@@ -134,8 +134,26 @@ export function loadConfig(): Promise<AppConfig> {
   });
 }
 
+/**
+ * Chromium ignores `@property` rules declared inside a ShadowRoot, so Tailwind v4's
+ * `--tw-*` custom properties (translate, border-style, shadow, ring...) would stay
+ * undefined in the HUD. Registering them at document level makes them apply globally.
+ */
+function registerTailwindProperties(css: string): void {
+  const STYLE_ID = 'ntg-tw-properties';
+  if (document.getElementById(STYLE_ID)) return;
+  const rules = css.match(/@property\s+[^{]+\{[^}]*\}/g);
+  if (!rules) return;
+  const style = document.createElement('style');
+  style.id = STYLE_ID;
+  style.textContent = rules.join('\n');
+  (document.head || document.documentElement).appendChild(style);
+}
+
 export function createHud(): void {
   if (document.getElementById('ntg-auto-hud-host')) return;
+
+  registerTailwindProperties(tailwindStyles);
 
   const host = document.createElement('div');
   host.id = 'ntg-auto-hud-host';

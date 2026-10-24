@@ -149,8 +149,21 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
         );
       }
 
+      // Fallback: Walk to Xe trà đá Chị Thơm ({x: 26, y: 12}) for Trà đá (3 shells, +8 stamina)
+      if (shells >= 3 && canAct('ben_drink', 4000)) {
+        return walkAndRun(
+          { x: 26, y: 12 },
+          () => {
+            sendBenWs({ t: 'buy', item: 'traDa' });
+            buStore.setState({ panel: null });
+          },
+          `Đi uống Trà đá Chị Thơm hồi Sức câu`,
+          'ben_drink'
+        );
+      }
+
       // Wait if recently bought/ate food so stamina can refresh
-      if (!canAct('ben_buy_food', 4000) || !canAct('ben_eat_pack', 3000) || !canAct('ben_goi_dau', 4000)) {
+      if (!canAct('ben_buy_food', 4000) || !canAct('ben_eat_pack', 3000) || !canAct('ben_goi_dau', 4000) || !canAct('ben_drink', 4000)) {
         return { acted: true, msg: '🍚 Đang chờ ăn hồi phục Sức câu...' };
       }
     }
@@ -166,19 +179,6 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
           },
           `Đi bán ${nonKeptCount} con cá tại Vựa Anh Tư để lấy tiền ăn cơm`,
           'ben_sell'
-        );
-      }
-
-      // ATM withdrawal
-      if (cfg.benAutoAtm && shells < (Number(cfg.benAtmThreshold) || 500) && canAct('ben_atm', 6000)) {
-        return walkAndRun(
-          { x: 30, y: 31 },
-          () => {
-            sendBenWs({ t: 'atm' });
-            buStore.setState({ panel: null });
-          },
-          'Đến cây ATM Bến Đò đổi tiền mặt lấy Vỏ sò',
-          'ben_atm'
         );
       }
 
@@ -325,17 +325,21 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
     }
   }
 
-  // 7. ATM
-  if (cfg.benAutoAtm && shells < (Number(cfg.benAtmThreshold) || 500) && canAct('ben_atm', 6000)) {
-    return walkAndRun(
-      { x: 30, y: 31 },
-      () => {
-        sendBenWs({ t: 'atm' });
-        buStore.setState({ panel: null });
-      },
-      'Đến cây ATM Bến Đò đổi tiền mặt lấy Vỏ sò',
-      'ben_atm'
-    );
+  // 7. Exchange shells at ATM ({x: 34, y: 35})
+  const atmMin = Number(cfg.benAtmThreshold) || 500;
+  if (cfg.benAutoAtm && shells >= atmMin + 100 && canAct('ben_atm', 4000)) {
+    const cashShells = Math.floor((shells - 100) / 50) * 50;
+    if (cashShells >= 100) {
+      return walkAndRun(
+        { x: 34, y: 35 },
+        () => {
+          sendBenWs({ t: 'atmCash', shells: cashShells });
+          buStore.setState({ panel: null });
+        },
+        `Đi đổi ${cashShells} vỏ sò ra tiền mặt tại ATM`,
+        'ben_atm'
+      );
+    }
   }
 
   // 8. Close panel if open
@@ -347,8 +351,9 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
   if (cfg.benAutoSpot !== false) {
     const spotChoice = cfg.benSpot || 'bank';
     const spotTargets: Record<string, { x: number; y: number; kind: string; label: string }> = {
+      dock: { x: 31, y: 4, kind: 'dock', label: 'Cầu tàu chính' },
+      bamboo: { x: 7, y: 6, kind: 'dock', label: 'Cầu tre' },
       bank: { x: 24, y: 10, kind: 'bank', label: 'Bờ sông' },
-      dock: { x: 31, y: 34, kind: 'dock', label: 'Cầu tàu chính' },
     };
     const target = spotTargets[spotChoice] || spotTargets.bank;
 

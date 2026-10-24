@@ -7,7 +7,7 @@ export interface PlotCrop {
   stage?: number;
   watered?: boolean;
   fertilized?: boolean;
-  pest?: boolean;
+  pests?: boolean;
   mature?: boolean;
   [key: string]: unknown;
 }
@@ -31,6 +31,7 @@ export interface KitchenState {
   known?: string[];
   stock?: Record<string, number>;
   buffs?: KitchenBuff[];
+  cooking?: unknown[];
   [key: string]: unknown;
 }
 
@@ -42,6 +43,7 @@ export interface PetData {
   cuddleDay?: number;
   cuddles?: number;
   bathedDay?: number;
+  playDay?: number;
   trickDay?: number;
   [key: string]: unknown;
 }
@@ -58,6 +60,7 @@ export interface DailyTask {
   id?: string | number;
   claimed?: boolean;
   kind?: string;
+  crop?: string;
   base?: number;
   need?: number;
   [key: string]: unknown;
@@ -65,13 +68,38 @@ export interface DailyTask {
 
 export interface VillageRequest {
   id: string | number;
-  fulfilled?: boolean;
-  crop?: string;
-  item?: string;
+  done?: boolean;
+  goods?: string;
   qty?: number;
+  who?: string;
   reward?: number;
   [key: string]: unknown;
 }
+
+export interface HelperState {
+  hired?: boolean;
+  unpaid?: number;
+}
+
+export interface GoldHolding {
+  qty: number;
+  cost: number;
+}
+
+export interface PiggyBank {
+  amount?: number;
+  streak?: number;
+  lastDay?: number;
+  broken?: boolean;
+}
+
+export interface BrokenPiggyResult {
+  coins?: number;
+  bonus?: number;
+}
+
+export type BuyItemsPayload = { fertilizer: number; pesticide: number; mysteryBag: number };
+export type BuySeedsPayload = { radish: number; carrot: number; corn: number; rice: number };
 
 export interface MainGameStoreState {
   screen?: string;
@@ -84,6 +112,8 @@ export interface MainGameStoreState {
   indoors?: boolean;
   onFoot?: boolean;
   sleeping?: boolean;
+  houseLevel?: number;
+  coffeeDay?: number;
   panel?: string | null;
   shop?: unknown;
   vendor?: unknown;
@@ -96,6 +126,7 @@ export interface MainGameStoreState {
     topic?: string;
     [key: string]: unknown;
   } | null;
+  uncleBa?: { met?: boolean; [key: string]: unknown };
   plots?: Record<string, PlotData>;
   seeds?: Record<string, number>;
   items?: Record<string, number>;
@@ -111,6 +142,7 @@ export interface MainGameStoreState {
   kitchen?: KitchenState;
   pets?: {
     pet?: PetData;
+    gear?: string[];
     news?: unknown;
     [key: string]: unknown;
   };
@@ -119,6 +151,7 @@ export interface MainGameStoreState {
     news?: unknown;
     noteRead?: boolean;
     fedDay?: number;
+    bebi?: string;
     fish?: Array<{ id?: string; days?: number; [key: string]: unknown }>;
     [key: string]: unknown;
   };
@@ -126,6 +159,7 @@ export interface MainGameStoreState {
     home?: boolean;
     news?: unknown;
     fedDay?: number;
+    bathDay?: number;
     mudDay?: number;
     lentDay?: number;
     mood?: number;
@@ -139,10 +173,11 @@ export interface MainGameStoreState {
     [key: string]: unknown;
   };
   helpers?: {
-    buffalo?: { hired?: boolean; unpaid?: number };
-    dairy?: { hired?: boolean; unpaid?: number };
-    poultry?: { hired?: boolean; unpaid?: number };
-    pond?: { hired?: boolean; unpaid?: number };
+    crops?: HelperState;
+    buffalo?: HelperState;
+    dairy?: HelperState;
+    poultry?: HelperState;
+    pond?: HelperState;
     [key: string]: unknown;
   };
   order?: {
@@ -150,7 +185,7 @@ export interface MainGameStoreState {
     qty: number;
     reward?: number;
     [key: string]: unknown;
-  };
+  } | null;
   village?: {
     newsDay?: number;
     met?: boolean;
@@ -159,9 +194,18 @@ export interface MainGameStoreState {
   };
   savings?: {
     newsDay?: number;
-    pig?: { amount?: number; streak?: number; broken?: boolean; fedDay?: number };
+    pig?: PiggyBank | null;
+    loan?: unknown;
+    books?: unknown[];
+    matured?: number;
     balance?: number;
     term?: string;
+    [key: string]: unknown;
+  };
+  goldShop?: {
+    newsDay?: number;
+    seed?: number;
+    hold?: Record<string, GoldHolding | undefined>;
     [key: string]: unknown;
   };
   daily?: {
@@ -170,6 +214,7 @@ export interface MainGameStoreState {
   };
   goalIndex?: number;
   firstDay?: {
+    cooked?: boolean;
     incense?: boolean;
     sprout?: boolean;
     sproutHarvested?: boolean;
@@ -189,6 +234,7 @@ export interface MainGameStoreState {
   fishing?: {
     rod?: number;
     seaOpen?: boolean;
+    useShrimp?: boolean;
     bait?: {
       worm?: number;
       shrimp?: number;
@@ -206,6 +252,7 @@ export interface MainGameStoreState {
   };
   stats?: {
     earned?: number;
+    harvested?: Record<string, number>;
     [key: string]: unknown;
   };
   player?: {
@@ -222,78 +269,95 @@ export interface MainGameStoreState {
   ledger?: Array<{ kind?: string; label?: string; [key: string]: unknown }>;
   goldStock?: Record<string, number>;
   goldAvgCost?: Record<string, number>;
-  plotOffer?: unknown;
+  plotOffer?: { price?: number; [key: string]: unknown } | null;
   zoneOffer?: unknown;
 
-  // Actions
+  // Navigation & sleep
   showWorldMap?: () => void;
   enterFarm?: () => void;
   leaveHouse?: () => void;
   enterHouse?: () => void;
   openSea?: () => void;
   goToSea?: () => string;
-  sellBasket?: () => number;
   goToSleep?: () => void;
   sleepThrough?: () => void;
   nextMorning?: () => void;
   stopSleeping?: () => void;
+
+  // House, kitchen & needs
+  learnRecipe?: (recipe: string) => string;
+  cook?: (recipe: string) => string;
+  eatDish?: (dish: string) => boolean;
+  buyFood?: (food: string) => string;
+  chargeVehicle?: () => number;
+  shampoo?: () => string;
+  whiten?: () => string;
+
+  // Crops
   setActiveTool?: (tool: string) => void;
   applyTool?: (plot: string, tool: string) => unknown;
-  previewTool?: (plot: string, tool: string) => boolean;
-  buyPlot?: () => string;
-  buySeed?: (seed: string, count: number) => string;
+  previewTool?: (plot: string, tool: string) => unknown;
+  buyItems?: (payload: BuyItemsPayload) => unknown;
+  consumeItem?: (item: string) => unknown;
+  buySeeds?: (payload: BuySeedsPayload) => boolean;
+  buyPlot?: () => boolean;
+  payHelper?: (type: string) => boolean;
+
+  // Pet
+  pickUpPet?: () => void;
   feedPet?: (food: string) => string;
+  buyPetFood?: (food: string, count: number) => string;
   cuddlePet?: () => string;
   bathPet?: () => string;
-  trickPet?: () => string;
-  buyPetFood?: (food: string, count: number) => string;
-  pickUpPet?: () => void;
-  feedBuffalo?: (grass: string) => string;
+  doTrick?: (trick: string) => string;
+
+  // Barn
+  feedBuffalo?: () => string;
   bathBuffalo?: () => string;
   lendBuffalo?: () => string;
   feedCows?: () => string;
-  cureCow?: (cowId: string | number) => string;
-  sellMilk?: () => { liters: number; total: number };
   buyMedicine?: () => void;
+  cureCow?: (cowId: string | number) => string;
+  sellMilk?: () => { liters: number; total: number } | null;
+
+  // Coop & pond
   collectEggs?: () => number;
   buyChick?: () => string;
-  payHelper?: (type: string) => boolean;
-  netFish?: () => { n: number; total: number };
-  feedPond?: () => string;
-  stockPond?: (fish: string) => string;
-  buyFry?: (fish: string) => string;
   readPondNote?: () => void;
+  netFish?: () => { n: number; total: number } | null;
+  stockFish?: (fish: string) => string;
+  feedFish?: () => string;
+
+  // Market & gold shop
   deliverOrder?: () => boolean;
   meetKhang?: () => void;
-  deliverVillageRequest?: (reqId: string | number) => boolean;
-  sellProduce?: (crop: string, qty: number) => boolean;
-  sellEgg?: (qty: number) => boolean;
-  buyGold?: (type: string) => boolean;
-  sellGold?: (type: string, qty: number) => boolean;
-  claimDailyTask?: (taskId: string | number) => boolean;
-  claimNotebookPage?: (pageId: string) => boolean;
-  readNotebook?: () => void;
-  startSoak?: () => string;
-  claimSoakSeed?: () => string;
+  deliverRequest?: (reqId: string | number) => boolean;
+  sellQty?: (goods: string, qty: number) => number;
+  buyGold?: (type: string, qty: number) => string;
+  sellGold?: (type: string, qty: number) => number | null;
+
+  // Di Bay, notebook & quests
   lightIncense?: () => string;
   plantSprouts?: () => string;
   harvestSprouts?: () => boolean;
-  clearDebris?: (index: number) => boolean;
+  clearDebris?: (index: number) => unknown;
+  claimPage?: (page: number) => boolean;
+  startSoak?: () => boolean;
+  claimDaily?: (index: number) => unknown;
+  claimGoal?: () => unknown;
+  breakPiggy?: () => BrokenPiggyResult | null;
+  newPiggy?: (tier: number) => boolean;
   feedPiggy?: () => string;
-  breakPiggy?: () => boolean;
-  buyPiggy?: () => boolean;
-  depositSavings?: (amt: number) => boolean;
-  buyFood?: (food: string) => string;
-  cook?: (recipe: string) => string;
-  eat?: (food: string) => string;
-  drink?: (drink: string) => string;
-  learnRecipe?: (recipe: string) => string;
-  chargeVehicle?: () => string;
-  shampoo?: () => string;
-  whiten?: () => string;
+  deposit?: (amount: number, days: number) => string;
+
+  // Sea fishing
   buyRod?: () => boolean;
-  buyBait?: (bait: string, packs: number) => boolean;
+  sellBasket?: () => number;
   claimDexReward?: () => boolean;
+  buyBait?: (bait: string, packs: number) => boolean;
+  setUseShrimp?: (use: boolean) => void;
+
+  // Interrupts
   closePhone?: () => void;
   answerAnnouncement?: (ans: boolean) => void;
   answerTip?: (ans: boolean) => void;

@@ -1,183 +1,158 @@
 import { getMainState } from '../../core/engine-access';
-import { getActiveTrend, getTrendQuota } from '../../core/store-watcher';
-import { GOLD_CATALOG, getGoldBuyPrice, getGoldSellPrice } from './gold-sim';
+import { canAct, markActed } from '../../core/cooldown';
 import { AppConfig } from '../../../shared/types/config';
+import { MainGameStoreState } from '../../../shared/types/game-store';
+import { GOLD_CATALOG, getGoldBuyPrice, getGoldSellPrice } from './gold-sim';
+import { getActiveTrend, getTrendQuota } from './trend';
+import { StepResult, NOT_ACTED, CROP_NAMES, formatVnd } from './types';
 
-export function handleMarketSubArea(cfg: AppConfig): { acted: boolean; msg?: string } {
+const GOLD_TYPES = ['mieng', 'nhan', 'k18', 'non'];
+
+const stockOf = (st: MainGameStoreState, goods: string): number =>
+  goods === 'egg' ? st.eggs || 0 : st.produce?.[goods] || 0;
+
+/** Quantity reserved for the active grocery order (never sell below it) */
+const reservedForOrder = (st: MainGameStoreState, goods: string): number =>
+  st.order && st.order.crop === goods ? st.order.qty : 0;
+
+function deliverGroceryOrder(): StepResult | null {
   const m = getMainState();
-  if (!m) return { acted: false };
+  if (!m.order || stockOf(m, m.order.crop) < m.order.qty) return null;
+  const reward = m.order.reward || 0;
+  const cropLabel = CROP_NAMES[m.order.crop] || m.order.crop;
+  if (m.deliverOrder?.() === true) {
+    return { acted: true, msg: `📦 Đã giao đơn hàng Chị Na (${cropLabel}) +${formatVnd(reward)}đ` };
+  }
+  return null;
+}
 
-  const cropNames: Record<string, string> = {
-    radish: 'Củ cải',
-    carrot: 'Cà rốt',
-    corn: 'Bắp ngô',
-    rice: 'Lúa thơm',
-    egg: 'Trứng gà',
-  };
-
-  // 7a. Deliver Grocery Order to Chị Na
-  if (cfg.autoDeliverOrder !== false && m.order) {
-    const have = m.produce?.[m.order.crop] || 0;
-    if (have >= m.order.qty) {
-      const reward = m.order.reward || 0;
-      const cropLabel = cropNames[m.order.crop] || m.order.crop;
-      if (m.deliverOrder?.() === true) {
-        return {
-          acted: true,
-          msg: `📦 Đã giao đơn hàng Chị Na (${cropLabel}) +${reward.toLocaleString('vi-VN')}đ`,
-        };
-      }
+function deliverVillageBoard(): StepResult | null {
+  const st = getMainState();
+  if ((st.village?.newsDay || 0) > 0 && !st.village?.met) {
+    st.meetKhang?.();
+  }
+  const cur = getMainState();
+  for (const req of cur.village?.requests || []) {
+    if (req.done || !req.goods) continue;
+    const qty = req.qty || 0;
+    if (stockOf(cur, req.goods) >= qty && cur.deliverRequest?.(req.id) === true) {
+      return { acted: true, msg: `📋 Đã giao ${qty} ${CROP_NAMES[req.goods] || req.goods} giúp ${req.who || 'bà con'} (Bảng tin làng)` };
     }
   }
+  return null;
+}
 
-  // 7b. Unlock & Deliver Village Board Requests
-  const stV = getMainState();
-  if (cfg.autoVillageBoard !== false) {
-    if ((stV.village?.newsDay || 0) > 0 && !stV.village?.met) {
-      stV.meetKhang?.();
+/** Sells ONLY the exact boosted trend quota, never over-sells */
+function sellTrendGoods(): StepResult | null {
+  const st = getMainState();
+  const day = st.day || 0;
+  const trend = getActiveTrend(day);
+  if (!trend) return null;
+  const quota = getTrendQuota(trend.goods, day, Object.keys(st.plots || {}).length, st.trendLog);
+  if (quota <= 0) return null;
+  const toSell = Math.min(Math.max(0, stockOf(st, trend.goods) - reservedForOrder(st, trend.goods)), quota);
+  if (toSell <= 0) return null;
+  const sold = st.sellQty?.(trend.goods, toSell) || 0;
+  if (sold > 0) {
+    return { acted: true, msg: `🔥 Đã bán đúng ${sold} ${CROP_NAMES[trend.goods] || trend.goods} theo Trend sốt dẻo (x2 giá)` };
+  }
+  return null;
+}
+
+/** Sells the MINIMUM produce needed to complete the notebook "sell" task (or the day-1 sell task) */
+function sellForDailyTask(): StepResult | null {
+  const st = getMainState();
+  const earned = st.stats?.earned || 0;
+  const sellTask = (st.daily?.tasks || []).find(
+    (t) => !t.claimed && t.kind === 'sell' && earned - (t.base || 0) < (t.need || 0)
+  );
+  const day1NeedSell = st.day === 1 && earned === 0;
+  if (!sellTask && !day1NeedSell) return null;
+
+  for (const item of ['radish', 'carrot', 'corn', 'rice', 'egg']) {
+    const sellable = Math.max(0, stockOf(st, item) - reservedForOrder(st, item));
+    if (sellable <= 0) continue;
+    let qty = 1;
+    if (sellTask) {
+      const missing = (sellTask.need || 0) - (earned - (sellTask.base || 0));
+      const unitPrice = item === 'egg' ? 1000 : st.prices?.[item] || 500;
+      qty = Math.max(1, Math.min(sellable, Math.ceil(missing / unitPrice)));
     }
-    const curV = getMainState();
-    if (Array.isArray(curV.village?.requests)) {
-      for (const req of curV.village.requests) {
-        if (!req.fulfilled) {
-          const itemKey = req.crop || req.item || '';
-          const have = itemKey === 'egg' ? curV.eggs || 0 : curV.produce?.[itemKey] || 0;
-          if (have >= (req.qty || 0)) {
-            if (curV.deliverVillageRequest?.(req.id) === true) {
-              return {
-                acted: true,
-                msg: `📋 Đã giao đơn Bảng tin làng (${cropNames[itemKey] || itemKey}) +${(req.reward || 0).toLocaleString('vi-VN')}đ`,
-              };
-            }
-          }
-        }
-      }
+    const sold = st.sellQty?.(item, qty) || 0;
+    if (sold > 0) {
+      return { acted: true, msg: `📋 Đã bán ${sold} ${CROP_NAMES[item] || item} để hoàn thành Việc Sổ tay hôm nay` };
     }
   }
+  return null;
+}
 
-  // 7c. Sell Trend produce (x2 price during trend hours)
-  const stT = getMainState();
-  if (cfg.autoSellTrend !== false && stT.day) {
-    const tr = getActiveTrend(stT.day);
-    if (tr) {
-      const quota = getTrendQuota(tr.goods, stT.day, Object.keys(stT.plots || {}).length, stT.trendLog);
-      if (quota > 0) {
-        const have = tr.goods === 'egg' ? stT.eggs || 0 : stT.produce?.[tr.goods] || 0;
-        const sellCount = Math.min(quota, have);
-        if (sellCount > 0) {
-          const ok = tr.goods === 'egg' ? stT.sellEgg?.(sellCount) : stT.sellProduce?.(tr.goods, sellCount);
-          if (ok === true) {
-            return {
-              acted: true,
-              msg: `📈 Bán ${sellCount} ${cropNames[tr.goods] || tr.goods} Xu hướng x2 giá chợ`,
-            };
-          }
-        }
-      }
+function sellSurplus(cfg: AppConfig): StepResult | null {
+  const st = getMainState();
+  const minKeep = Math.max(0, Number(cfg.surplusKeepQty) || 20);
+  for (const item of ['rice', 'corn', 'carrot', 'radish', 'egg']) {
+    const sellable = stockOf(st, item) - reservedForOrder(st, item) - minKeep;
+    if (sellable <= 0) continue;
+    const sold = st.sellQty?.(item, sellable) || 0;
+    if (sold > 0) {
+      return { acted: true, msg: `🏪 Đã bán ${sold} ${CROP_NAMES[item] || item} nông sản dư (giữ lại ${minKeep})` };
     }
   }
+  return null;
+}
 
-  // 7d. Sell produce to complete Sổ tay "Bán hàng" task or Day 1 sell task
-  const stS = getMainState();
-  if (cfg.autoSellDailyTask !== false) {
-    const sellTask = (stS.daily?.tasks || []).find(
-      (t: { claimed?: boolean; kind?: string; base?: number; need?: number }) =>
-        !t.claimed && t.kind === 'sell' && (stS.stats?.earned || 0) - (t.base || 0) < (t.need || 0)
-    );
-    const day1NeedSell = stS.day === 1 && (stS.stats?.earned || 0) === 0;
+/** Cô Kim gold shop (Chợ Lớn, unlocked day 30+) */
+function tradeGold(cfg: AppConfig): StepResult | null {
+  const st = getMainState();
+  const shop = st.goldShop;
+  if (!shop || !((shop.newsDay || 0) > 0 || (st.day || 0) >= 30)) return null;
+  const seed = shop.seed || 0;
+  const day = st.day || 0;
+  const minutes = st.minutes || 0;
 
-    if (sellTask || day1NeedSell) {
-      const items = ['radish', 'carrot', 'corn', 'rice', 'egg'];
-      for (const item of items) {
-        const have = item === 'egg' ? stS.eggs || 0 : stS.produce?.[item] || 0;
-        const reserved = stS.order && stS.order.crop === item ? stS.order.qty : 0;
-        const sellable = Math.max(0, have - reserved);
-        if (sellable > 0) {
-          let qtyToSell = 1;
-          if (sellTask) {
-            const missing = (sellTask.need || 0) - ((stS.stats?.earned || 0) - (sellTask.base || 0));
-            const unitPrice = item === 'egg' ? 1000 : (stS.prices?.[item] || 500);
-            qtyToSell = Math.max(1, Math.min(sellable, Math.ceil(missing / unitPrice)));
-          }
-          const ok = item === 'egg' ? stS.sellEgg?.(qtyToSell) : stS.sellProduce?.(item, qtyToSell);
-          if (ok === true) {
-            return {
-              acted: true,
-              msg: `🏪 Bán ${qtyToSell} ${cropNames[item] || item} hoàn thành nhiệm vụ bán hàng`,
-            };
-          }
-        }
-      }
-    }
-  }
-
-  // 7e. Sell surplus produce (Warehouse protection: only sell if quantity > surplusKeepQty)
-  if (cfg.autoSellProduce && typeof cfg.surplusKeepQty === 'number') {
-    const stSur = getMainState();
-    const keepLimit = Number(cfg.surplusKeepQty) || 20;
-    const items = ['radish', 'carrot', 'corn', 'rice', 'egg'];
-
-    for (const item of items) {
-      const have = item === 'egg' ? stSur.eggs || 0 : stSur.produce?.[item] || 0;
-      const reserved = stSur.order && stSur.order.crop === item ? stSur.order.qty : 0;
-      const surplus = have - Math.max(keepLimit, reserved);
-      if (surplus > 0) {
-        const ok = item === 'egg' ? stSur.sellEgg?.(surplus) : stSur.sellProduce?.(item, surplus);
-        if (ok === true) {
+  if (cfg.goldAutoSell !== false) {
+    const targetProfitPct = Number(cfg.goldProfitPercent) || 10;
+    for (const type of GOLD_TYPES) {
+      const holding = shop.hold?.[type];
+      if (!holding || holding.qty <= 0 || holding.cost <= 0) continue;
+      const costPerUnit = holding.cost / holding.qty;
+      const sellPrice = getGoldSellPrice(seed, type, day, minutes);
+      const profitPct = ((sellPrice - costPerUnit) / costPerUnit) * 100;
+      if (profitPct >= targetProfitPct && canAct('farm_gold', 3500)) {
+        const profit = st.sellGold?.(type, holding.qty);
+        if (profit !== null && profit !== undefined) {
+          markActed('farm_gold');
           return {
             acted: true,
-            msg: `📦 Bán ${surplus} ${cropNames[item] || item} dư kho (giữ lại tối thiểu ${keepLimit})`,
+            msg: `🪙 Đã bán chốt lời ${holding.qty} chỉ ${GOLD_CATALOG[type]?.name || type} tại Tiệm Vàng Cô Kim (+${formatVnd(profit)}đ, lãi ${Math.round(profitPct)}%)`,
           };
         }
       }
     }
   }
 
-  // 7f. Gold Cô Kim Investment Algorithm
-  if (cfg.goldAutoBuy || cfg.goldAutoSell) {
-    const stG = getMainState();
-    const curGold = stG.gold || 0;
-    const seed = (stG.day || 1) * 1000 + Math.floor((stG.minutes || 0) / 720);
-    const day = stG.day || 1;
-    const min = stG.minutes || 0;
-
-    // Auto Sell Gold when profit reached
-    if (cfg.goldAutoSell !== false) {
-      const profitTarget = Number(cfg.goldProfitPercent) || 10;
-      for (const t of Object.keys(GOLD_CATALOG)) {
-        const have = stG.goldStock?.[t] || 0;
-        const avgCost = stG.goldAvgCost?.[t] || 0;
-        if (have > 0 && avgCost > 0) {
-          const sellPrice = getGoldSellPrice(seed, t, day, min);
-          const profit = ((sellPrice - avgCost) / avgCost) * 100;
-          if (profit >= profitTarget) {
-            if (stG.sellGold?.(t, have) === true) {
-              return {
-                acted: true,
-                msg: `🪙 Bán chốt lời ${have} ${GOLD_CATALOG[t]?.name || t} (Lãi +${profit.toFixed(1)}%)`,
-              };
-            }
-          }
-        }
-      }
-    }
-
-    // Auto Buy Gold
-    if (cfg.goldAutoBuy) {
-      const prefType = cfg.goldPreferType || 'mieng';
-      const keepCash = Number(cfg.goldKeepCash) || 500000;
-      const buyPrice = getGoldBuyPrice(seed, prefType, day, min);
-
-      if (curGold >= keepCash + buyPrice && buyPrice > 0) {
-        if (stG.buyGold?.(prefType) === true) {
-          return {
-            acted: true,
-            msg: `🪙 Mua tích lũy 1 ${GOLD_CATALOG[prefType]?.name || prefType} Cô Kim (-${buyPrice.toLocaleString('vi-VN')}đ)`,
-          };
-        }
-      }
+  if (cfg.goldAutoBuy && canAct('farm_gold', 3500)) {
+    const prefType = cfg.goldPreferType || 'mieng';
+    const keepCash = Number(cfg.goldKeepCash) || 500000;
+    const buyPrice = getGoldBuyPrice(seed, prefType, day, minutes);
+    if (buyPrice > 0 && (st.gold || 0) - buyPrice >= keepCash && st.buyGold?.(prefType, 1) === 'ok') {
+      markActed('farm_gold');
+      return {
+        acted: true,
+        msg: `🪙 Đã mua 1 chỉ ${GOLD_CATALOG[prefType]?.name || prefType} đầu tư tại Tiệm Vàng Cô Kim (-${formatVnd(buyPrice)}đ)`,
+      };
     }
   }
+  return null;
+}
 
-  return { acted: false };
+export function handleMarketSubArea(cfg: AppConfig): StepResult {
+  return (
+    (cfg.autoDeliverOrder !== false ? deliverGroceryOrder() : null) ||
+    (cfg.autoVillageBoard !== false ? deliverVillageBoard() : null) ||
+    (cfg.autoSellTrend !== false ? sellTrendGoods() : null) ||
+    (cfg.autoSellDailyTask !== false ? sellForDailyTask() : null) ||
+    (cfg.autoSellProduce === true ? sellSurplus(cfg) : null) ||
+    tradeGold(cfg) ||
+    NOT_ACTED
+  );
 }

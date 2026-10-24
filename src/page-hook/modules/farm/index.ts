@@ -5,35 +5,28 @@ import { handleCropsSubArea } from './crops';
 import { handlePetSubArea, handleBarnSubArea, handleCoopSubArea, handlePondSubArea } from './animals';
 import { handleMarketSubArea } from './market';
 import { handleDiBaySubArea } from './tasks';
+import { StepResult, NOT_ACTED } from './types';
 
 import { AppConfig, FarmSubAreaId } from '../../../shared/types/config';
 
-export function execFarmSubAreaStep(subAreaId: FarmSubAreaId, cfg: AppConfig): { acted: boolean; msg?: string } {
-  const m = stores.main?.getState();
-  if (!m) return { acted: false };
+const SUBAREA_HANDLERS: Record<FarmSubAreaId, (cfg: AppConfig) => StepResult> = {
+  house: handleHouseSubArea,
+  crops: handleCropsSubArea,
+  pet: handlePetSubArea,
+  barn: handleBarnSubArea,
+  coop: handleCoopSubArea,
+  pond: handlePondSubArea,
+  market: handleMarketSubArea,
+  dibay: handleDiBaySubArea,
+};
+
+export function execFarmSubAreaStep(subAreaId: FarmSubAreaId, cfg: AppConfig): StepResult {
+  if (!stores.main?.getState()) return NOT_ACTED;
 
   // Always dismiss blocking interrupts first
   const interrupted = dismissInterruptsIfNeeded(cfg);
   if (interrupted) return interrupted;
 
-  switch (subAreaId) {
-    case 'house':
-      return handleHouseSubArea(cfg);
-    case 'crops':
-      return handleCropsSubArea(cfg);
-    case 'pet':
-      return handlePetSubArea(cfg);
-    case 'barn':
-      return handleBarnSubArea(cfg);
-    case 'coop':
-      return handleCoopSubArea(cfg);
-    case 'pond':
-      return handlePondSubArea(cfg);
-    case 'market':
-      return handleMarketSubArea(cfg);
-    case 'dibay':
-      return handleDiBaySubArea(cfg);
-    default:
-      return { acted: false };
-  }
+  const handler = SUBAREA_HANDLERS[subAreaId];
+  return handler ? handler(cfg) : NOT_ACTED;
 }
