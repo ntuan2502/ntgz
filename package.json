@@ -1,0 +1,14 @@
+{
+  "name": "nongtraigenz-auto",
+  "version": "1.0.0",
+  "description": "Nông Trại GenZ Auto by Tún - Tiện ích Chrome Extension tự động hóa đa khu vực thông minh",
+  "private": true,
+  "scripts": {
+    "commitlint": "commitlint --last",
+    "check-syntax": "node --check content.js && node --check page-hook.js && node --check background.js && node --check popup.js"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1"
+  }
+}

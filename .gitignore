@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+.pnpm-debug.log*
+
+# Internal development tools & sessions
+tools/
+recorded-session.json
+*.log
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

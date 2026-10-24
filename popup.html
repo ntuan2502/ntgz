@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nông Trại GenZ Auto by Tún</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <span class="dot" id="status-dot"></span>
+        <div>
+          <h1>🌾 NTG Auto by Tún</h1>
+          <div style="font-size:10.5px; color:#94a3b8; font-weight:600; margin-top:1px;">Phiên bản v1.0.0</div>
+        </div>
+      </div>
+      <span class="badge" id="state-badge">OFF</span>
+    </div>
+
+    <div class="actions">
+      <button id="btn-open-game" class="btn game-btn">
+        🚀 Vào Game Nông Trại GenZ
+      </button>
+
+      <button id="btn-toggle-auto" class="btn primary">
+        ▶️ BẬT AUTO (Alt+A)
+      </button>
+
+      <button id="btn-toggle-panel" class="btn secondary">
+        🖥️ Ẩn / Hiện Menu Trong Game (Alt+P)
+      </button>
+    </div>
+
+    <div class="footer-note" id="msg-status">
+      Mọi tuỳ chỉnh chi tiết đều nằm trong Menu nổi ở góc phải màn hình game.
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
