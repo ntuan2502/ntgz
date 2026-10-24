@@ -14600,6 +14600,48 @@
     return n;
   }
 
+  // node_modules/.pnpm/class-variance-authority@0.7.1/node_modules/class-variance-authority/dist/index.mjs
+  var falsyToString = (value) => typeof value === "boolean" ? `${value}` : value === 0 ? "0" : value;
+  var cx = clsx;
+  var cva = (base, config) => (props) => {
+    var _config_compoundVariants;
+    if ((config === null || config === void 0 ? void 0 : config.variants) == null) return cx(base, props === null || props === void 0 ? void 0 : props.class, props === null || props === void 0 ? void 0 : props.className);
+    const { variants, defaultVariants } = config;
+    const getVariantClassNames = Object.keys(variants).map((variant) => {
+      const variantProp = props === null || props === void 0 ? void 0 : props[variant];
+      const defaultVariantProp = defaultVariants === null || defaultVariants === void 0 ? void 0 : defaultVariants[variant];
+      if (variantProp === null) return null;
+      const variantKey = falsyToString(variantProp) || falsyToString(defaultVariantProp);
+      return variants[variant][variantKey];
+    });
+    const propsWithoutUndefined = props && Object.entries(props).reduce((acc, param) => {
+      let [key, value] = param;
+      if (value === void 0) {
+        return acc;
+      }
+      acc[key] = value;
+      return acc;
+    }, {});
+    const getCompoundVariantClassNames = config === null || config === void 0 ? void 0 : (_config_compoundVariants = config.compoundVariants) === null || _config_compoundVariants === void 0 ? void 0 : _config_compoundVariants.reduce((acc, param) => {
+      let { class: cvClass, className: cvClassName, ...compoundVariantOptions } = param;
+      return Object.entries(compoundVariantOptions).every((param2) => {
+        let [key, value] = param2;
+        return Array.isArray(value) ? value.includes({
+          ...defaultVariants,
+          ...propsWithoutUndefined
+        }[key]) : {
+          ...defaultVariants,
+          ...propsWithoutUndefined
+        }[key] === value;
+      }) ? [
+        ...acc,
+        cvClass,
+        cvClassName
+      ] : acc;
+    }, []);
+    return cx(base, getVariantClassNames, getCompoundVariantClassNames, props === null || props === void 0 ? void 0 : props.class, props === null || props === void 0 ? void 0 : props.className);
+  };
+
   // node_modules/.pnpm/tailwind-merge@3.7.0/node_modules/tailwind-merge/dist/bundle-mjs.mjs
   var concatArrays = (array1, array2) => {
     const combinedArray = new Array(array1.length + array2.length);
@@ -17863,117 +17905,6 @@
     return twMerge(clsx(inputs));
   }
 
-  // src/components/ui/card.tsx
-  var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
-  function Card({ className, ...props }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-      "div",
-      {
-        "data-slot": "card",
-        className: cn(
-          "flex flex-col gap-6 rounded-xl border bg-card py-6 text-card-foreground shadow-sm",
-          className
-        ),
-        ...props
-      }
-    );
-  }
-  function CardHeader({ className, ...props }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-      "div",
-      {
-        "data-slot": "card-header",
-        className: cn(
-          "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
-          className
-        ),
-        ...props
-      }
-    );
-  }
-  function CardTitle({ className, ...props }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-      "div",
-      {
-        "data-slot": "card-title",
-        className: cn("leading-none font-semibold", className),
-        ...props
-      }
-    );
-  }
-  function CardDescription({ className, ...props }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-      "div",
-      {
-        "data-slot": "card-description",
-        className: cn("text-sm text-muted-foreground", className),
-        ...props
-      }
-    );
-  }
-  function CardContent({ className, ...props }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-      "div",
-      {
-        "data-slot": "card-content",
-        className: cn("px-6", className),
-        ...props
-      }
-    );
-  }
-  function CardFooter({ className, ...props }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-      "div",
-      {
-        "data-slot": "card-footer",
-        className: cn("flex items-center px-6 [.border-t]:pt-6", className),
-        ...props
-      }
-    );
-  }
-
-  // node_modules/.pnpm/class-variance-authority@0.7.1/node_modules/class-variance-authority/dist/index.mjs
-  var falsyToString = (value) => typeof value === "boolean" ? `${value}` : value === 0 ? "0" : value;
-  var cx = clsx;
-  var cva = (base, config) => (props) => {
-    var _config_compoundVariants;
-    if ((config === null || config === void 0 ? void 0 : config.variants) == null) return cx(base, props === null || props === void 0 ? void 0 : props.class, props === null || props === void 0 ? void 0 : props.className);
-    const { variants, defaultVariants } = config;
-    const getVariantClassNames = Object.keys(variants).map((variant) => {
-      const variantProp = props === null || props === void 0 ? void 0 : props[variant];
-      const defaultVariantProp = defaultVariants === null || defaultVariants === void 0 ? void 0 : defaultVariants[variant];
-      if (variantProp === null) return null;
-      const variantKey = falsyToString(variantProp) || falsyToString(defaultVariantProp);
-      return variants[variant][variantKey];
-    });
-    const propsWithoutUndefined = props && Object.entries(props).reduce((acc, param) => {
-      let [key, value] = param;
-      if (value === void 0) {
-        return acc;
-      }
-      acc[key] = value;
-      return acc;
-    }, {});
-    const getCompoundVariantClassNames = config === null || config === void 0 ? void 0 : (_config_compoundVariants = config.compoundVariants) === null || _config_compoundVariants === void 0 ? void 0 : _config_compoundVariants.reduce((acc, param) => {
-      let { class: cvClass, className: cvClassName, ...compoundVariantOptions } = param;
-      return Object.entries(compoundVariantOptions).every((param2) => {
-        let [key, value] = param2;
-        return Array.isArray(value) ? value.includes({
-          ...defaultVariants,
-          ...propsWithoutUndefined
-        }[key]) : {
-          ...defaultVariants,
-          ...propsWithoutUndefined
-        }[key] === value;
-      }) ? [
-        ...acc,
-        cvClass,
-        cvClassName
-      ] : acc;
-    }, []);
-    return cx(base, getVariantClassNames, getCompoundVariantClassNames, props === null || props === void 0 ? void 0 : props.class, props === null || props === void 0 ? void 0 : props.className);
-  };
-
   // node_modules/.pnpm/@radix-ui+react-primitive@2_8110221bfe749bbb617b2ef4d8402995/node_modules/@radix-ui/react-primitive/dist/index.mjs
   var React3 = __toESM(require_react(), 1);
   var ReactDOM = __toESM(require_react_dom(), 1);
@@ -18187,7 +18118,7 @@
   var use = React2[" use ".trim().toString()];
 
   // node_modules/.pnpm/@radix-ui+react-primitive@2_8110221bfe749bbb617b2ef4d8402995/node_modules/@radix-ui/react-primitive/dist/index.mjs
-  var import_jsx_runtime2 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
   var __defProp4 = Object.defineProperty;
   var __name3 = (target, value) => __defProp4(target, "name", { value, configurable: true });
   var NODES = [
@@ -18217,7 +18148,7 @@
       if (typeof window !== "undefined") {
         window[/* @__PURE__ */ Symbol.for("radix-ui")] = true;
       }
-      return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Comp, { ...primitiveProps, ref: forwardedRef });
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Comp, { ...primitiveProps, ref: forwardedRef });
     });
     Node2.displayName = `Primitive.${node}`;
     return { ...primitive, [node]: Node2 };
@@ -18246,7 +18177,7 @@
 
   // node_modules/.pnpm/@radix-ui+react-context@1.3_f5e7faa335a2377b2de19422090f7bda/node_modules/@radix-ui/react-context/dist/index.mjs
   var React4 = __toESM(require_react(), 1);
-  var import_jsx_runtime3 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime2 = __toESM(require_jsx_runtime(), 1);
   var __defProp5 = Object.defineProperty;
   var __name4 = (target, value) => __defProp5(target, "name", { value, configurable: true });
   // @__NO_SIDE_EFFECTS__
@@ -18256,7 +18187,7 @@
     const Provider = /* @__PURE__ */ __name4((props) => {
       const { children, ...context } = props;
       const value = React4.useMemo(() => context, Object.values(context));
-      return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Context.Provider, { value, children });
+      return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Context.Provider, { value, children });
     }, "Provider");
     Provider.displayName = rootComponentName + "Provider";
     function useContext22(consumerName, options = {}) {
@@ -18283,7 +18214,7 @@
         const { scope, children, ...context } = props;
         const Context = scope?.[scopeName]?.[index] || BaseContext;
         const value = React4.useMemo(() => context, Object.values(context));
-        return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Context.Provider, { value, children });
+        return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Context.Provider, { value, children });
       }, "Provider");
       Provider.displayName = rootComponentName + "Provider";
       function useContext22(consumerName, scope, options = {}) {
@@ -18339,7 +18270,7 @@
 
   // node_modules/.pnpm/@radix-ui+react-collection@_6acb2d8ed0d1a5e2d86fa68fa86b38fc/node_modules/@radix-ui/react-collection/dist/index.mjs
   var React6 = __toESM(require_react(), 1);
-  var import_jsx_runtime4 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime3 = __toESM(require_jsx_runtime(), 1);
   var React22 = __toESM(require_react(), 1);
 
   // node_modules/.pnpm/@radix-ui+react-use-layout-_d3987928d2181a5100d43510a878393c/node_modules/@radix-ui/react-use-layout-effect/dist/index.mjs
@@ -18348,7 +18279,7 @@
   };
 
   // node_modules/.pnpm/@radix-ui+react-collection@_6acb2d8ed0d1a5e2d86fa68fa86b38fc/node_modules/@radix-ui/react-collection/dist/index.mjs
-  var import_jsx_runtime5 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime4 = __toESM(require_jsx_runtime(), 1);
   var __defProp6 = Object.defineProperty;
   var __name5 = (target, value) => __defProp6(target, "name", { value, configurable: true });
   // @__NO_SIDE_EFFECTS__
@@ -18363,7 +18294,7 @@
       const { scope, children } = props;
       const ref = React6.useRef(null);
       const itemMap = React6.useRef(/* @__PURE__ */ new Map()).current;
-      return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(CollectionProviderImpl, { scope, itemMap, collectionRef: ref, children });
+      return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(CollectionProviderImpl, { scope, itemMap, collectionRef: ref, children });
     }, "CollectionProvider");
     CollectionProvider.displayName = PROVIDER_NAME;
     const COLLECTION_SLOT_NAME = name + "CollectionSlot";
@@ -18373,7 +18304,7 @@
         const { scope, children } = props;
         const context = useCollectionContext(COLLECTION_SLOT_NAME, scope);
         const composedRefs = useComposedRefs(forwardedRef, context.collectionRef);
-        return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(CollectionSlotImpl, { ref: composedRefs, children });
+        return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(CollectionSlotImpl, { ref: composedRefs, children });
       }
     );
     CollectionSlot.displayName = COLLECTION_SLOT_NAME;
@@ -18390,7 +18321,7 @@
           context.itemMap.set(ref, { ref, ...itemData });
           return () => void context.itemMap.delete(ref);
         });
-        return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(CollectionItemSlotImpl, { ...{ [ITEM_DATA_ATTR]: "" }, ref: composedRefs, children });
+        return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(CollectionItemSlotImpl, { ...{ [ITEM_DATA_ATTR]: "" }, ref: composedRefs, children });
       }
     );
     CollectionItemSlot.displayName = ITEM_SLOT_NAME;
@@ -18746,12 +18677,12 @@
     const [CollectionStatefulContextProvider, useStatefulCollectionContext] = createCollectionContext(PROVIDER_NAME);
     CollectionStatefulContextProvider.displayName = name + "CollectionStatefulContextProvider";
     const CollectionProvider = /* @__PURE__ */ __name5(({ state, ...props }) => {
-      return state ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(CollectionProviderImpl, { ...props, state }) : /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(CollectionInit, { ...props });
+      return state ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(CollectionProviderImpl, { ...props, state }) : /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(CollectionInit, { ...props });
     }, "CollectionProvider");
     CollectionProvider.displayName = PROVIDER_NAME;
     const CollectionInit = /* @__PURE__ */ __name5((props) => {
       const state = useInitCollection();
-      return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(CollectionProviderImpl, { ...props, state });
+      return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(CollectionProviderImpl, { ...props, state });
     }, "CollectionInit");
     CollectionInit.displayName = name + "CollectionInit";
     const CollectionProviderImpl = /* @__PURE__ */ __name5((props) => {
@@ -18791,7 +18722,7 @@
           observer.disconnect();
         };
       }, [collectionElement, setCollection]);
-      return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
         CollectionStableContextProvider,
         {
           scope,
@@ -18800,7 +18731,7 @@
           getCollection,
           setCollection,
           registryRef,
-          children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+          children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
             CollectionStatefulContextProvider,
             {
               scope,
@@ -18820,7 +18751,7 @@
         const { scope, children } = props;
         const context = useStableCollectionContext(COLLECTION_SLOT_NAME, scope);
         const composedRefs = useComposedRefs(forwardedRef, context.collectionElementRef);
-        return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(CollectionSlotImpl, { ref: composedRefs, children });
+        return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(CollectionSlotImpl, { ref: composedRefs, children });
       }
     );
     CollectionSlot.displayName = COLLECTION_SLOT_NAME;
@@ -18896,7 +18827,7 @@
             });
           };
         }, [setCollection]);
-        return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(CollectionItemSlotImpl, { ...{ [ITEM_DATA_ATTR]: "" }, ref: composedRefs, children });
+        return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(CollectionItemSlotImpl, { ...{ [ITEM_DATA_ATTR]: "" }, ref: composedRefs, children });
       }
     );
     CollectionItemSlot.displayName = ITEM_SLOT_NAME;
@@ -19392,7 +19323,7 @@
   __name10(useId, "useId");
 
   // node_modules/.pnpm/@radix-ui+react-collapsible_f8634540a4e1e40b51592c3777d0d653/node_modules/@radix-ui/react-collapsible/dist/index.mjs
-  var import_jsx_runtime6 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime5 = __toESM(require_jsx_runtime(), 1);
   var __defProp12 = Object.defineProperty;
   var __name11 = (target, value) => __defProp12(target, "name", { value, configurable: true });
   var COLLAPSIBLE_NAME = "Collapsible";
@@ -19414,7 +19345,7 @@
         onChange: onOpenChange,
         caller: COLLAPSIBLE_NAME
       });
-      return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
         CollapsibleProvider,
         {
           scope: __scopeCollapsible,
@@ -19422,7 +19353,7 @@
           contentId: useId(),
           open,
           onOpenToggle: React11.useCallback(() => setOpen((prevOpen) => !prevOpen), [setOpen]),
-          children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
             Primitive.div,
             {
               "data-state": getState(open),
@@ -19441,7 +19372,7 @@
     /* @__PURE__ */ __name11(function CollapsibleTrigger2(props, forwardedRef) {
       const { __scopeCollapsible, ...triggerProps } = props;
       const context = useCollapsibleContext(TRIGGER_NAME, __scopeCollapsible);
-      return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
         Primitive.button,
         {
           type: "button",
@@ -19463,7 +19394,7 @@
     /* @__PURE__ */ __name11(function CollapsibleContent2(props, forwardedRef) {
       const { forceMount, ...contentProps } = props;
       const context = useCollapsibleContext(CONTENT_NAME, props.__scopeCollapsible);
-      return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Presence, { present: forceMount || context.open, children: ({ present }) => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(CollapsibleContentImpl, { ...contentProps, ref: forwardedRef, present }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Presence, { present: forceMount || context.open, children: ({ present }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(CollapsibleContentImpl, { ...contentProps, ref: forwardedRef, present }) });
     }, "CollapsibleContent")
   );
   var CollapsibleContentImpl = /* @__PURE__ */ React11.forwardRef(/* @__PURE__ */ __name11(function CollapsibleContentImpl2(props, forwardedRef) {
@@ -19502,7 +19433,7 @@
         setIsPresent(present);
       }
     }, [context.open, present]);
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
       Primitive.div,
       {
         "data-state": getState(context.open),
@@ -19527,7 +19458,7 @@
 
   // node_modules/.pnpm/@radix-ui+react-direction@1_527de58341a1b41b1117c799ae82b79a/node_modules/@radix-ui/react-direction/dist/index.mjs
   var React12 = __toESM(require_react(), 1);
-  var import_jsx_runtime7 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime6 = __toESM(require_jsx_runtime(), 1);
   var __defProp13 = Object.defineProperty;
   var __name12 = (target, value) => __defProp13(target, "name", { value, configurable: true });
   var Direction = {
@@ -19542,7 +19473,7 @@
   __name12(useDirection, "useDirection");
 
   // node_modules/.pnpm/@radix-ui+react-accordion@1_5c7d962b3fe73107d038e39b4f324168/node_modules/@radix-ui/react-accordion/dist/index.mjs
-  var import_jsx_runtime8 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime7 = __toESM(require_jsx_runtime(), 1);
   var __defProp14 = Object.defineProperty;
   var __name13 = (target, value) => __defProp14(target, "name", { value, configurable: true });
   var AccordionType = {
@@ -19571,7 +19502,7 @@
       const { type, ...accordionProps } = props;
       const singleProps = accordionProps;
       const multipleProps = accordionProps;
-      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Collection.Provider, { scope: props.__scopeAccordion, children: type === AccordionType.Multiple ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(AccordionImplMultiple, { ...multipleProps, ref: forwardedRef }) : /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(AccordionImplSingle, { ...singleProps, ref: forwardedRef }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Collection.Provider, { scope: props.__scopeAccordion, children: type === AccordionType.Multiple ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(AccordionImplMultiple, { ...multipleProps, ref: forwardedRef }) : /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(AccordionImplSingle, { ...singleProps, ref: forwardedRef }) });
     }, "Accordion")
   );
   var [AccordionValueProvider, useAccordionValueContext] = createAccordionContext(ACCORDION_NAME);
@@ -19596,14 +19527,14 @@
         onChange: onValueChange,
         caller: ACCORDION_NAME
       });
-      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         AccordionValueProvider,
         {
           scope: props.__scopeAccordion,
           value: React13.useMemo(() => value ? [value] : [], [value]),
           onItemOpen: setValue,
           onItemClose: React13.useCallback(() => collapsible && setValue(""), [collapsible, setValue]),
-          children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(AccordionCollapsibleProvider, { scope: props.__scopeAccordion, collapsible, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(AccordionImpl, { ...accordionSingleProps, ref: forwardedRef }) })
+          children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(AccordionCollapsibleProvider, { scope: props.__scopeAccordion, collapsible, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(AccordionImpl, { ...accordionSingleProps, ref: forwardedRef }) })
         }
       );
     }, "AccordionImplSingle")
@@ -19630,14 +19561,14 @@
       (itemValue) => setValue((prevValue = []) => prevValue.filter((value2) => value2 !== itemValue)),
       [setValue]
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
       AccordionValueProvider,
       {
         scope: props.__scopeAccordion,
         value,
         onItemOpen: handleItemOpen,
         onItemClose: handleItemClose,
-        children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(AccordionCollapsibleProvider, { scope: props.__scopeAccordion, collapsible: true, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(AccordionImpl, { ...accordionMultipleProps, ref: forwardedRef }) })
+        children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(AccordionCollapsibleProvider, { scope: props.__scopeAccordion, collapsible: true, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(AccordionImpl, { ...accordionMultipleProps, ref: forwardedRef }) })
       }
     );
   }, "AccordionImplMultiple"));
@@ -19723,14 +19654,14 @@
         const clampedIndex = nextIndex % triggerCount;
         triggerCollection.at(clampedIndex)?.element.focus();
       });
-      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         AccordionImplProvider,
         {
           scope: __scopeAccordion,
           disabled,
           direction: dir,
           orientation,
-          children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Collection.Slot, { scope: __scopeAccordion, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+          children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Collection.Slot, { scope: __scopeAccordion, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
             Primitive.div,
             {
               ...accordionProps,
@@ -19754,14 +19685,14 @@
       const triggerId = useId();
       const open = value && valueContext.value.includes(value) || false;
       const disabled = accordionContext.disabled || props.disabled;
-      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         AccordionItemProvider,
         {
           scope: __scopeAccordion,
           open,
           disabled,
           triggerId,
-          children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+          children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
             Collapsible,
             {
               "data-orientation": accordionContext.orientation,
@@ -19791,7 +19722,7 @@
       const { __scopeAccordion, ...headerProps } = props;
       const accordionContext = useAccordionContext(ACCORDION_NAME, __scopeAccordion);
       const itemContext = useAccordionItemContext(HEADER_NAME, __scopeAccordion);
-      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         Primitive.h3,
         {
           "data-orientation": accordionContext.orientation,
@@ -19812,7 +19743,7 @@
       const itemContext = useAccordionItemContext(TRIGGER_NAME2, __scopeAccordion);
       const collapsibleContext = useAccordionCollapsibleContext(TRIGGER_NAME2, __scopeAccordion);
       const collapsibleScope = useCollapsibleScope(__scopeAccordion);
-      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Collection.ItemSlot, { scope: __scopeAccordion, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Collection.ItemSlot, { scope: __scopeAccordion, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         CollapsibleTrigger,
         {
           "aria-disabled": itemContext.open && !collapsibleContext.collapsible || void 0,
@@ -19833,7 +19764,7 @@
       const accordionContext = useAccordionContext(ACCORDION_NAME, __scopeAccordion);
       const itemContext = useAccordionItemContext(CONTENT_NAME2, __scopeAccordion);
       const collapsibleScope = useCollapsibleScope(__scopeAccordion);
-      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         CollapsibleContent,
         {
           role: "region",
@@ -19863,7 +19794,7 @@
     Separator: () => Separator
   });
   var React14 = __toESM(require_react(), 1);
-  var import_jsx_runtime9 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime8 = __toESM(require_jsx_runtime(), 1);
   var __defProp15 = Object.defineProperty;
   var __name14 = (target, value) => __defProp15(target, "name", { value, configurable: true });
   var Orientation2 = {
@@ -19878,7 +19809,7 @@
       const orientation = isValidOrientation(orientationProp) ? orientationProp : DEFAULT_ORIENTATION;
       const ariaOrientation = orientation === Orientation2.Vertical ? orientation : void 0;
       const semanticProps = decorative ? { role: "none" } : { "aria-orientation": ariaOrientation, role: "separator" };
-      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
         Primitive.div,
         {
           "data-orientation": orientation,
@@ -19895,7 +19826,7 @@
   __name14(isValidOrientation, "isValidOrientation");
 
   // src/components/ui/button.tsx
-  var import_jsx_runtime10 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime(), 1);
   var buttonVariants = cva(
     "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
     {
@@ -19933,7 +19864,7 @@
     ...props
   }) {
     const Comp = asChild ? dist_exports.Root : "button";
-    return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
       Comp,
       {
         "data-slot": "button",
@@ -19946,7 +19877,7 @@
   }
 
   // src/components/ui/badge.tsx
-  var import_jsx_runtime11 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime(), 1);
   var badgeVariants = cva(
     "inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3",
     {
@@ -19972,7 +19903,7 @@
     ...props
   }) {
     const Comp = asChild ? dist_exports.Root : "span";
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
       Comp,
       {
         "data-slot": "badge",
@@ -19984,14 +19915,14 @@
   }
 
   // src/components/ui/separator.tsx
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime11 = __toESM(require_jsx_runtime(), 1);
   function Separator3({
     className,
     orientation = "horizontal",
     decorative = true,
     ...props
   }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
       dist_exports4.Root,
       {
         "data-slot": "separator",
@@ -20379,17 +20310,17 @@
   var Square = createLucideIcon(__iconData11);
 
   // src/components/ui/accordion.tsx
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime(), 1);
   function Accordion3({
     ...props
   }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(dist_exports2.Root, { "data-slot": "accordion", ...props });
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(dist_exports2.Root, { "data-slot": "accordion", ...props });
   }
   function AccordionItem3({
     className,
     ...props
   }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
       dist_exports2.Item,
       {
         "data-slot": "accordion-item",
@@ -20403,7 +20334,7 @@
     children,
     ...props
   }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(dist_exports2.Header, { className: "flex", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(dist_exports2.Header, { className: "flex", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
       dist_exports2.Trigger,
       {
         "data-slot": "accordion-trigger",
@@ -20414,7 +20345,7 @@
         ...props,
         children: [
           children,
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ChevronDown, { className: "pointer-events-none size-4 shrink-0 translate-y-0.5 text-muted-foreground transition-transform duration-200" })
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ChevronDown, { className: "pointer-events-none size-4 shrink-0 translate-y-0.5 text-muted-foreground transition-transform duration-200" })
         ]
       }
     ) });
@@ -20424,38 +20355,38 @@
     children,
     ...props
   }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
       dist_exports2.Content,
       {
         "data-slot": "accordion-content",
         className: "overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down",
         ...props,
-        children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: cn("pt-0 pb-4", className), children })
+        children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: cn("pt-0 pb-4", className), children })
       }
     );
   }
 
   // src/components/ReleaseChangelogView.tsx
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
   function ReleaseChangelogView({ updateInfo, onClose }) {
     const hasUpdate = updateInfo.hasUpdate;
     const older = updateInfo.olderReleases || [];
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex flex-col space-y-3 font-sans text-slate-800", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-slate-50 p-3 border border-slate-200", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2.5", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex flex-col space-y-3 font-sans text-slate-800", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-slate-50 p-3 border border-slate-200", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center gap-2.5", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
             "div",
             {
               className: `flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${hasUpdate ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-blue-50 text-blue-600 border-blue-200"}`,
-              children: hasUpdate ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Sparkles, { className: "h-5 w-5" }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CircleCheck, { className: "h-5 w-5" })
+              children: hasUpdate ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Sparkles, { className: "h-5 w-5" }) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(CircleCheck, { className: "h-5 w-5" })
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs font-bold text-slate-900", children: hasUpdate ? "\u0110\xE3 C\xF3 Phi\xEAn B\u1EA3n M\u1EDBi!" : "B\u1EA3n \u0110ang D\xF9ng M\u1EDBi Nh\u1EA5t" }),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-[11px] text-slate-500 font-mono", children: hasUpdate ? `v${updateInfo.currentVersion} \u2794 v${updateInfo.latestVersion}` : `Phi\xEAn b\u1EA3n hi\u1EC7n t\u1EA1i v${updateInfo.currentVersion}` })
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "text-xs font-bold text-slate-900", children: hasUpdate ? "\u0110\xE3 C\xF3 Phi\xEAn B\u1EA3n M\u1EDBi!" : "B\u1EA3n \u0110ang D\xF9ng M\u1EDBi Nh\u1EA5t" }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "text-[11px] text-slate-500 font-mono", children: hasUpdate ? `v${updateInfo.currentVersion} \u2794 v${updateInfo.latestVersion}` : `Phi\xEAn b\u1EA3n hi\u1EC7n t\u1EA1i v${updateInfo.currentVersion}` })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
           Badge,
           {
             variant: hasUpdate ? "default" : "secondary",
@@ -20464,16 +20395,16 @@
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "rounded-xl border border-emerald-200 bg-emerald-50/60 p-3 space-y-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between border-b border-emerald-200/60 pb-1.5", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "flex items-center gap-1.5", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { className: "font-bold text-xs text-emerald-800", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "rounded-xl border border-emerald-200 bg-emerald-50/60 p-3 space-y-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center justify-between border-b border-emerald-200/60 pb-1.5", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "flex items-center gap-1.5", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { className: "font-bold text-xs text-emerald-800", children: [
             "\u2728 ",
             updateInfo.releaseName || `Release v${updateInfo.latestVersion}`
           ] }) }),
-          updateInfo.publishedAt && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-[10px] text-slate-500", children: new Date(updateInfo.publishedAt).toLocaleDateString("vi-VN") })
+          updateInfo.publishedAt && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "text-[10px] text-slate-500", children: new Date(updateInfo.publishedAt).toLocaleDateString("vi-VN") })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "max-h-[140px] overflow-y-auto pr-1 text-[11px] text-slate-700 whitespace-pre-wrap leading-relaxed font-sans", children: updateInfo.releaseNotes || "Kh\xF4ng c\xF3 nh\u1EADt k\xFD chi ti\u1EBFt cho b\u1EA3n ph\xE1t h\xE0nh n\xE0y." }),
-        hasUpdate && updateInfo.downloadUrl && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "pt-1", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "max-h-[140px] overflow-y-auto pr-1 text-[11px] text-slate-700 whitespace-pre-wrap leading-relaxed font-sans", children: updateInfo.releaseNotes || "Kh\xF4ng c\xF3 nh\u1EADt k\xFD chi ti\u1EBFt cho b\u1EA3n ph\xE1t h\xE0nh n\xE0y." }),
+        hasUpdate && updateInfo.downloadUrl && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "pt-1", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
           Button,
           {
             variant: "default",
@@ -20485,31 +20416,31 @@
               }
             },
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Download, { className: "h-3.5 w-3.5 mr-1.5" }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Download, { className: "h-3.5 w-3.5 mr-1.5" }),
               "T\u1EA3i B\u1EA3n C\u1EADp Nh\u1EADt v",
               updateInfo.latestVersion
             ]
           }
         ) })
       ] }),
-      older.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "space-y-1", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-1 text-[11px] font-semibold text-slate-600 px-1 pt-1", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(RotateCcwClock, { className: "h-3.5 w-3.5" }),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: "L\u1ECBch s\u1EED c\xE1c phi\xEAn b\u1EA3n tr\u01B0\u1EDBc:" })
+      older.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "space-y-1", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center gap-1 text-[11px] font-semibold text-slate-600 px-1 pt-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(RotateCcwClock, { className: "h-3.5 w-3.5" }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: "L\u1ECBch s\u1EED c\xE1c phi\xEAn b\u1EA3n tr\u01B0\u1EDBc:" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Accordion3, { type: "single", collapsible: true, className: "w-full space-y-1", children: older.map((rel, idx) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Accordion3, { type: "single", collapsible: true, className: "w-full space-y-1", children: older.map((rel, idx) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
           AccordionItem3,
           {
             value: rel.tag || String(idx),
             className: "rounded-lg border border-slate-200 bg-white px-2.5 py-0 text-xs shadow-xs",
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(AccordionTrigger3, { className: "py-2 hover:no-underline text-xs text-slate-800 font-medium", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-mono text-emerald-700 font-bold border border-slate-200", children: rel.tag }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "truncate max-w-[200px]", children: rel.name || rel.tag })
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(AccordionTrigger3, { className: "py-2 hover:no-underline text-xs text-slate-800 font-medium", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-mono text-emerald-700 font-bold border border-slate-200", children: rel.tag }),
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "truncate max-w-[200px]", children: rel.name || rel.tag })
               ] }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(AccordionContent3, { className: "pb-2.5 pt-1 text-[11px] text-slate-600 whitespace-pre-wrap leading-relaxed border-t border-slate-100 mt-1", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { children: rel.body || "Kh\xF4ng c\xF3 ghi ch\xFA." }),
-                rel.htmlUrl && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "mt-2 pt-1 border-t border-slate-100", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(AccordionContent3, { className: "pb-2.5 pt-1 text-[11px] text-slate-600 whitespace-pre-wrap leading-relaxed border-t border-slate-100 mt-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { children: rel.body || "Kh\xF4ng c\xF3 ghi ch\xFA." }),
+                rel.htmlUrl && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "mt-2 pt-1 border-t border-slate-100", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
                   "a",
                   {
                     href: rel.htmlUrl,
@@ -20517,7 +20448,7 @@
                     rel: "noreferrer",
                     className: "inline-flex items-center gap-1 text-[10px] text-emerald-700 hover:underline font-medium",
                     children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ExternalLink, { className: "h-3 w-3" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ExternalLink, { className: "h-3 w-3" }),
                       "Xem tr\xEAn GitHub"
                     ]
                   }
@@ -20528,7 +20459,7 @@
           rel.tag || idx
         )) })
       ] }),
-      onClose && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "pt-1", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      onClose && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "pt-1", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
         Button,
         {
           variant: "outline",
@@ -20628,12 +20559,12 @@
   }
 
   // src/popup/PopupApp.tsx
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
   var GAME_URL = "https://nongtraigenz.online/play/";
   function PopupApp() {
     const [version, setVersion] = (0, import_react4.useState)("1.0.0");
     const [isRunning, setIsRunning] = (0, import_react4.useState)(false);
-    const [statusMsg, setStatusMsg] = (0, import_react4.useState)("M\u1ECDi tu\u1EF3 ch\u1EC9nh chi ti\u1EBFt \u0111\u1EC1u n\u1EB1m trong Menu n\u1ED5i \u1EDF g\xF3c ph\u1EA3i m\xE0n h\xECnh game.");
+    const [statusMsg, setStatusMsg] = (0, import_react4.useState)("B\u1EA3ng \u0111i\u1EC1u khi\u1EC3n HUD chi ti\u1EBFt n\u1EB1m ngay b\xEAn trong tab game.");
     const [isError, setIsError] = (0, import_react4.useState)(false);
     const [isCheckingUpdate, setIsCheckingUpdate] = (0, import_react4.useState)(false);
     const [updateInfo, setUpdateInfo] = (0, import_react4.useState)(null);
@@ -20661,7 +20592,7 @@
         }
         if (!tab || !tab.id) {
           setIsError(true);
-          setStatusMsg('Ch\u01B0a m\u1EDF tab game. H\xE3y b\u1EA5m "\u{1F680} V\xE0o Game N\xF4ng Tr\u1EA1i GenZ"!');
+          setStatusMsg('Ch\u01B0a m\u1EDF tab game. H\xE3y b\u1EA5m "V\xE0o Game N\xF4ng Tr\u1EA1i GenZ"!');
           return null;
         }
         try {
@@ -20739,51 +20670,13 @@
         setIsCheckingUpdate(false);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "w-[360px] p-2.5 font-sans select-none bg-slate-50 text-slate-900", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(Card, { className: "border border-slate-200/90 bg-white shadow-xl rounded-2xl overflow-hidden", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between px-3.5 py-2.5 bg-slate-50/90 border-b border-slate-200/80", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center gap-2", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-            "button",
-            {
-              type: "button",
-              onClick: () => window.close(),
-              className: "flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-500 hover:bg-red-600 border border-red-600/40 transition-transform active:scale-90 cursor-pointer shadow-xs",
-              title: "\u0110\xF3ng popup",
-              children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-[8px] font-bold text-red-950 leading-none select-none", children: "\u2715" })
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-            "button",
-            {
-              type: "button",
-              onClick: () => setViewMode(viewMode === "changelog" ? "main" : "changelog"),
-              className: "flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-400 hover:bg-amber-500 border border-amber-500/40 transition-transform active:scale-90 cursor-pointer shadow-xs",
-              title: "Chuy\u1EC3n ch\u1EBF \u0111\u1ED9 xem",
-              children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-[9px] font-bold text-amber-950 leading-none select-none", children: "\u2212" })
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-            "button",
-            {
-              type: "button",
-              onClick: handleCheckUpdate,
-              className: "flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-600 border border-emerald-600/40 transition-transform active:scale-90 cursor-pointer shadow-xs",
-              title: "Ki\u1EC3m tra c\u1EADp nh\u1EADt GitHub",
-              children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                "span",
-                {
-                  className: `text-[9px] font-bold text-emerald-950 leading-none select-none ${isCheckingUpdate ? "animate-spin inline-block" : ""}`,
-                  children: "\u21BB"
-                }
-              )
-            }
-          )
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "w-[320px] font-sans select-none bg-white text-slate-900 overflow-hidden", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between px-3.5 py-2.5 bg-slate-50 border-b border-slate-200/90", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-1.5 font-bold text-xs tracking-tight", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-emerald-700", children: "\u{1F33E} NTG Auto" }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-slate-400 font-normal", children: "by T\xFAn" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center gap-1.5 font-bold text-xs tracking-tight", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-emerald-700", children: "\u{1F33E} NTG Auto" }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-slate-400 font-normal", children: "by T\xFAn" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
           Badge,
           {
             variant: "outline",
@@ -20795,9 +20688,9 @@
           }
         )
       ] }),
-      viewMode === "changelog" && updateInfo ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "p-3.5 space-y-3", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+      viewMode === "changelog" && updateInfo ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "p-3 space-y-2.5", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
             Button,
             {
               variant: "ghost",
@@ -20805,17 +20698,17 @@
               className: "text-xs text-slate-600 hover:text-slate-900 hover:bg-slate-100 h-7 px-2",
               onClick: () => setViewMode("main"),
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ArrowLeft, { className: "h-3.5 w-3.5 mr-1" }),
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ArrowLeft, { className: "h-3.5 w-3.5 mr-1" }),
                 "Quay l\u1EA1i"
               ]
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(Badge, { variant: "outline", className: "text-[10px] font-mono", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(Badge, { variant: "outline", className: "text-[10px] font-mono", children: [
             "v",
             version
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
           ReleaseChangelogView,
           {
             updateInfo,
@@ -20824,116 +20717,116 @@
         )
       ] }) : (
         /* View Mode: Main Dashboard */
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardHeader, { className: "pb-3 pt-3 px-3.5", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center gap-2.5", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "relative flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 shadow-xs", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Sparkles, { className: "h-4.5 w-4.5" }),
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "p-3.5 space-y-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "relative flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 shadow-xs", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Sparkles, { className: "h-4 w-4" }),
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
                   "span",
                   {
-                    className: `absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white ${isRunning ? "bg-emerald-500 animate-pulse" : "bg-slate-300"}`
+                    className: `absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full border-2 border-white ${isRunning ? "bg-emerald-500 animate-pulse" : "bg-slate-300"}`
                   }
                 )
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardTitle, { className: "text-sm font-bold text-slate-900 tracking-tight", children: "B\u1EA3ng \u0110i\u1EC1u Khi\u1EC3n Auto" }),
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardDescription, { className: "text-[11px] text-slate-500 font-mono", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs font-bold text-slate-900", children: "B\u1EA3ng \u0110i\u1EC1u Khi\u1EC3n Auto" }),
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "text-[10px] text-slate-400 font-mono", children: [
                   "Phi\xEAn b\u1EA3n v",
                   version
                 ] })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
               Badge,
               {
                 variant: isRunning ? "default" : "secondary",
-                className: `px-2 py-0.5 text-[10px] tracking-wider uppercase font-bold rounded-lg ${isRunning ? "bg-emerald-600 text-white shadow-xs" : "bg-slate-100 text-slate-600"}`,
+                className: `px-2 py-0.5 text-[10px] uppercase font-bold rounded-md ${isRunning ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-600"}`,
                 children: isRunning ? "\u0110ANG CH\u1EA0Y" : "\u0110\xC3 D\u1EEANG"
               }
             )
-          ] }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Separator3, { className: "bg-slate-100" }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardContent, { className: "space-y-2.5 pt-3 pb-2 px-3.5", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Separator3, { className: "bg-slate-100" }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
               Button,
               {
                 variant: "default",
-                className: "w-full justify-between h-9 text-xs font-bold rounded-xl shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white",
+                className: "w-full justify-between h-8.5 text-xs font-semibold rounded-lg shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white",
                 onClick: handleOpenGame,
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "flex items-center gap-2", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ExternalLink, { className: "h-3.5 w-3.5" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { className: "flex items-center gap-1.5", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ExternalLink, { className: "h-3.5 w-3.5" }),
                     "V\xE0o Game N\xF4ng Tr\u1EA1i GenZ"
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-[10px] bg-black/10 rounded px-1.5 py-0.5 font-normal", children: "M\u1EDF Tab" })
+                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-[10px] bg-black/15 rounded px-1.5 py-0.5 font-normal", children: "M\u1EDF Tab" })
                 ]
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
               Button,
               {
                 variant: isRunning ? "destructive" : "default",
-                className: `w-full justify-between h-9 text-xs font-bold rounded-xl shadow-xs ${isRunning ? "bg-red-600 hover:bg-red-700 text-white" : "bg-emerald-700 hover:bg-emerald-800 text-white"}`,
+                className: `w-full justify-between h-8.5 text-xs font-semibold rounded-lg shadow-xs ${isRunning ? "bg-red-600 hover:bg-red-700 text-white" : "bg-emerald-700 hover:bg-emerald-800 text-white"}`,
                 onClick: handleToggleAuto,
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "flex items-center gap-2", children: [
-                    isRunning ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Square, { className: "h-3.5 w-3.5 fill-current" }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Play, { className: "h-3.5 w-3.5 fill-current" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { className: "flex items-center gap-1.5", children: [
+                    isRunning ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Square, { className: "h-3.5 w-3.5 fill-current" }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Play, { className: "h-3.5 w-3.5 fill-current" }),
                     isRunning ? "D\u1EEANG AUTO TO\xC0N B\u1ED8" : "B\u1EACT AUTO TO\xC0N B\u1ED8"
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-[10px] bg-black/10 rounded px-1.5 py-0.5 font-mono", children: "Alt + A" })
+                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-[10px] bg-black/15 rounded px-1.5 py-0.5 font-mono", children: "Alt + A" })
                 ]
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "grid grid-cols-2 gap-2 pt-0.5", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "grid grid-cols-2 gap-2 pt-0.5", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
                 Button,
                 {
                   variant: "outline",
                   size: "sm",
-                  className: "w-full border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs rounded-xl shadow-xs",
+                  className: "w-full border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs rounded-lg shadow-xs h-8",
                   onClick: handleTogglePanel,
                   children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Eye, { className: "h-3.5 w-3.5 mr-1 text-slate-500" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Eye, { className: "h-3.5 w-3.5 mr-1 text-slate-500" }),
                     "\u1EA8n/Hi\u1EC7n HUD"
                   ]
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
                 Button,
                 {
                   variant: "secondary",
                   size: "sm",
                   disabled: isCheckingUpdate,
-                  className: "w-full bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs border border-slate-200 rounded-xl shadow-xs",
+                  className: "w-full bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs border border-slate-200 rounded-lg shadow-xs h-8",
                   onClick: handleCheckUpdate,
                   children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(RefreshCw, { className: `h-3.5 w-3.5 mr-1 text-slate-500 ${isCheckingUpdate ? "animate-spin text-emerald-600" : ""}` }),
+                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(RefreshCw, { className: `h-3.5 w-3.5 mr-1 text-slate-500 ${isCheckingUpdate ? "animate-spin text-emerald-600" : ""}` }),
                     "Ki\u1EC3m Tra C\u1EADp Nh\u1EADt"
                   ]
                 }
               )
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardFooter, { className: "pt-1 pb-3 px-3.5", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
             "div",
             {
-              className: `w-full rounded-xl px-2.5 py-2 text-[11px] leading-relaxed border transition-colors ${isError ? "border-red-200 bg-red-50 text-red-700" : "border-slate-200 bg-slate-50 text-slate-600"}`,
+              className: `w-full rounded-lg px-2.5 py-2 text-[11px] leading-relaxed border transition-colors ${isError ? "border-red-200 bg-red-50 text-red-700" : "border-slate-200 bg-slate-50 text-slate-600"}`,
               children: statusMsg
             }
-          ) })
+          )
         ] })
       )
-    ] }) });
+    ] });
   }
 
   // src/popup/index.tsx
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
   var container = document.getElementById("root");
   if (container) {
     const root = (0, import_client.createRoot)(container);
     root.render(
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react5.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(PopupApp, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react5.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(PopupApp, {}) })
     );
   }
 })();

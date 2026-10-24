@@ -158,7 +158,7 @@ export function HudApp({
         transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
         pointerEvents: 'auto',
       }}
-      className="fixed left-0 top-0 z-[2147483647] w-[385px] overflow-hidden rounded-2xl border border-slate-200/90 shadow-2xl bg-white/98 text-slate-800 backdrop-blur-xl font-sans select-none ring-1 ring-black/5"
+      className="fixed left-0 top-0 z-[2147483647] w-[385px] max-h-[calc(100vh-60px)] flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 shadow-2xl bg-white/98 text-slate-800 backdrop-blur-xl font-sans select-none ring-1 ring-black/5"
     >
       {/* macOS Styled Header with Traffic Light Buttons */}
       <HudHeader
@@ -173,7 +173,7 @@ export function HudApp({
 
       {/* Body content when not minimized */}
       {!isMinimized && (
-        <div className="flex flex-col">
+        <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
           {/* Live Stats Bar */}
           <HudStats snap={snap} />
 
@@ -189,7 +189,7 @@ export function HudApp({
           />
 
           {/* Current Action Status Text */}
-          <div className="flex items-center gap-2 border-b border-slate-200/90 bg-emerald-50/80 px-3 py-1.5 text-[11px] font-mono text-emerald-800">
+          <div className="flex items-center gap-2 border-b border-slate-200/90 bg-emerald-50/80 px-3 py-1.5 text-[11px] font-mono text-emerald-800 shrink-0">
             <span className="relative flex h-2 w-2 shrink-0">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-600" />
@@ -198,8 +198,8 @@ export function HudApp({
           </div>
 
           {/* Navigation Tabs */}
-          <Tabs value={config.activeTab} onValueChange={handleTabChange} className="w-full p-2.5">
-            <TabsList className="grid w-full grid-cols-4 h-8 text-[11px] rounded-xl p-1 bg-slate-100 border border-slate-200/80 text-slate-600">
+          <Tabs value={config.activeTab} onValueChange={handleTabChange} className="w-full flex-1 flex flex-col min-h-0 p-2.5 overflow-hidden">
+            <TabsList className="grid w-full grid-cols-4 h-8 text-[11px] rounded-xl p-1 bg-slate-100 border border-slate-200/80 text-slate-600 shrink-0">
               <TabsTrigger
                 value="farm"
                 className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
@@ -226,7 +226,7 @@ export function HudApp({
               </TabsTrigger>
             </TabsList>
 
-            <div className="mt-2.5 max-h-[380px] overflow-y-auto pr-1">
+            <div className="mt-2.5 flex-1 overflow-y-auto pr-1 min-h-0">
               <TabsContent value="farm" className="m-0">
                 <FarmTabContent config={config} onUpdateConfig={handleUpdateConfig} />
               </TabsContent>
