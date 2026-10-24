@@ -27,14 +27,14 @@ export const DEFAULT_CONFIG: AppConfig = {
   showOrderDrawer: true,
 
   // General Delay & Transition settings
-  taskDelayMs: 650,
+  taskDelayMs: 500,
   fishingSwitchCount: 15,
 
   // Main Area Order & Enable/Disable toggles
   areaOrder: ['farm', 'benDo', 'sea'],
   areaEnabled: {
     farm: true,
-    benDo: true,
+    benDo: false,
     sea: true,
     city: false,
   },
@@ -151,28 +151,28 @@ export const DEFAULT_CONFIG: AppConfig = {
   benAutoSell: true,
   benSellThreshold: 60,
   benAutoKeepRare: true,
-  benAutoGoiDau: true,
+  benAutoGoiDau: false,
   benAutoRecoverStamina: true,
   benStaminaThreshold: 20,
   benPreferFood: 'lauMam',
   benAutoLuckDrink: true,
   benPreferDrink: 'duaTuoi',
-  benAutoLantern: true,
+  benAutoLantern: false,
   benBuyLanternTicket: false,
-  benAutoLotto: true,
-  benAutoBuyLotto: true,
+  benAutoLotto: false,
+  benAutoBuyLotto: false,
   benAutoAtm: false,
   benAtmThreshold: 500,
 
   // Area 3: Sea Fishing Settings
   seaAutoSpot: true,
-  seaSpot: 'pier',
+  seaSpot: 'beach',
   seaAutoBuyBait: true,
   seaPreferBait: 'worm',
-  seaBaitPacks: 2,
+  seaBaitPacks: 50,
   seaAutoSell: true,
-  seaSellThreshold: 5,
+  seaSellThreshold: 100,
   seaAutoClaimDex: true,
-  seaAutoEat: true,
+  seaAutoEat: false,
   seaStaminaThreshold: 20,
 };

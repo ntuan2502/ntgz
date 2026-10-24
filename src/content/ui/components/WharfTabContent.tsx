@@ -62,7 +62,7 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
                 onChange={(e) => updateField('benSpot', e.target.value as AppConfig['benSpot'])}
                 className="rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
               >
-                <option value="bank">🌿 Bờ sông</option>
+                <option value="bank">🌾 Bờ sông</option>
                 <option value="dock">🌉 Cầu tàu chính</option>
               </select>
             </div>

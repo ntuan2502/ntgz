@@ -14648,13 +14648,13 @@
     panelMinimized: false,
     showOrderDrawer: true,
     // General Delay & Transition settings
-    taskDelayMs: 650,
+    taskDelayMs: 500,
     fishingSwitchCount: 15,
     // Main Area Order & Enable/Disable toggles
     areaOrder: ["farm", "benDo", "sea"],
     areaEnabled: {
       farm: true,
-      benDo: true,
+      benDo: false,
       sea: true,
       city: false
     },
@@ -14761,28 +14761,28 @@
     benAutoSell: true,
     benSellThreshold: 60,
     benAutoKeepRare: true,
-    benAutoGoiDau: true,
+    benAutoGoiDau: false,
     benAutoRecoverStamina: true,
     benStaminaThreshold: 20,
     benPreferFood: "lauMam",
     benAutoLuckDrink: true,
     benPreferDrink: "duaTuoi",
-    benAutoLantern: true,
+    benAutoLantern: false,
     benBuyLanternTicket: false,
-    benAutoLotto: true,
-    benAutoBuyLotto: true,
+    benAutoLotto: false,
+    benAutoBuyLotto: false,
     benAutoAtm: false,
     benAtmThreshold: 500,
     // Area 3: Sea Fishing Settings
     seaAutoSpot: true,
-    seaSpot: "pier",
+    seaSpot: "beach",
     seaAutoBuyBait: true,
     seaPreferBait: "worm",
-    seaBaitPacks: 2,
+    seaBaitPacks: 50,
     seaAutoSell: true,
-    seaSellThreshold: 5,
+    seaSellThreshold: 100,
     seaAutoClaimDex: true,
-    seaAutoEat: true,
+    seaAutoEat: false,
     seaStaminaThreshold: 20
   };
 
@@ -21355,7 +21355,7 @@
               onChange: (e) => updateField("benSpot", e.target.value),
               className: "rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500",
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "bank", children: "\u{1F33F} B\u1EDD s\xF4ng" }),
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "bank", children: "\u{1F33E} B\u1EDD s\xF4ng" }),
                 /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "dock", children: "\u{1F309} C\u1EA7u t\xE0u ch\xEDnh" })
               ]
             }
@@ -21691,7 +21691,7 @@
               {
                 type: "number",
                 min: 1,
-                max: 20,
+                max: 100,
                 value: config2.seaBaitPacks,
                 onChange: (e) => updateField("seaBaitPacks", Number(e.target.value)),
                 className: "w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
@@ -21716,7 +21716,7 @@
             {
               type: "number",
               min: 1,
-              max: 30,
+              max: 200,
               value: config2.seaSellThreshold,
               onChange: (e) => updateField("seaSellThreshold", Number(e.target.value)),
               className: "w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
