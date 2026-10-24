@@ -33,7 +33,7 @@ export function HudSelect({
       <SelectTrigger
         size="sm"
         className={cn(
-          'flex-1 max-w-[195px] min-w-0 h-8 min-h-8 px-2.5 py-1 text-xs rounded-lg bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800 shadow-none overflow-hidden focus-visible:ring-1 focus-visible:ring-emerald-500 focus-visible:border-emerald-500',
+          'flex-1 w-full min-w-0 h-8 min-h-8 px-2.5 py-1 text-xs rounded-lg bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800 shadow-none overflow-hidden focus-visible:ring-1 focus-visible:ring-emerald-500 focus-visible:border-emerald-500',
           className
         )}
       >
@@ -43,7 +43,7 @@ export function HudSelect({
         position="popper"
         align="end"
         sideOffset={4}
-        className="z-[2147483647] max-w-[min(360px,calc(100vw-24px))] max-h-[280px] rounded-xl border border-slate-200 bg-white text-slate-800 shadow-xl"
+        className="z-[2147483647] w-[var(--radix-select-trigger-width)] min-w-[var(--radix-select-trigger-width)] max-w-[min(650px,calc(100vw-24px))] max-h-[280px] rounded-xl border border-slate-200 bg-white text-slate-800 shadow-xl"
       >
         {options.map((opt) => (
           <SelectItem

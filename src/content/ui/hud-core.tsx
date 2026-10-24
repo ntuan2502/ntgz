@@ -102,7 +102,7 @@ export function setStatus(text: string): void {
       gameTime: formatGameClock(lastGameSnap),
       text,
     };
-    sessionLogs = [...sessionLogs.slice(-299), nextEntry];
+    sessionLogs = [...sessionLogs, nextEntry];
     window.dispatchEvent(
       new CustomEvent<HudLogEntry[]>('__NTG_LOGS_UPDATE__', { detail: sessionLogs })
     );
