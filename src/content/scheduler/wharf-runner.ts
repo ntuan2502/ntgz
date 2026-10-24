@@ -122,12 +122,12 @@ export async function stepBenDoFishing(
     const castBtn = document.querySelector('button.ben-cast.btn-green, button.ben-cast.btn-yellow') as HTMLButtonElement | null;
     const btnText = (castBtn?.textContent || '').trim();
 
-    if (liveStam < 4 || btnText.includes('Đuối sức')) {
+    if (!config.benAutoRecoverStamina && (liveStam < 4 || btnText.includes('Đuối sức'))) {
       setStatus('😮‍💨 Bến Đò: Hết thể lực không câu được nữa -> Chuyển khu vực tiếp theo!');
       return { finishedArea: true, exhausted: true };
     }
 
-    if ((bn.wallet?.bait || 0) <= 0 || btnText.includes('Hết mồi')) {
+    if (!config.benAutoBuyBait && ((bn.wallet?.bait || 0) <= 0 || btnText.includes('Hết mồi'))) {
       setStatus('🪱 Bến Đò: Đã hết mồi câu -> Chuyển khu vực tiếp theo!');
       return { finishedArea: true, exhausted: true };
     }

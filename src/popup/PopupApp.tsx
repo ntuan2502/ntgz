@@ -6,7 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { ReleaseChangelogView } from '@/components/ReleaseChangelogView';
 import { checkForUpdates } from '../services/github-service';
 import { UpdateCheckResult } from '../shared/types/github';
-import { Play, Square, ExternalLink, RefreshCw, Eye, Sparkles, ArrowLeft, Sun, Moon } from 'lucide-react';
+import { Play, Square, ExternalLink, RefreshCw, Eye, Sparkles, ArrowLeft } from 'lucide-react';
 
 const GAME_URL = 'https://nongtraigenz.online/play/';
 
@@ -28,7 +28,6 @@ export function PopupApp() {
   const [isCheckingUpdate, setIsCheckingUpdate] = useState<boolean>(false);
   const [updateInfo, setUpdateInfo] = useState<UpdateCheckResult | null>(null);
   const [viewMode, setViewMode] = useState<'main' | 'changelog'>('main');
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   useEffect(() => {
     try {
@@ -37,26 +36,7 @@ export function PopupApp() {
     } catch {
       // Fallback
     }
-
-    try {
-      const savedTheme = localStorage.getItem('ntg_theme');
-      if (savedTheme === 'light' || savedTheme === 'dark') {
-        setTheme(savedTheme);
-      }
-    } catch {
-      // Fallback
-    }
   }, []);
-
-  const toggleTheme = () => {
-    const next = theme === 'dark' ? 'light' : 'dark';
-    setTheme(next);
-    try {
-      localStorage.setItem('ntg_theme', next);
-    } catch {
-      // Fallback
-    }
-  };
 
   const findGameTab = useCallback(async (): Promise<chrome.tabs.Tab | undefined> => {
     const tabs = await chrome.tabs.query({});
@@ -137,7 +117,7 @@ export function PopupApp() {
     const res = await sendToGameTab({ action: 'TOGGLE_PANEL' });
     if (res) {
       setIsError(false);
-      setStatusMsg('🖥️ Đã đảo trạng thái ẩn/hiện bảng điều khiển.');
+      setStatusMsg('🖥️ Đã đảo trạng thái ẩn/hiện bảng điều khiển HUD.');
     }
   };
 
@@ -163,59 +143,69 @@ export function PopupApp() {
   };
 
   return (
-    <div
-      className={`w-[360px] p-2.5 font-sans select-none transition-colors ${
-        theme === 'dark' ? 'dark bg-slate-950 text-slate-100' : 'light bg-slate-50 text-slate-900'
-      }`}
-    >
-      <Card className="border border-slate-700/60 dark:border-slate-800/80 light:border-slate-200 bg-slate-900/95 dark:bg-slate-900/95 light:bg-white shadow-2xl rounded-2xl overflow-hidden backdrop-blur-xl">
+    <div className="w-[360px] p-2.5 font-sans select-none bg-slate-50 text-slate-900">
+      <Card className="border border-slate-200/90 bg-white shadow-xl rounded-2xl overflow-hidden">
         {/* macOS Title Bar */}
-        <div className="flex items-center justify-between px-3.5 py-2.5 bg-slate-950/80 dark:bg-slate-950/80 light:bg-slate-100/90 border-b border-slate-800/80 dark:border-slate-800/80 light:border-slate-200">
+        <div className="flex items-center justify-between px-3.5 py-2.5 bg-slate-50/90 border-b border-slate-200/80">
           <div className="flex items-center gap-2">
+            {/* Red button: Đóng popup */}
             <button
               type="button"
               onClick={() => window.close()}
-              className="flex h-3 w-3 items-center justify-center rounded-full bg-red-500 hover:bg-red-600 transition-colors shadow-xs"
+              className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-500 hover:bg-red-600 border border-red-600/40 transition-transform active:scale-90 cursor-pointer shadow-xs"
               title="Đóng popup"
-            />
+            >
+              <span className="text-[8px] font-bold text-red-950 leading-none select-none">✕</span>
+            </button>
+
+            {/* Yellow button: Đổi chế độ xem */}
             <button
               type="button"
               onClick={() => setViewMode(viewMode === 'changelog' ? 'main' : 'changelog')}
-              className="flex h-3 w-3 items-center justify-center rounded-full bg-amber-500 hover:bg-amber-600 transition-colors shadow-xs"
+              className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-400 hover:bg-amber-500 border border-amber-500/40 transition-transform active:scale-90 cursor-pointer shadow-xs"
               title="Chuyển chế độ xem"
-            />
+            >
+              <span className="text-[9px] font-bold text-amber-950 leading-none select-none">−</span>
+            </button>
+
+            {/* Green button: Kiểm tra cập nhật */}
             <button
               type="button"
-              onClick={toggleTheme}
-              className="flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-600 transition-colors shadow-xs"
-              title="Đổi giao diện Sáng / Tối"
-            />
+              onClick={handleCheckUpdate}
+              className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-600 border border-emerald-600/40 transition-transform active:scale-90 cursor-pointer shadow-xs"
+              title="Kiểm tra cập nhật GitHub"
+            >
+              <span
+                className={`text-[9px] font-bold text-emerald-950 leading-none select-none ${
+                  isCheckingUpdate ? 'animate-spin inline-block' : ''
+                }`}
+              >
+                ↻
+              </span>
+            </button>
           </div>
 
-          <div className="flex items-center gap-1 text-xs font-bold">
-            <span className="text-emerald-400">🌾 NTG Auto</span>
+          <div className="flex items-center gap-1.5 font-bold text-xs tracking-tight">
+            <span className="text-emerald-700">🌾 NTG Auto</span>
             <span className="text-slate-400 font-normal">by Tún</span>
           </div>
 
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            className="h-6 w-6 text-slate-400 hover:text-amber-400 rounded-md"
-            onClick={toggleTheme}
-            title={`Đổi sang chế độ ${theme === 'dark' ? 'Sáng' : 'Tối'}`}
+          <Badge
+            variant="outline"
+            className="border-slate-200 bg-white px-1.5 py-0 text-[10px] font-mono text-slate-600 shadow-xs"
           >
-            {theme === 'dark' ? <Sun className="h-3.5 w-3.5 text-amber-400" /> : <Moon className="h-3.5 w-3.5 text-indigo-500" />}
-          </Button>
+            v{version}
+          </Badge>
         </div>
 
         {/* View Mode: Changelog View */}
         {viewMode === 'changelog' && updateInfo ? (
-          <div className="p-3 space-y-3">
+          <div className="p-3.5 space-y-3">
             <div className="flex items-center justify-between">
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-xs text-slate-400 hover:text-slate-100 h-7 px-2"
+                className="text-xs text-slate-600 hover:text-slate-900 hover:bg-slate-100 h-7 px-2"
                 onClick={() => setViewMode('main')}
               >
                 <ArrowLeft className="h-3.5 w-3.5 mr-1" />
@@ -237,19 +227,19 @@ export function PopupApp() {
             <CardHeader className="pb-3 pt-3 px-3.5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="relative flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shadow-sm">
+                  <div className="relative flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 shadow-xs">
                     <Sparkles className="h-4.5 w-4.5" />
                     <span
-                      className={`absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-slate-900 ${
-                        isRunning ? 'bg-emerald-500 animate-pulse' : 'bg-slate-500'
+                      className={`absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white ${
+                        isRunning ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'
                       }`}
                     />
                   </div>
                   <div>
-                    <CardTitle className="text-sm font-bold text-slate-100 light:text-slate-900 tracking-tight">
+                    <CardTitle className="text-sm font-bold text-slate-900 tracking-tight">
                       Bảng Điều Khiển Auto
                     </CardTitle>
-                    <CardDescription className="text-[11px] text-slate-400 light:text-slate-500 font-mono">
+                    <CardDescription className="text-[11px] text-slate-500 font-mono">
                       Phiên bản v{version}
                     </CardDescription>
                   </div>
@@ -258,7 +248,7 @@ export function PopupApp() {
                 <Badge
                   variant={isRunning ? 'default' : 'secondary'}
                   className={`px-2 py-0.5 text-[10px] tracking-wider uppercase font-bold rounded-lg ${
-                    isRunning ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : ''
+                    isRunning ? 'bg-emerald-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600'
                   }`}
                 >
                   {isRunning ? 'ĐANG CHẠY' : 'ĐÃ DỪNG'}
@@ -266,41 +256,45 @@ export function PopupApp() {
               </div>
             </CardHeader>
 
-            <Separator className="bg-slate-800 dark:bg-slate-800 light:bg-slate-200" />
+            <Separator className="bg-slate-100" />
 
             <CardContent className="space-y-2.5 pt-3 pb-2 px-3.5">
               <Button
                 variant="default"
-                className="w-full justify-between h-9 text-xs font-bold rounded-xl shadow-md shadow-emerald-950/30 bg-emerald-600 hover:bg-emerald-500 text-white"
+                className="w-full justify-between h-9 text-xs font-bold rounded-xl shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white"
                 onClick={handleOpenGame}
               >
                 <span className="flex items-center gap-2">
                   <ExternalLink className="h-3.5 w-3.5" />
                   Vào Game Nông Trại GenZ
                 </span>
-                <span className="text-[10px] bg-black/20 rounded px-1.5 py-0.5 font-normal">Mở Tab</span>
+                <span className="text-[10px] bg-black/10 rounded px-1.5 py-0.5 font-normal">Mở Tab</span>
               </Button>
 
               <Button
                 variant={isRunning ? 'destructive' : 'default'}
-                className="w-full justify-between h-9 text-xs font-bold rounded-xl shadow-md"
+                className={`w-full justify-between h-9 text-xs font-bold rounded-xl shadow-xs ${
+                  isRunning
+                    ? 'bg-red-600 hover:bg-red-700 text-white'
+                    : 'bg-emerald-700 hover:bg-emerald-800 text-white'
+                }`}
                 onClick={handleToggleAuto}
               >
                 <span className="flex items-center gap-2">
                   {isRunning ? <Square className="h-3.5 w-3.5 fill-current" /> : <Play className="h-3.5 w-3.5 fill-current" />}
                   {isRunning ? 'DỪNG AUTO TOÀN BỘ' : 'BẬT AUTO TOÀN BỘ'}
                 </span>
-                <span className="text-[10px] bg-black/20 rounded px-1.5 py-0.5 font-mono">Alt + A</span>
+                <span className="text-[10px] bg-black/10 rounded px-1.5 py-0.5 font-mono">Alt + A</span>
               </Button>
 
               <div className="grid grid-cols-2 gap-2 pt-0.5">
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-full border-slate-700 light:border-slate-300 bg-slate-800/60 light:bg-slate-100 hover:bg-slate-800 text-slate-200 light:text-slate-800 text-xs rounded-xl"
+                  className="w-full border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs rounded-xl shadow-xs"
                   onClick={handleTogglePanel}
                 >
-                  <Eye className="h-3.5 w-3.5 mr-1 text-slate-400" />
+                  <Eye className="h-3.5 w-3.5 mr-1 text-slate-500" />
                   Ẩn/Hiện HUD
                 </Button>
 
@@ -308,10 +302,10 @@ export function PopupApp() {
                   variant="secondary"
                   size="sm"
                   disabled={isCheckingUpdate}
-                  className="w-full bg-slate-800 light:bg-slate-200 text-slate-200 light:text-slate-800 hover:bg-slate-700 text-xs border border-slate-700/60 light:border-slate-300 rounded-xl"
+                  className="w-full bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs border border-slate-200 rounded-xl shadow-xs"
                   onClick={handleCheckUpdate}
                 >
-                  <RefreshCw className={`h-3.5 w-3.5 mr-1 text-slate-400 ${isCheckingUpdate ? 'animate-spin text-emerald-400' : ''}`} />
+                  <RefreshCw className={`h-3.5 w-3.5 mr-1 text-slate-500 ${isCheckingUpdate ? 'animate-spin text-emerald-600' : ''}`} />
                   Kiểm Tra Cập Nhật
                 </Button>
               </div>
@@ -321,8 +315,8 @@ export function PopupApp() {
               <div
                 className={`w-full rounded-xl px-2.5 py-2 text-[11px] leading-relaxed border transition-colors ${
                   isError
-                    ? 'border-red-900/50 bg-red-950/30 text-red-300'
-                    : 'border-slate-800/80 light:border-slate-200 bg-slate-950/40 light:bg-slate-100/60 text-slate-400 light:text-slate-600'
+                    ? 'border-red-200 bg-red-50 text-red-700'
+                    : 'border-slate-200 bg-slate-50 text-slate-600'
                 }`}
               >
                 {statusMsg}

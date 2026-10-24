@@ -38,7 +38,6 @@ export function HudApp({
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
   const [isOrderDrawerOpen, setIsOrderDrawerOpen] = useState<boolean>(false);
   const [version, setVersion] = useState<string>('1.0.0');
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   // Dialog states
   const [isCheckingUpdate, setIsCheckingUpdate] = useState<boolean>(false);
@@ -53,7 +52,7 @@ export function HudApp({
   const isDraggingRef = useRef(false);
   const dragOffsetRef = useRef({ x: 0, y: 0 });
 
-  // Get manifest version & theme preference
+  // Get manifest version
   useEffect(() => {
     try {
       const v = chrome.runtime.getManifest().version;
@@ -61,26 +60,7 @@ export function HudApp({
     } catch {
       // Ignore
     }
-
-    try {
-      const savedTheme = localStorage.getItem('ntg_theme');
-      if (savedTheme === 'light' || savedTheme === 'dark') {
-        setTheme(savedTheme);
-      }
-    } catch {
-      // Ignore
-    }
   }, []);
-
-  const toggleTheme = () => {
-    const next = theme === 'dark' ? 'light' : 'dark';
-    setTheme(next);
-    try {
-      localStorage.setItem('ntg_theme', next);
-    } catch {
-      // Ignore
-    }
-  };
 
   // Expose global bridge update listeners
   useEffect(() => {
@@ -128,7 +108,7 @@ export function HudApp({
       if (!isDraggingRef.current) return;
       const newX = Math.min(
         Math.max(10, moveEvent.clientX - dragOffsetRef.current.x),
-        window.innerWidth - 380
+        window.innerWidth - 390
       );
       const newY = Math.min(
         Math.max(10, moveEvent.clientY - dragOffsetRef.current.y),
@@ -178,17 +158,11 @@ export function HudApp({
         transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
         pointerEvents: 'auto',
       }}
-      className={`fixed left-0 top-0 z-[2147483647] w-[380px] overflow-hidden rounded-2xl border border-slate-700/60 dark:border-slate-800/80 light:border-slate-300 shadow-2xl backdrop-blur-xl font-sans select-none transition-colors ${
-        theme === 'dark'
-          ? 'dark bg-slate-950/95 text-slate-100'
-          : 'light bg-white/95 text-slate-900'
-      }`}
+      className="fixed left-0 top-0 z-[2147483647] w-[385px] overflow-hidden rounded-2xl border border-slate-200/90 shadow-2xl bg-white/98 text-slate-800 backdrop-blur-xl font-sans select-none ring-1 ring-black/5"
     >
-      {/* macOS Styled Header */}
+      {/* macOS Styled Header with Traffic Light Buttons */}
       <HudHeader
         version={version}
-        theme={theme}
-        onToggleTheme={toggleTheme}
         isMinimized={isMinimized}
         onToggleMinimize={() => setIsMinimized(!isMinimized)}
         onHide={handleHide}
@@ -215,21 +189,41 @@ export function HudApp({
           />
 
           {/* Current Action Status Text */}
-          <div className="flex items-center gap-2 border-b border-slate-800/80 dark:border-slate-800/80 light:border-slate-200 bg-slate-950 dark:bg-slate-950 light:bg-slate-100/90 px-3 py-1.5 text-[11px] font-mono text-emerald-400 light:text-emerald-700">
-            <span className="relative flex h-2 w-2">
+          <div className="flex items-center gap-2 border-b border-slate-200/90 bg-emerald-50/80 px-3 py-1.5 text-[11px] font-mono text-emerald-800">
+            <span className="relative flex h-2 w-2 shrink-0">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-600" />
             </span>
             <span className="truncate">{lastAction}</span>
           </div>
 
           {/* Navigation Tabs */}
           <Tabs value={config.activeTab} onValueChange={handleTabChange} className="w-full p-2.5">
-            <TabsList className="grid w-full grid-cols-4 h-8 text-[11px] rounded-xl p-1 bg-slate-900/80 dark:bg-slate-900/80 light:bg-slate-200/80">
-              <TabsTrigger value="farm" className="px-1 py-1 rounded-lg">🌾 Nông trại</TabsTrigger>
-              <TabsTrigger value="benDo" className="px-1 py-1 rounded-lg">🛶 Bến đò</TabsTrigger>
-              <TabsTrigger value="sea" className="px-1 py-1 rounded-lg">🏖️ Biển</TabsTrigger>
-              <TabsTrigger value="city" className="px-1 py-1 rounded-lg">🏙️ Phố xá</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-4 h-8 text-[11px] rounded-xl p-1 bg-slate-100 border border-slate-200/80 text-slate-600">
+              <TabsTrigger
+                value="farm"
+                className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
+              >
+                🌾 Nông trại
+              </TabsTrigger>
+              <TabsTrigger
+                value="benDo"
+                className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
+              >
+                🛶 Bến đò
+              </TabsTrigger>
+              <TabsTrigger
+                value="sea"
+                className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
+              >
+                🏖️ Biển
+              </TabsTrigger>
+              <TabsTrigger
+                value="city"
+                className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
+              >
+                🏙️ Phố xá
+              </TabsTrigger>
             </TabsList>
 
             <div className="mt-2.5 max-h-[380px] overflow-y-auto pr-1">
@@ -257,7 +251,7 @@ export function HudApp({
       <Dialog open={isUpdateModalOpen} onOpenChange={setIsUpdateModalOpen}>
         <DialogContent
           container={shadowRoot as unknown as HTMLElement}
-          className="max-w-[350px] bg-slate-900/98 dark:bg-slate-950/98 light:bg-white border-slate-800 light:border-slate-300 text-slate-100 light:text-slate-900 p-4 rounded-2xl shadow-2xl"
+          className="max-w-[360px] bg-white border border-slate-200 text-slate-900 p-4 rounded-2xl shadow-2xl"
         >
           {updateInfo && (
             <ReleaseChangelogView

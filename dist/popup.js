@@ -20303,25 +20303,8 @@
   __iconData6.node;
   var Eye = createLucideIcon(__iconData6);
 
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/moon.mjs
-  var __iconData7 = {
-    name: "moon",
-    size: 24,
-    node: [
-      [
-        "path",
-        {
-          d: "M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401",
-          key: "kfwtm"
-        }
-      ]
-    ]
-  };
-  __iconData7.node;
-  var Moon = createLucideIcon(__iconData7);
-
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/play.mjs
-  var __iconData8 = {
+  var __iconData7 = {
     name: "play",
     size: 24,
     node: [
@@ -20334,11 +20317,11 @@
       ]
     ]
   };
-  __iconData8.node;
-  var Play = createLucideIcon(__iconData8);
+  __iconData7.node;
+  var Play = createLucideIcon(__iconData7);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
-  var __iconData9 = {
+  var __iconData8 = {
     name: "refresh-cw",
     size: 24,
     node: [
@@ -20348,11 +20331,11 @@
       ["path", { d: "M8 16H3v5", key: "1cv678" }]
     ]
   };
-  __iconData9.node;
-  var RefreshCw = createLucideIcon(__iconData9);
+  __iconData8.node;
+  var RefreshCw = createLucideIcon(__iconData8);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/rotate-ccw-clock.mjs
-  var __iconData10 = {
+  var __iconData9 = {
     name: "rotate-ccw-clock",
     size: 24,
     node: [
@@ -20362,11 +20345,11 @@
     ],
     aliases: ["history"]
   };
-  __iconData10.node;
-  var RotateCcwClock = createLucideIcon(__iconData10);
+  __iconData9.node;
+  var RotateCcwClock = createLucideIcon(__iconData9);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/sparkles.mjs
-  var __iconData11 = {
+  var __iconData10 = {
     name: "sparkles",
     size: 24,
     node: [
@@ -20383,36 +20366,17 @@
     ],
     aliases: ["stars"]
   };
-  __iconData11.node;
-  var Sparkles = createLucideIcon(__iconData11);
+  __iconData10.node;
+  var Sparkles = createLucideIcon(__iconData10);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/square.mjs
-  var __iconData12 = {
+  var __iconData11 = {
     name: "square",
     size: 24,
     node: [["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]]
   };
-  __iconData12.node;
-  var Square = createLucideIcon(__iconData12);
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/sun.mjs
-  var __iconData13 = {
-    name: "sun",
-    size: 24,
-    node: [
-      ["circle", { cx: "12", cy: "12", r: "4", key: "4exip2" }],
-      ["path", { d: "M12 2v2", key: "tus03m" }],
-      ["path", { d: "M12 20v2", key: "1lh1kg" }],
-      ["path", { d: "m4.93 4.93 1.41 1.41", key: "149t6j" }],
-      ["path", { d: "m17.66 17.66 1.41 1.41", key: "ptbguv" }],
-      ["path", { d: "M2 12h2", key: "1t8f8n" }],
-      ["path", { d: "M20 12h2", key: "1q8mjw" }],
-      ["path", { d: "m6.34 17.66-1.41 1.41", key: "1m8zz5" }],
-      ["path", { d: "m19.07 4.93-1.41 1.41", key: "1shlcs" }]
-    ]
-  };
-  __iconData13.node;
-  var Sun = createLucideIcon(__iconData13);
+  __iconData11.node;
+  var Square = createLucideIcon(__iconData11);
 
   // src/components/ui/accordion.tsx
   var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
@@ -20476,38 +20440,45 @@
   function ReleaseChangelogView({ updateInfo, onClose }) {
     const hasUpdate = updateInfo.hasUpdate;
     const older = updateInfo.olderReleases || [];
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex flex-col space-y-3 font-sans", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-slate-900/60 dark:bg-slate-900/60 light:bg-slate-100 p-3 border border-slate-700/50", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex flex-col space-y-3 font-sans text-slate-800", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-slate-50 p-3 border border-slate-200", children: [
         /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2.5", children: [
           /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
             "div",
             {
-              className: `flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${hasUpdate ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-blue-500/10 text-blue-400 border-blue-500/30"}`,
+              className: `flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${hasUpdate ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-blue-50 text-blue-600 border-blue-200"}`,
               children: hasUpdate ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Sparkles, { className: "h-5 w-5" }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CircleCheck, { className: "h-5 w-5" })
             }
           ),
           /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs font-bold text-slate-100 light:text-slate-900", children: hasUpdate ? "\u0110\xE3 C\xF3 Phi\xEAn B\u1EA3n M\u1EDBi!" : "B\u1EA3n \u0110ang D\xF9ng M\u1EDBi Nh\u1EA5t" }),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-[11px] text-slate-400 font-mono", children: hasUpdate ? `Hi\u1EC7n t\u1EA1i: v${updateInfo.currentVersion} \u2794 M\u1EDBi nh\u1EA5t: v${updateInfo.latestVersion}` : `Phi\xEAn b\u1EA3n hi\u1EC7n t\u1EA1i v${updateInfo.currentVersion}` })
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs font-bold text-slate-900", children: hasUpdate ? "\u0110\xE3 C\xF3 Phi\xEAn B\u1EA3n M\u1EDBi!" : "B\u1EA3n \u0110ang D\xF9ng M\u1EDBi Nh\u1EA5t" }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-[11px] text-slate-500 font-mono", children: hasUpdate ? `v${updateInfo.currentVersion} \u2794 v${updateInfo.latestVersion}` : `Phi\xEAn b\u1EA3n hi\u1EC7n t\u1EA1i v${updateInfo.currentVersion}` })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Badge, { variant: hasUpdate ? "default" : "secondary", className: "text-[10px] uppercase font-bold", children: hasUpdate ? "UPDATE" : "LATEST" })
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+          Badge,
+          {
+            variant: hasUpdate ? "default" : "secondary",
+            className: `text-[10px] uppercase font-bold ${hasUpdate ? "bg-emerald-600 text-white" : "bg-slate-200 text-slate-700"}`,
+            children: hasUpdate ? "UPDATE" : "LATEST"
+          }
+        )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "rounded-xl border border-emerald-500/30 bg-emerald-950/20 light:bg-emerald-50/50 p-3 space-y-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between border-b border-emerald-500/20 pb-1.5", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "flex items-center gap-1.5", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { className: "font-bold text-xs text-emerald-400 light:text-emerald-700", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "rounded-xl border border-emerald-200 bg-emerald-50/60 p-3 space-y-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between border-b border-emerald-200/60 pb-1.5", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "flex items-center gap-1.5", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { className: "font-bold text-xs text-emerald-800", children: [
             "\u2728 ",
             updateInfo.releaseName || `Release v${updateInfo.latestVersion}`
           ] }) }),
-          updateInfo.publishedAt && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-[10px] text-slate-400", children: new Date(updateInfo.publishedAt).toLocaleDateString("vi-VN") })
+          updateInfo.publishedAt && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-[10px] text-slate-500", children: new Date(updateInfo.publishedAt).toLocaleDateString("vi-VN") })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "max-h-[140px] overflow-y-auto pr-1 text-[11px] text-slate-300 light:text-slate-700 whitespace-pre-wrap leading-relaxed font-sans", children: updateInfo.releaseNotes || "Kh\xF4ng c\xF3 nh\u1EADt k\xFD chi ti\u1EBFt cho b\u1EA3n ph\xE1t h\xE0nh n\xE0y." }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "max-h-[140px] overflow-y-auto pr-1 text-[11px] text-slate-700 whitespace-pre-wrap leading-relaxed font-sans", children: updateInfo.releaseNotes || "Kh\xF4ng c\xF3 nh\u1EADt k\xFD chi ti\u1EBFt cho b\u1EA3n ph\xE1t h\xE0nh n\xE0y." }),
         hasUpdate && updateInfo.downloadUrl && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "pt-1", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
           Button,
           {
             variant: "default",
             size: "sm",
-            className: "w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs h-8 shadow-md",
+            className: "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs h-8 shadow-xs",
             onClick: () => {
               if (updateInfo.downloadUrl) {
                 window.open(updateInfo.downloadUrl, "_blank");
@@ -20522,7 +20493,7 @@
         ) })
       ] }),
       older.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "space-y-1", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-1 text-[11px] font-semibold text-slate-400 px-1 pt-1", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-1 text-[11px] font-semibold text-slate-600 px-1 pt-1", children: [
           /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(RotateCcwClock, { className: "h-3.5 w-3.5" }),
           /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: "L\u1ECBch s\u1EED c\xE1c phi\xEAn b\u1EA3n tr\u01B0\u1EDBc:" })
         ] }),
@@ -20530,21 +20501,21 @@
           AccordionItem3,
           {
             value: rel.tag || String(idx),
-            className: "rounded-lg border border-slate-800 bg-slate-900/40 px-2.5 py-0 text-xs",
+            className: "rounded-lg border border-slate-200 bg-white px-2.5 py-0 text-xs shadow-xs",
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(AccordionTrigger3, { className: "py-2 hover:no-underline text-xs text-slate-300 light:text-slate-800 font-medium", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "rounded bg-slate-800 px-1.5 py-0.5 text-[10px] font-mono text-emerald-400", children: rel.tag }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(AccordionTrigger3, { className: "py-2 hover:no-underline text-xs text-slate-800 font-medium", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-mono text-emerald-700 font-bold border border-slate-200", children: rel.tag }),
                 /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "truncate max-w-[200px]", children: rel.name || rel.tag })
               ] }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(AccordionContent3, { className: "pb-2.5 pt-1 text-[11px] text-slate-400 whitespace-pre-wrap leading-relaxed border-t border-slate-800/60 mt-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(AccordionContent3, { className: "pb-2.5 pt-1 text-[11px] text-slate-600 whitespace-pre-wrap leading-relaxed border-t border-slate-100 mt-1", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { children: rel.body || "Kh\xF4ng c\xF3 ghi ch\xFA." }),
-                rel.htmlUrl && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "mt-2 pt-1 border-t border-slate-800/40", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
+                rel.htmlUrl && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "mt-2 pt-1 border-t border-slate-100", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
                   "a",
                   {
                     href: rel.htmlUrl,
                     target: "_blank",
                     rel: "noreferrer",
-                    className: "inline-flex items-center gap-1 text-[10px] text-emerald-400 hover:underline",
+                    className: "inline-flex items-center gap-1 text-[10px] text-emerald-700 hover:underline font-medium",
                     children: [
                       /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ExternalLink, { className: "h-3 w-3" }),
                       "Xem tr\xEAn GitHub"
@@ -20562,7 +20533,7 @@
         {
           variant: "outline",
           size: "sm",
-          className: "w-full border-slate-700 text-xs",
+          className: "w-full border-slate-200 text-slate-700 hover:bg-slate-100 text-xs shadow-xs",
           onClick: onClose,
           children: "\u0110\xF3ng"
         }
@@ -20667,29 +20638,13 @@
     const [isCheckingUpdate, setIsCheckingUpdate] = (0, import_react4.useState)(false);
     const [updateInfo, setUpdateInfo] = (0, import_react4.useState)(null);
     const [viewMode, setViewMode] = (0, import_react4.useState)("main");
-    const [theme, setTheme] = (0, import_react4.useState)("dark");
     (0, import_react4.useEffect)(() => {
       try {
         const manifestVer = chrome.runtime.getManifest().version;
         if (manifestVer) setVersion(manifestVer);
       } catch {
       }
-      try {
-        const savedTheme = localStorage.getItem("ntg_theme");
-        if (savedTheme === "light" || savedTheme === "dark") {
-          setTheme(savedTheme);
-        }
-      } catch {
-      }
     }, []);
-    const toggleTheme = () => {
-      const next = theme === "dark" ? "light" : "dark";
-      setTheme(next);
-      try {
-        localStorage.setItem("ntg_theme", next);
-      } catch {
-      }
-    };
     const findGameTab = (0, import_react4.useCallback)(async () => {
       const tabs = await chrome.tabs.query({});
       return tabs.find((t) => t.url && t.url.includes("nongtraigenz.online"));
@@ -20761,7 +20716,7 @@
       const res = await sendToGameTab({ action: "TOGGLE_PANEL" });
       if (res) {
         setIsError(false);
-        setStatusMsg("\u{1F5A5}\uFE0F \u0110\xE3 \u0111\u1EA3o tr\u1EA1ng th\xE1i \u1EA9n/hi\u1EC7n b\u1EA3ng \u0111i\u1EC1u khi\u1EC3n.");
+        setStatusMsg("\u{1F5A5}\uFE0F \u0110\xE3 \u0111\u1EA3o tr\u1EA1ng th\xE1i \u1EA9n/hi\u1EC7n b\u1EA3ng \u0111i\u1EC1u khi\u1EC3n HUD.");
       }
     };
     const handleCheckUpdate = async () => {
@@ -20784,189 +20739,192 @@
         setIsCheckingUpdate(false);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-      "div",
-      {
-        className: `w-[360px] p-2.5 font-sans select-none transition-colors ${theme === "dark" ? "dark bg-slate-950 text-slate-100" : "light bg-slate-50 text-slate-900"}`,
-        children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(Card, { className: "border border-slate-700/60 dark:border-slate-800/80 light:border-slate-200 bg-slate-900/95 dark:bg-slate-900/95 light:bg-white shadow-2xl rounded-2xl overflow-hidden backdrop-blur-xl", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between px-3.5 py-2.5 bg-slate-950/80 dark:bg-slate-950/80 light:bg-slate-100/90 border-b border-slate-800/80 dark:border-slate-800/80 light:border-slate-200", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center gap-2", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                "button",
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "w-[360px] p-2.5 font-sans select-none bg-slate-50 text-slate-900", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(Card, { className: "border border-slate-200/90 bg-white shadow-xl rounded-2xl overflow-hidden", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between px-3.5 py-2.5 bg-slate-50/90 border-b border-slate-200/80", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+            "button",
+            {
+              type: "button",
+              onClick: () => window.close(),
+              className: "flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-500 hover:bg-red-600 border border-red-600/40 transition-transform active:scale-90 cursor-pointer shadow-xs",
+              title: "\u0110\xF3ng popup",
+              children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-[8px] font-bold text-red-950 leading-none select-none", children: "\u2715" })
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+            "button",
+            {
+              type: "button",
+              onClick: () => setViewMode(viewMode === "changelog" ? "main" : "changelog"),
+              className: "flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-400 hover:bg-amber-500 border border-amber-500/40 transition-transform active:scale-90 cursor-pointer shadow-xs",
+              title: "Chuy\u1EC3n ch\u1EBF \u0111\u1ED9 xem",
+              children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-[9px] font-bold text-amber-950 leading-none select-none", children: "\u2212" })
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+            "button",
+            {
+              type: "button",
+              onClick: handleCheckUpdate,
+              className: "flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-600 border border-emerald-600/40 transition-transform active:scale-90 cursor-pointer shadow-xs",
+              title: "Ki\u1EC3m tra c\u1EADp nh\u1EADt GitHub",
+              children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+                "span",
                 {
-                  type: "button",
-                  onClick: () => window.close(),
-                  className: "flex h-3 w-3 items-center justify-center rounded-full bg-red-500 hover:bg-red-600 transition-colors shadow-xs",
-                  title: "\u0110\xF3ng popup"
-                }
-              ),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                "button",
-                {
-                  type: "button",
-                  onClick: () => setViewMode(viewMode === "changelog" ? "main" : "changelog"),
-                  className: "flex h-3 w-3 items-center justify-center rounded-full bg-amber-500 hover:bg-amber-600 transition-colors shadow-xs",
-                  title: "Chuy\u1EC3n ch\u1EBF \u0111\u1ED9 xem"
-                }
-              ),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                "button",
-                {
-                  type: "button",
-                  onClick: toggleTheme,
-                  className: "flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-600 transition-colors shadow-xs",
-                  title: "\u0110\u1ED5i giao di\u1EC7n S\xE1ng / T\u1ED1i"
+                  className: `text-[9px] font-bold text-emerald-950 leading-none select-none ${isCheckingUpdate ? "animate-spin inline-block" : ""}`,
+                  children: "\u21BB"
                 }
               )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center gap-1 text-xs font-bold", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-emerald-400", children: "\u{1F33E} NTG Auto" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-slate-400 font-normal", children: "by T\xFAn" })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-              Button,
-              {
-                variant: "ghost",
-                size: "icon-xs",
-                className: "h-6 w-6 text-slate-400 hover:text-amber-400 rounded-md",
-                onClick: toggleTheme,
-                title: `\u0110\u1ED5i sang ch\u1EBF \u0111\u1ED9 ${theme === "dark" ? "S\xE1ng" : "T\u1ED1i"}`,
-                children: theme === "dark" ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Sun, { className: "h-3.5 w-3.5 text-amber-400" }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Moon, { className: "h-3.5 w-3.5 text-indigo-500" })
-              }
-            )
-          ] }),
-          viewMode === "changelog" && updateInfo ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "p-3 space-y-3", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
-                Button,
-                {
-                  variant: "ghost",
-                  size: "sm",
-                  className: "text-xs text-slate-400 hover:text-slate-100 h-7 px-2",
-                  onClick: () => setViewMode("main"),
-                  children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ArrowLeft, { className: "h-3.5 w-3.5 mr-1" }),
-                    "Quay l\u1EA1i"
-                  ]
-                }
-              ),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(Badge, { variant: "outline", className: "text-[10px] font-mono", children: [
-                "v",
-                version
+            }
+          )
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center gap-1.5 font-bold text-xs tracking-tight", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-emerald-700", children: "\u{1F33E} NTG Auto" }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-slate-400 font-normal", children: "by T\xFAn" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+          Badge,
+          {
+            variant: "outline",
+            className: "border-slate-200 bg-white px-1.5 py-0 text-[10px] font-mono text-slate-600 shadow-xs",
+            children: [
+              "v",
+              version
+            ]
+          }
+        )
+      ] }),
+      viewMode === "changelog" && updateInfo ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "p-3.5 space-y-3", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+            Button,
+            {
+              variant: "ghost",
+              size: "sm",
+              className: "text-xs text-slate-600 hover:text-slate-900 hover:bg-slate-100 h-7 px-2",
+              onClick: () => setViewMode("main"),
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ArrowLeft, { className: "h-3.5 w-3.5 mr-1" }),
+                "Quay l\u1EA1i"
+              ]
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(Badge, { variant: "outline", className: "text-[10px] font-mono", children: [
+            "v",
+            version
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+          ReleaseChangelogView,
+          {
+            updateInfo,
+            onClose: () => setViewMode("main")
+          }
+        )
+      ] }) : (
+        /* View Mode: Main Dashboard */
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardHeader, { className: "pb-3 pt-3 px-3.5", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center gap-2.5", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "relative flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 shadow-xs", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Sparkles, { className: "h-4.5 w-4.5" }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+                  "span",
+                  {
+                    className: `absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white ${isRunning ? "bg-emerald-500 animate-pulse" : "bg-slate-300"}`
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardTitle, { className: "text-sm font-bold text-slate-900 tracking-tight", children: "B\u1EA3ng \u0110i\u1EC1u Khi\u1EC3n Auto" }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardDescription, { className: "text-[11px] text-slate-500 font-mono", children: [
+                  "Phi\xEAn b\u1EA3n v",
+                  version
+                ] })
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-              ReleaseChangelogView,
+              Badge,
               {
-                updateInfo,
-                onClose: () => setViewMode("main")
+                variant: isRunning ? "default" : "secondary",
+                className: `px-2 py-0.5 text-[10px] tracking-wider uppercase font-bold rounded-lg ${isRunning ? "bg-emerald-600 text-white shadow-xs" : "bg-slate-100 text-slate-600"}`,
+                children: isRunning ? "\u0110ANG CH\u1EA0Y" : "\u0110\xC3 D\u1EEANG"
               }
             )
-          ] }) : (
-            /* View Mode: Main Dashboard */
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardHeader, { className: "pb-3 pt-3 px-3.5", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center gap-2.5", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "relative flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shadow-sm", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Sparkles, { className: "h-4.5 w-4.5" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                      "span",
-                      {
-                        className: `absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-slate-900 ${isRunning ? "bg-emerald-500 animate-pulse" : "bg-slate-500"}`
-                      }
-                    )
+          ] }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Separator3, { className: "bg-slate-100" }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardContent, { className: "space-y-2.5 pt-3 pb-2 px-3.5", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+              Button,
+              {
+                variant: "default",
+                className: "w-full justify-between h-9 text-xs font-bold rounded-xl shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white",
+                onClick: handleOpenGame,
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "flex items-center gap-2", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ExternalLink, { className: "h-3.5 w-3.5" }),
+                    "V\xE0o Game N\xF4ng Tr\u1EA1i GenZ"
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardTitle, { className: "text-sm font-bold text-slate-100 light:text-slate-900 tracking-tight", children: "B\u1EA3ng \u0110i\u1EC1u Khi\u1EC3n Auto" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardDescription, { className: "text-[11px] text-slate-400 light:text-slate-500 font-mono", children: [
-                      "Phi\xEAn b\u1EA3n v",
-                      version
-                    ] })
-                  ] })
-                ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                  Badge,
-                  {
-                    variant: isRunning ? "default" : "secondary",
-                    className: `px-2 py-0.5 text-[10px] tracking-wider uppercase font-bold rounded-lg ${isRunning ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : ""}`,
-                    children: isRunning ? "\u0110ANG CH\u1EA0Y" : "\u0110\xC3 D\u1EEANG"
-                  }
-                )
-              ] }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Separator3, { className: "bg-slate-800 dark:bg-slate-800 light:bg-slate-200" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardContent, { className: "space-y-2.5 pt-3 pb-2 px-3.5", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
-                  Button,
-                  {
-                    variant: "default",
-                    className: "w-full justify-between h-9 text-xs font-bold rounded-xl shadow-md shadow-emerald-950/30 bg-emerald-600 hover:bg-emerald-500 text-white",
-                    onClick: handleOpenGame,
-                    children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "flex items-center gap-2", children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ExternalLink, { className: "h-3.5 w-3.5" }),
-                        "V\xE0o Game N\xF4ng Tr\u1EA1i GenZ"
-                      ] }),
-                      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-[10px] bg-black/20 rounded px-1.5 py-0.5 font-normal", children: "M\u1EDF Tab" })
-                    ]
-                  }
-                ),
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
-                  Button,
-                  {
-                    variant: isRunning ? "destructive" : "default",
-                    className: "w-full justify-between h-9 text-xs font-bold rounded-xl shadow-md",
-                    onClick: handleToggleAuto,
-                    children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "flex items-center gap-2", children: [
-                        isRunning ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Square, { className: "h-3.5 w-3.5 fill-current" }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Play, { className: "h-3.5 w-3.5 fill-current" }),
-                        isRunning ? "D\u1EEANG AUTO TO\xC0N B\u1ED8" : "B\u1EACT AUTO TO\xC0N B\u1ED8"
-                      ] }),
-                      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-[10px] bg-black/20 rounded px-1.5 py-0.5 font-mono", children: "Alt + A" })
-                    ]
-                  }
-                ),
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "grid grid-cols-2 gap-2 pt-0.5", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
-                    Button,
-                    {
-                      variant: "outline",
-                      size: "sm",
-                      className: "w-full border-slate-700 light:border-slate-300 bg-slate-800/60 light:bg-slate-100 hover:bg-slate-800 text-slate-200 light:text-slate-800 text-xs rounded-xl",
-                      onClick: handleTogglePanel,
-                      children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Eye, { className: "h-3.5 w-3.5 mr-1 text-slate-400" }),
-                        "\u1EA8n/Hi\u1EC7n HUD"
-                      ]
-                    }
-                  ),
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
-                    Button,
-                    {
-                      variant: "secondary",
-                      size: "sm",
-                      disabled: isCheckingUpdate,
-                      className: "w-full bg-slate-800 light:bg-slate-200 text-slate-200 light:text-slate-800 hover:bg-slate-700 text-xs border border-slate-700/60 light:border-slate-300 rounded-xl",
-                      onClick: handleCheckUpdate,
-                      children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(RefreshCw, { className: `h-3.5 w-3.5 mr-1 text-slate-400 ${isCheckingUpdate ? "animate-spin text-emerald-400" : ""}` }),
-                        "Ki\u1EC3m Tra C\u1EADp Nh\u1EADt"
-                      ]
-                    }
-                  )
-                ] })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardFooter, { className: "pt-1 pb-3 px-3.5", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                "div",
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-[10px] bg-black/10 rounded px-1.5 py-0.5 font-normal", children: "M\u1EDF Tab" })
+                ]
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+              Button,
+              {
+                variant: isRunning ? "destructive" : "default",
+                className: `w-full justify-between h-9 text-xs font-bold rounded-xl shadow-xs ${isRunning ? "bg-red-600 hover:bg-red-700 text-white" : "bg-emerald-700 hover:bg-emerald-800 text-white"}`,
+                onClick: handleToggleAuto,
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "flex items-center gap-2", children: [
+                    isRunning ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Square, { className: "h-3.5 w-3.5 fill-current" }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Play, { className: "h-3.5 w-3.5 fill-current" }),
+                    isRunning ? "D\u1EEANG AUTO TO\xC0N B\u1ED8" : "B\u1EACT AUTO TO\xC0N B\u1ED8"
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-[10px] bg-black/10 rounded px-1.5 py-0.5 font-mono", children: "Alt + A" })
+                ]
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "grid grid-cols-2 gap-2 pt-0.5", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+                Button,
                 {
-                  className: `w-full rounded-xl px-2.5 py-2 text-[11px] leading-relaxed border transition-colors ${isError ? "border-red-900/50 bg-red-950/30 text-red-300" : "border-slate-800/80 light:border-slate-200 bg-slate-950/40 light:bg-slate-100/60 text-slate-400 light:text-slate-600"}`,
-                  children: statusMsg
+                  variant: "outline",
+                  size: "sm",
+                  className: "w-full border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs rounded-xl shadow-xs",
+                  onClick: handleTogglePanel,
+                  children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Eye, { className: "h-3.5 w-3.5 mr-1 text-slate-500" }),
+                    "\u1EA8n/Hi\u1EC7n HUD"
+                  ]
                 }
-              ) })
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+                Button,
+                {
+                  variant: "secondary",
+                  size: "sm",
+                  disabled: isCheckingUpdate,
+                  className: "w-full bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs border border-slate-200 rounded-xl shadow-xs",
+                  onClick: handleCheckUpdate,
+                  children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(RefreshCw, { className: `h-3.5 w-3.5 mr-1 text-slate-500 ${isCheckingUpdate ? "animate-spin text-emerald-600" : ""}` }),
+                    "Ki\u1EC3m Tra C\u1EADp Nh\u1EADt"
+                  ]
+                }
+              )
             ] })
-          )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardFooter, { className: "pt-1 pb-3 px-3.5", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+            "div",
+            {
+              className: `w-full rounded-xl px-2.5 py-2 text-[11px] leading-relaxed border transition-colors ${isError ? "border-red-200 bg-red-50 text-red-700" : "border-slate-200 bg-slate-50 text-slate-600"}`,
+              children: statusMsg
+            }
+          ) })
         ] })
-      }
-    );
+      )
+    ] }) });
   }
 
   // src/popup/index.tsx
@@ -21054,13 +21012,11 @@ lucide-react/dist/esm/icons/circle-check.mjs:
 lucide-react/dist/esm/icons/download.mjs:
 lucide-react/dist/esm/icons/external-link.mjs:
 lucide-react/dist/esm/icons/eye.mjs:
-lucide-react/dist/esm/icons/moon.mjs:
 lucide-react/dist/esm/icons/play.mjs:
 lucide-react/dist/esm/icons/refresh-cw.mjs:
 lucide-react/dist/esm/icons/rotate-ccw-clock.mjs:
 lucide-react/dist/esm/icons/sparkles.mjs:
 lucide-react/dist/esm/icons/square.mjs:
-lucide-react/dist/esm/icons/sun.mjs:
 lucide-react/dist/esm/lucide-react.mjs:
   (**
    * @license lucide-react v1.61.0 - ISC

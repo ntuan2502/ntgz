@@ -68,14 +68,24 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
     return { acted: true, msg: label };
   };
 
+  const foodPrices: Record<string, number> = {
+    banhMi: 10,
+    chaoCa: 14,
+    huTieu: 20,
+    comTam: 28,
+    lauMam: 45,
+  };
+  const prefFood = cfg.benPreferFood || 'lauMam';
+  const targetFoodPrice = foodPrices[prefFood] || 45;
+
   const needShellsForBait = bait <= 0 && shells < 15;
   const needShellsForFood =
     (stamina < 4 || (cfg.benAutoRecoverStamina !== false && stamina <= stamMin)) &&
     packItems.length === 0 &&
-    shells < 10;
+    shells < targetFoodPrice;
 
   // 1. Sell basket at Vựa cá Anh Tư
-  const sellThreshold = Number(cfg.benSellThreshold) || 20;
+  const sellThreshold = Number(cfg.benSellThreshold) || 60;
   if (
     cfg.benAutoSell !== false &&
     nonKeptCount > 0 &&
@@ -115,19 +125,21 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
         );
       }
 
-      // Buy food from Dì Tám
-      const foodPrices: Record<string, number> = {
-        banhMi: 10,
-        chaoCa: 15,
-        huTieu: 25,
-        comTam: 40,
-        lauMam: 120,
-      };
-      const prefFood = cfg.benPreferFood || 'comTam';
-      const buyItem = shells >= (foodPrices[prefFood] || 40) ? prefFood : 'banhMi';
+      // Buy food from Dì Tám ({ x: 39, y: 23 })
+      const buyItem =
+        shells >= targetFoodPrice
+          ? prefFood
+          : shells >= 28
+            ? 'comTam'
+            : shells >= 20
+              ? 'huTieu'
+              : shells >= 14
+                ? 'chaoCa'
+                : 'banhMi';
+
       if (shells >= (foodPrices[buyItem] || 10) && canAct('ben_buy_food', 4000)) {
         return walkAndRun(
-          { x: 19, y: 9 },
+          { x: 39, y: 23 },
           () => {
             sendBenWs({ t: 'buy', item: buyItem });
             buStore.setState({ panel: null });
@@ -136,9 +148,27 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
           'ben_buy_food'
         );
       }
+
+      // Wait if recently bought/ate food so stamina can refresh
+      if (!canAct('ben_buy_food', 4000) || !canAct('ben_eat_pack', 3000) || !canAct('ben_goi_dau', 4000)) {
+        return { acted: true, msg: '🍚 Đang chờ ăn hồi phục Sức câu...' };
+      }
     }
 
     if (stamina < 4) {
+      // Still has fish in basket to sell? Sell first to get shells
+      if (cfg.benAutoSell !== false && nonKeptCount > 0) {
+        return walkAndRun(
+          { x: 40, y: 10 },
+          () => {
+            sendBenWs({ t: 'sell' });
+            buStore.setState({ panel: null });
+          },
+          `Đi bán ${nonKeptCount} con cá tại Vựa Anh Tư để lấy tiền ăn cơm`,
+          'ben_sell'
+        );
+      }
+
       // ATM withdrawal
       if (cfg.benAutoAtm && shells < (Number(cfg.benAtmThreshold) || 500) && canAct('ben_atm', 6000)) {
         return walkAndRun(
@@ -166,9 +196,9 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
       const baitPrices: Record<string, number> = {
         moi20: 15,
         moi60: 40,
-        moi150: 95,
+        moi150: 90,
       };
-      const prefBait = cfg.benPreferBait || 'moi60';
+      const prefBait = cfg.benPreferBait || 'moi150';
       const buyBaitChoice =
         shells >= (baitPrices[prefBait] || 40)
           ? prefBait
@@ -315,13 +345,12 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
 
   // 9. Walk to fishing spot
   if (cfg.benAutoSpot !== false) {
-    const spotChoice = cfg.benSpot || 'dock';
+    const spotChoice = cfg.benSpot || 'bank';
     const spotTargets: Record<string, { x: number; y: number; kind: string; label: string }> = {
-      dock: { x: 31, y: 4, kind: 'dock', label: 'Cầu tàu chính' },
-      bamboo: { x: 7, y: 6, kind: 'dock', label: 'Cầu tre' },
       bank: { x: 24, y: 10, kind: 'bank', label: 'Bờ sông' },
+      dock: { x: 31, y: 34, kind: 'dock', label: 'Cầu tàu chính' },
     };
-    const target = spotTargets[spotChoice] || spotTargets.dock;
+    const target = spotTargets[spotChoice] || spotTargets.bank;
 
     if (!bu.spot || (bu.spot !== target.kind && (spotChoice as string) !== 'any')) {
       if (benScene && typeof benScene.goFarmer === 'function') {

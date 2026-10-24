@@ -42,18 +42,21 @@ function init(): void {
 
   // Extension runtime messages from Popup or Background
   chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
-    if (msg.type === 'TOGGLE_AUTO') {
+    const action = msg?.action || msg?.type;
+    if (action === 'TOGGLE_AUTO') {
       toggleAutoAll();
       const cfg = getConfig();
       sendResponse({ ok: true, running: cfg.running });
-    } else if (msg.type === 'TOGGLE_PANEL') {
+    } else if (action === 'TOGGLE_PANEL') {
       const cfg = getConfig();
       cfg.panelVisible = !cfg.panelVisible;
       saveConfig();
+      renderAll();
       sendResponse({ ok: true, panelVisible: cfg.panelVisible });
-    } else if (msg.type === 'GET_STATUS') {
+    } else if (action === 'GET_STATUS') {
       sendResponse({
         ok: true,
+        running: getConfig().running,
         config: getConfig(),
         lastActionText: getLastActionText(),
         snap: getLastGameSnap(),

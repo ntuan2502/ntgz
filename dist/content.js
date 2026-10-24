@@ -14755,18 +14755,18 @@
     savingsKeepGold: 2e5,
     // Area 2: Ben Do Fishing Settings
     benAutoSpot: true,
-    benSpot: "dock",
+    benSpot: "bank",
     benAutoBuyBait: true,
-    benPreferBait: "moi60",
+    benPreferBait: "moi150",
     benAutoSell: true,
-    benSellThreshold: 20,
+    benSellThreshold: 60,
     benAutoKeepRare: true,
     benAutoGoiDau: true,
     benAutoRecoverStamina: true,
     benStaminaThreshold: 20,
-    benPreferFood: "comTam",
-    benAutoLuckDrink: false,
-    benPreferDrink: "nuocMia",
+    benPreferFood: "lauMam",
+    benAutoLuckDrink: true,
+    benPreferDrink: "duaTuoi",
     benAutoLantern: true,
     benBuyLanternTicket: false,
     benAutoLotto: true,
@@ -23456,8 +23456,182 @@
     );
   }
 
-  // src/components/ui/button.tsx
+  // src/content/ui/components/HudHeader.tsx
   var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
+  function HudHeader({
+    version,
+    isMinimized,
+    onToggleMinimize,
+    onHide,
+    onCheckUpdate,
+    isCheckingUpdate,
+    onMouseDownDrag
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
+      "div",
+      {
+        className: "flex items-center justify-between px-3.5 py-2.5 bg-slate-50 border-b border-slate-200/90 select-none cursor-move transition-colors",
+        onMouseDown: onMouseDownDrag,
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "flex items-center gap-2", onMouseDown: (e) => e.stopPropagation(), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+              "button",
+              {
+                type: "button",
+                onClick: onHide,
+                className: "flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-500 hover:bg-red-600 border border-red-600/40 transition-transform active:scale-90 cursor-pointer shadow-xs",
+                title: "\u1EA8n b\u1EA3ng \u0111i\u1EC1u khi\u1EC3n (Alt+P)",
+                children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "text-[8px] font-bold text-red-950 leading-none select-none", children: "\u2715" })
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+              "button",
+              {
+                type: "button",
+                onClick: onToggleMinimize,
+                className: "flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-400 hover:bg-amber-500 border border-amber-500/40 transition-transform active:scale-90 cursor-pointer shadow-xs",
+                title: isMinimized ? "M\u1EDF r\u1ED9ng b\u1EA3ng \u0111i\u1EC1u khi\u1EC3n" : "Thu g\u1ECDn b\u1EA3ng \u0111i\u1EC1u khi\u1EC3n",
+                children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "text-[9px] font-bold text-amber-950 leading-none select-none", children: "\u2212" })
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+              "button",
+              {
+                type: "button",
+                onClick: onCheckUpdate,
+                className: "flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-600 border border-emerald-600/40 transition-transform active:scale-90 cursor-pointer shadow-xs",
+                title: "Ki\u1EC3m tra b\u1EA3n c\u1EADp nh\u1EADt m\u1EDBi t\u1EEB GitHub",
+                children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+                  "span",
+                  {
+                    className: `text-[9px] font-bold text-emerald-950 leading-none select-none ${isCheckingUpdate ? "animate-spin inline-block" : ""}`,
+                    children: "\u21BB"
+                  }
+                )
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "flex items-center gap-1.5 font-bold text-xs tracking-tight", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "text-emerald-700", children: "\u{1F33E} NTG Auto" }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "text-slate-400 font-normal", children: "by T\xFAn" }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
+              Badge,
+              {
+                variant: "outline",
+                className: "ml-0.5 border-slate-200 bg-white px-1.5 py-0 text-[10px] font-mono text-slate-600 shadow-xs",
+                children: [
+                  "v",
+                  version
+                ]
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "flex items-center gap-1", onMouseDown: (e) => e.stopPropagation(), children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+            "span",
+            {
+              className: "text-[10px] text-slate-400 font-mono bg-slate-200/60 rounded px-1.5 py-0.5 cursor-pointer hover:bg-slate-200 transition-colors",
+              onClick: onHide,
+              title: "Ph\xEDm t\u1EAFt \u1EA9n/hi\u1EC7n: Alt + P",
+              children: "Alt+P"
+            }
+          ) })
+        ]
+      }
+    );
+  }
+
+  // src/content/scheduler/dom-helpers.ts
+  var sleep = (ms) => new Promise((r2) => setTimeout(r2, ms));
+  function isVisible(el) {
+    if (!el) return false;
+    const s = window.getComputedStyle(el);
+    if (s.display === "none" || s.visibility === "hidden" || Number(s.opacity) === 0) return false;
+    const r2 = el.getBoundingClientRect();
+    return r2.width > 0 && r2.height > 0;
+  }
+  function triggerPointerDownAndClick(el) {
+    if (!el) return false;
+    const rect = el.getBoundingClientRect();
+    const cx2 = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const opts = { bubbles: true, cancelable: true, clientX: cx2, clientY: cy, button: 0, buttons: 1 };
+    el.dispatchEvent(new PointerEvent("pointerdown", opts));
+    el.dispatchEvent(new MouseEvent("mousedown", opts));
+    el.dispatchEvent(new PointerEvent("pointerup", opts));
+    el.dispatchEvent(new MouseEvent("mouseup", opts));
+    el.click();
+    return true;
+  }
+  function triggerPointerDownOnly(el) {
+    if (!el) return false;
+    const rect = el.getBoundingClientRect();
+    const cx2 = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const opts = { bubbles: true, cancelable: true, clientX: cx2, clientY: cy, button: 0, buttons: 1 };
+    el.dispatchEvent(new PointerEvent("pointerdown", opts));
+    el.dispatchEvent(new PointerEvent("pointerup", opts));
+    return true;
+  }
+  function formatClock(minutes) {
+    if (typeof minutes !== "number") return "--:--";
+    const h = Math.floor(minutes / 60) % 24;
+    const m = Math.floor(minutes % 60);
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+  }
+  function formatGold(n) {
+    if (typeof n !== "number") return "--";
+    return n.toLocaleString("vi-VN") + "\u0111";
+  }
+
+  // src/content/ui/components/HudStats.tsx
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
+  function HudStats({ snap }) {
+    const day = snap?.day ?? 1;
+    const timeStr = typeof snap?.minutes === "number" ? formatClock(snap.minutes) : "--:--";
+    const goldStr = typeof snap?.gold === "number" ? formatGold(snap.gold) : "--";
+    const fullness = typeof snap?.fullness === "number" ? `${Math.round(snap.fullness)}%` : "--";
+    const hydration = typeof snap?.hydration === "number" ? `${Math.round(snap.hydration)}%` : "--";
+    const energy = typeof snap?.energy === "number" ? `${Math.round(snap.energy)}%` : "--";
+    let extraNote = "";
+    if (snap?.screen === "sea") {
+      extraNote = snap.sea?.bite ? "\u{1F3A3} C\xE1 c\u1EAFn c\xE2u!" : snap.sea?.phase ? `\u{1F30A} Bi\u1EC3n: ${snap.sea.phase}` : "\u{1F30A} Bi\u1EC3n";
+    } else if (snap?.screen === "benDo") {
+      const stam = snap.benWallet?.liveStamina ?? snap.benWallet?.stamina;
+      extraNote = typeof stam === "number" ? `\u{1F6F6} S\u1EE9c: ${stam}` : "\u{1F6F6} B\u1EBFn \u0111\xF2";
+    } else if (snap?.sleeping) {
+      extraNote = "\u{1F634} \u0110ang ng\u1EE7";
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "bg-slate-50 border-b border-slate-200/90 px-3 py-1.5 text-[11px] font-mono text-slate-700", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex flex-wrap items-center justify-between gap-1.5", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-1.5 text-slate-700 font-semibold", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { className: "text-amber-700", children: [
+          "\u{1F4C5} Ng\xE0y ",
+          day
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "text-slate-300", children: "\xB7" }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "text-emerald-700", children: timeStr }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "text-slate-300", children: "\xB7" }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "text-amber-800 font-bold", children: goldStr })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-1", title: "\u0110\u1ED9 no", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "\u{1F956}" }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "text-orange-700 font-semibold", children: fullness })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-1", title: "\u0110\u1ED9 kh\xE1t", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "\u{1F964}" }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "text-sky-700 font-semibold", children: hydration })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-1", title: "N\u0103ng l\u01B0\u1EE3ng / Pin / Th\u1EC3 l\u1EF1c", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "\u26A1" }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "text-emerald-700 font-semibold", children: energy })
+        ] }),
+        extraNote && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "rounded bg-amber-50 px-1.5 py-0.5 text-[10px] text-amber-800 border border-amber-200/80 font-medium", children: extraNote })
+      ] })
+    ] }) });
+  }
+
+  // src/components/ui/button.tsx
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime(), 1);
   var buttonVariants = cva(
     "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
     {
@@ -23495,7 +23669,7 @@
     ...props
   }) {
     const Comp = asChild ? dist_exports.Root : "button";
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
       Comp,
       {
         "data-slot": "button",
@@ -23503,6 +23677,102 @@
         "data-size": size,
         className: cn(buttonVariants({ variant, size, className })),
         ...props
+      }
+    );
+  }
+
+  // src/components/ui/slider.tsx
+  var React36 = __toESM(require_react(), 1);
+  var import_jsx_runtime20 = __toESM(require_jsx_runtime(), 1);
+  function Slider3({
+    className,
+    defaultValue,
+    value,
+    min = 0,
+    max = 100,
+    ...props
+  }) {
+    const _values = React36.useMemo(
+      () => Array.isArray(value) ? value : Array.isArray(defaultValue) ? defaultValue : [min, max],
+      [value, defaultValue, min, max]
+    );
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
+      dist_exports5.Root,
+      {
+        "data-slot": "slider",
+        defaultValue,
+        value,
+        min,
+        max,
+        className: cn(
+          "relative flex w-full touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col",
+          className
+        ),
+        ...props,
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+            dist_exports5.Track,
+            {
+              "data-slot": "slider-track",
+              className: cn(
+                "relative grow overflow-hidden rounded-full bg-muted data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5"
+              ),
+              children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+                dist_exports5.Range,
+                {
+                  "data-slot": "slider-range",
+                  className: cn(
+                    "absolute bg-primary data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full"
+                  )
+                }
+              )
+            }
+          ),
+          Array.from({ length: _values.length }, (_, index) => /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+            dist_exports5.Thumb,
+            {
+              "data-slot": "slider-thumb",
+              className: "block size-4 shrink-0 rounded-full border border-primary bg-white shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"
+            },
+            index
+          ))
+        ]
+      }
+    );
+  }
+
+  // src/components/ui/switch.tsx
+  var import_jsx_runtime21 = __toESM(require_jsx_runtime(), 1);
+  function Switch3({
+    className,
+    size = "default",
+    ...props
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+      dist_exports6.Root,
+      {
+        "data-slot": "switch",
+        "data-size": size,
+        className: cn(
+          "peer group/switch inline-flex shrink-0 items-center rounded-full border-2 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer",
+          "data-[size=default]:h-5 data-[size=default]:w-9 data-[size=sm]:h-4 data-[size=sm]:w-7",
+          "data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600 data-[state=checked]:shadow-xs",
+          "data-[state=unchecked]:bg-slate-300 data-[state=unchecked]:border-slate-300",
+          className
+        ),
+        ...props,
+        children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+          dist_exports6.Thumb,
+          {
+            "data-slot": "switch-thumb",
+            className: cn(
+              "pointer-events-none block rounded-full bg-white transition-transform shadow-xs",
+              "group-data-[size=default]/switch:size-3.5 group-data-[size=sm]/switch:size-2.5",
+              "data-[state=checked]:translate-x-4",
+              "data-[state=unchecked]:translate-x-0.5"
+            )
+          }
+        )
       }
     );
   }
@@ -23826,25 +24096,8 @@
   __iconData8.node;
   var ListOrdered = createLucideIcon(__iconData8);
 
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/moon.mjs
-  var __iconData9 = {
-    name: "moon",
-    size: 24,
-    node: [
-      [
-        "path",
-        {
-          d: "M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401",
-          key: "kfwtm"
-        }
-      ]
-    ]
-  };
-  __iconData9.node;
-  var Moon = createLucideIcon(__iconData9);
-
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/play.mjs
-  var __iconData10 = {
+  var __iconData9 = {
     name: "play",
     size: 24,
     node: [
@@ -23857,25 +24110,11 @@
       ]
     ]
   };
-  __iconData10.node;
-  var Play = createLucideIcon(__iconData10);
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
-  var __iconData11 = {
-    name: "refresh-cw",
-    size: 24,
-    node: [
-      ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
-      ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
-      ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
-      ["path", { d: "M8 16H3v5", key: "1cv678" }]
-    ]
-  };
-  __iconData11.node;
-  var RefreshCw = createLucideIcon(__iconData11);
+  __iconData9.node;
+  var Play = createLucideIcon(__iconData9);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/rotate-ccw-clock.mjs
-  var __iconData12 = {
+  var __iconData10 = {
     name: "rotate-ccw-clock",
     size: 24,
     node: [
@@ -23885,11 +24124,11 @@
     ],
     aliases: ["history"]
   };
-  __iconData12.node;
-  var RotateCcwClock = createLucideIcon(__iconData12);
+  __iconData10.node;
+  var RotateCcwClock = createLucideIcon(__iconData10);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/sparkles.mjs
-  var __iconData13 = {
+  var __iconData11 = {
     name: "sparkles",
     size: 24,
     node: [
@@ -23906,39 +24145,20 @@
     ],
     aliases: ["stars"]
   };
-  __iconData13.node;
-  var Sparkles = createLucideIcon(__iconData13);
+  __iconData11.node;
+  var Sparkles = createLucideIcon(__iconData11);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/square.mjs
-  var __iconData14 = {
+  var __iconData12 = {
     name: "square",
     size: 24,
     node: [["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]]
   };
-  __iconData14.node;
-  var Square = createLucideIcon(__iconData14);
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/sun.mjs
-  var __iconData15 = {
-    name: "sun",
-    size: 24,
-    node: [
-      ["circle", { cx: "12", cy: "12", r: "4", key: "4exip2" }],
-      ["path", { d: "M12 2v2", key: "tus03m" }],
-      ["path", { d: "M12 20v2", key: "1lh1kg" }],
-      ["path", { d: "m4.93 4.93 1.41 1.41", key: "149t6j" }],
-      ["path", { d: "m17.66 17.66 1.41 1.41", key: "ptbguv" }],
-      ["path", { d: "M2 12h2", key: "1t8f8n" }],
-      ["path", { d: "M20 12h2", key: "1q8mjw" }],
-      ["path", { d: "m6.34 17.66-1.41 1.41", key: "1m8zz5" }],
-      ["path", { d: "m19.07 4.93-1.41 1.41", key: "1shlcs" }]
-    ]
-  };
-  __iconData15.node;
-  var Sun = createLucideIcon(__iconData15);
+  __iconData12.node;
+  var Square = createLucideIcon(__iconData12);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/x.mjs
-  var __iconData16 = {
+  var __iconData13 = {
     name: "x",
     size: 24,
     node: [
@@ -23946,289 +24166,8 @@
       ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
     ]
   };
-  __iconData16.node;
-  var X = createLucideIcon(__iconData16);
-
-  // src/content/ui/components/HudHeader.tsx
-  var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
-  function HudHeader({
-    version,
-    theme,
-    onToggleTheme,
-    isMinimized,
-    onToggleMinimize,
-    onHide,
-    onCheckUpdate,
-    isCheckingUpdate,
-    onMouseDownDrag
-  }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
-      "div",
-      {
-        className: "flex items-center justify-between px-3.5 py-2.5 bg-slate-950/80 dark:bg-slate-950/80 light:bg-slate-100/90 border-b border-slate-800/80 dark:border-slate-800/80 light:border-slate-200 select-none cursor-move transition-colors rounded-t-2xl",
-        onMouseDown: onMouseDownDrag,
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-2", onMouseDown: (e) => e.stopPropagation(), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
-              "button",
-              {
-                type: "button",
-                onClick: onHide,
-                className: "group relative flex h-3 w-3 items-center justify-center rounded-full bg-red-500 hover:bg-red-600 transition-transform active:scale-90 cursor-pointer shadow-xs",
-                title: "\u1EA8n b\u1EA3ng \u0111i\u1EC1u khi\u1EC3n (Alt+P)",
-                children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "opacity-0 group-hover:opacity-100 text-[8px] font-bold text-red-950 leading-none", children: "\u2715" })
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
-              "button",
-              {
-                type: "button",
-                onClick: onToggleMinimize,
-                className: "group relative flex h-3 w-3 items-center justify-center rounded-full bg-amber-500 hover:bg-amber-600 transition-transform active:scale-90 cursor-pointer shadow-xs",
-                title: isMinimized ? "M\u1EDF r\u1ED9ng" : "Thu g\u1ECDn",
-                children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "opacity-0 group-hover:opacity-100 text-[8px] font-bold text-amber-950 leading-none", children: "\u2212" })
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
-              "button",
-              {
-                type: "button",
-                onClick: onToggleTheme,
-                className: "group relative flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-600 transition-transform active:scale-90 cursor-pointer shadow-xs",
-                title: `Chuy\u1EC3n sang giao di\u1EC7n ${theme === "dark" ? "S\xE1ng" : "T\u1ED1i"}`,
-                children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "opacity-0 group-hover:opacity-100 text-[8px] font-bold text-emerald-950 leading-none", children: "\u26A1" })
-              }
-            )
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-1.5 font-bold text-xs tracking-tight", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "text-emerald-400", children: "\u{1F33E} NTG Auto" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "text-slate-400 font-normal", children: "by T\xFAn" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
-              Badge,
-              {
-                variant: "outline",
-                className: "ml-0.5 border-slate-700/60 bg-slate-900/60 light:bg-white px-1.5 py-0 text-[10px] font-mono text-slate-400",
-                children: [
-                  "v",
-                  version
-                ]
-              }
-            )
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-1 text-slate-400", onMouseDown: (e) => e.stopPropagation(), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
-              Button,
-              {
-                variant: "ghost",
-                size: "icon-xs",
-                className: "h-6 w-6 text-slate-400 hover:text-slate-100 hover:bg-slate-800/80 rounded-md",
-                title: "Ki\u1EC3m tra b\u1EA3n c\u1EADp nh\u1EADt m\u1EDBi t\u1EEB GitHub",
-                onClick: onCheckUpdate,
-                children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RefreshCw, { className: `h-3 w-3 ${isCheckingUpdate ? "animate-spin text-emerald-400" : ""}` })
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
-              Button,
-              {
-                variant: "ghost",
-                size: "icon-xs",
-                className: "h-6 w-6 text-slate-400 hover:text-amber-400 hover:bg-slate-800/80 rounded-md",
-                title: `\u0110\u1ED5i sang ch\u1EBF \u0111\u1ED9 ${theme === "dark" ? "S\xE1ng" : "T\u1ED1i"}`,
-                onClick: onToggleTheme,
-                children: theme === "dark" ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Sun, { className: "h-3.5 w-3.5 text-amber-400" }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Moon, { className: "h-3.5 w-3.5 text-indigo-500" })
-              }
-            )
-          ] })
-        ]
-      }
-    );
-  }
-
-  // src/content/scheduler/dom-helpers.ts
-  var sleep = (ms) => new Promise((r2) => setTimeout(r2, ms));
-  function isVisible(el) {
-    if (!el) return false;
-    const s = window.getComputedStyle(el);
-    if (s.display === "none" || s.visibility === "hidden" || Number(s.opacity) === 0) return false;
-    const r2 = el.getBoundingClientRect();
-    return r2.width > 0 && r2.height > 0;
-  }
-  function triggerPointerDownAndClick(el) {
-    if (!el) return false;
-    const rect = el.getBoundingClientRect();
-    const cx2 = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const opts = { bubbles: true, cancelable: true, clientX: cx2, clientY: cy, button: 0, buttons: 1 };
-    el.dispatchEvent(new PointerEvent("pointerdown", opts));
-    el.dispatchEvent(new MouseEvent("mousedown", opts));
-    el.dispatchEvent(new PointerEvent("pointerup", opts));
-    el.dispatchEvent(new MouseEvent("mouseup", opts));
-    el.click();
-    return true;
-  }
-  function triggerPointerDownOnly(el) {
-    if (!el) return false;
-    const rect = el.getBoundingClientRect();
-    const cx2 = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const opts = { bubbles: true, cancelable: true, clientX: cx2, clientY: cy, button: 0, buttons: 1 };
-    el.dispatchEvent(new PointerEvent("pointerdown", opts));
-    el.dispatchEvent(new PointerEvent("pointerup", opts));
-    return true;
-  }
-  function formatClock(minutes) {
-    if (typeof minutes !== "number") return "--:--";
-    const h = Math.floor(minutes / 60) % 24;
-    const m = Math.floor(minutes % 60);
-    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-  }
-  function formatGold(n) {
-    if (typeof n !== "number") return "--";
-    return n.toLocaleString("vi-VN") + "\u0111";
-  }
-
-  // src/content/ui/components/HudStats.tsx
-  var import_jsx_runtime19 = __toESM(require_jsx_runtime(), 1);
-  function HudStats({ snap }) {
-    const day = snap?.day ?? 1;
-    const timeStr = typeof snap?.minutes === "number" ? formatClock(snap.minutes) : "--:--";
-    const goldStr = typeof snap?.gold === "number" ? formatGold(snap.gold) : "--";
-    const fullness = typeof snap?.fullness === "number" ? `${Math.round(snap.fullness)}%` : "--";
-    const hydration = typeof snap?.hydration === "number" ? `${Math.round(snap.hydration)}%` : "--";
-    const energy = typeof snap?.energy === "number" ? `${Math.round(snap.energy)}%` : "--";
-    let extraNote = "";
-    if (snap?.screen === "sea") {
-      extraNote = snap.sea?.bite ? "\u{1F3A3} C\xE1 c\u1EAFn c\xE2u!" : snap.sea?.phase ? `\u{1F30A} Bi\u1EC3n: ${snap.sea.phase}` : "\u{1F30A} Bi\u1EC3n";
-    } else if (snap?.screen === "benDo") {
-      const stam = snap.benWallet?.liveStamina ?? snap.benWallet?.stamina;
-      extraNote = typeof stam === "number" ? `\u{1F6F6} S\u1EE9c: ${stam}` : "\u{1F6F6} B\u1EBFn \u0111\xF2";
-    } else if (snap?.sleeping) {
-      extraNote = "\u{1F634} \u0110ang ng\u1EE7";
-    }
-    return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "bg-slate-900/90 border-b border-slate-800/80 px-2.5 py-1.5 text-[11px] font-mono text-slate-300", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex flex-wrap items-center justify-between gap-1.5", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center gap-1 text-slate-300", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { className: "text-amber-400 font-semibold", children: [
-          "\u{1F4C5} Ng\xE0y ",
-          day
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-500", children: "\xB7" }),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-emerald-400 font-semibold", children: timeStr }),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-500", children: "\xB7" }),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-yellow-400 font-bold", children: goldStr })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center gap-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center gap-1", title: "\u0110\u1ED9 no", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F956}" }),
-          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-orange-300 font-medium", children: fullness })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center gap-1", title: "\u0110\u1ED9 kh\xE1t", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F964}" }),
-          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-cyan-300 font-medium", children: hydration })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center gap-1", title: "N\u0103ng l\u01B0\u1EE3ng / Pin / Th\u1EC3 l\u1EF1c", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u26A1" }),
-          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-emerald-300 font-medium", children: energy })
-        ] }),
-        extraNote && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "rounded bg-slate-800 px-1 py-0.5 text-[10px] text-amber-300 border border-slate-700", children: extraNote })
-      ] })
-    ] }) });
-  }
-
-  // src/components/ui/slider.tsx
-  var React36 = __toESM(require_react(), 1);
-  var import_jsx_runtime20 = __toESM(require_jsx_runtime(), 1);
-  function Slider3({
-    className,
-    defaultValue,
-    value,
-    min = 0,
-    max = 100,
-    ...props
-  }) {
-    const _values = React36.useMemo(
-      () => Array.isArray(value) ? value : Array.isArray(defaultValue) ? defaultValue : [min, max],
-      [value, defaultValue, min, max]
-    );
-    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
-      dist_exports5.Root,
-      {
-        "data-slot": "slider",
-        defaultValue,
-        value,
-        min,
-        max,
-        className: cn(
-          "relative flex w-full touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col",
-          className
-        ),
-        ...props,
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
-            dist_exports5.Track,
-            {
-              "data-slot": "slider-track",
-              className: cn(
-                "relative grow overflow-hidden rounded-full bg-muted data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5"
-              ),
-              children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
-                dist_exports5.Range,
-                {
-                  "data-slot": "slider-range",
-                  className: cn(
-                    "absolute bg-primary data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full"
-                  )
-                }
-              )
-            }
-          ),
-          Array.from({ length: _values.length }, (_, index) => /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
-            dist_exports5.Thumb,
-            {
-              "data-slot": "slider-thumb",
-              className: "block size-4 shrink-0 rounded-full border border-primary bg-white shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"
-            },
-            index
-          ))
-        ]
-      }
-    );
-  }
-
-  // src/components/ui/switch.tsx
-  var import_jsx_runtime21 = __toESM(require_jsx_runtime(), 1);
-  function Switch3({
-    className,
-    size = "default",
-    ...props
-  }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-      dist_exports6.Root,
-      {
-        "data-slot": "switch",
-        "data-size": size,
-        className: cn(
-          "peer group/switch inline-flex shrink-0 items-center rounded-full border-2 transition-all outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer",
-          "data-[size=default]:h-5 data-[size=default]:w-9 data-[size=sm]:h-4 data-[size=sm]:w-7",
-          "data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-400 data-[state=checked]:shadow-[0_0_8px_rgba(16,185,129,0.35)]",
-          "data-[state=unchecked]:bg-slate-700/80 data-[state=unchecked]:border-slate-600 dark:data-[state=unchecked]:bg-slate-800 dark:data-[state=unchecked]:border-slate-700",
-          className
-        ),
-        ...props,
-        children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-          dist_exports6.Thumb,
-          {
-            "data-slot": "switch-thumb",
-            className: cn(
-              "pointer-events-none block rounded-full transition-transform",
-              "group-data-[size=default]/switch:size-3.5 group-data-[size=sm]/switch:size-2.5",
-              "data-[state=checked]:translate-x-4 data-[state=checked]:bg-white data-[state=checked]:shadow-md",
-              "data-[state=unchecked]:translate-x-0.5 data-[state=unchecked]:bg-slate-300 dark:data-[state=unchecked]:bg-slate-400"
-            )
-          }
-        )
-      }
-    );
-  }
+  __iconData13.node;
+  var X = createLucideIcon(__iconData13);
 
   // src/content/ui/components/HudControls.tsx
   var import_jsx_runtime22 = __toESM(require_jsx_runtime(), 1);
@@ -24274,14 +24213,14 @@
         }
       }));
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "space-y-2 border-b border-slate-800/80 dark:border-slate-800/80 light:border-slate-200 bg-slate-900/60 dark:bg-slate-900/60 light:bg-slate-100/60 p-2.5 text-xs transition-colors", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "space-y-2 border-b border-slate-200/90 bg-slate-50/70 p-2.5 text-xs transition-colors", children: [
       /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "grid grid-cols-2 gap-2", children: [
         /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
           Button,
           {
             variant: isRunningAll ? "destructive" : "default",
             size: "sm",
-            className: "w-full justify-center font-bold text-[11px] rounded-xl h-8.5 shadow-md shadow-emerald-950/20 active:scale-[0.98]",
+            className: "w-full justify-center font-bold text-[11px] rounded-xl h-8.5 shadow-xs active:scale-[0.98] bg-emerald-600 hover:bg-emerald-700 text-white",
             onClick: onToggleAll,
             children: isRunningAll ? /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
               /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Square, { className: "h-3.5 w-3.5 fill-current mr-1.5" }),
@@ -24295,15 +24234,15 @@
         /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
           Button,
           {
-            variant: isRunningTab ? "destructive" : "secondary",
+            variant: isRunningTab ? "destructive" : "outline",
             size: "sm",
-            className: "w-full justify-center font-bold text-[11px] rounded-xl h-8.5 border border-slate-700/60 light:border-slate-300 shadow-md active:scale-[0.98]",
+            className: `w-full justify-center font-bold text-[11px] rounded-xl h-8.5 border shadow-xs active:scale-[0.98] ${isRunningTab ? "bg-red-600 hover:bg-red-700 text-white border-red-700" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"}`,
             onClick: onToggleTab,
             children: isRunningTab ? /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
               /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Square, { className: "h-3.5 w-3.5 fill-current mr-1.5" }),
               "D\u1EEANG TAB N\xC0Y"
             ] }) : /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Play, { className: "h-3.5 w-3.5 fill-current mr-1.5" }),
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Play, { className: "h-3.5 w-3.5 fill-current mr-1.5 text-emerald-600" }),
               "\u{1F3AF} CH\u1EC8 ",
               AREA_META[activeTab]?.name?.toUpperCase() || "TAB N\xC0Y"
             ] })
@@ -24312,9 +24251,9 @@
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center justify-between gap-3 pt-1", children: [
         /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex-1 space-y-1", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center justify-between text-[11px] text-slate-400 light:text-slate-600", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center justify-between text-[11px] text-slate-600", children: [
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "T\u1ED1c \u0111\u1ED9 delay m\u1ED7i l\u1EC7nh:" }),
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "font-mono text-emerald-400 font-bold", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "font-mono text-emerald-700 font-bold", children: [
               config2.taskDelayMs,
               " ms"
             ] })
@@ -24336,7 +24275,7 @@
           {
             variant: "outline",
             size: "xs",
-            className: `border-slate-700 light:border-slate-300 text-[10px] rounded-lg whitespace-nowrap self-end h-6 px-2 ${isOrderDrawerOpen ? "bg-slate-800 text-emerald-400 border-emerald-500/50" : "bg-slate-900/80 light:bg-white text-slate-300 light:text-slate-700"}`,
+            className: `border-slate-200 text-[10px] rounded-lg whitespace-nowrap self-end h-6 px-2 shadow-xs ${isOrderDrawerOpen ? "bg-emerald-50 text-emerald-800 border-emerald-300 font-semibold" : "bg-white text-slate-700 hover:bg-slate-100"}`,
             onClick: onToggleOrderDrawer,
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ListOrdered, { className: "h-3 w-3 mr-1" }),
@@ -24345,8 +24284,8 @@
           }
         )
       ] }),
-      isOrderDrawerOpen && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "mt-1.5 rounded-xl border border-slate-800 light:border-slate-300 bg-slate-950/80 light:bg-white p-2.5 space-y-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center justify-between text-[10px] text-slate-400 light:text-slate-600 font-medium border-b border-slate-800 light:border-slate-200 pb-1.5", children: [
+      isOrderDrawerOpen && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "mt-1.5 rounded-xl border border-slate-200 bg-white p-2.5 space-y-2 shadow-xs", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center justify-between text-[10px] text-slate-600 font-medium border-b border-slate-100 pb-1.5", children: [
           /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "Th\u1EE9 t\u1EF1 ch\u1EA1y Auto c\xE1c khu:" }),
           /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center gap-1", children: [
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "\u0110\u1ED5i khu sau" }),
@@ -24358,7 +24297,7 @@
                 max: 50,
                 value: config2.fishingSwitchCount,
                 onChange: handleFishingSwitchChange,
-                className: "w-9 rounded-md bg-slate-900 light:bg-slate-100 px-1 py-0.5 text-center text-[10px] text-emerald-400 font-bold border border-slate-700 light:border-slate-300 font-mono"
+                className: "w-9 rounded-md bg-slate-50 px-1 py-0.5 text-center text-[10px] text-emerald-700 font-bold border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
               }
             ),
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "con c\xE1" })
@@ -24370,14 +24309,14 @@
           return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
             "div",
             {
-              className: "flex items-center justify-between rounded-lg bg-slate-900/90 light:bg-slate-50 px-2.5 py-1.5 border border-slate-800/80 light:border-slate-200 text-[11px]",
+              className: "flex items-center justify-between rounded-lg bg-slate-50 px-2.5 py-1.5 border border-slate-200/80 text-[11px]",
               children: [
                 /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center gap-2", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "font-mono text-[10px] text-slate-500 font-semibold", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "font-mono text-[10px] text-slate-400 font-semibold", children: [
                     "#",
                     idx + 1
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: isEnabled ? "text-slate-200 light:text-slate-800 font-medium" : "text-slate-500 line-through", children: meta?.name || areaId })
+                  /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: isEnabled ? "text-slate-800 font-medium" : "text-slate-400 line-through", children: meta?.name || areaId })
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center gap-2", children: [
                   /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center gap-0.5", children: [
@@ -24387,7 +24326,7 @@
                         variant: "ghost",
                         size: "icon-xs",
                         disabled: idx === 0,
-                        className: "h-5 w-5 text-slate-400 hover:text-white",
+                        className: "h-5 w-5 text-slate-500 hover:text-slate-900",
                         onClick: () => handleMoveArea(idx, "up"),
                         children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ChevronUp, { className: "h-3 w-3" })
                       }
@@ -24398,7 +24337,7 @@
                         variant: "ghost",
                         size: "icon-xs",
                         disabled: idx === config2.areaOrder.length - 1,
-                        className: "h-5 w-5 text-slate-400 hover:text-white",
+                        className: "h-5 w-5 text-slate-500 hover:text-slate-900",
                         onClick: () => handleMoveArea(idx, "down"),
                         children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ChevronDown, { className: "h-3 w-3" })
                       }
@@ -24477,7 +24416,7 @@
       switch (subId) {
         case "house":
           return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4AC} T\u1EAFt th\xF4ng b\xE1o Loa & \u0110i\u1EC7n tho\u1EA1i" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24487,7 +24426,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F373} T\u1EF1 n\u1EA5u m\xF3n \u0103n trong B\u1EBFp" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24497,14 +24436,14 @@
                 }
               )
             ] }),
-            config2.autoCook && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "M\xF3n \u01B0u ti\xEAn:" }),
+            config2.autoCook && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "M\xF3n \u01B0u ti\xEAn:" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
                 "select",
                 {
                   value: config2.preferDish,
                   onChange: (e) => updateField("preferDish", e.target.value),
-                  className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                  className: "rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs",
                   children: [
                     /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "auto", children: "\u2728 T\u1EF1 ch\u1ECDn m\xF3n \u0111\u1EE7 nguy\xEAn li\u1EC7u" }),
                     /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "comTam", children: "\u{1F35B} C\u01A1m t\u1EA5m \u1ED1p la (No l\xE2u)" }),
@@ -24518,7 +24457,7 @@
                 }
               )
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F372} T\u1EF1 \u0103n khi \u0110\xF3i" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24528,9 +24467,9 @@
                 }
               )
             ] }),
-            config2.autoRecoverHunger && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: [
+            config2.autoRecoverHunger && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "\u0102n khi \u0110\xF3i < (%):" }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "\u0102n khi \u0110\xF3i < (%):" }),
                 /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                   "input",
                   {
@@ -24540,18 +24479,18 @@
                     step: 5,
                     value: config2.hungerThreshold,
                     onChange: (e) => updateField("hungerThreshold", Number(e.target.value)),
-                    className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                    className: "w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
                   }
                 )
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Ngu\u1ED3n \u0103n:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "Ngu\u1ED3n \u0103n:" }),
                 /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
                   "select",
                   {
                     value: config2.foodSource,
                     onChange: (e) => updateField("foodSource", e.target.value),
-                    className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                    className: "rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs",
                     children: [
                       /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "kitchen_first", children: "\u{1F372} \u01AFu ti\xEAn B\u1EBFp, thi\u1EBFu mua Ti\u1EC7m" }),
                       /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "kitchen_only", children: "\u{1F3E1} Ch\u1EC9 \u0103n m\xF3n B\u1EBFp / Kho" }),
@@ -24561,13 +24500,13 @@
                 )
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "M\xF3n mua \u1EDF Ti\u1EC7m:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "M\xF3n mua \u1EDF Ti\u1EC7m:" }),
                 /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
                   "select",
                   {
                     value: config2.preferFoodShop,
                     onChange: (e) => updateField("preferFoodShop", e.target.value),
-                    className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                    className: "rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs",
                     children: [
                       /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "banhMiThit", children: "\u{1F956} B\xE1nh m\xEC th\u1ECBt (15.000\u0111 \xB7 +50 no)" }),
                       /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "banhMiCha", children: "\u{1F41F} B\xE1nh m\xEC ch\u1EA3 c\xE1 (15.000\u0111 \xB7 +45 no)" }),
@@ -24579,7 +24518,7 @@
                 )
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F964} T\u1EF1 u\u1ED1ng khi Kh\xE1t" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24589,9 +24528,9 @@
                 }
               )
             ] }),
-            config2.autoRecoverThirst && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: [
+            config2.autoRecoverThirst && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "U\u1ED1ng khi Kh\xE1t < (%):" }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "U\u1ED1ng khi Kh\xE1t < (%):" }),
                 /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                   "input",
                   {
@@ -24601,18 +24540,18 @@
                     step: 5,
                     value: config2.thirstThreshold,
                     onChange: (e) => updateField("thirstThreshold", Number(e.target.value)),
-                    className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                    className: "w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
                   }
                 )
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Ngu\u1ED3n n\u01B0\u1EDBc:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "Ngu\u1ED3n n\u01B0\u1EDBc:" }),
                 /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
                   "select",
                   {
                     value: config2.drinkSource,
                     onChange: (e) => updateField("drinkSource", e.target.value),
-                    className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                    className: "rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs",
                     children: [
                       /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "kitchen_first", children: "\u{1F9C3} \u01AFu ti\xEAn n\u01B0\u1EDBc B\u1EBFp, thi\u1EBFu mua Ti\u1EC7m" }),
                       /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "shop_only", children: "\u{1F964} Ch\u1EC9 mua n\u01B0\u1EDBc t\u1EA1i Ti\u1EC7m gi\u1EA3i kh\xE1t" }),
@@ -24622,13 +24561,13 @@
                 )
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "N\u01B0\u1EDBc \u1EDF Ti\u1EC7m:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "N\u01B0\u1EDBc \u1EDF Ti\u1EC7m:" }),
                 /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
                   "select",
                   {
                     value: config2.preferDrinkShop,
                     onChange: (e) => updateField("preferDrinkShop", e.target.value),
-                    className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                    className: "rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs",
                     children: [
                       /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "nuocMia", children: "\u{1F964} N\u01B0\u1EDBc m\xEDa (8.000\u0111 \xB7 +35 n\u01B0\u1EDBc)" }),
                       /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "traDao", children: "\u{1F351} Tr\xE0 \u0111\xE0o cam s\u1EA3 (15.000\u0111 \xB7 +50 n\u01B0\u1EDBc)" }),
@@ -24640,7 +24579,7 @@
                 )
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u2615 T\u1EF1 u\u1ED1ng C\xE0 ph\xEA s\xE1ng (+50% t\u1ED1c \u0111\u1ED9 ch\u1EA1y)" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24650,7 +24589,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F50B} T\u1EF1 s\u1EA1c \u0111i\u1EC7n cho Xe m\xE1y \u0111i\u1EC7n EV" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24660,8 +24599,8 @@
                 }
               )
             ] }),
-            config2.autoChargeVehicle && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "S\u1EA1c khi Pin < (%):" }),
+            config2.autoChargeVehicle && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "S\u1EA1c khi Pin < (%):" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 "input",
                 {
@@ -24671,11 +24610,11 @@
                   step: 5,
                   value: config2.batteryThreshold,
                   onChange: (e) => updateField("batteryThreshold", Number(e.target.value)),
-                  className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                  className: "w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
                 }
               )
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F486} Salon Ch\u1ECB Linh: G\u1ED9i \u0111\u1EA7u d\u01B0\u1EE1ng sinh (Buff th\u01B0 gi\xE3n)" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24685,7 +24624,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u2728 Salon Ch\u1ECB Linh: T\u1EAFm tr\u1EAFng n\xE2ng t\xF4ng khi \u0111en da" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24695,7 +24634,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F6CF}\uFE0F T\u1EF1 \u0111i ng\u1EE7 qua ng\xE0y m\u1EDBi" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24705,9 +24644,9 @@
                 }
               )
             ] }),
-            config2.autoSleep && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: [
+            config2.autoSleep && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Gi\u1EDD \u0111i ng\u1EE7 bu\u1ED5i t\u1ED1i (h):" }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "Gi\u1EDD \u0111i ng\u1EE7 bu\u1ED5i t\u1ED1i (h):" }),
                 /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                   "input",
                   {
@@ -24717,11 +24656,11 @@
                     step: 1,
                     value: config2.sleepHour,
                     onChange: (e) => updateField("sleepHour", Number(e.target.value)),
-                    className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                    className: "w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
                   }
                 )
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-400 light:text-slate-600", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-600", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F319} Ng\u1EE7 ngay khi h\u1EBFt c\xE2u \u0111\u01B0\u1EE3c bu\u1ED5i t\u1ED1i" }),
                 /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                   Switch3,
@@ -24736,7 +24675,7 @@
           ] });
         case "crops":
           return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F33E} T\u1EF1 thu ho\u1EA1ch n\xF4ng s\u1EA3n ch\xEDn" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24746,7 +24685,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F41B} T\u1EF1 mua thu\u1ED1c & di\u1EC7t s\xE2u b\u1EC7nh" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24756,7 +24695,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4A7} T\u1EF1 t\u01B0\u1EDBi n\u01B0\u1EDBc gi\u1EEF \u1EA9m \u0111\u1EA5t" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24766,7 +24705,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F9EA} T\u1EF1 mua & b\xF3n ph\xE2n NPK" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24776,7 +24715,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F331} T\u1EF1 mua & gieo h\u1EA1t gi\u1ED1ng m\u1EDBi" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24786,14 +24725,14 @@
                 }
               )
             ] }),
-            config2.autoPlant && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "H\u1EA1t gi\u1ED1ng \u01B0u ti\xEAn:" }),
+            config2.autoPlant && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "H\u1EA1t gi\u1ED1ng \u01B0u ti\xEAn:" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
                 "select",
                 {
                   value: config2.preferSeed,
                   onChange: (e) => updateField("preferSeed", e.target.value),
-                  className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                  className: "rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs",
                   children: [
                     /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "auto", children: "\u2728 T\u1EF1 ch\u1ECDn t\u1ED1i \u01B0u" }),
                     /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "rice", children: "\u{1F33E} L\xFAa (8 ng\xE0y)" }),
@@ -24804,7 +24743,7 @@
                 }
               )
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u26CF\uFE0F T\u1EF1 mua th\xEAm \xF4 \u0111\u1EA5t ru\u1ED9ng khi m\u1EDF b\xE1n" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24817,7 +24756,7 @@
           ] });
         case "pet":
           return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F356} T\u1EF1 mua \u0111\u1ED3 \u0103n & cho Th\xFA c\u01B0ng \u0103n" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24827,7 +24766,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F496} T\u1EF1 vu\u1ED1t ve t\u0103ng vui v\u1EBB" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24837,7 +24776,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F9FC} T\u1EF1 t\u1EAFm s\u1EA1ch cho Th\xFA c\u01B0ng" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24847,7 +24786,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F3BE} T\u1EF1 t\u1EADp tr\xF2 hu\u1EA5n luy\u1EC7n (+XP)" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24860,8 +24799,8 @@
           ] });
         case "barn":
           return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "text-[11px] font-bold text-emerald-400 border-b border-slate-800 light:border-slate-200 pb-1", children: "\u{1F403} Chu\u1ED3ng Tr\xE2u \u1ED4i" }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "text-[11px] font-bold text-emerald-400 border-b border-slate-200 pb-1", children: "\u{1F403} Chu\u1ED3ng Tr\xE2u \u1ED4i" }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F33E} T\u1EF1 cho Tr\xE2u \u0103n c\u1ECF / r\u01A1m" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24871,7 +24810,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F6BF} T\u1EF1 t\u1EAFm m\xE1t cho Tr\xE2u" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24881,7 +24820,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F91D} Cho h\xE0ng x\xF3m thu\xEA Tr\xE2u c\xE0y (+Ti\u1EC1n)" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24891,8 +24830,8 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "text-[11px] font-bold text-emerald-400 border-b border-slate-800 light:border-slate-200 pb-1 pt-2", children: "\u{1F404} Chu\u1ED3ng B\xF2 S\u1EEFa" }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "text-[11px] font-bold text-emerald-400 border-b border-slate-200 pb-1 pt-2", children: "\u{1F404} Chu\u1ED3ng B\xF2 S\u1EEFa" }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F33F} T\u1EF1 cho \u0111\xE0n B\xF2 s\u1EEFa \u0103n c\u1ECF" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24902,7 +24841,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F95B} T\u1EF1 v\u1EAFt s\u1EEFa & b\xE1n s\u1EEFa t\u01B0\u01A1i" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24912,7 +24851,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F48A} T\u1EF1 mua thu\u1ED1c & ch\u1EEFa b\u1EC7nh cho B\xF2" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24922,7 +24861,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng ng\u01B0\u1EDDi ph\u1EE5 Chu\u1ED3ng" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24935,7 +24874,7 @@
           ] });
         case "coop":
           return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F95A} T\u1EF1 nh\u1EB7t tr\u1EE9ng g\xE0 m\u1ED7i ng\xE0y" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24945,7 +24884,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F424} T\u1EF1 mua th\xEAm G\xE0 con khi chu\u1ED3ng tr\u1ED1ng" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24955,7 +24894,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng ng\u01B0\u1EDDi ph\u1EE5 Chu\u1ED3ng g\xE0" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24968,7 +24907,7 @@
           ] });
         case "pond":
           return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F41F} T\u1EF1 k\xE9o l\u01B0\u1EDBi thu ho\u1EA1ch c\xE1 tr\u01B0\u1EDFng th\xE0nh" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24978,7 +24917,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F35E} T\u1EF1 r\u1EA3i c\xE1m cho c\xE1 \u0103n m\u1ED7i ng\xE0y" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24988,7 +24927,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F41F} T\u1EF1 th\u1EA3 c\xE1 gi\u1ED1ng m\u1EDBi khi ao tr\u1ED1ng" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -24998,14 +24937,14 @@
                 }
               )
             ] }),
-            config2.pondAutoStock && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Lo\u1EA1i gi\u1ED1ng th\u1EA3:" }),
+            config2.pondAutoStock && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "Lo\u1EA1i gi\u1ED1ng th\u1EA3:" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
                 "select",
                 {
                   value: config2.preferPondFish,
                   onChange: (e) => updateField("preferPondFish", e.target.value),
-                  className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                  className: "rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs",
                   children: [
                     /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "chep", children: "\u{1F41F} C\xE1 ch\xE9p (L\u1EDDi cao)" }),
                     /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "tre", children: "\u{1F41F} C\xE1 tr\xEA" }),
@@ -25014,7 +24953,7 @@
                 }
               )
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng ng\u01B0\u1EDDi ph\u1EE5 Ao c\xE1" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -25027,7 +24966,7 @@
           ] });
         case "market":
           return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4E6} T\u1EF1 giao \u0111\u01A1n h\xE0ng T\u1EA1p h\xF3a Ch\u1ECB Na" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -25037,7 +24976,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4CB} T\u1EF1 giao \u0111\u01A1n B\u1EA3ng tin l\xE0ng" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -25047,7 +24986,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F525} B\xE1n N\xF4ng s\u1EA3n Trend (x2 gi\xE1, \u0111\xFAng quota)" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -25057,7 +24996,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4DC} T\u1EF1 b\xE1n n\xF4ng s\u1EA3n ho\xE0n th\xE0nh Vi\u1EC7c S\u1ED5 tay" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -25067,7 +25006,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F3EA} T\u1EF1 b\xE1n n\xF4ng s\u1EA3n d\u01B0 th\u1EEBa trong kho" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -25077,8 +25016,8 @@
                 }
               )
             ] }),
-            config2.autoSellProduce && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "T\u1ED1i thi\u1EC3u gi\u1EEF l\u1EA1i:" }),
+            config2.autoSellProduce && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "T\u1ED1i thi\u1EC3u gi\u1EEF l\u1EA1i:" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 "input",
                 {
@@ -25088,12 +25027,12 @@
                   step: 5,
                   value: config2.surplusKeepQty,
                   onChange: (e) => updateField("surplusKeepQty", Number(e.target.value)),
-                  className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                  className: "w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
                 }
               )
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "text-[11px] font-bold text-amber-400 border-b border-slate-800 light:border-slate-200 pb-1 pt-2", children: "\u{1FA99} Ti\u1EC7m V\xE0ng C\xF4 Kim" }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "text-[11px] font-bold text-amber-400 border-b border-slate-200 pb-1 pt-2", children: "\u{1FA99} Ti\u1EC7m V\xE0ng C\xF4 Kim" }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1FA99} T\u1EF1 mua v\xE0ng \u0111\u1EA7u t\u01B0" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -25103,15 +25042,15 @@
                 }
               )
             ] }),
-            config2.goldAutoBuy && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: [
+            config2.goldAutoBuy && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Lo\u1EA1i v\xE0ng \u01B0u ti\xEAn:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "Lo\u1EA1i v\xE0ng \u01B0u ti\xEAn:" }),
                 /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
                   "select",
                   {
                     value: config2.goldPreferType,
                     onChange: (e) => updateField("goldPreferType", e.target.value),
-                    className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                    className: "rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs",
                     children: [
                       /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "mieng", children: "\u{1F7E8} V\xE0ng mi\u1EBFng 9999 (Ch\xEAnh th\u1EA5p)" }),
                       /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "nhan", children: "\u{1F48D} Nh\u1EABn tr\u01A1n 9999 (\u1ED4n \u0111\u1ECBnh)" }),
@@ -25122,7 +25061,7 @@
                 )
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Ti\u1EC1n m\u1EB7t t\u1ED1i thi\u1EC3u gi\u1EEF:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "Ti\u1EC1n m\u1EB7t t\u1ED1i thi\u1EC3u gi\u1EEF:" }),
                 /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                   "input",
                   {
@@ -25132,12 +25071,12 @@
                     step: 1e5,
                     value: config2.goldKeepCash,
                     onChange: (e) => updateField("goldKeepCash", Number(e.target.value)),
-                    className: "w-20 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                    className: "w-20 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
                   }
                 )
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4C8} T\u1EF1 b\xE1n v\xE0ng khi c\xF3 l\xE3i" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -25147,8 +25086,8 @@
                 }
               )
             ] }),
-            config2.goldAutoSell && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Ch\u1ED1t l\u1EDDi khi l\xE3i >= (%):" }),
+            config2.goldAutoSell && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "Ch\u1ED1t l\u1EDDi khi l\xE3i >= (%):" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 "input",
                 {
@@ -25158,14 +25097,14 @@
                   step: 1,
                   value: config2.goldProfitPercent,
                   onChange: (e) => updateField("goldProfitPercent", Number(e.target.value)),
-                  className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                  className: "w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
                 }
               )
             ] }) })
           ] });
         case "dibay":
           return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F381} T\u1EF1 nh\u1EADn th\u01B0\u1EDFng Vi\u1EC7c h\xF4m nay & S\u1ED5 tay" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -25175,7 +25114,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4DC} T\u1EF1 l\xE0m chu\u1ED7i h\u01B0\u1EDBng d\u1EABn Ng\xE0y 1 & 2" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -25185,7 +25124,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4D4} T\u1EF1 thu th\u1EADp trang S\u1ED5 tay \xD4ng N\u0103m" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -25195,7 +25134,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1FA99} T\u1EF1 b\u1ECF ti\u1EC1n v\xE0o Heo \u0111\u1EA5t m\u1ED7i ng\xE0y" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -25205,7 +25144,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F528} T\u1EF1 \u0111\u1EADp Heo \u0111\u1EA5t khi no (\u0111\u1EE7 7 ng\xE0y)" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -25215,7 +25154,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F6D2} T\u1EF1 mua Heo \u0111\u1EA5t m\u1EDBi khi chu\u1ED3ng tr\u1ED1ng" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -25225,7 +25164,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F3E6} T\u1EF1 g\u1EEDi S\u1ED5 ti\u1EBFt ki\u1EC7m D\xEC B\u1EA3y" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 Switch3,
@@ -25235,8 +25174,8 @@
                 }
               )
             ] }),
-            config2.autoSavings && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Gi\u1EEF ti\u1EC1n m\u1EB7t t\u1ED1i thi\u1EC3u:" }),
+            config2.autoSavings && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "Gi\u1EEF ti\u1EC1n m\u1EB7t t\u1ED1i thi\u1EC3u:" }),
               /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                 "input",
                 {
@@ -25246,7 +25185,7 @@
                   step: 5e4,
                   value: config2.savingsKeepGold,
                   onChange: (e) => updateField("savingsKeepGold", Number(e.target.value)),
-                  className: "w-20 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                  className: "w-20 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
                 }
               )
             ] }) })
@@ -25256,7 +25195,7 @@
       }
     };
     return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-emerald-950/40 light:bg-emerald-50 border border-emerald-500/30 px-3 py-2 text-emerald-300 light:text-emerald-900 shadow-sm", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-emerald-50 border border-emerald-200/80 px-3.5 py-2 text-emerald-900 shadow-xs", children: [
         /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F33E} Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c N\xF4ng Tr\u1EA1i" }),
         /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Switch3, { checked: isFarmAreaEnabled, onCheckedChange: handleToggleArea })
       ] }),
@@ -25267,17 +25206,17 @@
         return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
           "div",
           {
-            className: `rounded-xl border bg-slate-900/80 dark:bg-slate-900/80 light:bg-white transition-all shadow-sm ${isEnabled ? "border-slate-800 light:border-slate-200" : "border-slate-800/40 light:border-slate-200/50 opacity-60"}`,
+            className: `rounded-xl border bg-white shadow-xs transition-all shadow-sm ${isEnabled ? "border-slate-200" : "border-slate-200/60 opacity-60"}`,
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
                 "div",
                 {
-                  className: "flex items-center justify-between px-3 py-2 cursor-pointer select-none hover:bg-slate-800/40 light:hover:bg-slate-100 rounded-t-xl",
+                  className: "flex items-center justify-between px-3 py-2 cursor-pointer select-none hover:bg-slate-50 rounded-t-xl",
                   onClick: () => handleToggleCollapse(subId),
                   children: [
                     /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center gap-2", children: [
                       /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400", children: isCollapsed ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChevronRight, { className: "h-3.5 w-3.5" }) : /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChevronDown, { className: "h-3.5 w-3.5" }) }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "font-semibold text-xs text-slate-200 light:text-slate-800", children: meta?.name || subId })
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "font-semibold text-xs text-slate-800", children: meta?.name || subId })
                     ] }),
                     /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center gap-2", onClick: (e) => e.stopPropagation(), children: [
                       /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center gap-0.5", children: [
@@ -25287,7 +25226,7 @@
                             variant: "ghost",
                             size: "icon-xs",
                             disabled: idx === 0,
-                            className: "h-5 w-5 text-slate-400 hover:text-white",
+                            className: "h-5 w-5 text-slate-400 hover:text-slate-900",
                             onClick: () => handleMoveSub(idx, "up"),
                             children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChevronUp, { className: "h-3 w-3" })
                           }
@@ -25298,7 +25237,7 @@
                             variant: "ghost",
                             size: "icon-xs",
                             disabled: idx === config2.farmSubOrder.length - 1,
-                            className: "h-5 w-5 text-slate-400 hover:text-white",
+                            className: "h-5 w-5 text-slate-400 hover:text-slate-900",
                             onClick: () => handleMoveSub(idx, "down"),
                             children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChevronDown, { className: "h-3 w-3" })
                           }
@@ -25316,7 +25255,7 @@
                   ]
                 }
               ),
-              !isCollapsed && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "border-t border-slate-800/60 light:border-slate-200 p-3 bg-slate-950/40 light:bg-slate-50/50 rounded-b-xl", children: renderSubCardBody(subId) })
+              !isCollapsed && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "border-t border-slate-100 p-3 bg-slate-50/60 rounded-b-xl", children: renderSubCardBody(subId) })
             ]
           },
           subId
@@ -25344,15 +25283,15 @@
         [key]: value
       }));
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "space-y-2 text-xs", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-blue-950/40 light:bg-blue-50 border border-blue-500/30 px-3 py-2 text-blue-300 light:text-blue-900 shadow-sm", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "space-y-2.5 text-xs font-sans text-slate-800", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-blue-50 border border-blue-200/80 px-3.5 py-2 text-blue-900 shadow-xs", children: [
         /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F6F6} Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c B\u1EBFn \u0110\xF2" }),
         /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Switch3, { checked: isWharfAreaEnabled, onCheckedChange: handleToggleArea })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "rounded-xl border border-slate-800 dark:border-slate-800 light:border-slate-200 bg-slate-900/80 dark:bg-slate-900/80 light:bg-white p-3 space-y-2.5 shadow-sm", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "font-semibold text-xs text-slate-200 light:text-slate-800 border-b border-slate-800 light:border-slate-200 pb-1.5 flex items-center justify-between", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F3A3} V\u1ECB Tr\xED & Thao T\xE1c C\xE2u B\u1EBFn \u0110\xF2" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { className: "text-[11px] text-slate-400 light:text-slate-500 italic", children: "\u2728 T\u1EF1 nh\u1EADn di\u1EC7n phao ch\xECm h\u1EB3n m\u1EDBi gi\u1EADt v\xE0 t\u1EF1 gh\xECm c\u1EA7n ng\u01B0\u1EE3c h\u01B0\u1EDBng c\xE1 ch\u1EA1y." }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "rounded-xl border border-slate-200 bg-white p-3 space-y-2.5 shadow-xs", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "font-semibold text-xs text-slate-800 border-b border-slate-100 pb-1.5 flex items-center justify-between", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F3A3} V\u1ECB Tr\xED & Thao T\xE1c C\xE2u B\u1EBFn \u0110\xF2" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { className: "text-[11px] text-slate-500 italic", children: "\u2728 T\u1EF1 nh\u1EADn di\u1EC7n phao ch\xECm h\u1EB3n m\u1EDBi gi\u1EADt v\xE0 t\u1EF1 gh\xECm c\u1EA7n ng\u01B0\u1EE3c h\u01B0\u1EDBng c\xE1 ch\u1EA1y." }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F4CD} T\u1EF1 \u0111i b\u1ED9 ra v\u1ECB tr\xED ng\u1ED3i c\xE2u" }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
             Switch3,
@@ -25362,23 +25301,22 @@
             }
           )
         ] }),
-        config2.benAutoSpot && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "V\u1ECB tr\xED ng\u1ED3i c\xE2u:" }),
+        config2.benAutoSpot && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-600", children: "V\u1ECB tr\xED ng\u1ED3i c\xE2u:" }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
             "select",
             {
               value: config2.benSpot,
               onChange: (e) => updateField("benSpot", e.target.value),
-              className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+              className: "rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500",
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "dock", children: "\u{1F309} C\u1EA7u t\xE0u ch\xEDnh" }),
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "bamboo", children: "\u{1F38B} C\u1EA7u tre" }),
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "bank", children: "\u{1F33F} B\u1EDD s\xF4ng" })
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "bank", children: "\u{1F33F} B\u1EDD s\xF4ng" }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "dock", children: "\u{1F309} C\u1EA7u t\xE0u ch\xEDnh" })
               ]
             }
           )
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u2B50 T\u1EF1 b\u1EA5m Gi\u1EEF l\u1EA1i c\xE1 L\u1EA1 / C\u1EA7u v\u1ED3ng / Th\u1EA7n tho\u1EA1i" }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
             Switch3,
@@ -25389,9 +25327,9 @@
           )
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "rounded-xl border border-slate-800 dark:border-slate-800 light:border-slate-200 bg-slate-900/80 dark:bg-slate-900/80 light:bg-white p-3 space-y-2.5 shadow-sm", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "font-semibold text-xs text-slate-200 light:text-slate-800 border-b border-slate-800 light:border-slate-200 pb-1.5", children: "\u{1FAB1} M\u1ED3i C\xE2u, B\xE1n C\xE1 & H\u1ED3i S\u1EE9c B\u1EBFn \u0110\xF2" }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "rounded-xl border border-slate-200 bg-white p-3 space-y-2.5 shadow-xs", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "font-semibold text-xs text-slate-800 border-b border-slate-100 pb-1.5", children: "\u{1FAB1} M\u1ED3i C\xE2u, B\xE1n C\xE1 & H\u1ED3i S\u1EE9c B\u1EBFn \u0110\xF2" }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1FAB1} T\u1EF1 \u0111i mua m\u1ED3i Ch\xFA \u0110\u1EF1c khi h\u1EBFt m\u1ED3i" }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
             Switch3,
@@ -25401,24 +25339,24 @@
             }
           )
         ] }),
-        config2.benAutoBuyBait && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Lo\u1EA1i m\u1ED3i \u01B0u ti\xEAn:" }),
+        config2.benAutoBuyBait && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-600", children: "Lo\u1EA1i m\u1ED3i \u01B0u ti\xEAn:" }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
             "select",
             {
               value: config2.benPreferBait,
               onChange: (e) => updateField("benPreferBait", e.target.value),
-              className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+              className: "rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500",
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "moi60", children: "\u{1FAB1} Thau 60 m\u1ED3i (40 v\u1ECF s\xF2)" }),
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "moi150", children: "\u{1FAB1} Th\xF9ng 150 m\u1ED3i (90 v\u1ECF s\xF2)" }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "xinMoi", children: "\u{1F932} Xin 10 m\u1ED3i mi\u1EC5n ph\xED" }),
                 /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "moi20", children: "\u{1FAB1} H\u1ED9p 20 m\u1ED3i (15 v\u1ECF s\xF2)" }),
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "xinMoi", children: "\u{1F932} Xin 10 m\u1ED3i mi\u1EC5n ph\xED" })
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "moi60", children: "\u{1FAB1} Thau 60 m\u1ED3i (40 v\u1ECF s\xF2)" }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "moi150", children: "\u{1FAB1} Th\xF9ng 150 m\u1ED3i (90 v\u1ECF s\xF2)" })
               ]
             }
           )
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F41F} T\u1EF1 \u0111i b\xE1n c\xE1 t\u1EA1i V\u1EF1a Anh T\u01B0" }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
             Switch3,
@@ -25428,8 +25366,8 @@
             }
           )
         ] }),
-        config2.benAutoSell && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "B\xE1n khi gi\u1ECF c\xE1 \u0111\u1EA1t (con):" }),
+        config2.benAutoSell && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-600", children: "B\xE1n khi gi\u1ECF c\xE1 \u0111\u1EA1t (con):" }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
             "input",
             {
@@ -25438,11 +25376,11 @@
               max: 60,
               value: config2.benSellThreshold,
               onChange: (e) => updateField("benSellThreshold", Number(e.target.value)),
-              className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+              className: "w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
             }
           )
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F371} T\u1EF1 \u0103n h\u1ED3i S\u1EE9c c\xE2u (\u26A1) khi \u0111u\u1ED1i s\u1EE9c" }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
             Switch3,
@@ -25452,9 +25390,9 @@
             }
           )
         ] }),
-        config2.benAutoRecoverStamina && /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: [
+        config2.benAutoRecoverStamina && /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: [
           /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "H\u1ED3i khi S\u1EE9c (\u26A1) d\u01B0\u1EDBi:" }),
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-600", children: "H\u1ED3i khi S\u1EE9c (\u26A1) d\u01B0\u1EDBi:" }),
             /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
               "input",
               {
@@ -25464,30 +25402,30 @@
                 step: 5,
                 value: config2.benStaminaThreshold,
                 onChange: (e) => updateField("benStaminaThreshold", Number(e.target.value)),
-                className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                className: "w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
               }
             )
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "M\xF3n \u0103n Qu\xE1n D\xEC T\xE1m:" }),
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-600", children: "M\xF3n \u0103n Qu\xE1n D\xEC T\xE1m:" }),
             /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
               "select",
               {
                 value: config2.benPreferFood,
                 onChange: (e) => updateField("benPreferFood", e.target.value),
-                className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                className: "rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500",
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "comTam", children: "\u{1F35B} C\u01A1m t\u1EA5m (+60\u26A1 \xB7 28\u{1F41A})" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "lauMam", children: "\u{1F372} L\u1EA9u c\xE1 linh (+100\u26A1 \xB7 45\u{1F41A})" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "huTieu", children: "\u{1F35C} H\u1EE7 ti\u1EBFu (+40\u26A1 \xB7 20\u{1F41A})" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "banhMi", children: "\u{1F956} B\xE1nh m\xEC (+20\u26A1 \xB7 10\u{1F41A})" }),
                   /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "chaoCa", children: "\u{1F963} Ch\xE1o c\xE1 l\xF3c (+28\u26A1 \xB7 14\u{1F41A})" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "banhMi", children: "\u{1F956} B\xE1nh m\xEC (+20\u26A1 \xB7 10\u{1F41A})" })
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "huTieu", children: "\u{1F35C} H\u1EE7 ti\u1EBFu (+40\u26A1 \xB7 20\u{1F41A})" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "comTam", children: "\u{1F35B} C\u01A1m t\u1EA5m (+60\u26A1 \xB7 28\u{1F41A})" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "lauMam", children: "\u{1F372} L\u1EA9u c\xE1 linh (+100\u26A1 \xB7 45\u{1F41A})" })
                 ]
               }
             )
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F486} Ti\u1EC7m \xDAt M\u01B0\u1EDDi: G\u1ED9i \u0111\u1EA7u (+50\u26A1 \xB7 25\u{1F41A})" }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
             Switch3,
@@ -25497,7 +25435,7 @@
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F340} Xe tr\xE0 \u0111\xE1 Ch\u1ECB Th\u01A1m: U\u1ED1ng n\u01B0\u1EDBc May M\u1EAFn" }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
             Switch3,
@@ -25507,28 +25445,28 @@
             }
           )
         ] }),
-        config2.benAutoLuckDrink && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "N\u01B0\u1EDBc u\u1ED1ng Ch\u1ECB Th\u01A1m:" }),
+        config2.benAutoLuckDrink && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-600", children: "N\u01B0\u1EDBc u\u1ED1ng Ch\u1ECB Th\u01A1m:" }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
             "select",
             {
               value: config2.benPreferDrink,
               onChange: (e) => updateField("benPreferDrink", e.target.value),
-              className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+              className: "rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500",
               children: [
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "traDa", children: "\u{1F9CA} Tr\xE0 \u0111\xE1 (+8\u26A1 \xB7 3\u{1F41A})" }),
                 /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "nuocMia", children: "\u{1F964} N\u01B0\u1EDBc m\xEDa (+1 May m\u1EAFn \xB7 15\u{1F41A})" }),
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "rauMa", children: "\u{1F96C} N\u01B0\u1EDBc rau m\xE1 (+2 May m\u1EAFn \xB7 30\u{1F41A})" }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "rauMa", children: "\u{1F96C} N\u01B0\u1EDBc rau m\xE1 (+1 May m\u1EAFn \xB7 30\u{1F41A})" }),
                 /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "caPhe", children: "\u2615 C\xE0 ph\xEA \u0111en (+2 May m\u1EAFn \xB7 35\u{1F41A})" }),
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "duaTuoi", children: "\u{1F965} D\u1EEBa t\u01B0\u01A1i B\u1EBFn Tre (+3 May m\u1EAFn \xB7 80\u{1F41A})" }),
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "traDa", children: "\u{1F9CA} Tr\xE0 \u0111\xE1 (+8\u26A1 \xB7 3\u{1F41A})" })
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "duaTuoi", children: "\u{1F965} D\u1EEBa t\u01B0\u01A1i B\u1EBFn Tre (+3 May m\u1EAFn \xB7 80\u{1F41A})" })
               ]
             }
           )
         ] }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "rounded-xl border border-slate-800 dark:border-slate-800 light:border-slate-200 bg-slate-900/80 dark:bg-slate-900/80 light:bg-white p-3 space-y-2.5 shadow-sm", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "font-semibold text-xs text-slate-200 light:text-slate-800 border-b border-slate-800 light:border-slate-200 pb-1.5", children: "\u{1F3EE} Gi\u1EA3i Tr\xED & Ti\u1EC7n \xCDch B\u1EBFn \u0110\xF2" }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "rounded-xl border border-slate-200 bg-white p-3 space-y-2.5 shadow-xs", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "font-semibold text-xs text-slate-800 border-b border-slate-100 pb-1.5", children: "\u{1F3EE} Gi\u1EA3i Tr\xED & Ti\u1EC7n \xCDch B\u1EBFn \u0110\xF2" }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F3EE} L\u1ED3ng \u0111\xE8n C\xF4 B\u1EA3y: T\u1EF1 quay khi c\xF3 v\xE9" }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
             Switch3,
@@ -25538,7 +25476,7 @@
             }
           )
         ] }),
-        config2.benAutoLantern && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-400 light:text-slate-600", children: [
+        config2.benAutoLantern && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-600 cursor-pointer", children: [
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F39F}\uFE0F T\u1EF1 mua th\xEAm v\xE9 quay (600\u{1F41A}/v\xE9)" }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
             Switch3,
@@ -25549,7 +25487,7 @@
             }
           )
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F39F}\uFE0F \u0110\u1EA1i l\xFD v\xE9 s\u1ED1 B\u1EBFn \u0110\xF2: T\u1EF1 \u0111\u1ED5i th\u01B0\u1EDFng" }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
             Switch3,
@@ -25559,7 +25497,7 @@
             }
           )
         ] }),
-        config2.benAutoLotto && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-400 light:text-slate-600", children: [
+        config2.benAutoLotto && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-600 cursor-pointer", children: [
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F340} Mua 1 v\xE9 s\u1ED1 c\u1EA7u may m\u1ED7i ng\xE0y (10\u{1F41A})" }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
             Switch3,
@@ -25570,7 +25508,7 @@
             }
           )
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F3E7} C\xE2y ATM: \u0110\u1ED5i v\u1ECF s\xF2 ra ti\u1EC1n m\u1EB7t" }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
             Switch3,
@@ -25580,8 +25518,8 @@
             }
           )
         ] }),
-        config2.benAutoAtm && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "\u0110\u1ED5i khi v\u1ECF s\xF2 >=:" }),
+        config2.benAutoAtm && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-600", children: "\u0110\u1ED5i khi v\u1ECF s\xF2 >=:" }),
           /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
             "input",
             {
@@ -25591,7 +25529,7 @@
               step: 50,
               value: config2.benAtmThreshold,
               onChange: (e) => updateField("benAtmThreshold", Number(e.target.value)),
-              className: "w-16 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+              className: "w-16 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
             }
           )
         ] }) })
@@ -25618,15 +25556,15 @@
         [key]: value
       }));
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "space-y-2 text-xs", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-cyan-950/40 light:bg-cyan-50 border border-cyan-500/30 px-3 py-2 text-cyan-300 light:text-cyan-900 shadow-sm", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "space-y-2.5 text-xs font-sans text-slate-800", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-cyan-50 border border-cyan-200/80 px-3.5 py-2 text-cyan-900 shadow-xs", children: [
         /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F3D6}\uFE0F Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c Bi\u1EC3n" }),
         /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Switch3, { checked: isSeaAreaEnabled, onCheckedChange: handleToggleArea })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "rounded-xl border border-slate-800 dark:border-slate-800 light:border-slate-200 bg-slate-900/80 dark:bg-slate-900/80 light:bg-white p-3 space-y-2.5 shadow-sm", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "font-semibold text-xs text-slate-200 light:text-slate-800 border-b border-slate-800 light:border-slate-200 pb-1.5", children: "\u{1F30A} V\u1ECB Tr\xED & Thao T\xE1c C\xE2u \u1EDE Bi\u1EC3n" }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { className: "text-[11px] text-slate-400 light:text-slate-500 italic", children: "\u2728 T\u1EF1 nh\u1EADn bi\u1EBFt c\xE1 c\u1EAFn c\xE2u \u0111\u1EC3 gi\u1EADt, t\u1EF1 gh\xECm c\u1EA7n theo h\u01B0\u1EDBng c\xE1 v\xE0 c\u1EA5t c\xE1 v\xE0o gi\u1ECF." }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "rounded-xl border border-slate-200 bg-white p-3 space-y-2.5 shadow-xs", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "font-semibold text-xs text-slate-800 border-b border-slate-100 pb-1.5", children: "\u{1F30A} V\u1ECB Tr\xED & Thao T\xE1c C\xE2u \u1EDE Bi\u1EC3n" }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { className: "text-[11px] text-slate-500 italic", children: "\u2728 T\u1EF1 nh\u1EADn bi\u1EBFt c\xE1 c\u1EAFn c\xE2u \u0111\u1EC3 gi\u1EADt, t\u1EF1 gh\xECm c\u1EA7n theo h\u01B0\u1EDBng c\xE1 v\xE0 c\u1EA5t c\xE1 v\xE0o gi\u1ECF." }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
           /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: "\u{1F4CD} T\u1EF1 \u0111i b\u1ED9 ra v\u1ECB tr\xED ng\u1ED3i c\xE2u" }),
           /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
             Switch3,
@@ -25636,14 +25574,14 @@
             }
           )
         ] }),
-        config2.seaAutoSpot && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "V\u1ECB tr\xED c\xE2u \u1EDF Bi\u1EC3n:" }),
+        config2.seaAutoSpot && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "text-slate-600", children: "V\u1ECB tr\xED c\xE2u \u1EDF Bi\u1EC3n:" }),
           /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
             "select",
             {
               value: config2.seaSpot,
               onChange: (e) => updateField("seaSpot", e.target.value),
-              className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+              className: "rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500",
               children: [
                 /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "pier", children: "\u{1F309} C\u1EA7u t\xE0u (\u0110a d\u1EA1ng c\xE1c lo\u1EA1i c\xE1)" }),
                 /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "rocks", children: "\u{1FAA8} B\xE3i \u0111\xE1 (Nhi\u1EC1u c\xE1 hi\u1EBFm)" }),
@@ -25652,7 +25590,7 @@
             }
           )
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
           /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: "\u{1F4D6} T\u1EF1 nh\u1EADn th\u01B0\u1EDFng S\u1ED5 c\xE1 B\xE1ch khoa \xD4ng T\u01B0" }),
           /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
             Switch3,
@@ -25662,7 +25600,7 @@
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
           /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: "\u{1F359} T\u1EF1 \u0103n u\u1ED1ng h\u1ED3i ph\u1EE5c \u0110\xF3i Kh\xE1t khi c\xE2u Bi\u1EC3n" }),
           /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
             Switch3,
@@ -25673,9 +25611,9 @@
           )
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "rounded-xl border border-slate-800 dark:border-slate-800 light:border-slate-200 bg-slate-900/80 dark:bg-slate-900/80 light:bg-white p-3 space-y-2.5 shadow-sm", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "font-semibold text-xs text-slate-200 light:text-slate-800 border-b border-slate-800 light:border-slate-200 pb-1.5", children: "\u{1F6D6} Ch\xF2i \xD4ng T\u01B0 (Mua M\u1ED3i & B\xE1n C\xE1)" }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "rounded-xl border border-slate-200 bg-white p-3 space-y-2.5 shadow-xs", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "font-semibold text-xs text-slate-800 border-b border-slate-100 pb-1.5", children: "\u{1F6D6} Ch\xF2i \xD4ng T\u01B0 (Mua M\u1ED3i & B\xE1n C\xE1)" }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
           /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: "\u{1F990} T\u1EF1 mua m\u1ED3i c\xE2u khi h\u1EBFt m\u1ED3i" }),
           /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
             Switch3,
@@ -25685,15 +25623,15 @@
             }
           )
         ] }),
-        config2.seaAutoBuyBait && /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: [
+        config2.seaAutoBuyBait && /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: [
           /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Lo\u1EA1i m\u1ED3i \u01B0u ti\xEAn:" }),
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "text-slate-600", children: "Lo\u1EA1i m\u1ED3i \u01B0u ti\xEAn:" }),
             /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
               "select",
               {
                 value: config2.seaPreferBait,
                 onChange: (e) => updateField("seaPreferBait", e.target.value),
-                className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                className: "rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500",
                 children: [
                   /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "worm", children: "\u{1FAB1} M\u1ED3i Giun / Tr\xF9n (C\xE2u th\u01B0\u1EDDng)" }),
                   /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "shrimp", children: "\u{1F990} M\u1ED3i T\xF4m (C\xE2u c\xE1 hi\u1EBFm)" })
@@ -25702,7 +25640,7 @@
             )
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "S\u1ED1 g\xF3i mua m\u1ED7i l\u1EA7n:" }),
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "text-slate-600", children: "S\u1ED1 g\xF3i mua m\u1ED7i l\u1EA7n:" }),
             /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
               "input",
               {
@@ -25711,12 +25649,12 @@
                 max: 20,
                 value: config2.seaBaitPacks,
                 onChange: (e) => updateField("seaBaitPacks", Number(e.target.value)),
-                className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                className: "w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
               }
             )
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
           /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: "\u{1F41F} T\u1EF1 b\xE1n h\u1EA3i s\u1EA3n trong gi\u1ECF cho \xD4ng T\u01B0" }),
           /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
             Switch3,
@@ -25726,8 +25664,8 @@
             }
           )
         ] }),
-        config2.seaAutoSell && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "B\xE1n khi gi\u1ECF c\xF3 t\u1EEB (con):" }),
+        config2.seaAutoSell && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "text-slate-600", children: "B\xE1n khi gi\u1ECF c\xF3 t\u1EEB (con):" }),
           /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
             "input",
             {
@@ -25736,7 +25674,7 @@
               max: 30,
               value: config2.seaSellThreshold,
               onChange: (e) => updateField("seaSellThreshold", Number(e.target.value)),
-              className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+              className: "w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
             }
           )
         ] }) })
@@ -25757,15 +25695,15 @@
         }
       }));
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "space-y-2 text-xs", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-purple-950/40 light:bg-purple-50 border border-purple-500/30 px-3 py-2 text-purple-300 light:text-purple-900 shadow-sm", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "space-y-2.5 text-xs font-sans text-slate-800", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-purple-50 border border-purple-200/80 px-3.5 py-2 text-purple-900 shadow-xs", children: [
         /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F3D9}\uFE0F Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c Th\xE0nh Ph\u1ED1" }),
         /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Switch3, { checked: isCityAreaEnabled, onCheckedChange: handleToggleArea })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex flex-col items-center justify-center rounded-xl border border-slate-800 dark:border-slate-800 light:border-slate-200 bg-slate-900/60 dark:bg-slate-900/60 light:bg-white p-6 text-center space-y-2.5 shadow-sm", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "flex h-11 w-11 items-center justify-center rounded-2xl bg-purple-500/10 text-purple-400 border border-purple-500/20 shadow-sm", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Construction, { className: "h-6 w-6" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "font-bold text-xs text-slate-100 light:text-slate-900", children: "Khu V\u1EF1c Th\xE0nh Ph\u1ED1 & H\u1ED9i Ch\u1EE3 X\xF3m Vui" }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { className: "text-[11px] text-slate-400 light:text-slate-600 max-w-[270px] leading-relaxed", children: "T\xEDnh n\u0103ng t\u1EF1 \u0111\u1ED9ng cho Khu v\u1EF1c Th\xE0nh Ph\u1ED1 & H\u1ED9i Ch\u1EE3 (Xe lam, Mini-game C\xE2u V\u1ECBt) \u0111ang \u0111\u01B0\u1EE3c ph\xE1t tri\u1EC3n v\xE0 s\u1EBD s\u1EDBm ra m\u1EAFt \u1EDF b\u1EA3n c\u1EADp nh\u1EADt ti\u1EBFp theo!" })
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex flex-col items-center justify-center rounded-xl border border-slate-200 bg-white p-6 text-center space-y-2.5 shadow-xs", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "flex h-11 w-11 items-center justify-center rounded-2xl bg-purple-50 text-purple-600 border border-purple-200/80 shadow-xs", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Construction, { className: "h-6 w-6" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "font-bold text-xs text-slate-900", children: "Khu V\u1EF1c Th\xE0nh Ph\u1ED1 & H\u1ED9i Ch\u1EE3 X\xF3m Vui" }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { className: "text-[11px] text-slate-500 max-w-[270px] leading-relaxed", children: "T\xEDnh n\u0103ng t\u1EF1 \u0111\u1ED9ng cho Khu v\u1EF1c Th\xE0nh Ph\u1ED1 & H\u1ED9i Ch\u1EE3 (Xe lam, Mini-game C\xE2u V\u1ECBt) \u0111ang \u0111\u01B0\u1EE3c ph\xE1t tri\u1EC3n v\xE0 s\u1EBD s\u1EDBm ra m\u1EAFt \u1EDF b\u1EA3n c\u1EADp nh\u1EADt ti\u1EBFp theo!" })
       ] })
     ] });
   }
@@ -25980,38 +25918,45 @@
   function ReleaseChangelogView({ updateInfo, onClose }) {
     const hasUpdate = updateInfo.hasUpdate;
     const older = updateInfo.olderReleases || [];
-    return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex flex-col space-y-3 font-sans", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-slate-900/60 dark:bg-slate-900/60 light:bg-slate-100 p-3 border border-slate-700/50", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex flex-col space-y-3 font-sans text-slate-800", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-slate-50 p-3 border border-slate-200", children: [
         /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center gap-2.5", children: [
           /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
             "div",
             {
-              className: `flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${hasUpdate ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-blue-500/10 text-blue-400 border-blue-500/30"}`,
+              className: `flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${hasUpdate ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-blue-50 text-blue-600 border-blue-200"}`,
               children: hasUpdate ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Sparkles, { className: "h-5 w-5" }) : /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(CircleCheck, { className: "h-5 w-5" })
             }
           ),
           /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "text-xs font-bold text-slate-100 light:text-slate-900", children: hasUpdate ? "\u0110\xE3 C\xF3 Phi\xEAn B\u1EA3n M\u1EDBi!" : "B\u1EA3n \u0110ang D\xF9ng M\u1EDBi Nh\u1EA5t" }),
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "text-[11px] text-slate-400 font-mono", children: hasUpdate ? `Hi\u1EC7n t\u1EA1i: v${updateInfo.currentVersion} \u2794 M\u1EDBi nh\u1EA5t: v${updateInfo.latestVersion}` : `Phi\xEAn b\u1EA3n hi\u1EC7n t\u1EA1i v${updateInfo.currentVersion}` })
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "text-xs font-bold text-slate-900", children: hasUpdate ? "\u0110\xE3 C\xF3 Phi\xEAn B\u1EA3n M\u1EDBi!" : "B\u1EA3n \u0110ang D\xF9ng M\u1EDBi Nh\u1EA5t" }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "text-[11px] text-slate-500 font-mono", children: hasUpdate ? `v${updateInfo.currentVersion} \u2794 v${updateInfo.latestVersion}` : `Phi\xEAn b\u1EA3n hi\u1EC7n t\u1EA1i v${updateInfo.currentVersion}` })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Badge, { variant: hasUpdate ? "default" : "secondary", className: "text-[10px] uppercase font-bold", children: hasUpdate ? "UPDATE" : "LATEST" })
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+          Badge,
+          {
+            variant: hasUpdate ? "default" : "secondary",
+            className: `text-[10px] uppercase font-bold ${hasUpdate ? "bg-emerald-600 text-white" : "bg-slate-200 text-slate-700"}`,
+            children: hasUpdate ? "UPDATE" : "LATEST"
+          }
+        )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "rounded-xl border border-emerald-500/30 bg-emerald-950/20 light:bg-emerald-50/50 p-3 space-y-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between border-b border-emerald-500/20 pb-1.5", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "flex items-center gap-1.5", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("span", { className: "font-bold text-xs text-emerald-400 light:text-emerald-700", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "rounded-xl border border-emerald-200 bg-emerald-50/60 p-3 space-y-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between border-b border-emerald-200/60 pb-1.5", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "flex items-center gap-1.5", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("span", { className: "font-bold text-xs text-emerald-800", children: [
             "\u2728 ",
             updateInfo.releaseName || `Release v${updateInfo.latestVersion}`
           ] }) }),
-          updateInfo.publishedAt && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-[10px] text-slate-400", children: new Date(updateInfo.publishedAt).toLocaleDateString("vi-VN") })
+          updateInfo.publishedAt && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-[10px] text-slate-500", children: new Date(updateInfo.publishedAt).toLocaleDateString("vi-VN") })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "max-h-[140px] overflow-y-auto pr-1 text-[11px] text-slate-300 light:text-slate-700 whitespace-pre-wrap leading-relaxed font-sans", children: updateInfo.releaseNotes || "Kh\xF4ng c\xF3 nh\u1EADt k\xFD chi ti\u1EBFt cho b\u1EA3n ph\xE1t h\xE0nh n\xE0y." }),
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "max-h-[140px] overflow-y-auto pr-1 text-[11px] text-slate-700 whitespace-pre-wrap leading-relaxed font-sans", children: updateInfo.releaseNotes || "Kh\xF4ng c\xF3 nh\u1EADt k\xFD chi ti\u1EBFt cho b\u1EA3n ph\xE1t h\xE0nh n\xE0y." }),
         hasUpdate && updateInfo.downloadUrl && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "pt-1", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
           Button,
           {
             variant: "default",
             size: "sm",
-            className: "w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs h-8 shadow-md",
+            className: "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs h-8 shadow-xs",
             onClick: () => {
               if (updateInfo.downloadUrl) {
                 window.open(updateInfo.downloadUrl, "_blank");
@@ -26026,7 +25971,7 @@
         ) })
       ] }),
       older.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center gap-1 text-[11px] font-semibold text-slate-400 px-1 pt-1", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center gap-1 text-[11px] font-semibold text-slate-600 px-1 pt-1", children: [
           /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(RotateCcwClock, { className: "h-3.5 w-3.5" }),
           /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "L\u1ECBch s\u1EED c\xE1c phi\xEAn b\u1EA3n tr\u01B0\u1EDBc:" })
         ] }),
@@ -26034,21 +25979,21 @@
           AccordionItem3,
           {
             value: rel.tag || String(idx),
-            className: "rounded-lg border border-slate-800 bg-slate-900/40 px-2.5 py-0 text-xs",
+            className: "rounded-lg border border-slate-200 bg-white px-2.5 py-0 text-xs shadow-xs",
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(AccordionTrigger3, { className: "py-2 hover:no-underline text-xs text-slate-300 light:text-slate-800 font-medium", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center gap-2", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "rounded bg-slate-800 px-1.5 py-0.5 text-[10px] font-mono text-emerald-400", children: rel.tag }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(AccordionTrigger3, { className: "py-2 hover:no-underline text-xs text-slate-800 font-medium", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-mono text-emerald-700 font-bold border border-slate-200", children: rel.tag }),
                 /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "truncate max-w-[200px]", children: rel.name || rel.tag })
               ] }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(AccordionContent3, { className: "pb-2.5 pt-1 text-[11px] text-slate-400 whitespace-pre-wrap leading-relaxed border-t border-slate-800/60 mt-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(AccordionContent3, { className: "pb-2.5 pt-1 text-[11px] text-slate-600 whitespace-pre-wrap leading-relaxed border-t border-slate-100 mt-1", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { children: rel.body || "Kh\xF4ng c\xF3 ghi ch\xFA." }),
-                rel.htmlUrl && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "mt-2 pt-1 border-t border-slate-800/40", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
+                rel.htmlUrl && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "mt-2 pt-1 border-t border-slate-100", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
                   "a",
                   {
                     href: rel.htmlUrl,
                     target: "_blank",
                     rel: "noreferrer",
-                    className: "inline-flex items-center gap-1 text-[10px] text-emerald-400 hover:underline",
+                    className: "inline-flex items-center gap-1 text-[10px] text-emerald-700 hover:underline font-medium",
                     children: [
                       /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(ExternalLink, { className: "h-3 w-3" }),
                       "Xem tr\xEAn GitHub"
@@ -26066,7 +26011,7 @@
         {
           variant: "outline",
           size: "sm",
-          className: "w-full border-slate-700 text-xs",
+          className: "w-full border-slate-200 text-slate-700 hover:bg-slate-100 text-xs shadow-xs",
           onClick: onClose,
           children: "\u0110\xF3ng"
         }
@@ -26175,7 +26120,6 @@
     const [isMinimized, setIsMinimized] = (0, import_react5.useState)(false);
     const [isOrderDrawerOpen, setIsOrderDrawerOpen] = (0, import_react5.useState)(false);
     const [version, setVersion] = (0, import_react5.useState)("1.0.0");
-    const [theme, setTheme] = (0, import_react5.useState)("dark");
     const [isCheckingUpdate, setIsCheckingUpdate] = (0, import_react5.useState)(false);
     const [updateInfo, setUpdateInfo] = (0, import_react5.useState)(null);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = (0, import_react5.useState)(false);
@@ -26191,22 +26135,7 @@
         if (v) setVersion(v);
       } catch {
       }
-      try {
-        const savedTheme = localStorage.getItem("ntg_theme");
-        if (savedTheme === "light" || savedTheme === "dark") {
-          setTheme(savedTheme);
-        }
-      } catch {
-      }
     }, []);
-    const toggleTheme = () => {
-      const next = theme === "dark" ? "light" : "dark";
-      setTheme(next);
-      try {
-        localStorage.setItem("ntg_theme", next);
-      } catch {
-      }
-    };
     (0, import_react5.useEffect)(() => {
       const handleSnapUpdate = (e) => {
         setSnap(e.detail);
@@ -26246,7 +26175,7 @@
         if (!isDraggingRef.current) return;
         const newX = Math.min(
           Math.max(10, moveEvent.clientX - dragOffsetRef.current.x),
-          window.innerWidth - 380
+          window.innerWidth - 390
         );
         const newY = Math.min(
           Math.max(10, moveEvent.clientY - dragOffsetRef.current.y),
@@ -26289,14 +26218,12 @@
           transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
           pointerEvents: "auto"
         },
-        className: `fixed left-0 top-0 z-[2147483647] w-[380px] overflow-hidden rounded-2xl border border-slate-700/60 dark:border-slate-800/80 light:border-slate-300 shadow-2xl backdrop-blur-xl font-sans select-none transition-colors ${theme === "dark" ? "dark bg-slate-950/95 text-slate-100" : "light bg-white/95 text-slate-900"}`,
+        className: "fixed left-0 top-0 z-[2147483647] w-[385px] overflow-hidden rounded-2xl border border-slate-200/90 shadow-2xl bg-white/98 text-slate-800 backdrop-blur-xl font-sans select-none ring-1 ring-black/5",
         children: [
           /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
             HudHeader,
             {
               version,
-              theme,
-              onToggleTheme: toggleTheme,
               isMinimized,
               onToggleMinimize: () => setIsMinimized(!isMinimized),
               onHide: handleHide,
@@ -26319,19 +26246,47 @@
                 onToggleOrderDrawer: () => setIsOrderDrawerOpen(!isOrderDrawerOpen)
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "flex items-center gap-2 border-b border-slate-800/80 dark:border-slate-800/80 light:border-slate-200 bg-slate-950 dark:bg-slate-950 light:bg-slate-100/90 px-3 py-1.5 text-[11px] font-mono text-emerald-400 light:text-emerald-700", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("span", { className: "relative flex h-2 w-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "flex items-center gap-2 border-b border-slate-200/90 bg-emerald-50/80 px-3 py-1.5 text-[11px] font-mono text-emerald-800", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("span", { className: "relative flex h-2 w-2 shrink-0", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("span", { className: "absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" }),
-                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("span", { className: "relative inline-flex h-2 w-2 rounded-full bg-emerald-500" })
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("span", { className: "relative inline-flex h-2 w-2 rounded-full bg-emerald-600" })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("span", { className: "truncate", children: lastAction })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(Tabs3, { value: config2.activeTab, onValueChange: handleTabChange, className: "w-full p-2.5", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(TabsList3, { className: "grid w-full grid-cols-4 h-8 text-[11px] rounded-xl p-1 bg-slate-900/80 dark:bg-slate-900/80 light:bg-slate-200/80", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(TabsTrigger3, { value: "farm", className: "px-1 py-1 rounded-lg", children: "\u{1F33E} N\xF4ng tr\u1EA1i" }),
-                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(TabsTrigger3, { value: "benDo", className: "px-1 py-1 rounded-lg", children: "\u{1F6F6} B\u1EBFn \u0111\xF2" }),
-                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(TabsTrigger3, { value: "sea", className: "px-1 py-1 rounded-lg", children: "\u{1F3D6}\uFE0F Bi\u1EC3n" }),
-                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(TabsTrigger3, { value: "city", className: "px-1 py-1 rounded-lg", children: "\u{1F3D9}\uFE0F Ph\u1ED1 x\xE1" })
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(TabsList3, { className: "grid w-full grid-cols-4 h-8 text-[11px] rounded-xl p-1 bg-slate-100 border border-slate-200/80 text-slate-600", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+                  TabsTrigger3,
+                  {
+                    value: "farm",
+                    className: "px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium",
+                    children: "\u{1F33E} N\xF4ng tr\u1EA1i"
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+                  TabsTrigger3,
+                  {
+                    value: "benDo",
+                    className: "px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium",
+                    children: "\u{1F6F6} B\u1EBFn \u0111\xF2"
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+                  TabsTrigger3,
+                  {
+                    value: "sea",
+                    className: "px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium",
+                    children: "\u{1F3D6}\uFE0F Bi\u1EC3n"
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+                  TabsTrigger3,
+                  {
+                    value: "city",
+                    className: "px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium",
+                    children: "\u{1F3D9}\uFE0F Ph\u1ED1 x\xE1"
+                  }
+                )
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "mt-2.5 max-h-[380px] overflow-y-auto pr-1", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(TabsContent3, { value: "farm", className: "m-0", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(FarmTabContent, { config: config2, onUpdateConfig: handleUpdateConfig }) }),
@@ -26345,7 +26300,7 @@
             DialogContent3,
             {
               container: shadowRoot,
-              className: "max-w-[350px] bg-slate-900/98 dark:bg-slate-950/98 light:bg-white border-slate-800 light:border-slate-300 text-slate-100 light:text-slate-900 p-4 rounded-2xl shadow-2xl",
+              className: "max-w-[360px] bg-white border border-slate-200 text-slate-900 p-4 rounded-2xl shadow-2xl",
               children: updateInfo && /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
                 ReleaseChangelogView,
                 {
@@ -26362,7 +26317,7 @@
 
   // src/styles/tailwind.compiled.css
   var tailwind_compiled_default = `/*! tailwindcss v4.3.3 | MIT License | https://tailwindcss.com */
-@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-scale-x:1;--tw-scale-y:1;--tw-scale-z:1;--tw-rotate-x:initial;--tw-rotate-y:initial;--tw-rotate-z:initial;--tw-skew-x:initial;--tw-skew-y:initial;--tw-pan-x:initial;--tw-pan-y:initial;--tw-pinch-zoom:initial;--tw-space-y-reverse:0;--tw-space-x-reverse:0;--tw-divide-x-reverse:0;--tw-border-style:solid;--tw-divide-y-reverse:0;--tw-leading:initial;--tw-font-weight:initial;--tw-tracking:initial;--tw-ordinal:initial;--tw-slashed-zero:initial;--tw-numeric-figure:initial;--tw-numeric-spacing:initial;--tw-numeric-fraction:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid;--tw-blur:initial;--tw-brightness:initial;--tw-contrast:initial;--tw-grayscale:initial;--tw-hue-rotate:initial;--tw-invert:initial;--tw-opacity:initial;--tw-saturate:initial;--tw-sepia:initial;--tw-drop-shadow:initial;--tw-drop-shadow-color:initial;--tw-drop-shadow-alpha:100%;--tw-drop-shadow-size:initial;--tw-backdrop-blur:initial;--tw-backdrop-brightness:initial;--tw-backdrop-contrast:initial;--tw-backdrop-grayscale:initial;--tw-backdrop-hue-rotate:initial;--tw-backdrop-invert:initial;--tw-backdrop-opacity:initial;--tw-backdrop-saturate:initial;--tw-backdrop-sepia:initial;--tw-duration:initial;--tw-ease:initial;--tw-content:""}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-red-300:oklch(80.8% .114 19.571);--color-red-400:oklch(70.4% .191 22.216);--color-red-500:oklch(63.7% .237 25.331);--color-red-600:oklch(57.7% .245 27.325);--color-red-900:oklch(39.6% .141 25.723);--color-red-950:oklch(25.8% .092 26.042);--color-orange-300:oklch(83.7% .128 66.29);--color-amber-50:oklch(98.7% .022 95.277);--color-amber-300:oklch(87.9% .169 91.605);--color-amber-400:oklch(82.8% .189 84.429);--color-amber-500:oklch(76.9% .188 70.08);--color-amber-600:oklch(66.6% .179 58.318);--color-amber-950:oklch(27.9% .077 45.635);--color-yellow-400:oklch(85.2% .199 91.936);--color-emerald-300:oklch(84.5% .143 164.978);--color-emerald-400:oklch(76.5% .177 163.223);--color-emerald-500:oklch(69.6% .17 162.48);--color-emerald-600:oklch(59.6% .145 163.225);--color-emerald-700:oklch(50.8% .118 165.612);--color-emerald-950:oklch(26.2% .051 172.552);--color-cyan-300:oklch(86.5% .127 207.078);--color-cyan-500:oklch(71.5% .143 215.221);--color-cyan-950:oklch(30.2% .056 229.695);--color-blue-300:oklch(80.9% .105 251.813);--color-blue-400:oklch(70.7% .165 254.624);--color-blue-500:oklch(62.3% .214 259.815);--color-blue-600:oklch(54.6% .245 262.881);--color-blue-950:oklch(28.2% .091 267.935);--color-indigo-500:oklch(58.5% .233 277.117);--color-purple-300:oklch(82.7% .119 306.383);--color-purple-400:oklch(71.4% .203 305.504);--color-purple-500:oklch(62.7% .265 303.9);--color-purple-950:oklch(29.1% .149 302.717);--color-slate-50:oklch(98.4% .003 247.858);--color-slate-100:oklch(96.8% .007 247.896);--color-slate-200:oklch(92.9% .013 255.508);--color-slate-300:oklch(86.9% .022 252.894);--color-slate-400:oklch(70.4% .04 256.788);--color-slate-500:oklch(55.4% .046 257.417);--color-slate-600:oklch(44.6% .043 257.281);--color-slate-700:oklch(37.2% .044 257.287);--color-slate-800:oklch(27.9% .041 260.031);--color-slate-900:oklch(20.8% .042 265.755);--color-slate-950:oklch(12.9% .042 264.695);--color-gray-100:oklch(96.7% .003 264.542);--color-gray-200:oklch(92.8% .006 264.531);--color-gray-600:oklch(44.6% .03 256.802);--color-gray-900:oklch(21% .034 264.665);--color-zinc-100:oklch(96.7% .001 286.375);--color-zinc-200:oklch(92% .004 286.32);--color-zinc-700:oklch(37% .013 285.805);--color-zinc-900:oklch(21% .006 285.885);--color-zinc-950:oklch(14.1% .005 285.823);--color-black:#000;--color-white:#fff;--spacing:.25rem;--container-lg:32rem;--container-4xl:56rem;--container-5xl:64rem;--container-7xl:80rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-base:1rem;--text-base--line-height:calc(1.5 / 1);--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--text-4xl:2.25rem;--text-4xl--line-height:calc(2.5 / 2.25);--text-5xl:3rem;--text-5xl--line-height:1;--text-6xl:3.75rem;--text-6xl--line-height:1;--text-7xl:4.5rem;--text-7xl--line-height:1;--font-weight-normal:400;--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--tracking-tighter:-.05em;--tracking-tight:-.025em;--tracking-wide:.025em;--tracking-wider:.05em;--leading-relaxed:1.625;--radius-xs:.125rem;--ease-in:cubic-bezier(.4, 0, 1, 1);--ease-out:cubic-bezier(0, 0, .2, 1);--ease-in-out:cubic-bezier(.4, 0, .2, 1);--animate-spin:spin 1s linear infinite;--animate-ping:ping 1s cubic-bezier(0, 0, .2, 1) infinite;--animate-pulse:pulse 2s cubic-bezier(.4, 0, .6, 1) infinite;--animate-bounce:bounce 1s infinite;--blur-xs:4px;--blur-md:12px;--blur-xl:24px;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono);--color-primary:var(--primary)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.\\@container\\/card{container:card/inline-size}.\\@container\\/card-header{container:card-header/inline-size}.\\@container{container-type:inline-size}.pointer-events-none{pointer-events:none}.collapse{visibility:collapse}.invisible{visibility:hidden}.visible{visibility:visible}.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.not-sr-only{clip-path:none;white-space:normal;width:auto;height:auto;margin:0;padding:0;position:static;overflow:visible}.absolute{position:absolute}.fixed{position:fixed}.relative{position:relative}.static{position:static}.sticky{position:sticky}.-inset-1{inset:calc(var(--spacing) * -1)}.inset-0{inset:0}.-top-0{top:0}.-top-0\\.5{top:calc(var(--spacing) * -.5)}.top-0{top:0}.top-3{top:calc(var(--spacing) * 3)}.top-4{top:calc(var(--spacing) * 4)}.top-\\[50\\%\\]{top:50%}.-right-0{right:0}.-right-0\\.5{right:calc(var(--spacing) * -.5)}.right-3{right:calc(var(--spacing) * 3)}.right-4{right:calc(var(--spacing) * 4)}.left-0{left:0}.left-\\[50\\%\\]{left:50%}.isolate{isolation:isolate}.isolation-auto{isolation:auto}.z-10{z-index:10}.z-50{z-index:50}.z-\\[60\\]{z-index:60}.z-\\[2147483647\\]{z-index:2147483647}.col-start-2{grid-column-start:2}.row-span-2{grid-row:span 2/span 2}.row-start-1{grid-row-start:1}.\\!container{width:100%!important}@media (min-width:40rem){.\\!container{max-width:40rem!important}}@media (min-width:48rem){.\\!container{max-width:48rem!important}}@media (min-width:64rem){.\\!container{max-width:64rem!important}}@media (min-width:80rem){.\\!container{max-width:80rem!important}}@media (min-width:96rem){.\\!container{max-width:96rem!important}}.container{width:100%}@media (min-width:40rem){.container{max-width:40rem}}@media (min-width:48rem){.container{max-width:48rem}}@media (min-width:64rem){.container{max-width:64rem}}@media (min-width:80rem){.container{max-width:80rem}}@media (min-width:96rem){.container{max-width:96rem}}.m-0{margin:0}.mx-auto{margin-inline:auto}.my-2{margin-block:calc(var(--spacing) * 2)}.mt-1{margin-top:var(--spacing)}.mt-1\\.5{margin-top:calc(var(--spacing) * 1.5)}.mt-2{margin-top:calc(var(--spacing) * 2)}.mt-2\\.5{margin-top:calc(var(--spacing) * 2.5)}.mr-0{margin-right:0}.mr-1{margin-right:var(--spacing)}.mr-1\\.5{margin-right:calc(var(--spacing) * 1.5)}.mb-1{margin-bottom:var(--spacing)}.ml-0{margin-left:0}.ml-0\\.5{margin-left:calc(var(--spacing) * .5)}.ml-2{margin-left:calc(var(--spacing) * 2)}.block{display:block}.contents{display:contents}.flex{display:flex}.flow-root{display:flow-root}.grid{display:grid}.hidden{display:none}.inline{display:inline}.inline-block{display:inline-block}.inline-flex{display:inline-flex}.inline-grid{display:inline-grid}.inline-table{display:inline-table}.list-item{display:list-item}.table{display:table}.table-caption{display:table-caption}.table-cell{display:table-cell}.table-column{display:table-column}.table-column-group{display:table-column-group}.table-footer-group{display:table-footer-group}.table-header-group{display:table-header-group}.table-row{display:table-row}.table-row-group{display:table-row-group}.size-4{width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.size-6{width:calc(var(--spacing) * 6);height:calc(var(--spacing) * 6)}.size-8{width:calc(var(--spacing) * 8);height:calc(var(--spacing) * 8)}.size-9{width:calc(var(--spacing) * 9);height:calc(var(--spacing) * 9)}.size-10{width:calc(var(--spacing) * 10);height:calc(var(--spacing) * 10)}.h-1{height:var(--spacing)}.h-2{height:calc(var(--spacing) * 2)}.h-2\\.5{height:calc(var(--spacing) * 2.5)}.h-3{height:calc(var(--spacing) * 3)}.h-3\\.5{height:calc(var(--spacing) * 3.5)}.h-4{height:calc(var(--spacing) * 4)}.h-4\\.5{height:calc(var(--spacing) * 4.5)}.h-5{height:calc(var(--spacing) * 5)}.h-6{height:calc(var(--spacing) * 6)}.h-7{height:calc(var(--spacing) * 7)}.h-8{height:calc(var(--spacing) * 8)}.h-8\\.5{height:calc(var(--spacing) * 8.5)}.h-9{height:calc(var(--spacing) * 9)}.h-10{height:calc(var(--spacing) * 10)}.h-11{height:calc(var(--spacing) * 11)}.h-20{height:calc(var(--spacing) * 20)}.h-\\[1-9\\]{height:1-9}.h-\\[100dvh\\]{height:100dvh}.h-\\[calc\\(100\\%-1px\\)\\]{height:calc(100% - 1px)}.h-full{height:100%}.h-screen{height:100vh}.max-h-\\[140px\\]{max-height:140px}.max-h-\\[380px\\]{max-height:380px}.min-h-\\[100dvh\\]{min-height:100dvh}.w-2{width:calc(var(--spacing) * 2)}.w-2\\.5{width:calc(var(--spacing) * 2.5)}.w-3{width:calc(var(--spacing) * 3)}.w-3\\.5{width:calc(var(--spacing) * 3.5)}.w-4{width:calc(var(--spacing) * 4)}.w-4\\.5{width:calc(var(--spacing) * 4.5)}.w-5{width:calc(var(--spacing) * 5)}.w-6{width:calc(var(--spacing) * 6)}.w-7{width:calc(var(--spacing) * 7)}.w-8{width:calc(var(--spacing) * 8)}.w-8\\.5{width:calc(var(--spacing) * 8.5)}.w-9{width:calc(var(--spacing) * 9)}.w-10{width:calc(var(--spacing) * 10)}.w-11{width:calc(var(--spacing) * 11)}.w-14{width:calc(var(--spacing) * 14)}.w-16{width:calc(var(--spacing) * 16)}.w-20{width:calc(var(--spacing) * 20)}.w-\\[360px\\]{width:360px}.w-\\[380px\\]{width:380px}.w-\\[calc\\(33\\%-1rem\\)\\]{width:calc(33% - 1rem)}.w-fit{width:fit-content}.w-full{width:100%}.max-w-4xl{max-width:var(--container-4xl)}.max-w-5xl{max-width:var(--container-5xl)}.max-w-7xl{max-width:var(--container-7xl)}.max-w-\\[65ch\\]{max-width:65ch}.max-w-\\[200px\\]{max-width:200px}.max-w-\\[270px\\]{max-width:270px}.max-w-\\[350px\\]{max-width:350px}.max-w-\\[1400px\\]{max-width:1400px}.max-w-\\[calc\\(100\\%-2rem\\)\\]{max-width:calc(100% - 2rem)}.max-w-lg{max-width:var(--container-lg)}.max-w-prose{max-width:65ch}.flex-1{flex:1}.shrink{flex-shrink:1}.shrink-0{flex-shrink:0}.grow{flex-grow:1}.border-collapse{border-collapse:collapse}.translate-x-\\[-50\\%\\]{--tw-translate-x:-50%;translate:var(--tw-translate-x) var(--tw-translate-y)}.-translate-y-\\[1px\\]{--tw-translate-y:calc(1px * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-y-0{--tw-translate-y:0px;translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-y-0\\.5{--tw-translate-y:calc(var(--spacing) * .5);translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-y-\\[-50\\%\\]{--tw-translate-y:-50%;translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-none{translate:none}.scale-3d{scale:var(--tw-scale-x) var(--tw-scale-y) var(--tw-scale-z)}.scale-\\[0\\.98\\]{scale:.98}.transform{transform:var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,)}.animate-bounce{animation:var(--animate-bounce)}.animate-ping{animation:var(--animate-ping)}.animate-pulse{animation:var(--animate-pulse)}.animate-spin{animation:var(--animate-spin)}.cursor-move{cursor:move}.cursor-pointer{cursor:pointer}.touch-pinch-zoom{--tw-pinch-zoom:pinch-zoom;touch-action:var(--tw-pan-x,) var(--tw-pan-y,) var(--tw-pinch-zoom,)}.touch-none{touch-action:none}.resize{resize:both}.auto-rows-min{grid-auto-rows:min-content}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.grid-cols-\\[auto_1fr\\]{grid-template-columns:auto 1fr}.grid-cols-\\[repeat\\(auto-fit\\,minmax\\(250px\\,1fr\\)\\)\\]{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}.grid-rows-2{grid-template-rows:repeat(2,minmax(0,1fr))}.grid-rows-\\[auto_auto\\]{grid-template-rows:auto auto}.flex-col{flex-direction:column}.flex-col-reverse{flex-direction:column-reverse}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.items-start{align-items:flex-start}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.justify-end{justify-content:flex-end}.gap-0{gap:0}.gap-0\\.5{gap:calc(var(--spacing) * .5)}.gap-1{gap:var(--spacing)}.gap-1\\.5{gap:calc(var(--spacing) * 1.5)}.gap-2{gap:calc(var(--spacing) * 2)}.gap-2\\.5{gap:calc(var(--spacing) * 2.5)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}.gap-6{gap:calc(var(--spacing) * 6)}:where(.space-y-1>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(var(--spacing) * var(--tw-space-y-reverse));margin-block-end:calc(var(--spacing) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-1\\.5>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 1.5) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 1.5) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-2>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-2\\.5>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 2.5) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 2.5) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-3>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-reverse>:not(:last-child)){--tw-space-y-reverse:1}:where(.space-x-reverse>:not(:last-child)){--tw-space-x-reverse:1}:where(.divide-x>:not(:last-child)){--tw-divide-x-reverse:0;border-inline-style:var(--tw-border-style);border-inline-start-width:calc(1px * var(--tw-divide-x-reverse));border-inline-end-width:calc(1px * calc(1 - var(--tw-divide-x-reverse)))}:where(.divide-y>:not(:last-child)){--tw-divide-y-reverse:0;border-bottom-style:var(--tw-border-style);border-top-style:var(--tw-border-style);border-top-width:calc(1px * var(--tw-divide-y-reverse));border-bottom-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)))}:where(.divide-y-reverse>:not(:last-child)){--tw-divide-y-reverse:1}.self-end{align-self:flex-end}.self-start{align-self:flex-start}.justify-self-end{justify-self:flex-end}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:calc(var(--radius) + 10px)}.rounded-full{border-radius:3.40282e38px}.rounded-lg{border-radius:var(--radius)}.rounded-md{border-radius:calc(var(--radius) - 2px)}.rounded-sm{border-radius:calc(var(--radius) - 4px)}.rounded-xl{border-radius:calc(var(--radius) + 6px)}.rounded-xs{border-radius:var(--radius-xs)}.rounded-s{border-start-start-radius:.25rem;border-end-start-radius:.25rem}.rounded-ss{border-start-start-radius:.25rem}.rounded-e{border-start-end-radius:.25rem;border-end-end-radius:.25rem}.rounded-se{border-start-end-radius:.25rem}.rounded-ee{border-end-end-radius:.25rem}.rounded-es{border-end-start-radius:.25rem}.rounded-t{border-top-left-radius:.25rem;border-top-right-radius:.25rem}.rounded-t-2xl{border-top-left-radius:calc(var(--radius) + 10px);border-top-right-radius:calc(var(--radius) + 10px)}.rounded-t-lg{border-top-left-radius:var(--radius);border-top-right-radius:var(--radius)}.rounded-t-xl{border-top-left-radius:calc(var(--radius) + 6px);border-top-right-radius:calc(var(--radius) + 6px)}.rounded-l{border-top-left-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-tl{border-top-left-radius:.25rem}.rounded-r{border-top-right-radius:.25rem;border-bottom-right-radius:.25rem}.rounded-tr{border-top-right-radius:.25rem}.rounded-b{border-bottom-right-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-b-lg{border-bottom-right-radius:var(--radius);border-bottom-left-radius:var(--radius)}.rounded-b-xl{border-bottom-right-radius:calc(var(--radius) + 6px);border-bottom-left-radius:calc(var(--radius) + 6px)}.rounded-br{border-bottom-right-radius:.25rem}.rounded-bl{border-bottom-left-radius:.25rem}.border{border-style:var(--tw-border-style);border-width:1px}.border-2{border-style:var(--tw-border-style);border-width:2px}.border-x{border-inline-style:var(--tw-border-style);border-inline-width:1px}.border-y{border-block-style:var(--tw-border-style);border-block-width:1px}.border-s{border-inline-start-style:var(--tw-border-style);border-inline-start-width:1px}.border-e{border-inline-end-style:var(--tw-border-style);border-inline-end-width:1px}.border-bs{border-block-start-style:var(--tw-border-style);border-block-start-width:1px}.border-be{border-block-end-style:var(--tw-border-style);border-block-end-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-l{border-left-style:var(--tw-border-style);border-left-width:1px}.border-l-2{border-left-style:var(--tw-border-style);border-left-width:2px}.border-amber-500{border-color:var(--color-amber-500)}.border-blue-500{border-color:var(--color-blue-500)}.border-blue-500\\/30{border-color:#3080ff4d}@supports (color:color-mix(in lab, red, red)){.border-blue-500\\/30{border-color:color-mix(in oklab, var(--color-blue-500) 30%, transparent)}}.border-border{border-color:var(--border)}.border-cyan-500{border-color:var(--color-cyan-500)}.border-cyan-500\\/30{border-color:#00b7d74d}@supports (color:color-mix(in lab, red, red)){.border-cyan-500\\/30{border-color:color-mix(in oklab, var(--color-cyan-500) 30%, transparent)}}.border-emerald-500{border-color:var(--color-emerald-500)}.border-emerald-500\\/20{border-color:#00bb7f33}@supports (color:color-mix(in lab, red, red)){.border-emerald-500\\/20{border-color:color-mix(in oklab, var(--color-emerald-500) 20%, transparent)}}.border-emerald-500\\/30{border-color:#00bb7f4d}@supports (color:color-mix(in lab, red, red)){.border-emerald-500\\/30{border-color:color-mix(in oklab, var(--color-emerald-500) 30%, transparent)}}.border-emerald-500\\/50{border-color:#00bb7f80}@supports (color:color-mix(in lab, red, red)){.border-emerald-500\\/50{border-color:color-mix(in oklab, var(--color-emerald-500) 50%, transparent)}}.border-primary{border-color:var(--primary)}.border-purple-500{border-color:var(--color-purple-500)}.border-purple-500\\/20{border-color:#ac4bff33}@supports (color:color-mix(in lab, red, red)){.border-purple-500\\/20{border-color:color-mix(in oklab, var(--color-purple-500) 20%, transparent)}}.border-purple-500\\/30{border-color:#ac4bff4d}@supports (color:color-mix(in lab, red, red)){.border-purple-500\\/30{border-color:color-mix(in oklab, var(--color-purple-500) 30%, transparent)}}.border-red-500{border-color:var(--color-red-500)}.border-red-900{border-color:var(--color-red-900)}.border-red-900\\/50{border-color:#82181a80}@supports (color:color-mix(in lab, red, red)){.border-red-900\\/50{border-color:color-mix(in oklab, var(--color-red-900) 50%, transparent)}}.border-slate-700{border-color:var(--color-slate-700)}.border-slate-700\\/50{border-color:#31415880}@supports (color:color-mix(in lab, red, red)){.border-slate-700\\/50{border-color:color-mix(in oklab, var(--color-slate-700) 50%, transparent)}}.border-slate-700\\/60{border-color:#31415899}@supports (color:color-mix(in lab, red, red)){.border-slate-700\\/60{border-color:color-mix(in oklab, var(--color-slate-700) 60%, transparent)}}.border-slate-800{border-color:var(--color-slate-800)}.border-slate-800\\/40{border-color:#1d293d66}@supports (color:color-mix(in lab, red, red)){.border-slate-800\\/40{border-color:color-mix(in oklab, var(--color-slate-800) 40%, transparent)}}.border-slate-800\\/60{border-color:#1d293d99}@supports (color:color-mix(in lab, red, red)){.border-slate-800\\/60{border-color:color-mix(in oklab, var(--color-slate-800) 60%, transparent)}}.border-slate-800\\/80{border-color:#1d293dcc}@supports (color:color-mix(in lab, red, red)){.border-slate-800\\/80{border-color:color-mix(in oklab, var(--color-slate-800) 80%, transparent)}}.border-slate-900{border-color:var(--color-slate-900)}.border-transparent{border-color:#0000}.border-white{border-color:var(--color-white)}.border-white\\/10{border-color:#ffffff1a}@supports (color:color-mix(in lab, red, red)){.border-white\\/10{border-color:color-mix(in oklab, var(--color-white) 10%, transparent)}}.border-zinc-200{border-color:var(--color-zinc-200)}.bg-amber-50{background-color:var(--color-amber-50)}.bg-amber-500{background-color:var(--color-amber-500)}.bg-amber-600{background-color:var(--color-amber-600)}.bg-background{background-color:var(--background)}.bg-black{background-color:var(--color-black)}.bg-black\\/20{background-color:#0003}@supports (color:color-mix(in lab, red, red)){.bg-black\\/20{background-color:color-mix(in oklab, var(--color-black) 20%, transparent)}}.bg-black\\/60{background-color:#0009}@supports (color:color-mix(in lab, red, red)){.bg-black\\/60{background-color:color-mix(in oklab, var(--color-black) 60%, transparent)}}.bg-blue-500{background-color:var(--color-blue-500)}.bg-blue-500\\/10{background-color:#3080ff1a}@supports (color:color-mix(in lab, red, red)){.bg-blue-500\\/10{background-color:color-mix(in oklab, var(--color-blue-500) 10%, transparent)}}.bg-blue-600{background-color:var(--color-blue-600)}.bg-blue-950{background-color:var(--color-blue-950)}.bg-blue-950\\/40{background-color:#16245666}@supports (color:color-mix(in lab, red, red)){.bg-blue-950\\/40{background-color:color-mix(in oklab, var(--color-blue-950) 40%, transparent)}}.bg-border{background-color:var(--border)}.bg-card{background-color:var(--card)}.bg-cyan-950{background-color:var(--color-cyan-950)}.bg-cyan-950\\/40{background-color:#05334566}@supports (color:color-mix(in lab, red, red)){.bg-cyan-950\\/40{background-color:color-mix(in oklab, var(--color-cyan-950) 40%, transparent)}}.bg-destructive{background-color:var(--destructive)}.bg-emerald-400{background-color:var(--color-emerald-400)}.bg-emerald-500{background-color:var(--color-emerald-500)}.bg-emerald-500\\/10{background-color:#00bb7f1a}@supports (color:color-mix(in lab, red, red)){.bg-emerald-500\\/10{background-color:color-mix(in oklab, var(--color-emerald-500) 10%, transparent)}}.bg-emerald-500\\/20{background-color:#00bb7f33}@supports (color:color-mix(in lab, red, red)){.bg-emerald-500\\/20{background-color:color-mix(in oklab, var(--color-emerald-500) 20%, transparent)}}.bg-emerald-600{background-color:var(--color-emerald-600)}.bg-emerald-700{background-color:var(--color-emerald-700)}.bg-emerald-950{background-color:var(--color-emerald-950)}.bg-emerald-950\\/20{background-color:#002c2233}@supports (color:color-mix(in lab, red, red)){.bg-emerald-950\\/20{background-color:color-mix(in oklab, var(--color-emerald-950) 20%, transparent)}}.bg-emerald-950\\/40{background-color:#002c2266}@supports (color:color-mix(in lab, red, red)){.bg-emerald-950\\/40{background-color:color-mix(in oklab, var(--color-emerald-950) 40%, transparent)}}.bg-gray-200{background-color:var(--color-gray-200)}.bg-muted{background-color:var(--muted)}.bg-primary{background-color:var(--primary)}.bg-purple-500{background-color:var(--color-purple-500)}.bg-purple-500\\/10{background-color:#ac4bff1a}@supports (color:color-mix(in lab, red, red)){.bg-purple-500\\/10{background-color:color-mix(in oklab, var(--color-purple-500) 10%, transparent)}}.bg-purple-950{background-color:var(--color-purple-950)}.bg-purple-950\\/40{background-color:#3c036666}@supports (color:color-mix(in lab, red, red)){.bg-purple-950\\/40{background-color:color-mix(in oklab, var(--color-purple-950) 40%, transparent)}}.bg-red-500{background-color:var(--color-red-500)}.bg-red-950{background-color:var(--color-red-950)}.bg-red-950\\/30{background-color:#4608094d}@supports (color:color-mix(in lab, red, red)){.bg-red-950\\/30{background-color:color-mix(in oklab, var(--color-red-950) 30%, transparent)}}.bg-secondary{background-color:var(--secondary)}.bg-slate-50{background-color:var(--color-slate-50)}.bg-slate-500{background-color:var(--color-slate-500)}.bg-slate-700{background-color:var(--color-slate-700)}.bg-slate-800{background-color:var(--color-slate-800)}.bg-slate-800\\/60{background-color:#1d293d99}@supports (color:color-mix(in lab, red, red)){.bg-slate-800\\/60{background-color:color-mix(in oklab, var(--color-slate-800) 60%, transparent)}}.bg-slate-900{background-color:var(--color-slate-900)}.bg-slate-900\\/40{background-color:#0f172b66}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/40{background-color:color-mix(in oklab, var(--color-slate-900) 40%, transparent)}}.bg-slate-900\\/60{background-color:#0f172b99}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/60{background-color:color-mix(in oklab, var(--color-slate-900) 60%, transparent)}}.bg-slate-900\\/80{background-color:#0f172bcc}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/80{background-color:color-mix(in oklab, var(--color-slate-900) 80%, transparent)}}.bg-slate-900\\/90{background-color:#0f172be6}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/90{background-color:color-mix(in oklab, var(--color-slate-900) 90%, transparent)}}.bg-slate-900\\/95{background-color:#0f172bf2}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/95{background-color:color-mix(in oklab, var(--color-slate-900) 95%, transparent)}}.bg-slate-900\\/98{background-color:#0f172bfa}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/98{background-color:color-mix(in oklab, var(--color-slate-900) 98%, transparent)}}.bg-slate-950{background-color:var(--color-slate-950)}.bg-slate-950\\/40{background-color:#02061866}@supports (color:color-mix(in lab, red, red)){.bg-slate-950\\/40{background-color:color-mix(in oklab, var(--color-slate-950) 40%, transparent)}}.bg-slate-950\\/80{background-color:#020618cc}@supports (color:color-mix(in lab, red, red)){.bg-slate-950\\/80{background-color:color-mix(in oklab, var(--color-slate-950) 80%, transparent)}}.bg-slate-950\\/95{background-color:#020618f2}@supports (color:color-mix(in lab, red, red)){.bg-slate-950\\/95{background-color:color-mix(in oklab, var(--color-slate-950) 95%, transparent)}}.bg-transparent{background-color:#0000}.bg-white{background-color:var(--color-white)}.bg-white\\/95{background-color:#fffffff2}@supports (color:color-mix(in lab, red, red)){.bg-white\\/95{background-color:color-mix(in oklab, var(--color-white) 95%, transparent)}}.bg-zinc-200{background-color:var(--color-zinc-200)}.bg-zinc-900{background-color:var(--color-zinc-900)}.bg-zinc-950{background-color:var(--color-zinc-950)}.bg-repeat{background-repeat:repeat}.mask-no-clip{-webkit-mask-clip:no-clip;mask-clip:no-clip}.mask-repeat{-webkit-mask-repeat:repeat;mask-repeat:repeat}.fill-current{fill:currentColor}.p-0{padding:0}.p-1{padding:var(--spacing)}.p-2{padding:calc(var(--spacing) * 2)}.p-2\\.5{padding:calc(var(--spacing) * 2.5)}.p-3{padding:calc(var(--spacing) * 3)}.p-4{padding:calc(var(--spacing) * 4)}.p-6{padding:calc(var(--spacing) * 6)}.p-\\[3px\\]{padding:3px}.px-1{padding-inline:var(--spacing)}.px-1\\.5{padding-inline:calc(var(--spacing) * 1.5)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-2\\.5{padding-inline:calc(var(--spacing) * 2.5)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-3\\.5{padding-inline:calc(var(--spacing) * 3.5)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-6{padding-inline:calc(var(--spacing) * 6)}.py-0{padding-block:0}.py-0\\.5{padding-block:calc(var(--spacing) * .5)}.py-1{padding-block:var(--spacing)}.py-1\\.5{padding-block:calc(var(--spacing) * 1.5)}.py-2{padding-block:calc(var(--spacing) * 2)}.py-2\\.5{padding-block:calc(var(--spacing) * 2.5)}.py-4{padding-block:calc(var(--spacing) * 4)}.py-6{padding-block:calc(var(--spacing) * 6)}.py-8{padding-block:calc(var(--spacing) * 8)}.py-16{padding-block:calc(var(--spacing) * 16)}.py-24{padding-block:calc(var(--spacing) * 24)}.py-32{padding-block:calc(var(--spacing) * 32)}.py-48{padding-block:calc(var(--spacing) * 48)}.pt-0{padding-top:0}.pt-0\\.5{padding-top:calc(var(--spacing) * .5)}.pt-1{padding-top:var(--spacing)}.pt-2{padding-top:calc(var(--spacing) * 2)}.pt-3{padding-top:calc(var(--spacing) * 3)}.pt-24{padding-top:calc(var(--spacing) * 24)}.pr-1{padding-right:var(--spacing)}.pb-0{padding-bottom:0}.pb-1{padding-bottom:var(--spacing)}.pb-1\\.5{padding-bottom:calc(var(--spacing) * 1.5)}.pb-2{padding-bottom:calc(var(--spacing) * 2)}.pb-2\\.5{padding-bottom:calc(var(--spacing) * 2.5)}.pb-3{padding-bottom:calc(var(--spacing) * 3)}.pb-4{padding-bottom:calc(var(--spacing) * 4)}.pl-2{padding-left:calc(var(--spacing) * 2)}.pl-2\\.5{padding-left:calc(var(--spacing) * 2.5)}.text-center{text-align:center}.text-left{text-align:left}.font-mono{font-family:var(--font-mono)}.font-sans{font-family:var(--font-sans)}.text-4xl{font-size:var(--text-4xl);line-height:var(--tw-leading,var(--text-4xl--line-height))}.text-6xl{font-size:var(--text-6xl);line-height:var(--tw-leading,var(--text-6xl--line-height))}.text-base{font-size:var(--text-base);line-height:var(--tw-leading,var(--text-base--line-height))}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.text-xs{font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}.text-\\[8px\\]{font-size:8px}.text-\\[10\\.5px\\]{font-size:10.5px}.text-\\[10px\\]{font-size:10px}.text-\\[11px\\]{font-size:11px}.leading-\\[1\\.1\\]{--tw-leading:1.1;line-height:1.1}.leading-\\[1\\],.leading-none{--tw-leading:1;line-height:1}.leading-relaxed{--tw-leading:var(--leading-relaxed);line-height:var(--leading-relaxed)}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.font-normal{--tw-font-weight:var(--font-weight-normal);font-weight:var(--font-weight-normal)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.tracking-\\[0\\.18em\\]{--tw-tracking:.18em;letter-spacing:.18em}.tracking-\\[0\\.22em\\]{--tw-tracking:.22em;letter-spacing:.22em}.tracking-tight{--tw-tracking:var(--tracking-tight);letter-spacing:var(--tracking-tight)}.tracking-tighter{--tw-tracking:var(--tracking-tighter);letter-spacing:var(--tracking-tighter)}.tracking-wide{--tw-tracking:var(--tracking-wide);letter-spacing:var(--tracking-wide)}.tracking-wider{--tw-tracking:var(--tracking-wider);letter-spacing:var(--tracking-wider)}.text-wrap{text-wrap:wrap}.text-clip{text-overflow:clip}.text-ellipsis{text-overflow:ellipsis}.whitespace-nowrap{white-space:nowrap}.whitespace-pre-wrap{white-space:pre-wrap}.text-amber-300{color:var(--color-amber-300)}.text-amber-400{color:var(--color-amber-400)}.text-amber-950{color:var(--color-amber-950)}.text-blue-300{color:var(--color-blue-300)}.text-blue-400{color:var(--color-blue-400)}.text-card-foreground{color:var(--card-foreground)}.text-cyan-300{color:var(--color-cyan-300)}.text-destructive-foreground{color:var(--destructive-foreground)}.text-emerald-300{color:var(--color-emerald-300)}.text-emerald-400{color:var(--color-emerald-400)}.text-emerald-950{color:var(--color-emerald-950)}.text-foreground,.text-foreground\\/60{color:var(--foreground)}@supports (color:color-mix(in lab, red, red)){.text-foreground\\/60{color:color-mix(in oklab, var(--foreground) 60%, transparent)}}.text-gray-600{color:var(--color-gray-600)}.text-gray-900{color:var(--color-gray-900)}.text-indigo-500{color:var(--color-indigo-500)}.text-muted-foreground{color:var(--muted-foreground)}.text-orange-300{color:var(--color-orange-300)}.text-primary{color:var(--primary)}.text-primary-foreground{color:var(--primary-foreground)}.text-purple-300{color:var(--color-purple-300)}.text-purple-400{color:var(--color-purple-400)}.text-red-300{color:var(--color-red-300)}.text-red-950{color:var(--color-red-950)}.text-secondary-foreground{color:var(--secondary-foreground)}.text-slate-100{color:var(--color-slate-100)}.text-slate-200{color:var(--color-slate-200)}.text-slate-300{color:var(--color-slate-300)}.text-slate-400{color:var(--color-slate-400)}.text-slate-500{color:var(--color-slate-500)}.text-slate-900{color:var(--color-slate-900)}.text-white{color:var(--color-white)}.text-yellow-400{color:var(--color-yellow-400)}.text-zinc-900{color:var(--color-zinc-900)}.capitalize{text-transform:capitalize}.lowercase{text-transform:lowercase}.normal-case{text-transform:none}.uppercase{text-transform:uppercase}.italic{font-style:italic}.not-italic{font-style:normal}.diagonal-fractions{--tw-numeric-fraction:diagonal-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.lining-nums{--tw-numeric-figure:lining-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.oldstyle-nums{--tw-numeric-figure:oldstyle-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.ordinal{--tw-ordinal:ordinal;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.proportional-nums{--tw-numeric-spacing:proportional-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.slashed-zero{--tw-slashed-zero:slashed-zero;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.stacked-fractions{--tw-numeric-fraction:stacked-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.tabular-nums{--tw-numeric-spacing:tabular-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.normal-nums{font-variant-numeric:normal}.line-through{text-decoration-line:line-through}.no-underline{text-decoration-line:none}.overline{text-decoration-line:overline}.underline{text-decoration-line:underline}.underline-offset-4{text-underline-offset:4px}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.subpixel-antialiased{-webkit-font-smoothing:auto;-moz-osx-font-smoothing:auto}.opacity-0{opacity:0}.opacity-60{opacity:.6}.opacity-70{opacity:.7}.opacity-75{opacity:.75}.shadow{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px var(--tw-shadow-color,#00000040);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-\\[inset_0_1px_0_rgba\\(255\\,255\\,255\\,0\\.1\\)\\]{--tw-shadow:inset 0 1px 0 var(--tw-shadow-color,#ffffff1a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px var(--tw-shadow-color,#0000001a), 0 4px 6px -4px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px var(--tw-shadow-color,#0000001a), 0 2px 4px -2px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px var(--tw-shadow-color,#0000001a), 0 8px 10px -6px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-xs{--tw-shadow:0 1px 2px 0 var(--tw-shadow-color,#0000000d);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-0{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.inset-ring{--tw-inset-ring-shadow:inset 0 0 0 1px var(--tw-inset-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-emerald-950{--tw-shadow-color:oklch(26.2% .051 172.552)}@supports (color:color-mix(in lab, red, red)){.shadow-emerald-950{--tw-shadow-color:color-mix(in oklab, var(--color-emerald-950) var(--tw-shadow-alpha), transparent)}}.shadow-emerald-950\\/20{--tw-shadow-color:#002c2233}@supports (color:color-mix(in lab, red, red)){.shadow-emerald-950\\/20{--tw-shadow-color:color-mix(in oklab, color-mix(in oklab, var(--color-emerald-950) 20%, transparent) var(--tw-shadow-alpha), transparent)}}.shadow-emerald-950\\/30{--tw-shadow-color:#002c224d}@supports (color:color-mix(in lab, red, red)){.shadow-emerald-950\\/30{--tw-shadow-color:color-mix(in oklab, color-mix(in oklab, var(--color-emerald-950) 30%, transparent) var(--tw-shadow-alpha), transparent)}}.ring-ring,.ring-ring\\/50{--tw-ring-color:var(--ring)}@supports (color:color-mix(in lab, red, red)){.ring-ring\\/50{--tw-ring-color:color-mix(in oklab, var(--ring) 50%, transparent)}}.ring-offset-background{--tw-ring-offset-color:var(--background)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.blur{--tw-blur:blur(8px);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.drop-shadow{--tw-drop-shadow-size:drop-shadow(0 1px 2px var(--tw-drop-shadow-color,#0000001a)) drop-shadow(0 1px 1px var(--tw-drop-shadow-color,#0000000f));--tw-drop-shadow:drop-shadow(0 1px 2px #0000001a) drop-shadow(0 1px 1px #0000000f);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.grayscale{--tw-grayscale:grayscale(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.invert{--tw-invert:invert(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.sepia{--tw-sepia:sepia(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.filter{filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-blur-md{--tw-backdrop-blur:blur(var(--blur-md));-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-blur-xl{--tw-backdrop-blur:blur(var(--blur-xl));-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-blur-xs{--tw-backdrop-blur:blur(var(--blur-xs));-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-grayscale{--tw-backdrop-grayscale:grayscale(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-invert{--tw-backdrop-invert:invert(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-sepia{--tw-backdrop-sepia:sepia(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-filter{-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.transition{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,opacity,box-shadow,transform,translate,scale,rotate,filter,-webkit-backdrop-filter,backdrop-filter,display,content-visibility,overlay,pointer-events;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-\\[color\\,box-shadow\\]{transition-property:color,box-shadow;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-opacity{transition-property:opacity;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-transform{transition-property:transform,translate,scale,rotate;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.duration-150{--tw-duration:.15s;transition-duration:.15s}.duration-200{--tw-duration:.2s;transition-duration:.2s}.ease-in{--tw-ease:var(--ease-in);transition-timing-function:var(--ease-in)}.ease-in-out{--tw-ease:var(--ease-in-out);transition-timing-function:var(--ease-in-out)}.ease-out{--tw-ease:var(--ease-out);transition-timing-function:var(--ease-out)}.outline-none{--tw-outline-style:none;outline-style:none}.select-none{-webkit-user-select:none;user-select:none}.\\[file\\:line\\]{file:line}:where(.divide-x-reverse>:not(:last-child)){--tw-divide-x-reverse:1}.ring-inset{--tw-ring-inset:inset}@media (hover:hover){.group-hover\\:opacity-100:is(:where(.group):hover *){opacity:1}}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:h-9:is(:where(.group\\/tabs)[data-orientation=horizontal] *){height:calc(var(--spacing) * 9)}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:h-fit:is(:where(.group\\/tabs)[data-orientation=vertical] *){height:fit-content}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:w-full:is(:where(.group\\/tabs)[data-orientation=vertical] *){width:100%}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:flex-col:is(:where(.group\\/tabs)[data-orientation=vertical] *){flex-direction:column}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:justify-start:is(:where(.group\\/tabs)[data-orientation=vertical] *){justify-content:flex-start}.group-data-\\[size\\=default\\]\\/switch\\:size-3\\.5:is(:where(.group\\/switch)[data-size=default] *){width:calc(var(--spacing) * 3.5);height:calc(var(--spacing) * 3.5)}.group-data-\\[size\\=sm\\]\\/switch\\:size-2\\.5:is(:where(.group\\/switch)[data-size=sm] *){width:calc(var(--spacing) * 2.5);height:calc(var(--spacing) * 2.5)}.group-data-\\[variant\\=line\\]\\/tabs-list\\:bg-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *){background-color:#0000}.after\\:absolute:after{content:var(--tw-content);position:absolute}.after\\:bg-foreground:after{content:var(--tw-content);background-color:var(--foreground)}.after\\:opacity-0:after{content:var(--tw-content);opacity:0}.after\\:transition-opacity:after{content:var(--tw-content);transition-property:opacity;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:after\\:inset-x-0:is(:where(.group\\/tabs)[data-orientation=horizontal] *):after{content:var(--tw-content);inset-inline:0}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:after\\:bottom-\\[-5px\\]:is(:where(.group\\/tabs)[data-orientation=horizontal] *):after{content:var(--tw-content);bottom:-5px}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:after\\:h-0\\.5:is(:where(.group\\/tabs)[data-orientation=horizontal] *):after{content:var(--tw-content);height:calc(var(--spacing) * .5)}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:after\\:inset-y-0:is(:where(.group\\/tabs)[data-orientation=vertical] *):after{content:var(--tw-content);inset-block:0}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:after\\:-right-1:is(:where(.group\\/tabs)[data-orientation=vertical] *):after{content:var(--tw-content);right:calc(var(--spacing) * -1)}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:after\\:w-0\\.5:is(:where(.group\\/tabs)[data-orientation=vertical] *):after{content:var(--tw-content);width:calc(var(--spacing) * .5)}.last\\:border-b-0:last-child{border-bottom-style:var(--tw-border-style);border-bottom-width:0}@media (hover:hover){.hover\\:scale-105:hover{--tw-scale-x:105%;--tw-scale-y:105%;--tw-scale-z:105%;scale:var(--tw-scale-x) var(--tw-scale-y)}.hover\\:bg-accent:hover{background-color:var(--accent)}.hover\\:bg-amber-600:hover{background-color:var(--color-amber-600)}.hover\\:bg-destructive\\/90:hover{background-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-destructive\\/90:hover{background-color:color-mix(in oklab, var(--destructive) 90%, transparent)}}.hover\\:bg-emerald-500:hover{background-color:var(--color-emerald-500)}.hover\\:bg-emerald-600:hover{background-color:var(--color-emerald-600)}.hover\\:bg-primary\\/90:hover{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-primary\\/90:hover{background-color:color-mix(in oklab, var(--primary) 90%, transparent)}}.hover\\:bg-red-600:hover{background-color:var(--color-red-600)}.hover\\:bg-secondary\\/80:hover{background-color:var(--secondary)}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-secondary\\/80:hover{background-color:color-mix(in oklab, var(--secondary) 80%, transparent)}}.hover\\:bg-slate-700:hover{background-color:var(--color-slate-700)}.hover\\:bg-slate-800:hover{background-color:var(--color-slate-800)}.hover\\:bg-slate-800\\/40:hover{background-color:#1d293d66}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-slate-800\\/40:hover{background-color:color-mix(in oklab, var(--color-slate-800) 40%, transparent)}}.hover\\:bg-slate-800\\/80:hover{background-color:#1d293dcc}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-slate-800\\/80:hover{background-color:color-mix(in oklab, var(--color-slate-800) 80%, transparent)}}.hover\\:text-accent-foreground:hover{color:var(--accent-foreground)}.hover\\:text-amber-400:hover{color:var(--color-amber-400)}.hover\\:text-foreground:hover{color:var(--foreground)}.hover\\:text-slate-100:hover{color:var(--color-slate-100)}.hover\\:text-white:hover{color:var(--color-white)}.hover\\:no-underline:hover{text-decoration-line:none}.hover\\:underline:hover{text-decoration-line:underline}.hover\\:opacity-100:hover{opacity:1}.hover\\:ring-4:hover{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}}.focus\\:ring-2:focus{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus\\:ring-ring:focus{--tw-ring-color:var(--ring)}.focus\\:ring-offset-2:focus{--tw-ring-offset-width:2px;--tw-ring-offset-shadow:var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color)}.focus\\:outline-hidden:focus{--tw-outline-style:none;outline-style:none}@media (forced-colors:active){.focus\\:outline-hidden:focus{outline-offset:2px;outline:2px solid #0000}}.focus-visible\\:border-ring:focus-visible{border-color:var(--ring)}.focus-visible\\:ring-2:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus-visible\\:ring-4:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus-visible\\:ring-\\[3px\\]:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus-visible\\:ring-destructive\\/20:focus-visible{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.focus-visible\\:ring-destructive\\/20:focus-visible{--tw-ring-color:color-mix(in oklab, var(--destructive) 20%, transparent)}}.focus-visible\\:ring-ring\\/50:focus-visible{--tw-ring-color:var(--ring)}@supports (color:color-mix(in lab, red, red)){.focus-visible\\:ring-ring\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--ring) 50%, transparent)}}.focus-visible\\:outline-hidden:focus-visible{--tw-outline-style:none;outline-style:none}@media (forced-colors:active){.focus-visible\\:outline-hidden:focus-visible{outline-offset:2px;outline:2px solid #0000}}.focus-visible\\:outline-1:focus-visible{outline-style:var(--tw-outline-style);outline-width:1px}.focus-visible\\:outline-ring:focus-visible{outline-color:var(--ring)}.active\\:scale-90:active{--tw-scale-x:90%;--tw-scale-y:90%;--tw-scale-z:90%;scale:var(--tw-scale-x) var(--tw-scale-y)}.active\\:scale-\\[0\\.98\\]:active{scale:.98}.disabled\\:pointer-events-none:disabled{pointer-events:none}.disabled\\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\\:opacity-50:disabled{opacity:.5}.has-data-\\[slot\\=card-action\\]\\:grid-cols-\\[1fr_auto\\]:has([data-slot=card-action]){grid-template-columns:1fr auto}.has-\\[\\>svg\\]\\:px-1\\.5:has(>svg){padding-inline:calc(var(--spacing) * 1.5)}.has-\\[\\>svg\\]\\:px-2\\.5:has(>svg){padding-inline:calc(var(--spacing) * 2.5)}.has-\\[\\>svg\\]\\:px-3:has(>svg){padding-inline:calc(var(--spacing) * 3)}.has-\\[\\>svg\\]\\:px-4:has(>svg){padding-inline:calc(var(--spacing) * 4)}.aria-invalid\\:border-destructive[aria-invalid=true]{border-color:var(--destructive)}.aria-invalid\\:ring-destructive\\/20[aria-invalid=true]{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.aria-invalid\\:ring-destructive\\/20[aria-invalid=true]{--tw-ring-color:color-mix(in oklab, var(--destructive) 20%, transparent)}}.data-\\[disabled\\]\\:opacity-50[data-disabled]{opacity:.5}.data-\\[orientation\\=horizontal\\]\\:h-1\\.5[data-orientation=horizontal]{height:calc(var(--spacing) * 1.5)}.data-\\[orientation\\=horizontal\\]\\:h-full[data-orientation=horizontal]{height:100%}.data-\\[orientation\\=horizontal\\]\\:h-px[data-orientation=horizontal]{height:1px}.data-\\[orientation\\=horizontal\\]\\:w-full[data-orientation=horizontal]{width:100%}.data-\\[orientation\\=horizontal\\]\\:flex-col[data-orientation=horizontal]{flex-direction:column}.data-\\[orientation\\=vertical\\]\\:h-full[data-orientation=vertical]{height:100%}.data-\\[orientation\\=vertical\\]\\:min-h-44[data-orientation=vertical]{min-height:calc(var(--spacing) * 44)}.data-\\[orientation\\=vertical\\]\\:w-1\\.5[data-orientation=vertical]{width:calc(var(--spacing) * 1.5)}.data-\\[orientation\\=vertical\\]\\:w-auto[data-orientation=vertical]{width:auto}.data-\\[orientation\\=vertical\\]\\:w-full[data-orientation=vertical]{width:100%}.data-\\[orientation\\=vertical\\]\\:w-px[data-orientation=vertical]{width:1px}.data-\\[orientation\\=vertical\\]\\:flex-col[data-orientation=vertical]{flex-direction:column}.data-\\[size\\=default\\]\\:h-5[data-size=default]{height:calc(var(--spacing) * 5)}.data-\\[size\\=default\\]\\:w-9[data-size=default]{width:calc(var(--spacing) * 9)}.data-\\[size\\=sm\\]\\:h-4[data-size=sm]{height:calc(var(--spacing) * 4)}.data-\\[size\\=sm\\]\\:w-7[data-size=sm]{width:calc(var(--spacing) * 7)}.data-\\[state\\=active\\]\\:bg-background[data-state=active]{background-color:var(--background)}.data-\\[state\\=active\\]\\:text-foreground[data-state=active]{color:var(--foreground)}.group-data-\\[variant\\=default\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:shadow-sm:is(:where(.group\\/tabs-list)[data-variant=default] *)[data-state=active]{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:bg-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{background-color:#0000}.group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:shadow-none:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{--tw-shadow:0 0 #0000;box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:after\\:opacity-100:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]:after{content:var(--tw-content);opacity:1}.data-\\[state\\=checked\\]\\:translate-x-4[data-state=checked]{--tw-translate-x:calc(var(--spacing) * 4);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=checked\\]\\:border-emerald-400[data-state=checked]{border-color:var(--color-emerald-400)}.data-\\[state\\=checked\\]\\:bg-emerald-500[data-state=checked]{background-color:var(--color-emerald-500)}.data-\\[state\\=checked\\]\\:bg-white[data-state=checked]{background-color:var(--color-white)}.data-\\[state\\=checked\\]\\:shadow-\\[0_0_8px_rgba\\(16\\,185\\,129\\,0\\.35\\)\\][data-state=checked]{--tw-shadow:0 0 8px var(--tw-shadow-color,#10b98159);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.data-\\[state\\=checked\\]\\:shadow-md[data-state=checked]{--tw-shadow:0 4px 6px -1px var(--tw-shadow-color,#0000001a), 0 2px 4px -2px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.data-\\[state\\=open\\]\\:bg-accent[data-state=open]{background-color:var(--accent)}.data-\\[state\\=open\\]\\:text-muted-foreground[data-state=open]{color:var(--muted-foreground)}.data-\\[state\\=unchecked\\]\\:translate-x-0\\.5[data-state=unchecked]{--tw-translate-x:calc(var(--spacing) * .5);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=unchecked\\]\\:border-slate-600[data-state=unchecked]{border-color:var(--color-slate-600)}.data-\\[state\\=unchecked\\]\\:bg-slate-300[data-state=unchecked]{background-color:var(--color-slate-300)}.data-\\[state\\=unchecked\\]\\:bg-slate-700\\/80[data-state=unchecked]{background-color:#314158cc}@supports (color:color-mix(in lab, red, red)){.data-\\[state\\=unchecked\\]\\:bg-slate-700\\/80[data-state=unchecked]{background-color:color-mix(in oklab, var(--color-slate-700) 80%, transparent)}}.data-\\[variant\\=line\\]\\:rounded-none[data-variant=line]{border-radius:0}@media (min-width:40rem){.sm\\:max-w-lg{max-width:var(--container-lg)}.sm\\:flex-row{flex-direction:row}.sm\\:justify-end{justify-content:flex-end}.sm\\:text-left{text-align:left}}@media (min-width:48rem){.md\\:w-1\\/2{width:50%}.md\\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\\:text-5xl{font-size:var(--text-5xl);line-height:var(--tw-leading,var(--text-5xl--line-height))}.md\\:text-6xl{font-size:var(--text-6xl);line-height:var(--tw-leading,var(--text-6xl--line-height))}.md\\:text-7xl{font-size:var(--text-7xl);line-height:var(--tw-leading,var(--text-7xl--line-height))}}@media (min-width:64rem){.lg\\:w-1\\/3{width:33.3333%}.lg\\:text-6xl{font-size:var(--text-6xl);line-height:var(--tw-leading,var(--text-6xl--line-height))}}@media (prefers-color-scheme:dark){.dark\\:border-input{border-color:var(--input)}.dark\\:border-slate-800{border-color:var(--color-slate-800)}.dark\\:border-slate-800\\/80{border-color:#1d293dcc}@supports (color:color-mix(in lab, red, red)){.dark\\:border-slate-800\\/80{border-color:color-mix(in oklab, var(--color-slate-800) 80%, transparent)}}.dark\\:border-zinc-700{border-color:var(--color-zinc-700)}.dark\\:bg-destructive\\/60{background-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-destructive\\/60{background-color:color-mix(in oklab, var(--destructive) 60%, transparent)}}.dark\\:bg-input\\/30{background-color:var(--input)}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-input\\/30{background-color:color-mix(in oklab, var(--input) 30%, transparent)}}.dark\\:bg-slate-800{background-color:var(--color-slate-800)}.dark\\:bg-slate-900\\/60{background-color:#0f172b99}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-slate-900\\/60{background-color:color-mix(in oklab, var(--color-slate-900) 60%, transparent)}}.dark\\:bg-slate-900\\/80{background-color:#0f172bcc}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-slate-900\\/80{background-color:color-mix(in oklab, var(--color-slate-900) 80%, transparent)}}.dark\\:bg-slate-900\\/95{background-color:#0f172bf2}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-slate-900\\/95{background-color:color-mix(in oklab, var(--color-slate-900) 95%, transparent)}}.dark\\:bg-slate-950{background-color:var(--color-slate-950)}.dark\\:bg-slate-950\\/80{background-color:#020618cc}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-slate-950\\/80{background-color:color-mix(in oklab, var(--color-slate-950) 80%, transparent)}}.dark\\:bg-slate-950\\/98{background-color:#020618fa}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-slate-950\\/98{background-color:color-mix(in oklab, var(--color-slate-950) 98%, transparent)}}.dark\\:bg-zinc-900{background-color:var(--color-zinc-900)}.dark\\:bg-zinc-950{background-color:var(--color-zinc-950)}.dark\\:text-gray-100{color:var(--color-gray-100)}.dark\\:text-muted-foreground{color:var(--muted-foreground)}.dark\\:text-zinc-100{color:var(--color-zinc-100)}@media (hover:hover){.dark\\:hover\\:bg-accent\\/50:hover{background-color:var(--accent)}@supports (color:color-mix(in lab, red, red)){.dark\\:hover\\:bg-accent\\/50:hover{background-color:color-mix(in oklab, var(--accent) 50%, transparent)}}.dark\\:hover\\:bg-input\\/50:hover{background-color:var(--input)}@supports (color:color-mix(in lab, red, red)){.dark\\:hover\\:bg-input\\/50:hover{background-color:color-mix(in oklab, var(--input) 50%, transparent)}}.dark\\:hover\\:text-foreground:hover{color:var(--foreground)}}.dark\\:focus-visible\\:ring-destructive\\/40:focus-visible{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.dark\\:focus-visible\\:ring-destructive\\/40:focus-visible{--tw-ring-color:color-mix(in oklab, var(--destructive) 40%, transparent)}}.dark\\:aria-invalid\\:ring-destructive\\/40[aria-invalid=true]{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.dark\\:aria-invalid\\:ring-destructive\\/40[aria-invalid=true]{--tw-ring-color:color-mix(in oklab, var(--destructive) 40%, transparent)}}.dark\\:data-\\[state\\=active\\]\\:border-input[data-state=active]{border-color:var(--input)}.dark\\:data-\\[state\\=active\\]\\:bg-input\\/30[data-state=active]{background-color:var(--input)}@supports (color:color-mix(in lab, red, red)){.dark\\:data-\\[state\\=active\\]\\:bg-input\\/30[data-state=active]{background-color:color-mix(in oklab, var(--input) 30%, transparent)}}.dark\\:data-\\[state\\=active\\]\\:text-foreground[data-state=active]{color:var(--foreground)}.dark\\:group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:border-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{border-color:#0000}.dark\\:group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:bg-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{background-color:#0000}.dark\\:data-\\[state\\=unchecked\\]\\:border-slate-700[data-state=unchecked]{border-color:var(--color-slate-700)}.dark\\:data-\\[state\\=unchecked\\]\\:bg-slate-400[data-state=unchecked]{background-color:var(--color-slate-400)}.dark\\:data-\\[state\\=unchecked\\]\\:bg-slate-800[data-state=unchecked]{background-color:var(--color-slate-800)}}.\\[\\&_svg\\]\\:pointer-events-none svg{pointer-events:none}.\\[\\&_svg\\]\\:shrink-0 svg{flex-shrink:0}.\\[\\&_svg\\:not\\(\\[class\\*\\=\\'size-\\'\\]\\)\\]\\:size-3 svg:not([class*=size-]){width:calc(var(--spacing) * 3);height:calc(var(--spacing) * 3)}.\\[\\&_svg\\:not\\(\\[class\\*\\=\\'size-\\'\\]\\)\\]\\:size-4 svg:not([class*=size-]){width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.\\[\\.border-b\\]\\:pb-6.border-b{padding-bottom:calc(var(--spacing) * 6)}.\\[\\.border-t\\]\\:pt-6.border-t{padding-top:calc(var(--spacing) * 6)}.\\[\\&\\>svg\\]\\:pointer-events-none>svg{pointer-events:none}.\\[\\&\\>svg\\]\\:size-3>svg{width:calc(var(--spacing) * 3);height:calc(var(--spacing) * 3)}.\\[\\&\\[data-state\\=open\\]\\>svg\\]\\:rotate-180[data-state=open]>svg{rotate:180deg}@media (hover:hover){a.\\[a\\&\\]\\:hover\\:bg-accent:hover{background-color:var(--accent)}a.\\[a\\&\\]\\:hover\\:bg-destructive\\/90:hover{background-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){a.\\[a\\&\\]\\:hover\\:bg-destructive\\/90:hover{background-color:color-mix(in oklab, var(--destructive) 90%, transparent)}}a.\\[a\\&\\]\\:hover\\:bg-primary\\/90:hover{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){a.\\[a\\&\\]\\:hover\\:bg-primary\\/90:hover{background-color:color-mix(in oklab, var(--primary) 90%, transparent)}}a.\\[a\\&\\]\\:hover\\:bg-secondary\\/90:hover{background-color:var(--secondary)}@supports (color:color-mix(in lab, red, red)){a.\\[a\\&\\]\\:hover\\:bg-secondary\\/90:hover{background-color:color-mix(in oklab, var(--secondary) 90%, transparent)}}a.\\[a\\&\\]\\:hover\\:text-accent-foreground:hover{color:var(--accent-foreground)}a.\\[a\\&\\]\\:hover\\:underline:hover{text-decoration-line:underline}}}:root{--background:#0c1222;--foreground:#f1f5f9;--card:#141c2e;--card-foreground:#f8fafc;--popover:#141c2e;--popover-foreground:#f8fafc;--primary:#10b981;--primary-foreground:#022c22;--secondary:#1e293b;--secondary-foreground:#f8fafc;--muted:#1a2436;--muted-foreground:#94a3b8;--accent:#253349;--accent-foreground:#f8fafc;--destructive:#ef4444;--destructive-foreground:#fff;--border:#28364d;--input:#1e2b40;--ring:#10b981;--radius:.875rem}.light{--background:#f8fafc;--foreground:#0f172a;--card:#fff;--card-foreground:#0f172a;--popover:#fff;--popover-foreground:#0f172a;--primary:#059669;--primary-foreground:#fff;--secondary:#f1f5f9;--secondary-foreground:#0f172a;--muted:#f1f5f9;--muted-foreground:#64748b;--accent:#e2e8f0;--accent-foreground:#0f172a;--destructive:#dc2626;--destructive-foreground:#fff;--border:#e2e8f0;--input:#e2e8f0;--ring:#059669}::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:0 0}::-webkit-scrollbar-thumb{background:#94a3b840;border-radius:9999px}::-webkit-scrollbar-thumb:hover{background:#94a3b873}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-scale-x{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-y{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-z{syntax:"*";inherits:false;initial-value:1}@property --tw-rotate-x{syntax:"*";inherits:false}@property --tw-rotate-y{syntax:"*";inherits:false}@property --tw-rotate-z{syntax:"*";inherits:false}@property --tw-skew-x{syntax:"*";inherits:false}@property --tw-skew-y{syntax:"*";inherits:false}@property --tw-pan-x{syntax:"*";inherits:false}@property --tw-pan-y{syntax:"*";inherits:false}@property --tw-pinch-zoom{syntax:"*";inherits:false}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-space-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-divide-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-divide-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-tracking{syntax:"*";inherits:false}@property --tw-ordinal{syntax:"*";inherits:false}@property --tw-slashed-zero{syntax:"*";inherits:false}@property --tw-numeric-figure{syntax:"*";inherits:false}@property --tw-numeric-spacing{syntax:"*";inherits:false}@property --tw-numeric-fraction{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-blur{syntax:"*";inherits:false}@property --tw-brightness{syntax:"*";inherits:false}@property --tw-contrast{syntax:"*";inherits:false}@property --tw-grayscale{syntax:"*";inherits:false}@property --tw-hue-rotate{syntax:"*";inherits:false}@property --tw-invert{syntax:"*";inherits:false}@property --tw-opacity{syntax:"*";inherits:false}@property --tw-saturate{syntax:"*";inherits:false}@property --tw-sepia{syntax:"*";inherits:false}@property --tw-drop-shadow{syntax:"*";inherits:false}@property --tw-drop-shadow-color{syntax:"*";inherits:false}@property --tw-drop-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-drop-shadow-size{syntax:"*";inherits:false}@property --tw-backdrop-blur{syntax:"*";inherits:false}@property --tw-backdrop-brightness{syntax:"*";inherits:false}@property --tw-backdrop-contrast{syntax:"*";inherits:false}@property --tw-backdrop-grayscale{syntax:"*";inherits:false}@property --tw-backdrop-hue-rotate{syntax:"*";inherits:false}@property --tw-backdrop-invert{syntax:"*";inherits:false}@property --tw-backdrop-opacity{syntax:"*";inherits:false}@property --tw-backdrop-saturate{syntax:"*";inherits:false}@property --tw-backdrop-sepia{syntax:"*";inherits:false}@property --tw-duration{syntax:"*";inherits:false}@property --tw-ease{syntax:"*";inherits:false}@property --tw-content{syntax:"*";inherits:false;initial-value:""}@keyframes spin{to{transform:rotate(360deg)}}@keyframes ping{75%,to{opacity:0;transform:scale(2)}}@keyframes pulse{50%{opacity:.5}}@keyframes bounce{0%,to{animation-timing-function:cubic-bezier(.8,0,1,1);transform:translateY(-25%)}50%{animation-timing-function:cubic-bezier(0,0,.2,1);transform:none}}`;
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-scale-x:1;--tw-scale-y:1;--tw-scale-z:1;--tw-rotate-x:initial;--tw-rotate-y:initial;--tw-rotate-z:initial;--tw-skew-x:initial;--tw-skew-y:initial;--tw-pan-x:initial;--tw-pan-y:initial;--tw-pinch-zoom:initial;--tw-space-y-reverse:0;--tw-space-x-reverse:0;--tw-divide-x-reverse:0;--tw-border-style:solid;--tw-divide-y-reverse:0;--tw-leading:initial;--tw-font-weight:initial;--tw-tracking:initial;--tw-ordinal:initial;--tw-slashed-zero:initial;--tw-numeric-figure:initial;--tw-numeric-spacing:initial;--tw-numeric-fraction:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid;--tw-blur:initial;--tw-brightness:initial;--tw-contrast:initial;--tw-grayscale:initial;--tw-hue-rotate:initial;--tw-invert:initial;--tw-opacity:initial;--tw-saturate:initial;--tw-sepia:initial;--tw-drop-shadow:initial;--tw-drop-shadow-color:initial;--tw-drop-shadow-alpha:100%;--tw-drop-shadow-size:initial;--tw-backdrop-blur:initial;--tw-backdrop-brightness:initial;--tw-backdrop-contrast:initial;--tw-backdrop-grayscale:initial;--tw-backdrop-hue-rotate:initial;--tw-backdrop-invert:initial;--tw-backdrop-opacity:initial;--tw-backdrop-saturate:initial;--tw-backdrop-sepia:initial;--tw-duration:initial;--tw-ease:initial;--tw-content:""}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-red-50:oklch(97.1% .013 17.38);--color-red-200:oklch(88.5% .062 18.334);--color-red-300:oklch(80.8% .114 19.571);--color-red-400:oklch(70.4% .191 22.216);--color-red-500:oklch(63.7% .237 25.331);--color-red-600:oklch(57.7% .245 27.325);--color-red-700:oklch(50.5% .213 27.518);--color-red-900:oklch(39.6% .141 25.723);--color-red-950:oklch(25.8% .092 26.042);--color-orange-300:oklch(83.7% .128 66.29);--color-orange-700:oklch(55.3% .195 38.402);--color-amber-50:oklch(98.7% .022 95.277);--color-amber-200:oklch(92.4% .12 95.746);--color-amber-300:oklch(87.9% .169 91.605);--color-amber-400:oklch(82.8% .189 84.429);--color-amber-500:oklch(76.9% .188 70.08);--color-amber-600:oklch(66.6% .179 58.318);--color-amber-700:oklch(55.5% .163 48.998);--color-amber-800:oklch(47.3% .137 46.201);--color-amber-950:oklch(27.9% .077 45.635);--color-yellow-400:oklch(85.2% .199 91.936);--color-emerald-50:oklch(97.9% .021 166.113);--color-emerald-200:oklch(90.5% .093 164.15);--color-emerald-300:oklch(84.5% .143 164.978);--color-emerald-400:oklch(76.5% .177 163.223);--color-emerald-500:oklch(69.6% .17 162.48);--color-emerald-600:oklch(59.6% .145 163.225);--color-emerald-700:oklch(50.8% .118 165.612);--color-emerald-800:oklch(43.2% .095 166.913);--color-emerald-900:oklch(37.8% .077 168.94);--color-emerald-950:oklch(26.2% .051 172.552);--color-cyan-50:oklch(98.4% .019 200.873);--color-cyan-200:oklch(91.7% .08 205.041);--color-cyan-300:oklch(86.5% .127 207.078);--color-cyan-500:oklch(71.5% .143 215.221);--color-cyan-900:oklch(39.8% .07 227.392);--color-cyan-950:oklch(30.2% .056 229.695);--color-sky-700:oklch(50% .134 242.749);--color-blue-50:oklch(97% .014 254.604);--color-blue-200:oklch(88.2% .059 254.128);--color-blue-300:oklch(80.9% .105 251.813);--color-blue-400:oklch(70.7% .165 254.624);--color-blue-500:oklch(62.3% .214 259.815);--color-blue-600:oklch(54.6% .245 262.881);--color-blue-900:oklch(37.9% .146 265.522);--color-blue-950:oklch(28.2% .091 267.935);--color-indigo-500:oklch(58.5% .233 277.117);--color-purple-50:oklch(97.7% .014 308.299);--color-purple-200:oklch(90.2% .063 306.703);--color-purple-300:oklch(82.7% .119 306.383);--color-purple-400:oklch(71.4% .203 305.504);--color-purple-500:oklch(62.7% .265 303.9);--color-purple-600:oklch(55.8% .288 302.321);--color-purple-900:oklch(38.1% .176 304.987);--color-purple-950:oklch(29.1% .149 302.717);--color-slate-50:oklch(98.4% .003 247.858);--color-slate-100:oklch(96.8% .007 247.896);--color-slate-200:oklch(92.9% .013 255.508);--color-slate-300:oklch(86.9% .022 252.894);--color-slate-400:oklch(70.4% .04 256.788);--color-slate-500:oklch(55.4% .046 257.417);--color-slate-600:oklch(44.6% .043 257.281);--color-slate-700:oklch(37.2% .044 257.287);--color-slate-800:oklch(27.9% .041 260.031);--color-slate-900:oklch(20.8% .042 265.755);--color-slate-950:oklch(12.9% .042 264.695);--color-gray-100:oklch(96.7% .003 264.542);--color-gray-200:oklch(92.8% .006 264.531);--color-gray-600:oklch(44.6% .03 256.802);--color-gray-900:oklch(21% .034 264.665);--color-zinc-100:oklch(96.7% .001 286.375);--color-zinc-200:oklch(92% .004 286.32);--color-zinc-700:oklch(37% .013 285.805);--color-zinc-900:oklch(21% .006 285.885);--color-zinc-950:oklch(14.1% .005 285.823);--color-black:#000;--color-white:#fff;--spacing:.25rem;--container-lg:32rem;--container-4xl:56rem;--container-5xl:64rem;--container-7xl:80rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-base:1rem;--text-base--line-height:calc(1.5 / 1);--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--text-4xl:2.25rem;--text-4xl--line-height:calc(2.5 / 2.25);--text-5xl:3rem;--text-5xl--line-height:1;--text-6xl:3.75rem;--text-6xl--line-height:1;--text-7xl:4.5rem;--text-7xl--line-height:1;--font-weight-normal:400;--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--tracking-tighter:-.05em;--tracking-tight:-.025em;--tracking-wide:.025em;--tracking-wider:.05em;--leading-relaxed:1.625;--radius-xs:.125rem;--ease-in:cubic-bezier(.4, 0, 1, 1);--ease-out:cubic-bezier(0, 0, .2, 1);--ease-in-out:cubic-bezier(.4, 0, .2, 1);--animate-spin:spin 1s linear infinite;--animate-ping:ping 1s cubic-bezier(0, 0, .2, 1) infinite;--animate-pulse:pulse 2s cubic-bezier(.4, 0, .6, 1) infinite;--animate-bounce:bounce 1s infinite;--blur-xs:4px;--blur-md:12px;--blur-xl:24px;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono);--color-primary:var(--primary)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.\\@container\\/card{container:card/inline-size}.\\@container\\/card-header{container:card-header/inline-size}.\\@container{container-type:inline-size}.pointer-events-none{pointer-events:none}.collapse{visibility:collapse}.invisible{visibility:hidden}.visible{visibility:visible}.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.not-sr-only{clip-path:none;white-space:normal;width:auto;height:auto;margin:0;padding:0;position:static;overflow:visible}.absolute{position:absolute}.fixed{position:fixed}.relative{position:relative}.static{position:static}.sticky{position:sticky}.-inset-1{inset:calc(var(--spacing) * -1)}.inset-0{inset:0}.-top-0{top:0}.-top-0\\.5{top:calc(var(--spacing) * -.5)}.top-0{top:0}.top-3{top:calc(var(--spacing) * 3)}.top-4{top:calc(var(--spacing) * 4)}.top-\\[50\\%\\]{top:50%}.-right-0{right:0}.-right-0\\.5{right:calc(var(--spacing) * -.5)}.right-3{right:calc(var(--spacing) * 3)}.right-4{right:calc(var(--spacing) * 4)}.left-0{left:0}.left-\\[50\\%\\]{left:50%}.isolate{isolation:isolate}.isolation-auto{isolation:auto}.z-10{z-index:10}.z-50{z-index:50}.z-\\[60\\]{z-index:60}.z-\\[2147483647\\]{z-index:2147483647}.col-start-2{grid-column-start:2}.row-span-2{grid-row:span 2/span 2}.row-start-1{grid-row-start:1}.\\!container{width:100%!important}@media (min-width:40rem){.\\!container{max-width:40rem!important}}@media (min-width:48rem){.\\!container{max-width:48rem!important}}@media (min-width:64rem){.\\!container{max-width:64rem!important}}@media (min-width:80rem){.\\!container{max-width:80rem!important}}@media (min-width:96rem){.\\!container{max-width:96rem!important}}.container{width:100%}@media (min-width:40rem){.container{max-width:40rem}}@media (min-width:48rem){.container{max-width:48rem}}@media (min-width:64rem){.container{max-width:64rem}}@media (min-width:80rem){.container{max-width:80rem}}@media (min-width:96rem){.container{max-width:96rem}}.m-0{margin:0}.mx-auto{margin-inline:auto}.my-2{margin-block:calc(var(--spacing) * 2)}.mt-1{margin-top:var(--spacing)}.mt-1\\.5{margin-top:calc(var(--spacing) * 1.5)}.mt-2{margin-top:calc(var(--spacing) * 2)}.mt-2\\.5{margin-top:calc(var(--spacing) * 2.5)}.mr-0{margin-right:0}.mr-1{margin-right:var(--spacing)}.mr-1\\.5{margin-right:calc(var(--spacing) * 1.5)}.mb-1{margin-bottom:var(--spacing)}.ml-0{margin-left:0}.ml-0\\.5{margin-left:calc(var(--spacing) * .5)}.ml-2{margin-left:calc(var(--spacing) * 2)}.block{display:block}.contents{display:contents}.flex{display:flex}.flow-root{display:flow-root}.grid{display:grid}.hidden{display:none}.inline{display:inline}.inline-block{display:inline-block}.inline-flex{display:inline-flex}.inline-grid{display:inline-grid}.inline-table{display:inline-table}.list-item{display:list-item}.table{display:table}.table-caption{display:table-caption}.table-cell{display:table-cell}.table-column{display:table-column}.table-column-group{display:table-column-group}.table-footer-group{display:table-footer-group}.table-header-group{display:table-header-group}.table-row{display:table-row}.table-row-group{display:table-row-group}.size-4{width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.size-6{width:calc(var(--spacing) * 6);height:calc(var(--spacing) * 6)}.size-8{width:calc(var(--spacing) * 8);height:calc(var(--spacing) * 8)}.size-9{width:calc(var(--spacing) * 9);height:calc(var(--spacing) * 9)}.size-10{width:calc(var(--spacing) * 10);height:calc(var(--spacing) * 10)}.h-1{height:var(--spacing)}.h-2{height:calc(var(--spacing) * 2)}.h-2\\.5{height:calc(var(--spacing) * 2.5)}.h-3{height:calc(var(--spacing) * 3)}.h-3\\.5{height:calc(var(--spacing) * 3.5)}.h-4{height:calc(var(--spacing) * 4)}.h-4\\.5{height:calc(var(--spacing) * 4.5)}.h-5{height:calc(var(--spacing) * 5)}.h-6{height:calc(var(--spacing) * 6)}.h-7{height:calc(var(--spacing) * 7)}.h-8{height:calc(var(--spacing) * 8)}.h-8\\.5{height:calc(var(--spacing) * 8.5)}.h-9{height:calc(var(--spacing) * 9)}.h-10{height:calc(var(--spacing) * 10)}.h-11{height:calc(var(--spacing) * 11)}.h-20{height:calc(var(--spacing) * 20)}.h-\\[1-9\\]{height:1-9}.h-\\[100dvh\\]{height:100dvh}.h-\\[calc\\(100\\%-1px\\)\\]{height:calc(100% - 1px)}.h-full{height:100%}.h-screen{height:100vh}.max-h-\\[140px\\]{max-height:140px}.max-h-\\[380px\\]{max-height:380px}.min-h-\\[100dvh\\]{min-height:100dvh}.w-2{width:calc(var(--spacing) * 2)}.w-2\\.5{width:calc(var(--spacing) * 2.5)}.w-3{width:calc(var(--spacing) * 3)}.w-3\\.5{width:calc(var(--spacing) * 3.5)}.w-4{width:calc(var(--spacing) * 4)}.w-4\\.5{width:calc(var(--spacing) * 4.5)}.w-5{width:calc(var(--spacing) * 5)}.w-6{width:calc(var(--spacing) * 6)}.w-7{width:calc(var(--spacing) * 7)}.w-8{width:calc(var(--spacing) * 8)}.w-8\\.5{width:calc(var(--spacing) * 8.5)}.w-9{width:calc(var(--spacing) * 9)}.w-10{width:calc(var(--spacing) * 10)}.w-11{width:calc(var(--spacing) * 11)}.w-14{width:calc(var(--spacing) * 14)}.w-16{width:calc(var(--spacing) * 16)}.w-20{width:calc(var(--spacing) * 20)}.w-\\[360px\\]{width:360px}.w-\\[380px\\]{width:380px}.w-\\[385px\\]{width:385px}.w-\\[calc\\(33\\%-1rem\\)\\]{width:calc(33% - 1rem)}.w-fit{width:fit-content}.w-full{width:100%}.max-w-4xl{max-width:var(--container-4xl)}.max-w-5xl{max-width:var(--container-5xl)}.max-w-7xl{max-width:var(--container-7xl)}.max-w-\\[65ch\\]{max-width:65ch}.max-w-\\[200px\\]{max-width:200px}.max-w-\\[270px\\]{max-width:270px}.max-w-\\[350px\\]{max-width:350px}.max-w-\\[360px\\]{max-width:360px}.max-w-\\[1400px\\]{max-width:1400px}.max-w-\\[calc\\(100\\%-2rem\\)\\]{max-width:calc(100% - 2rem)}.max-w-lg{max-width:var(--container-lg)}.max-w-prose{max-width:65ch}.flex-1{flex:1}.shrink{flex-shrink:1}.shrink-0{flex-shrink:0}.grow{flex-grow:1}.border-collapse{border-collapse:collapse}.translate-x-\\[-50\\%\\]{--tw-translate-x:-50%;translate:var(--tw-translate-x) var(--tw-translate-y)}.-translate-y-\\[1px\\]{--tw-translate-y:calc(1px * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-y-0{--tw-translate-y:0px;translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-y-0\\.5{--tw-translate-y:calc(var(--spacing) * .5);translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-y-\\[-50\\%\\]{--tw-translate-y:-50%;translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-none{translate:none}.scale-3d{scale:var(--tw-scale-x) var(--tw-scale-y) var(--tw-scale-z)}.scale-\\[0\\.98\\]{scale:.98}.transform{transform:var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,)}.animate-bounce{animation:var(--animate-bounce)}.animate-ping{animation:var(--animate-ping)}.animate-pulse{animation:var(--animate-pulse)}.animate-spin{animation:var(--animate-spin)}.cursor-move{cursor:move}.cursor-pointer{cursor:pointer}.touch-pinch-zoom{--tw-pinch-zoom:pinch-zoom;touch-action:var(--tw-pan-x,) var(--tw-pan-y,) var(--tw-pinch-zoom,)}.touch-none{touch-action:none}.resize{resize:both}.auto-rows-min{grid-auto-rows:min-content}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.grid-cols-\\[auto_1fr\\]{grid-template-columns:auto 1fr}.grid-cols-\\[repeat\\(auto-fit\\,minmax\\(250px\\,1fr\\)\\)\\]{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}.grid-rows-2{grid-template-rows:repeat(2,minmax(0,1fr))}.grid-rows-\\[auto_auto\\]{grid-template-rows:auto auto}.flex-col{flex-direction:column}.flex-col-reverse{flex-direction:column-reverse}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.items-start{align-items:flex-start}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.justify-end{justify-content:flex-end}.gap-0{gap:0}.gap-0\\.5{gap:calc(var(--spacing) * .5)}.gap-1{gap:var(--spacing)}.gap-1\\.5{gap:calc(var(--spacing) * 1.5)}.gap-2{gap:calc(var(--spacing) * 2)}.gap-2\\.5{gap:calc(var(--spacing) * 2.5)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}.gap-6{gap:calc(var(--spacing) * 6)}:where(.space-y-1>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(var(--spacing) * var(--tw-space-y-reverse));margin-block-end:calc(var(--spacing) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-1\\.5>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 1.5) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 1.5) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-2>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-2\\.5>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 2.5) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 2.5) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-3>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-reverse>:not(:last-child)){--tw-space-y-reverse:1}:where(.space-x-reverse>:not(:last-child)){--tw-space-x-reverse:1}:where(.divide-x>:not(:last-child)){--tw-divide-x-reverse:0;border-inline-style:var(--tw-border-style);border-inline-start-width:calc(1px * var(--tw-divide-x-reverse));border-inline-end-width:calc(1px * calc(1 - var(--tw-divide-x-reverse)))}:where(.divide-y>:not(:last-child)){--tw-divide-y-reverse:0;border-bottom-style:var(--tw-border-style);border-top-style:var(--tw-border-style);border-top-width:calc(1px * var(--tw-divide-y-reverse));border-bottom-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)))}:where(.divide-y-reverse>:not(:last-child)){--tw-divide-y-reverse:1}.self-end{align-self:flex-end}.self-start{align-self:flex-start}.justify-self-end{justify-self:flex-end}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:calc(var(--radius) + 10px)}.rounded-full{border-radius:3.40282e38px}.rounded-lg{border-radius:var(--radius)}.rounded-md{border-radius:calc(var(--radius) - 2px)}.rounded-sm{border-radius:calc(var(--radius) - 4px)}.rounded-xl{border-radius:calc(var(--radius) + 6px)}.rounded-xs{border-radius:var(--radius-xs)}.rounded-s{border-start-start-radius:.25rem;border-end-start-radius:.25rem}.rounded-ss{border-start-start-radius:.25rem}.rounded-e{border-start-end-radius:.25rem;border-end-end-radius:.25rem}.rounded-se{border-start-end-radius:.25rem}.rounded-ee{border-end-end-radius:.25rem}.rounded-es{border-end-start-radius:.25rem}.rounded-t{border-top-left-radius:.25rem;border-top-right-radius:.25rem}.rounded-t-2xl{border-top-left-radius:calc(var(--radius) + 10px);border-top-right-radius:calc(var(--radius) + 10px)}.rounded-t-lg{border-top-left-radius:var(--radius);border-top-right-radius:var(--radius)}.rounded-t-xl{border-top-left-radius:calc(var(--radius) + 6px);border-top-right-radius:calc(var(--radius) + 6px)}.rounded-l{border-top-left-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-tl{border-top-left-radius:.25rem}.rounded-r{border-top-right-radius:.25rem;border-bottom-right-radius:.25rem}.rounded-tr{border-top-right-radius:.25rem}.rounded-b{border-bottom-right-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-b-lg{border-bottom-right-radius:var(--radius);border-bottom-left-radius:var(--radius)}.rounded-b-xl{border-bottom-right-radius:calc(var(--radius) + 6px);border-bottom-left-radius:calc(var(--radius) + 6px)}.rounded-br{border-bottom-right-radius:.25rem}.rounded-bl{border-bottom-left-radius:.25rem}.border{border-style:var(--tw-border-style);border-width:1px}.border-2{border-style:var(--tw-border-style);border-width:2px}.border-x{border-inline-style:var(--tw-border-style);border-inline-width:1px}.border-y{border-block-style:var(--tw-border-style);border-block-width:1px}.border-s{border-inline-start-style:var(--tw-border-style);border-inline-start-width:1px}.border-e{border-inline-end-style:var(--tw-border-style);border-inline-end-width:1px}.border-bs{border-block-start-style:var(--tw-border-style);border-block-start-width:1px}.border-be{border-block-end-style:var(--tw-border-style);border-block-end-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-l{border-left-style:var(--tw-border-style);border-left-width:1px}.border-l-2{border-left-style:var(--tw-border-style);border-left-width:2px}.border-amber-200\\/80{border-color:#fee685cc}@supports (color:color-mix(in lab, red, red)){.border-amber-200\\/80{border-color:color-mix(in oklab, var(--color-amber-200) 80%, transparent)}}.border-amber-500{border-color:var(--color-amber-500)}.border-amber-500\\/40{border-color:#f99c0066}@supports (color:color-mix(in lab, red, red)){.border-amber-500\\/40{border-color:color-mix(in oklab, var(--color-amber-500) 40%, transparent)}}.border-blue-200{border-color:var(--color-blue-200)}.border-blue-200\\/80{border-color:#bedbffcc}@supports (color:color-mix(in lab, red, red)){.border-blue-200\\/80{border-color:color-mix(in oklab, var(--color-blue-200) 80%, transparent)}}.border-blue-500{border-color:var(--color-blue-500)}.border-blue-500\\/30{border-color:#3080ff4d}@supports (color:color-mix(in lab, red, red)){.border-blue-500\\/30{border-color:color-mix(in oklab, var(--color-blue-500) 30%, transparent)}}.border-border{border-color:var(--border)}.border-cyan-200\\/80{border-color:#a2f4fdcc}@supports (color:color-mix(in lab, red, red)){.border-cyan-200\\/80{border-color:color-mix(in oklab, var(--color-cyan-200) 80%, transparent)}}.border-cyan-500{border-color:var(--color-cyan-500)}.border-cyan-500\\/30{border-color:#00b7d74d}@supports (color:color-mix(in lab, red, red)){.border-cyan-500\\/30{border-color:color-mix(in oklab, var(--color-cyan-500) 30%, transparent)}}.border-emerald-200{border-color:var(--color-emerald-200)}.border-emerald-200\\/60{border-color:#a4f4cf99}@supports (color:color-mix(in lab, red, red)){.border-emerald-200\\/60{border-color:color-mix(in oklab, var(--color-emerald-200) 60%, transparent)}}.border-emerald-200\\/80{border-color:#a4f4cfcc}@supports (color:color-mix(in lab, red, red)){.border-emerald-200\\/80{border-color:color-mix(in oklab, var(--color-emerald-200) 80%, transparent)}}.border-emerald-300{border-color:var(--color-emerald-300)}.border-emerald-500{border-color:var(--color-emerald-500)}.border-emerald-500\\/20{border-color:#00bb7f33}@supports (color:color-mix(in lab, red, red)){.border-emerald-500\\/20{border-color:color-mix(in oklab, var(--color-emerald-500) 20%, transparent)}}.border-emerald-500\\/30{border-color:#00bb7f4d}@supports (color:color-mix(in lab, red, red)){.border-emerald-500\\/30{border-color:color-mix(in oklab, var(--color-emerald-500) 30%, transparent)}}.border-emerald-500\\/50{border-color:#00bb7f80}@supports (color:color-mix(in lab, red, red)){.border-emerald-500\\/50{border-color:color-mix(in oklab, var(--color-emerald-500) 50%, transparent)}}.border-emerald-600\\/40{border-color:#00976766}@supports (color:color-mix(in lab, red, red)){.border-emerald-600\\/40{border-color:color-mix(in oklab, var(--color-emerald-600) 40%, transparent)}}.border-primary{border-color:var(--primary)}.border-purple-200\\/80{border-color:#e9d5ffcc}@supports (color:color-mix(in lab, red, red)){.border-purple-200\\/80{border-color:color-mix(in oklab, var(--color-purple-200) 80%, transparent)}}.border-purple-500{border-color:var(--color-purple-500)}.border-purple-500\\/20{border-color:#ac4bff33}@supports (color:color-mix(in lab, red, red)){.border-purple-500\\/20{border-color:color-mix(in oklab, var(--color-purple-500) 20%, transparent)}}.border-purple-500\\/30{border-color:#ac4bff4d}@supports (color:color-mix(in lab, red, red)){.border-purple-500\\/30{border-color:color-mix(in oklab, var(--color-purple-500) 30%, transparent)}}.border-red-200{border-color:var(--color-red-200)}.border-red-500{border-color:var(--color-red-500)}.border-red-600\\/40{border-color:#e4001466}@supports (color:color-mix(in lab, red, red)){.border-red-600\\/40{border-color:color-mix(in oklab, var(--color-red-600) 40%, transparent)}}.border-red-700{border-color:var(--color-red-700)}.border-red-900{border-color:var(--color-red-900)}.border-red-900\\/50{border-color:#82181a80}@supports (color:color-mix(in lab, red, red)){.border-red-900\\/50{border-color:color-mix(in oklab, var(--color-red-900) 50%, transparent)}}.border-slate-100{border-color:var(--color-slate-100)}.border-slate-200{border-color:var(--color-slate-200)}.border-slate-200\\/60{border-color:#e2e8f099}@supports (color:color-mix(in lab, red, red)){.border-slate-200\\/60{border-color:color-mix(in oklab, var(--color-slate-200) 60%, transparent)}}.border-slate-200\\/80{border-color:#e2e8f0cc}@supports (color:color-mix(in lab, red, red)){.border-slate-200\\/80{border-color:color-mix(in oklab, var(--color-slate-200) 80%, transparent)}}.border-slate-200\\/90{border-color:#e2e8f0e6}@supports (color:color-mix(in lab, red, red)){.border-slate-200\\/90{border-color:color-mix(in oklab, var(--color-slate-200) 90%, transparent)}}.border-slate-700{border-color:var(--color-slate-700)}.border-slate-700\\/50{border-color:#31415880}@supports (color:color-mix(in lab, red, red)){.border-slate-700\\/50{border-color:color-mix(in oklab, var(--color-slate-700) 50%, transparent)}}.border-slate-700\\/60{border-color:#31415899}@supports (color:color-mix(in lab, red, red)){.border-slate-700\\/60{border-color:color-mix(in oklab, var(--color-slate-700) 60%, transparent)}}.border-slate-800{border-color:var(--color-slate-800)}.border-slate-800\\/40{border-color:#1d293d66}@supports (color:color-mix(in lab, red, red)){.border-slate-800\\/40{border-color:color-mix(in oklab, var(--color-slate-800) 40%, transparent)}}.border-slate-800\\/60{border-color:#1d293d99}@supports (color:color-mix(in lab, red, red)){.border-slate-800\\/60{border-color:color-mix(in oklab, var(--color-slate-800) 60%, transparent)}}.border-slate-800\\/80{border-color:#1d293dcc}@supports (color:color-mix(in lab, red, red)){.border-slate-800\\/80{border-color:color-mix(in oklab, var(--color-slate-800) 80%, transparent)}}.border-slate-900{border-color:var(--color-slate-900)}.border-transparent{border-color:#0000}.border-white{border-color:var(--color-white)}.border-white\\/10{border-color:#ffffff1a}@supports (color:color-mix(in lab, red, red)){.border-white\\/10{border-color:color-mix(in oklab, var(--color-white) 10%, transparent)}}.border-zinc-200{border-color:var(--color-zinc-200)}.bg-amber-50{background-color:var(--color-amber-50)}.bg-amber-400{background-color:var(--color-amber-400)}.bg-amber-500{background-color:var(--color-amber-500)}.bg-amber-600{background-color:var(--color-amber-600)}.bg-background{background-color:var(--background)}.bg-black{background-color:var(--color-black)}.bg-black\\/10{background-color:#0000001a}@supports (color:color-mix(in lab, red, red)){.bg-black\\/10{background-color:color-mix(in oklab, var(--color-black) 10%, transparent)}}.bg-black\\/20{background-color:#0003}@supports (color:color-mix(in lab, red, red)){.bg-black\\/20{background-color:color-mix(in oklab, var(--color-black) 20%, transparent)}}.bg-black\\/60{background-color:#0009}@supports (color:color-mix(in lab, red, red)){.bg-black\\/60{background-color:color-mix(in oklab, var(--color-black) 60%, transparent)}}.bg-blue-50{background-color:var(--color-blue-50)}.bg-blue-500{background-color:var(--color-blue-500)}.bg-blue-500\\/10{background-color:#3080ff1a}@supports (color:color-mix(in lab, red, red)){.bg-blue-500\\/10{background-color:color-mix(in oklab, var(--color-blue-500) 10%, transparent)}}.bg-blue-600{background-color:var(--color-blue-600)}.bg-blue-950{background-color:var(--color-blue-950)}.bg-blue-950\\/40{background-color:#16245666}@supports (color:color-mix(in lab, red, red)){.bg-blue-950\\/40{background-color:color-mix(in oklab, var(--color-blue-950) 40%, transparent)}}.bg-border{background-color:var(--border)}.bg-card{background-color:var(--card)}.bg-cyan-50{background-color:var(--color-cyan-50)}.bg-cyan-950{background-color:var(--color-cyan-950)}.bg-cyan-950\\/40{background-color:#05334566}@supports (color:color-mix(in lab, red, red)){.bg-cyan-950\\/40{background-color:color-mix(in oklab, var(--color-cyan-950) 40%, transparent)}}.bg-destructive{background-color:var(--destructive)}.bg-emerald-50{background-color:var(--color-emerald-50)}.bg-emerald-50\\/60{background-color:#ecfdf599}@supports (color:color-mix(in lab, red, red)){.bg-emerald-50\\/60{background-color:color-mix(in oklab, var(--color-emerald-50) 60%, transparent)}}.bg-emerald-50\\/80{background-color:#ecfdf5cc}@supports (color:color-mix(in lab, red, red)){.bg-emerald-50\\/80{background-color:color-mix(in oklab, var(--color-emerald-50) 80%, transparent)}}.bg-emerald-400{background-color:var(--color-emerald-400)}.bg-emerald-500{background-color:var(--color-emerald-500)}.bg-emerald-500\\/10{background-color:#00bb7f1a}@supports (color:color-mix(in lab, red, red)){.bg-emerald-500\\/10{background-color:color-mix(in oklab, var(--color-emerald-500) 10%, transparent)}}.bg-emerald-500\\/20{background-color:#00bb7f33}@supports (color:color-mix(in lab, red, red)){.bg-emerald-500\\/20{background-color:color-mix(in oklab, var(--color-emerald-500) 20%, transparent)}}.bg-emerald-600{background-color:var(--color-emerald-600)}.bg-emerald-700{background-color:var(--color-emerald-700)}.bg-emerald-950{background-color:var(--color-emerald-950)}.bg-emerald-950\\/20{background-color:#002c2233}@supports (color:color-mix(in lab, red, red)){.bg-emerald-950\\/20{background-color:color-mix(in oklab, var(--color-emerald-950) 20%, transparent)}}.bg-emerald-950\\/40{background-color:#002c2266}@supports (color:color-mix(in lab, red, red)){.bg-emerald-950\\/40{background-color:color-mix(in oklab, var(--color-emerald-950) 40%, transparent)}}.bg-gray-200{background-color:var(--color-gray-200)}.bg-muted{background-color:var(--muted)}.bg-primary{background-color:var(--primary)}.bg-purple-50{background-color:var(--color-purple-50)}.bg-purple-500{background-color:var(--color-purple-500)}.bg-purple-500\\/10{background-color:#ac4bff1a}@supports (color:color-mix(in lab, red, red)){.bg-purple-500\\/10{background-color:color-mix(in oklab, var(--color-purple-500) 10%, transparent)}}.bg-purple-950{background-color:var(--color-purple-950)}.bg-purple-950\\/40{background-color:#3c036666}@supports (color:color-mix(in lab, red, red)){.bg-purple-950\\/40{background-color:color-mix(in oklab, var(--color-purple-950) 40%, transparent)}}.bg-red-50{background-color:var(--color-red-50)}.bg-red-500{background-color:var(--color-red-500)}.bg-red-600{background-color:var(--color-red-600)}.bg-red-950{background-color:var(--color-red-950)}.bg-red-950\\/30{background-color:#4608094d}@supports (color:color-mix(in lab, red, red)){.bg-red-950\\/30{background-color:color-mix(in oklab, var(--color-red-950) 30%, transparent)}}.bg-secondary{background-color:var(--secondary)}.bg-slate-50{background-color:var(--color-slate-50)}.bg-slate-50\\/60{background-color:#f8fafc99}@supports (color:color-mix(in lab, red, red)){.bg-slate-50\\/60{background-color:color-mix(in oklab, var(--color-slate-50) 60%, transparent)}}.bg-slate-50\\/70{background-color:#f8fafcb3}@supports (color:color-mix(in lab, red, red)){.bg-slate-50\\/70{background-color:color-mix(in oklab, var(--color-slate-50) 70%, transparent)}}.bg-slate-50\\/90{background-color:#f8fafce6}@supports (color:color-mix(in lab, red, red)){.bg-slate-50\\/90{background-color:color-mix(in oklab, var(--color-slate-50) 90%, transparent)}}.bg-slate-100{background-color:var(--color-slate-100)}.bg-slate-200{background-color:var(--color-slate-200)}.bg-slate-200\\/60{background-color:#e2e8f099}@supports (color:color-mix(in lab, red, red)){.bg-slate-200\\/60{background-color:color-mix(in oklab, var(--color-slate-200) 60%, transparent)}}.bg-slate-300{background-color:var(--color-slate-300)}.bg-slate-500{background-color:var(--color-slate-500)}.bg-slate-700{background-color:var(--color-slate-700)}.bg-slate-800{background-color:var(--color-slate-800)}.bg-slate-800\\/60{background-color:#1d293d99}@supports (color:color-mix(in lab, red, red)){.bg-slate-800\\/60{background-color:color-mix(in oklab, var(--color-slate-800) 60%, transparent)}}.bg-slate-900{background-color:var(--color-slate-900)}.bg-slate-900\\/40{background-color:#0f172b66}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/40{background-color:color-mix(in oklab, var(--color-slate-900) 40%, transparent)}}.bg-slate-900\\/60{background-color:#0f172b99}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/60{background-color:color-mix(in oklab, var(--color-slate-900) 60%, transparent)}}.bg-slate-900\\/80{background-color:#0f172bcc}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/80{background-color:color-mix(in oklab, var(--color-slate-900) 80%, transparent)}}.bg-slate-900\\/90{background-color:#0f172be6}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/90{background-color:color-mix(in oklab, var(--color-slate-900) 90%, transparent)}}.bg-slate-900\\/95{background-color:#0f172bf2}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/95{background-color:color-mix(in oklab, var(--color-slate-900) 95%, transparent)}}.bg-slate-900\\/98{background-color:#0f172bfa}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/98{background-color:color-mix(in oklab, var(--color-slate-900) 98%, transparent)}}.bg-slate-950{background-color:var(--color-slate-950)}.bg-slate-950\\/40{background-color:#02061866}@supports (color:color-mix(in lab, red, red)){.bg-slate-950\\/40{background-color:color-mix(in oklab, var(--color-slate-950) 40%, transparent)}}.bg-slate-950\\/80{background-color:#020618cc}@supports (color:color-mix(in lab, red, red)){.bg-slate-950\\/80{background-color:color-mix(in oklab, var(--color-slate-950) 80%, transparent)}}.bg-slate-950\\/95{background-color:#020618f2}@supports (color:color-mix(in lab, red, red)){.bg-slate-950\\/95{background-color:color-mix(in oklab, var(--color-slate-950) 95%, transparent)}}.bg-transparent{background-color:#0000}.bg-white{background-color:var(--color-white)}.bg-white\\/95{background-color:#fffffff2}@supports (color:color-mix(in lab, red, red)){.bg-white\\/95{background-color:color-mix(in oklab, var(--color-white) 95%, transparent)}}.bg-white\\/98{background-color:#fffffffa}@supports (color:color-mix(in lab, red, red)){.bg-white\\/98{background-color:color-mix(in oklab, var(--color-white) 98%, transparent)}}.bg-zinc-200{background-color:var(--color-zinc-200)}.bg-zinc-900{background-color:var(--color-zinc-900)}.bg-zinc-950{background-color:var(--color-zinc-950)}.bg-repeat{background-repeat:repeat}.mask-no-clip{-webkit-mask-clip:no-clip;mask-clip:no-clip}.mask-repeat{-webkit-mask-repeat:repeat;mask-repeat:repeat}.fill-current{fill:currentColor}.p-0{padding:0}.p-1{padding:var(--spacing)}.p-2{padding:calc(var(--spacing) * 2)}.p-2\\.5{padding:calc(var(--spacing) * 2.5)}.p-3{padding:calc(var(--spacing) * 3)}.p-3\\.5{padding:calc(var(--spacing) * 3.5)}.p-4{padding:calc(var(--spacing) * 4)}.p-6{padding:calc(var(--spacing) * 6)}.p-\\[3px\\]{padding:3px}.px-1{padding-inline:var(--spacing)}.px-1\\.5{padding-inline:calc(var(--spacing) * 1.5)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-2\\.5{padding-inline:calc(var(--spacing) * 2.5)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-3\\.5{padding-inline:calc(var(--spacing) * 3.5)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-6{padding-inline:calc(var(--spacing) * 6)}.py-0{padding-block:0}.py-0\\.5{padding-block:calc(var(--spacing) * .5)}.py-1{padding-block:var(--spacing)}.py-1\\.5{padding-block:calc(var(--spacing) * 1.5)}.py-2{padding-block:calc(var(--spacing) * 2)}.py-2\\.5{padding-block:calc(var(--spacing) * 2.5)}.py-4{padding-block:calc(var(--spacing) * 4)}.py-6{padding-block:calc(var(--spacing) * 6)}.py-8{padding-block:calc(var(--spacing) * 8)}.py-16{padding-block:calc(var(--spacing) * 16)}.py-24{padding-block:calc(var(--spacing) * 24)}.py-32{padding-block:calc(var(--spacing) * 32)}.py-48{padding-block:calc(var(--spacing) * 48)}.pt-0{padding-top:0}.pt-0\\.5{padding-top:calc(var(--spacing) * .5)}.pt-1{padding-top:var(--spacing)}.pt-2{padding-top:calc(var(--spacing) * 2)}.pt-3{padding-top:calc(var(--spacing) * 3)}.pt-24{padding-top:calc(var(--spacing) * 24)}.pr-1{padding-right:var(--spacing)}.pb-0{padding-bottom:0}.pb-1{padding-bottom:var(--spacing)}.pb-1\\.5{padding-bottom:calc(var(--spacing) * 1.5)}.pb-2{padding-bottom:calc(var(--spacing) * 2)}.pb-2\\.5{padding-bottom:calc(var(--spacing) * 2.5)}.pb-3{padding-bottom:calc(var(--spacing) * 3)}.pb-4{padding-bottom:calc(var(--spacing) * 4)}.pl-2{padding-left:calc(var(--spacing) * 2)}.pl-2\\.5{padding-left:calc(var(--spacing) * 2.5)}.text-center{text-align:center}.text-left{text-align:left}.font-mono{font-family:var(--font-mono)}.font-sans{font-family:var(--font-sans)}.text-4xl{font-size:var(--text-4xl);line-height:var(--tw-leading,var(--text-4xl--line-height))}.text-6xl{font-size:var(--text-6xl);line-height:var(--tw-leading,var(--text-6xl--line-height))}.text-base{font-size:var(--text-base);line-height:var(--tw-leading,var(--text-base--line-height))}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.text-xs{font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}.text-\\[8px\\]{font-size:8px}.text-\\[9px\\]{font-size:9px}.text-\\[10\\.5px\\]{font-size:10.5px}.text-\\[10px\\]{font-size:10px}.text-\\[11px\\]{font-size:11px}.leading-\\[1\\.1\\]{--tw-leading:1.1;line-height:1.1}.leading-\\[1\\],.leading-none{--tw-leading:1;line-height:1}.leading-relaxed{--tw-leading:var(--leading-relaxed);line-height:var(--leading-relaxed)}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.font-normal{--tw-font-weight:var(--font-weight-normal);font-weight:var(--font-weight-normal)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.tracking-\\[0\\.18em\\]{--tw-tracking:.18em;letter-spacing:.18em}.tracking-\\[0\\.22em\\]{--tw-tracking:.22em;letter-spacing:.22em}.tracking-tight{--tw-tracking:var(--tracking-tight);letter-spacing:var(--tracking-tight)}.tracking-tighter{--tw-tracking:var(--tracking-tighter);letter-spacing:var(--tracking-tighter)}.tracking-wide{--tw-tracking:var(--tracking-wide);letter-spacing:var(--tracking-wide)}.tracking-wider{--tw-tracking:var(--tracking-wider);letter-spacing:var(--tracking-wider)}.text-wrap{text-wrap:wrap}.text-clip{text-overflow:clip}.text-ellipsis{text-overflow:ellipsis}.whitespace-nowrap{white-space:nowrap}.whitespace-pre-wrap{white-space:pre-wrap}.text-amber-300{color:var(--color-amber-300)}.text-amber-400{color:var(--color-amber-400)}.text-amber-700{color:var(--color-amber-700)}.text-amber-800{color:var(--color-amber-800)}.text-amber-950{color:var(--color-amber-950)}.text-blue-300{color:var(--color-blue-300)}.text-blue-400{color:var(--color-blue-400)}.text-blue-600{color:var(--color-blue-600)}.text-blue-900{color:var(--color-blue-900)}.text-card-foreground{color:var(--card-foreground)}.text-cyan-300{color:var(--color-cyan-300)}.text-cyan-900{color:var(--color-cyan-900)}.text-destructive-foreground{color:var(--destructive-foreground)}.text-emerald-300{color:var(--color-emerald-300)}.text-emerald-400{color:var(--color-emerald-400)}.text-emerald-600{color:var(--color-emerald-600)}.text-emerald-700{color:var(--color-emerald-700)}.text-emerald-800{color:var(--color-emerald-800)}.text-emerald-900{color:var(--color-emerald-900)}.text-emerald-950{color:var(--color-emerald-950)}.text-foreground,.text-foreground\\/60{color:var(--foreground)}@supports (color:color-mix(in lab, red, red)){.text-foreground\\/60{color:color-mix(in oklab, var(--foreground) 60%, transparent)}}.text-gray-600{color:var(--color-gray-600)}.text-gray-900{color:var(--color-gray-900)}.text-indigo-500{color:var(--color-indigo-500)}.text-muted-foreground{color:var(--muted-foreground)}.text-orange-300{color:var(--color-orange-300)}.text-orange-700{color:var(--color-orange-700)}.text-primary{color:var(--primary)}.text-primary-foreground{color:var(--primary-foreground)}.text-purple-300{color:var(--color-purple-300)}.text-purple-400{color:var(--color-purple-400)}.text-purple-600{color:var(--color-purple-600)}.text-purple-900{color:var(--color-purple-900)}.text-red-300{color:var(--color-red-300)}.text-red-700{color:var(--color-red-700)}.text-red-950{color:var(--color-red-950)}.text-secondary-foreground{color:var(--secondary-foreground)}.text-sky-700{color:var(--color-sky-700)}.text-slate-100{color:var(--color-slate-100)}.text-slate-200{color:var(--color-slate-200)}.text-slate-300{color:var(--color-slate-300)}.text-slate-400{color:var(--color-slate-400)}.text-slate-500{color:var(--color-slate-500)}.text-slate-600{color:var(--color-slate-600)}.text-slate-700{color:var(--color-slate-700)}.text-slate-800{color:var(--color-slate-800)}.text-slate-900{color:var(--color-slate-900)}.text-white{color:var(--color-white)}.text-yellow-400{color:var(--color-yellow-400)}.text-zinc-900{color:var(--color-zinc-900)}.capitalize{text-transform:capitalize}.lowercase{text-transform:lowercase}.normal-case{text-transform:none}.uppercase{text-transform:uppercase}.italic{font-style:italic}.not-italic{font-style:normal}.diagonal-fractions{--tw-numeric-fraction:diagonal-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.lining-nums{--tw-numeric-figure:lining-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.oldstyle-nums{--tw-numeric-figure:oldstyle-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.ordinal{--tw-ordinal:ordinal;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.proportional-nums{--tw-numeric-spacing:proportional-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.slashed-zero{--tw-slashed-zero:slashed-zero;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.stacked-fractions{--tw-numeric-fraction:stacked-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.tabular-nums{--tw-numeric-spacing:tabular-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.normal-nums{font-variant-numeric:normal}.line-through{text-decoration-line:line-through}.no-underline{text-decoration-line:none}.overline{text-decoration-line:overline}.underline{text-decoration-line:underline}.underline-offset-4{text-underline-offset:4px}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.subpixel-antialiased{-webkit-font-smoothing:auto;-moz-osx-font-smoothing:auto}.opacity-0{opacity:0}.opacity-60{opacity:.6}.opacity-70{opacity:.7}.opacity-75{opacity:.75}.shadow{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px var(--tw-shadow-color,#00000040);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-\\[inset_0_1px_0_rgba\\(255\\,255\\,255\\,0\\.1\\)\\]{--tw-shadow:inset 0 1px 0 var(--tw-shadow-color,#ffffff1a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px var(--tw-shadow-color,#0000001a), 0 4px 6px -4px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px var(--tw-shadow-color,#0000001a), 0 2px 4px -2px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px var(--tw-shadow-color,#0000001a), 0 8px 10px -6px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-xs{--tw-shadow:0 1px 2px 0 var(--tw-shadow-color,#0000000d);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-0{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-1{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.inset-ring{--tw-inset-ring-shadow:inset 0 0 0 1px var(--tw-inset-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-emerald-950{--tw-shadow-color:oklch(26.2% .051 172.552)}@supports (color:color-mix(in lab, red, red)){.shadow-emerald-950{--tw-shadow-color:color-mix(in oklab, var(--color-emerald-950) var(--tw-shadow-alpha), transparent)}}.shadow-emerald-950\\/20{--tw-shadow-color:#002c2233}@supports (color:color-mix(in lab, red, red)){.shadow-emerald-950\\/20{--tw-shadow-color:color-mix(in oklab, color-mix(in oklab, var(--color-emerald-950) 20%, transparent) var(--tw-shadow-alpha), transparent)}}.shadow-emerald-950\\/30{--tw-shadow-color:#002c224d}@supports (color:color-mix(in lab, red, red)){.shadow-emerald-950\\/30{--tw-shadow-color:color-mix(in oklab, color-mix(in oklab, var(--color-emerald-950) 30%, transparent) var(--tw-shadow-alpha), transparent)}}.ring-black\\/5{--tw-ring-color:#0000000d}@supports (color:color-mix(in lab, red, red)){.ring-black\\/5{--tw-ring-color:color-mix(in oklab, var(--color-black) 5%, transparent)}}.ring-ring,.ring-ring\\/50{--tw-ring-color:var(--ring)}@supports (color:color-mix(in lab, red, red)){.ring-ring\\/50{--tw-ring-color:color-mix(in oklab, var(--ring) 50%, transparent)}}.ring-offset-background{--tw-ring-offset-color:var(--background)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.blur{--tw-blur:blur(8px);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.drop-shadow{--tw-drop-shadow-size:drop-shadow(0 1px 2px var(--tw-drop-shadow-color,#0000001a)) drop-shadow(0 1px 1px var(--tw-drop-shadow-color,#0000000f));--tw-drop-shadow:drop-shadow(0 1px 2px #0000001a) drop-shadow(0 1px 1px #0000000f);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.grayscale{--tw-grayscale:grayscale(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.invert{--tw-invert:invert(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.sepia{--tw-sepia:sepia(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.filter{filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-blur-md{--tw-backdrop-blur:blur(var(--blur-md));-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-blur-xl{--tw-backdrop-blur:blur(var(--blur-xl));-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-blur-xs{--tw-backdrop-blur:blur(var(--blur-xs));-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-grayscale{--tw-backdrop-grayscale:grayscale(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-invert{--tw-backdrop-invert:invert(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-sepia{--tw-backdrop-sepia:sepia(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-filter{-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.transition{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,opacity,box-shadow,transform,translate,scale,rotate,filter,-webkit-backdrop-filter,backdrop-filter,display,content-visibility,overlay,pointer-events;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-\\[color\\,box-shadow\\]{transition-property:color,box-shadow;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-opacity{transition-property:opacity;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-transform{transition-property:transform,translate,scale,rotate;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.duration-150{--tw-duration:.15s;transition-duration:.15s}.duration-200{--tw-duration:.2s;transition-duration:.2s}.ease-in{--tw-ease:var(--ease-in);transition-timing-function:var(--ease-in)}.ease-in-out{--tw-ease:var(--ease-in-out);transition-timing-function:var(--ease-in-out)}.ease-out{--tw-ease:var(--ease-out);transition-timing-function:var(--ease-out)}.outline-none{--tw-outline-style:none;outline-style:none}.select-none{-webkit-user-select:none;user-select:none}.\\[file\\:line\\]{file:line}:where(.divide-x-reverse>:not(:last-child)){--tw-divide-x-reverse:1}.ring-inset{--tw-ring-inset:inset}@media (hover:hover){.group-hover\\:opacity-100:is(:where(.group):hover *){opacity:1}}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:h-9:is(:where(.group\\/tabs)[data-orientation=horizontal] *){height:calc(var(--spacing) * 9)}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:h-fit:is(:where(.group\\/tabs)[data-orientation=vertical] *){height:fit-content}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:w-full:is(:where(.group\\/tabs)[data-orientation=vertical] *){width:100%}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:flex-col:is(:where(.group\\/tabs)[data-orientation=vertical] *){flex-direction:column}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:justify-start:is(:where(.group\\/tabs)[data-orientation=vertical] *){justify-content:flex-start}.group-data-\\[size\\=default\\]\\/switch\\:size-3\\.5:is(:where(.group\\/switch)[data-size=default] *){width:calc(var(--spacing) * 3.5);height:calc(var(--spacing) * 3.5)}.group-data-\\[size\\=sm\\]\\/switch\\:size-2\\.5:is(:where(.group\\/switch)[data-size=sm] *){width:calc(var(--spacing) * 2.5);height:calc(var(--spacing) * 2.5)}.group-data-\\[variant\\=line\\]\\/tabs-list\\:bg-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *){background-color:#0000}.after\\:absolute:after{content:var(--tw-content);position:absolute}.after\\:bg-foreground:after{content:var(--tw-content);background-color:var(--foreground)}.after\\:opacity-0:after{content:var(--tw-content);opacity:0}.after\\:transition-opacity:after{content:var(--tw-content);transition-property:opacity;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:after\\:inset-x-0:is(:where(.group\\/tabs)[data-orientation=horizontal] *):after{content:var(--tw-content);inset-inline:0}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:after\\:bottom-\\[-5px\\]:is(:where(.group\\/tabs)[data-orientation=horizontal] *):after{content:var(--tw-content);bottom:-5px}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:after\\:h-0\\.5:is(:where(.group\\/tabs)[data-orientation=horizontal] *):after{content:var(--tw-content);height:calc(var(--spacing) * .5)}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:after\\:inset-y-0:is(:where(.group\\/tabs)[data-orientation=vertical] *):after{content:var(--tw-content);inset-block:0}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:after\\:-right-1:is(:where(.group\\/tabs)[data-orientation=vertical] *):after{content:var(--tw-content);right:calc(var(--spacing) * -1)}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:after\\:w-0\\.5:is(:where(.group\\/tabs)[data-orientation=vertical] *):after{content:var(--tw-content);width:calc(var(--spacing) * .5)}.last\\:border-b-0:last-child{border-bottom-style:var(--tw-border-style);border-bottom-width:0}@media (hover:hover){.hover\\:scale-105:hover{--tw-scale-x:105%;--tw-scale-y:105%;--tw-scale-z:105%;scale:var(--tw-scale-x) var(--tw-scale-y)}.hover\\:bg-accent:hover{background-color:var(--accent)}.hover\\:bg-amber-500:hover{background-color:var(--color-amber-500)}.hover\\:bg-amber-600:hover{background-color:var(--color-amber-600)}.hover\\:bg-destructive\\/90:hover{background-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-destructive\\/90:hover{background-color:color-mix(in oklab, var(--destructive) 90%, transparent)}}.hover\\:bg-emerald-500:hover{background-color:var(--color-emerald-500)}.hover\\:bg-emerald-600:hover{background-color:var(--color-emerald-600)}.hover\\:bg-emerald-700:hover{background-color:var(--color-emerald-700)}.hover\\:bg-emerald-800:hover{background-color:var(--color-emerald-800)}.hover\\:bg-primary\\/90:hover{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-primary\\/90:hover{background-color:color-mix(in oklab, var(--primary) 90%, transparent)}}.hover\\:bg-red-600:hover{background-color:var(--color-red-600)}.hover\\:bg-red-700:hover{background-color:var(--color-red-700)}.hover\\:bg-secondary\\/80:hover{background-color:var(--secondary)}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-secondary\\/80:hover{background-color:color-mix(in oklab, var(--secondary) 80%, transparent)}}.hover\\:bg-slate-50:hover{background-color:var(--color-slate-50)}.hover\\:bg-slate-100:hover{background-color:var(--color-slate-100)}.hover\\:bg-slate-200:hover{background-color:var(--color-slate-200)}.hover\\:bg-slate-700:hover{background-color:var(--color-slate-700)}.hover\\:bg-slate-800:hover{background-color:var(--color-slate-800)}.hover\\:bg-slate-800\\/40:hover{background-color:#1d293d66}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-slate-800\\/40:hover{background-color:color-mix(in oklab, var(--color-slate-800) 40%, transparent)}}.hover\\:bg-slate-800\\/80:hover{background-color:#1d293dcc}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-slate-800\\/80:hover{background-color:color-mix(in oklab, var(--color-slate-800) 80%, transparent)}}.hover\\:text-accent-foreground:hover{color:var(--accent-foreground)}.hover\\:text-amber-400:hover{color:var(--color-amber-400)}.hover\\:text-foreground:hover{color:var(--foreground)}.hover\\:text-slate-100:hover{color:var(--color-slate-100)}.hover\\:text-slate-900:hover{color:var(--color-slate-900)}.hover\\:text-white:hover{color:var(--color-white)}.hover\\:no-underline:hover{text-decoration-line:none}.hover\\:underline:hover{text-decoration-line:underline}.hover\\:opacity-100:hover{opacity:1}.hover\\:ring-4:hover{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}}.focus\\:ring-1:focus{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus\\:ring-2:focus{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus\\:ring-emerald-500:focus{--tw-ring-color:var(--color-emerald-500)}.focus\\:ring-ring:focus{--tw-ring-color:var(--ring)}.focus\\:ring-offset-2:focus{--tw-ring-offset-width:2px;--tw-ring-offset-shadow:var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color)}.focus\\:outline-hidden:focus{--tw-outline-style:none;outline-style:none}@media (forced-colors:active){.focus\\:outline-hidden:focus{outline-offset:2px;outline:2px solid #0000}}.focus\\:outline-none:focus{--tw-outline-style:none;outline-style:none}.focus-visible\\:border-ring:focus-visible{border-color:var(--ring)}.focus-visible\\:ring-2:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus-visible\\:ring-4:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus-visible\\:ring-\\[3px\\]:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus-visible\\:ring-destructive\\/20:focus-visible{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.focus-visible\\:ring-destructive\\/20:focus-visible{--tw-ring-color:color-mix(in oklab, var(--destructive) 20%, transparent)}}.focus-visible\\:ring-emerald-500\\/50:focus-visible{--tw-ring-color:#00bb7f80}@supports (color:color-mix(in lab, red, red)){.focus-visible\\:ring-emerald-500\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--color-emerald-500) 50%, transparent)}}.focus-visible\\:ring-ring\\/50:focus-visible{--tw-ring-color:var(--ring)}@supports (color:color-mix(in lab, red, red)){.focus-visible\\:ring-ring\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--ring) 50%, transparent)}}.focus-visible\\:outline-hidden:focus-visible{--tw-outline-style:none;outline-style:none}@media (forced-colors:active){.focus-visible\\:outline-hidden:focus-visible{outline-offset:2px;outline:2px solid #0000}}.focus-visible\\:outline-1:focus-visible{outline-style:var(--tw-outline-style);outline-width:1px}.focus-visible\\:outline-ring:focus-visible{outline-color:var(--ring)}.active\\:scale-90:active{--tw-scale-x:90%;--tw-scale-y:90%;--tw-scale-z:90%;scale:var(--tw-scale-x) var(--tw-scale-y)}.active\\:scale-\\[0\\.98\\]:active{scale:.98}.disabled\\:pointer-events-none:disabled{pointer-events:none}.disabled\\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\\:opacity-50:disabled{opacity:.5}.has-data-\\[slot\\=card-action\\]\\:grid-cols-\\[1fr_auto\\]:has([data-slot=card-action]){grid-template-columns:1fr auto}.has-\\[\\>svg\\]\\:px-1\\.5:has(>svg){padding-inline:calc(var(--spacing) * 1.5)}.has-\\[\\>svg\\]\\:px-2\\.5:has(>svg){padding-inline:calc(var(--spacing) * 2.5)}.has-\\[\\>svg\\]\\:px-3:has(>svg){padding-inline:calc(var(--spacing) * 3)}.has-\\[\\>svg\\]\\:px-4:has(>svg){padding-inline:calc(var(--spacing) * 4)}.aria-invalid\\:border-destructive[aria-invalid=true]{border-color:var(--destructive)}.aria-invalid\\:ring-destructive\\/20[aria-invalid=true]{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.aria-invalid\\:ring-destructive\\/20[aria-invalid=true]{--tw-ring-color:color-mix(in oklab, var(--destructive) 20%, transparent)}}.data-\\[disabled\\]\\:opacity-50[data-disabled]{opacity:.5}.data-\\[orientation\\=horizontal\\]\\:h-1\\.5[data-orientation=horizontal]{height:calc(var(--spacing) * 1.5)}.data-\\[orientation\\=horizontal\\]\\:h-full[data-orientation=horizontal]{height:100%}.data-\\[orientation\\=horizontal\\]\\:h-px[data-orientation=horizontal]{height:1px}.data-\\[orientation\\=horizontal\\]\\:w-full[data-orientation=horizontal]{width:100%}.data-\\[orientation\\=horizontal\\]\\:flex-col[data-orientation=horizontal]{flex-direction:column}.data-\\[orientation\\=vertical\\]\\:h-full[data-orientation=vertical]{height:100%}.data-\\[orientation\\=vertical\\]\\:min-h-44[data-orientation=vertical]{min-height:calc(var(--spacing) * 44)}.data-\\[orientation\\=vertical\\]\\:w-1\\.5[data-orientation=vertical]{width:calc(var(--spacing) * 1.5)}.data-\\[orientation\\=vertical\\]\\:w-auto[data-orientation=vertical]{width:auto}.data-\\[orientation\\=vertical\\]\\:w-full[data-orientation=vertical]{width:100%}.data-\\[orientation\\=vertical\\]\\:w-px[data-orientation=vertical]{width:1px}.data-\\[orientation\\=vertical\\]\\:flex-col[data-orientation=vertical]{flex-direction:column}.data-\\[size\\=default\\]\\:h-5[data-size=default]{height:calc(var(--spacing) * 5)}.data-\\[size\\=default\\]\\:w-9[data-size=default]{width:calc(var(--spacing) * 9)}.data-\\[size\\=sm\\]\\:h-4[data-size=sm]{height:calc(var(--spacing) * 4)}.data-\\[size\\=sm\\]\\:w-7[data-size=sm]{width:calc(var(--spacing) * 7)}.data-\\[state\\=active\\]\\:bg-background[data-state=active]{background-color:var(--background)}.data-\\[state\\=active\\]\\:bg-white[data-state=active]{background-color:var(--color-white)}.data-\\[state\\=active\\]\\:text-emerald-700[data-state=active]{color:var(--color-emerald-700)}.data-\\[state\\=active\\]\\:text-foreground[data-state=active]{color:var(--foreground)}.data-\\[state\\=active\\]\\:shadow-xs[data-state=active]{--tw-shadow:0 1px 2px 0 var(--tw-shadow-color,#0000000d);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.group-data-\\[variant\\=default\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:shadow-sm:is(:where(.group\\/tabs-list)[data-variant=default] *)[data-state=active]{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:bg-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{background-color:#0000}.group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:shadow-none:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{--tw-shadow:0 0 #0000;box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:after\\:opacity-100:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]:after{content:var(--tw-content);opacity:1}.data-\\[state\\=checked\\]\\:translate-x-4[data-state=checked]{--tw-translate-x:calc(var(--spacing) * 4);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=checked\\]\\:border-emerald-400[data-state=checked]{border-color:var(--color-emerald-400)}.data-\\[state\\=checked\\]\\:border-emerald-600[data-state=checked]{border-color:var(--color-emerald-600)}.data-\\[state\\=checked\\]\\:bg-emerald-500[data-state=checked]{background-color:var(--color-emerald-500)}.data-\\[state\\=checked\\]\\:bg-emerald-600[data-state=checked]{background-color:var(--color-emerald-600)}.data-\\[state\\=checked\\]\\:bg-white[data-state=checked]{background-color:var(--color-white)}.data-\\[state\\=checked\\]\\:shadow-\\[0_0_8px_rgba\\(16\\,185\\,129\\,0\\.35\\)\\][data-state=checked]{--tw-shadow:0 0 8px var(--tw-shadow-color,#10b98159);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.data-\\[state\\=checked\\]\\:shadow-md[data-state=checked]{--tw-shadow:0 4px 6px -1px var(--tw-shadow-color,#0000001a), 0 2px 4px -2px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.data-\\[state\\=checked\\]\\:shadow-xs[data-state=checked]{--tw-shadow:0 1px 2px 0 var(--tw-shadow-color,#0000000d);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.data-\\[state\\=open\\]\\:bg-accent[data-state=open]{background-color:var(--accent)}.data-\\[state\\=open\\]\\:text-muted-foreground[data-state=open]{color:var(--muted-foreground)}.data-\\[state\\=unchecked\\]\\:translate-x-0\\.5[data-state=unchecked]{--tw-translate-x:calc(var(--spacing) * .5);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=unchecked\\]\\:border-slate-300[data-state=unchecked]{border-color:var(--color-slate-300)}.data-\\[state\\=unchecked\\]\\:border-slate-600[data-state=unchecked]{border-color:var(--color-slate-600)}.data-\\[state\\=unchecked\\]\\:bg-slate-300[data-state=unchecked]{background-color:var(--color-slate-300)}.data-\\[state\\=unchecked\\]\\:bg-slate-700\\/80[data-state=unchecked]{background-color:#314158cc}@supports (color:color-mix(in lab, red, red)){.data-\\[state\\=unchecked\\]\\:bg-slate-700\\/80[data-state=unchecked]{background-color:color-mix(in oklab, var(--color-slate-700) 80%, transparent)}}.data-\\[variant\\=line\\]\\:rounded-none[data-variant=line]{border-radius:0}@media (min-width:40rem){.sm\\:max-w-lg{max-width:var(--container-lg)}.sm\\:flex-row{flex-direction:row}.sm\\:justify-end{justify-content:flex-end}.sm\\:text-left{text-align:left}}@media (min-width:48rem){.md\\:w-1\\/2{width:50%}.md\\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\\:text-5xl{font-size:var(--text-5xl);line-height:var(--tw-leading,var(--text-5xl--line-height))}.md\\:text-6xl{font-size:var(--text-6xl);line-height:var(--tw-leading,var(--text-6xl--line-height))}.md\\:text-7xl{font-size:var(--text-7xl);line-height:var(--tw-leading,var(--text-7xl--line-height))}}@media (min-width:64rem){.lg\\:w-1\\/3{width:33.3333%}.lg\\:text-6xl{font-size:var(--text-6xl);line-height:var(--tw-leading,var(--text-6xl--line-height))}}@media (prefers-color-scheme:dark){.dark\\:border-input{border-color:var(--input)}.dark\\:border-slate-800{border-color:var(--color-slate-800)}.dark\\:border-slate-800\\/80{border-color:#1d293dcc}@supports (color:color-mix(in lab, red, red)){.dark\\:border-slate-800\\/80{border-color:color-mix(in oklab, var(--color-slate-800) 80%, transparent)}}.dark\\:border-zinc-700{border-color:var(--color-zinc-700)}.dark\\:bg-destructive\\/60{background-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-destructive\\/60{background-color:color-mix(in oklab, var(--destructive) 60%, transparent)}}.dark\\:bg-input\\/30{background-color:var(--input)}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-input\\/30{background-color:color-mix(in oklab, var(--input) 30%, transparent)}}.dark\\:bg-slate-800{background-color:var(--color-slate-800)}.dark\\:bg-slate-900\\/60{background-color:#0f172b99}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-slate-900\\/60{background-color:color-mix(in oklab, var(--color-slate-900) 60%, transparent)}}.dark\\:bg-slate-900\\/80{background-color:#0f172bcc}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-slate-900\\/80{background-color:color-mix(in oklab, var(--color-slate-900) 80%, transparent)}}.dark\\:bg-slate-900\\/95{background-color:#0f172bf2}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-slate-900\\/95{background-color:color-mix(in oklab, var(--color-slate-900) 95%, transparent)}}.dark\\:bg-slate-950{background-color:var(--color-slate-950)}.dark\\:bg-slate-950\\/80{background-color:#020618cc}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-slate-950\\/80{background-color:color-mix(in oklab, var(--color-slate-950) 80%, transparent)}}.dark\\:bg-slate-950\\/98{background-color:#020618fa}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-slate-950\\/98{background-color:color-mix(in oklab, var(--color-slate-950) 98%, transparent)}}.dark\\:bg-zinc-900{background-color:var(--color-zinc-900)}.dark\\:bg-zinc-950{background-color:var(--color-zinc-950)}.dark\\:text-gray-100{color:var(--color-gray-100)}.dark\\:text-muted-foreground{color:var(--muted-foreground)}.dark\\:text-zinc-100{color:var(--color-zinc-100)}@media (hover:hover){.dark\\:hover\\:bg-accent\\/50:hover{background-color:var(--accent)}@supports (color:color-mix(in lab, red, red)){.dark\\:hover\\:bg-accent\\/50:hover{background-color:color-mix(in oklab, var(--accent) 50%, transparent)}}.dark\\:hover\\:bg-input\\/50:hover{background-color:var(--input)}@supports (color:color-mix(in lab, red, red)){.dark\\:hover\\:bg-input\\/50:hover{background-color:color-mix(in oklab, var(--input) 50%, transparent)}}.dark\\:hover\\:text-foreground:hover{color:var(--foreground)}}.dark\\:focus-visible\\:ring-destructive\\/40:focus-visible{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.dark\\:focus-visible\\:ring-destructive\\/40:focus-visible{--tw-ring-color:color-mix(in oklab, var(--destructive) 40%, transparent)}}.dark\\:aria-invalid\\:ring-destructive\\/40[aria-invalid=true]{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.dark\\:aria-invalid\\:ring-destructive\\/40[aria-invalid=true]{--tw-ring-color:color-mix(in oklab, var(--destructive) 40%, transparent)}}.dark\\:data-\\[state\\=active\\]\\:border-input[data-state=active]{border-color:var(--input)}.dark\\:data-\\[state\\=active\\]\\:bg-input\\/30[data-state=active]{background-color:var(--input)}@supports (color:color-mix(in lab, red, red)){.dark\\:data-\\[state\\=active\\]\\:bg-input\\/30[data-state=active]{background-color:color-mix(in oklab, var(--input) 30%, transparent)}}.dark\\:data-\\[state\\=active\\]\\:text-foreground[data-state=active]{color:var(--foreground)}.dark\\:group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:border-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{border-color:#0000}.dark\\:group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:bg-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{background-color:#0000}.dark\\:data-\\[state\\=unchecked\\]\\:border-slate-700[data-state=unchecked]{border-color:var(--color-slate-700)}.dark\\:data-\\[state\\=unchecked\\]\\:bg-slate-400[data-state=unchecked]{background-color:var(--color-slate-400)}.dark\\:data-\\[state\\=unchecked\\]\\:bg-slate-800[data-state=unchecked]{background-color:var(--color-slate-800)}}.\\[\\&_svg\\]\\:pointer-events-none svg{pointer-events:none}.\\[\\&_svg\\]\\:shrink-0 svg{flex-shrink:0}.\\[\\&_svg\\:not\\(\\[class\\*\\=\\'size-\\'\\]\\)\\]\\:size-3 svg:not([class*=size-]){width:calc(var(--spacing) * 3);height:calc(var(--spacing) * 3)}.\\[\\&_svg\\:not\\(\\[class\\*\\=\\'size-\\'\\]\\)\\]\\:size-4 svg:not([class*=size-]){width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.\\[\\.border-b\\]\\:pb-6.border-b{padding-bottom:calc(var(--spacing) * 6)}.\\[\\.border-t\\]\\:pt-6.border-t{padding-top:calc(var(--spacing) * 6)}.\\[\\&\\>svg\\]\\:pointer-events-none>svg{pointer-events:none}.\\[\\&\\>svg\\]\\:size-3>svg{width:calc(var(--spacing) * 3);height:calc(var(--spacing) * 3)}.\\[\\&\\[data-state\\=open\\]\\>svg\\]\\:rotate-180[data-state=open]>svg{rotate:180deg}@media (hover:hover){a.\\[a\\&\\]\\:hover\\:bg-accent:hover{background-color:var(--accent)}a.\\[a\\&\\]\\:hover\\:bg-destructive\\/90:hover{background-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){a.\\[a\\&\\]\\:hover\\:bg-destructive\\/90:hover{background-color:color-mix(in oklab, var(--destructive) 90%, transparent)}}a.\\[a\\&\\]\\:hover\\:bg-primary\\/90:hover{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){a.\\[a\\&\\]\\:hover\\:bg-primary\\/90:hover{background-color:color-mix(in oklab, var(--primary) 90%, transparent)}}a.\\[a\\&\\]\\:hover\\:bg-secondary\\/90:hover{background-color:var(--secondary)}@supports (color:color-mix(in lab, red, red)){a.\\[a\\&\\]\\:hover\\:bg-secondary\\/90:hover{background-color:color-mix(in oklab, var(--secondary) 90%, transparent)}}a.\\[a\\&\\]\\:hover\\:text-accent-foreground:hover{color:var(--accent-foreground)}a.\\[a\\&\\]\\:hover\\:underline:hover{text-decoration-line:underline}}}:root{--background:#f8fafc;--foreground:#0f172a;--card:#fff;--card-foreground:#0f172a;--popover:#fff;--popover-foreground:#0f172a;--primary:#059669;--primary-foreground:#fff;--secondary:#f1f5f9;--secondary-foreground:#0f172a;--muted:#f1f5f9;--muted-foreground:#64748b;--accent:#e2e8f0;--accent-foreground:#0f172a;--destructive:#dc2626;--destructive-foreground:#fff;--border:#e2e8f0;--input:#f1f5f9;--ring:#059669;--radius:.875rem}::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:0 0}::-webkit-scrollbar-thumb{background:#64748b40;border-radius:9999px}::-webkit-scrollbar-thumb:hover{background:#64748b73}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-scale-x{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-y{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-z{syntax:"*";inherits:false;initial-value:1}@property --tw-rotate-x{syntax:"*";inherits:false}@property --tw-rotate-y{syntax:"*";inherits:false}@property --tw-rotate-z{syntax:"*";inherits:false}@property --tw-skew-x{syntax:"*";inherits:false}@property --tw-skew-y{syntax:"*";inherits:false}@property --tw-pan-x{syntax:"*";inherits:false}@property --tw-pan-y{syntax:"*";inherits:false}@property --tw-pinch-zoom{syntax:"*";inherits:false}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-space-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-divide-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-divide-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-tracking{syntax:"*";inherits:false}@property --tw-ordinal{syntax:"*";inherits:false}@property --tw-slashed-zero{syntax:"*";inherits:false}@property --tw-numeric-figure{syntax:"*";inherits:false}@property --tw-numeric-spacing{syntax:"*";inherits:false}@property --tw-numeric-fraction{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-blur{syntax:"*";inherits:false}@property --tw-brightness{syntax:"*";inherits:false}@property --tw-contrast{syntax:"*";inherits:false}@property --tw-grayscale{syntax:"*";inherits:false}@property --tw-hue-rotate{syntax:"*";inherits:false}@property --tw-invert{syntax:"*";inherits:false}@property --tw-opacity{syntax:"*";inherits:false}@property --tw-saturate{syntax:"*";inherits:false}@property --tw-sepia{syntax:"*";inherits:false}@property --tw-drop-shadow{syntax:"*";inherits:false}@property --tw-drop-shadow-color{syntax:"*";inherits:false}@property --tw-drop-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-drop-shadow-size{syntax:"*";inherits:false}@property --tw-backdrop-blur{syntax:"*";inherits:false}@property --tw-backdrop-brightness{syntax:"*";inherits:false}@property --tw-backdrop-contrast{syntax:"*";inherits:false}@property --tw-backdrop-grayscale{syntax:"*";inherits:false}@property --tw-backdrop-hue-rotate{syntax:"*";inherits:false}@property --tw-backdrop-invert{syntax:"*";inherits:false}@property --tw-backdrop-opacity{syntax:"*";inherits:false}@property --tw-backdrop-saturate{syntax:"*";inherits:false}@property --tw-backdrop-sepia{syntax:"*";inherits:false}@property --tw-duration{syntax:"*";inherits:false}@property --tw-ease{syntax:"*";inherits:false}@property --tw-content{syntax:"*";inherits:false;initial-value:""}@keyframes spin{to{transform:rotate(360deg)}}@keyframes ping{75%,to{opacity:0;transform:scale(2)}}@keyframes pulse{50%{opacity:.5}}@keyframes bounce{0%,to{animation-timing-function:cubic-bezier(.8,0,1,1);transform:translateY(-25%)}50%{animation-timing-function:cubic-bezier(0,0,.2,1);transform:none}}`;
 
   // src/content/ui/hud-core.tsx
   var import_jsx_runtime32 = __toESM(require_jsx_runtime(), 1);
@@ -26683,11 +26638,11 @@
       const liveStam = bn.wallet?.liveStamina ?? 100;
       const castBtn = document.querySelector("button.ben-cast.btn-green, button.ben-cast.btn-yellow");
       const btnText = (castBtn?.textContent || "").trim();
-      if (liveStam < 4 || btnText.includes("\u0110u\u1ED1i s\u1EE9c")) {
+      if (!config2.benAutoRecoverStamina && (liveStam < 4 || btnText.includes("\u0110u\u1ED1i s\u1EE9c"))) {
         setStatus2("\u{1F62E}\u200D\u{1F4A8} B\u1EBFn \u0110\xF2: H\u1EBFt th\u1EC3 l\u1EF1c kh\xF4ng c\xE2u \u0111\u01B0\u1EE3c n\u1EEFa -> Chuy\u1EC3n khu v\u1EF1c ti\u1EBFp theo!");
         return { finishedArea: true, exhausted: true };
       }
-      if ((bn.wallet?.bait || 0) <= 0 || btnText.includes("H\u1EBFt m\u1ED3i")) {
+      if (!config2.benAutoBuyBait && ((bn.wallet?.bait || 0) <= 0 || btnText.includes("H\u1EBFt m\u1ED3i"))) {
         setStatus2("\u{1FAB1} B\u1EBFn \u0110\xF2: \u0110\xE3 h\u1EBFt m\u1ED3i c\xE2u -> Chuy\u1EC3n khu v\u1EF1c ti\u1EBFp theo!");
         return { finishedArea: true, exhausted: true };
       }
@@ -27054,18 +27009,21 @@
       }
     });
     chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
-      if (msg.type === "TOGGLE_AUTO") {
+      const action = msg?.action || msg?.type;
+      if (action === "TOGGLE_AUTO") {
         toggleAutoAll();
         const cfg = getConfig();
         sendResponse({ ok: true, running: cfg.running });
-      } else if (msg.type === "TOGGLE_PANEL") {
+      } else if (action === "TOGGLE_PANEL") {
         const cfg = getConfig();
         cfg.panelVisible = !cfg.panelVisible;
         saveConfig();
+        renderAll();
         sendResponse({ ok: true, panelVisible: cfg.panelVisible });
-      } else if (msg.type === "GET_STATUS") {
+      } else if (action === "GET_STATUS") {
         sendResponse({
           ok: true,
+          running: getConfig().running,
           config: getConfig(),
           lastActionText: getLastActionText(),
           snap: getLastGameSnap()
@@ -27165,13 +27123,10 @@ lucide-react/dist/esm/icons/construction.mjs:
 lucide-react/dist/esm/icons/download.mjs:
 lucide-react/dist/esm/icons/external-link.mjs:
 lucide-react/dist/esm/icons/list-ordered.mjs:
-lucide-react/dist/esm/icons/moon.mjs:
 lucide-react/dist/esm/icons/play.mjs:
-lucide-react/dist/esm/icons/refresh-cw.mjs:
 lucide-react/dist/esm/icons/rotate-ccw-clock.mjs:
 lucide-react/dist/esm/icons/sparkles.mjs:
 lucide-react/dist/esm/icons/square.mjs:
-lucide-react/dist/esm/icons/sun.mjs:
 lucide-react/dist/esm/icons/x.mjs:
 lucide-react/dist/esm/lucide-react.mjs:
   (**

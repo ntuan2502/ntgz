@@ -1475,9 +1475,18 @@
       actionFn();
       return { acted: true, msg: label };
     };
+    const foodPrices = {
+      banhMi: 10,
+      chaoCa: 14,
+      huTieu: 20,
+      comTam: 28,
+      lauMam: 45
+    };
+    const prefFood = cfg.benPreferFood || "lauMam";
+    const targetFoodPrice = foodPrices[prefFood] || 45;
     const needShellsForBait = bait <= 0 && shells < 15;
-    const needShellsForFood = (stamina < 4 || cfg.benAutoRecoverStamina !== false && stamina <= stamMin) && packItems.length === 0 && shells < 10;
-    const sellThreshold = Number(cfg.benSellThreshold) || 20;
+    const needShellsForFood = (stamina < 4 || cfg.benAutoRecoverStamina !== false && stamina <= stamMin) && packItems.length === 0 && shells < targetFoodPrice;
+    const sellThreshold = Number(cfg.benSellThreshold) || 60;
     if (cfg.benAutoSell !== false && nonKeptCount > 0 && (nonKeptCount >= sellThreshold || nonKeptCount >= 55 || needShellsForBait || needShellsForFood)) {
       return walkAndRun(
         { x: 40, y: 10 },
@@ -1507,18 +1516,10 @@
             "ben_goi_dau"
           );
         }
-        const foodPrices = {
-          banhMi: 10,
-          chaoCa: 15,
-          huTieu: 25,
-          comTam: 40,
-          lauMam: 120
-        };
-        const prefFood = cfg.benPreferFood || "comTam";
-        const buyItem = shells >= (foodPrices[prefFood] || 40) ? prefFood : "banhMi";
+        const buyItem = shells >= targetFoodPrice ? prefFood : shells >= 28 ? "comTam" : shells >= 20 ? "huTieu" : shells >= 14 ? "chaoCa" : "banhMi";
         if (shells >= (foodPrices[buyItem] || 10) && canAct("ben_buy_food", 4e3)) {
           return walkAndRun(
-            { x: 19, y: 9 },
+            { x: 39, y: 23 },
             () => {
               sendBenWs({ t: "buy", item: buyItem });
               buStore.setState({ panel: null });
@@ -1527,8 +1528,22 @@
             "ben_buy_food"
           );
         }
+        if (!canAct("ben_buy_food", 4e3) || !canAct("ben_eat_pack", 3e3) || !canAct("ben_goi_dau", 4e3)) {
+          return { acted: true, msg: "\u{1F35A} \u0110ang ch\u1EDD \u0103n h\u1ED3i ph\u1EE5c S\u1EE9c c\xE2u..." };
+        }
       }
       if (stamina < 4) {
+        if (cfg.benAutoSell !== false && nonKeptCount > 0) {
+          return walkAndRun(
+            { x: 40, y: 10 },
+            () => {
+              sendBenWs({ t: "sell" });
+              buStore.setState({ panel: null });
+            },
+            `\u0110i b\xE1n ${nonKeptCount} con c\xE1 t\u1EA1i V\u1EF1a Anh T\u01B0 \u0111\u1EC3 l\u1EA5y ti\u1EC1n \u0103n c\u01A1m`,
+            "ben_sell"
+          );
+        }
         if (cfg.benAutoAtm && shells < (Number(cfg.benAtmThreshold) || 500) && canAct("ben_atm", 6e3)) {
           return walkAndRun(
             { x: 30, y: 31 },
@@ -1552,9 +1567,9 @@
         const baitPrices = {
           moi20: 15,
           moi60: 40,
-          moi150: 95
+          moi150: 90
         };
-        const prefBait = cfg.benPreferBait || "moi60";
+        const prefBait = cfg.benPreferBait || "moi150";
         const buyBaitChoice = shells >= (baitPrices[prefBait] || 40) ? prefBait : shells >= 15 ? "moi20" : "xinMoi";
         if (buyBaitChoice !== "xinMoi" && shells >= (baitPrices[buyBaitChoice] || 15) && canAct("ben_bait", 3e3)) {
           return walkAndRun(
@@ -1674,13 +1689,12 @@
       buStore.setState({ panel: null });
     }
     if (cfg.benAutoSpot !== false) {
-      const spotChoice = cfg.benSpot || "dock";
+      const spotChoice = cfg.benSpot || "bank";
       const spotTargets = {
-        dock: { x: 31, y: 4, kind: "dock", label: "C\u1EA7u t\xE0u ch\xEDnh" },
-        bamboo: { x: 7, y: 6, kind: "dock", label: "C\u1EA7u tre" },
-        bank: { x: 24, y: 10, kind: "bank", label: "B\u1EDD s\xF4ng" }
+        bank: { x: 24, y: 10, kind: "bank", label: "B\u1EDD s\xF4ng" },
+        dock: { x: 31, y: 34, kind: "dock", label: "C\u1EA7u t\xE0u ch\xEDnh" }
       };
-      const target = spotTargets[spotChoice] || spotTargets.dock;
+      const target = spotTargets[spotChoice] || spotTargets.bank;
       if (!bu.spot || bu.spot !== target.kind && spotChoice !== "any") {
         if (benScene && typeof benScene.goFarmer === "function") {
           benScene.goFarmer({ x: target.x, y: target.y });
