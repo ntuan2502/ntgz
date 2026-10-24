@@ -4,7 +4,6 @@ node_modules/
 
 # Internal development tools & sessions
 tools/
-.agents/
 recorded-session.json
 *.log
 
