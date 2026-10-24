@@ -1,4 +1,4 @@
-# 🌾 Nông Trại GenZ Auto by Tún (v1.0.0)
+# 🌾 Nông Trại GenZ Auto by Tún (v1.1.0)
 
 > **Công cụ Auto đa khu vực (DOM + Canvas) thông minh, toàn diện dành riêng cho tựa game [Nông Trại GenZ](https://nongtraigenz.online/play/).**  
 > Bản quyền phát triển bởi **Tún**. Tiện ích mở rộng Google Chrome Extension theo chuẩn **Manifest V3**.
@@ -23,7 +23,9 @@ Tiện ích hoạt động mượt mà kết hợp giữa can thiệp giao diệ
   - **100% TypeScript & Modular**: Kiến trúc module hóa tách biệt rõ ràng, type safety nghiêm ngặt, build siêu tốc bằng `esbuild`.
   - **Chống mua lặp (Anti-Double-Action)**: Bộ đệm thông minh ngăn ngừa tuyệt đối lỗi mua 2 lần do mạng trễ.
   - **Khóa Tab Auto độc lập**: Chạy auto cố định theo khu vực đã chọn mà không bị gián đoạn khi chuyển tab xem thông tin.
-  - **Giao diện HUD V2 hiện đại**: Bảng điều khiển nổi tự do kéo thả khắp màn hình, giữ nguyên kích thước khi thu gọn, tích hợp icon trực quan cho từng tác vụ và thanh trượt tùy chỉnh tốc độ trễ.
+  - **Giao diện HUD V2 hiện đại**: Kích thước mặc định `400×800`, hỗ trợ kéo giãn (resize) tự do, tích hợp cửa sổ **Terminal Lịch Sử Hoạt Động** của phiên hiện tại, nút chạy kép `▶️ Tất cả` và `🎯 Tab này`, thanh trượt điều chỉnh tốc độ trễ `taskDelayMs`.
+  - **Hệ thống Select & Input cao cấp**: Sử dụng Shadcn UI Radix Select chống tràn chữ (`...`), đồng bộ chiều cao chuẩn `32px` với các ô nhập số.
+  - **Tự động hóa nâng cao**: Tự động hóa chu kỳ quay vé lồng đèn Cô Bảy (tự chọn món săn, quay vé, ghi log trúng thưởng vào Terminal và nhấn xác nhận); hỗ trợ chế độ "Hiển thị đầy đủ thao tác" (`showFullActions`).
 
 👉 **Chi tiết toàn bộ tính năng và danh sách cập nhật đầy đủ được ghi chép tại [CHANGELOG.md](CHANGELOG.md).**
 
@@ -115,5 +117,5 @@ Xem toàn bộ lịch sử cập nhật và mô tả chức năng chi tiết t�
 ## 👤 Tác Giả & Bản Quyền
 
 - **Tác giả**: Tún (Nông Trại GenZ Auto by Tún)
-- **Phiên bản hiện tại**: `v1.0.0`
+- **Phiên bản hiện tại**: `v1.1.0`
 - **Giấy phép**: Bản quyền mã nguồn dành riêng cho cộng đồng người chơi Nông Trại GenZ.

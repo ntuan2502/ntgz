@@ -5,29 +5,62 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
-## [Unreleased] - 2026-10-24
+## [1.1.0] - 2026-10-25
 
 ### 🚀 Kiến Trúc & Công Nghệ Mới (TypeScript & Modular Architecture)
 - **Chuyển đổi 100% sang TypeScript**: Toàn bộ dự án được viết bằng TypeScript với hệ thống kiểu dữ liệu nghiêm ngặt (`strict: true`), loại bỏ hoàn toàn các lỗi tiềm ẩn do sai kiểu hoặc `undefined`.
 - **Module hóa toàn diện (Modular Architecture)**: Phân tách 2 tệp monolithic khổng lồ (`content.js` ~2.735 dòng và `page-hook.js` ~2.137 dòng) thành hơn 20 module nhỏ gọn, độc lập và dễ bảo trì:
-  - `src/shared/`: Định nghĩa kiểu dữ liệu chuẩn (`config`, `protocol`, `game-state`, `github`) và cấu hình mặc định.
+  - `src/shared/`: Định nghĩa kiểu dữ liệu chuẩn (`config`, `protocol`, `game-state`, `github`, `game-store`) và cấu hình mặc định.
   - `src/services/`: Dịch vụ tích hợp GitHub Releases API và so sánh phiên bản SemVer.
   - `src/background/`: Service Worker quản lý badge trạng thái và phím tắt extension.
   - `src/popup/`: Giao diện popup extension tối giản và nút kiểm tra cập nhật nhanh.
   - `src/page-hook/`: Tương tác trực tiếp với engine game (Phaser 3 & Zustand Store) chia theo từng phân hệ (`farm`, `wharf`, `sea`).
   - `src/content/`: Điều phối lịch trình (`scheduler`), cầu nối RPC (`bridge`) và giao diện Shadow DOM HUD (`ui`).
-- **Đóng gói siêu tốc với esbuild**: Tốc độ build toàn bộ extension dưới 100ms, hỗ trợ chế độ `--watch` tự động cập nhật bundle khi lưu file.
+- **Đóng gói siêu tốc với esbuild & Tailwind CSS v4**: Tốc độ build toàn bộ extension dưới 1 giây, biên dịch stylesheet tự động và kiểm tra tính hợp lệ cú pháp trước khi release.
 
-### ✨ Tính Năng Mới
+### 🖥️ Nâng Cấp Giao Diện HUD & Trải Nghiệm Người Dùng
+- **Kích thước HUD mặc định 400x800 & Hỗ trợ Resize tự do**:
+  - Tăng kích thước mặc định của bảng điều khiển nổi lên `400×800` (rộng rãi, hiển thị trọn vẹn thông tin các tab).
+  - Bổ sung các tay cầm kéo giãn (Border & Corner Resizers) ở cạnh phải, cạnh dưới và góc dưới-phải, cho phép người dùng kéo thả co giãn kích thước HUD tùy ý; kích thước tùy chỉnh tự động lưu vào `chrome.storage.local`.
+- **Cửa sổ Terminal Lịch Sử Hoạt Động (Session Logs)**:
+  - Tích hợp cửa sổ Terminal chuyên dụng ngay dưới thanh trạng thái trực tiếp của HUD.
+  - Lưu trữ toàn bộ lịch sử các hành động trong phiên hiện tại (tối đa 300 dòng) kèm mốc thời gian thực `[HH:mm:ss]` và thời gian game `[N... HH:mm]`.
+  - Hỗ trợ cuộn tự động ghim đáy (Auto Stick-to-bottom), nút Thu gọn / Mở rộng và nút Xóa lịch sử.
+  - Tối ưu định dạng văn bản inline, cho phép bôi đen copy ra ngoài gọn gàng trên 1 dòng duy nhất.
+- **Chuyển đổi toàn bộ Select sang Shadcn UI (`HudSelect`)**:
+  - Thay thế toàn bộ thẻ select native HTML bằng component Radix UI Select phong cách Shadcn UI sang trọng, hiện đại.
+  - Tự động cắt ngắn text quá dài bằng dấu chấm lửng `...` (`truncate`), không bị tràn vỡ giao diện.
+  - Tách portal hiển thị `z-index: 2147483647` ra ngoài stacking context, khắc phục triệt để lỗi menu dropdown bị che khuất dưới HUD.
+- **Đồng bộ chiều cao ô Input số**:
+  - Tăng chiều cao tối thiểu của tất cả các ô `<input type="number">` ở cả 3 tab (Nông trại, Bến Đò, Biển) lên `h-8 min-h-8` (`32px`), cân đối hoàn hảo với các ô Select.
+
+### 🎣 Nâng Cấp Hệ Thống Câu Cá & Bến Đò / Biển
+- **Ghi log chi tiết từng con cá câu được và khi bán cá**:
+  - **Bến Đò**: Ghi rõ tên cá, độ hiếm (`Thường`, `Hơi hiếm`, `Hiếm`, `Rất hiếm`, `Huyền thoại`, `Thần thoại`), biến thể (`✨ Cá lạ`, `🌈 Cầu vồng`, `📏 Kỷ lục`), chiều dài (`cm`), giá bán (`🐚 vỏ sò`) hoặc thưởng thả sông, và số vé quay lồng đèn nếu cá ngậm vé (`🎟️ +1 vé quay`).
+  - **Biển**: Ghi rõ tên hải sản, độ hiếm (`★`), cờ `KHỦNG!`, chiều dài (`cm`) và giá Ông Tư thu mua (`đ`).
+  - **Bán cá**: Ghi rõ số lượng cá bán và tổng số tiền/vỏ sò thu được tại Vựa cá Anh Tư và Chòi Ông Tư.
+- **Tự động hóa toàn diện Vòng quay lồng đèn Cô Bảy**:
+  - Tự động đi tới sạp lồng đèn Cô Bảy và mở bảng Vòng quay.
+  - Nếu vòng quay chưa đủ 3 món săn, hệ thống tự động nhận diện và chọn 3 vật phẩm chưa sở hữu rồi nhấn `"Lên vòng"`.
+  - Tự động bấm `"Quay 1 · 🎟️ 1"`, ghi nhận kết quả quay được vào Terminal (vật phẩm trúng hoặc số vỏ sò an ủi), tự động nhấn nút xác nhận (**"Nhận"** / **"Chọn món mới"**) và tiếp tục quay vé tiếp theo cho đến khi hết vé mới đóng bảng quay lại câu cá.
+- **Chuẩn hóa tên Tiếng Việt toàn bộ vật phẩm trong Log**:
+  - Loại bỏ hoàn toàn việc hiển thị ID thô (như `lauMam`, `duaTuoi`, `moi150`, `packItems[0]`).
+  - Ghi rõ tên đầy đủ: *Lẩu cá linh bông điên điển*, *Cơm tấm sườn bì*, *Hủ tiếu nam vang*, *Cháo cá lóc*, *Bánh mì thịt*, *Dừa xiêm tươi*, *Cà phê sữa đá*, *Rau má đậu xanh*, *Nước mía tắc*, *Thùng mồi cám*, *Thau mồi trùn*, *Hộp mồi trùn*, *10 mồi miễn phí*, v.v.
+
+### 🌐 Cài Đặt Toàn Cục Mới
+- **Công tắc "👁️ Hiển thị đầy đủ thao tác" (`showFullActions`)**:
+  - Bổ sung tùy chọn cài đặt toàn cục trên thanh điều khiển chính (mặc định tắt - chạy ngầm tốc độ cao).
+  - Khi bật: Các thao tác mua đồ ăn/nước uống, quay vé lồng đèn, rút ATM, đổi vé số hoặc nấu ăn sẽ hiển thị giao diện UI gốc của game lên màn hình để người dùng quan sát trực quan trước khi đóng lại.
+
+### 🐛 Vá Lỗi & Tối Ưu Hóa Kỹ Thuật
+- **Sửa lỗi CSS Switch Shadcn & Tailwind CSS v4 trong Shadow DOM**:
+  - Khắc phục lỗi Chromium bỏ qua các khai báo `@property` bên trong ShadowRoot bằng cách inject stylesheet an toàn ở cấp Document, giúp animation trượt nút Switch hoạt động mượt mà và chuẩn xác.
+- **Phục hồi đồng bộ Zustand Stores**:
+  - Khắc phục sự cố mất kết nối một số chức năng nông trại (tưới nước, nhận việc sổ tay, bảng tin làng) sau khi chuyển đổi mã nguồn; đảm bảo tất cả action gọi trực tiếp vào store engine của game.
 - **Kiểm tra cập nhật trực tiếp từ GitHub Releases**:
-  - Tích hợp nút **🔄 Kiểm Tra Cập Nhật** trên cả **Popup Extension** và **Thanh tiêu đề Menu Game HUD**.
-  - So sánh phiên bản hiện tại với release mới nhất trên kho lưu trữ `ntuan2502/ntgz`.
-  - Tự động hiển thị huy hiệu thông báo khi có bản cập nhật mới.
-  - Hiển thị cửa sổ Modal trực quan với nội dung **Nhật ký thay đổi (Changelog Markdown)** và nút bấm tải nhanh bản cập nhật mới nhất.
+  - Tích hợp tính năng tự động kiểm tra phiên bản mới, hiển thị Changelog và link tải trực tiếp file zip release.
 
-### 🛠️ Quy Trình Phát Triển (DX)
-- Chuẩn hóa Commit Messages theo định dạng Conventional Commits với **Commitlint**.
-- Tự động kiểm tra chất lượng mã nguồn trước khi commit bằng Git Hooks (**Husky**).
+---
 
 ---
 
