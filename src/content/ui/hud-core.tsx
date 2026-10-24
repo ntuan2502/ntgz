@@ -97,6 +97,8 @@ export function mergeConfig(saved: Partial<AppConfig> | null | undefined): AppCo
     autoSalonWhiten: (saved.autoSalonWhiten ?? DEFAULT_CONFIG.autoSalonWhiten) as boolean,
     autoFirstDayTasks: (saved.autoFirstDayTasks ?? DEFAULT_CONFIG.autoFirstDayTasks) as boolean,
     autoNotebookPages: (saved.autoNotebookPages ?? DEFAULT_CONFIG.autoNotebookPages) as boolean,
+    hudWidth: (typeof saved.hudWidth === 'number' && saved.hudWidth >= 340 ? saved.hudWidth : DEFAULT_CONFIG.hudWidth),
+    hudHeight: (typeof saved.hudHeight === 'number' && saved.hudHeight >= 360 ? saved.hudHeight : DEFAULT_CONFIG.hudHeight),
   };
 
   if (!Array.isArray(next.areaOrder) || next.areaOrder.length === 0) {

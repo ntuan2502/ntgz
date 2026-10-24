@@ -29,6 +29,8 @@ export interface AppConfig {
   panelVisible: boolean;
   panelMinimized: boolean;
   showOrderDrawer: boolean;
+  hudWidth: number;
+  hudHeight: number;
 
   // General Delay & Transition settings
   taskDelayMs: number;

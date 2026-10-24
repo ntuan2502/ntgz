@@ -25,6 +25,8 @@ export const DEFAULT_CONFIG: AppConfig = {
   panelVisible: true,
   panelMinimized: false,
   showOrderDrawer: true,
+  hudWidth: 400,
+  hudHeight: 800,
 
   // General Delay & Transition settings
   taskDelayMs: 500,
