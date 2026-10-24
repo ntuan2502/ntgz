@@ -5,6 +5,20 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.1.1] - 2026-10-25
+
+### 🛠️ Sửa Lỗi & Tối Ưu Giao Diện (Bug Fixes & UI Improvements)
+- **Khắc phục triệt để lỗi tràn màn hình của cửa sổ Nhật ký phiên bản (Changelog Modal)**:
+  - Khống chế chiều cao tối đa của modal trong giới hạn màn hình `max-h-[85vh]` cùng cấu trúc `flex flex-col` và `overflow-hidden`, ngăn chặn việc nội dung dài đẩy phình modal vượt quá viewport của trình duyệt.
+  - Bổ sung thanh cuộn riêng (`max-h-[200px] overflow-y-auto`) cho phần ghi chú phát hành bản mới nhất và thanh cuộn độc lập (`max-h-[180px] overflow-y-auto`) cho từng mục Accordion khi mở xem các phiên bản phát hành cũ.
+  - Cố định Header (nút Đóng `✖`) và Footer (nút Tải Cập Nhật / Đóng) luôn hiển thị ở đầu và đáy modal, không bao giờ bị trôi mất.
+  - Mở rộng chiều rộng modal lên chuẩn `max-w-[440px]` thoáng đãng, dễ đọc.
+  - Hỗ trợ phím tắt `Escape` (Esc) và bấm chuột vào nền mờ (Backdrop click) để thoát nhanh modal.
+- **Đồng bộ giao diện Changelog trên Popup Extension**:
+  - Tối ưu vùng hiển thị cuộn mượt mà trong giới hạn khung nhìn `520px` của Extension Popup, giữ cố định nút Quay lại và chân trang.
+
+---
+
 ## [1.1.0] - 2026-10-25
 
 ### 🚀 Kiến Trúc & Công Nghệ Mới (TypeScript & Modular Architecture)
