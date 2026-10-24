@@ -5,12 +5,14 @@
   "private": true,
   "scripts": {
     "commitlint": "commitlint --last",
-    "check-syntax": "node --check content.js && node --check page-hook.js && node --check background.js && node --check popup.js"
+    "check-syntax": "node --check content.js && node --check page-hook.js && node --check background.js && node --check popup.js",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@commitlint/types": "^21.2.3",
+    "husky": "^9.1.7",
     "typescript": "^7.0.2"
   }
 }
