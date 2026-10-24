@@ -142,6 +142,18 @@ export function HudControls({
         </Button>
       </div>
 
+      {/* Global Full Action UI Toggle */}
+      <label className="flex items-center justify-between rounded-lg bg-white/90 border border-slate-200/80 px-2.5 py-1.5 text-[11px] text-slate-700 cursor-pointer shadow-2xs">
+        <span className="font-medium">👁️ Hiển thị đầy đủ thao tác (Mở UI gốc khi mua/quay)</span>
+        <Switch
+          size="sm"
+          checked={Boolean(config.showFullActions)}
+          onCheckedChange={(checked) =>
+            onUpdateConfig((prev) => ({ ...prev, showFullActions: checked }))
+          }
+        />
+      </label>
+
       {/* Area Order Collapsible Drawer */}
       {isOrderDrawerOpen && (
         <div className="mt-1.5 rounded-xl border border-slate-200 bg-white p-2.5 space-y-2 shadow-xs">
@@ -155,7 +167,7 @@ export function HudControls({
                 max={50}
                 value={config.fishingSwitchCount}
                 onChange={handleFishingSwitchChange}
-                className="w-9 rounded-md bg-slate-50 px-1 py-0.5 text-center text-[10px] text-emerald-700 font-bold border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="w-11 h-7 min-h-7 rounded-md bg-slate-50 px-1.5 py-0.5 text-center text-[11px] text-emerald-700 font-bold border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
               />
               <span>con cá</span>
             </div>

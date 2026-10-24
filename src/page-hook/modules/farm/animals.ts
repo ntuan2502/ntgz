@@ -17,6 +17,24 @@ const PET_DIETS: Array<{ kinds: string[]; foods: string[]; shop: string[] }> = [
 ];
 
 const PET_TRICKS = ['dance', 'roll', 'paw', 'sit', 'come'];
+const PET_TRICK_NAMES: Record<string, string> = {
+  dance: 'Nhảy múa',
+  roll: 'Lăn vòng',
+  paw: 'Bắt tay',
+  sit: 'Ngồi ngoan',
+  come: 'Lại đây',
+};
+const PET_FOOD_NAMES: Record<string, string> = {
+  xuong: 'Xương gặm 🦴',
+  cakho: 'Cá khô 🐟',
+  pate: 'Pate cá ngừ 🥫',
+  hat: 'Hạt tổng hợp 🥣',
+  coKho: 'Cỏ khô 🌿',
+  cam: 'Cám heo 🌾',
+  'crop:carrot': 'Cà rốt 🥕',
+  'crop:corn': 'Bắp ngô 🌽',
+  'crop:radish': 'Củ cải 🌱',
+};
 const isFed = (res: string | undefined) => res === 'ok' || res === 'fav';
 
 export function handlePetSubArea(cfg: AppConfig): StepResult {
@@ -38,12 +56,12 @@ export function handlePetSubArea(cfg: AppConfig): StepResult {
 
     for (const f of foods) {
       if (isFed(getMainState().feedPet?.(f))) {
-        return { acted: true, msg: `🐕 Đã cho thú cưng (${petName}) ăn no` };
+        return { acted: true, msg: `🐕 Đã cho thú cưng (${petName}) ăn ${PET_FOOD_NAMES[f] || f}` };
       }
     }
     for (const sf of shop) {
       if (getMainState().buyPetFood?.(sf, 1) === 'ok' && isFed(getMainState().feedPet?.(sf))) {
-        return { acted: true, msg: `🦴 Đã mua đồ ăn & cho thú cưng (${petName}) ăn` };
+        return { acted: true, msg: `🦴 Đã mua ${PET_FOOD_NAMES[sf] || sf} & cho thú cưng (${petName}) ăn` };
       }
     }
   }
@@ -73,7 +91,7 @@ export function handlePetSubArea(cfg: AppConfig): StepResult {
     if (trickPet.trickDay !== st.day) {
       for (const tr of PET_TRICKS) {
         if (getMainState().doTrick?.(tr) === 'ok') {
-          return { acted: true, msg: `🎾 Tập trò "${tr}" cùng thú cưng` };
+          return { acted: true, msg: `🎾 Tập trò "${PET_TRICK_NAMES[tr] || tr}" cùng thú cưng` };
         }
       }
     }

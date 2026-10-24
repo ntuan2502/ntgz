@@ -126,7 +126,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                     step={5}
                     value={config.hungerThreshold}
                     onChange={(e) => updateField('hungerThreshold', Number(e.target.value))}
-                    className="w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
+                    className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>
                 <div className="flex items-center justify-between gap-2 min-w-0">
@@ -196,7 +196,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                     step={5}
                     value={config.thirstThreshold}
                     onChange={(e) => updateField('thirstThreshold', Number(e.target.value))}
-                    className="w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
+                    className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>
                 <div className="flex items-center justify-between gap-2 min-w-0">
@@ -271,7 +271,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                     step={5}
                     value={config.batteryThreshold}
                     onChange={(e) => updateField('batteryThreshold', Number(e.target.value))}
-                    className="w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
+                    className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>
               </div>
@@ -311,7 +311,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                     step={1}
                     value={config.sleepHour}
                     onChange={(e) => updateField('sleepHour', Number(e.target.value))}
-                    className="w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
+                    className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>
                 <label className="flex items-center justify-between text-slate-600">
@@ -620,7 +620,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                     step={5}
                     value={config.surplusKeepQty}
                     onChange={(e) => updateField('surplusKeepQty', Number(e.target.value))}
-                    className="w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
+                    className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>
               </div>
@@ -660,7 +660,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                     step={100000}
                     value={config.goldKeepCash}
                     onChange={(e) => updateField('goldKeepCash', Number(e.target.value))}
-                    className="w-20 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
+                    className="w-24 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>
               </div>
@@ -684,7 +684,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                     step={1}
                     value={config.goldProfitPercent}
                     onChange={(e) => updateField('goldProfitPercent', Number(e.target.value))}
-                    className="w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
+                    className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>
               </div>
@@ -755,7 +755,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                     step={50000}
                     value={config.savingsKeepGold}
                     onChange={(e) => updateField('savingsKeepGold', Number(e.target.value))}
-                    className="w-20 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
+                    className="w-24 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>
               </div>

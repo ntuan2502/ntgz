@@ -8,6 +8,44 @@ let lastModalClickAt = 0;
 let lastHookAt = 0;
 let lastCastAt = 0;
 
+function formatBenCatchSummary(card: HTMLElement, kept: boolean): string {
+  const fishName = card.querySelector('h3')?.textContent?.trim() || 'Cá';
+  const rarityText = card.querySelector('h3')?.nextElementSibling?.textContent?.trim() || 'Thường';
+  const isRainbow = Boolean(card.querySelector('.catch-tag.rainbow'));
+  const isOdd = Boolean(card.querySelector('.catch-tag.odd'));
+  const isRecord = Boolean(card.querySelector('.catch-tag.record'));
+
+  const variantTag = isRainbow ? ' · 🌈 Cầu vồng' : isOdd ? ' · ✨ Cá lạ' : '';
+  const recordTag = isRecord ? ' · 📏 Kỷ lục' : '';
+  const typeLabel = `${rarityText}${variantTag}${recordTag}`;
+
+  const fullText = card.textContent || '';
+  const sizeMatch = fullText.match(/Dài\s+([\d.,]+)\s*cm/i);
+  const sizePart = sizeMatch ? `Dài ${sizeMatch[1]} cm` : '';
+
+  const priceRaw = card.querySelector('.ben-catch-price')?.textContent?.trim() || '';
+  const sellMatch = priceRaw.match(/🐚\s*([\d.,]+)\s*vỏ sò/i);
+  const releaseMatch = priceRaw.match(/thưởng\s*🐚\s*\+?([\d.,]+)/i);
+  const pricePart = sellMatch
+    ? `Bán ${sellMatch[1]} vỏ sò 🐚`
+    : releaseMatch
+      ? `Thả sông +${releaseMatch[1]} vỏ sò 🐚`
+      : priceRaw;
+
+  const ticketMatch = fullText.match(/có\s+(\d+)\s*tấm vé quay/i);
+  const hasTicket = ticketMatch
+    ? ` · 🎟️ +${ticketMatch[1]} vé quay`
+    : fullText.includes('tấm vé quay')
+      ? ' · 🎟️ +1 vé quay'
+      : '';
+
+  const prefix = kept ? '⭐ Giữ lại' : '🐟 Câu được';
+  const parts = [`${prefix}: ${fishName} (${typeLabel})`];
+  if (sizePart) parts.push(sizePart);
+  if (pricePart) parts.push(pricePart);
+  return parts.join(' · ') + hasTicket;
+}
+
 export async function stepBenDoFishing(
   snap: GameSnapshot,
   config: AppConfig,
@@ -50,11 +88,13 @@ export async function stepBenDoFishing(
         const bagBtn = card.querySelector('.ben-catch-btns button.btn-green') as HTMLButtonElement | null;
 
         if (config.benAutoKeepRare && isRareSpecial && keepBtn && !keepBtn.disabled) {
+          const msg = formatBenCatchSummary(card, true);
           triggerPointerDownAndClick(keepBtn);
-          setStatus('⭐ Đã giữ lại cá Hiếm/Lạ/Cầu vồng!');
+          setStatus(msg);
         } else if (bagBtn) {
+          const msg = formatBenCatchSummary(card, false);
           triggerPointerDownAndClick(bagBtn);
-          setStatus('🧺 Đã bỏ cá vào giỏ Bến Đò');
+          setStatus(msg);
         }
         lastModalClickAt = now;
         onCatchIncrement();

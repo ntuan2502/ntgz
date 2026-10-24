@@ -31,6 +31,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   // General Delay & Transition settings
   taskDelayMs: 500,
   fishingSwitchCount: 15,
+  showFullActions: false,
 
   // Main Area Order & Enable/Disable toggles
   areaOrder: ['farm', 'benDo', 'sea'],

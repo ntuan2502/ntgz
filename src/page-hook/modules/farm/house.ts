@@ -1,7 +1,7 @@
 import { getMainState } from '../../core/engine-access';
 import { canAct, markActed } from '../../core/cooldown';
 import { AppConfig } from '../../../shared/types/config';
-import { StepResult, NOT_ACTED, formatVnd } from './types';
+import { StepResult, NOT_ACTED, formatVnd, showFarmActionUI } from './types';
 
 const DISH_NAMES: Record<string, string> = {
   radishSoup: 'Canh củ cải',
@@ -100,6 +100,7 @@ function tryCook(cfg: AppConfig): StepResult | null {
     }
 
     if (cur.cook?.(d) === 'ok') {
+      showFarmActionUI(cfg, { panel: 'kitchen' });
       return { acted: true, msg: `🍳 Đã bắc bếp nấu món ${DISH_NAMES[d] || d}` };
     }
   }
@@ -120,6 +121,7 @@ function tryRecoverHunger(cfg: AppConfig, threshold: number): StepResult | null 
     for (const d of dishOrder) {
       if ((st.kitchen?.stock?.[d] || 0) > 0 && st.eatDish?.(d) === true) {
         markActed('farm_eat');
+        showFarmActionUI(cfg, { panel: 'kitchen' });
         return { acted: true, msg: `🍲 Đã ăn ${DISH_LABELS[d] || d} trong bếp hồi Đói (${st.fullness}%)` };
       }
     }
@@ -133,6 +135,7 @@ function tryRecoverHunger(cfg: AppConfig, threshold: number): StepResult | null 
       seen.add(item);
       if ((st.gold || 0) >= (SHOP_FOOD_PRICES[item] || 8000) && st.buyFood?.(item) === 'ok') {
         markActed('farm_eat');
+        showFarmActionUI(cfg, { vendor: 'bakery', shop: 'menu' });
         return { acted: true, msg: `🥖 Đã mua & ăn ${SHOP_FOOD_LABELS[item] || item} tại Tiệm bánh hồi Đói` };
       }
     }
@@ -154,6 +157,7 @@ function tryRecoverThirst(cfg: AppConfig, threshold: number): StepResult | null 
     for (const d of kitchenDrinks) {
       if ((st.kitchen?.stock?.[d] || 0) > 0 && st.eatDish?.(d) === true) {
         markActed('farm_drink');
+        showFarmActionUI(cfg, { panel: 'kitchen' });
         return { acted: true, msg: `🧃 Đã dùng ${DISH_LABELS[d] || d} trong bếp giải Khát (${st.hydration}%)` };
       }
     }
@@ -167,6 +171,7 @@ function tryRecoverThirst(cfg: AppConfig, threshold: number): StepResult | null 
       seen.add(dr);
       if ((st.gold || 0) >= (DRINK_PRICES[dr] || 3000) && st.buyFood?.(dr) === 'ok') {
         markActed('farm_drink');
+        showFarmActionUI(cfg, { vendor: 'cafe', shop: 'menu' });
         return { acted: true, msg: `🥤 Đã mua & uống ${DRINK_LABELS[dr] || dr} giải Khát` };
       }
     }
@@ -198,6 +203,7 @@ export function handleHouseSubArea(cfg: AppConfig): StepResult {
     const st = getMainState();
     if (st.coffeeDay !== st.day && (st.gold || 0) >= 30000 && canAct('farm_coffee', 4000) && st.buyFood?.('caPheSua') === 'ok') {
       markActed('farm_coffee');
+      showFarmActionUI(cfg, { vendor: 'cafe', shop: 'menu' });
       return { acted: true, msg: '☕ Đã uống Cà phê sữa đá (+25% nước, chạy nhanh suốt ngày)' };
     }
   }
@@ -208,6 +214,7 @@ export function handleHouseSubArea(cfg: AppConfig): StepResult {
       const charged = st.chargeVehicle?.();
       if (typeof charged === 'number' && charged > 0) {
         markActed('farm_vehicle');
+        showFarmActionUI(cfg, { panel: 'ev' });
         return { acted: true, msg: `🔋 Đã sạc đầy pin xe điện (-${formatVnd(charged)}đ)` };
       }
     }
@@ -218,12 +225,14 @@ export function handleHouseSubArea(cfg: AppConfig): StepResult {
       const st = getMainState();
       const hasRelax = (st.kitchen?.buffs || []).some((b) => b.kind === 'relax' && b.day === st.day);
       if (!hasRelax && (st.gold || 0) >= 150000 && st.shampoo?.() === 'ok') {
+        showFarmActionUI(cfg, { panel: 'salon' });
         return { acted: true, msg: '💆 Đã ghé Chị Linh Tây gội đầu dưỡng sinh (Buff thư giãn)' };
       }
     }
     if (cfg.autoSalonWhiten) {
       const st = getMainState();
       if ((st.player?.outfit?.tan || 0) > 0 && (st.gold || 0) >= 300000 && st.whiten?.() === 'ok') {
+        showFarmActionUI(cfg, { panel: 'salon' });
         return { acted: true, msg: '✨ Đã ghé Chị Linh Tây tắm trắng nâng tông da' };
       }
     }

@@ -1,6 +1,6 @@
 import { getMainState, setMainState } from '../../core/engine-access';
 import { AppConfig } from '../../../shared/types/config';
-import { StepResult, NOT_ACTED, formatVnd } from './types';
+import { StepResult, NOT_ACTED, formatVnd, showFarmActionUI } from './types';
 
 const DEBRIS_COUNT = 5;
 const NOTEBOOK_PAGES = [1, 4, 5];
@@ -67,20 +67,22 @@ function collectNotebookPages(): StepResult | null {
   return null;
 }
 
-function claimQuests(): StepResult | null {
+function claimQuests(cfg: AppConfig): StepResult | null {
   const taskCount = getMainState().daily?.tasks?.length || 0;
   for (let i = 0; i < taskCount; i++) {
     if (getMainState().claimDaily?.(i)) {
+      showFarmActionUI(cfg, { panel: 'goals' });
       return { acted: true, msg: `🎁 Đã nhận thưởng Việc hôm nay #${i + 1} trong Sổ tay` };
     }
   }
   if (getMainState().claimGoal?.()) {
+    showFarmActionUI(cfg, { panel: 'goals' });
     return { acted: true, msg: '🏆 Đã nhận thưởng Mục tiêu Sổ tay!' };
   }
   return null;
 }
 
-function breakFullPiggy(): StepResult | null {
+function breakFullPiggy(cfg: AppConfig): StepResult | null {
   const st = getMainState();
   const pig = st.savings?.pig;
   if (!pig || (pig.amount || 0) <= 0) return null;
@@ -90,10 +92,11 @@ function breakFullPiggy(): StepResult | null {
   const brk = st.breakPiggy?.();
   if (!brk) return null;
   const totalGot = (brk.coins || 0) + (brk.bonus || 0);
+  showFarmActionUI(cfg, { vendor: 'savings', shop: 'piggy' });
   return { acted: true, msg: `🔨 Đã đập Heo đất đủ 7 ngày (+${formatVnd(totalGot)}đ)!` };
 }
 
-function buyNewPiggy(): StepResult | null {
+function buyNewPiggy(cfg: AppConfig): StepResult | null {
   const st = getMainState();
   const pig = st.savings?.pig;
   if (pig && pig.amount !== 0) return null;
@@ -102,17 +105,19 @@ function buyNewPiggy(): StepResult | null {
   if (!tier && gold >= 15000) tier = 10000;
   if (tier > 0 && st.newPiggy?.(tier) === true) {
     getMainState().feedPiggy?.();
+    showFarmActionUI(cfg, { vendor: 'savings', shop: 'piggy' });
     return { acted: true, msg: `🐷 Đã mua & bỏ ống Heo đất mới (${formatVnd(tier)}đ/ngày)` };
   }
   return null;
 }
 
-function feedPiggy(): StepResult | null {
+function feedPiggy(cfg: AppConfig): StepResult | null {
   const st = getMainState();
   const pig = st.savings?.pig;
   const amount = pig?.amount || 0;
   if (!pig || amount <= 0 || pig.lastDay === st.day || (st.gold || 0) < amount) return null;
   if (st.feedPiggy?.() === 'ok') {
+    showFarmActionUI(cfg, { vendor: 'savings', shop: 'piggy' });
     return { acted: true, msg: `🪙 Đã bỏ ống Heo đất hôm nay (${formatVnd(amount)}đ)` };
   }
   return null;
@@ -129,6 +134,7 @@ function depositSavings(cfg: AppConfig): StepResult | null {
   const cap = matured >= 10 ? 20000000 : matured >= 5 ? 12000000 : matured >= 2 ? 8000000 : 5000000;
   const amount = Math.min(cap, Math.floor((gold - minGold) / 10000) * 10000);
   if (amount >= 50000 && st.deposit?.(amount, 7) === 'ok') {
+    showFarmActionUI(cfg, { vendor: 'savings', shop: 'savings' });
     return { acted: true, msg: `🏦 Đã gửi sổ tiết kiệm Dì Bảy ${formatVnd(amount)}đ (7 ngày)` };
   }
   return null;
@@ -139,10 +145,10 @@ export function handleDiBaySubArea(cfg: AppConfig): StepResult {
   return (
     (cfg.autoFirstDayTasks !== false ? runFirstDayGuide() : null) ||
     (cfg.autoNotebookPages !== false ? collectNotebookPages() : null) ||
-    (cfg.autoClaimQuests !== false ? claimQuests() : null) ||
-    (cfg.autoBreakPiggy !== false ? breakFullPiggy() : null) ||
-    (cfg.autoNewPiggy !== false ? buyNewPiggy() : null) ||
-    (cfg.autoFeedPiggy !== false ? feedPiggy() : null) ||
+    (cfg.autoClaimQuests !== false ? claimQuests(cfg) : null) ||
+    (cfg.autoBreakPiggy !== false ? breakFullPiggy(cfg) : null) ||
+    (cfg.autoNewPiggy !== false ? buyNewPiggy(cfg) : null) ||
+    (cfg.autoFeedPiggy !== false ? feedPiggy(cfg) : null) ||
     (cfg.autoSavings ? depositSavings(cfg) : null) ||
     NOT_ACTED
   );

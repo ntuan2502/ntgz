@@ -93,15 +93,17 @@ export function HudTerminal({ lastAction, logs, onClearLogs }: HudTerminalProps)
                 return (
                   <div
                     key={entry.id}
-                    className={`flex items-start gap-1.5 break-words ${
+                    className={`leading-snug break-words ${
                       isLatest ? 'text-emerald-300 font-medium' : 'text-slate-300'
                     }`}
                   >
-                    <span className="text-slate-500 shrink-0">[{entry.time}]</span>
+                    <span className="text-slate-500">[{entry.time}]</span>{' '}
                     {entry.gameTime && (
-                      <span className="text-amber-400/90 shrink-0">[{entry.gameTime}]</span>
+                      <>
+                        <span className="text-amber-400/90">[{entry.gameTime}]</span>{' '}
+                      </>
                     )}
-                    <span className="min-w-0 flex-1 break-words">{entry.text}</span>
+                    <span>{entry.text}</span>
                   </div>
                 );
               })

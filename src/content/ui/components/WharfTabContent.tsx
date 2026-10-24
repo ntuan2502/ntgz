@@ -127,7 +127,7 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
                 max={60}
                 value={config.benSellThreshold}
                 onChange={(e) => updateField('benSellThreshold', Number(e.target.value))}
-                className="w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
               />
             </div>
           </div>
@@ -152,7 +152,7 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
                 step={1}
                 value={config.benStaminaThreshold}
                 onChange={(e) => updateField('benStaminaThreshold', Number(e.target.value))}
-                className="w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
               />
             </div>
             <div className="flex items-center justify-between gap-2 min-w-0">
@@ -271,7 +271,7 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
                 step={50}
                 value={config.benAtmThreshold}
                 onChange={(e) => updateField('benAtmThreshold', Number(e.target.value))}
-                className="w-16 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="w-20 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
               />
             </div>
           </div>

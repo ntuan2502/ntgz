@@ -8,6 +8,49 @@ let lastModalClickAt = 0;
 let lastHookAt = 0;
 let lastCastAt = 0;
 
+function formatSeaCatchSummary(card: HTMLElement): string {
+  const fishName = card.querySelector('.catch-name')?.textContent?.trim() || 'Hải sản';
+  const rarityText = card.querySelector('.catch-rarity')?.textContent?.trim() || '';
+  const isBig = Boolean(card.querySelector('.catch-tag.big'));
+  const isRecord = Boolean(card.querySelector('.catch-tag.record'));
+
+  const typeParts = [rarityText, isBig ? 'KHỦNG' : '', isRecord ? 'KỶ LỤC' : ''].filter(Boolean);
+  const typeLabel = typeParts.join(' · ');
+
+  let sizePart = '';
+  let pricePart = '';
+  const metas = Array.from(card.querySelectorAll('.catch-meta'));
+  for (const m of metas) {
+    const txt = (m.textContent || '').trim();
+    const cmMatch = txt.match(/([\d.,]+)\s*cm/i);
+    if (cmMatch) {
+      sizePart = `Dài ${cmMatch[1]} cm`;
+    }
+    const buyMatch = txt.match(/ông Tư mua\s+(.+)$/i);
+    if (buyMatch && buyMatch[1]) {
+      pricePart = `Bán ${buyMatch[1].trim()}`;
+    }
+  }
+
+  if (!pricePart) {
+    const letterTxt = (card.querySelector('.catch-letter')?.textContent || '').trim();
+    const releaseMatch = letterTxt.match(/tặng thêm\s+(\d+)\s*mồi tôm/i);
+    const goldMatch = letterTxt.match(/kèm\s+([^)]+)/i);
+    if (releaseMatch) {
+      pricePart = `Thả biển (+${releaseMatch[1]} mồi tôm)`;
+    } else if (goldMatch && goldMatch[1]) {
+      pricePart = `Thư chai (+${goldMatch[1].trim()})`;
+    } else {
+      pricePart = 'Bán 0đ';
+    }
+  }
+
+  const parts = [`🐟 Câu được: ${fishName}${typeLabel ? ` (${typeLabel})` : ''}`];
+  if (sizePart) parts.push(sizePart);
+  if (pricePart) parts.push(pricePart);
+  return parts.join(' · ');
+}
+
 export async function stepSeaFishing(
   snap: GameSnapshot,
   config: AppConfig,
@@ -59,15 +102,17 @@ export async function stepSeaFishing(
         }
         const storeBtn = card.querySelector('.foot-buttons button.btn-brown') as HTMLButtonElement | null;
         const againBtn = card.querySelector('.foot-buttons button.btn-green') as HTMLButtonElement | null;
+        const catchMsg = formatSeaCatchSummary(card);
         if (storeBtn) {
           triggerPointerDownAndClick(storeBtn);
           lastModalClickAt = now;
           onCatchIncrement();
-          setStatus('🧺 Đã cất cá vào giỏ Biển');
+          setStatus(catchMsg);
         } else if (againBtn) {
           triggerPointerDownAndClick(againBtn);
           lastModalClickAt = now;
           onCatchIncrement();
+          setStatus(catchMsg);
         }
       }
     }

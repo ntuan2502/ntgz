@@ -33,7 +33,7 @@ export function HudSelect({
       <SelectTrigger
         size="sm"
         className={cn(
-          'flex-1 max-w-[195px] min-w-0 h-7 px-2.5 py-1 text-xs rounded-lg bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800 shadow-none overflow-hidden focus-visible:ring-1 focus-visible:ring-emerald-500 focus-visible:border-emerald-500',
+          'flex-1 max-w-[195px] min-w-0 h-8 min-h-8 px-2.5 py-1 text-xs rounded-lg bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800 shadow-none overflow-hidden focus-visible:ring-1 focus-visible:ring-emerald-500 focus-visible:border-emerald-500',
           className
         )}
       >

@@ -389,6 +389,24 @@
     egg: "Tr\u1EE9ng g\xE0"
   };
   var formatVnd = (n) => n.toLocaleString("vi-VN");
+  var farmUiTimer = null;
+  function showFarmActionUI(cfg, uiState, durationMs = 1200) {
+    if (!cfg.showFullActions) return;
+    if (farmUiTimer) {
+      clearTimeout(farmUiTimer);
+      farmUiTimer = null;
+    }
+    setMainState({
+      panel: null,
+      vendor: null,
+      shop: null,
+      ...uiState
+    });
+    farmUiTimer = setTimeout(() => {
+      setMainState({ panel: null, vendor: null, shop: null });
+      farmUiTimer = null;
+    }, durationMs);
+  }
 
   // src/page-hook/modules/farm/house.ts
   var DISH_NAMES = {
@@ -474,6 +492,7 @@
         if (have < cur.order.qty + ing.need) continue;
       }
       if (cur.cook?.(d) === "ok") {
+        showFarmActionUI(cfg, { panel: "kitchen" });
         return { acted: true, msg: `\u{1F373} \u0110\xE3 b\u1EAFc b\u1EBFp n\u1EA5u m\xF3n ${DISH_NAMES[d] || d}` };
       }
     }
@@ -489,6 +508,7 @@
       for (const d of dishOrder) {
         if ((st.kitchen?.stock?.[d] || 0) > 0 && st.eatDish?.(d) === true) {
           markActed("farm_eat");
+          showFarmActionUI(cfg, { panel: "kitchen" });
           return { acted: true, msg: `\u{1F372} \u0110\xE3 \u0103n ${DISH_LABELS[d] || d} trong b\u1EBFp h\u1ED3i \u0110\xF3i (${st.fullness}%)` };
         }
       }
@@ -501,6 +521,7 @@
         seen.add(item);
         if ((st.gold || 0) >= (SHOP_FOOD_PRICES[item] || 8e3) && st.buyFood?.(item) === "ok") {
           markActed("farm_eat");
+          showFarmActionUI(cfg, { vendor: "bakery", shop: "menu" });
           return { acted: true, msg: `\u{1F956} \u0110\xE3 mua & \u0103n ${SHOP_FOOD_LABELS[item] || item} t\u1EA1i Ti\u1EC7m b\xE1nh h\u1ED3i \u0110\xF3i` };
         }
       }
@@ -517,6 +538,7 @@
       for (const d of kitchenDrinks) {
         if ((st.kitchen?.stock?.[d] || 0) > 0 && st.eatDish?.(d) === true) {
           markActed("farm_drink");
+          showFarmActionUI(cfg, { panel: "kitchen" });
           return { acted: true, msg: `\u{1F9C3} \u0110\xE3 d\xF9ng ${DISH_LABELS[d] || d} trong b\u1EBFp gi\u1EA3i Kh\xE1t (${st.hydration}%)` };
         }
       }
@@ -529,6 +551,7 @@
         seen.add(dr);
         if ((st.gold || 0) >= (DRINK_PRICES[dr] || 3e3) && st.buyFood?.(dr) === "ok") {
           markActed("farm_drink");
+          showFarmActionUI(cfg, { vendor: "cafe", shop: "menu" });
           return { acted: true, msg: `\u{1F964} \u0110\xE3 mua & u\u1ED1ng ${DRINK_LABELS[dr] || dr} gi\u1EA3i Kh\xE1t` };
         }
       }
@@ -555,6 +578,7 @@
       const st = getMainState();
       if (st.coffeeDay !== st.day && (st.gold || 0) >= 3e4 && canAct("farm_coffee", 4e3) && st.buyFood?.("caPheSua") === "ok") {
         markActed("farm_coffee");
+        showFarmActionUI(cfg, { vendor: "cafe", shop: "menu" });
         return { acted: true, msg: "\u2615 \u0110\xE3 u\u1ED1ng C\xE0 ph\xEA s\u1EEFa \u0111\xE1 (+25% n\u01B0\u1EDBc, ch\u1EA1y nhanh su\u1ED1t ng\xE0y)" };
       }
     }
@@ -564,6 +588,7 @@
         const charged = st.chargeVehicle?.();
         if (typeof charged === "number" && charged > 0) {
           markActed("farm_vehicle");
+          showFarmActionUI(cfg, { panel: "ev" });
           return { acted: true, msg: `\u{1F50B} \u0110\xE3 s\u1EA1c \u0111\u1EA7y pin xe \u0111i\u1EC7n (-${formatVnd(charged)}\u0111)` };
         }
       }
@@ -573,12 +598,14 @@
         const st = getMainState();
         const hasRelax = (st.kitchen?.buffs || []).some((b) => b.kind === "relax" && b.day === st.day);
         if (!hasRelax && (st.gold || 0) >= 15e4 && st.shampoo?.() === "ok") {
+          showFarmActionUI(cfg, { panel: "salon" });
           return { acted: true, msg: "\u{1F486} \u0110\xE3 gh\xE9 Ch\u1ECB Linh T\xE2y g\u1ED9i \u0111\u1EA7u d\u01B0\u1EE1ng sinh (Buff th\u01B0 gi\xE3n)" };
         }
       }
       if (cfg.autoSalonWhiten) {
         const st = getMainState();
         if ((st.player?.outfit?.tan || 0) > 0 && (st.gold || 0) >= 3e5 && st.whiten?.() === "ok") {
+          showFarmActionUI(cfg, { panel: "salon" });
           return { acted: true, msg: "\u2728 \u0110\xE3 gh\xE9 Ch\u1ECB Linh T\xE2y t\u1EAFm tr\u1EAFng n\xE2ng t\xF4ng da" };
         }
       }
@@ -752,6 +779,24 @@
     { kinds: ["vang", "muc", "husky", "corgi", "pug"], foods: ["xuong", "pate", "hat"], shop: ["xuong", "pate", "hat"] }
   ];
   var PET_TRICKS = ["dance", "roll", "paw", "sit", "come"];
+  var PET_TRICK_NAMES = {
+    dance: "Nh\u1EA3y m\xFAa",
+    roll: "L\u0103n v\xF2ng",
+    paw: "B\u1EAFt tay",
+    sit: "Ng\u1ED3i ngoan",
+    come: "L\u1EA1i \u0111\xE2y"
+  };
+  var PET_FOOD_NAMES = {
+    xuong: "X\u01B0\u01A1ng g\u1EB7m \u{1F9B4}",
+    cakho: "C\xE1 kh\xF4 \u{1F41F}",
+    pate: "Pate c\xE1 ng\u1EEB \u{1F96B}",
+    hat: "H\u1EA1t t\u1ED5ng h\u1EE3p \u{1F963}",
+    coKho: "C\u1ECF kh\xF4 \u{1F33F}",
+    cam: "C\xE1m heo \u{1F33E}",
+    "crop:carrot": "C\xE0 r\u1ED1t \u{1F955}",
+    "crop:corn": "B\u1EAFp ng\xF4 \u{1F33D}",
+    "crop:radish": "C\u1EE7 c\u1EA3i \u{1F331}"
+  };
   var isFed = (res) => res === "ok" || res === "fav";
   function handlePetSubArea(cfg) {
     const m = getMainState();
@@ -768,12 +813,12 @@
       const shop = diet?.shop || DEFAULT_PET_SHOP;
       for (const f of foods) {
         if (isFed(getMainState().feedPet?.(f))) {
-          return { acted: true, msg: `\u{1F415} \u0110\xE3 cho th\xFA c\u01B0ng (${petName}) \u0103n no` };
+          return { acted: true, msg: `\u{1F415} \u0110\xE3 cho th\xFA c\u01B0ng (${petName}) \u0103n ${PET_FOOD_NAMES[f] || f}` };
         }
       }
       for (const sf of shop) {
         if (getMainState().buyPetFood?.(sf, 1) === "ok" && isFed(getMainState().feedPet?.(sf))) {
-          return { acted: true, msg: `\u{1F9B4} \u0110\xE3 mua \u0111\u1ED3 \u0103n & cho th\xFA c\u01B0ng (${petName}) \u0103n` };
+          return { acted: true, msg: `\u{1F9B4} \u0110\xE3 mua ${PET_FOOD_NAMES[sf] || sf} & cho th\xFA c\u01B0ng (${petName}) \u0103n` };
         }
       }
     }
@@ -797,7 +842,7 @@
       if (trickPet.trickDay !== st.day) {
         for (const tr of PET_TRICKS) {
           if (getMainState().doTrick?.(tr) === "ok") {
-            return { acted: true, msg: `\u{1F3BE} T\u1EADp tr\xF2 "${tr}" c\xF9ng th\xFA c\u01B0ng` };
+            return { acted: true, msg: `\u{1F3BE} T\u1EADp tr\xF2 "${PET_TRICK_NAMES[tr] || tr}" c\xF9ng th\xFA c\u01B0ng` };
           }
         }
       }
@@ -1047,17 +1092,18 @@
   var GOLD_TYPES = ["mieng", "nhan", "k18", "non"];
   var stockOf = (st, goods) => goods === "egg" ? st.eggs || 0 : st.produce?.[goods] || 0;
   var reservedForOrder = (st, goods) => st.order && st.order.crop === goods ? st.order.qty : 0;
-  function deliverGroceryOrder() {
+  function deliverGroceryOrder(cfg) {
     const m = getMainState();
     if (!m.order || stockOf(m, m.order.crop) < m.order.qty) return null;
     const reward = m.order.reward || 0;
     const cropLabel = CROP_NAMES[m.order.crop] || m.order.crop;
     if (m.deliverOrder?.() === true) {
+      showFarmActionUI(cfg, { vendor: "grocery", shop: "orders" });
       return { acted: true, msg: `\u{1F4E6} \u0110\xE3 giao \u0111\u01A1n h\xE0ng Ch\u1ECB Na (${cropLabel}) +${formatVnd(reward)}\u0111` };
     }
     return null;
   }
-  function deliverVillageBoard() {
+  function deliverVillageBoard(cfg) {
     const st = getMainState();
     if ((st.village?.newsDay || 0) > 0 && !st.village?.met) {
       st.meetKhang?.();
@@ -1067,12 +1113,13 @@
       if (req.done || !req.goods) continue;
       const qty = req.qty || 0;
       if (stockOf(cur, req.goods) >= qty && cur.deliverRequest?.(req.id) === true) {
+        showFarmActionUI(cfg, { panel: "village" });
         return { acted: true, msg: `\u{1F4CB} \u0110\xE3 giao ${qty} ${CROP_NAMES[req.goods] || req.goods} gi\xFAp ${req.who || "b\xE0 con"} (B\u1EA3ng tin l\xE0ng)` };
       }
     }
     return null;
   }
-  function sellTrendGoods() {
+  function sellTrendGoods(cfg) {
     const st = getMainState();
     const day = st.day || 0;
     const trend = getActiveTrend2(day);
@@ -1083,11 +1130,12 @@
     if (toSell <= 0) return null;
     const sold = st.sellQty?.(trend.goods, toSell) || 0;
     if (sold > 0) {
+      showFarmActionUI(cfg, { vendor: "grocery", shop: "storage" });
       return { acted: true, msg: `\u{1F525} \u0110\xE3 b\xE1n \u0111\xFAng ${sold} ${CROP_NAMES[trend.goods] || trend.goods} theo Trend s\u1ED1t d\u1EBBo (x2 gi\xE1)` };
     }
     return null;
   }
-  function sellForDailyTask() {
+  function sellForDailyTask(cfg) {
     const st = getMainState();
     const earned = st.stats?.earned || 0;
     const sellTask = (st.daily?.tasks || []).find(
@@ -1106,6 +1154,7 @@
       }
       const sold = st.sellQty?.(item, qty) || 0;
       if (sold > 0) {
+        showFarmActionUI(cfg, { vendor: "grocery", shop: "storage" });
         return { acted: true, msg: `\u{1F4CB} \u0110\xE3 b\xE1n ${sold} ${CROP_NAMES[item] || item} \u0111\u1EC3 ho\xE0n th\xE0nh Vi\u1EC7c S\u1ED5 tay h\xF4m nay` };
       }
     }
@@ -1119,6 +1168,7 @@
       if (sellable <= 0) continue;
       const sold = st.sellQty?.(item, sellable) || 0;
       if (sold > 0) {
+        showFarmActionUI(cfg, { vendor: "grocery", shop: "storage" });
         return { acted: true, msg: `\u{1F3EA} \u0110\xE3 b\xE1n ${sold} ${CROP_NAMES[item] || item} n\xF4ng s\u1EA3n d\u01B0 (gi\u1EEF l\u1EA1i ${minKeep})` };
       }
     }
@@ -1143,6 +1193,7 @@
           const profit = st.sellGold?.(type, holding.qty);
           if (profit !== null && profit !== void 0) {
             markActed("farm_gold");
+            showFarmActionUI(cfg, { vendor: "goldShop", shop: "goldShop" });
             return {
               acted: true,
               msg: `\u{1FA99} \u0110\xE3 b\xE1n ch\u1ED1t l\u1EDDi ${holding.qty} ch\u1EC9 ${GOLD_CATALOG[type]?.name || type} t\u1EA1i Ti\u1EC7m V\xE0ng C\xF4 Kim (+${formatVnd(profit)}\u0111, l\xE3i ${Math.round(profitPct)}%)`
@@ -1157,6 +1208,7 @@
       const buyPrice = getGoldBuyPrice(seed, prefType, day, minutes);
       if (buyPrice > 0 && (st.gold || 0) - buyPrice >= keepCash && st.buyGold?.(prefType, 1) === "ok") {
         markActed("farm_gold");
+        showFarmActionUI(cfg, { vendor: "goldShop", shop: "goldShop" });
         return {
           acted: true,
           msg: `\u{1FA99} \u0110\xE3 mua 1 ch\u1EC9 ${GOLD_CATALOG[prefType]?.name || prefType} \u0111\u1EA7u t\u01B0 t\u1EA1i Ti\u1EC7m V\xE0ng C\xF4 Kim (-${formatVnd(buyPrice)}\u0111)`
@@ -1166,7 +1218,7 @@
     return null;
   }
   function handleMarketSubArea(cfg) {
-    return (cfg.autoDeliverOrder !== false ? deliverGroceryOrder() : null) || (cfg.autoVillageBoard !== false ? deliverVillageBoard() : null) || (cfg.autoSellTrend !== false ? sellTrendGoods() : null) || (cfg.autoSellDailyTask !== false ? sellForDailyTask() : null) || (cfg.autoSellProduce === true ? sellSurplus(cfg) : null) || tradeGold(cfg) || NOT_ACTED;
+    return (cfg.autoDeliverOrder !== false ? deliverGroceryOrder(cfg) : null) || (cfg.autoVillageBoard !== false ? deliverVillageBoard(cfg) : null) || (cfg.autoSellTrend !== false ? sellTrendGoods(cfg) : null) || (cfg.autoSellDailyTask !== false ? sellForDailyTask(cfg) : null) || (cfg.autoSellProduce === true ? sellSurplus(cfg) : null) || tradeGold(cfg) || NOT_ACTED;
   }
 
   // src/page-hook/modules/farm/tasks.ts
@@ -1227,19 +1279,21 @@
     }
     return null;
   }
-  function claimQuests() {
+  function claimQuests(cfg) {
     const taskCount = getMainState().daily?.tasks?.length || 0;
     for (let i = 0; i < taskCount; i++) {
       if (getMainState().claimDaily?.(i)) {
+        showFarmActionUI(cfg, { panel: "goals" });
         return { acted: true, msg: `\u{1F381} \u0110\xE3 nh\u1EADn th\u01B0\u1EDFng Vi\u1EC7c h\xF4m nay #${i + 1} trong S\u1ED5 tay` };
       }
     }
     if (getMainState().claimGoal?.()) {
+      showFarmActionUI(cfg, { panel: "goals" });
       return { acted: true, msg: "\u{1F3C6} \u0110\xE3 nh\u1EADn th\u01B0\u1EDFng M\u1EE5c ti\xEAu S\u1ED5 tay!" };
     }
     return null;
   }
-  function breakFullPiggy() {
+  function breakFullPiggy(cfg) {
     const st = getMainState();
     const pig = st.savings?.pig;
     if (!pig || (pig.amount || 0) <= 0) return null;
@@ -1249,9 +1303,10 @@
     const brk = st.breakPiggy?.();
     if (!brk) return null;
     const totalGot = (brk.coins || 0) + (brk.bonus || 0);
+    showFarmActionUI(cfg, { vendor: "savings", shop: "piggy" });
     return { acted: true, msg: `\u{1F528} \u0110\xE3 \u0111\u1EADp Heo \u0111\u1EA5t \u0111\u1EE7 7 ng\xE0y (+${formatVnd(totalGot)}\u0111)!` };
   }
-  function buyNewPiggy() {
+  function buyNewPiggy(cfg) {
     const st = getMainState();
     const pig = st.savings?.pig;
     if (pig && pig.amount !== 0) return null;
@@ -1260,16 +1315,18 @@
     if (!tier && gold >= 15e3) tier = 1e4;
     if (tier > 0 && st.newPiggy?.(tier) === true) {
       getMainState().feedPiggy?.();
+      showFarmActionUI(cfg, { vendor: "savings", shop: "piggy" });
       return { acted: true, msg: `\u{1F437} \u0110\xE3 mua & b\u1ECF \u1ED1ng Heo \u0111\u1EA5t m\u1EDBi (${formatVnd(tier)}\u0111/ng\xE0y)` };
     }
     return null;
   }
-  function feedPiggy() {
+  function feedPiggy(cfg) {
     const st = getMainState();
     const pig = st.savings?.pig;
     const amount = pig?.amount || 0;
     if (!pig || amount <= 0 || pig.lastDay === st.day || (st.gold || 0) < amount) return null;
     if (st.feedPiggy?.() === "ok") {
+      showFarmActionUI(cfg, { vendor: "savings", shop: "piggy" });
       return { acted: true, msg: `\u{1FA99} \u0110\xE3 b\u1ECF \u1ED1ng Heo \u0111\u1EA5t h\xF4m nay (${formatVnd(amount)}\u0111)` };
     }
     return null;
@@ -1285,13 +1342,14 @@
     const cap = matured >= 10 ? 2e7 : matured >= 5 ? 12e6 : matured >= 2 ? 8e6 : 5e6;
     const amount = Math.min(cap, Math.floor((gold - minGold) / 1e4) * 1e4);
     if (amount >= 5e4 && st.deposit?.(amount, 7) === "ok") {
+      showFarmActionUI(cfg, { vendor: "savings", shop: "savings" });
       return { acted: true, msg: `\u{1F3E6} \u0110\xE3 g\u1EEDi s\u1ED5 ti\u1EBFt ki\u1EC7m D\xEC B\u1EA3y ${formatVnd(amount)}\u0111 (7 ng\xE0y)` };
     }
     return null;
   }
   function handleDiBaySubArea(cfg) {
     ensureSavingsCounterOpen();
-    return (cfg.autoFirstDayTasks !== false ? runFirstDayGuide() : null) || (cfg.autoNotebookPages !== false ? collectNotebookPages() : null) || (cfg.autoClaimQuests !== false ? claimQuests() : null) || (cfg.autoBreakPiggy !== false ? breakFullPiggy() : null) || (cfg.autoNewPiggy !== false ? buyNewPiggy() : null) || (cfg.autoFeedPiggy !== false ? feedPiggy() : null) || (cfg.autoSavings ? depositSavings(cfg) : null) || NOT_ACTED;
+    return (cfg.autoFirstDayTasks !== false ? runFirstDayGuide() : null) || (cfg.autoNotebookPages !== false ? collectNotebookPages() : null) || (cfg.autoClaimQuests !== false ? claimQuests(cfg) : null) || (cfg.autoBreakPiggy !== false ? breakFullPiggy(cfg) : null) || (cfg.autoNewPiggy !== false ? buyNewPiggy(cfg) : null) || (cfg.autoFeedPiggy !== false ? feedPiggy(cfg) : null) || (cfg.autoSavings ? depositSavings(cfg) : null) || NOT_ACTED;
   }
 
   // src/page-hook/modules/farm/index.ts
@@ -1314,6 +1372,21 @@
   }
 
   // src/page-hook/modules/sea/index.ts
+  var SEA_DISH_NAMES = {
+    radishSoup: "Canh c\u1EE7 c\u1EA3i \u{1F372}",
+    boiledEgg: "Tr\u1EE9ng lu\u1ED9c \u{1F95A}",
+    grilledCorn: "B\u1EAFp n\u01B0\u1EDBng m\u1EE1 h\xE0nh \u{1F33D}",
+    carrotJuice: "N\u01B0\u1EDBc \xE9p c\xE0 r\u1ED1t \u{1F9C3}",
+    eggBread: "B\xE1nh m\xEC \u1ED1p la \u{1F96A}",
+    comTam: "C\u01A1m t\u1EA5m \u1ED1p la \u{1F35B}",
+    cornCake: "B\xE1nh b\u1EAFp n\u01B0\u1EDBng \u{1F96E}"
+  };
+  var SEA_SPOT_NAMES = {
+    pier: "\u{1F309} C\u1EA7u t\xE0u",
+    rocks: "\u{1FAA8} B\xE3i \u0111\xE1",
+    beach: "\u{1F3D6}\uFE0F M\xE9p b\xE3i c\xE1t"
+  };
+  var keepSeaPanelUntil = 0;
   function execSeaStep(cfg) {
     const mainStore = stores.main;
     const seaStore = stores.sea;
@@ -1324,9 +1397,16 @@
     const interrupted = dismissInterruptsIfNeeded(cfg);
     if (interrupted) return interrupted;
     const seaScene = getActiveScene("SeaScene");
+    const showSeaPanelIfEnabled = (panelName, holdMs = 1400) => {
+      if (cfg.showFullActions) {
+        seaStore.setState({ panel: panelName });
+        keepSeaPanelUntil = Date.now() + holdMs;
+      }
+    };
     if ((m.fishing?.rod || 0) === 0 && (m.gold || 0) >= 15e3) {
       if (m.buyRod?.() === true) {
-        return { acted: true, msg: "\u{1F3A3} \u0110\xE3 mua C\u1EA7n c\xE2u t\u1EA1i Ch\xF2i \xD4ng T\u01B0" };
+        showSeaPanelIfEnabled("shop");
+        return { acted: true, msg: "\u{1F3A3} \u0110\xE3 mua C\u1EA7n c\xE2u t\u1EA1i Ch\xF2i \xD4ng T\u01B0 (-15.000\u0111)" };
       }
     }
     const sellMin = (m.minutes || 0) >= 1320 ? 1 : Number(cfg.seaSellThreshold) || 1;
@@ -1334,11 +1414,13 @@
       const count = m.fishing?.basket?.length || 0;
       const earned = m.sellBasket?.();
       if (typeof earned === "number" && earned > 0) {
-        return { acted: true, msg: `\u{1F4B0} \u0110\xE3 b\xE1n ${count} c\xE1 \u1EDF Bi\u1EC3n (+${earned.toLocaleString("vi-VN")}\u0111)` };
+        showSeaPanelIfEnabled("shop");
+        return { acted: true, msg: `\u{1F41F} \u0110\xE3 b\xE1n ${count} h\u1EA3i s\u1EA3n \u1EDF Bi\u1EC3n cho \xD4ng T\u01B0 (+${earned.toLocaleString("vi-VN")}\u0111)` };
       }
     }
     if (cfg.seaAutoClaimDex !== false && m.claimDexReward?.() === true) {
-      return { acted: true, msg: "\u{1F4D6} \u0110\xE3 nh\u1EADn th\u01B0\u1EDFng S\u1ED5 c\xE1 \xD4ng T\u01B0" };
+      showSeaPanelIfEnabled("dex");
+      return { acted: true, msg: "\u{1F4D6} \u0110\xE3 nh\u1EADn th\u01B0\u1EDFng S\u1ED5 c\xE1 B\xE1ch khoa \xD4ng T\u01B0" };
     }
     const curM = mainStore.getState();
     const totalBait = (curM.fishing?.bait?.worm || 0) + (curM.fishing?.bait?.shrimp || 0);
@@ -1346,9 +1428,14 @@
       const pref = cfg.seaPreferBait || "worm";
       const packs = Number(cfg.seaBaitPacks) || 2;
       if (curM.buyBait?.(pref, packs) === true) {
-        return { acted: true, msg: `\u{1FAB1} \u0110\xE3 mua ${packs} g\xF3i m\u1ED3i ${pref === "shrimp" ? "T\xF4m" : "Giun"}` };
+        showSeaPanelIfEnabled("shop");
+        return {
+          acted: true,
+          msg: `\u{1FAB1} \u0110\xE3 mua ${packs} g\xF3i ${pref === "shrimp" ? "M\u1ED3i t\xF4m \u{1F990}" : "M\u1ED3i tr\xF9n \u{1FAB1}"} t\u1EA1i Ch\xF2i \xD4ng T\u01B0`
+        };
       } else if (curM.buyBait?.("worm", 1) === true) {
-        return { acted: true, msg: `\u{1FAB1} \u0110\xE3 mua 1 g\xF3i m\u1ED3i Giun` };
+        showSeaPanelIfEnabled("shop");
+        return { acted: true, msg: `\u{1FAB1} \u0110\xE3 mua 1 g\xF3i M\u1ED3i tr\xF9n t\u1EA1i Ch\xF2i \xD4ng T\u01B0` };
       }
     }
     const curM2 = mainStore.getState();
@@ -1365,18 +1452,18 @@
         for (const d of ["carrotJuice", "radishSoup"]) {
           if ((stT.kitchen?.stock?.[d] || 0) > 0 && stT.eatDish?.(d) === true) {
             markActed("sea_drink");
-            const label = d === "carrotJuice" ? "N\u01B0\u1EDBc \xE9p c\xE0 r\u1ED1t" : "Canh c\u1EE7 c\u1EA3i";
-            return { acted: true, msg: `\u{1F9C3} \u0110\xE3 u\u1ED1ng ${label} gi\u1EA3i kh\xE1t t\u1EA1i Bi\u1EC3n` };
+            return { acted: true, msg: `\u{1F9C3} \u0110\xE3 u\u1ED1ng ${SEA_DISH_NAMES[d] || d} gi\u1EA3i kh\xE1t t\u1EA1i Bi\u1EC3n` };
           }
         }
         const drinks = [
-          { id: "nuocDua", price: 15e3, msg: "\u{1F965} \u0110\xE3 u\u1ED1ng N\u01B0\u1EDBc d\u1EEBa t\u01B0\u01A1i t\u1EA1i Bi\u1EC3n h\u1ED3i kh\xE1t" },
-          { id: "nuocMia", price: 8e3, msg: "\u{1F964} \u0110\xE3 u\u1ED1ng N\u01B0\u1EDBc m\xEDa t\u1EA1i Bi\u1EC3n h\u1ED3i kh\xE1t" },
-          { id: "traDa", price: 3e3, msg: "\u{1F9CA} \u0110\xE3 u\u1ED1ng Tr\xE0 \u0111\xE1 t\u1EA1i Bi\u1EC3n h\u1ED3i kh\xE1t" }
+          { id: "nuocDua", price: 15e3, msg: "\u{1F965} \u0110\xE3 mua & u\u1ED1ng N\u01B0\u1EDBc d\u1EEBa t\u01B0\u01A1i t\u1EA1i Bi\u1EC3n h\u1ED3i kh\xE1t (-15.000\u0111)" },
+          { id: "nuocMia", price: 8e3, msg: "\u{1F964} \u0110\xE3 mua & u\u1ED1ng N\u01B0\u1EDBc m\xEDa t\u1EA1i Bi\u1EC3n h\u1ED3i kh\xE1t (-8.000\u0111)" },
+          { id: "traDa", price: 3e3, msg: "\u{1F9CA} \u0110\xE3 mua & u\u1ED1ng Tr\xE0 \u0111\xE1 t\u1EA1i Bi\u1EC3n h\u1ED3i kh\xE1t (-3.000\u0111)" }
         ];
         for (const dr of drinks) {
           if ((mainStore.getState().gold || 0) >= dr.price && mainStore.getState().buyFood?.(dr.id) === "ok") {
             markActed("sea_drink");
+            showSeaPanelIfEnabled("coconut");
             return { acted: true, msg: dr.msg };
           }
         }
@@ -1386,24 +1473,25 @@
         for (const d of Object.keys(stH.kitchen?.stock || {})) {
           if ((stH.kitchen?.stock?.[d] || 0) > 0 && stH.eatDish?.(d) === true) {
             markActed("sea_eat");
-            return { acted: true, msg: "\u{1F372} \u0110\xE3 \u0103n m\xF3n mang theo h\u1ED3i s\u1EE9c t\u1EA1i Bi\u1EC3n" };
+            return { acted: true, msg: `\u{1F372} \u0110\xE3 \u0103n ${SEA_DISH_NAMES[d] || d} mang theo h\u1ED3i s\u1EE9c t\u1EA1i Bi\u1EC3n` };
           }
         }
         if ((stH.gold || 0) >= 15e3 && stH.buyFood?.("banhMiThit") === "ok") {
           markActed("sea_eat");
-          return { acted: true, msg: "\u{1F956} \u0110\xE3 \u0103n B\xE1nh m\xEC t\u1EA1i Bi\u1EC3n h\u1ED3i \u0111\xF3i" };
+          return { acted: true, msg: "\u{1F956} \u0110\xE3 mua & \u0103n B\xE1nh m\xEC th\u1ECBt t\u1EA1i Bi\u1EC3n h\u1ED3i \u0111\xF3i (-15.000\u0111)" };
         }
         if ((mainStore.getState().gold || 0) >= 8e3 && mainStore.getState().buyFood?.("banhBao") === "ok") {
           markActed("sea_eat");
-          return { acted: true, msg: "\u{1F95F} \u0110\xE3 \u0103n B\xE1nh bao t\u1EA1i Bi\u1EC3n h\u1ED3i \u0111\xF3i" };
+          return { acted: true, msg: "\u{1F95F} \u0110\xE3 mua & \u0103n B\xE1nh bao t\u1EA1i Bi\u1EC3n h\u1ED3i \u0111\xF3i (-8.000\u0111)" };
         }
       }
     }
-    if (s.panel && s.phase === "idle") {
+    if (s.panel && s.phase === "idle" && (!cfg.showFullActions || Date.now() >= keepSeaPanelUntil)) {
       seaStore.setState({ panel: null });
     }
     if (cfg.seaAutoSpot !== false && s.phase === "idle" && !s.walking) {
       const targetSpot = cfg.seaSpot || "pier";
+      const spotLabel = SEA_SPOT_NAMES[targetSpot] || targetSpot;
       if (s.spot !== targetSpot) {
         const spotCoords = {
           pier: { x: 24, y: 4 },
@@ -1413,10 +1501,10 @@
         const coord = spotCoords[targetSpot] || spotCoords.pier;
         if (seaScene && typeof seaScene.goFarmer === "function") {
           seaScene.goFarmer(coord);
-          return { acted: true, msg: `\u{1F6B6} \u0110ang \u0111i ra v\u1ECB tr\xED c\xE2u (${targetSpot})...` };
+          return { acted: true, msg: `\u{1F6B6} \u0110ang \u0111i ra v\u1ECB tr\xED c\xE2u (${spotLabel})...` };
         } else {
           seaStore.setState({ spot: targetSpot, walking: false });
-          return { acted: true, msg: `\u{1F4CD} \u0110\xE3 ch\u1ECDn v\u1ECB tr\xED c\xE2u (${targetSpot})` };
+          return { acted: true, msg: `\u{1F4CD} \u0110\xE3 ch\u1ECDn v\u1ECB tr\xED c\xE2u (${spotLabel})` };
         }
       }
     }
@@ -1424,6 +1512,57 @@
   }
 
   // src/page-hook/modules/wharf/index.ts
+  var BEN_FOOD_NAMES = {
+    banhMi: "\u{1F956} B\xE1nh m\xEC th\u1ECBt (+20\u26A1)",
+    chaoCa: "\u{1F963} Ch\xE1o c\xE1 l\xF3c (+28\u26A1)",
+    huTieu: "\u{1F35C} H\u1EE7 ti\u1EBFu nam vang (+40\u26A1)",
+    comTam: "\u{1F35B} C\u01A1m t\u1EA5m s\u01B0\u1EDDn b\xEC (+60\u26A1)",
+    lauMam: "\u{1F372} L\u1EA9u c\xE1 linh b\xF4ng \u0111i\xEAn \u0111i\u1EC3n (+100\u26A1)"
+  };
+  var BEN_PACK_NAMES = {
+    xoiBap: "\u{1F359} X\xF4i b\u1EAFp g\xF3i l\xE1 chu\u1ED1i (+15\u26A1)",
+    banhMiGoi: "\u{1F956} B\xE1nh m\xEC g\xF3i gi\u1EA5y (+20\u26A1)",
+    banhBao: "\u{1F95F} B\xE1nh bao nh\xE2n th\u1ECBt (+22\u26A1)",
+    comNam: "\u{1F359} C\u01A1m n\u1EAFm mu\u1ED1i m\xE8 (+30\u26A1)",
+    banhTet: "\u{1FAD4} B\xE1nh t\xE9t l\xE1 c\u1EA9m (+50\u26A1)",
+    traDaTui: "\u{1F9CB} Tr\xE0 \u0111\xE1 t\xFAi x\xE1ch (+8\u26A1)",
+    nuocSuoi: "\u{1F4A7} Chai n\u01B0\u1EDBc su\u1ED1i (+10\u26A1)"
+  };
+  var BEN_DRINK_NAMES = {
+    traDa: "\u{1F9CA} Tr\xE0 \u0111\xE1 (+8\u26A1)",
+    nuocMia: "\u{1F964} N\u01B0\u1EDBc m\xEDa t\u1EAFc (+5\u26A1, May +1)",
+    rauMa: "\u{1F375} Rau m\xE1 \u0111\u1EADu xanh (+5\u26A1, May +1)",
+    caPhe: "\u2615 C\xE0 ph\xEA s\u1EEFa \u0111\xE1 (+10\u26A1, May +2)",
+    duaTuoi: "\u{1F965} D\u1EEBa xi\xEAm t\u01B0\u01A1i (+15\u26A1, May +3)"
+  };
+  var BEN_BAIT_NAMES = {
+    xinMoi: "\u{1F932} 10 m\u1ED3i mi\u1EC5n ph\xED",
+    moi20: "\u{1FAB1} H\u1ED9p m\u1ED3i tr\xF9n (+20 m\u1ED3i)",
+    moi60: "\u{1FAB1} Thau m\u1ED3i tr\xF9n (+60 m\u1ED3i)",
+    moi150: "\u{1FAB1} Th\xF9ng m\u1ED3i c\xE1m (+150 m\u1ED3i)"
+  };
+  var WHEEL_ITEM_IDS = [
+    "canhSaoDem",
+    "canhHac",
+    "rongMay",
+    "trangRam",
+    "canhPhuong",
+    "vayRong",
+    "canhCo",
+    "denKeoQuan",
+    "dieuSao",
+    "danKimXaCu",
+    "coGhe",
+    "denCaChep",
+    "loTre",
+    "danKim",
+    "dienDien",
+    "denOngSao",
+    "dieuGiay",
+    "canCau"
+  ];
+  var keepBenPanelUntil = 0;
+  var keepBenPanelMsg = "";
   function execBenStep(cfg) {
     const mStore = stores.main;
     const buStore = stores.benUI;
@@ -1440,6 +1579,9 @@
     if (bu.walking || bn.fishing !== "idle") {
       return { acted: false };
     }
+    if (cfg.showFullActions && bu.panel && Date.now() < keepBenPanelUntil) {
+      return { acted: true, msg: keepBenPanelMsg || "\u{1F441}\uFE0F \u0110ang hi\u1EC3n th\u1ECB giao di\u1EC7n thao t\xE1c..." };
+    }
     const rawScene = getActiveScene("BenDoScene");
     const benScene = rawScene;
     const wallet = bn.wallet;
@@ -1447,11 +1589,29 @@
     const stamina = computeBenStamina(wallet);
     const shells = wallet.shells || 0;
     const bait = wallet.bait || 0;
-    const nonKeptCount = Array.isArray(bn.basket) ? bn.basket.filter((x) => !x.kept).length : 0;
+    const nonKeptFish = Array.isArray(bn.basket) ? bn.basket.filter((x) => !x.kept) : [];
+    const nonKeptCount = nonKeptFish.length;
+    const totalSellShells = nonKeptFish.reduce(
+      (sum, x) => sum + (Number(x.price) || 0),
+      0
+    );
     const pack = bn.pack || {};
     const packItems = Object.keys(pack).filter((k) => (pack[k] || 0) > 0);
     const stamMin = Number(cfg.benStaminaThreshold ?? 4);
-    const walkAndRun = (tile, actionFn, label, actionKey = null) => {
+    const runWithOptionalPanel = (actionFn, label, panelState, holdMs = 1500) => {
+      if (cfg.showFullActions && panelState) {
+        buStore.setState(panelState);
+        keepBenPanelUntil = Date.now() + holdMs;
+        keepBenPanelMsg = label;
+        setTimeout(() => {
+          actionFn();
+        }, 300);
+      } else {
+        actionFn();
+        buStore.setState({ panel: null });
+      }
+    };
+    const walkAndRun = (tile, actionFn, label, actionKey = null, panelState, holdMs = 1500) => {
       if (actionKey && !canAct(actionKey)) {
         return { acted: false };
       }
@@ -1459,7 +1619,7 @@
         const cur = benScene.farmer?.tile;
         if (cur && Math.abs(cur.x - tile.x) + Math.abs(cur.y - tile.y) <= 1) {
           if (actionKey) markActed(actionKey);
-          actionFn();
+          runWithOptionalPanel(actionFn, label, panelState, holdMs);
           return { acted: true, msg: label };
         }
         if (benScene.farmer?.running) {
@@ -1469,14 +1629,14 @@
           setTimeout(() => {
             if (!actionKey || canAct(actionKey)) {
               if (actionKey) markActed(actionKey);
-              actionFn();
+              runWithOptionalPanel(actionFn, label, panelState, holdMs);
             }
           }, 250);
         });
         return { acted: true, msg: `\u{1F6B6} ${label}` };
       }
       if (actionKey) markActed(actionKey);
-      actionFn();
+      runWithOptionalPanel(actionFn, label, panelState, holdMs);
       return { acted: true, msg: label };
     };
     const foodPrices = {
@@ -1496,40 +1656,54 @@
         { x: 40, y: 10 },
         () => {
           sendBenWs({ t: "sell" });
-          buStore.setState({ panel: null });
         },
-        `\u0110i b\xE1n ${nonKeptCount} con c\xE1 t\u1EA1i V\u1EF1a Anh T\u01B0`,
-        "ben_sell"
+        `\u{1F41F} B\xE1n ${nonKeptCount} con c\xE1 t\u1EA1i V\u1EF1a Anh T\u01B0 (+${totalSellShells.toLocaleString("vi-VN")} v\u1ECF s\xF2 \u{1F41A})`,
+        "ben_sell",
+        { panel: "sell" },
+        1400
       );
     }
     if (stamina < 4 || cfg.benAutoRecoverStamina !== false && stamina <= stamMin) {
       if (cfg.benAutoRecoverStamina !== false) {
         if (packItems.length > 0 && canAct("ben_eat_pack", 3e3)) {
+          const packItem = packItems[0];
+          const packLabel = BEN_PACK_NAMES[packItem] || packItem;
           markActed("ben_eat_pack");
-          sendBenWs({ t: "eat", item: packItems[0] });
-          return { acted: true, msg: `\u{1F359} \u0110\xE3 \u0103n ${packItems[0]} trong balo h\u1ED3i S\u1EE9c c\xE2u` };
+          runWithOptionalPanel(
+            () => {
+              sendBenWs({ t: "eat", item: packItem });
+            },
+            `\u0110\xE3 \u0103n ${packLabel} trong balo h\u1ED3i S\u1EE9c c\xE2u`,
+            { panel: "pack", bagTab: "food" },
+            1400
+          );
+          return { acted: true, msg: `\u0110\xE3 \u0103n ${packLabel} trong balo h\u1ED3i S\u1EE9c c\xE2u` };
         }
         if (cfg.benAutoGoiDau !== false && shells >= 25 && canAct("ben_goi_dau", 4e3)) {
           return walkAndRun(
             { x: 16, y: 24 },
             () => {
               sendBenWs({ t: "buy", item: "goiDau" });
-              buStore.setState({ panel: null });
             },
-            `G\u1ED9i \u0111\u1EA7u massage \xDAt M\u01B0\u1EDDi (+50 S\u1EE9c c\xE2u, -25\u{1F41A})`,
-            "ben_goi_dau"
+            `\u{1F486} G\u1ED9i \u0111\u1EA7u massage t\u1EA1i Ti\u1EC7m \xDAt M\u01B0\u1EDDi (+50\u26A1, -25\u{1F41A})`,
+            "ben_goi_dau",
+            { panel: "hair" },
+            1500
           );
         }
         const buyItem = shells >= targetFoodPrice ? prefFood : shells >= 28 ? "comTam" : shells >= 20 ? "huTieu" : shells >= 14 ? "chaoCa" : "banhMi";
-        if (shells >= (foodPrices[buyItem] || 10) && canAct("ben_buy_food", 4e3)) {
+        const foodCost = foodPrices[buyItem] || 10;
+        const foodLabel = BEN_FOOD_NAMES[buyItem] || buyItem;
+        if (shells >= foodCost && canAct("ben_buy_food", 4e3)) {
           return walkAndRun(
             { x: 39, y: 23 },
             () => {
               sendBenWs({ t: "buy", item: buyItem });
-              buStore.setState({ panel: null });
             },
-            `Mua ${buyItem} t\u1EA1i Qu\xE1n \u0103n D\xEC T\xE1m h\u1ED3i S\u1EE9c c\xE2u`,
-            "ben_buy_food"
+            `Mua ${foodLabel} t\u1EA1i Qu\xE1n \u0103n D\xEC T\xE1m (-${foodCost}\u{1F41A})`,
+            "ben_buy_food",
+            { panel: "food" },
+            1500
           );
         }
         if (shells >= 3 && canAct("ben_drink", 4e3)) {
@@ -1537,10 +1711,11 @@
             { x: 26, y: 12 },
             () => {
               sendBenWs({ t: "buy", item: "traDa" });
-              buStore.setState({ panel: null });
             },
-            `\u0110i u\u1ED1ng Tr\xE0 \u0111\xE1 Ch\u1ECB Th\u01A1m h\u1ED3i S\u1EE9c c\xE2u`,
-            "ben_drink"
+            `U\u1ED1ng ${BEN_DRINK_NAMES.traDa} t\u1EA1i Xe tr\xE0 \u0111\xE1 Ch\u1ECB Th\u01A1m (-3\u{1F41A})`,
+            "ben_drink",
+            { panel: "tea", teaStand: "river" },
+            1500
           );
         }
         if (!canAct("ben_buy_food", 4e3) || !canAct("ben_eat_pack", 3e3) || !canAct("ben_goi_dau", 4e3) || !canAct("ben_drink", 4e3)) {
@@ -1553,10 +1728,11 @@
             { x: 40, y: 10 },
             () => {
               sendBenWs({ t: "sell" });
-              buStore.setState({ panel: null });
             },
-            `\u0110i b\xE1n ${nonKeptCount} con c\xE1 t\u1EA1i V\u1EF1a Anh T\u01B0 \u0111\u1EC3 l\u1EA5y ti\u1EC1n \u0103n c\u01A1m`,
-            "ben_sell"
+            `\u{1F41F} B\xE1n ${nonKeptCount} con c\xE1 t\u1EA1i V\u1EF1a Anh T\u01B0 (+${totalSellShells.toLocaleString("vi-VN")} v\u1ECF s\xF2 \u{1F41A}) \u0111\u1EC3 l\u1EA5y ti\u1EC1n \u0103n`,
+            "ben_sell",
+            { panel: "sell" },
+            1400
           );
         }
         return {
@@ -1576,14 +1752,16 @@
         const prefBait = cfg.benPreferBait || "moi150";
         const buyBaitChoice = shells >= (baitPrices[prefBait] || 40) ? prefBait : shells >= 15 ? "moi20" : "xinMoi";
         if (buyBaitChoice !== "xinMoi" && shells >= (baitPrices[buyBaitChoice] || 15) && canAct("ben_bait", 3e3)) {
+          const baitLabel = BEN_BAIT_NAMES[buyBaitChoice] || buyBaitChoice;
           return walkAndRun(
             { x: 53, y: 11 },
             () => {
               sendBenWs({ t: "buy", item: buyBaitChoice });
-              buStore.setState({ panel: null });
             },
-            `Mua ${buyBaitChoice} t\u1EA1i S\u1EA1p Ch\xFA \u0110\u1EF1c (-${baitPrices[buyBaitChoice]}\u{1F41A})`,
-            "ben_bait"
+            `Mua ${baitLabel} t\u1EA1i S\u1EA1p Ch\xFA \u0110\u1EF1c (-${baitPrices[buyBaitChoice]}\u{1F41A})`,
+            "ben_bait",
+            { panel: "bait" },
+            1500
           );
         }
       }
@@ -1594,10 +1772,11 @@
           { x: 53, y: 11 },
           () => {
             sendBenWs({ t: "buy", item: "xinMoi" });
-            buStore.setState({ panel: null });
           },
-          `\u0110i xin 10 m\u1ED3i mi\u1EC5n ph\xED t\u1EA1i Ch\xFA \u0110\u1EF1c`,
-          "ben_bait"
+          `Xin ${BEN_BAIT_NAMES.xinMoi} t\u1EA1i S\u1EA1p Ch\xFA \u0110\u1EF1c`,
+          "ben_bait",
+          { panel: "bait" },
+          1500
         );
       }
       return {
@@ -1609,29 +1788,41 @@
     if (cfg.benAutoLuckDrink && (wallet.luckCasts || 0) <= 0 && canAct("ben_luck_drink", 5e3)) {
       const drinkId = cfg.benPreferDrink || "nuocMia";
       const drinkPrices = { traDa: 3, nuocMia: 15, rauMa: 30, caPhe: 35, duaTuoi: 80 };
-      if (shells >= (drinkPrices[drinkId] || 15)) {
+      const drinkCost = drinkPrices[drinkId] || 15;
+      const drinkLabel = BEN_DRINK_NAMES[drinkId] || drinkId;
+      if (shells >= drinkCost) {
         return walkAndRun(
           { x: 26, y: 12 },
           () => {
             sendBenWs({ t: "buy", item: drinkId });
-            buStore.setState({ panel: null });
           },
-          `\u0110i u\u1ED1ng n\u01B0\u1EDBc t\u0103ng May m\u1EAFn (${drinkId}) t\u1EA1i Ch\u1ECB Th\u01A1m`,
-          "ben_luck_drink"
+          `U\u1ED1ng ${drinkLabel} t\u1EA1i Xe tr\xE0 \u0111\xE1 Ch\u1ECB Th\u01A1m (-${drinkCost}\u{1F41A})`,
+          "ben_luck_drink",
+          { panel: "tea", teaStand: "river" },
+          1500
         );
       }
     }
     if (cfg.benAutoLantern !== false) {
       const tickets = wallet.tickets || 0;
-      if (tickets > 0 && canAct("ben_lantern_spin", 4e3)) {
+      if (tickets > 0 && canAct("ben_lantern_spin", cfg.showFullActions ? 5e3 : 4e3)) {
         return walkAndRun(
           { x: 37, y: 28 },
           () => {
+            const curBn = bnStore.getState();
+            const curPicks = curBn.wheel?.picks || [];
+            const ownedCloset = Array.isArray(curBn.closet) ? curBn.closet : [];
+            const unownedWheel = WHEEL_ITEM_IDS.filter((id) => !ownedCloset.includes(id));
+            const needPicks = Math.min(3, unownedWheel.length);
+            if (needPicks > 0 && curPicks.length < needPicks) {
+              sendBenWs({ t: "pick", items: unownedWheel.slice(0, needPicks) });
+            }
             sendBenWs({ t: "spin", n: 1 });
-            buStore.setState({ panel: null });
           },
-          `Quay V\xF2ng quay may m\u1EAFn S\u1EA1p l\u1ED3ng \u0111\xE8n C\xF4 B\u1EA3y (c\xF2n ${tickets} v\xE9 \u{1F39F}\uFE0F)`,
-          "ben_lantern_spin"
+          `\u{1F3EE} Quay V\xF2ng quay l\u1ED3ng \u0111\xE8n C\xF4 B\u1EA3y (c\xF2n ${tickets} v\xE9 \u{1F39F}\uFE0F)`,
+          "ben_lantern_spin",
+          { panel: "lantern" },
+          4e3
         );
       }
       const boughtToday = bn.wheel?.bought || 0;
@@ -1640,10 +1831,11 @@
           { x: 37, y: 28 },
           () => {
             sendBenWs({ t: "ticket" });
-            buStore.setState({ panel: null });
           },
-          `Mua v\xE9 V\xF2ng quay l\u1ED3ng \u0111\xE8n C\xF4 B\u1EA3y (${boughtToday + 1}/5, -600\u{1F41A})`,
-          "ben_lantern_buy"
+          `\u{1F39F}\uFE0F Mua v\xE9 V\xF2ng quay l\u1ED3ng \u0111\xE8n C\xF4 B\u1EA3y (${boughtToday + 1}/5, -600\u{1F41A})`,
+          "ben_lantern_buy",
+          { panel: "lantern" },
+          1500
         );
       }
     }
@@ -1655,10 +1847,11 @@
           { x: 36, y: 31 },
           () => {
             sendBenWs({ t: "lottoClaim" });
-            buStore.setState({ panel: null });
           },
-          `\u0110\u1ED5i th\u01B0\u1EDFng v\xE9 s\u1ED1 B\u1EBFn \u0110\xF2 t\u1EA1i \u0110\u1EA1i l\xFD Ch\xFA B\u1EA3y (+${(lottoState?.pending || 0).toLocaleString("vi-VN")}\u{1F41A})`,
-          "ben_lotto_claim"
+          `\u{1F39F}\uFE0F \u0110\u1ED5i th\u01B0\u1EDFng v\xE9 s\u1ED1 B\u1EBFn \u0110\xF2 t\u1EA1i \u0110\u1EA1i l\xFD Ch\xFA B\u1EA3y (+${(lottoState?.pending || 0).toLocaleString("vi-VN")}\u{1F41A})`,
+          "ben_lotto_claim",
+          { panel: "agent" },
+          1500
         );
       }
       if (cfg.benAutoBuyLotto && shells >= 10 && canAct("ben_lotto_buy", 6e4)) {
@@ -1670,10 +1863,11 @@
             { x: 36, y: 31 },
             () => {
               sendBenWs({ t: "lottoBuy", num: randNum, qty: 1 });
-              buStore.setState({ panel: null });
             },
-            `Mua 1 v\xE9 s\u1ED1 B\u1EBFn \u0110\xF2 (${randNum < 10 ? "0" + randNum : randNum}) t\u1EA1i \u0110\u1EA1i l\xFD Ch\xFA B\u1EA3y (-10\u{1F41A})`,
-            "ben_lotto_buy"
+            `\u{1F340} Mua 1 v\xE9 s\u1ED1 B\u1EBFn \u0110\xF2 (s\u1ED1 ${randNum < 10 ? "0" + randNum : randNum}) t\u1EA1i \u0110\u1EA1i l\xFD Ch\xFA B\u1EA3y (-10\u{1F41A})`,
+            "ben_lotto_buy",
+            { panel: "agent" },
+            1500
           );
         }
       }
@@ -1686,20 +1880,21 @@
           { x: 34, y: 35 },
           () => {
             sendBenWs({ t: "atmCash", shells: cashShells });
-            buStore.setState({ panel: null });
           },
-          `\u0110i \u0111\u1ED5i ${cashShells} v\u1ECF s\xF2 ra ti\u1EC1n m\u1EB7t t\u1EA1i ATM`,
-          "ben_atm"
+          `\u{1F3E7} \u0110\u1ED5i ${cashShells.toLocaleString("vi-VN")} v\u1ECF s\xF2 ra ti\u1EC1n m\u1EB7t t\u1EA1i C\xE2y ATM`,
+          "ben_atm",
+          { panel: "atm" },
+          1500
         );
       }
     }
-    if (bu.panel) {
+    if (bu.panel && (!cfg.showFullActions || Date.now() >= keepBenPanelUntil)) {
       buStore.setState({ panel: null });
     }
     if (cfg.benAutoSpot !== false) {
       const spotChoice = cfg.benSpot || "bank";
       const spotTargets = {
-        dock: { x: 31, y: 4, kind: "dock", label: "C\u1EA7u t\xE0u ch\xEDnh" },
+        dock: { x: 31, y: 4, kind: "dock", label: "C\u1EA7u tre" },
         bamboo: { x: 7, y: 6, kind: "dock", label: "C\u1EA7u tre" },
         bank: { x: 24, y: 10, kind: "bank", label: "B\u1EDD s\xF4ng" }
       };

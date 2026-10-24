@@ -416,8 +416,9 @@ export interface BenNetState {
   status?: string;
   fishing?: string;
   wallet?: BenNetWallet | null;
-  basket?: Array<{ id?: string; kept?: boolean; [key: string]: unknown }>;
+  basket?: Array<{ id?: string; fish?: string; price?: number; size?: number; kept?: boolean; [key: string]: unknown }>;
   pack?: Record<string, number>;
+  closet?: string[];
   fight?: {
     run?: {
       dir?: 'left' | 'right';
@@ -428,6 +429,7 @@ export interface BenNetState {
   };
   wheel?: {
     bought?: number;
+    picks?: string[];
     [key: string]: unknown;
   };
   lotto?: {

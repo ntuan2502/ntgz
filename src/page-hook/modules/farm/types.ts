@@ -1,3 +1,7 @@
+import { setMainState } from '../../core/engine-access';
+import { AppConfig } from '../../../shared/types/config';
+import { MainGameStoreState } from '../../../shared/types/game-store';
+
 export interface StepResult {
   acted: boolean;
   msg?: string;
@@ -14,3 +18,27 @@ export const CROP_NAMES: Record<string, string> = {
 };
 
 export const formatVnd = (n: number): string => n.toLocaleString('vi-VN');
+
+let farmUiTimer: ReturnType<typeof setTimeout> | null = null;
+
+export function showFarmActionUI(
+  cfg: AppConfig,
+  uiState: Partial<MainGameStoreState>,
+  durationMs = 1200
+): void {
+  if (!cfg.showFullActions) return;
+  if (farmUiTimer) {
+    clearTimeout(farmUiTimer);
+    farmUiTimer = null;
+  }
+  setMainState({
+    panel: null,
+    vendor: null,
+    shop: null,
+    ...uiState,
+  });
+  farmUiTimer = setTimeout(() => {
+    setMainState({ panel: null, vendor: null, shop: null });
+    farmUiTimer = null;
+  }, durationMs);
+}

@@ -35,6 +35,7 @@ export interface AppConfig {
   // General Delay & Transition settings
   taskDelayMs: number;
   fishingSwitchCount: number;
+  showFullActions: boolean;
 
   // Main Area Order & Enable/Disable toggles
   areaOrder: AreaId[];
