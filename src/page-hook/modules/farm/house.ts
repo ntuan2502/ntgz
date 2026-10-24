@@ -4,58 +4,70 @@ import { AppConfig } from '../../../shared/types/config';
 import { StepResult, NOT_ACTED, formatVnd } from './types';
 
 const DISH_NAMES: Record<string, string> = {
-  comTam: 'Cơm tấm',
-  eggBread: 'Bánh mì trứng',
   radishSoup: 'Canh củ cải',
-  carrotJuice: 'Nước ép cà rốt',
-  grilledCorn: 'Bắp nướng',
   boiledEgg: 'Trứng luộc',
-  cornCake: 'Bánh bắp',
+  grilledCorn: 'Bắp nướng mỡ hành',
+  carrotJuice: 'Nước ép cà rốt',
+  eggBread: 'Bánh mì ốp la',
+  comTam: 'Cơm tấm ốp la',
+  cornCake: 'Bánh bắp nướng',
 };
 
 const DISH_LABELS: Record<string, string> = {
-  comTam: 'Cơm tấm 🍛',
-  eggBread: 'Bánh mì trứng 🥪',
   radishSoup: 'Canh củ cải 🍲',
-  grilledCorn: 'Bắp nướng 🌽',
   boiledEgg: 'Trứng luộc 🥚',
-  cornCake: 'Bánh bắp 🥮',
+  grilledCorn: 'Bắp nướng mỡ hành 🌽',
   carrotJuice: 'Nước ép cà rốt 🧃',
+  eggBread: 'Bánh mì ốp la 🥪',
+  comTam: 'Cơm tấm ốp la 🍛',
+  cornCake: 'Bánh bắp nướng 🥮',
 };
 
 const LEARN_LIST = ['grilledCorn', 'carrotJuice', 'eggBread', 'comTam', 'cornCake'];
+const ALL_DISHES_ORDER = ['radishSoup', 'boiledEgg', 'grilledCorn', 'carrotJuice', 'eggBread', 'comTam', 'cornCake'];
+const KITCHEN_FOOD_ORDER = ['radishSoup', 'boiledEgg', 'grilledCorn', 'eggBread', 'comTam', 'cornCake'];
+const KITCHEN_DRINK_ORDER = ['radishSoup', 'carrotJuice', 'comTam'];
 
 /** Primary crop per dish, so cooking never eats crops reserved for an active grocery order */
 const DISH_CROP_MAP: Record<string, { crop: string; need: number }> = {
   radishSoup: { crop: 'radish', need: 3 },
-  carrotJuice: { crop: 'carrot', need: 2 },
+  carrotJuice: { crop: 'carrot', need: 3 },
   grilledCorn: { crop: 'corn', need: 2 },
-  comTam: { crop: 'rice', need: 2 },
-  cornCake: { crop: 'corn', need: 2 },
+  eggBread: { crop: 'carrot', need: 1 },
+  comTam: { crop: 'radish', need: 2 },
+  cornCake: { crop: 'corn', need: 4 },
 };
 
+const SHOP_FOOD_ORDER = ['banhBao', 'banhMiTrung', 'banhMiThit', 'banhMiCha', 'banhMiFull'];
 const SHOP_FOOD_PRICES: Record<string, number> = {
+  banhBao: 8000,
+  banhMiTrung: 10000,
   banhMiThit: 15000,
   banhMiCha: 15000,
-  banhMiTrung: 10000,
-  banhBao: 8000,
   banhMiFull: 25000,
 };
 const SHOP_FOOD_LABELS: Record<string, string> = {
+  banhBao: 'Bánh bao 🥟',
+  banhMiTrung: 'Bánh mì trứng 🍳',
   banhMiThit: 'Bánh mì thịt 🥖',
   banhMiCha: 'Bánh mì chả cá 🐟',
-  banhMiTrung: 'Bánh mì trứng 🍳',
-  banhBao: 'Bánh bao 🥟',
   banhMiFull: 'Bánh mì full topping 🤤',
 };
 
-const DRINK_PRICES: Record<string, number> = { traDao: 15000, traSua: 18000, nuocMia: 8000, caPheSua: 12000, traDa: 3000 };
+const SHOP_DRINK_ORDER = ['traDa', 'nuocMia', 'caPheSua', 'traDao', 'traSua'];
+const DRINK_PRICES: Record<string, number> = {
+  traDa: 3000,
+  nuocMia: 8000,
+  caPheSua: 12000,
+  traDao: 15000,
+  traSua: 18000,
+};
 const DRINK_LABELS: Record<string, string> = {
+  traDa: 'Trà đá 🧊',
   nuocMia: 'Nước mía 🥤',
+  caPheSua: 'Cà phê sữa đá ☕',
   traDao: 'Trà đào cam sả 🍑',
   traSua: 'Trà sữa trân châu 🧋',
-  caPheSua: 'Cà phê sữa đá ☕',
-  traDa: 'Trà đá 🧊',
 };
 
 function tryCook(cfg: AppConfig): StepResult | null {
@@ -70,7 +82,10 @@ function tryCook(cfg: AppConfig): StepResult | null {
   const maxSlots = (cur.houseLevel || 0) >= 1 ? 2 : 1;
   if ((cur.kitchen?.cooking?.length || 0) >= maxSlots) return null;
 
-  const dishes = [cfg.preferDish || 'comTam', 'comTam', 'eggBread', 'radishSoup', 'carrotJuice', 'grilledCorn', 'boiledEgg', 'cornCake'];
+  const dishes =
+    cfg.preferDish && cfg.preferDish !== 'auto'
+      ? [cfg.preferDish, ...ALL_DISHES_ORDER]
+      : ALL_DISHES_ORDER;
   const seen = new Set<string>();
   for (const d of dishes) {
     if (!d || seen.has(d)) continue;
@@ -97,8 +112,11 @@ function tryRecoverHunger(cfg: AppConfig, threshold: number): StepResult | null 
   const foodSource = cfg.foodSource || 'kitchen_first';
 
   if (foodSource !== 'shop_only') {
-    const base = ['comTam', 'eggBread', 'radishSoup', 'grilledCorn', 'boiledEgg', 'cornCake', 'carrotJuice'];
-    const dishOrder = cfg.preferDish && cfg.preferDish !== 'auto' ? [cfg.preferDish, ...base] : base;
+    const prefKitchen = cfg.preferFoodKitchen || 'auto';
+    const dishOrder =
+      prefKitchen !== 'auto'
+        ? [prefKitchen]
+        : KITCHEN_FOOD_ORDER;
     for (const d of dishOrder) {
       if ((st.kitchen?.stock?.[d] || 0) > 0 && st.eatDish?.(d) === true) {
         markActed('farm_eat');
@@ -108,8 +126,11 @@ function tryRecoverHunger(cfg: AppConfig, threshold: number): StepResult | null 
   }
 
   if (foodSource !== 'kitchen_only') {
-    const shopItems = [cfg.preferFoodShop || 'banhMiThit', 'banhMiThit', 'banhMiCha', 'banhMiTrung', 'banhBao', 'banhMiFull'];
+    const shopItems = [cfg.preferFoodShop || 'banhMiThit', ...SHOP_FOOD_ORDER];
+    const seen = new Set<string>();
     for (const item of shopItems) {
+      if (!item || seen.has(item)) continue;
+      seen.add(item);
       if ((st.gold || 0) >= (SHOP_FOOD_PRICES[item] || 8000) && st.buyFood?.(item) === 'ok') {
         markActed('farm_eat');
         return { acted: true, msg: `🥖 Đã mua & ăn ${SHOP_FOOD_LABELS[item] || item} tại Tiệm bánh hồi Đói` };
@@ -125,20 +146,29 @@ function tryRecoverThirst(cfg: AppConfig, threshold: number): StepResult | null 
   const drinkSource = cfg.drinkSource || 'kitchen_first';
 
   if (drinkSource !== 'shop_only') {
-    for (const d of ['carrotJuice', 'radishSoup']) {
+    const prefDrinkKitchen = cfg.preferDrinkKitchen || 'auto';
+    const kitchenDrinks =
+      prefDrinkKitchen !== 'auto'
+        ? [prefDrinkKitchen]
+        : KITCHEN_DRINK_ORDER;
+    for (const d of kitchenDrinks) {
       if ((st.kitchen?.stock?.[d] || 0) > 0 && st.eatDish?.(d) === true) {
         markActed('farm_drink');
-        const label = d === 'carrotJuice' ? 'Nước ép cà rốt' : 'Canh củ cải';
-        return { acted: true, msg: `🧃 Đã uống ${label} giải Khát (${st.hydration}%)` };
+        return { acted: true, msg: `🧃 Đã dùng ${DISH_LABELS[d] || d} trong bếp giải Khát (${st.hydration}%)` };
       }
     }
   }
 
-  const drinkOrder = [cfg.preferDrinkShop || 'nuocMia', 'nuocMia', 'traDa', 'traDao', 'traSua', 'caPheSua'];
-  for (const dr of drinkOrder) {
-    if ((st.gold || 0) >= (DRINK_PRICES[dr] || 3000) && st.buyFood?.(dr) === 'ok') {
-      markActed('farm_drink');
-      return { acted: true, msg: `🥤 Đã mua & uống ${DRINK_LABELS[dr] || dr} giải Khát` };
+  if (drinkSource !== 'kitchen_only') {
+    const drinkOrder = [cfg.preferDrinkShop || 'nuocMia', ...SHOP_DRINK_ORDER];
+    const seen = new Set<string>();
+    for (const dr of drinkOrder) {
+      if (!dr || seen.has(dr)) continue;
+      seen.add(dr);
+      if ((st.gold || 0) >= (DRINK_PRICES[dr] || 3000) && st.buyFood?.(dr) === 'ok') {
+        markActed('farm_drink');
+        return { acted: true, msg: `🥤 Đã mua & uống ${DRINK_LABELS[dr] || dr} giải Khát` };
+      }
     }
   }
   return null;

@@ -392,52 +392,64 @@
 
   // src/page-hook/modules/farm/house.ts
   var DISH_NAMES = {
-    comTam: "C\u01A1m t\u1EA5m",
-    eggBread: "B\xE1nh m\xEC tr\u1EE9ng",
     radishSoup: "Canh c\u1EE7 c\u1EA3i",
-    carrotJuice: "N\u01B0\u1EDBc \xE9p c\xE0 r\u1ED1t",
-    grilledCorn: "B\u1EAFp n\u01B0\u1EDBng",
     boiledEgg: "Tr\u1EE9ng lu\u1ED9c",
-    cornCake: "B\xE1nh b\u1EAFp"
+    grilledCorn: "B\u1EAFp n\u01B0\u1EDBng m\u1EE1 h\xE0nh",
+    carrotJuice: "N\u01B0\u1EDBc \xE9p c\xE0 r\u1ED1t",
+    eggBread: "B\xE1nh m\xEC \u1ED1p la",
+    comTam: "C\u01A1m t\u1EA5m \u1ED1p la",
+    cornCake: "B\xE1nh b\u1EAFp n\u01B0\u1EDBng"
   };
   var DISH_LABELS = {
-    comTam: "C\u01A1m t\u1EA5m \u{1F35B}",
-    eggBread: "B\xE1nh m\xEC tr\u1EE9ng \u{1F96A}",
     radishSoup: "Canh c\u1EE7 c\u1EA3i \u{1F372}",
-    grilledCorn: "B\u1EAFp n\u01B0\u1EDBng \u{1F33D}",
     boiledEgg: "Tr\u1EE9ng lu\u1ED9c \u{1F95A}",
-    cornCake: "B\xE1nh b\u1EAFp \u{1F96E}",
-    carrotJuice: "N\u01B0\u1EDBc \xE9p c\xE0 r\u1ED1t \u{1F9C3}"
+    grilledCorn: "B\u1EAFp n\u01B0\u1EDBng m\u1EE1 h\xE0nh \u{1F33D}",
+    carrotJuice: "N\u01B0\u1EDBc \xE9p c\xE0 r\u1ED1t \u{1F9C3}",
+    eggBread: "B\xE1nh m\xEC \u1ED1p la \u{1F96A}",
+    comTam: "C\u01A1m t\u1EA5m \u1ED1p la \u{1F35B}",
+    cornCake: "B\xE1nh b\u1EAFp n\u01B0\u1EDBng \u{1F96E}"
   };
   var LEARN_LIST = ["grilledCorn", "carrotJuice", "eggBread", "comTam", "cornCake"];
+  var ALL_DISHES_ORDER = ["radishSoup", "boiledEgg", "grilledCorn", "carrotJuice", "eggBread", "comTam", "cornCake"];
+  var KITCHEN_FOOD_ORDER = ["radishSoup", "boiledEgg", "grilledCorn", "eggBread", "comTam", "cornCake"];
+  var KITCHEN_DRINK_ORDER = ["radishSoup", "carrotJuice", "comTam"];
   var DISH_CROP_MAP = {
     radishSoup: { crop: "radish", need: 3 },
-    carrotJuice: { crop: "carrot", need: 2 },
+    carrotJuice: { crop: "carrot", need: 3 },
     grilledCorn: { crop: "corn", need: 2 },
-    comTam: { crop: "rice", need: 2 },
-    cornCake: { crop: "corn", need: 2 }
+    eggBread: { crop: "carrot", need: 1 },
+    comTam: { crop: "radish", need: 2 },
+    cornCake: { crop: "corn", need: 4 }
   };
+  var SHOP_FOOD_ORDER = ["banhBao", "banhMiTrung", "banhMiThit", "banhMiCha", "banhMiFull"];
   var SHOP_FOOD_PRICES = {
+    banhBao: 8e3,
+    banhMiTrung: 1e4,
     banhMiThit: 15e3,
     banhMiCha: 15e3,
-    banhMiTrung: 1e4,
-    banhBao: 8e3,
     banhMiFull: 25e3
   };
   var SHOP_FOOD_LABELS = {
+    banhBao: "B\xE1nh bao \u{1F95F}",
+    banhMiTrung: "B\xE1nh m\xEC tr\u1EE9ng \u{1F373}",
     banhMiThit: "B\xE1nh m\xEC th\u1ECBt \u{1F956}",
     banhMiCha: "B\xE1nh m\xEC ch\u1EA3 c\xE1 \u{1F41F}",
-    banhMiTrung: "B\xE1nh m\xEC tr\u1EE9ng \u{1F373}",
-    banhBao: "B\xE1nh bao \u{1F95F}",
     banhMiFull: "B\xE1nh m\xEC full topping \u{1F924}"
   };
-  var DRINK_PRICES = { traDao: 15e3, traSua: 18e3, nuocMia: 8e3, caPheSua: 12e3, traDa: 3e3 };
+  var SHOP_DRINK_ORDER = ["traDa", "nuocMia", "caPheSua", "traDao", "traSua"];
+  var DRINK_PRICES = {
+    traDa: 3e3,
+    nuocMia: 8e3,
+    caPheSua: 12e3,
+    traDao: 15e3,
+    traSua: 18e3
+  };
   var DRINK_LABELS = {
+    traDa: "Tr\xE0 \u0111\xE1 \u{1F9CA}",
     nuocMia: "N\u01B0\u1EDBc m\xEDa \u{1F964}",
-    traDao: "Tr\xE0 \u0111\xE0o cam s\u1EA3 \u{1F351}",
-    traSua: "Tr\xE0 s\u1EEFa tr\xE2n ch\xE2u \u{1F9CB}",
     caPheSua: "C\xE0 ph\xEA s\u1EEFa \u0111\xE1 \u2615",
-    traDa: "Tr\xE0 \u0111\xE1 \u{1F9CA}"
+    traDao: "Tr\xE0 \u0111\xE0o cam s\u1EA3 \u{1F351}",
+    traSua: "Tr\xE0 s\u1EEFa tr\xE2n ch\xE2u \u{1F9CB}"
   };
   function tryCook(cfg) {
     const m = getMainState();
@@ -449,7 +461,7 @@
     const cur = getMainState();
     const maxSlots = (cur.houseLevel || 0) >= 1 ? 2 : 1;
     if ((cur.kitchen?.cooking?.length || 0) >= maxSlots) return null;
-    const dishes = [cfg.preferDish || "comTam", "comTam", "eggBread", "radishSoup", "carrotJuice", "grilledCorn", "boiledEgg", "cornCake"];
+    const dishes = cfg.preferDish && cfg.preferDish !== "auto" ? [cfg.preferDish, ...ALL_DISHES_ORDER] : ALL_DISHES_ORDER;
     const seen = /* @__PURE__ */ new Set();
     for (const d of dishes) {
       if (!d || seen.has(d)) continue;
@@ -472,8 +484,8 @@
     if ((st.fullness || 0) >= threshold || !canAct("farm_eat", 3500)) return null;
     const foodSource = cfg.foodSource || "kitchen_first";
     if (foodSource !== "shop_only") {
-      const base = ["comTam", "eggBread", "radishSoup", "grilledCorn", "boiledEgg", "cornCake", "carrotJuice"];
-      const dishOrder = cfg.preferDish && cfg.preferDish !== "auto" ? [cfg.preferDish, ...base] : base;
+      const prefKitchen = cfg.preferFoodKitchen || "auto";
+      const dishOrder = prefKitchen !== "auto" ? [prefKitchen] : KITCHEN_FOOD_ORDER;
       for (const d of dishOrder) {
         if ((st.kitchen?.stock?.[d] || 0) > 0 && st.eatDish?.(d) === true) {
           markActed("farm_eat");
@@ -482,8 +494,11 @@
       }
     }
     if (foodSource !== "kitchen_only") {
-      const shopItems = [cfg.preferFoodShop || "banhMiThit", "banhMiThit", "banhMiCha", "banhMiTrung", "banhBao", "banhMiFull"];
+      const shopItems = [cfg.preferFoodShop || "banhMiThit", ...SHOP_FOOD_ORDER];
+      const seen = /* @__PURE__ */ new Set();
       for (const item of shopItems) {
+        if (!item || seen.has(item)) continue;
+        seen.add(item);
         if ((st.gold || 0) >= (SHOP_FOOD_PRICES[item] || 8e3) && st.buyFood?.(item) === "ok") {
           markActed("farm_eat");
           return { acted: true, msg: `\u{1F956} \u0110\xE3 mua & \u0103n ${SHOP_FOOD_LABELS[item] || item} t\u1EA1i Ti\u1EC7m b\xE1nh h\u1ED3i \u0110\xF3i` };
@@ -497,19 +512,25 @@
     if ((st.hydration || 0) >= threshold || !canAct("farm_drink", 3500)) return null;
     const drinkSource = cfg.drinkSource || "kitchen_first";
     if (drinkSource !== "shop_only") {
-      for (const d of ["carrotJuice", "radishSoup"]) {
+      const prefDrinkKitchen = cfg.preferDrinkKitchen || "auto";
+      const kitchenDrinks = prefDrinkKitchen !== "auto" ? [prefDrinkKitchen] : KITCHEN_DRINK_ORDER;
+      for (const d of kitchenDrinks) {
         if ((st.kitchen?.stock?.[d] || 0) > 0 && st.eatDish?.(d) === true) {
           markActed("farm_drink");
-          const label = d === "carrotJuice" ? "N\u01B0\u1EDBc \xE9p c\xE0 r\u1ED1t" : "Canh c\u1EE7 c\u1EA3i";
-          return { acted: true, msg: `\u{1F9C3} \u0110\xE3 u\u1ED1ng ${label} gi\u1EA3i Kh\xE1t (${st.hydration}%)` };
+          return { acted: true, msg: `\u{1F9C3} \u0110\xE3 d\xF9ng ${DISH_LABELS[d] || d} trong b\u1EBFp gi\u1EA3i Kh\xE1t (${st.hydration}%)` };
         }
       }
     }
-    const drinkOrder = [cfg.preferDrinkShop || "nuocMia", "nuocMia", "traDa", "traDao", "traSua", "caPheSua"];
-    for (const dr of drinkOrder) {
-      if ((st.gold || 0) >= (DRINK_PRICES[dr] || 3e3) && st.buyFood?.(dr) === "ok") {
-        markActed("farm_drink");
-        return { acted: true, msg: `\u{1F964} \u0110\xE3 mua & u\u1ED1ng ${DRINK_LABELS[dr] || dr} gi\u1EA3i Kh\xE1t` };
+    if (drinkSource !== "kitchen_only") {
+      const drinkOrder = [cfg.preferDrinkShop || "nuocMia", ...SHOP_DRINK_ORDER];
+      const seen = /* @__PURE__ */ new Set();
+      for (const dr of drinkOrder) {
+        if (!dr || seen.has(dr)) continue;
+        seen.add(dr);
+        if ((st.gold || 0) >= (DRINK_PRICES[dr] || 3e3) && st.buyFood?.(dr) === "ok") {
+          markActed("farm_drink");
+          return { acted: true, msg: `\u{1F964} \u0110\xE3 mua & u\u1ED1ng ${DRINK_LABELS[dr] || dr} gi\u1EA3i Kh\xE1t` };
+        }
       }
     }
     return null;

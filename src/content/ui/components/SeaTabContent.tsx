@@ -55,16 +55,16 @@ export function SeaTabContent({ config, onUpdateConfig }: SeaTabContentProps) {
         </label>
         {config.seaAutoSpot && (
           <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
-            <div className="flex items-center justify-between">
-              <span className="text-slate-600">Vị trí câu ở Biển:</span>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-slate-600 shrink-0">Vị trí câu ở Biển:</span>
               <select
                 value={config.seaSpot}
                 onChange={(e) => updateField('seaSpot', e.target.value as AppConfig['seaSpot'])}
-                className="rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="max-w-[235px] truncate rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
               >
-                <option value="pier">🌉 Cầu tàu (Đa dạng các loại cá)</option>
-                <option value="rocks">🪨 Bãi đá (Nhiều cá hiếm)</option>
-                <option value="beach">🏖️ Mép bãi cát (Cá ven bờ)</option>
+                <option value="beach">🏖️ Mép bãi cát (Nhiều cá nhỏ, hay vớt trúng rác)</option>
+                <option value="pier">🌉 Cầu tàu (Nước sâu vừa, cá gì cũng có)</option>
+                <option value="rocks">🪨 Bãi đá (Cá hiếm hay rình ở đây)</option>
               </select>
             </div>
           </div>
@@ -102,15 +102,15 @@ export function SeaTabContent({ config, onUpdateConfig }: SeaTabContentProps) {
         </label>
         {config.seaAutoBuyBait && (
           <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
-            <div className="flex items-center justify-between">
-              <span className="text-slate-600">Loại mồi ưu tiên:</span>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-slate-600 shrink-0">Loại mồi ưu tiên:</span>
               <select
                 value={config.seaPreferBait}
                 onChange={(e) => updateField('seaPreferBait', e.target.value as AppConfig['seaPreferBait'])}
-                className="rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="max-w-[235px] truncate rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
               >
-                <option value="worm">🪱 Mồi Giun / Trùn (Câu thường)</option>
-                <option value="shrimp">🦐 Mồi Tôm (Câu cá hiếm)</option>
+                <option value="worm">🪱 Mồi trùn (10 mồi/gói · 2.000đ · Cá nào cũng ăn)</option>
+                <option value="shrimp">🦐 Mồi tôm (5 mồi/gói · 10.000đ · Ít rác, nhiều cá hiếm)</option>
               </select>
             </div>
             <div className="flex items-center justify-between">

@@ -52,10 +52,12 @@ export interface AppConfig {
   autoRecoverHunger: boolean;
   hungerThreshold: number;
   foodSource: 'kitchen_first' | 'kitchen_only' | 'shop_only';
+  preferFoodKitchen: string;
   preferFoodShop: string;
   autoRecoverThirst: boolean;
   thirstThreshold: number;
-  drinkSource: 'kitchen_first' | 'shop_only' | 'both';
+  drinkSource: 'kitchen_first' | 'kitchen_only' | 'shop_only';
+  preferDrinkKitchen: string;
   preferDrinkShop: string;
   needThreshold: number;
   autoMorningCoffee: boolean;

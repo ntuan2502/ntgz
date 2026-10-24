@@ -87,21 +87,21 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
             </label>
             {config.autoCook && (
               <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Món ưu tiên:</span>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-slate-600 shrink-0">Món ưu tiên:</span>
                   <select
                     value={config.preferDish}
                     onChange={(e) => updateField('preferDish', e.target.value)}
-                    className="rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
+                    className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
                   >
                     <option value="auto">✨ Tự chọn món đủ nguyên liệu</option>
-                    <option value="comTam">🍛 Cơm tấm ốp la (No lâu)</option>
-                    <option value="eggBread">🥪 Bánh mì ốp la (Tốc độ)</option>
-                    <option value="radishSoup">🍲 Canh củ cải</option>
-                    <option value="carrotJuice">🧃 Nước ép cà rốt</option>
-                    <option value="grilledCorn">🌽 Bắp nướng mỡ hành</option>
-                    <option value="boiledEgg">🥚 Trứng luộc</option>
-                    <option value="cornCake">🥮 Bánh bắp nướng</option>
+                    <option value="radishSoup">🍲 Canh củ cải (+20 no, +30 đã khát · 3 củ cải)</option>
+                    <option value="boiledEgg">🥚 Trứng luộc (+25 no · 2 trứng)</option>
+                    <option value="grilledCorn">🌽 Bắp nướng mỡ hành (+30 no · 2 ngô)</option>
+                    <option value="carrotJuice">🧃 Nước ép cà rốt (+40 đã khát, 💧 Không khát · 3 cà rốt)</option>
+                    <option value="eggBread">🥪 Bánh mì ốp la (+40 no, 💨 Đi nhanh · 2 trứng, 1 cà rốt)</option>
+                    <option value="comTam">🍛 Cơm tấm ốp la (+60 no, +20 đã khát, 🍚 Không đói · 2 trứng, 2 củ cải, 2 cà rốt)</option>
+                    <option value="cornCake">🥮 Bánh bắp nướng (+50 no, 🌾 Được mùa · 4 ngô, 2 trứng)</option>
                   </select>
                 </div>
               </div>
@@ -128,32 +128,52 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                     className="w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
                   />
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Nguồn ăn:</span>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-slate-600 shrink-0">Nguồn ăn:</span>
                   <select
                     value={config.foodSource}
                     onChange={(e) => updateField('foodSource', e.target.value as AppConfig['foodSource'])}
-                    className="rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
+                    className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
                   >
                     <option value="kitchen_first">🍲 Ưu tiên Bếp, thiếu mua Tiệm</option>
-                    <option value="kitchen_only">🏡 Chỉ ăn món Bếp / Kho</option>
-                    <option value="shop_only">🥖 Chỉ mua Tiệm bánh mì</option>
+                    <option value="kitchen_only">🏡 Chỉ món ăn Bếp, Kho</option>
+                    <option value="shop_only">🥖 Chỉ mua Tiệm</option>
                   </select>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Món mua ở Tiệm:</span>
-                  <select
-                    value={config.preferFoodShop}
-                    onChange={(e) => updateField('preferFoodShop', e.target.value)}
-                    className="rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
-                  >
-                    <option value="banhMiThit">🥖 Bánh mì thịt (15.000đ · +50 no)</option>
-                    <option value="banhMiCha">🐟 Bánh mì chả cá (15.000đ · +45 no)</option>
-                    <option value="banhMiTrung">🍳 Bánh mì trứng (10.000đ · +35 no)</option>
-                    <option value="banhBao">🥟 Bánh bao (8.000đ · +25 no)</option>
-                    <option value="banhMiFull">🤤 Bánh mì full topping (25.000đ · +80 no)</option>
-                  </select>
-                </div>
+                {config.foodSource !== 'shop_only' && (
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-slate-600 shrink-0">Món ăn ở Bếp:</span>
+                    <select
+                      value={config.preferFoodKitchen || 'auto'}
+                      onChange={(e) => updateField('preferFoodKitchen', e.target.value)}
+                      className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
+                    >
+                      <option value="auto">✨ Tự chọn món có sẵn trong Bếp</option>
+                      <option value="radishSoup">🍲 Canh củ cải (+20 no, +30 đã khát)</option>
+                      <option value="boiledEgg">🥚 Trứng luộc (+25 no)</option>
+                      <option value="grilledCorn">🌽 Bắp nướng mỡ hành (+30 no)</option>
+                      <option value="eggBread">🥪 Bánh mì ốp la (+40 no, 💨 Đi nhanh)</option>
+                      <option value="comTam">🍛 Cơm tấm ốp la (+60 no, +20 đã khát, 🍚 Không đói)</option>
+                      <option value="cornCake">🥮 Bánh bắp nướng (+50 no, 🌾 Được mùa)</option>
+                    </select>
+                  </div>
+                )}
+                {config.foodSource !== 'kitchen_only' && (
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-slate-600 shrink-0">Món mua ở Tiệm:</span>
+                    <select
+                      value={config.preferFoodShop}
+                      onChange={(e) => updateField('preferFoodShop', e.target.value)}
+                      className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
+                    >
+                      <option value="banhBao">🥟 Bánh bao (+25 no · 8.000đ)</option>
+                      <option value="banhMiTrung">🍳 Bánh mì trứng (+35 no · 10.000đ)</option>
+                      <option value="banhMiThit">🥖 Bánh mì thịt (+50 no · 15.000đ)</option>
+                      <option value="banhMiCha">🐟 Bánh mì chả cá (+45 no, +5 nước · 15.000đ)</option>
+                      <option value="banhMiFull">🤤 Bánh mì full topping (+80 no · 25.000đ)</option>
+                    </select>
+                  </div>
+                )}
               </div>
             )}
 
@@ -178,32 +198,49 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                     className="w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
                   />
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Nguồn nước:</span>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-slate-600 shrink-0">Nguồn nước:</span>
                   <select
                     value={config.drinkSource}
                     onChange={(e) => updateField('drinkSource', e.target.value as AppConfig['drinkSource'])}
-                    className="rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
+                    className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
                   >
-                    <option value="kitchen_first">🧃 Ưu tiên nước Bếp, thiếu mua Tiệm</option>
-                    <option value="shop_only">🥤 Chỉ mua nước tại Tiệm giải khát</option>
-                    <option value="both">✨ Linh hoạt cả Bếp &amp; Tiệm</option>
+                    <option value="kitchen_first">🧃 Ưu tiên Bếp, thiếu mua Tiệm</option>
+                    <option value="kitchen_only">🏡 Chỉ món nước Bếp, Kho</option>
+                    <option value="shop_only">🥤 Chỉ mua Tiệm</option>
                   </select>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Nước ở Tiệm:</span>
-                  <select
-                    value={config.preferDrinkShop}
-                    onChange={(e) => updateField('preferDrinkShop', e.target.value)}
-                    className="rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
-                  >
-                    <option value="nuocMia">🥤 Nước mía (8.000đ · +35 nước)</option>
-                    <option value="traDao">🍑 Trà đào cam sả (15.000đ · +50 nước)</option>
-                    <option value="traSua">🧋 Trà sữa trân châu (18.000đ · +40 nước)</option>
-                    <option value="caPheSua">☕ Cà phê sữa đá (12.000đ · +25 nước)</option>
-                    <option value="traDa">🧊 Trà đá vỉa hè (3.000đ · +20 nước)</option>
-                  </select>
-                </div>
+                {config.drinkSource !== 'shop_only' && (
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-slate-600 shrink-0">Nước ở Bếp:</span>
+                    <select
+                      value={config.preferDrinkKitchen || 'auto'}
+                      onChange={(e) => updateField('preferDrinkKitchen', e.target.value)}
+                      className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
+                    >
+                      <option value="auto">✨ Tự chọn nước có sẵn trong Bếp</option>
+                      <option value="radishSoup">🍲 Canh củ cải (+30 đã khát, +20 no)</option>
+                      <option value="carrotJuice">🧃 Nước ép cà rốt (+40 đã khát, 💧 Không khát)</option>
+                      <option value="comTam">🍛 Cơm tấm ốp la (+20 đã khát, +60 no, 🍚 Không đói)</option>
+                    </select>
+                  </div>
+                )}
+                {config.drinkSource !== 'kitchen_only' && (
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-slate-600 shrink-0">Nước ở Tiệm:</span>
+                    <select
+                      value={config.preferDrinkShop}
+                      onChange={(e) => updateField('preferDrinkShop', e.target.value)}
+                      className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
+                    >
+                      <option value="traDa">🧊 Trà đá (+20 nước · 3.000đ)</option>
+                      <option value="nuocMia">🥤 Nước mía (+35 nước · 8.000đ)</option>
+                      <option value="caPheSua">☕ Cà phê sữa đá (+25 nước, ⚡ Đi nhanh x1.5 · 12.000đ)</option>
+                      <option value="traDao">🍑 Trà đào cam sả (+50 nước · 15.000đ)</option>
+                      <option value="traSua">🧋 Trà sữa trân châu (+40 nước, +12 no · 18.000đ)</option>
+                    </select>
+                  </div>
+                )}
               </div>
             )}
 
@@ -333,18 +370,18 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
             </label>
             {config.autoPlant && (
               <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Hạt giống ưu tiên:</span>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-slate-600 shrink-0">Hạt giống ưu tiên:</span>
                   <select
                     value={config.preferSeed}
                     onChange={(e) => updateField('preferSeed', e.target.value)}
-                    className="rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
+                    className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
                   >
                     <option value="auto">✨ Tự chọn tối ưu</option>
-                    <option value="rice">🌾 Lúa (8 ngày)</option>
-                    <option value="corn">🌽 Bắp (6 ngày)</option>
-                    <option value="carrot">🥕 Cà rốt (4 ngày)</option>
-                    <option value="radish">🌱 Củ cải (2 ngày)</option>
+                    <option value="radish">🌱 Củ cải (2 ngày · Hạt 20.000đ · Bán 12.000đ)</option>
+                    <option value="carrot">🥕 Cà rốt (4 ngày · Hạt 40.000đ · Bán 28.000đ)</option>
+                    <option value="corn">🌽 Ngô (6 ngày · Hạt 60.000đ · Bán 50.000đ)</option>
+                    <option value="rice">🌾 Lúa thơm (8 ngày · Hạt 120.000đ · Bán 90.000đ)</option>
                   </select>
                 </div>
               </div>
@@ -509,16 +546,16 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
             </label>
             {config.pondAutoStock && (
               <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Loại giống thả:</span>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-slate-600 shrink-0">Loại giống thả:</span>
                   <select
                     value={config.preferPondFish}
                     onChange={(e) => updateField('preferPondFish', e.target.value)}
-                    className="rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
+                    className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
                   >
-                    <option value="chep">🐟 Cá chép (Lời cao)</option>
-                    <option value="tre">🐟 Cá trê</option>
-                    <option value="ro">🐟 Cá rô</option>
+                    <option value="ro">🐟 Cá rô đồng (3 ngày · Giống 8.000đ · Bán 26.000đ)</option>
+                    <option value="tre">🐟 Cá trê (5 ngày · Giống 15.000đ · Bán 50.000đ)</option>
+                    <option value="chep">🐟 Cá chép (7 ngày · Giống 25.000đ · Bán 90.000đ)</option>
                   </select>
                 </div>
               </div>
@@ -600,17 +637,17 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
             </label>
             {config.goldAutoBuy && (
               <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Loại vàng ưu tiên:</span>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-slate-600 shrink-0">Loại vàng ưu tiên:</span>
                   <select
                     value={config.goldPreferType}
                     onChange={(e) => updateField('goldPreferType', e.target.value)}
-                    className="rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
+                    className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
                   >
-                    <option value="mieng">🟨 Vàng miếng 9999 (Chênh thấp)</option>
-                    <option value="nhan">💍 Nhẫn trơn 9999 (Ổn định)</option>
-                    <option value="k18">📿 Vàng 18K (Trang sức)</option>
-                    <option value="non">🪙 Vàng non 10K (Lướt sóng)</option>
+                    <option value="mieng">🟨 Vàng miếng 9999 (~8,2tr · Chênh 1,6% · Hợp giữ lâu)</option>
+                    <option value="nhan">💍 Nhẫn trơn 9999 (~7,6tr · Chênh 1,2% · Ổn định nhất)</option>
+                    <option value="k18">📿 Vàng 18K (~5,6tr · Chênh 9% · Trang sức)</option>
+                    <option value="non">🪙 Vàng non 10K (~3,1tr · Chênh 5% · Lướt sóng)</option>
                   </select>
                 </div>
                 <div className="flex items-center justify-between">

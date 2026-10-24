@@ -82,7 +82,12 @@ export function mergeConfig(saved: Partial<AppConfig> | null | undefined): AppCo
     barnAutoBathBuffalo: (saved.barnAutoBathBuffalo ?? savedAny.barnAutoBuffalo ?? DEFAULT_CONFIG.barnAutoBathBuffalo) as boolean,
     barnAutoLendBuffalo: (saved.barnAutoLendBuffalo ?? DEFAULT_CONFIG.barnAutoLendBuffalo) as boolean,
     autoRecoverHunger: (saved.autoRecoverHunger ?? savedAny.autoRecoverNeeds ?? DEFAULT_CONFIG.autoRecoverHunger) as boolean,
+    preferFoodKitchen: (saved.preferFoodKitchen ?? DEFAULT_CONFIG.preferFoodKitchen) as string,
     autoRecoverThirst: (saved.autoRecoverThirst ?? savedAny.autoRecoverNeeds ?? DEFAULT_CONFIG.autoRecoverThirst) as boolean,
+    drinkSource: ((saved.drinkSource as string) === 'both'
+      ? 'kitchen_first'
+      : (saved.drinkSource ?? DEFAULT_CONFIG.drinkSource)) as AppConfig['drinkSource'],
+    preferDrinkKitchen: (saved.preferDrinkKitchen ?? DEFAULT_CONFIG.preferDrinkKitchen) as string,
     autoChargeVehicle: (saved.autoChargeVehicle ?? savedAny.autoRecoverNeeds ?? DEFAULT_CONFIG.autoChargeVehicle) as boolean,
     autoMorningCoffee: (saved.autoMorningCoffee ?? savedAny.autoRecoverNeeds ?? DEFAULT_CONFIG.autoMorningCoffee) as boolean,
     autoFeedPiggy: (saved.autoFeedPiggy ?? savedAny.autoPiggy ?? DEFAULT_CONFIG.autoFeedPiggy) as boolean,
