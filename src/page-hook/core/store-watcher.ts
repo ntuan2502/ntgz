@@ -1,0 +1,155 @@
+import { stores, discoverStores, hookPhaserGame, phaserGame, benWs } from './engine-access';
+import { GameSnapshot } from '../../shared/types/game-state';
+
+const _TREND_CROPS = ['radish', 'carrot', 'corn', 'rice'];
+
+function _tt(e: number): number {
+  let t = (e + 2135587861) | 0;
+  t = Math.imul(t ^ (t >>> 16), 73244475);
+  t = Math.imul(t ^ (t >>> 16), 73244475);
+  t ^= t >>> 16;
+  return (t >>> 0) / 4294967296;
+}
+
+function _nt(n: number, t: number) {
+  const arr = n >= 2 ? [..._TREND_CROPS, 'egg'] : [..._TREND_CROPS];
+  const r = arr[Math.floor(_tt(n * 3 + 1) * arr.length)];
+  return { goods: r, start: t, end: t + 2 };
+}
+
+function _rt(day: number) {
+  let t = 9;
+  for (let n = 0; ; n++) {
+    if (t + 2 >= day) return _nt(n, t);
+    t += 7 + Math.floor(_tt(n * 3) * 4);
+  }
+}
+
+export function getActiveTrend(day: number) {
+  const t = _rt(day);
+  return t.start <= day ? t : null;
+}
+
+export function getTrendQuota(goods: string, day: number, plotCount: number, trendLog: any): number {
+  const t = getActiveTrend(day);
+  if (!t || t.goods !== goods) return 0;
+  const maxQuota = 4 + Math.floor(plotCount / 4);
+  const sold = trendLog && trendLog.soldDay === day ? trendLog.sold || 0 : 0;
+  return Math.max(0, maxQuota - sold);
+}
+
+export function computeBenStamina(wallet: any): number {
+  if (!wallet) return 0;
+  if (!wallet.staminaNext || typeof wallet.at !== 'number') return wallet.stamina ?? 0;
+  const elapsed = performance.now() - wallet.at;
+  if (elapsed < wallet.staminaNext) return wallet.stamina ?? 0;
+  return Math.min(100, (wallet.stamina ?? 0) + 1 + Math.floor((elapsed - wallet.staminaNext) / 180000));
+}
+
+export function getSnapshot(): GameSnapshot {
+  if (!stores.main || !stores.sea || !stores.benUI || !stores.benNet) {
+    discoverStores();
+  }
+  hookPhaserGame();
+
+  const m = stores.main ? stores.main.getState() : null;
+  const s = stores.sea ? stores.sea.getState() : null;
+  const bu = stores.benUI ? stores.benUI.getState() : null;
+  const bn = stores.benNet ? stores.benNet.getState() : null;
+
+  if (!m) return { ok: false };
+
+  const benWallet = bn?.wallet
+    ? {
+        ...bn.wallet,
+        liveStamina: computeBenStamina(bn.wallet),
+      }
+    : null;
+
+  const benNonKeptCount = Array.isArray(bn?.basket)
+    ? bn.basket.filter((x: any) => !x.kept).length
+    : 0;
+
+  return {
+    ok: true,
+    hasPhaser: Boolean(phaserGame),
+    hasBenWs: Boolean(benWs && benWs.readyState === WebSocket.OPEN),
+    screen: m.screen,
+    day: m.day,
+    minutes: m.minutes,
+    gold: m.gold,
+    fullness: m.fullness,
+    hydration: m.hydration,
+    energy: benWallet ? benWallet.liveStamina : m.battery || 0,
+    battery: m.battery,
+    vehicle: m.vehicle,
+    onFoot: m.onFoot,
+    indoors: m.indoors,
+    sleeping: m.sleeping,
+    panel: m.panel,
+    shop: m.shop,
+    phone: m.phone,
+    announcement: m.announcement,
+    call: m.call,
+    tip: m.tip,
+    plots: m.plots,
+    seeds: m.seeds,
+    items: m.items,
+    produce: m.produce,
+    eggs: m.eggs,
+    nestEggs: m.nestEggs,
+    hens: m.hens,
+    coopLevel: m.coopLevel,
+    kitchen: m.kitchen,
+    pets: m.pets,
+    pond: m.pond,
+    buffalo: m.buffalo,
+    dairy: m.dairy,
+    helpers: m.helpers,
+    order: m.order,
+    village: m.village,
+    savings: m.savings,
+    daily: m.daily,
+    goalIndex: m.goalIndex,
+    firstDay: m.firstDay,
+    notebook: m.notebook,
+    fishing: m.fishing,
+    unlockedZones: m.unlockedZones,
+    salonOpen: m.salonOpen,
+    trendLog: m.trendLog,
+    trend: (() => {
+      const tr = getActiveTrend(m.day);
+      if (!tr) return null;
+      const quota = getTrendQuota(tr.goods, m.day, Object.keys(m.plots || {}).length, m.trendLog);
+      return { goods: tr.goods, start: tr.start, end: tr.end, quota };
+    })(),
+    sea: s
+      ? {
+          spot: s.spot,
+          walking: s.walking,
+          phase: s.phase,
+          panel: s.panel,
+        }
+      : null,
+    benUI: bu
+      ? {
+          spot: bu.spot,
+          walking: bu.walking,
+          panel: bu.panel,
+        }
+      : null,
+    benNet: bn
+      ? {
+          status: bn.status,
+          fishing: bn.fishing,
+          fight: bn.fight,
+          wallet: benWallet,
+          basketCount: benNonKeptCount,
+          totalBasket: Array.isArray(bn.basket) ? bn.basket.length : 0,
+          pack: bn.pack || {},
+          landed: bn.landed,
+          notice: bn.notice,
+        }
+      : null,
+  };
+}

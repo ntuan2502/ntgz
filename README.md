@@ -18,7 +18,9 @@ Tiện ích hoạt động mượt mà kết hợp giữa can thiệp giao diệ
 - 🌾 **Khu Vực Nông Trại**: Tự động hóa toàn diện 8 cụm công việc (Nhà & Nhu cầu, Ruộng đồng, Thú cưng, Chuồng trâu/bò, Chuồng gà, Ao cá, Chợ Lớn & Tiệm Vàng Cô Kim, Quầy Dì Bảy & Sổ tay). Hỗ trợ kéo thả hoặc bấm nút để thay đổi thứ tự ưu tiên các cụm việc theo ý muốn.
 - 🛶 **Khu Vực Bến Đò**: Tự động nhận diện phao câu chìm giật cần chuẩn xác, chọn đa dạng điểm câu (Cầu tàu, Cầu tre, Bờ sông), mua/xin mồi câu Chú Đực, bán cá Vựa Anh Tư, gội đầu dưỡng sinh Út Mười hồi phục sức câu, ăn uống Dì Tám/Chị Thơm, sạp lồng đèn Cô Bảy, vé số Chú Bảy và đổi tiền tại cây ATM.
 - 🏖️ **Khu Vực Biển**: Tự động canh lực giật cần biển, ghìm cá ngược hướng bơi, câu tại 3 điểm (Cầu tàu, Bãi đá, Mép cát), mua mồi và bán cá Chòi Ông Tư, tự nhận thưởng Sổ cá biển bách khoa toàn thư.
+- 🔄 **Kiểm Tra Cập Nhật Trực Tiếp**: Tích hợp nút kiểm tra cập nhật trên cả Popup Extension và Menu Game HUD, tự động so sánh phiên bản với GitHub Releases và hiển thị nội dung Changelog Markdown chi tiết kèm đường dẫn tải bản mới.
 - ⚡ **Công Nghệ & Trải Nghiệm**:
+  - **100% TypeScript & Modular**: Kiến trúc module hóa tách biệt rõ ràng, type safety nghiêm ngặt, build siêu tốc bằng `esbuild`.
   - **Chống mua lặp (Anti-Double-Action)**: Bộ đệm thông minh ngăn ngừa tuyệt đối lỗi mua 2 lần do mạng trễ.
   - **Khóa Tab Auto độc lập**: Chạy auto cố định theo khu vực đã chọn mà không bị gián đoạn khi chuyển tab xem thông tin.
   - **Giao diện HUD V2 hiện đại**: Bảng điều khiển nổi tự do kéo thả khắp màn hình, giữ nguyên kích thước khi thu gọn, tích hợp icon trực quan cho từng tác vụ và thanh trượt tùy chỉnh tốc độ trễ.
@@ -29,15 +31,43 @@ Tiện ích hoạt động mượt mà kết hợp giữa can thiệp giao diệ
 
 ## 🚀 Hướng Dẫn Cài Đặt (Google Chrome)
 
-1. Tải mã nguồn về máy tính (tải file nén `.zip` hoặc `git clone`) và **giải nén vào một thư mục bất kỳ trên máy của bạn**.
-2. Mở trình duyệt **Google Chrome** và truy cập đường dẫn:
+### Cách 1: Sử dụng Bản Phát Hành Sẵn (.zip từ GitHub Releases)
+1. Tải bản phát hành `.zip` mới nhất tại mục [Releases](https://github.com/ntuan2502/ntgz/releases) và giải nén vào một thư mục trên máy tính của bạn.
+2. Mở trình duyệt **Google Chrome** và truy cập:
    ```
    chrome://extensions/
    ```
 3. Bật công tắc **Chế độ dành cho nhà phát triển (Developer mode)** ở góc trên bên phải màn hình.
 4. Bấm nút **Tải tiện ích đã giải nén (Load unpacked)** ở góc trên bên trái.
-5. Tìm và chọn **thư mục bạn vừa giải nén mã nguồn**.
+5. Chọn **thư mục bạn vừa giải nén**.
 6. Truy cập vào trang game [https://nongtraigenz.online/play/](https://nongtraigenz.online/play/) (hoặc bấm nút **🚀 Vào Game Nông Trại GenZ** trên Popup Extension) để bắt đầu trải nghiệm!
+
+### Cách 2: Biên Dịch Từ Mã Nguồn (Dành Cho Nhà Phát Triển)
+1. Clone mã nguồn về máy:
+   ```bash
+   git clone https://github.com/ntuan2502/ntgz.git
+   cd ntgz
+   ```
+2. Cài đặt thư viện bằng `pnpm`:
+   ```bash
+   pnpm install
+   ```
+3. Biên dịch dự án:
+   ```bash
+   pnpm run build
+   ```
+4. Mở `chrome://extensions/` -> Bật **Developer mode** -> Chọn **Tải tiện ích đã giải nén** -> Chọn thư mục **`dist`** trong dự án.
+
+---
+
+## 🛠️ Lệnh Dành Cho Nhà Phát Triển
+
+| Lệnh | Chức Năng |
+| :--- | :--- |
+| **`pnpm run build`** | Biên dịch toàn bộ extension từ `src/` ra thư mục `dist/` |
+| **`pnpm run dev`** | Chạy chế độ theo dõi file tự động re-build khi lưu code (Watch mode) |
+| **`pnpm run type-check`** | Kiểm tra toàn bộ kiểu dữ liệu TypeScript (`tsc --noEmit`) |
+| **`pnpm run check-syntax`** | Kiểm tra cú pháp của tất cả các file bundle trong `dist/` |
 
 ---
 
@@ -50,19 +80,28 @@ Tiện ích hoạt động mượt mà kết hợp giữa can thiệp giao diệ
 
 ---
 
-## 📁 Cấu Trúc Dự Án
+## 📁 Cấu Trúc Dự Án (Modular TypeScript)
 
 ```
 nongtraigenz/
-├── manifest.json       # Tệp khai báo tiện ích Chrome Extension (Manifest V3)
-├── background.js       # Service worker nền xử lý phím tắt & điều hướng
-├── popup.html          # Giao diện menu nhỏ khi bấm vào biểu tượng Extension
-├── popup.css           # Định kiểu giao diện Popup tối giản
-├── popup.js            # Điều khiển Popup: 1-click vào game, bật/tắt auto
-├── content.js          # Content Script: Tạo giao diện HUD, quản lý cấu hình & lịch trình
-├── page-hook.js        # Script can thiệp thế giới trang (Phaser 3 Engine & Zustand Store)
-├── CHANGELOG.md        # Nhật ký thay đổi chi tiết toàn bộ các tính năng qua các phiên bản
-└── README.md           # Tài liệu giới thiệu tổng quan và hướng dẫn sử dụng tiếng Việt
+├── src/
+│   ├── background/         # Service worker quản lý phím tắt & badge
+│   ├── popup/              # Giao diện & logic popup extension
+│   ├── content/            # Content script, scheduler, UI HUD, update modal
+│   │   ├── bridge/         # Cầu nối gửi nhận message giữa Content và Page Hook
+│   │   ├── scheduler/      # Bộ điều phối vòng lặp auto và xử lý minigame
+│   │   └── ui/             # Giao diện Shadow DOM HUD nổi và các tab khu vực
+│   ├── page-hook/          # Logic can thiệp thế giới trang (Phaser 3 Engine & Zustand Store)
+│   │   ├── core/           # Truy cập engine, store watcher, cooldown & interrupts
+│   │   └── modules/        # Chia module theo khu vực: farm, wharf, sea
+│   ├── services/           # Dịch vụ gọi GitHub API kiểm tra cập nhật & parse Changelog
+│   └── shared/             # Types, constants và cấu hình mặc định dùng chung
+├── dist/                   # Thư mục build đầu ra (Load unpacked vào Chrome)
+├── build.mjs               # Script build multi-entry siêu tốc bằng esbuild
+├── tsconfig.json           # Cấu hình TypeScript nghiêm ngặt (strict mode)
+├── commitlint.config.ts    # Cấu hình chuẩn hóa Conventional Commits
+├── CHANGELOG.md            # Nhật ký thay đổi chi tiết toàn bộ các tính năng
+└── README.md               # Tài liệu giới thiệu tổng quan và hướng dẫn sử dụng tiếng Việt
 ```
 
 ---

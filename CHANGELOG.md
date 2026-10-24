@@ -5,6 +5,32 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [Unreleased] - 2026-10-24
+
+### 🚀 Kiến Trúc & Công Nghệ Mới (TypeScript & Modular Architecture)
+- **Chuyển đổi 100% sang TypeScript**: Toàn bộ dự án được viết bằng TypeScript với hệ thống kiểu dữ liệu nghiêm ngặt (`strict: true`), loại bỏ hoàn toàn các lỗi tiềm ẩn do sai kiểu hoặc `undefined`.
+- **Module hóa toàn diện (Modular Architecture)**: Phân tách 2 tệp monolithic khổng lồ (`content.js` ~2.735 dòng và `page-hook.js` ~2.137 dòng) thành hơn 20 module nhỏ gọn, độc lập và dễ bảo trì:
+  - `src/shared/`: Định nghĩa kiểu dữ liệu chuẩn (`config`, `protocol`, `game-state`, `github`) và cấu hình mặc định.
+  - `src/services/`: Dịch vụ tích hợp GitHub Releases API và so sánh phiên bản SemVer.
+  - `src/background/`: Service Worker quản lý badge trạng thái và phím tắt extension.
+  - `src/popup/`: Giao diện popup extension tối giản và nút kiểm tra cập nhật nhanh.
+  - `src/page-hook/`: Tương tác trực tiếp với engine game (Phaser 3 & Zustand Store) chia theo từng phân hệ (`farm`, `wharf`, `sea`).
+  - `src/content/`: Điều phối lịch trình (`scheduler`), cầu nối RPC (`bridge`) và giao diện Shadow DOM HUD (`ui`).
+- **Đóng gói siêu tốc với esbuild**: Tốc độ build toàn bộ extension dưới 100ms, hỗ trợ chế độ `--watch` tự động cập nhật bundle khi lưu file.
+
+### ✨ Tính Năng Mới
+- **Kiểm tra cập nhật trực tiếp từ GitHub Releases**:
+  - Tích hợp nút **🔄 Kiểm Tra Cập Nhật** trên cả **Popup Extension** và **Thanh tiêu đề Menu Game HUD**.
+  - So sánh phiên bản hiện tại với release mới nhất trên kho lưu trữ `ntuan2502/ntgz`.
+  - Tự động hiển thị huy hiệu thông báo khi có bản cập nhật mới.
+  - Hiển thị cửa sổ Modal trực quan với nội dung **Nhật ký thay đổi (Changelog Markdown)** và nút bấm tải nhanh bản cập nhật mới nhất.
+
+### 🛠️ Quy Trình Phát Triển (DX)
+- Chuẩn hóa Commit Messages theo định dạng Conventional Commits với **Commitlint**.
+- Tự động kiểm tra chất lượng mã nguồn trước khi commit bằng Git Hooks (**Husky**).
+
+---
+
 ## [1.0.0] - 2026-10-24
 
 ### 🌟 Bản Phát Hành Chính Thức Đầu Tiên (Official Release)

@@ -3,15 +3,21 @@
   "version": "1.0.0",
   "description": "Nông Trại GenZ Auto by Tún - Tiện ích Chrome Extension tự động hóa đa khu vực thông minh",
   "private": true,
+  "type": "module",
   "scripts": {
+    "build": "node build.mjs",
+    "dev": "node build.mjs --watch",
+    "type-check": "tsc --noEmit",
+    "check-syntax": "node --check dist/content.js && node --check dist/page-hook.js && node --check dist/background.js && node --check dist/popup.js",
     "commitlint": "commitlint --last",
-    "check-syntax": "node --check content.js && node --check page-hook.js && node --check background.js && node --check popup.js",
     "prepare": "husky"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@commitlint/types": "^21.2.3",
+    "@types/chrome": "^0.3.6",
+    "esbuild": "^0.28.2",
     "husky": "^9.1.7",
     "typescript": "^7.0.2"
   }

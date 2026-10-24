@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "Nông Trại GenZ Auto by Tún",
+  "version": "1.0.0",
+  "description": "Nông Trại GenZ Auto by Tún - Công cụ Auto đa khu vực (DOM + Canvas) thông minh cho game Nông Trại GenZ.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Nông Trại GenZ Auto by Tún"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["page-hook.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "commands": {
+    "toggle-auto": {
+      "suggested_key": {
+        "default": "Alt+A"
+      },
+      "description": "Bật / Tắt Auto"
+    },
+    "toggle-panel": {
+      "suggested_key": {
+        "default": "Alt+P"
+      },
+      "description": "Ẩn / Hiện bảng điều khiển trên màn hình game"
+    }
+  }
+}

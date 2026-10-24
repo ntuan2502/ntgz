@@ -1,15 +1,15 @@
-// Background Service Worker - Nông Trại GenZ Auto
+// Background Service Worker - Nông Trại GenZ Auto by Tún
 const BRIDGE_URL = 'http://127.0.0.1:17890';
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'UPDATE_BADGE') {
     const isRunning = Boolean(message.isRunning);
     const tabId = sender.tab ? sender.tab.id : message.tabId;
-    const badgeOptions = {
-      text: isRunning ? 'ON' : ''
+    const badgeOptions: chrome.action.BadgeTextDetails = {
+      text: isRunning ? 'ON' : '',
     };
-    const colorOptions = {
-      color: isRunning ? '#10b981' : '#6b7280'
+    const colorOptions: chrome.action.BadgeColorDetails = {
+      color: isRunning ? '#10b981' : '#6b7280',
     };
     if (tabId) {
       chrome.action.setBadgeText({ ...badgeOptions, tabId });
@@ -26,7 +26,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     fetch(`${BRIDGE_URL}/event`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(message.payload)
+      body: JSON.stringify(message.payload),
     })
       .then((r) => r.json())
       .then((data) => sendResponse({ ok: true, data }))
@@ -41,6 +41,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       .catch((err) => sendResponse({ ok: false, error: err.message }));
     return true;
   }
+
+  return false;
 });
 
 chrome.commands.onCommand.addListener(async (command) => {

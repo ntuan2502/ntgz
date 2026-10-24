@@ -12,7 +12,7 @@
         <span class="dot" id="status-dot"></span>
         <div>
           <h1>🌾 NTG Auto by Tún</h1>
-          <div style="font-size:10.5px; color:#94a3b8; font-weight:600; margin-top:1px;">Phiên bản v1.0.0</div>
+          <div id="version-label" style="font-size:10.5px; color:#94a3b8; font-weight:600; margin-top:1px;">Phiên bản v1.0.0</div>
         </div>
       </div>
       <span class="badge" id="state-badge">OFF</span>
@@ -30,6 +30,18 @@
       <button id="btn-toggle-panel" class="btn secondary">
         🖥️ Ẩn / Hiện Menu Trong Game (Alt+P)
       </button>
+
+      <button id="btn-check-update" class="btn update-btn">
+        🔄 Kiểm Tra Cập Nhật
+      </button>
+    </div>
+
+    <div id="update-box" class="update-box" style="display: none;">
+      <div id="update-title" class="update-title"></div>
+      <div id="update-notes" class="update-notes"></div>
+      <a id="update-link" class="btn update-action-btn" target="_blank" rel="noopener noreferrer">
+        ⬇️ Tải Bản Cập Nhật
+      </a>
     </div>
 
     <div class="footer-note" id="msg-status">
