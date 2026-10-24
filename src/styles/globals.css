@@ -1,6 +1,7 @@
 @import "tailwindcss";
+@source "../**/*.{ts,tsx,html}";
 
-:root {
+:root, :host, #ntg-hud-root {
   --background: #ffffff;
   --foreground: #0f172a;
   --card: #ffffff;

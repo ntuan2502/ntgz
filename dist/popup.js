@@ -2863,13 +2863,13 @@
         registerTwoPhaseEvent(reactName, [domEventName]);
       }
       var globalClientIdCounter$1 = 0;
-      function getViewTransitionName(props, instance) {
+      function getViewTransitionName(props, instance2) {
         if (null != props.name && "auto" !== props.name) return props.name;
-        if (null !== instance.autoName) return instance.autoName;
+        if (null !== instance2.autoName) return instance2.autoName;
         props = pendingEffectsRoot.identifierPrefix;
         var globalClientId = globalClientIdCounter$1++;
         props = "_" + props + "t_" + globalClientId.toString(32) + "_";
-        return instance.autoName = props;
+        return instance2.autoName = props;
       }
       function getClassNameByType(classByType) {
         if (null == classByType || "string" === typeof classByType)
@@ -3199,40 +3199,40 @@
         throw HydrationMismatchException;
       }
       function prepareToHydrateHostInstance(fiber) {
-        var instance = fiber.stateNode, type = fiber.type, props = fiber.memoizedProps;
-        instance[internalInstanceKey] = fiber;
-        instance[internalPropsKey] = props;
+        var instance2 = fiber.stateNode, type = fiber.type, props = fiber.memoizedProps;
+        instance2[internalInstanceKey] = fiber;
+        instance2[internalPropsKey] = props;
         switch (type) {
           case "dialog":
-            listenToNonDelegatedEvent("cancel", instance);
-            listenToNonDelegatedEvent("close", instance);
+            listenToNonDelegatedEvent("cancel", instance2);
+            listenToNonDelegatedEvent("close", instance2);
             break;
           case "iframe":
           case "object":
           case "embed":
-            listenToNonDelegatedEvent("load", instance);
+            listenToNonDelegatedEvent("load", instance2);
             break;
           case "video":
           case "audio":
             for (type = 0; type < mediaEventTypes.length; type++)
-              listenToNonDelegatedEvent(mediaEventTypes[type], instance);
+              listenToNonDelegatedEvent(mediaEventTypes[type], instance2);
             break;
           case "source":
-            listenToNonDelegatedEvent("error", instance);
+            listenToNonDelegatedEvent("error", instance2);
             break;
           case "img":
           case "image":
           case "link":
-            listenToNonDelegatedEvent("error", instance);
-            listenToNonDelegatedEvent("load", instance);
+            listenToNonDelegatedEvent("error", instance2);
+            listenToNonDelegatedEvent("load", instance2);
             break;
           case "details":
-            listenToNonDelegatedEvent("toggle", instance);
+            listenToNonDelegatedEvent("toggle", instance2);
             break;
           case "input":
-            listenToNonDelegatedEvent("invalid", instance);
+            listenToNonDelegatedEvent("invalid", instance2);
             initInput(
-              instance,
+              instance2,
               props.value,
               props.defaultValue,
               props.checked,
@@ -3243,14 +3243,14 @@
             );
             break;
           case "select":
-            listenToNonDelegatedEvent("invalid", instance);
+            listenToNonDelegatedEvent("invalid", instance2);
             break;
           case "textarea":
-            listenToNonDelegatedEvent("invalid", instance), initTextarea(instance, props.value, props.defaultValue, props.children);
+            listenToNonDelegatedEvent("invalid", instance2), initTextarea(instance2, props.value, props.defaultValue, props.children);
         }
         type = props.children;
-        "string" !== typeof type && "number" !== typeof type && "bigint" !== typeof type || instance.textContent === "" + type || true === props.suppressHydrationWarning || checkForUnmatchedText(instance.textContent, type) ? (null != props.popover && (listenToNonDelegatedEvent("beforetoggle", instance), listenToNonDelegatedEvent("toggle", instance)), null != props.onScroll && listenToNonDelegatedEvent("scroll", instance), null != props.onScrollEnd && listenToNonDelegatedEvent("scrollend", instance), null != props.onClick && (instance.onclick = noop$1), instance = true) : instance = false;
-        instance || throwOnHydrationMismatch(fiber, true);
+        "string" !== typeof type && "number" !== typeof type && "bigint" !== typeof type || instance2.textContent === "" + type || true === props.suppressHydrationWarning || checkForUnmatchedText(instance2.textContent, type) ? (null != props.popover && (listenToNonDelegatedEvent("beforetoggle", instance2), listenToNonDelegatedEvent("toggle", instance2)), null != props.onScroll && listenToNonDelegatedEvent("scroll", instance2), null != props.onScrollEnd && listenToNonDelegatedEvent("scrollend", instance2), null != props.onClick && (instance2.onclick = noop$1), instance2 = true) : instance2 = false;
+        instance2 || throwOnHydrationMismatch(fiber, true);
       }
       function popToNextHostParent(fiber) {
         for (hydrationParentFiber = fiber.return; hydrationParentFiber; )
@@ -4254,12 +4254,12 @@
               a: {
                 var workInProgress2 = workInProgress$jscomp$0, update = pendingQueue;
                 updateLane = props;
-                var instance = instance$jscomp$0;
+                var instance2 = instance$jscomp$0;
                 switch (update.tag) {
                   case 1:
                     workInProgress2 = update.payload;
                     if ("function" === typeof workInProgress2) {
-                      newState = workInProgress2.call(instance, newState, updateLane);
+                      newState = workInProgress2.call(instance2, newState, updateLane);
                       break a;
                     }
                     newState = workInProgress2;
@@ -4268,7 +4268,7 @@
                     workInProgress2.flags = workInProgress2.flags & -65537 | 128;
                   case 0:
                     workInProgress2 = update.payload;
-                    updateLane = "function" === typeof workInProgress2 ? workInProgress2.call(instance, newState, updateLane) : workInProgress2;
+                    updateLane = "function" === typeof workInProgress2 ? workInProgress2.call(instance2, newState, updateLane) : workInProgress2;
                     if (null === updateLane || void 0 === updateLane) break a;
                     newState = assign({}, newState, updateLane);
                     break a;
@@ -5650,11 +5650,11 @@
         workInProgress2 = workInProgress2.stateNode;
         return "function" === typeof workInProgress2.shouldComponentUpdate ? workInProgress2.shouldComponentUpdate(newProps, newState, nextContext) : ctor.prototype && ctor.prototype.isPureReactComponent ? !shallowEqual2(oldProps, newProps) || !shallowEqual2(oldState, newState) : true;
       }
-      function callComponentWillReceiveProps(workInProgress2, instance, newProps, nextContext) {
-        workInProgress2 = instance.state;
-        "function" === typeof instance.componentWillReceiveProps && instance.componentWillReceiveProps(newProps, nextContext);
-        "function" === typeof instance.UNSAFE_componentWillReceiveProps && instance.UNSAFE_componentWillReceiveProps(newProps, nextContext);
-        instance.state !== workInProgress2 && classComponentUpdater.enqueueReplaceState(instance, instance.state, null);
+      function callComponentWillReceiveProps(workInProgress2, instance2, newProps, nextContext) {
+        workInProgress2 = instance2.state;
+        "function" === typeof instance2.componentWillReceiveProps && instance2.componentWillReceiveProps(newProps, nextContext);
+        "function" === typeof instance2.UNSAFE_componentWillReceiveProps && instance2.UNSAFE_componentWillReceiveProps(newProps, nextContext);
+        instance2.state !== workInProgress2 && classComponentUpdater.enqueueReplaceState(instance2, instance2.state, null);
       }
       function resolveClassComponentProps(Component, baseProps) {
         var newProps = baseProps;
@@ -7567,22 +7567,22 @@
       function commitClassCallbacks(finishedWork) {
         var updateQueue = finishedWork.updateQueue;
         if (null !== updateQueue) {
-          var instance = finishedWork.stateNode;
+          var instance2 = finishedWork.stateNode;
           try {
-            commitCallbacks(updateQueue, instance);
+            commitCallbacks(updateQueue, instance2);
           } catch (error) {
             captureCommitPhaseError(finishedWork, finishedWork.return, error);
           }
         }
       }
-      function safelyCallComponentWillUnmount(current, nearestMountedAncestor, instance) {
-        instance.props = resolveClassComponentProps(
+      function safelyCallComponentWillUnmount(current, nearestMountedAncestor, instance2) {
+        instance2.props = resolveClassComponentProps(
           current.type,
           current.memoizedProps
         );
-        instance.state = current.memoizedState;
+        instance2.state = current.memoizedState;
         try {
-          instance.componentWillUnmount();
+          instance2.componentWillUnmount();
         } catch (error) {
           captureCommitPhaseError(current, nearestMountedAncestor, error);
         }
@@ -7598,10 +7598,10 @@
                 var instanceToUse = current.stateNode;
                 break;
               case 30:
-                var instance = current.stateNode, name = getViewTransitionName(current.memoizedProps, instance);
-                if (null === instance.ref || instance.ref.name !== name)
-                  instance.ref = createViewTransitionInstance(name);
-                instanceToUse = instance.ref;
+                var instance2 = current.stateNode, name = getViewTransitionName(current.memoizedProps, instance2);
+                if (null === instance2.ref || instance2.ref.name !== name)
+                  instance2.ref = createViewTransitionInstance(name);
+                instanceToUse = instance2.ref;
                 break;
               case 7:
                 if (null === current.stateNode) {
@@ -7675,17 +7675,17 @@
         return fiber && 7 === fiber.tag && null !== fiber.stateNode;
       }
       function commitHostMount(finishedWork) {
-        var type = finishedWork.type, props = finishedWork.memoizedProps, instance = finishedWork.stateNode;
+        var type = finishedWork.type, props = finishedWork.memoizedProps, instance2 = finishedWork.stateNode;
         try {
           a: switch (type) {
             case "button":
             case "input":
             case "select":
             case "textarea":
-              props.autoFocus && instance.focus();
+              props.autoFocus && instance2.focus();
               break a;
             case "img":
-              props.src ? instance.src = props.src : props.srcSet && (instance.srcset = props.srcSet);
+              props.src ? instance2.src = props.src : props.srcSet && (instance2.srcset = props.srcSet);
           }
         } catch (error) {
           captureCommitPhaseError(finishedWork, finishedWork.return, error);
@@ -7793,16 +7793,16 @@
       function applyViewTransitionToHostInstancesRecursive(child, name, className, collectMeasurements, stopAtNestedViewTransitions) {
         for (var inViewport = false; null !== child; ) {
           if (5 === child.tag) {
-            var instance = child.stateNode;
+            var instance2 = child.stateNode;
             if (null !== collectMeasurements) {
-              var measurement = measureInstance(instance);
+              var measurement = measureInstance(instance2);
               collectMeasurements.push(measurement);
               measurement.view && (inViewport = true);
             } else
-              inViewport || measureInstance(instance).view && (inViewport = true);
+              inViewport || measureInstance(instance2).view && (inViewport = true);
             shouldStartViewTransition = true;
             applyViewTransitionName(
-              instance,
+              instance2,
               0 === viewTransitionHostInstanceIdx ? name : name + "_" + viewTransitionHostInstanceIdx,
               className
             );
@@ -7935,8 +7935,8 @@
           for (parent = parent.child; null !== parent; ) {
             if (22 !== parent.tag || null === parent.memoizedState) {
               if (30 === parent.tag && 0 !== (parent.flags & 18874368)) {
-                var instance = parent.stateNode;
-                null !== instance.paired && (instance.paired = null, restoreViewTransitionOnHostInstances(parent.child, false));
+                var instance2 = parent.stateNode;
+                null !== instance2.paired && (instance2.paired = null, restoreViewTransitionOnHostInstances(parent.child, false));
               }
               restorePairedViewTransitions(parent);
             }
@@ -7958,9 +7958,9 @@
       function measureViewTransitionHostInstancesRecursive(parentViewTransition, child, newName, oldName, className, previousMeasurements, stopAtNestedViewTransitions) {
         for (var inViewport = false; null !== child; ) {
           if (5 === child.tag) {
-            var instance = child.stateNode;
+            var instance2 = child.stateNode;
             if (null !== previousMeasurements && viewTransitionHostInstanceIdx < previousMeasurements.length) {
-              var previousMeasurement = previousMeasurements[viewTransitionHostInstanceIdx], nextMeasurement = measureInstance(instance);
+              var previousMeasurement = previousMeasurements[viewTransitionHostInstanceIdx], nextMeasurement = measureInstance(instance2);
               if (previousMeasurement.view || nextMeasurement.view) inViewport = true;
               var JSCompiler_temp;
               if (JSCompiler_temp = 0 === (parentViewTransition.flags & 4))
@@ -7975,12 +7975,12 @@
               nextMeasurement && (parentViewTransition.flags |= 32);
             } else parentViewTransition.flags |= 32;
             0 !== (parentViewTransition.flags & 4) && applyViewTransitionName(
-              instance,
+              instance2,
               0 === viewTransitionHostInstanceIdx ? newName : newName + "_" + viewTransitionHostInstanceIdx,
               className
             );
             inViewport && 0 !== (parentViewTransition.flags & 4) || (null === viewTransitionCancelableChildren && (viewTransitionCancelableChildren = []), viewTransitionCancelableChildren.push(
-              instance,
+              instance2,
               0 === viewTransitionHostInstanceIdx ? oldName : oldName + "_" + viewTransitionHostInstanceIdx,
               child.memoizedProps
             ));
@@ -8127,17 +8127,17 @@
                 isViewTransitionEligible = void 0;
                 flags = current.memoizedProps;
                 current = current.memoizedState;
-                var instance = fiber.stateNode;
+                var instance2 = fiber.stateNode;
                 try {
                   var resolvedPrevProps = resolveClassComponentProps(
                     fiber.type,
                     flags
                   );
-                  isViewTransitionEligible = instance.getSnapshotBeforeUpdate(
+                  isViewTransitionEligible = instance2.getSnapshotBeforeUpdate(
                     resolvedPrevProps,
                     current
                   );
-                  instance.__reactInternalSnapshotBeforeUpdate = isViewTransitionEligible;
+                  instance2.__reactInternalSnapshotBeforeUpdate = isViewTransitionEligible;
                 } catch (error) {
                   captureCommitPhaseError(fiber, fiber.return, error);
                 }
@@ -8309,9 +8309,9 @@
           case 5:
           case 26:
             try {
-              var instance = fiber.stateNode;
+              var instance2 = fiber.stateNode;
               if (isHidden) {
-                var style2 = instance.style;
+                var style2 = instance2.style;
                 "function" === typeof style2.setProperty ? style2.setProperty("display", "none", "important") : style2.display = "none";
               } else {
                 var instance$jscomp$0 = fiber.stateNode, styleProp = fiber.memoizedProps.style, display = void 0 !== styleProp && null !== styleProp && styleProp.hasOwnProperty("display") ? styleProp.display : null;
@@ -9058,11 +9058,11 @@
               break;
             case 1:
               safelyDetachRef(finishedWork, finishedWork.return);
-              var instance = finishedWork.stateNode;
-              "function" === typeof instance.componentWillUnmount && safelyCallComponentWillUnmount(
+              var instance2 = finishedWork.stateNode;
+              "function" === typeof instance2.componentWillUnmount && safelyCallComponentWillUnmount(
                 finishedWork,
                 finishedWork.return,
-                instance
+                instance2
               );
               recursivelyTraverseDisappearLayoutEffects(
                 finishedWork,
@@ -9088,8 +9088,8 @@
               break;
             case 26:
               safelyDetachRef(finishedWork, finishedWork.return);
-              instance = finishedWork.stateNode;
-              null !== finishedWork.memoizedState || null === instance || offscreenSubtreeWasHidden || instance.parentNode.removeChild(instance);
+              instance2 = finishedWork.stateNode;
+              null !== finishedWork.memoizedState || null === instance2 || offscreenSubtreeWasHidden || instance2.parentNode.removeChild(instance2);
               recursivelyTraverseDisappearLayoutEffects(
                 finishedWork,
                 layoutEffectTraversalFlags
@@ -9151,12 +9151,12 @@
               current = finishedWork;
               finishedRoot = current.updateQueue;
               if (null !== finishedRoot) {
-                var instance = current.stateNode;
+                var instance2 = current.stateNode;
                 try {
                   var hiddenCallbacks = finishedRoot.shared.hiddenCallbacks;
                   if (null !== hiddenCallbacks)
                     for (finishedRoot.shared.hiddenCallbacks = null, finishedRoot = 0; finishedRoot < hiddenCallbacks.length; finishedRoot++)
-                      callCallback(hiddenCallbacks[finishedRoot], instance);
+                      callCallback(hiddenCallbacks[finishedRoot], instance2);
                 } catch (error) {
                   captureCommitPhaseError(current, current.return, error);
                 }
@@ -9180,11 +9180,11 @@
               commitFragmentInstanceInsertionEffects(finishedWork);
               break;
             case 26:
-              instance = finishedWork.stateNode;
-              null !== finishedWork.memoizedState || null === instance || offscreenSubtreeIsHidden || mountHoistable(
-                getHoistableRoot(instance.ownerDocument),
+              instance2 = finishedWork.stateNode;
+              null !== finishedWork.memoizedState || null === instance2 || offscreenSubtreeIsHidden || mountHoistable(
+                getHoistableRoot(instance2.ownerDocument),
                 finishedWork.type,
-                instance
+                instance2
               );
               recursivelyTraverseReappearLayoutEffects(
                 finishedRoot,
@@ -9422,8 +9422,8 @@
             case 23:
               break;
             case 22:
-              var instance = finishedWork.stateNode;
-              null !== finishedWork.memoizedState ? instance._visibility & 2 ? recursivelyTraverseReconnectPassiveEffects(
+              var instance2 = finishedWork.stateNode;
+              null !== finishedWork.memoizedState ? instance2._visibility & 2 ? recursivelyTraverseReconnectPassiveEffects(
                 finishedRoot,
                 finishedWork,
                 committedLanes,
@@ -9432,7 +9432,7 @@
               ) : recursivelyTraverseAtomicPassiveEffects(
                 finishedRoot,
                 finishedWork
-              ) : (instance._visibility |= 2, recursivelyTraverseReconnectPassiveEffects(
+              ) : (instance2._visibility |= 2, recursivelyTraverseReconnectPassiveEffects(
                 finishedRoot,
                 finishedWork,
                 committedLanes,
@@ -9606,8 +9606,8 @@
             recursivelyTraversePassiveUnmountEffects(finishedWork);
             break;
           case 22:
-            var instance = finishedWork.stateNode;
-            null !== finishedWork.memoizedState && instance._visibility & 2 && (null === finishedWork.return || 13 !== finishedWork.return.tag) ? (instance._visibility &= -3, recursivelyTraverseDisconnectPassiveEffects(finishedWork)) : recursivelyTraversePassiveUnmountEffects(finishedWork);
+            var instance2 = finishedWork.stateNode;
+            null !== finishedWork.memoizedState && instance2._visibility & 2 && (null === finishedWork.return || 13 !== finishedWork.return.tag) ? (instance2._visibility &= -3, recursivelyTraverseDisconnectPassiveEffects(finishedWork)) : recursivelyTraversePassiveUnmountEffects(finishedWork);
             break;
           default:
             recursivelyTraversePassiveUnmountEffects(finishedWork);
@@ -9749,12 +9749,12 @@
       }
       function scheduleViewTransitionEvent(fiber, callback) {
         if (null != callback) {
-          var state = fiber.stateNode, instance = state.ref;
-          null === instance && (instance = state.ref = createViewTransitionInstance(
+          var state = fiber.stateNode, instance2 = state.ref;
+          null === instance2 && (instance2 = state.ref = createViewTransitionInstance(
             getViewTransitionName(fiber.memoizedProps, state)
           ));
           null === pendingViewTransitionEvents && (pendingViewTransitionEvents = []);
-          pendingViewTransitionEvents.push(callback.bind(null, instance));
+          pendingViewTransitionEvents.push(callback.bind(null, instance2));
         }
       }
       function scheduleUpdateOnFiber(root2, fiber, lane) {
@@ -10660,17 +10660,17 @@
               );
               break;
             } else if (1 === nearestMountedAncestor.tag) {
-              var instance = nearestMountedAncestor.stateNode;
-              if ("function" === typeof nearestMountedAncestor.type.getDerivedStateFromError || "function" === typeof instance.componentDidCatch && (null === legacyErrorBoundariesThatAlreadyFailed || !legacyErrorBoundariesThatAlreadyFailed.has(instance))) {
+              var instance2 = nearestMountedAncestor.stateNode;
+              if ("function" === typeof nearestMountedAncestor.type.getDerivedStateFromError || "function" === typeof instance2.componentDidCatch && (null === legacyErrorBoundariesThatAlreadyFailed || !legacyErrorBoundariesThatAlreadyFailed.has(instance2))) {
                 sourceFiber = createCapturedValueAtFiber(error, sourceFiber);
                 error = createClassErrorUpdate(2);
-                instance = enqueueUpdate(nearestMountedAncestor, error, 2);
-                null !== instance && (initializeClassErrorUpdate(
+                instance2 = enqueueUpdate(nearestMountedAncestor, error, 2);
+                null !== instance2 && (initializeClassErrorUpdate(
                   error,
-                  instance,
+                  instance2,
                   nearestMountedAncestor,
                   sourceFiber
-                ), markRootUpdated$1(instance, 2), ensureRootIsScheduled(instance));
+                ), markRootUpdated$1(instance2, 2), ensureRootIsScheduled(instance2));
                 break;
               }
             }
@@ -10996,9 +10996,9 @@
             var previousInstance = void 0;
             if (eventSystemFlags)
               for (var i$jscomp$0 = _dispatchQueue$i.length - 1; 0 <= i$jscomp$0; i$jscomp$0--) {
-                var _dispatchListeners$i = _dispatchQueue$i[i$jscomp$0], instance = _dispatchListeners$i.instance, currentTarget = _dispatchListeners$i.currentTarget;
+                var _dispatchListeners$i = _dispatchQueue$i[i$jscomp$0], instance2 = _dispatchListeners$i.instance, currentTarget = _dispatchListeners$i.currentTarget;
                 _dispatchListeners$i = _dispatchListeners$i.listener;
-                if (instance !== previousInstance && event.isPropagationStopped())
+                if (instance2 !== previousInstance && event.isPropagationStopped())
                   break a;
                 previousInstance = _dispatchListeners$i;
                 event.currentTarget = currentTarget;
@@ -11008,15 +11008,15 @@
                   reportGlobalError(error);
                 }
                 event.currentTarget = null;
-                previousInstance = instance;
+                previousInstance = instance2;
               }
             else
               for (i$jscomp$0 = 0; i$jscomp$0 < _dispatchQueue$i.length; i$jscomp$0++) {
                 _dispatchListeners$i = _dispatchQueue$i[i$jscomp$0];
-                instance = _dispatchListeners$i.instance;
+                instance2 = _dispatchListeners$i.instance;
                 currentTarget = _dispatchListeners$i.currentTarget;
                 _dispatchListeners$i = _dispatchListeners$i.listener;
-                if (instance !== previousInstance && event.isPropagationStopped())
+                if (instance2 !== previousInstance && event.isPropagationStopped())
                   break a;
                 previousInstance = _dispatchListeners$i;
                 event.currentTarget = currentTarget;
@@ -11026,7 +11026,7 @@
                   reportGlobalError(error);
                 }
                 event.currentTarget = null;
-                previousInstance = instance;
+                previousInstance = instance2;
               }
           }
         }
@@ -11205,15 +11205,15 @@
               }
               var inCapturePhase = 0 !== (eventSystemFlags & 4), accumulateTargetOnly = !inCapturePhase && ("scroll" === domEventName || "scrollend" === domEventName), reactEventName = inCapturePhase ? null !== reactName ? reactName + "Capture" : null : reactName;
               inCapturePhase = [];
-              for (var instance = targetInst, lastHostComponent; null !== instance; ) {
-                var _instance = instance;
+              for (var instance2 = targetInst, lastHostComponent; null !== instance2; ) {
+                var _instance = instance2;
                 lastHostComponent = _instance.stateNode;
                 _instance = _instance.tag;
-                5 !== _instance && 26 !== _instance && 27 !== _instance || null === lastHostComponent || null === reactEventName || (_instance = getListener(instance, reactEventName), null != _instance && inCapturePhase.push(
-                  createDispatchListener(instance, _instance, lastHostComponent)
+                5 !== _instance && 26 !== _instance && 27 !== _instance || null === lastHostComponent || null === reactEventName || (_instance = getListener(instance2, reactEventName), null != _instance && inCapturePhase.push(
+                  createDispatchListener(instance2, _instance, lastHostComponent)
                 ));
                 if (accumulateTargetOnly) break;
-                instance = instance.return;
+                instance2 = instance2.return;
               }
               0 < inCapturePhase.length && (reactName = new SyntheticEventCtor(
                 reactName,
@@ -11240,14 +11240,14 @@
                   inCapturePhase = SyntheticMouseEvent;
                   _instance = "onMouseLeave";
                   reactEventName = "onMouseEnter";
-                  instance = "mouse";
+                  instance2 = "mouse";
                   if ("pointerout" === domEventName || "pointerover" === domEventName)
-                    inCapturePhase = SyntheticPointerEvent, _instance = "onPointerLeave", reactEventName = "onPointerEnter", instance = "pointer";
+                    inCapturePhase = SyntheticPointerEvent, _instance = "onPointerLeave", reactEventName = "onPointerEnter", instance2 = "pointer";
                   accumulateTargetOnly = null == reactName ? reactEventType : getNodeFromInstance(reactName);
                   lastHostComponent = null == SyntheticEventCtor ? reactEventType : getNodeFromInstance(SyntheticEventCtor);
                   reactEventType = new inCapturePhase(
                     _instance,
-                    instance + "leave",
+                    instance2 + "leave",
                     reactName,
                     nativeEvent,
                     nativeEventTarget
@@ -11257,7 +11257,7 @@
                   _instance = null;
                   getClosestInstanceFromNode(nativeEventTarget) === targetInst && (inCapturePhase = new inCapturePhase(
                     reactEventName,
-                    instance + "enter",
+                    instance2 + "enter",
                     SyntheticEventCtor,
                     nativeEvent,
                     nativeEventTarget
@@ -11381,9 +11381,9 @@
           processDispatchQueue(dispatchQueue, eventSystemFlags);
         });
       }
-      function createDispatchListener(instance, listener, currentTarget) {
+      function createDispatchListener(instance2, listener, currentTarget) {
         return {
-          instance,
+          instance: instance2,
           listener,
           currentTarget
         };
@@ -12370,30 +12370,30 @@
           node = nextNode;
         } while (node);
       }
-      function applyViewTransitionName(instance, name, className) {
+      function applyViewTransitionName(instance2, name, className) {
         name = CSS.escape(name) !== name ? "r-" + btoa(name).replace(/=/g, "") : name;
-        instance.style.viewTransitionName = name;
-        null != className && (instance.style.viewTransitionClass = className);
-        className = getComputedStyle(instance);
+        instance2.style.viewTransitionName = name;
+        null != className && (instance2.style.viewTransitionClass = className);
+        className = getComputedStyle(instance2);
         if ("inline" === className.display) {
-          name = instance.getClientRects();
+          name = instance2.getClientRects();
           if (1 === name.length) var JSCompiler_inline_result = 1;
           else
             for (var i = JSCompiler_inline_result = 0; i < name.length; i++) {
               var rect = name[i];
               0 < rect.width && 0 < rect.height && JSCompiler_inline_result++;
             }
-          1 === JSCompiler_inline_result && (instance = instance.style, instance.display = 1 === name.length ? "inline-block" : "block", instance.marginTop = "-" + className.paddingTop, instance.marginBottom = "-" + className.paddingBottom);
+          1 === JSCompiler_inline_result && (instance2 = instance2.style, instance2.display = 1 === name.length ? "inline-block" : "block", instance2.marginTop = "-" + className.paddingTop, instance2.marginBottom = "-" + className.paddingBottom);
         }
       }
-      function restoreViewTransitionName(instance, props) {
-        instance = instance.style;
+      function restoreViewTransitionName(instance2, props) {
+        instance2 = instance2.style;
         props = props.style;
         var viewTransitionName = null != props ? props.hasOwnProperty("viewTransitionName") ? props.viewTransitionName : props.hasOwnProperty("view-transition-name") ? props["view-transition-name"] : null : null;
-        instance.viewTransitionName = null == viewTransitionName || "boolean" === typeof viewTransitionName ? "" : ("" + viewTransitionName).trim();
+        instance2.viewTransitionName = null == viewTransitionName || "boolean" === typeof viewTransitionName ? "" : ("" + viewTransitionName).trim();
         viewTransitionName = null != props ? props.hasOwnProperty("viewTransitionClass") ? props.viewTransitionClass : props.hasOwnProperty("view-transition-class") ? props["view-transition-class"] : null : null;
-        instance.viewTransitionClass = null == viewTransitionName || "boolean" === typeof viewTransitionName ? "" : ("" + viewTransitionName).trim();
-        "inline-block" === instance.display && (null == props ? instance.display = instance.margin = "" : (viewTransitionName = props.display, instance.display = null == viewTransitionName || "boolean" === typeof viewTransitionName ? "" : viewTransitionName, viewTransitionName = props.margin, null != viewTransitionName ? instance.margin = viewTransitionName : (viewTransitionName = props.hasOwnProperty("marginTop") ? props.marginTop : props["margin-top"], instance.marginTop = null == viewTransitionName || "boolean" === typeof viewTransitionName ? "" : viewTransitionName, props = props.hasOwnProperty("marginBottom") ? props.marginBottom : props["margin-bottom"], instance.marginBottom = null == props || "boolean" === typeof props ? "" : props)));
+        instance2.viewTransitionClass = null == viewTransitionName || "boolean" === typeof viewTransitionName ? "" : ("" + viewTransitionName).trim();
+        "inline-block" === instance2.display && (null == props ? instance2.display = instance2.margin = "" : (viewTransitionName = props.display, instance2.display = null == viewTransitionName || "boolean" === typeof viewTransitionName ? "" : viewTransitionName, viewTransitionName = props.margin, null != viewTransitionName ? instance2.margin = viewTransitionName : (viewTransitionName = props.hasOwnProperty("marginTop") ? props.marginTop : props["margin-top"], instance2.marginTop = null == viewTransitionName || "boolean" === typeof viewTransitionName ? "" : viewTransitionName, props = props.hasOwnProperty("marginBottom") ? props.marginBottom : props["margin-bottom"], instance2.marginBottom = null == props || "boolean" === typeof props ? "" : props)));
       }
       function createMeasurement(rect, computedStyle, element) {
         element = element.ownerDocument.defaultView;
@@ -12404,20 +12404,20 @@
           view: 0 <= rect.bottom && 0 <= rect.right && rect.top <= element.innerHeight && rect.left <= element.innerWidth
         };
       }
-      function measureInstance(instance) {
-        var rect = instance.getBoundingClientRect(), computedStyle = getComputedStyle(instance);
-        return createMeasurement(rect, computedStyle, instance);
+      function measureInstance(instance2) {
+        var rect = instance2.getBoundingClientRect(), computedStyle = getComputedStyle(instance2);
+        return createMeasurement(rect, computedStyle, instance2);
       }
-      function measureClonedInstance(instance) {
-        var measuredRect = instance.getBoundingClientRect();
+      function measureClonedInstance(instance2) {
+        var measuredRect = instance2.getBoundingClientRect();
         measuredRect = new DOMRect(
           measuredRect.x + 2e4,
           measuredRect.y + 2e4,
           measuredRect.width,
           measuredRect.height
         );
-        var computedStyle = getComputedStyle(instance);
-        return createMeasurement(measuredRect, computedStyle, instance);
+        var computedStyle = getComputedStyle(instance2);
+        return createMeasurement(measuredRect, computedStyle, instance2);
       }
       function forceLayout(ownerDocument) {
         return ownerDocument.documentElement.clientHeight;
@@ -12788,11 +12788,11 @@
       }
       var pendingIntersectionUnobserves = [];
       var intersectionUnobserveScheduled = false;
-      function schedulePendingIntersectionUnobserve(fragmentInstance, observer, instance) {
+      function schedulePendingIntersectionUnobserve(fragmentInstance, observer, instance2) {
         pendingIntersectionUnobserves.push({
           fragmentInstance,
           observer,
-          instance
+          instance: instance2
         });
         intersectionUnobserveScheduled || (intersectionUnobserveScheduled = true, requestPostPaintCallback(function() {
           intersectionUnobserveScheduled = false;
@@ -12996,9 +12996,9 @@
         addFragmentHandleToInstance(child, fragmentInstance);
         return false;
       }
-      function addFragmentHandleToInstance(instance, fragmentInstance) {
-        null == instance.reactFragments && (instance.reactFragments = /* @__PURE__ */ new Set());
-        instance.reactFragments.add(fragmentInstance);
+      function addFragmentHandleToInstance(instance2, fragmentInstance) {
+        null == instance2.reactFragments && (instance2.reactFragments = /* @__PURE__ */ new Set());
+        instance2.reactFragments.add(fragmentInstance);
       }
       function commitNewChildToFragmentInstance(childInstance, fragmentInstance) {
         var eventListeners = fragmentInstance._eventListeners;
@@ -13062,75 +13062,75 @@
           container2.removeChild(node);
         }
       }
-      function canHydrateInstance(instance, type, props, inRootOrSingleton) {
-        for (; 1 === instance.nodeType; ) {
+      function canHydrateInstance(instance2, type, props, inRootOrSingleton) {
+        for (; 1 === instance2.nodeType; ) {
           var anyProps = props;
-          if (instance.nodeName.toLowerCase() !== type.toLowerCase()) {
-            if (!inRootOrSingleton && ("INPUT" !== instance.nodeName || "hidden" !== instance.type))
+          if (instance2.nodeName.toLowerCase() !== type.toLowerCase()) {
+            if (!inRootOrSingleton && ("INPUT" !== instance2.nodeName || "hidden" !== instance2.type))
               break;
           } else if (!inRootOrSingleton)
-            if ("input" === type && "hidden" === instance.type) {
+            if ("input" === type && "hidden" === instance2.type) {
               var name = null == anyProps.name ? null : "" + anyProps.name;
-              if ("hidden" === anyProps.type && instance.getAttribute("name") === name)
-                return instance;
-            } else return instance;
-          else if (!instance[internalHoistableMarker])
+              if ("hidden" === anyProps.type && instance2.getAttribute("name") === name)
+                return instance2;
+            } else return instance2;
+          else if (!instance2[internalHoistableMarker])
             switch (type) {
               case "meta":
-                if (!instance.hasAttribute("itemprop")) break;
-                return instance;
+                if (!instance2.hasAttribute("itemprop")) break;
+                return instance2;
               case "link":
-                name = instance.getAttribute("rel");
-                if ("stylesheet" === name && instance.hasAttribute("data-precedence"))
+                name = instance2.getAttribute("rel");
+                if ("stylesheet" === name && instance2.hasAttribute("data-precedence"))
                   break;
-                else if (name !== anyProps.rel || instance.getAttribute("href") !== (null == anyProps.href || "" === anyProps.href ? null : anyProps.href) || instance.getAttribute("crossorigin") !== (null == anyProps.crossOrigin ? null : anyProps.crossOrigin) || instance.getAttribute("title") !== (null == anyProps.title ? null : anyProps.title))
+                else if (name !== anyProps.rel || instance2.getAttribute("href") !== (null == anyProps.href || "" === anyProps.href ? null : anyProps.href) || instance2.getAttribute("crossorigin") !== (null == anyProps.crossOrigin ? null : anyProps.crossOrigin) || instance2.getAttribute("title") !== (null == anyProps.title ? null : anyProps.title))
                   break;
-                return instance;
+                return instance2;
               case "style":
-                if (instance.hasAttribute("data-precedence")) break;
-                return instance;
+                if (instance2.hasAttribute("data-precedence")) break;
+                return instance2;
               case "script":
-                name = instance.getAttribute("src");
-                if ((name !== (null == anyProps.src ? null : anyProps.src) || instance.getAttribute("type") !== (null == anyProps.type ? null : anyProps.type) || instance.getAttribute("crossorigin") !== (null == anyProps.crossOrigin ? null : anyProps.crossOrigin)) && name && instance.hasAttribute("async") && !instance.hasAttribute("itemprop"))
+                name = instance2.getAttribute("src");
+                if ((name !== (null == anyProps.src ? null : anyProps.src) || instance2.getAttribute("type") !== (null == anyProps.type ? null : anyProps.type) || instance2.getAttribute("crossorigin") !== (null == anyProps.crossOrigin ? null : anyProps.crossOrigin)) && name && instance2.hasAttribute("async") && !instance2.hasAttribute("itemprop"))
                   break;
-                return instance;
+                return instance2;
               default:
-                return instance;
+                return instance2;
             }
-          instance = getNextHydratable(instance.nextSibling);
-          if (null === instance) break;
+          instance2 = getNextHydratable(instance2.nextSibling);
+          if (null === instance2) break;
         }
         return null;
       }
-      function canHydrateTextInstance(instance, text, inRootOrSingleton) {
+      function canHydrateTextInstance(instance2, text, inRootOrSingleton) {
         if ("" === text) return null;
-        for (; 3 !== instance.nodeType; ) {
-          if ((1 !== instance.nodeType || "INPUT" !== instance.nodeName || "hidden" !== instance.type) && !inRootOrSingleton)
+        for (; 3 !== instance2.nodeType; ) {
+          if ((1 !== instance2.nodeType || "INPUT" !== instance2.nodeName || "hidden" !== instance2.type) && !inRootOrSingleton)
             return null;
-          instance = getNextHydratable(instance.nextSibling);
-          if (null === instance) return null;
+          instance2 = getNextHydratable(instance2.nextSibling);
+          if (null === instance2) return null;
         }
-        return instance;
+        return instance2;
       }
-      function canHydrateHydrationBoundary(instance, inRootOrSingleton) {
-        for (; 8 !== instance.nodeType; ) {
-          if ((1 !== instance.nodeType || "INPUT" !== instance.nodeName || "hidden" !== instance.type) && !inRootOrSingleton)
+      function canHydrateHydrationBoundary(instance2, inRootOrSingleton) {
+        for (; 8 !== instance2.nodeType; ) {
+          if ((1 !== instance2.nodeType || "INPUT" !== instance2.nodeName || "hidden" !== instance2.type) && !inRootOrSingleton)
             return null;
-          instance = getNextHydratable(instance.nextSibling);
-          if (null === instance) return null;
+          instance2 = getNextHydratable(instance2.nextSibling);
+          if (null === instance2) return null;
         }
-        return instance;
+        return instance2;
       }
-      function isSuspenseInstancePending(instance) {
-        return "$?" === instance.data || "$~" === instance.data;
+      function isSuspenseInstancePending(instance2) {
+        return "$?" === instance2.data || "$~" === instance2.data;
       }
-      function isSuspenseInstanceFallback(instance) {
-        return "$!" === instance.data || "$?" === instance.data && "loading" !== instance.ownerDocument.readyState;
+      function isSuspenseInstanceFallback(instance2) {
+        return "$!" === instance2.data || "$?" === instance2.data && "loading" !== instance2.ownerDocument.readyState;
       }
-      function registerSuspenseInstanceRetry(instance, callback) {
-        var ownerDocument = instance.ownerDocument;
-        if ("$~" === instance.data) instance._reactRetry = callback;
-        else if ("$?" !== instance.data || "loading" !== ownerDocument.readyState)
+      function registerSuspenseInstanceRetry(instance2, callback) {
+        var ownerDocument = instance2.ownerDocument;
+        if ("$~" === instance2.data) instance2._reactRetry = callback;
+        else if ("$?" !== instance2.data || "loading" !== ownerDocument.readyState)
           callback();
         else {
           var listener = function() {
@@ -13138,7 +13138,7 @@
             ownerDocument.removeEventListener("DOMContentLoaded", listener);
           };
           ownerDocument.addEventListener("DOMContentLoaded", listener);
-          instance._reactRetry = listener;
+          instance2._reactRetry = listener;
         }
       }
       function getNextHydratable(node) {
@@ -13224,19 +13224,19 @@
             throw Error(formatProdErrorMessage(451));
         }
       }
-      function releaseSingletonInstance(instance, type, props) {
+      function releaseSingletonInstance(instance2, type, props) {
         for (var propKey in props) {
           var propValue = props[propKey];
-          props.hasOwnProperty(propKey) && null != propValue && setProp(instance, type, propKey, null, emptyProps, propValue);
+          props.hasOwnProperty(propKey) && null != propValue && setProp(instance2, type, propKey, null, emptyProps, propValue);
         }
-        null != props.dangerouslySetInnerHTML && (instance.textContent = "");
-        instance.onclick === noop$1 && (instance.onclick = null);
-        detachDeletedInstance(instance);
+        null != props.dangerouslySetInnerHTML && (instance2.textContent = "");
+        instance2.onclick === noop$1 && (instance2.onclick = null);
+        detachDeletedInstance(instance2);
       }
-      function clearSingletonPreambleContribution(instance) {
-        for (var attributes = instance.attributes; attributes.length; )
-          instance.removeAttributeNode(attributes[0]);
-        detachDeletedInstance(instance);
+      function clearSingletonPreambleContribution(instance2) {
+        for (var attributes = instance2.attributes; attributes.length; )
+          instance2.removeAttributeNode(attributes[0]);
+        detachDeletedInstance(instance2);
       }
       var preloadPropsMap = /* @__PURE__ */ new Map();
       var preconnectsSet = /* @__PURE__ */ new Set();
@@ -13311,13 +13311,13 @@
             },
             options2
           ), preloadPropsMap.set(key, href), null !== ownerDocument.querySelector(preloadSelector) || "style" === as && ownerDocument.querySelector(getStylesheetSelectorFromKey(key)) || "script" === as && ownerDocument.querySelector(getScriptSelectorFromKey(key))))) {
-            var instance = ownerDocument.createElement("link");
-            setInitialProperties(instance, "link", href);
-            "style" === as && (instance[internalLoadPendingKey] = true, instance.onload = instance.onerror = function() {
-              clearPendingLoadOnNode(instance);
+            var instance2 = ownerDocument.createElement("link");
+            setInitialProperties(instance2, "link", href);
+            "style" === as && (instance2[internalLoadPendingKey] = true, instance2.onload = instance2.onerror = function() {
+              clearPendingLoadOnNode(instance2);
             });
-            markNodeAsHoistable(instance);
-            ownerDocument.head.appendChild(instance);
+            markNodeAsHoistable(instance2);
+            ownerDocument.head.appendChild(instance2);
           }
         }
       }
@@ -13529,24 +13529,24 @@
         if (null === resource.instance)
           switch (resource.type) {
             case "style":
-              var instance = hoistableRoot.querySelector(
+              var instance2 = hoistableRoot.querySelector(
                 'style[data-href~="' + escapeSelectorAttributeValueInsideDoubleQuotes(props.href) + '"]'
               );
-              if (instance)
-                return resource.instance = instance, markNodeAsHoistable(instance), instance;
+              if (instance2)
+                return resource.instance = instance2, markNodeAsHoistable(instance2), instance2;
               var styleProps = assign({}, props, {
                 "data-href": props.href,
                 "data-precedence": props.precedence,
                 href: null,
                 precedence: null
               });
-              instance = (hoistableRoot.ownerDocument || hoistableRoot).createElement(
+              instance2 = (hoistableRoot.ownerDocument || hoistableRoot).createElement(
                 "style"
               );
-              markNodeAsHoistable(instance);
-              setInitialProperties(instance, "style", styleProps);
-              insertStylesheet(instance, props.precedence, hoistableRoot);
-              return resource.instance = instance;
+              markNodeAsHoistable(instance2);
+              setInitialProperties(instance2, "style", styleProps);
+              insertStylesheet(instance2, props.precedence, hoistableRoot);
+              return resource.instance = instance2;
             case "stylesheet":
               styleProps = getStyleKey(props.href);
               var instance$274 = hoistableRoot.querySelector(
@@ -13554,8 +13554,8 @@
               );
               if (instance$274)
                 return resource.state.loading |= 4, resource.instance = instance$274, markNodeAsHoistable(instance$274), instance$274;
-              instance = stylesheetPropsFromRawProps(props);
-              (styleProps = preloadPropsMap.get(styleProps)) && adoptPreloadPropsForStylesheet(instance, styleProps);
+              instance2 = stylesheetPropsFromRawProps(props);
+              (styleProps = preloadPropsMap.get(styleProps)) && adoptPreloadPropsForStylesheet(instance2, styleProps);
               instance$274 = (hoistableRoot.ownerDocument || hoistableRoot).createElement("link");
               markNodeAsHoistable(instance$274);
               var linkInstance = instance$274;
@@ -13563,7 +13563,7 @@
                 linkInstance.onload = resolve;
                 linkInstance.onerror = reject;
               });
-              setInitialProperties(instance$274, "link", instance);
+              setInitialProperties(instance$274, "link", instance2);
               resource.state.loading |= 4;
               insertStylesheet(instance$274, props.precedence, hoistableRoot);
               return resource.instance = instance$274;
@@ -13573,13 +13573,13 @@
                 getScriptSelectorFromKey(instance$274)
               ))
                 return resource.instance = styleProps, markNodeAsHoistable(styleProps), styleProps;
-              instance = props;
+              instance2 = props;
               if (styleProps = preloadPropsMap.get(instance$274))
-                instance = assign({}, props), adoptPreloadPropsForScript(instance, styleProps);
+                instance2 = assign({}, props), adoptPreloadPropsForScript(instance2, styleProps);
               hoistableRoot = hoistableRoot.ownerDocument || hoistableRoot;
               styleProps = hoistableRoot.createElement("script");
               markNodeAsHoistable(styleProps);
-              setInitialProperties(styleProps, "link", instance);
+              setInitialProperties(styleProps, "link", instance2);
               hoistableRoot.head.appendChild(styleProps);
               return resource.instance = styleProps;
             case "void":
@@ -13588,10 +13588,10 @@
               throw Error(formatProdErrorMessage(443, resource.type));
           }
         else
-          "stylesheet" === resource.type && 0 === (resource.state.loading & 4) && (instance = resource.instance, resource.state.loading |= 4, insertStylesheet(instance, props.precedence, hoistableRoot));
+          "stylesheet" === resource.type && 0 === (resource.state.loading & 4) && (instance2 = resource.instance, resource.state.loading |= 4, insertStylesheet(instance2, props.precedence, hoistableRoot));
         return resource.instance;
       }
-      function insertStylesheet(instance, precedence, root2) {
+      function insertStylesheet(instance2, precedence, root2) {
         for (var nodes = root2.querySelectorAll(
           'link[rel="stylesheet"][data-precedence],style[data-precedence]'
         ), last = nodes.length ? nodes[nodes.length - 1] : null, prior = last, i = 0; i < nodes.length; i++) {
@@ -13599,7 +13599,7 @@
           if (node.dataset.precedence === precedence) prior = node;
           else if (prior !== last) break;
         }
-        prior ? prior.parentNode.insertBefore(instance, prior.nextSibling) : (precedence = 9 === root2.nodeType ? root2.head : root2, precedence.insertBefore(instance, precedence.firstChild));
+        prior ? prior.parentNode.insertBefore(instance2, prior.nextSibling) : (precedence = 9 === root2.nodeType ? root2.head : root2, precedence.insertBefore(instance2, precedence.firstChild));
       }
       function adoptPreloadPropsForStylesheet(stylesheetProps, preloadProps) {
         null == stylesheetProps.crossOrigin && (stylesheetProps.crossOrigin = preloadProps.crossOrigin);
@@ -13633,10 +13633,10 @@
         }
         return cache;
       }
-      function mountHoistable(hoistableRoot, type, instance) {
+      function mountHoistable(hoistableRoot, type, instance2) {
         hoistableRoot = hoistableRoot.ownerDocument || hoistableRoot;
         hoistableRoot.head.insertBefore(
-          instance,
+          instance2,
           "title" === type ? hoistableRoot.querySelector("head > title") : null
         );
       }
@@ -13671,38 +13671,38 @@
       function preloadResource(resource) {
         return "stylesheet" === resource.type && 0 === (resource.state.loading & 3) ? false : true;
       }
-      function estimateImageBytes(instance) {
-        return (instance.width || 100) * (instance.height || 100) * ("number" === typeof devicePixelRatio ? devicePixelRatio : 1) * 0.25;
+      function estimateImageBytes(instance2) {
+        return (instance2.width || 100) * (instance2.height || 100) * ("number" === typeof devicePixelRatio ? devicePixelRatio : 1) * 0.25;
       }
-      function suspendInstance(state, instance) {
-        "function" === typeof instance.decode && (state.imgCount++, instance.complete || (state.imgBytes += estimateImageBytes(instance), state.suspenseyImages.push(instance)), state = onUnsuspendImg.bind(state), instance.decode().then(state, state));
+      function suspendInstance(state, instance2) {
+        "function" === typeof instance2.decode && (state.imgCount++, instance2.complete || (state.imgBytes += estimateImageBytes(instance2), state.suspenseyImages.push(instance2)), state = onUnsuspendImg.bind(state), instance2.decode().then(state, state));
       }
       function suspendResource(state, hoistableRoot, resource, props) {
         if ("stylesheet" === resource.type && ("string" !== typeof props.media || false !== matchMedia(props.media).matches) && 0 === (resource.state.loading & 4)) {
           if (null === resource.instance) {
-            var key = getStyleKey(props.href), instance = hoistableRoot.querySelector(
+            var key = getStyleKey(props.href), instance2 = hoistableRoot.querySelector(
               getStylesheetSelectorFromKey(key)
             );
-            if (instance) {
-              hoistableRoot = instance._p;
+            if (instance2) {
+              hoistableRoot = instance2._p;
               null !== hoistableRoot && "object" === typeof hoistableRoot && "function" === typeof hoistableRoot.then && (state.count++, state = onUnsuspend.bind(state), hoistableRoot.then(state, state));
               resource.state.loading |= 4;
-              resource.instance = instance;
-              markNodeAsHoistable(instance);
+              resource.instance = instance2;
+              markNodeAsHoistable(instance2);
               return;
             }
-            instance = hoistableRoot.ownerDocument || hoistableRoot;
+            instance2 = hoistableRoot.ownerDocument || hoistableRoot;
             props = stylesheetPropsFromRawProps(props);
             (key = preloadPropsMap.get(key)) && adoptPreloadPropsForStylesheet(props, key);
-            instance = instance.createElement("link");
-            markNodeAsHoistable(instance);
-            var linkInstance = instance;
+            instance2 = instance2.createElement("link");
+            markNodeAsHoistable(instance2);
+            var linkInstance = instance2;
             linkInstance._p = new Promise(function(resolve, reject) {
               linkInstance.onload = resolve;
               linkInstance.onerror = reject;
             });
-            setInitialProperties(instance, "link", props);
-            resource.instance = instance;
+            setInitialProperties(instance2, "link", props);
+            resource.instance = instance2;
           }
           null === state.stylesheets && (state.stylesheets = /* @__PURE__ */ new Map());
           state.stylesheets.set(resource, hoistableRoot);
@@ -14642,3268 +14642,1180 @@
     return cx(base, getVariantClassNames, getCompoundVariantClassNames, props === null || props === void 0 ? void 0 : props.class, props === null || props === void 0 ? void 0 : props.className);
   };
 
-  // node_modules/.pnpm/tailwind-merge@3.7.0/node_modules/tailwind-merge/dist/bundle-mjs.mjs
-  var concatArrays = (array1, array2) => {
-    const combinedArray = new Array(array1.length + array2.length);
-    for (let i = 0; i < array1.length; i++) {
-      combinedArray[i] = array1[i];
-    }
-    for (let i = 0; i < array2.length; i++) {
-      combinedArray[array1.length + i] = array2[i];
-    }
-    return combinedArray;
+  // node_modules/.pnpm/cn@0.5.0/node_modules/cn/dist/tables.js
+  var P = 48;
+  var U = (s, o = 0) => {
+    const out = new Int32Array(s.length);
+    for (let i = 0; i < s.length; i++) out[i] = s.charCodeAt(i) - P - o;
+    return out;
   };
-  var createClassValidatorObject = (classGroupId, validator) => ({
-    classGroupId,
-    validator
-  });
-  var createClassPartObject = (nextPart = /* @__PURE__ */ new Map(), validators = null, classGroupId) => ({
-    nextPart,
-    validators,
-    classGroupId
-  });
-  var CLASS_PART_SEPARATOR = "-";
-  var EMPTY_CONFLICTS = [];
-  var ARBITRARY_PROPERTY_PREFIX = "arbitrary..";
-  var createClassGroupUtils = (config) => {
-    const classMap = createClassMap(config);
-    const {
-      conflictingClassGroups,
-      conflictingClassGroupModifiers
-    } = config;
-    const getClassGroupId = (className) => {
-      if (className.startsWith("[") && className.endsWith("]")) {
-        return getGroupIdForArbitraryProperty(className);
-      }
-      const classParts = className.split(CLASS_PART_SEPARATOR);
-      const startIndex = classParts[0] === "" && classParts.length > 1 ? 1 : 0;
-      return getGroupRecursive(classParts, startIndex, classMap);
-    };
-    const getConflictingClassGroupIds = (classGroupId, hasPostfixModifier) => {
-      if (hasPostfixModifier) {
-        const modifierConflicts = conflictingClassGroupModifiers[classGroupId];
-        const baseConflicts = conflictingClassGroups[classGroupId];
-        if (modifierConflicts) {
-          if (baseConflicts) {
-            return concatArrays(baseConflicts, modifierConflicts);
-          }
-          return modifierConflicts;
-        }
-        return baseConflicts || EMPTY_CONFLICTS;
-      }
-      return conflictingClassGroups[classGroupId] || EMPTY_CONFLICTS;
-    };
-    return {
-      getClassGroupId,
-      getConflictingClassGroupIds
-    };
+  var PS = (counts) => {
+    const out = new Int32Array(counts.length + 1);
+    for (let i = 0; i < counts.length; i++) out[i + 1] = out[i] + counts[i];
+    return out;
   };
-  var getGroupRecursive = (classParts, startIndex, classPartObject) => {
-    const classPathsLength = classParts.length - startIndex;
-    if (classPathsLength === 0) {
-      return classPartObject.classGroupId;
+  var DZ = (s) => {
+    const out = new Int32Array(s.length);
+    let a = 0;
+    for (let i = 0; i < s.length; i++) {
+      const z = s.charCodeAt(i) - P;
+      a += z >>> 1 ^ -(z & 1);
+      out[i] = a;
     }
-    const currentClassPart = classParts[startIndex];
-    const nextClassPartObject = classPartObject.nextPart.get(currentClassPart);
-    if (nextClassPartObject) {
-      const result = getGroupRecursive(classParts, startIndex + 1, nextClassPartObject);
-      if (result) return result;
+    return out;
+  };
+  var GROUP_COUNT = 384;
+  var customValidatorNames = [];
+  var edgeStart = PS(U("E0500002005282000000002000150000020021820000011200000003022202000300004200120000200420001200021200301200010400162000010000220021010:2192001200220012000220012000200200200400010200040000000000400200108200110100000022010313000162002000020020012020080213000228200000000082000000000120002000120020020040101020300130001001010"));
+  var labelStart = PS(U(":11111111211111119311546544411119731869:671397415686432441111111111161114151214313433415:78311132233313187211117221449443411141111151152226611131111112212518142224214215421421542142424242516171151615616347111111111197911327451111111111111111111113134714133513411111311111111111111111111112444411111342312715245411117:3"));
+  var labelText = "@containerabcdefghinlmoprstunderlineviawzccentlignnimatespectuto-colsrowsaglorightnessckdrop-sisbcontrastfiltergrayscalehue-rotateinvertopacityslurrightnessaturateepia-coniclinearpositionradialsizeockurrderttom-belrstxyespacing-xyaretoursorlnt-umnsendspantartainentrasteividerop-shadowurationcorationlay-xyasendillexontromlter-featuresstretchapr-xyayscaleidow-colsrowsue-rotatedentlinesetvert-beringsxyeshadoweiadingftnest-clamp-imageabein-lrstxyskx--b-coniclpositionrsizet-x-y-fromto-fromto-inearfromto-fromto-adialfromto-fromtofromtofromtofromtoblockhinlinew-screenesblockhinlinewbjectpacityrutlinederigin-offsetbelrstxyesrspective-originaceholderioghtng-offsettateundedw-xyz-belrstlreseslr-endspantartaturatecepiahizekewpace-taleroll-xyz-barmpbelrstxyesbelrstxyes-thumbrackadowrink-xyxyartrokeabextora-shadowpckingnsformitionlate-xyz-offsetill-changeoom";
+  var edgeTarget = (() => {
+    const N = edgeStart.length - 1;
+    const sizes = new Int32Array(N);
+    for (let i = N - 1; i >= 0; i--) {
+      let s = 1;
+      let c = i + 1;
+      for (let k = edgeStart[i]; k < edgeStart[i + 1]; k++) {
+        s += sizes[c];
+        c += sizes[c];
+      }
+      sizes[i] = s;
     }
-    const validators = classPartObject.validators;
-    if (validators === null) {
-      return void 0;
-    }
-    const classRest = startIndex === 0 ? classParts.join(CLASS_PART_SEPARATOR) : classParts.slice(startIndex).join(CLASS_PART_SEPARATOR);
-    const validatorsLength = validators.length;
-    for (let i = 0; i < validatorsLength; i++) {
-      const validatorObj = validators[i];
-      if (validatorObj.validator(classRest)) {
-        return validatorObj.classGroupId;
+    const out = new Int32Array(edgeStart[N]);
+    let e = 0;
+    for (let i = 0; i < N; i++) {
+      let c = i + 1;
+      for (let k = edgeStart[i]; k < edgeStart[i + 1]; k++) {
+        out[e++] = c;
+        c += sizes[c];
       }
     }
-    return void 0;
-  };
-  var getGroupIdForArbitraryProperty = (className) => className.slice(1, -1).indexOf(":") === -1 ? void 0 : (() => {
-    const content = className.slice(1, -1);
-    const colonIndex = content.indexOf(":");
-    const property = content.slice(0, colonIndex);
-    return property ? ARBITRARY_PROPERTY_PREFIX + property : void 0;
+    return out;
   })();
-  var createClassMap = (config) => {
-    const {
-      theme,
-      classGroups
-    } = config;
-    return processClassGroups(classGroups, theme);
-  };
-  var processClassGroups = (classGroups, theme) => {
-    const classMap = createClassPartObject();
-    for (const classGroupId in classGroups) {
-      const group = classGroups[classGroupId];
-      processClassesRecursively(group, classMap, classGroupId, theme);
-    }
-    return classMap;
-  };
-  var processClassesRecursively = (classGroup, classPartObject, classGroupId, theme) => {
-    const len = classGroup.length;
-    for (let i = 0; i < len; i++) {
-      const classDefinition = classGroup[i];
-      processClassDefinition(classDefinition, classPartObject, classGroupId, theme);
-    }
-  };
-  var processClassDefinition = (classDefinition, classPartObject, classGroupId, theme) => {
-    if (typeof classDefinition === "string") {
-      processStringDefinition(classDefinition, classPartObject, classGroupId);
-      return;
-    }
-    if (typeof classDefinition === "function") {
-      processFunctionDefinition(classDefinition, classPartObject, classGroupId, theme);
-      return;
-    }
-    processObjectDefinition(classDefinition, classPartObject, classGroupId, theme);
-  };
-  var processStringDefinition = (classDefinition, classPartObject, classGroupId) => {
-    const classPartObjectToEdit = classDefinition === "" ? classPartObject : getPart(classPartObject, classDefinition);
-    classPartObjectToEdit.classGroupId = classGroupId;
-  };
-  var processFunctionDefinition = (classDefinition, classPartObject, classGroupId, theme) => {
-    if (isThemeGetter(classDefinition)) {
-      processClassesRecursively(classDefinition(theme), classPartObject, classGroupId, theme);
-      return;
-    }
-    if (classPartObject.validators === null) {
-      classPartObject.validators = [];
-    }
-    classPartObject.validators.push(createClassValidatorObject(classGroupId, classDefinition));
-  };
-  var processObjectDefinition = (classDefinition, classPartObject, classGroupId, theme) => {
-    const entries = Object.entries(classDefinition);
-    const len = entries.length;
-    for (let i = 0; i < len; i++) {
-      const [key, value] = entries[i];
-      processClassesRecursively(value, getPart(classPartObject, key), classGroupId, theme);
-    }
-  };
-  var getPart = (classPartObject, path) => {
-    let current = classPartObject;
-    const parts = path.split(CLASS_PART_SEPARATOR);
-    const len = parts.length;
-    for (let i = 0; i < len; i++) {
-      const part = parts[i];
-      let next = current.nextPart.get(part);
-      if (!next) {
-        next = createClassPartObject();
-        current.nextPart.set(part, next);
-      }
-      current = next;
-    }
-    return current;
-  };
-  var isThemeGetter = (func) => "isThemeGetter" in func && func.isThemeGetter === true;
-  var createLruCache = (maxCacheSize) => {
-    if (maxCacheSize < 1) {
-      return {
-        get: () => void 0,
-        set: () => {
-        }
-      };
-    }
-    let cacheSize = 0;
-    let cache = /* @__PURE__ */ Object.create(null);
-    let previousCache = /* @__PURE__ */ Object.create(null);
-    const update = (key, value) => {
-      cache[key] = value;
-      cacheSize++;
-      if (cacheSize > maxCacheSize) {
-        cacheSize = 0;
-        previousCache = cache;
-        cache = /* @__PURE__ */ Object.create(null);
-      }
-    };
-    return {
-      get(key) {
-        let value = cache[key];
-        if (value !== void 0) {
-          return value;
-        }
-        if ((value = previousCache[key]) !== void 0) {
-          update(key, value);
-          return value;
-        }
-      },
-      set(key, value) {
-        if (key in cache) {
-          cache[key] = value;
-        } else {
-          update(key, value);
-        }
-      }
-    };
-  };
-  var IMPORTANT_MODIFIER = "!";
-  var MODIFIER_SEPARATOR = ":";
-  var EMPTY_MODIFIERS = [];
-  var createResultObject = (modifiers, hasImportantModifier, baseClassName, maybePostfixModifierPosition, isExternal) => ({
-    modifiers,
-    hasImportantModifier,
-    baseClassName,
-    maybePostfixModifierPosition,
-    isExternal
+  var nodeGroup = U("02000000000000900<=0?000B000F00F00\u014FI0J0LNPRTVX0000]_a00000000000000000000000rst0000000z\u014F00000000000\x85\u014F000\x880000\u014F000000\x900000\x970000000000000000000000000000000000000000000000000000\xCB000000000000000000000\xDE000000000000000000\xF00000000\xF80\xF9\xFA\xFB\xFC\xFD\xFE\xFF\u0100\u0101\u0102\u0103\u0104\u0105\u0106000000000000000000000000000000000000000000\u01270\u0128\u012A00000000000000000000\u013C\u013D00000\u016C000000", 1);
+  var vlistPat = PS(U("123333359346463635126536711576"));
+  var vlistOps = U("93203242332583253248325D>E?F@03263243255B:032523853:0325B:8GA032542H<C=12727B:0328432553;D>E?3257D>032585:0325B:;0328B:032");
+  var vlistRef = U("012113445661666666789111:5;;;;;;;;444;;;:62999<1161=62>>?61:21@ABCD4446996:64E:::;:?::64:F114GHHIHHHHIHH1HH1HH1HHHHHH::EEJ4444::EE4444441691;644444114244444:;K6666555555555555555999666664444444444444444444444226?6:66644L9M?D:111::::6DE199");
+  var vlistGroup = DZ("020200202020020020020020020020200200200200200200200002020202001003040106000200200200200200200200200200200200200200200200200200200200200200200200200200200200020020020020020020002020200202002002002002002002002002002020002002020020200220200200200200200200200200200200020020020000200020002000200200200020020020002000200200200020020202002020202000200200020022000200200020020002002000200220002002000200W0Z00020020002002020002002000200g0j0002002000200200020020002002000200200020020002000200002000002002002002002000200020000200002002002002002002002020020020200200200200200200200200202020020020020020020020020002002002020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020002002002002002002000200200200200200200200200200020202020002000200020002002002002000020200200");
+  var nodeVlist = (() => {
+    const out = (/* @__PURE__ */ new Int32Array(319)).fill(-1);
+    const A = DZ("02422242:222222242224222242442222222422222244442242226224222426222422442462222422622222222626222462242622422622422424242422222222422222222242422222222222222222622442224222222222222224424442262222222222222222222226224222424242422224422422422222");
+    const V = DZ("02222222222222222222202222222222222222222222221422222222222222222222222222222222222Y\\222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222221422222222222222222222222222222222222222\u013F\u0142222222222222222222");
+    for (let i = 0; i < A.length; i++) out[A[i]] = V[i];
+    return out;
+  })();
+  var SETS = "container |break-after- all auto avoid avoid-page column left page right|break-before- all auto avoid avoid-page column left page right|break-inside-a uto void void-column void-page|box-decoration- clone slice|box- border content| contents flow-root hidden table table-caption table-cell table-column table-column-group table-footer-group table-header-group table-row table-row-group| not-sr-only sr-only|float- end left none right start|clear- both end left none right start|isolat e ion-auto|overflow- auto clip hidden scroll visible|overflow-x- auto clip hidden scroll visible|overflow-y- auto clip hidden scroll visible|overscroll- auto contain none|overscroll-x- auto contain none|overscroll-y- auto contain none| absolute fixed relative static sticky| collapse invisible visible|justify- around baseline between center center-safe end end-safe evenly normal start stretch|justify-items- center center-safe end end-safe normal start stretch|justify-self- auto center center-safe end end-safe start stretch|items- baseline baseline-last center center-safe end end-safe start stretch|self- auto baseline baseline-last center center-safe end end-safe start stretch|place-content- around baseline between center center-safe end end-safe evenly start stretch|place-items- baseline center center-safe end end-safe start stretch|place-self- auto center center-safe end end-safe start stretch| antialiased subpixel-antialiased| italic not-italic|normal-nums |ordinal |slashed-zero | lining-nums oldstyle-nums| proportional-nums tabular-nums| diagonal-fractions stacked-fractions| no-underline overline| capitalize lowercase normal-case uppercase|truncate |whitespace- break-spaces normal nowrap pre pre-line pre-wrap|break- all keep normal words|wrap- anywhere break-word normal|hyphens- auto manual none|mix-blend- color color-burn color-dodge darken difference exclusion hard-light hue lighten luminosity multiply normal overlay plus-darker plus-lighter saturation screen soft-light|table- auto fixed|caption- bottom top|backface- hidden visible|appearance- auto none|scheme- dark light light-dark normal only-dark only-light|field-sizing- content fixed|pointer-events- auto none|resize  -none -x -y|snap- align-none center end start|snap- always normal|snap- both none x y|snap- mandatory proximity|touch- auto manipulation none|touch-pan- left right x|touch-pan- down up y|touch-pinch-zoom |select- all auto none text|forced-color-adjust- auto none| normal size| baseline bottom middle sub super text-bottom text-top top| bounce none ping pulse spin| auto square video| auto fr max min px|none | auto full px| fixed local scroll|clip- border content padding text|origin- border content padding| bottom bottom-left bottom-right center left left-bottom left-top right right-bottom right-top top top-left top-right| no-repeat repeat repeat-round repeat-space repeat-x repeat-y| auto contain cover| gradient-to-b gradient-to-bl gradient-to-br gradient-to-l gradient-to-r gradient-to-t gradient-to-tl gradient-to-tr none|blend- color color-burn color-dodge darken difference exclusion hard-light hue lighten luminosity multiply normal overlay saturation screen soft-light|to- b bl br l r t tl tr| auto dvh fit full lh lvh max min px screen svh| dashed dotted double hidden none solid| collapse separate|px |auto |full | content none strict| inline-size size|layout |paint |style | around baseline between center center-safe end end-safe evenly normal start stretch| alias all-scroll auto cell col-resize context-menu copy crosshair default e-resize ew-resize grab grabbing help move n-resize ne-resize nesw-resize no-drop none not-allowed ns-resize nw-resize nwse-resize pointer progress row-resize s-resize se-resize sw-resize text vertical-text w-resize wait zoom-in zoom-out| dashed dotted double solid wavy| auto from-font|reverse |initial | in in-out initial linear out| col col-reverse row row-reverse| nowrap wrap wrap-reverse| auto initial none| black bold extrabold extralight light medium normal semibold thin| condensed expanded extra-condensed extra-expanded normal semi-condensed semi-expanded ultra-condensed ultra-expanded|flow- col col-dense dense row row-dense| none subgrid| auto dvh dvw fit full lh lvh lvw max min px screen svh svw| block flex grid table| auto dvw fit full lvw max min px screen svw| loose none normal px relaxed snug tight|through |item | inside outside| decimal disc none| auto px| clip-border clip-content clip-fill clip-padding clip-stroke clip-view no-clip| add exclude intersect subtract| alpha luminance match|origin- border content fill padding stroke view|type- alpha luminance| circle ellipse| closest-corner closest-side farthest-corner farthest-side|at- bottom bottom-left bottom-right center left left-bottom left-top right right-bottom right-top top top-left top-right| dvh fit full lh lvh max min none px screen svh| auto dvh dvw fit full lh lvh lvw max min none px screen svh svw| dvw fit full lvw max min none px screen svw| auto dvh dvw fit full lvh lvw max min none prose px svh svw| auto dvh dvw fit full lvh lvw max min none px screen svh svw| contain cover fill none scale-down| first last none| distant dramatic midrange near none normal|inset | full none|3d | auto smooth|gutter- auto both stable| auto none thin| inner none| auto dvh dvw fit full lvh lvw max min px svh svw|base | center end justify left right start| clip ellipsis| balance nowrap pretty wrap| normal tight tighter wide wider widest| cpu gpu none| 3d flat| all colors none opacity shadow transform| discrete normal| full px| auto dvh dvw fit full lvh lvw max min px screen svh svw| auto contents scroll transform".split("|").map((s) => {
+    const tails = s.split(" ");
+    const prefix = tails.shift();
+    for (let i = 0; i < tails.length; i++) tails[i] = prefix + tails[i];
+    return tails;
   });
-  var createParseClassName = (config) => {
-    const {
-      prefix,
-      experimentalParseClassName
-    } = config;
-    let parseClassName = (className) => {
-      const modifiers = [];
-      let bracketDepth = 0;
-      let parenDepth = 0;
-      let modifierStart = 0;
-      let postfixModifierPosition;
-      const len = className.length;
-      for (let index = 0; index < len; index++) {
-        const currentCharacter = className[index];
-        if (bracketDepth === 0 && parenDepth === 0) {
-          if (currentCharacter === MODIFIER_SEPARATOR) {
-            modifiers.push(className.slice(modifierStart, index));
-            modifierStart = index + 1;
-            continue;
-          }
-          if (currentCharacter === "/") {
-            postfixModifierPosition = index;
-            continue;
-          }
-        }
-        if (currentCharacter === "[") bracketDepth++;
-        else if (currentCharacter === "]") bracketDepth--;
-        else if (currentCharacter === "(") parenDepth++;
-        else if (currentCharacter === ")") parenDepth--;
+  var AA = DZ("0000000000000000000000000000000000000000000000000000000000000262242:6@200000006:240B428:4422400002046044222426220026642642462026224222824220022400000000\\00N222422242222222224062242222222422226264222422222222222222442804222422222222222222222222220<4<0204260002444020204224422");
+  var AG = DZ("\u0260222222222222222222222222222222222222222222222222222222222222\u02D54222226>\u02B622\u02B7\u02BA\u02B72\u02B8\u02B742\u02B42\u029322>621422\u0276222\u0279\u027C\u0277\u027A\u0277\u027A22\u027142222\u02682\u026726622\u0258\u0253244\u01B8\u01B5222]d24242\u01D6\u01D3\u019A\xC4\u022B2263\u0228\u0225\u02282222222\u01E3222222222222222222\u01C2\u01BD2\u01BE\u01B52222222422222\u019C\u019122222222222222222222144\u0166\u016322\u0162\u015F222222222222222222222\u01382\u013168\u0126\u0123\u0126\u0261\u01704\u0120\xAB\xAE\u011D822\u0114\u0111\u01142\u01132222622");
+  var AS = DZ("02222222222222222222222222222222222222222222222222222222222222222202022222222222EH2200IL021042222Y\\222IL0cf2e10j2222U00X202[^2y0000120|{~\x7F\x8222\x85\x88\x87:22|22222222222G000q\x86OVI00000}\x9A2\x9B>40000\x8C\x9DB00000I\xA8\xA9000\xAC00000000000000\x8D021M\xAE\xAD00\xB0\x93000000000000000000000\x96222\x9BHGHa1\xBA222\xBF2\xC02222\xC9\xCC000\xAD\xB02\xB1");
+  var litAnchor = /* @__PURE__ */ new Int32Array(995);
+  var litGroup = /* @__PURE__ */ new Int32Array(995);
+  var litPool = /* @__PURE__ */ new Int32Array(995);
+  var poolText = "";
+  var poolOffsets = /* @__PURE__ */ new Int32Array(1038);
+  {
+    const tailRef = /* @__PURE__ */ new Map();
+    let nextRef = 0;
+    let e = 0;
+    for (let i = 0; i < AA.length; i++) for (const tail of SETS[AS[i]]) {
+      let r2 = tailRef.get(tail);
+      if (r2 === void 0) {
+        r2 = nextRef++;
+        tailRef.set(tail, r2);
+        poolOffsets[r2 * 2] = poolText.length;
+        poolOffsets[r2 * 2 + 1] = tail.length;
+        poolText += tail;
       }
-      const baseClassNameWithImportantModifier = modifiers.length === 0 ? className : className.slice(modifierStart);
-      let baseClassName = baseClassNameWithImportantModifier;
-      let hasImportantModifier = false;
-      if (baseClassNameWithImportantModifier.endsWith(IMPORTANT_MODIFIER)) {
-        baseClassName = baseClassNameWithImportantModifier.slice(0, -1);
-        hasImportantModifier = true;
-      } else if (
-        /**
-         * In Tailwind CSS v3 the important modifier was at the start of the base class name. This is still supported for legacy reasons.
-         * @see https://github.com/dcastil/tailwind-merge/issues/513#issuecomment-2614029864
-         */
-        baseClassNameWithImportantModifier.startsWith(IMPORTANT_MODIFIER)
-      ) {
-        baseClassName = baseClassNameWithImportantModifier.slice(1);
-        hasImportantModifier = true;
-      }
-      const maybePostfixModifierPosition = postfixModifierPosition && postfixModifierPosition > modifierStart ? postfixModifierPosition - modifierStart : void 0;
-      return createResultObject(modifiers, hasImportantModifier, baseClassName, maybePostfixModifierPosition);
-    };
-    if (prefix) {
-      const fullPrefix = prefix + MODIFIER_SEPARATOR;
-      const parseClassNameOriginal = parseClassName;
-      parseClassName = (className) => className.startsWith(fullPrefix) ? parseClassNameOriginal(className.slice(fullPrefix.length)) : createResultObject(EMPTY_MODIFIERS, false, className, void 0, true);
+      litAnchor[e] = AA[i];
+      litGroup[e] = AG[i];
+      litPool[e] = r2;
+      e++;
     }
-    if (experimentalParseClassName) {
-      const parseClassNameOriginal = parseClassName;
-      parseClassName = (className) => experimentalParseClassName({
-        className,
-        parseClassName: parseClassNameOriginal
-      });
-    }
-    return parseClassName;
+  }
+  var adjGid = DZ("0b2N:222@R>F@286\xA62@H2D266226FB22B2>BD\\6N22222Z222D222p");
+  var adjStart = PS(U("1::24444432:442:44:44>222222:44:4421322511111311111114"));
+  var adjTgt = DZ("2\x8A4A;33N=C@H4A;33N=C@<27;83:;8393NQ:3NQ\u02B0222\u02C9\xBA\u0174\u017D2R2=18c\u01B4\xC5\u0147\x9C=c\u011E\xDBC1\u0188\u01DD\u0208:\u012725=11D3A@4=<1;1DEr25;11B3?<6;:371BCn9@7=<8192>2E121@9@EHE@9>2T25511<398454131<=V25511<398454131<=\x84\u01A7N\u017E2\u0110\xE5242L222290000f22500\u025B000\u01D8222");
+  var patGid = U("\u0133");
+  var patTgt = U("\x97");
+  var postfixLookupGroups = U("1");
+  var orderSensitiveModifiers = "* ** after backdrop before details-content file first-letter first-line marker placeholder selection";
+  var tables_generated_default = {
+    GROUP_COUNT,
+    customValidatorNames,
+    edgeStart,
+    labelStart,
+    labelText,
+    edgeTarget,
+    nodeGroup,
+    nodeVlist,
+    vlistPat,
+    vlistOps,
+    vlistRef,
+    vlistGroup,
+    litAnchor,
+    litGroup,
+    litPool,
+    poolOffsets,
+    poolText,
+    adjGid,
+    adjStart,
+    adjTgt,
+    patGid,
+    patTgt,
+    postfixLookupGroups,
+    orderSensitiveModifiers
   };
-  var createSortModifiers = (config) => {
-    const modifierWeights = /* @__PURE__ */ new Map();
-    config.orderSensitiveModifiers.forEach((mod, index) => {
-      modifierWeights.set(mod, 1e6 + index);
+
+  // node_modules/.pnpm/cn@0.5.0/node_modules/cn/dist/engine.js
+  var IS_JSC = "line" in /* @__PURE__ */ new Error();
+  var EXTERNAL = -1;
+  var DEAD = -1;
+  var fnv = (str, s, e) => {
+    let h = 2166136261;
+    for (let p = s; p < e; p++) h = Math.imul(h ^ str.charCodeAt(p), 16777619);
+    return h;
+  };
+  var spanHash = (str, s, e) => {
+    const len = e - s;
+    let h = Math.imul(len, 2654435761) ^ str.charCodeAt(s);
+    if (len > 3) {
+      const q = len >> 2;
+      const m = len >> 1;
+      h = Math.imul(h ^ str.charCodeAt(s + 1) << 8 ^ str.charCodeAt(s + 2) << 16 ^ str.charCodeAt(s + q), 2246822507);
+      h = Math.imul(h ^ str.charCodeAt(s + m) << 8 ^ str.charCodeAt(s + m + q) << 16 ^ str.charCodeAt(e - 3), 3266489909);
+      h ^= str.charCodeAt(e - 2) << 8 ^ str.charCodeAt(e - 1) << 16;
+      for (let p = s + 3, q2 = e - 4; p < s + 8 && p < q2; p++, q2--) h = Math.imul(h ^ str.charCodeAt(p) ^ str.charCodeAt(q2) << 8, 16777619);
+    }
+    return h ^ h >>> 15 | 0;
+  };
+  var createEngine = (T, validatorImpls, options = {}) => {
+    const { GROUP_COUNT: GROUP_COUNT2, edgeStart: edgeStart2, labelStart: labelStart2, labelText: labelText2, edgeTarget: edgeTarget2, nodeGroup: nodeGroup2, nodeVlist: nodeVlist2, vlistPat: vlistPat2, vlistOps: vlistOps2, vlistRef: vlistRef2, vlistGroup: vlistGroup2, litAnchor: litAnchor2, litGroup: litGroup2, litPool: litPool2, poolOffsets: poolOffsets2, poolText: poolText2, adjGid: adjGid2, adjStart: adjStart2, adjTgt: adjTgt2, patGid: patGid2, patTgt: patTgt2, postfixLookupGroups: postfixLookupGroups2, customValidatorNames: customValidatorNames2, orderSensitiveModifiers: orderSensitiveModifiers2 } = T;
+    const adjRow = new Int32Array(GROUP_COUNT2).fill(-1);
+    for (let i = 0; i < adjGid2.length; i++) adjRow[adjGid2[i]] = i;
+    let maxAdj = 0;
+    for (let r2 = 0; r2 + 1 < adjStart2.length; r2++) {
+      const n = adjStart2[r2 + 1] - adjStart2[r2];
+      if (n > maxAdj) maxAdj = n;
+    }
+    let CLAIM_PER_TOKEN = 32;
+    while (CLAIM_PER_TOKEN < 2 * (1 + maxAdj + patGid2.length)) CLAIM_PER_TOKEN <<= 1;
+    const vgStart = new Int32Array(vlistRef2.length + 1);
+    for (let l = 0; l < vlistRef2.length; l++) vgStart[l + 1] = vgStart[l] + vlistPat2[vlistRef2[l] + 1] - vlistPat2[vlistRef2[l]];
+    const postfixLookupSet = new Uint8Array(GROUP_COUNT2);
+    for (let i = 0; i < postfixLookupGroups2.length; i++) postfixLookupSet[postfixLookupGroups2[i]] = 1;
+    const nodeCount = edgeStart2.length - 1;
+    const nodeHasLit = new Uint8Array(nodeCount);
+    let litMaxLen = 0;
+    let litNoArb = true;
+    for (let i = 0; i < litAnchor2.length; i++) {
+      nodeHasLit[litAnchor2[i]] = 1;
+      const len = poolOffsets2[litPool2[i] * 2 + 1];
+      if (len > litMaxLen) litMaxLen = len;
+      const c0 = poolText2.charCodeAt(poolOffsets2[litPool2[i] * 2]);
+      if (c0 === 91 || c0 === 40) litNoArb = false;
+    }
+    let LIT_SIZE = 1;
+    while (LIT_SIZE < litAnchor2.length * 2) LIT_SIZE <<= 1;
+    const litTable = new Int32Array(LIT_SIZE).fill(-1);
+    for (let i = 0; i < litAnchor2.length; i++) {
+      const off = poolOffsets2[litPool2[i] * 2];
+      let idx = (fnv(poolText2, off, off + poolOffsets2[litPool2[i] * 2 + 1]) ^ Math.imul(litAnchor2[i], 2654435761) | 0) & LIT_SIZE - 1;
+      while (litTable[idx] !== -1) idx = idx + 1 & LIT_SIZE - 1;
+      litTable[idx] = i;
+    }
+    const litProbe = (anchor, input, s, e) => {
+      let idx = (fnv(input, s, e) ^ Math.imul(anchor, 2654435761) | 0) & LIT_SIZE - 1;
+      const len = e - s;
+      for (; ; ) {
+        const entry = litTable[idx];
+        if (entry === -1) return -1;
+        if (litAnchor2[entry] === anchor && poolOffsets2[litPool2[entry] * 2 + 1] === len) {
+          const off = poolOffsets2[litPool2[entry] * 2];
+          let ok = true;
+          for (let k = 0; k < len; k++) if (poolText2.charCodeAt(off + k) !== input.charCodeAt(s + k)) {
+            ok = false;
+            break;
+          }
+          if (ok) return litGroup2[entry];
+        }
+        idx = idx + 1 & LIT_SIZE - 1;
+      }
+    };
+    const cacheSize = options.cacheSize ?? 8192;
+    const RAW_PREFIX = options.prefix ?? T.prefix ?? "";
+    const FULL_PREFIX = RAW_PREFIX === "" ? "" : RAW_PREFIX + ":";
+    const FPL = FULL_PREFIX.length;
+    const vCustom = (customValidatorNames2 ?? []).map((name) => {
+      const fn = validatorImpls && validatorImpls[name];
+      if (!fn) throw new Error("cn: missing validator " + name);
+      return fn;
     });
-    return (modifiers) => {
-      const result = [];
-      let currentSegment = [];
-      for (let i = 0; i < modifiers.length; i++) {
-        const modifier = modifiers[i];
-        const isArbitrary = modifier[0] === "[";
-        const isOrderSensitive = modifierWeights.has(modifier);
-        if (isArbitrary || isOrderSensitive) {
-          if (currentSegment.length > 0) {
-            currentSegment.sort();
-            result.push(...currentSegment);
-            currentSegment = [];
-          }
-          result.push(modifier);
-        } else {
-          currentSegment.push(modifier);
+    const lengthUnitRegex = /\d+(%|px|r?em|[sdl]?v([hwib]|min|max)|pt|pc|in|cm|mm|cap|ch|ex|r?lh|cq(w|h|i|b|min|max))|\b(calc|min|max|clamp)\(.+\)|^0$/;
+    const colorFunctionRegex = /^(rgba?|hsla?|hwb|(ok)?(lab|lch)|color-mix)\(.+\)$/;
+    const shadowRegex = /^(inset_)?-?((\d+)?\.?(\d+)[a-z]+|0)_-?((\d+)?\.?(\d+)[a-z]+|0)/;
+    const imageRegex = /^(url|image|image-set|cross-fade|element|(repeating-)?(linear|radial|conic)-gradient)\(.+\)$/;
+    let aKind = 0;
+    let aLabelS = -1;
+    let aLabelE = -1;
+    let aValS = -1;
+    let aValE = -1;
+    const isWordCode = (c) => c >= 97 && c <= 122 || c >= 65 && c <= 90 || c >= 48 && c <= 57 || c === 95;
+    const isUniWS = (c) => /\s/.test(String.fromCharCode(c));
+    const analyzeArb = (input, s, e) => {
+      aKind = 0;
+      aLabelS = -1;
+      if (e - s < 3) return;
+      const c0 = input.charCodeAt(s);
+      const cl = input.charCodeAt(e - 1);
+      if (c0 === 91 && cl === 93) aKind = 1;
+      else if (c0 === 40 && cl === 41) aKind = 2;
+      else return;
+      aValS = s + 1;
+      aValE = e - 1;
+      let p = s + 1;
+      if (isWordCode(input.charCodeAt(p))) {
+        p++;
+        while (p < e - 1) {
+          const c = input.charCodeAt(p);
+          if (!isWordCode(c) && c !== 45) break;
+          p++;
+        }
+        if (p < e - 2 && input.charCodeAt(p) === 58) {
+          aLabelS = s + 1;
+          aLabelE = p;
+          aValS = p + 1;
         }
       }
-      if (currentSegment.length > 0) {
-        currentSegment.sort();
-        result.push(...currentSegment);
-      }
-      return result;
     };
-  };
-  var createConfigUtils = (config) => ({
-    cache: createLruCache(config.cacheSize),
-    parseClassName: createParseClassName(config),
-    sortModifiers: createSortModifiers(config),
-    postfixLookupClassGroupIds: createPostfixLookupClassGroupIds(config),
-    ...createClassGroupUtils(config)
-  });
-  var createPostfixLookupClassGroupIds = (config) => {
-    const lookup = /* @__PURE__ */ Object.create(null);
-    const classGroupIds = config.postfixLookupClassGroups;
-    if (classGroupIds) {
-      for (let i = 0; i < classGroupIds.length; i++) {
-        lookup[classGroupIds[i]] = true;
+    const spanEq = (input, s, e, str) => {
+      if (e - s !== str.length) return false;
+      for (let i = 0; i < str.length; i++) if (input.charCodeAt(s + i) !== str.charCodeAt(i)) return false;
+      return true;
+    };
+    const fractionRegex = /^\d+(?:\.\d+)?\/\d+(?:\.\d+)?$/;
+    const tshirtRegex = /^(\d+(\.\d+)?)?(xs|sm|md|lg|xl)$/;
+    const isNumStr = (v) => !!v && !Number.isNaN(Number(v));
+    const spanIsNamedContainerQuery = (input, s, e) => {
+      if (e - s < 11 || !spanEq(input, s, s + 10, "@container")) return false;
+      if (input.charCodeAt(s + 10) === 47) return e - s >= 12;
+      const c11 = input.charCodeAt(s + 11);
+      return c11 === 115 && e - s >= 17 && spanEq(input, s + 10, s + 16, "-size/") || c11 === 110 && e - s >= 19 && spanEq(input, s + 10, s + 18, "-normal/");
+    };
+    const VKIND = [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+    ];
+    const VLABELS = "length|number|number weight|family-name|position percentage|length size bg-size|image url|shadow|length|family-name|position percentage|length size bg-size|image url|shadow|number weight".split("|").map((s) => s.split(" "));
+    const VFALL = [
+      2,
+      3,
+      1,
+      0,
+      0,
+      0,
+      4,
+      5,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1
+    ];
+    const runValidator = (op, input, s, e) => {
+      if (op >= 10) {
+        if (op >= 25) return vCustom[op - 25](input.slice(s, e));
+        const i = op - 10;
+        if (aKind !== VKIND[i]) return false;
+        if (aLabelS >= 0) {
+          for (const L of VLABELS[i]) if (spanEq(input, aLabelS, aLabelE, L)) return true;
+          return false;
+        }
+        switch (VFALL[i]) {
+          case 0:
+            return false;
+          case 1:
+            return true;
+          case 2: {
+            const v = input.slice(aValS, aValE);
+            return lengthUnitRegex.test(v) && !colorFunctionRegex.test(v);
+          }
+          case 3:
+            return isNumStr(input.slice(aValS, aValE));
+          case 4:
+            return imageRegex.test(input.slice(aValS, aValE));
+          default:
+            return shadowRegex.test(input.slice(aValS, aValE));
+        }
       }
-    }
-    return lookup;
-  };
-  var SPLIT_CLASSES_REGEX = /\s+/;
-  var mergeClassList = (classList, configUtils) => {
-    const {
-      parseClassName,
-      getClassGroupId,
-      getConflictingClassGroupIds,
-      sortModifiers,
-      postfixLookupClassGroupIds
-    } = configUtils;
-    const classGroupsInConflict = [];
-    const classNames = classList.trim().split(SPLIT_CLASSES_REGEX);
-    let result = "";
-    for (let index = classNames.length - 1; index >= 0; index -= 1) {
-      const originalClassName = classNames[index];
-      const {
-        isExternal,
-        modifiers,
-        hasImportantModifier,
-        baseClassName,
-        maybePostfixModifierPosition
-      } = parseClassName(originalClassName);
-      if (isExternal) {
-        result = originalClassName + (result.length > 0 ? " " + result : result);
-        continue;
+      switch (op) {
+        case 0:
+          return true;
+        case 1:
+          return aKind === 0;
+        case 2:
+          return aKind === 1;
+        case 3:
+          return aKind === 2;
+        case 4:
+          return fractionRegex.test(input.slice(s, e));
+        case 5:
+          return isNumStr(input.slice(s, e));
+        case 6: {
+          const v = input.slice(s, e);
+          return !!v && Number.isInteger(Number(v));
+        }
+        case 7:
+          return e > s && input.charCodeAt(e - 1) === 37 && isNumStr(input.slice(s, e - 1));
+        case 8:
+          return tshirtRegex.test(input.slice(s, e));
+        default:
+          return spanIsNamedContainerQuery(input, s, e);
       }
-      let hasPostfixModifier = !!maybePostfixModifierPosition;
-      let classGroupId;
-      if (hasPostfixModifier) {
-        const baseClassNameWithoutPostfix = baseClassName.substring(0, maybePostfixModifierPosition);
-        classGroupId = getClassGroupId(baseClassNameWithoutPostfix);
-        const classGroupIdWithPostfix = classGroupId && postfixLookupClassGroupIds[classGroupId] ? getClassGroupId(baseClassName) : void 0;
-        if (classGroupIdWithPostfix && classGroupIdWithPostfix !== classGroupId) {
-          classGroupId = classGroupIdWithPostfix;
-          hasPostfixModifier = false;
+    };
+    const orderSensitive = new Set(typeof orderSensitiveModifiers2 === "string" ? orderSensitiveModifiers2.split(" ") : orderSensitiveModifiers2);
+    const internSpan = (map, input, s, e, imp, make) => {
+      const h = fnv(input, s, e) ^ (imp ? 2654435769 : 0) | 0;
+      let bucket = map.get(h);
+      if (bucket !== void 0) outer: for (let b = 0; b < bucket.length; b++) {
+        const en = bucket[b];
+        if (en.imp !== imp || en.k.length !== e - s) continue;
+        for (let i = 0; i < en.k.length; i++) if (en.k.charCodeAt(i) !== input.charCodeAt(s + i)) continue outer;
+        return en.id;
+      }
+      else map.set(h, bucket = []);
+      const k = input.slice(s, e);
+      const id = make(k);
+      bucket.push({
+        k,
+        imp,
+        id
+      });
+      return id;
+    };
+    let ctxByHash = /* @__PURE__ */ new Map();
+    let ctxByCanon = /* @__PURE__ */ new Map();
+    let nextCtxId = 2;
+    const MAX_CTX = 4096;
+    const canonicalizeContext = (raw, important) => {
+      const mods = [];
+      let dB = 0, dP = 0, start = 0;
+      for (let i = 0; i < raw.length; i++) {
+        const c = raw.charCodeAt(i);
+        if (dB === 0 && dP === 0 && c === 58) {
+          mods.push(raw.slice(start, i));
+          start = i + 1;
+        } else if (c === 91) dB++;
+        else if (c === 93) dB--;
+        else if (c === 40) dP++;
+        else if (c === 41) dP--;
+      }
+      mods.push(raw.slice(start));
+      let canonical = mods[0];
+      if (mods.length > 1) {
+        const result = [];
+        let segment = [];
+        for (const mod of mods) if (mod.charCodeAt(0) === 91 || orderSensitive.has(mod)) {
+          if (segment.length) {
+            result.push(...segment.sort());
+            segment = [];
+          }
+          result.push(mod);
+        } else segment.push(mod);
+        if (segment.length) result.push(...segment.sort());
+        canonical = result.join(":");
+      }
+      const key = important ? canonical + " !" : canonical;
+      let id = ctxByCanon.get(key);
+      if (id === void 0) ctxByCanon.set(key, id = nextCtxId++);
+      return id;
+    };
+    let dynByHash = /* @__PURE__ */ new Map();
+    let nextDynId = GROUP_COUNT2;
+    const MAX_DYN = GROUP_COUNT2 + 4096;
+    const newDynId = () => nextDynId++;
+    const ID_LIMIT = 2097152;
+    const TOKEN_TABLE = 8192;
+    const memoHash = new Int32Array(TOKEN_TABLE);
+    const memoStr = new Array(TOKEN_TABLE).fill(null);
+    const memoGid = new Int32Array(TOKEN_TABLE);
+    const memoCtx = new Int32Array(TOKEN_TABLE);
+    const memoFlags = new Uint8Array(TOKEN_TABLE);
+    let memoTick = 0;
+    const memoPut = (way0, input, ts, te, h, gid, ctxId, flags) => {
+      let slot = way0;
+      if (memoStr[way0] !== null) {
+        if (memoStr[way0 | 1] === null) slot = way0 | 1;
+        else if ((memoTick++ & 3) === 0) slot = way0 | memoTick >> 2 & 1;
+        else return;
+      }
+      memoStr[slot] = input.slice(ts, te);
+      memoHash[slot] = h;
+      memoGid[slot] = gid;
+      memoCtx[slot] = ctxId;
+      memoFlags[slot] = flags;
+    };
+    const memoReset = () => memoStr.fill(null);
+    let cap = 256;
+    let tokI32 = [
+      new Int32Array(cap),
+      new Int32Array(cap),
+      new Int32Array(cap),
+      new Int32Array(cap)
+    ];
+    let [tokStart, tokEnd, tokGid, tokCtx] = tokI32;
+    let tokFlags = new Uint8Array(cap);
+    let keep = new Uint8Array(cap);
+    const growTokens = () => {
+      cap *= 2;
+      tokI32 = tokI32.map((a) => {
+        const n = new Int32Array(cap);
+        n.set(a);
+        return n;
+      });
+      [tokStart, tokEnd, tokGid, tokCtx] = tokI32;
+      const nf = new Uint8Array(cap);
+      nf.set(tokFlags);
+      tokFlags = nf;
+      keep = new Uint8Array(cap);
+    };
+    let ckptCap = 64;
+    let ckptNode = new Int32Array(ckptCap);
+    let ckptTail = new Int32Array(ckptCap);
+    const claim0 = new Int32Array(GROUP_COUNT2);
+    let CLAIM_TABLE = 2048;
+    let claimShift = 21;
+    let claimKeys = new Float64Array(CLAIM_TABLE);
+    let claimEpochs = new Int32Array(CLAIM_TABLE);
+    let epoch = 0;
+    const claimTest = (ctx, gid) => {
+      if (ctx === 0 && gid < GROUP_COUNT2) {
+        if (claim0[gid] === epoch) return 1;
+        claim0[gid] = epoch;
+        return 0;
+      }
+      const key = ctx * 2097152 + gid + 1;
+      let idx = Math.imul(key, 2654435761) >>> claimShift;
+      for (; ; ) {
+        if (claimEpochs[idx] !== epoch) break;
+        if (claimKeys[idx] === key) return 1;
+        idx = idx + 1 & CLAIM_TABLE - 1;
+      }
+      claimKeys[idx] = key;
+      claimEpochs[idx] = epoch;
+      return 0;
+    };
+    const resolveAt = (input, bs, endPos, nodeAt, ckptAt) => {
+      if (endPos - bs >= 2 && input.charCodeAt(bs) === 91 && input.charCodeAt(endPos - 1) === 93) {
+        let colon = -1;
+        for (let p = bs + 1; p < endPos - 1; p++) if (input.charCodeAt(p) === 58) {
+          colon = p;
+          break;
+        }
+        if (colon === -1 || colon === bs + 1) return EXTERNAL;
+        return internSpan(dynByHash, input, bs + 1, colon, 0, newDynId);
+      }
+      if (nodeAt >= 0 && nodeGroup2[nodeAt] >= 0) return nodeGroup2[nodeAt];
+      for (let k = ckptAt - 1; k >= 0; k--) {
+        const tailStart = ckptTail[k];
+        if (tailStart > endPos) continue;
+        const nodeId = ckptNode[k];
+        const tlen = endPos - tailStart;
+        if (nodeHasLit[nodeId] === 1 && tlen > 0 && tlen <= litMaxLen) {
+          const c0 = input.charCodeAt(tailStart);
+          if (litNoArb === false || c0 !== 91 && c0 !== 40) {
+            const g = litProbe(nodeId, input, tailStart, endPos);
+            if (g >= 0) return g;
+          }
+        }
+        const vl = nodeVlist2[nodeId];
+        if (vl < 0) continue;
+        const pat = vlistRef2[vl];
+        const vs = vlistPat2[pat];
+        const ve = vlistPat2[pat + 1];
+        if (vs === ve) continue;
+        analyzeArb(input, tailStart, endPos);
+        const g0 = vgStart[vl] - vs;
+        for (let v = vs; v < ve; v++) if (runValidator(vlistOps2[v], input, tailStart, endPos)) return vlistGroup2[g0 + v];
+      }
+      return EXTERNAL;
+    };
+    const mergeClassList = (input) => {
+      const n = input.length;
+      let tokenCount = 0;
+      let totalTokenChars = 0;
+      let sawNonSpaceWS = false;
+      if (nextCtxId > MAX_CTX || ctxByHash.size > MAX_CTX) {
+        ctxByHash = /* @__PURE__ */ new Map();
+        ctxByCanon = /* @__PURE__ */ new Map();
+        nextCtxId = 2;
+        memoReset();
+      }
+      if (nextDynId > MAX_DYN) {
+        dynByHash = /* @__PURE__ */ new Map();
+        nextDynId = GROUP_COUNT2;
+        memoReset();
+      }
+      let i = 0;
+      while (i < n) {
+        let c = input.charCodeAt(i);
+        if (c === 32 || c >= 9 && c <= 13 || c >= 160 && isUniWS(c)) {
+          if (c !== 32) sawNonSpaceWS = true;
+          i++;
+          continue;
+        }
+        const ts = i;
+        let th = 0;
+        while (i < n) {
+          c = input.charCodeAt(i);
+          if (c <= 32) {
+            if (c === 32) break;
+            if (c >= 9 && c <= 13) {
+              sawNonSpaceWS = true;
+              break;
+            }
+          } else if (c >= 160 && isUniWS(c)) {
+            sawNonSpaceWS = true;
+            break;
+          }
+          th = Math.imul(th ^ c, 16777619);
+          i++;
+        }
+        const te = i;
+        const len = te - ts;
+        if (tokenCount === cap) growTokens();
+        const t2 = tokenCount++;
+        tokStart[t2] = ts;
+        tokEnd[t2] = te;
+        totalTokenChars += len;
+        th ^= Math.imul(len, 2654435761);
+        const h = th ^ th >>> 15 | 0;
+        const way0 = h & 8190;
+        {
+          let hitAt = -1;
+          if (memoHash[way0] === h && memoStr[way0] !== null && memoStr[way0].length === len) hitAt = way0;
+          else if (memoHash[way0 | 1] === h && memoStr[way0 | 1] !== null && memoStr[way0 | 1].length === len) hitAt = way0 | 1;
+          if (hitAt >= 0) {
+            const s = memoStr[hitAt];
+            let ok = true;
+            for (let k = 0; k < len; k++) if (s.charCodeAt(k) !== input.charCodeAt(ts + k)) {
+              ok = false;
+              break;
+            }
+            if (ok) {
+              tokGid[t2] = memoGid[hitAt];
+              tokCtx[t2] = memoCtx[hitAt];
+              tokFlags[t2] = memoFlags[hitAt];
+              continue;
+            }
+          }
+        }
+        let pts = ts;
+        if (FPL !== 0) {
+          if (te - ts <= FPL || !input.startsWith(FULL_PREFIX, ts)) {
+            tokGid[t2] = EXTERNAL;
+            memoPut(way0, input, ts, te, h, EXTERNAL, 0, 0);
+            continue;
+          }
+          pts = ts + FPL;
+        }
+        let depthB = 0, depthP = 0;
+        let lastColon = -1, lastSlash = -1;
+        for (let p = pts; p < te; p++) {
+          const pc = input.charCodeAt(p);
+          if (depthB === 0 && depthP === 0) {
+            if (pc === 58) {
+              lastColon = p;
+              continue;
+            }
+            if (pc === 47) {
+              lastSlash = p;
+              continue;
+            }
+          }
+          if (pc === 91) depthB++;
+          else if (pc === 93) depthB--;
+          else if (pc === 40) depthP++;
+          else if (pc === 41) depthP--;
+        }
+        const modStart = lastColon >= pts ? lastColon + 1 : pts;
+        let bs = modStart;
+        let be = te;
+        let important = false;
+        let prefixShift = 0;
+        if (be > bs && input.charCodeAt(be - 1) === 33) {
+          important = true;
+          be--;
+        } else if (be > bs && input.charCodeAt(bs) === 33) {
+          important = true;
+          bs++;
+          prefixShift = 1;
+        }
+        let postfixEnd = -1;
+        if (lastSlash > modStart) {
+          postfixEnd = lastSlash + prefixShift;
+          if (postfixEnd >= be) postfixEnd = -1;
+        }
+        let feedStart = bs;
+        if (be - bs > 1 && input.charCodeAt(bs) === 45) feedStart = bs + 1;
+        let node = 0;
+        let lp = 0;
+        let le = 0;
+        let pending = -1;
+        let ckptTop = 0;
+        if (nodeVlist2[0] >= 0 || nodeHasLit[0] === 1) {
+          ckptNode[0] = 0;
+          ckptTail[0] = feedStart;
+          ckptTop = 1;
+        }
+        let slashNode = DEAD;
+        let slashCkpt = 0;
+        for (let p = feedStart; p < be; p++) {
+          if (p === postfixEnd) {
+            slashNode = lp < le ? DEAD : node;
+            slashCkpt = ckptTop;
+          }
+          if (node !== DEAD) {
+            const cc = input.charCodeAt(p);
+            let arrived = -1;
+            if (lp < le) {
+              if (labelText2.charCodeAt(lp) === cc) {
+                lp++;
+                if (lp === le) arrived = node = pending;
+              } else node = DEAD;
+            } else {
+              const es = edgeStart2[node];
+              const ee = edgeStart2[node + 1];
+              let next = DEAD;
+              for (let e = es; e < ee; e++) {
+                const ls = labelStart2[e];
+                if (labelText2.charCodeAt(ls) === cc) {
+                  if (labelStart2[e + 1] - ls === 1) arrived = next = edgeTarget2[e];
+                  else {
+                    lp = ls + 1;
+                    le = labelStart2[e + 1];
+                    pending = edgeTarget2[e];
+                    next = node;
+                  }
+                  break;
+                }
+              }
+              node = next;
+            }
+            if (arrived >= 0 && (nodeVlist2[arrived] >= 0 || nodeHasLit[arrived] === 1) && p + 1 < be && input.charCodeAt(p + 1) === 45) {
+              if (ckptTop === ckptCap) {
+                ckptCap *= 2;
+                const nv = new Int32Array(ckptCap);
+                nv.set(ckptNode);
+                ckptNode = nv;
+                const nt = new Int32Array(ckptCap);
+                nt.set(ckptTail);
+                ckptTail = nt;
+              }
+              ckptNode[ckptTop] = arrived;
+              ckptTail[ckptTop] = p + 2;
+              ckptTop++;
+            }
+          }
+        }
+        if (postfixEnd === be) {
+          slashNode = lp < le ? DEAD : node;
+          slashCkpt = ckptTop;
+        }
+        const endNode = lp < le ? DEAD : node;
+        let gid;
+        let hasPostfix = false;
+        if (postfixEnd >= 0) {
+          hasPostfix = true;
+          gid = resolveAt(input, bs, postfixEnd, slashNode, slashCkpt);
+          if (gid !== EXTERNAL && gid < GROUP_COUNT2 && postfixLookupSet[gid]) {
+            const gidFull = resolveAt(input, bs, be, endNode, ckptTop);
+            if (gidFull !== EXTERNAL && gidFull !== gid) {
+              gid = gidFull;
+              hasPostfix = false;
+            }
+          } else if (gid === EXTERNAL) {
+            gid = resolveAt(input, bs, be, endNode, ckptTop);
+            hasPostfix = false;
+          }
+        } else gid = resolveAt(input, bs, be, endNode, ckptTop);
+        let ctxId = 0;
+        let flags = 0;
+        if (gid === EXTERNAL) tokGid[t2] = EXTERNAL;
+        else {
+          flags = hasPostfix ? 1 : 0;
+          ctxId = pts >= lastColon ? important ? 1 : 0 : internSpan(ctxByHash, input, pts, lastColon, important ? 1 : 0, (k) => canonicalizeContext(k, important));
+          tokGid[t2] = gid;
+          tokFlags[t2] = flags;
+          tokCtx[t2] = ctxId;
+        }
+        memoPut(way0, input, ts, te, h, gid, ctxId, flags);
+      }
+      if (tokenCount === 0) return "";
+      if (tokenCount === 1) return tokStart[0] === 0 && tokEnd[0] === n ? input : input.slice(tokStart[0], tokEnd[0]);
+      if (tokenCount * CLAIM_PER_TOKEN > CLAIM_TABLE) {
+        while (tokenCount * CLAIM_PER_TOKEN > CLAIM_TABLE) {
+          CLAIM_TABLE <<= 1;
+          claimShift--;
+        }
+        claimKeys = new Float64Array(CLAIM_TABLE);
+        claimEpochs = new Int32Array(CLAIM_TABLE);
+      }
+      if (nextCtxId >= ID_LIMIT || nextDynId >= ID_LIMIT) throw new Error("cn: too many distinct classes in one merge");
+      epoch = epoch + 1 | 0;
+      if (epoch === 0) {
+        claim0.fill(0);
+        claimEpochs.fill(0);
+        epoch = 1;
+      }
+      let didDrop = false;
+      for (let t2 = tokenCount - 1; t2 >= 0; t2--) {
+        const gid = tokGid[t2];
+        if (gid === EXTERNAL) {
+          keep[t2] = 1;
+          continue;
+        }
+        const ctxId = tokCtx[t2];
+        if (claimTest(ctxId, gid) === 1) {
+          keep[t2] = 0;
+          didDrop = true;
+          continue;
+        }
+        keep[t2] = 1;
+        if (gid < GROUP_COUNT2) {
+          const r2 = adjRow[gid];
+          if (r2 >= 0) for (let k = adjStart2[r2]; k < adjStart2[r2 + 1]; k++) claimTest(ctxId, adjTgt2[k]);
+          if (tokFlags[t2] & 1) {
+            for (let k = 0; k < patGid2.length; k++) if (patGid2[k] === gid) claimTest(ctxId, patTgt2[k]);
+          }
+        }
+      }
+      if (!didDrop && !sawNonSpaceWS && n === totalTokenChars + tokenCount - 1) return input;
+      let out = "";
+      let t = 0;
+      while (t < tokenCount) {
+        if (!keep[t]) {
+          t++;
+          continue;
+        }
+        const runStart = tokStart[t];
+        let runEnd = tokEnd[t];
+        let u = t + 1;
+        while (u < tokenCount && keep[u] && tokStart[u] === runEnd + 1 && input.charCodeAt(runEnd) === 32) {
+          runEnd = tokEnd[u];
+          u++;
+        }
+        if (out.length > 0) out += " ";
+        out += input.slice(runStart, runEnd);
+        t = u;
+      }
+      return out;
+    };
+    const DOOR_SIZE = 16384;
+    const door = new Int32Array(DOOR_SIZE * 2);
+    let doorBase = 0;
+    let doorEpoch = 1;
+    let cache = /* @__PURE__ */ Object.create(null);
+    let prevCache = /* @__PURE__ */ Object.create(null);
+    let cacheMap = /* @__PURE__ */ new Map();
+    let prevCacheMap = /* @__PURE__ */ new Map();
+    let cacheCount = 0;
+    let doorMarks = 0;
+    const rotateDoor = () => {
+      doorBase ^= DOOR_SIZE;
+      doorEpoch = doorEpoch + 1 | 0;
+      doorMarks = 0;
+    };
+    const mergeCached = (input) => {
+      let merged = cache[input];
+      if (merged !== void 0) return merged;
+      const hash = spanHash(input, 0, input.length);
+      const slot = (hash & 16383) + doorBase;
+      const wasSeen = door[slot] === (hash ^ doorEpoch) || door[slot ^ DOOR_SIZE] === (hash ^ doorEpoch - 1);
+      if (wasSeen) {
+        merged = prevCache[input];
+        if (merged !== void 0) {
+          cache[input] = merged;
+          return merged;
+        }
+      }
+      merged = mergeClassList(input);
+      if (wasSeen) {
+        cache[input] = merged;
+        if (++cacheCount > cacheSize) {
+          cacheCount = 0;
+          prevCache = cache;
+          cache = /* @__PURE__ */ Object.create(null);
+          rotateDoor();
         }
       } else {
-        classGroupId = getClassGroupId(baseClassName);
+        door[slot] = hash ^ doorEpoch;
+        if (++doorMarks > DOOR_SIZE) rotateDoor();
       }
-      if (!classGroupId) {
-        if (!hasPostfixModifier) {
-          result = originalClassName + (result.length > 0 ? " " + result : result);
-          continue;
-        }
-        classGroupId = getClassGroupId(baseClassName);
-        if (!classGroupId) {
-          result = originalClassName + (result.length > 0 ? " " + result : result);
-          continue;
-        }
-        hasPostfixModifier = false;
-      }
-      const variantModifier = modifiers.length === 0 ? "" : modifiers.length === 1 ? modifiers[0] : sortModifiers(modifiers).join(":");
-      const modifierId = hasImportantModifier ? variantModifier + IMPORTANT_MODIFIER : variantModifier;
-      const classId = modifierId + classGroupId;
-      if (classGroupsInConflict.indexOf(classId) > -1) {
-        continue;
-      }
-      classGroupsInConflict.push(classId);
-      const conflictGroups = getConflictingClassGroupIds(classGroupId, hasPostfixModifier);
-      for (let i = 0; i < conflictGroups.length; ++i) {
-        const group = conflictGroups[i];
-        classGroupsInConflict.push(modifierId + group);
-      }
-      result = originalClassName + (result.length > 0 ? " " + result : result);
-    }
-    return result;
-  };
-  var twJoin = (...classLists) => {
-    let index = 0;
-    let argument;
-    let resolvedValue;
-    let string = "";
-    while (index < classLists.length) {
-      if (argument = classLists[index++]) {
-        if (resolvedValue = toValue(argument)) {
-          string && (string += " ");
-          string += resolvedValue;
-        }
-      }
-    }
-    return string;
-  };
-  var toValue = (mix) => {
-    if (typeof mix === "string") {
-      return mix;
-    }
-    let resolvedValue;
-    let string = "";
-    for (let k = 0; k < mix.length; k++) {
-      if (mix[k]) {
-        if (resolvedValue = toValue(mix[k])) {
-          string && (string += " ");
-          string += resolvedValue;
-        }
-      }
-    }
-    return string;
-  };
-  var createTailwindMerge = (createConfigFirst, ...createConfigRest) => {
-    let configUtils;
-    let cacheGet;
-    let cacheSet;
-    let functionToCall;
-    const initTailwindMerge = (classList) => {
-      const config = createConfigRest.reduce((previousConfig, createConfigCurrent) => createConfigCurrent(previousConfig), createConfigFirst());
-      configUtils = createConfigUtils(config);
-      cacheGet = configUtils.cache.get;
-      cacheSet = configUtils.cache.set;
-      functionToCall = tailwindMerge;
-      return tailwindMerge(classList);
+      return merged;
     };
-    const tailwindMerge = (classList) => {
-      const cachedResult = cacheGet(classList);
-      if (cachedResult) {
-        return cachedResult;
+    const mergeCachedMap = (input) => {
+      let merged = cacheMap.get(input);
+      if (merged !== void 0) return merged;
+      const hash = spanHash(input, 0, input.length);
+      const slot = (hash & 16383) + doorBase;
+      const wasSeen = door[slot] === (hash ^ doorEpoch) || door[slot ^ DOOR_SIZE] === (hash ^ doorEpoch - 1);
+      if (wasSeen) {
+        merged = prevCacheMap.get(input);
+        if (merged !== void 0) {
+          cacheMap.set(input, merged);
+          return merged;
+        }
       }
-      const result = mergeClassList(classList, configUtils);
-      cacheSet(classList, result);
-      return result;
+      merged = mergeClassList(input);
+      if (wasSeen) {
+        cacheMap.set(input, merged);
+        if (++cacheCount > cacheSize) {
+          cacheCount = 0;
+          prevCacheMap = cacheMap;
+          cacheMap = /* @__PURE__ */ new Map();
+          rotateDoor();
+        }
+      } else {
+        door[slot] = hash ^ doorEpoch;
+        if (++doorMarks > DOOR_SIZE) rotateDoor();
+      }
+      return merged;
     };
-    functionToCall = initTailwindMerge;
-    return (...args) => functionToCall(twJoin(...args));
-  };
-  var fallbackThemeArr = [];
-  var fromTheme = (key) => {
-    const themeGetter = (theme) => theme[key] || fallbackThemeArr;
-    themeGetter.isThemeGetter = true;
-    themeGetter.themeKey = key;
-    return themeGetter;
-  };
-  var arbitraryValueRegex = /^\[(?:(\w[\w-]*):)?(.+)\]$/i;
-  var arbitraryVariableRegex = /^\((?:(\w[\w-]*):)?(.+)\)$/i;
-  var fractionRegex = /^\d+(?:\.\d+)?\/\d+(?:\.\d+)?$/;
-  var tshirtUnitRegex = /^(\d+(\.\d+)?)?(xs|sm|md|lg|xl)$/;
-  var lengthUnitRegex = /\d+(%|px|r?em|[sdl]?v([hwib]|min|max)|pt|pc|in|cm|mm|cap|ch|ex|r?lh|cq(w|h|i|b|min|max))|\b(calc|min|max|clamp)\(.+\)|^0$/;
-  var colorFunctionRegex = /^(rgba?|hsla?|hwb|(ok)?(lab|lch)|color-mix|color|light-dark)\(.+\)$/;
-  var shadowRegex = /^(inset_)?-?((\d+)?\.?(\d+)[a-z]+|0)_-?((\d+)?\.?(\d+)[a-z]+|0)/;
-  var imageRegex = /^(url|image|image-set|cross-fade|element|(repeating-)?(linear|radial|conic)-gradient)\(.+\)$/;
-  var isFraction = (value) => fractionRegex.test(value);
-  var isNumber = (value) => !!value && !Number.isNaN(Number(value));
-  var isInteger = (value) => !!value && Number.isInteger(Number(value));
-  var isPercent = (value) => value.endsWith("%") && isNumber(value.slice(0, -1));
-  var isTshirtSize = (value) => tshirtUnitRegex.test(value);
-  var isAny = () => true;
-  var isLengthOnly = (value) => (
-    // `colorFunctionRegex` check is necessary because color functions can have percentages in them which which would be incorrectly classified as lengths.
-    // For example, `hsl(0 0% 0%)` would be classified as a length without this check.
-    // I could also use lookbehind assertion in `lengthUnitRegex` but that isn't supported widely enough.
-    lengthUnitRegex.test(value) && !colorFunctionRegex.test(value)
-  );
-  var isNever = () => false;
-  var isShadow = (value) => shadowRegex.test(value);
-  var isImage = (value) => imageRegex.test(value);
-  var isAnyNonArbitrary = (value) => !isArbitraryValue(value) && !isArbitraryVariable(value);
-  var isNamedContainerQuery = (value) => value.startsWith("@container") && (value[10] === "/" && value[11] !== void 0 || value[11] === "s" && value[16] !== void 0 && value.startsWith("-size/", 10) || value[11] === "n" && value[18] !== void 0 && value.startsWith("-normal/", 10));
-  var isArbitrarySize = (value) => getIsArbitraryValue(value, isLabelSize, isNever);
-  var isArbitraryValue = (value) => arbitraryValueRegex.test(value);
-  var isArbitraryLength = (value) => getIsArbitraryValue(value, isLabelLength, isLengthOnly);
-  var isArbitraryNumber = (value) => getIsArbitraryValue(value, isLabelNumber, isNumber);
-  var isArbitraryWeight = (value) => getIsArbitraryValue(value, isLabelWeight, isAny);
-  var isArbitraryFamilyName = (value) => getIsArbitraryValue(value, isLabelFamilyName, isNever);
-  var isArbitraryPosition = (value) => getIsArbitraryValue(value, isLabelPosition, isNever);
-  var isArbitraryImage = (value) => getIsArbitraryValue(value, isLabelImage, isImage);
-  var isArbitraryShadow = (value) => getIsArbitraryValue(value, isLabelShadow, isShadow);
-  var isArbitraryVariable = (value) => arbitraryVariableRegex.test(value);
-  var isArbitraryVariableLength = (value) => getIsArbitraryVariable(value, isLabelLength);
-  var isArbitraryVariableFamilyName = (value) => getIsArbitraryVariable(value, isLabelFamilyName);
-  var isArbitraryVariablePosition = (value) => getIsArbitraryVariable(value, isLabelPosition);
-  var isArbitraryVariableSize = (value) => getIsArbitraryVariable(value, isLabelSize);
-  var isArbitraryVariableImage = (value) => getIsArbitraryVariable(value, isLabelImage);
-  var isArbitraryVariableShadow = (value) => getIsArbitraryVariable(value, isLabelShadow, true);
-  var isArbitraryVariableWeight = (value) => getIsArbitraryVariable(value, isLabelWeight, true);
-  var getIsArbitraryValue = (value, testLabel, testValue) => {
-    const result = arbitraryValueRegex.exec(value);
-    if (result) {
-      if (result[1]) {
-        return testLabel(result[1]);
-      }
-      return testValue(result[2]);
-    }
-    return false;
-  };
-  var getIsArbitraryVariable = (value, testLabel, shouldMatchNoLabel = false) => {
-    const result = arbitraryVariableRegex.exec(value);
-    if (result) {
-      if (result[1]) {
-        return testLabel(result[1]);
-      }
-      return shouldMatchNoLabel;
-    }
-    return false;
-  };
-  var isLabelPosition = (label) => label === "position" || label === "percentage";
-  var isLabelImage = (label) => label === "image" || label === "url";
-  var isLabelSize = (label) => label === "length" || label === "size" || label === "bg-size";
-  var isLabelLength = (label) => label === "length";
-  var isLabelNumber = (label) => label === "number";
-  var isLabelFamilyName = (label) => label === "family-name";
-  var isLabelWeight = (label) => label === "number" || label === "weight";
-  var isLabelShadow = (label) => label === "shadow";
-  var getDefaultConfig = () => {
-    const themeColor = fromTheme("color");
-    const themeFont = fromTheme("font");
-    const themeText = fromTheme("text");
-    const themeFontWeight = fromTheme("font-weight");
-    const themeTracking = fromTheme("tracking");
-    const themeLeading = fromTheme("leading");
-    const themeBreakpoint = fromTheme("breakpoint");
-    const themeContainer = fromTheme("container");
-    const themeSpacing = fromTheme("spacing");
-    const themeRadius = fromTheme("radius");
-    const themeShadow = fromTheme("shadow");
-    const themeInsetShadow = fromTheme("inset-shadow");
-    const themeTextShadow = fromTheme("text-shadow");
-    const themeDropShadow = fromTheme("drop-shadow");
-    const themeBlur = fromTheme("blur");
-    const themePerspective = fromTheme("perspective");
-    const themeAspect = fromTheme("aspect");
-    const themeEase = fromTheme("ease");
-    const themeAnimate = fromTheme("animate");
-    const scaleBreak = () => ["auto", "avoid", "all", "avoid-page", "page", "left", "right", "column"];
-    const scalePosition = () => [
-      "center",
-      "top",
-      "bottom",
-      "left",
-      "right",
-      "top-left",
-      // Deprecated since Tailwind CSS v4.1.0, see https://github.com/tailwindlabs/tailwindcss/pull/17378
-      "left-top",
-      "top-right",
-      // Deprecated since Tailwind CSS v4.1.0, see https://github.com/tailwindlabs/tailwindcss/pull/17378
-      "right-top",
-      "bottom-right",
-      // Deprecated since Tailwind CSS v4.1.0, see https://github.com/tailwindlabs/tailwindcss/pull/17378
-      "right-bottom",
-      "bottom-left",
-      // Deprecated since Tailwind CSS v4.1.0, see https://github.com/tailwindlabs/tailwindcss/pull/17378
-      "left-bottom"
-    ];
-    const scalePositionWithArbitrary = () => [...scalePosition(), isArbitraryVariable, isArbitraryValue];
-    const scaleOverflow = () => ["auto", "hidden", "clip", "visible", "scroll"];
-    const scaleOverscroll = () => ["auto", "contain", "none"];
-    const scaleUnambiguousSpacing = () => [isArbitraryVariable, isArbitraryValue, themeSpacing];
-    const scaleInset = () => [isFraction, "full", "auto", ...scaleUnambiguousSpacing()];
-    const scaleGridTemplateColsRows = () => [isInteger, "none", "subgrid", isArbitraryVariable, isArbitraryValue];
-    const scaleGridColRowStartAndEnd = () => ["auto", {
-      span: ["full", isInteger, isArbitraryVariable, isArbitraryValue]
-    }, isInteger, isArbitraryVariable, isArbitraryValue];
-    const scaleGridColRowStartOrEnd = () => [isInteger, "auto", isArbitraryVariable, isArbitraryValue];
-    const scaleGridAutoColsRows = () => ["auto", "min", "max", "fr", isArbitraryVariable, isArbitraryValue];
-    const scaleAlignPrimaryAxis = () => ["start", "end", "center", "between", "around", "evenly", "stretch", "baseline", "center-safe", "end-safe"];
-    const scaleAlignSecondaryAxis = () => ["start", "end", "center", "stretch", "center-safe", "end-safe"];
-    const scaleMargin = () => ["auto", ...scaleUnambiguousSpacing()];
-    const scaleSizing = () => [isFraction, "auto", "full", "dvw", "dvh", "lvw", "lvh", "svw", "svh", "min", "max", "fit", ...scaleUnambiguousSpacing()];
-    const scaleSizingInline = () => [themeContainer, isFraction, "screen", "full", "dvw", "lvw", "svw", "min", "max", "fit", ...scaleUnambiguousSpacing()];
-    const scaleSizingBlock = () => [isFraction, "screen", "full", "lh", "dvh", "lvh", "svh", "min", "max", "fit", ...scaleUnambiguousSpacing()];
-    const scaleColor = () => [themeColor, isArbitraryVariable, isArbitraryValue];
-    const scaleBgPosition = () => [...scalePosition(), isArbitraryVariablePosition, isArbitraryPosition, {
-      position: [isArbitraryVariable, isArbitraryValue]
-    }];
-    const scaleBgRepeat = () => ["no-repeat", {
-      repeat: ["", "x", "y", "space", "round"]
-    }];
-    const scaleBgSize = () => ["auto", "cover", "contain", isArbitraryVariableSize, isArbitrarySize, {
-      size: [isArbitraryVariable, isArbitraryValue]
-    }];
-    const scaleGradientStopPosition = () => [isPercent, isArbitraryVariableLength, isArbitraryLength];
-    const scaleRadius = () => [
-      // Deprecated since Tailwind CSS v4.0.0
-      "",
-      "none",
-      "full",
-      themeRadius,
-      isArbitraryVariable,
-      isArbitraryValue
-    ];
-    const scaleBorderWidth = () => ["", isNumber, isArbitraryVariableLength, isArbitraryLength];
-    const scaleLineStyle = () => ["solid", "dashed", "dotted", "double"];
-    const scaleBlendMode = () => ["normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion", "hue", "saturation", "color", "luminosity"];
-    const scaleMaskImagePosition = () => [isNumber, isPercent, isArbitraryVariablePosition, isArbitraryPosition];
-    const scaleBlur = () => [
-      // Deprecated since Tailwind CSS v4.0.0
-      "",
-      "none",
-      themeBlur,
-      isArbitraryVariable,
-      isArbitraryValue
-    ];
-    const scaleRotate = () => ["none", isNumber, isArbitraryVariable, isArbitraryValue];
-    const scaleScale = () => ["none", isNumber, isArbitraryVariable, isArbitraryValue];
-    const scaleSkew = () => [isNumber, isArbitraryVariable, isArbitraryValue];
-    const scaleTranslate = () => [isFraction, "full", ...scaleUnambiguousSpacing()];
+    const seenBefore = (input) => {
+      const hash = spanHash(input, 0, input.length);
+      const slot = (hash & 16383) + doorBase;
+      if (door[slot] === (hash ^ doorEpoch) || door[slot ^ DOOR_SIZE] === (hash ^ doorEpoch - 1)) return true;
+      door[slot] = hash ^ doorEpoch;
+      if (++doorMarks > DOOR_SIZE) rotateDoor();
+      return false;
+    };
+    const mergeString = cacheSize === 0 ? mergeClassList : IS_JSC ? (input) => {
+      const merged = cacheMap.get(input);
+      return merged !== void 0 ? merged : mergeCachedMap(input);
+    } : mergeCached;
+    const merge = function() {
+      return arguments.length === 1 && typeof arguments[0] === "string" ? mergeString(arguments[0]) : mergeString(twJoin.apply(null, arguments));
+    };
     return {
-      cacheSize: 500,
-      theme: {
-        animate: ["spin", "ping", "pulse", "bounce"],
-        aspect: ["video"],
-        blur: [isTshirtSize],
-        breakpoint: [isTshirtSize],
-        color: [isAny],
-        container: [isTshirtSize],
-        "drop-shadow": [isTshirtSize],
-        ease: ["in", "out", "in-out"],
-        font: [isAnyNonArbitrary],
-        "font-weight": ["thin", "extralight", "light", "normal", "medium", "semibold", "bold", "extrabold", "black"],
-        "inset-shadow": [isTshirtSize],
-        leading: ["none", "tight", "snug", "normal", "relaxed", "loose"],
-        perspective: ["dramatic", "near", "normal", "midrange", "distant", "none"],
-        radius: [isTshirtSize],
-        shadow: [isTshirtSize],
-        spacing: ["px", isNumber],
-        text: [isTshirtSize],
-        "text-shadow": [isTshirtSize],
-        tracking: ["tighter", "tight", "normal", "wide", "wider", "widest"]
-      },
-      classGroups: {
-        // --------------
-        // --- Layout ---
-        // --------------
-        /**
-         * Aspect Ratio
-         * @see https://tailwindcss.com/docs/aspect-ratio
-         */
-        aspect: [{
-          aspect: ["auto", "square", isFraction, isArbitraryValue, isArbitraryVariable, themeAspect]
-        }],
-        /**
-         * Container
-         * @see https://tailwindcss.com/docs/container
-         * @deprecated since Tailwind CSS v4.0.0
-         */
-        container: ["container"],
-        /**
-         * Container Type
-         * @see https://tailwindcss.com/docs/responsive-design#container-queries
-         */
-        "container-type": [{
-          "@container": ["", "normal", "size", isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Container Name
-         * @see https://tailwindcss.com/docs/responsive-design#named-containers
-         */
-        "container-named": [isNamedContainerQuery],
-        /**
-         * Columns
-         * @see https://tailwindcss.com/docs/columns
-         */
-        columns: [{
-          columns: [isNumber, "auto", isArbitraryValue, isArbitraryVariable, themeContainer]
-        }],
-        /**
-         * Break After
-         * @see https://tailwindcss.com/docs/break-after
-         */
-        "break-after": [{
-          "break-after": scaleBreak()
-        }],
-        /**
-         * Break Before
-         * @see https://tailwindcss.com/docs/break-before
-         */
-        "break-before": [{
-          "break-before": scaleBreak()
-        }],
-        /**
-         * Break Inside
-         * @see https://tailwindcss.com/docs/break-inside
-         */
-        "break-inside": [{
-          "break-inside": ["auto", "avoid", "avoid-page", "avoid-column"]
-        }],
-        /**
-         * Box Decoration Break
-         * @see https://tailwindcss.com/docs/box-decoration-break
-         */
-        "box-decoration": [{
-          "box-decoration": ["slice", "clone"]
-        }],
-        /**
-         * Box Sizing
-         * @see https://tailwindcss.com/docs/box-sizing
-         */
-        box: [{
-          box: ["border", "content"]
-        }],
-        /**
-         * Display
-         * @see https://tailwindcss.com/docs/display
-         */
-        display: ["block", "inline-block", "inline", "flex", "inline-flex", "table", "inline-table", "table-caption", "table-cell", "table-column", "table-column-group", "table-footer-group", "table-header-group", "table-row-group", "table-row", "flow-root", "grid", "inline-grid", "contents", "list-item", "hidden"],
-        /**
-         * Screen Reader Only
-         * @see https://tailwindcss.com/docs/display#screen-reader-only
-         */
-        sr: ["sr-only", "not-sr-only"],
-        /**
-         * Floats
-         * @see https://tailwindcss.com/docs/float
-         */
-        float: [{
-          float: ["right", "left", "none", "start", "end"]
-        }],
-        /**
-         * Clear
-         * @see https://tailwindcss.com/docs/clear
-         */
-        clear: [{
-          clear: ["left", "right", "both", "none", "start", "end"]
-        }],
-        /**
-         * Isolation
-         * @see https://tailwindcss.com/docs/isolation
-         */
-        isolation: ["isolate", "isolation-auto"],
-        /**
-         * Object Fit
-         * @see https://tailwindcss.com/docs/object-fit
-         */
-        "object-fit": [{
-          object: ["contain", "cover", "fill", "none", "scale-down"]
-        }],
-        /**
-         * Object Position
-         * @see https://tailwindcss.com/docs/object-position
-         */
-        "object-position": [{
-          object: scalePositionWithArbitrary()
-        }],
-        /**
-         * Overflow
-         * @see https://tailwindcss.com/docs/overflow
-         */
-        overflow: [{
-          overflow: scaleOverflow()
-        }],
-        /**
-         * Overflow X
-         * @see https://tailwindcss.com/docs/overflow
-         */
-        "overflow-x": [{
-          "overflow-x": scaleOverflow()
-        }],
-        /**
-         * Overflow Y
-         * @see https://tailwindcss.com/docs/overflow
-         */
-        "overflow-y": [{
-          "overflow-y": scaleOverflow()
-        }],
-        /**
-         * Overscroll Behavior
-         * @see https://tailwindcss.com/docs/overscroll-behavior
-         */
-        overscroll: [{
-          overscroll: scaleOverscroll()
-        }],
-        /**
-         * Overscroll Behavior X
-         * @see https://tailwindcss.com/docs/overscroll-behavior
-         */
-        "overscroll-x": [{
-          "overscroll-x": scaleOverscroll()
-        }],
-        /**
-         * Overscroll Behavior Y
-         * @see https://tailwindcss.com/docs/overscroll-behavior
-         */
-        "overscroll-y": [{
-          "overscroll-y": scaleOverscroll()
-        }],
-        /**
-         * Position
-         * @see https://tailwindcss.com/docs/position
-         */
-        position: ["static", "fixed", "absolute", "relative", "sticky"],
-        /**
-         * Inset
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         */
-        inset: [{
-          inset: scaleInset()
-        }],
-        /**
-         * Inset Inline
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         */
-        "inset-x": [{
-          "inset-x": scaleInset()
-        }],
-        /**
-         * Inset Block
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         */
-        "inset-y": [{
-          "inset-y": scaleInset()
-        }],
-        /**
-         * Inset Inline Start
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         * @todo class group will be renamed to `inset-s` in next major release
-         */
-        start: [{
-          "inset-s": scaleInset(),
-          /**
-           * @deprecated since Tailwind CSS v4.2.0 in favor of `inset-s-*` utilities.
-           * @see https://github.com/tailwindlabs/tailwindcss/pull/19613
-           */
-          start: scaleInset()
-        }],
-        /**
-         * Inset Inline End
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         * @todo class group will be renamed to `inset-e` in next major release
-         */
-        end: [{
-          "inset-e": scaleInset(),
-          /**
-           * @deprecated since Tailwind CSS v4.2.0 in favor of `inset-e-*` utilities.
-           * @see https://github.com/tailwindlabs/tailwindcss/pull/19613
-           */
-          end: scaleInset()
-        }],
-        /**
-         * Inset Block Start
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         */
-        "inset-bs": [{
-          "inset-bs": scaleInset()
-        }],
-        /**
-         * Inset Block End
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         */
-        "inset-be": [{
-          "inset-be": scaleInset()
-        }],
-        /**
-         * Top
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         */
-        top: [{
-          top: scaleInset()
-        }],
-        /**
-         * Right
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         */
-        right: [{
-          right: scaleInset()
-        }],
-        /**
-         * Bottom
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         */
-        bottom: [{
-          bottom: scaleInset()
-        }],
-        /**
-         * Left
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         */
-        left: [{
-          left: scaleInset()
-        }],
-        /**
-         * Visibility
-         * @see https://tailwindcss.com/docs/visibility
-         */
-        visibility: ["visible", "invisible", "collapse"],
-        /**
-         * Z-Index
-         * @see https://tailwindcss.com/docs/z-index
-         */
-        z: [{
-          z: [isInteger, "auto", isArbitraryVariable, isArbitraryValue]
-        }],
-        // ------------------------
-        // --- Flexbox and Grid ---
-        // ------------------------
-        /**
-         * Flex Basis
-         * @see https://tailwindcss.com/docs/flex-basis
-         */
-        basis: [{
-          basis: [isFraction, "full", "auto", themeContainer, ...scaleUnambiguousSpacing()]
-        }],
-        /**
-         * Flex Direction
-         * @see https://tailwindcss.com/docs/flex-direction
-         */
-        "flex-direction": [{
-          flex: ["row", "row-reverse", "col", "col-reverse"]
-        }],
-        /**
-         * Flex Wrap
-         * @see https://tailwindcss.com/docs/flex-wrap
-         */
-        "flex-wrap": [{
-          flex: ["nowrap", "wrap", "wrap-reverse"]
-        }],
-        /**
-         * Flex
-         * @see https://tailwindcss.com/docs/flex
-         */
-        flex: [{
-          flex: [isNumber, isFraction, "auto", "initial", "none", isArbitraryValue]
-        }],
-        /**
-         * Flex Grow
-         * @see https://tailwindcss.com/docs/flex-grow
-         */
-        grow: [{
-          grow: ["", isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Flex Shrink
-         * @see https://tailwindcss.com/docs/flex-shrink
-         */
-        shrink: [{
-          shrink: ["", isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Order
-         * @see https://tailwindcss.com/docs/order
-         */
-        order: [{
-          order: [isInteger, "first", "last", "none", isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Grid Template Columns
-         * @see https://tailwindcss.com/docs/grid-template-columns
-         */
-        "grid-cols": [{
-          "grid-cols": scaleGridTemplateColsRows()
-        }],
-        /**
-         * Grid Column Start / End
-         * @see https://tailwindcss.com/docs/grid-column
-         */
-        "col-start-end": [{
-          col: scaleGridColRowStartAndEnd()
-        }],
-        /**
-         * Grid Column Start
-         * @see https://tailwindcss.com/docs/grid-column
-         */
-        "col-start": [{
-          "col-start": scaleGridColRowStartOrEnd()
-        }],
-        /**
-         * Grid Column End
-         * @see https://tailwindcss.com/docs/grid-column
-         */
-        "col-end": [{
-          "col-end": scaleGridColRowStartOrEnd()
-        }],
-        /**
-         * Grid Template Rows
-         * @see https://tailwindcss.com/docs/grid-template-rows
-         */
-        "grid-rows": [{
-          "grid-rows": scaleGridTemplateColsRows()
-        }],
-        /**
-         * Grid Row Start / End
-         * @see https://tailwindcss.com/docs/grid-row
-         */
-        "row-start-end": [{
-          row: scaleGridColRowStartAndEnd()
-        }],
-        /**
-         * Grid Row Start
-         * @see https://tailwindcss.com/docs/grid-row
-         */
-        "row-start": [{
-          "row-start": scaleGridColRowStartOrEnd()
-        }],
-        /**
-         * Grid Row End
-         * @see https://tailwindcss.com/docs/grid-row
-         */
-        "row-end": [{
-          "row-end": scaleGridColRowStartOrEnd()
-        }],
-        /**
-         * Grid Auto Flow
-         * @see https://tailwindcss.com/docs/grid-auto-flow
-         */
-        "grid-flow": [{
-          "grid-flow": ["row", "col", "dense", "row-dense", "col-dense"]
-        }],
-        /**
-         * Grid Auto Columns
-         * @see https://tailwindcss.com/docs/grid-auto-columns
-         */
-        "auto-cols": [{
-          "auto-cols": scaleGridAutoColsRows()
-        }],
-        /**
-         * Grid Auto Rows
-         * @see https://tailwindcss.com/docs/grid-auto-rows
-         */
-        "auto-rows": [{
-          "auto-rows": scaleGridAutoColsRows()
-        }],
-        /**
-         * Gap
-         * @see https://tailwindcss.com/docs/gap
-         */
-        gap: [{
-          gap: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Gap X
-         * @see https://tailwindcss.com/docs/gap
-         */
-        "gap-x": [{
-          "gap-x": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Gap Y
-         * @see https://tailwindcss.com/docs/gap
-         */
-        "gap-y": [{
-          "gap-y": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Justify Content
-         * @see https://tailwindcss.com/docs/justify-content
-         */
-        "justify-content": [{
-          justify: [...scaleAlignPrimaryAxis(), "normal"]
-        }],
-        /**
-         * Justify Items
-         * @see https://tailwindcss.com/docs/justify-items
-         */
-        "justify-items": [{
-          "justify-items": [...scaleAlignSecondaryAxis(), "normal"]
-        }],
-        /**
-         * Justify Self
-         * @see https://tailwindcss.com/docs/justify-self
-         */
-        "justify-self": [{
-          "justify-self": ["auto", ...scaleAlignSecondaryAxis()]
-        }],
-        /**
-         * Align Content
-         * @see https://tailwindcss.com/docs/align-content
-         */
-        "align-content": [{
-          content: ["normal", ...scaleAlignPrimaryAxis()]
-        }],
-        /**
-         * Align Items
-         * @see https://tailwindcss.com/docs/align-items
-         */
-        "align-items": [{
-          items: [...scaleAlignSecondaryAxis(), {
-            baseline: ["", "last"]
-          }]
-        }],
-        /**
-         * Align Self
-         * @see https://tailwindcss.com/docs/align-self
-         */
-        "align-self": [{
-          self: ["auto", ...scaleAlignSecondaryAxis(), {
-            baseline: ["", "last"]
-          }]
-        }],
-        /**
-         * Place Content
-         * @see https://tailwindcss.com/docs/place-content
-         */
-        "place-content": [{
-          "place-content": scaleAlignPrimaryAxis()
-        }],
-        /**
-         * Place Items
-         * @see https://tailwindcss.com/docs/place-items
-         */
-        "place-items": [{
-          "place-items": [...scaleAlignSecondaryAxis(), "baseline"]
-        }],
-        /**
-         * Place Self
-         * @see https://tailwindcss.com/docs/place-self
-         */
-        "place-self": [{
-          "place-self": ["auto", ...scaleAlignSecondaryAxis()]
-        }],
-        // Spacing
-        /**
-         * Padding
-         * @see https://tailwindcss.com/docs/padding
-         */
-        p: [{
-          p: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Inline
-         * @see https://tailwindcss.com/docs/padding
-         */
-        px: [{
-          px: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Block
-         * @see https://tailwindcss.com/docs/padding
-         */
-        py: [{
-          py: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Inline Start
-         * @see https://tailwindcss.com/docs/padding
-         */
-        ps: [{
-          ps: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Inline End
-         * @see https://tailwindcss.com/docs/padding
-         */
-        pe: [{
-          pe: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Block Start
-         * @see https://tailwindcss.com/docs/padding
-         */
-        pbs: [{
-          pbs: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Block End
-         * @see https://tailwindcss.com/docs/padding
-         */
-        pbe: [{
-          pbe: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Top
-         * @see https://tailwindcss.com/docs/padding
-         */
-        pt: [{
-          pt: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Right
-         * @see https://tailwindcss.com/docs/padding
-         */
-        pr: [{
-          pr: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Bottom
-         * @see https://tailwindcss.com/docs/padding
-         */
-        pb: [{
-          pb: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Left
-         * @see https://tailwindcss.com/docs/padding
-         */
-        pl: [{
-          pl: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Margin
-         * @see https://tailwindcss.com/docs/margin
-         */
-        m: [{
-          m: scaleMargin()
-        }],
-        /**
-         * Margin Inline
-         * @see https://tailwindcss.com/docs/margin
-         */
-        mx: [{
-          mx: scaleMargin()
-        }],
-        /**
-         * Margin Block
-         * @see https://tailwindcss.com/docs/margin
-         */
-        my: [{
-          my: scaleMargin()
-        }],
-        /**
-         * Margin Inline Start
-         * @see https://tailwindcss.com/docs/margin
-         */
-        ms: [{
-          ms: scaleMargin()
-        }],
-        /**
-         * Margin Inline End
-         * @see https://tailwindcss.com/docs/margin
-         */
-        me: [{
-          me: scaleMargin()
-        }],
-        /**
-         * Margin Block Start
-         * @see https://tailwindcss.com/docs/margin
-         */
-        mbs: [{
-          mbs: scaleMargin()
-        }],
-        /**
-         * Margin Block End
-         * @see https://tailwindcss.com/docs/margin
-         */
-        mbe: [{
-          mbe: scaleMargin()
-        }],
-        /**
-         * Margin Top
-         * @see https://tailwindcss.com/docs/margin
-         */
-        mt: [{
-          mt: scaleMargin()
-        }],
-        /**
-         * Margin Right
-         * @see https://tailwindcss.com/docs/margin
-         */
-        mr: [{
-          mr: scaleMargin()
-        }],
-        /**
-         * Margin Bottom
-         * @see https://tailwindcss.com/docs/margin
-         */
-        mb: [{
-          mb: scaleMargin()
-        }],
-        /**
-         * Margin Left
-         * @see https://tailwindcss.com/docs/margin
-         */
-        ml: [{
-          ml: scaleMargin()
-        }],
-        /**
-         * Space Between X
-         * @see https://tailwindcss.com/docs/margin#adding-space-between-children
-         */
-        "space-x": [{
-          "space-x": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Space Between X Reverse
-         * @see https://tailwindcss.com/docs/margin#adding-space-between-children
-         */
-        "space-x-reverse": ["space-x-reverse"],
-        /**
-         * Space Between Y
-         * @see https://tailwindcss.com/docs/margin#adding-space-between-children
-         */
-        "space-y": [{
-          "space-y": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Space Between Y Reverse
-         * @see https://tailwindcss.com/docs/margin#adding-space-between-children
-         */
-        "space-y-reverse": ["space-y-reverse"],
-        // --------------
-        // --- Sizing ---
-        // --------------
-        /**
-         * Size
-         * @see https://tailwindcss.com/docs/width#setting-both-width-and-height
-         */
-        size: [{
-          size: scaleSizing()
-        }],
-        /**
-         * Inline Size
-         * @see https://tailwindcss.com/docs/inline-size
-         */
-        "inline-size": [{
-          inline: ["auto", ...scaleSizingInline()]
-        }],
-        /**
-         * Min-Inline Size
-         * @see https://tailwindcss.com/docs/min-inline-size
-         */
-        "min-inline-size": [{
-          "min-inline": ["auto", ...scaleSizingInline()]
-        }],
-        /**
-         * Max-Inline Size
-         * @see https://tailwindcss.com/docs/max-inline-size
-         */
-        "max-inline-size": [{
-          "max-inline": ["none", ...scaleSizingInline()]
-        }],
-        /**
-         * Block Size
-         * @see https://tailwindcss.com/docs/block-size
-         */
-        "block-size": [{
-          block: ["auto", ...scaleSizingBlock()]
-        }],
-        /**
-         * Min-Block Size
-         * @see https://tailwindcss.com/docs/min-block-size
-         */
-        "min-block-size": [{
-          "min-block": ["auto", ...scaleSizingBlock()]
-        }],
-        /**
-         * Max-Block Size
-         * @see https://tailwindcss.com/docs/max-block-size
-         */
-        "max-block-size": [{
-          "max-block": ["none", ...scaleSizingBlock()]
-        }],
-        /**
-         * Width
-         * @see https://tailwindcss.com/docs/width
-         */
-        w: [{
-          w: [themeContainer, "screen", ...scaleSizing()]
-        }],
-        /**
-         * Min-Width
-         * @see https://tailwindcss.com/docs/min-width
-         */
-        "min-w": [{
-          "min-w": [
-            themeContainer,
-            "screen",
-            /** Deprecated. @see https://github.com/tailwindlabs/tailwindcss.com/issues/2027#issuecomment-2620152757 */
-            "none",
-            ...scaleSizing()
-          ]
-        }],
-        /**
-         * Max-Width
-         * @see https://tailwindcss.com/docs/max-width
-         */
-        "max-w": [{
-          "max-w": [
-            themeContainer,
-            "screen",
-            "none",
-            /** Deprecated since Tailwind CSS v4.0.0. @see https://github.com/tailwindlabs/tailwindcss.com/issues/2027#issuecomment-2620152757 */
-            "prose",
-            /** Deprecated since Tailwind CSS v4.0.0. @see https://github.com/tailwindlabs/tailwindcss.com/issues/2027#issuecomment-2620152757 */
-            {
-              screen: [themeBreakpoint]
-            },
-            ...scaleSizing()
-          ]
-        }],
-        /**
-         * Height
-         * @see https://tailwindcss.com/docs/height
-         */
-        h: [{
-          h: ["screen", "lh", ...scaleSizing()]
-        }],
-        /**
-         * Min-Height
-         * @see https://tailwindcss.com/docs/min-height
-         */
-        "min-h": [{
-          "min-h": ["screen", "lh", "none", ...scaleSizing()]
-        }],
-        /**
-         * Max-Height
-         * @see https://tailwindcss.com/docs/max-height
-         */
-        "max-h": [{
-          "max-h": ["screen", "lh", "none", ...scaleSizing()]
-        }],
-        // ------------------
-        // --- Typography ---
-        // ------------------
-        /**
-         * Font Size
-         * @see https://tailwindcss.com/docs/font-size
-         */
-        "font-size": [{
-          text: ["base", themeText, isArbitraryVariableLength, isArbitraryLength]
-        }],
-        /**
-         * Font Smoothing
-         * @see https://tailwindcss.com/docs/font-smoothing
-         */
-        "font-smoothing": ["antialiased", "subpixel-antialiased"],
-        /**
-         * Font Style
-         * @see https://tailwindcss.com/docs/font-style
-         */
-        "font-style": ["italic", "not-italic"],
-        /**
-         * Font Weight
-         * @see https://tailwindcss.com/docs/font-weight
-         */
-        "font-weight": [{
-          font: [themeFontWeight, isArbitraryVariableWeight, isArbitraryWeight]
-        }],
-        /**
-         * Font Stretch
-         * @see https://tailwindcss.com/docs/font-stretch
-         */
-        "font-stretch": [{
-          "font-stretch": ["ultra-condensed", "extra-condensed", "condensed", "semi-condensed", "normal", "semi-expanded", "expanded", "extra-expanded", "ultra-expanded", isPercent, isArbitraryValue]
-        }],
-        /**
-         * Font Family
-         * @see https://tailwindcss.com/docs/font-family
-         */
-        "font-family": [{
-          font: [isArbitraryVariableFamilyName, isArbitraryFamilyName, themeFont]
-        }],
-        /**
-         * Font Feature Settings
-         * @see https://tailwindcss.com/docs/font-feature-settings
-         */
-        "font-features": [{
-          "font-features": [isArbitraryValue]
-        }],
-        /**
-         * Font Variant Numeric
-         * @see https://tailwindcss.com/docs/font-variant-numeric
-         */
-        "fvn-normal": ["normal-nums"],
-        /**
-         * Font Variant Numeric
-         * @see https://tailwindcss.com/docs/font-variant-numeric
-         */
-        "fvn-ordinal": ["ordinal"],
-        /**
-         * Font Variant Numeric
-         * @see https://tailwindcss.com/docs/font-variant-numeric
-         */
-        "fvn-slashed-zero": ["slashed-zero"],
-        /**
-         * Font Variant Numeric
-         * @see https://tailwindcss.com/docs/font-variant-numeric
-         */
-        "fvn-figure": ["lining-nums", "oldstyle-nums"],
-        /**
-         * Font Variant Numeric
-         * @see https://tailwindcss.com/docs/font-variant-numeric
-         */
-        "fvn-spacing": ["proportional-nums", "tabular-nums"],
-        /**
-         * Font Variant Numeric
-         * @see https://tailwindcss.com/docs/font-variant-numeric
-         */
-        "fvn-fraction": ["diagonal-fractions", "stacked-fractions"],
-        /**
-         * Letter Spacing
-         * @see https://tailwindcss.com/docs/letter-spacing
-         */
-        tracking: [{
-          tracking: [themeTracking, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Line Clamp
-         * @see https://tailwindcss.com/docs/line-clamp
-         */
-        "line-clamp": [{
-          "line-clamp": [isNumber, "none", isArbitraryVariable, isArbitraryNumber]
-        }],
-        /**
-         * Line Height
-         * @see https://tailwindcss.com/docs/line-height
-         */
-        leading: [{
-          leading: [
-            "none",
-            /** Deprecated since Tailwind CSS v4.0.0. @see https://github.com/tailwindlabs/tailwindcss.com/issues/2027#issuecomment-2620152757 */
-            themeLeading,
-            ...scaleUnambiguousSpacing()
-          ]
-        }],
-        /**
-         * List Style Image
-         * @see https://tailwindcss.com/docs/list-style-image
-         */
-        "list-image": [{
-          "list-image": ["none", isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * List Style Position
-         * @see https://tailwindcss.com/docs/list-style-position
-         */
-        "list-style-position": [{
-          list: ["inside", "outside"]
-        }],
-        /**
-         * List Style Type
-         * @see https://tailwindcss.com/docs/list-style-type
-         */
-        "list-style-type": [{
-          list: ["disc", "decimal", "none", isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Text Alignment
-         * @see https://tailwindcss.com/docs/text-align
-         */
-        "text-alignment": [{
-          text: ["left", "center", "right", "justify", "start", "end"]
-        }],
-        /**
-         * Placeholder Color
-         * @deprecated since Tailwind CSS v3.0.0
-         * @see https://v3.tailwindcss.com/docs/placeholder-color
-         */
-        "placeholder-color": [{
-          placeholder: scaleColor()
-        }],
-        /**
-         * Text Color
-         * @see https://tailwindcss.com/docs/text-color
-         */
-        "text-color": [{
-          text: scaleColor()
-        }],
-        /**
-         * Text Decoration
-         * @see https://tailwindcss.com/docs/text-decoration
-         */
-        "text-decoration": ["underline", "overline", "line-through", "no-underline"],
-        /**
-         * Text Decoration Style
-         * @see https://tailwindcss.com/docs/text-decoration-style
-         */
-        "text-decoration-style": [{
-          decoration: [...scaleLineStyle(), "wavy"]
-        }],
-        /**
-         * Text Decoration Thickness
-         * @see https://tailwindcss.com/docs/text-decoration-thickness
-         */
-        "text-decoration-thickness": [{
-          decoration: [isNumber, "from-font", "auto", isArbitraryVariable, isArbitraryLength]
-        }],
-        /**
-         * Text Decoration Color
-         * @see https://tailwindcss.com/docs/text-decoration-color
-         */
-        "text-decoration-color": [{
-          decoration: scaleColor()
-        }],
-        /**
-         * Text Underline Offset
-         * @see https://tailwindcss.com/docs/text-underline-offset
-         */
-        "underline-offset": [{
-          "underline-offset": [isNumber, "auto", isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Text Transform
-         * @see https://tailwindcss.com/docs/text-transform
-         */
-        "text-transform": ["uppercase", "lowercase", "capitalize", "normal-case"],
-        /**
-         * Text Overflow
-         * @see https://tailwindcss.com/docs/text-overflow
-         */
-        "text-overflow": ["truncate", "text-ellipsis", "text-clip"],
-        /**
-         * Text Wrap
-         * @see https://tailwindcss.com/docs/text-wrap
-         */
-        "text-wrap": [{
-          text: ["wrap", "nowrap", "balance", "pretty"]
-        }],
-        /**
-         * Text Indent
-         * @see https://tailwindcss.com/docs/text-indent
-         */
-        indent: [{
-          indent: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Tab Size
-         * @see https://tailwindcss.com/docs/tab-size
-         */
-        "tab-size": [{
-          tab: [isInteger, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Vertical Alignment
-         * @see https://tailwindcss.com/docs/vertical-align
-         */
-        "vertical-align": [{
-          align: ["baseline", "top", "middle", "bottom", "text-top", "text-bottom", "sub", "super", isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Whitespace
-         * @see https://tailwindcss.com/docs/whitespace
-         */
-        whitespace: [{
-          whitespace: ["normal", "nowrap", "pre", "pre-line", "pre-wrap", "break-spaces"]
-        }],
-        /**
-         * Word Break
-         * @see https://tailwindcss.com/docs/word-break
-         */
-        break: [{
-          break: ["normal", "words", "all", "keep"]
-        }],
-        /**
-         * Overflow Wrap
-         * @see https://tailwindcss.com/docs/overflow-wrap
-         */
-        wrap: [{
-          wrap: ["break-word", "anywhere", "normal"]
-        }],
-        /**
-         * Hyphens
-         * @see https://tailwindcss.com/docs/hyphens
-         */
-        hyphens: [{
-          hyphens: ["none", "manual", "auto"]
-        }],
-        /**
-         * Content
-         * @see https://tailwindcss.com/docs/content
-         */
-        content: [{
-          content: ["none", isArbitraryVariable, isArbitraryValue]
-        }],
-        // -------------------
-        // --- Backgrounds ---
-        // -------------------
-        /**
-         * Background Attachment
-         * @see https://tailwindcss.com/docs/background-attachment
-         */
-        "bg-attachment": [{
-          bg: ["fixed", "local", "scroll"]
-        }],
-        /**
-         * Background Clip
-         * @see https://tailwindcss.com/docs/background-clip
-         */
-        "bg-clip": [{
-          "bg-clip": ["border", "padding", "content", "text"]
-        }],
-        /**
-         * Background Origin
-         * @see https://tailwindcss.com/docs/background-origin
-         */
-        "bg-origin": [{
-          "bg-origin": ["border", "padding", "content"]
-        }],
-        /**
-         * Background Position
-         * @see https://tailwindcss.com/docs/background-position
-         */
-        "bg-position": [{
-          bg: scaleBgPosition()
-        }],
-        /**
-         * Background Repeat
-         * @see https://tailwindcss.com/docs/background-repeat
-         */
-        "bg-repeat": [{
-          bg: scaleBgRepeat()
-        }],
-        /**
-         * Background Size
-         * @see https://tailwindcss.com/docs/background-size
-         */
-        "bg-size": [{
-          bg: scaleBgSize()
-        }],
-        /**
-         * Background Image
-         * @see https://tailwindcss.com/docs/background-image
-         */
-        "bg-image": [{
-          bg: ["none", {
-            linear: [{
-              to: ["t", "tr", "r", "br", "b", "bl", "l", "tl"]
-            }, isInteger, isArbitraryVariable, isArbitraryValue],
-            radial: ["", isArbitraryVariable, isArbitraryValue],
-            conic: ["", isInteger, isArbitraryVariable, isArbitraryValue]
-          }, isArbitraryVariableImage, isArbitraryImage]
-        }],
-        /**
-         * Background Color
-         * @see https://tailwindcss.com/docs/background-color
-         */
-        "bg-color": [{
-          bg: scaleColor()
-        }],
-        /**
-         * Gradient Color Stops From Position
-         * @see https://tailwindcss.com/docs/gradient-color-stops
-         */
-        "gradient-from-pos": [{
-          from: scaleGradientStopPosition()
-        }],
-        /**
-         * Gradient Color Stops Via Position
-         * @see https://tailwindcss.com/docs/gradient-color-stops
-         */
-        "gradient-via-pos": [{
-          via: scaleGradientStopPosition()
-        }],
-        /**
-         * Gradient Color Stops To Position
-         * @see https://tailwindcss.com/docs/gradient-color-stops
-         */
-        "gradient-to-pos": [{
-          to: scaleGradientStopPosition()
-        }],
-        /**
-         * Gradient Color Stops From
-         * @see https://tailwindcss.com/docs/gradient-color-stops
-         */
-        "gradient-from": [{
-          from: scaleColor()
-        }],
-        /**
-         * Gradient Color Stops Via
-         * @see https://tailwindcss.com/docs/gradient-color-stops
-         */
-        "gradient-via": [{
-          via: scaleColor()
-        }],
-        /**
-         * Gradient Color Stops To
-         * @see https://tailwindcss.com/docs/gradient-color-stops
-         */
-        "gradient-to": [{
-          to: scaleColor()
-        }],
-        // ---------------
-        // --- Borders ---
-        // ---------------
-        /**
-         * Border Radius
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        rounded: [{
-          rounded: scaleRadius()
-        }],
-        /**
-         * Border Radius Start
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-s": [{
-          "rounded-s": scaleRadius()
-        }],
-        /**
-         * Border Radius End
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-e": [{
-          "rounded-e": scaleRadius()
-        }],
-        /**
-         * Border Radius Top
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-t": [{
-          "rounded-t": scaleRadius()
-        }],
-        /**
-         * Border Radius Right
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-r": [{
-          "rounded-r": scaleRadius()
-        }],
-        /**
-         * Border Radius Bottom
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-b": [{
-          "rounded-b": scaleRadius()
-        }],
-        /**
-         * Border Radius Left
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-l": [{
-          "rounded-l": scaleRadius()
-        }],
-        /**
-         * Border Radius Start Start
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-ss": [{
-          "rounded-ss": scaleRadius()
-        }],
-        /**
-         * Border Radius Start End
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-se": [{
-          "rounded-se": scaleRadius()
-        }],
-        /**
-         * Border Radius End End
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-ee": [{
-          "rounded-ee": scaleRadius()
-        }],
-        /**
-         * Border Radius End Start
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-es": [{
-          "rounded-es": scaleRadius()
-        }],
-        /**
-         * Border Radius Top Left
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-tl": [{
-          "rounded-tl": scaleRadius()
-        }],
-        /**
-         * Border Radius Top Right
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-tr": [{
-          "rounded-tr": scaleRadius()
-        }],
-        /**
-         * Border Radius Bottom Right
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-br": [{
-          "rounded-br": scaleRadius()
-        }],
-        /**
-         * Border Radius Bottom Left
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-bl": [{
-          "rounded-bl": scaleRadius()
-        }],
-        /**
-         * Border Width
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w": [{
-          border: scaleBorderWidth()
-        }],
-        /**
-         * Border Width Inline
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-x": [{
-          "border-x": scaleBorderWidth()
-        }],
-        /**
-         * Border Width Block
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-y": [{
-          "border-y": scaleBorderWidth()
-        }],
-        /**
-         * Border Width Inline Start
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-s": [{
-          "border-s": scaleBorderWidth()
-        }],
-        /**
-         * Border Width Inline End
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-e": [{
-          "border-e": scaleBorderWidth()
-        }],
-        /**
-         * Border Width Block Start
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-bs": [{
-          "border-bs": scaleBorderWidth()
-        }],
-        /**
-         * Border Width Block End
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-be": [{
-          "border-be": scaleBorderWidth()
-        }],
-        /**
-         * Border Width Top
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-t": [{
-          "border-t": scaleBorderWidth()
-        }],
-        /**
-         * Border Width Right
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-r": [{
-          "border-r": scaleBorderWidth()
-        }],
-        /**
-         * Border Width Bottom
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-b": [{
-          "border-b": scaleBorderWidth()
-        }],
-        /**
-         * Border Width Left
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-l": [{
-          "border-l": scaleBorderWidth()
-        }],
-        /**
-         * Divide Width X
-         * @see https://tailwindcss.com/docs/border-width#between-children
-         */
-        "divide-x": [{
-          "divide-x": scaleBorderWidth()
-        }],
-        /**
-         * Divide Width X Reverse
-         * @see https://tailwindcss.com/docs/border-width#between-children
-         */
-        "divide-x-reverse": ["divide-x-reverse"],
-        /**
-         * Divide Width Y
-         * @see https://tailwindcss.com/docs/border-width#between-children
-         */
-        "divide-y": [{
-          "divide-y": scaleBorderWidth()
-        }],
-        /**
-         * Divide Width Y Reverse
-         * @see https://tailwindcss.com/docs/border-width#between-children
-         */
-        "divide-y-reverse": ["divide-y-reverse"],
-        /**
-         * Border Style
-         * @see https://tailwindcss.com/docs/border-style
-         */
-        "border-style": [{
-          border: [...scaleLineStyle(), "hidden", "none"]
-        }],
-        /**
-         * Divide Style
-         * @see https://tailwindcss.com/docs/border-style#setting-the-divider-style
-         */
-        "divide-style": [{
-          divide: [...scaleLineStyle(), "hidden", "none"]
-        }],
-        /**
-         * Border Color
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color": [{
-          border: scaleColor()
-        }],
-        /**
-         * Border Color Inline
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-x": [{
-          "border-x": scaleColor()
-        }],
-        /**
-         * Border Color Block
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-y": [{
-          "border-y": scaleColor()
-        }],
-        /**
-         * Border Color Inline Start
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-s": [{
-          "border-s": scaleColor()
-        }],
-        /**
-         * Border Color Inline End
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-e": [{
-          "border-e": scaleColor()
-        }],
-        /**
-         * Border Color Block Start
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-bs": [{
-          "border-bs": scaleColor()
-        }],
-        /**
-         * Border Color Block End
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-be": [{
-          "border-be": scaleColor()
-        }],
-        /**
-         * Border Color Top
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-t": [{
-          "border-t": scaleColor()
-        }],
-        /**
-         * Border Color Right
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-r": [{
-          "border-r": scaleColor()
-        }],
-        /**
-         * Border Color Bottom
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-b": [{
-          "border-b": scaleColor()
-        }],
-        /**
-         * Border Color Left
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-l": [{
-          "border-l": scaleColor()
-        }],
-        /**
-         * Divide Color
-         * @see https://tailwindcss.com/docs/divide-color
-         */
-        "divide-color": [{
-          divide: scaleColor()
-        }],
-        /**
-         * Outline Style
-         * @see https://tailwindcss.com/docs/outline-style
-         */
-        "outline-style": [{
-          outline: [...scaleLineStyle(), "none", "hidden"]
-        }],
-        /**
-         * Outline Offset
-         * @see https://tailwindcss.com/docs/outline-offset
-         */
-        "outline-offset": [{
-          "outline-offset": [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Outline Width
-         * @see https://tailwindcss.com/docs/outline-width
-         */
-        "outline-w": [{
-          outline: ["", isNumber, isArbitraryVariableLength, isArbitraryLength]
-        }],
-        /**
-         * Outline Color
-         * @see https://tailwindcss.com/docs/outline-color
-         */
-        "outline-color": [{
-          outline: scaleColor()
-        }],
-        // ---------------
-        // --- Effects ---
-        // ---------------
-        /**
-         * Box Shadow
-         * @see https://tailwindcss.com/docs/box-shadow
-         */
-        shadow: [{
-          shadow: [
-            // Deprecated since Tailwind CSS v4.0.0
-            "",
-            // Deprecated since Tailwind CSS v4.0.0
-            "inner",
-            "none",
-            themeShadow,
-            isArbitraryVariableShadow,
-            isArbitraryShadow
-          ]
-        }],
-        /**
-         * Box Shadow Color
-         * @see https://tailwindcss.com/docs/box-shadow#setting-the-shadow-color
-         */
-        "shadow-color": [{
-          shadow: scaleColor()
-        }],
-        /**
-         * Inset Box Shadow
-         * @see https://tailwindcss.com/docs/box-shadow#adding-an-inset-shadow
-         */
-        "inset-shadow": [{
-          "inset-shadow": ["none", themeInsetShadow, isArbitraryVariableShadow, isArbitraryShadow]
-        }],
-        /**
-         * Inset Box Shadow Color
-         * @see https://tailwindcss.com/docs/box-shadow#setting-the-inset-shadow-color
-         */
-        "inset-shadow-color": [{
-          "inset-shadow": scaleColor()
-        }],
-        /**
-         * Ring Width
-         * @see https://tailwindcss.com/docs/box-shadow#adding-a-ring
-         */
-        "ring-w": [{
-          ring: scaleBorderWidth()
-        }],
-        /**
-         * Ring Width Inset
-         * @see https://v3.tailwindcss.com/docs/ring-width#inset-rings
-         * @deprecated since Tailwind CSS v4.0.0
-         * @see https://github.com/tailwindlabs/tailwindcss/blob/v4.0.0/packages/tailwindcss/src/utilities.ts#L4158
-         */
-        "ring-w-inset": ["ring-inset"],
-        /**
-         * Ring Color
-         * @see https://tailwindcss.com/docs/box-shadow#setting-the-ring-color
-         */
-        "ring-color": [{
-          ring: scaleColor()
-        }],
-        /**
-         * Ring Offset Width
-         * @see https://v3.tailwindcss.com/docs/ring-offset-width
-         * @deprecated since Tailwind CSS v4.0.0
-         * @see https://github.com/tailwindlabs/tailwindcss/blob/v4.0.0/packages/tailwindcss/src/utilities.ts#L4158
-         */
-        "ring-offset-w": [{
-          "ring-offset": [isNumber, isArbitraryLength]
-        }],
-        /**
-         * Ring Offset Color
-         * @see https://v3.tailwindcss.com/docs/ring-offset-color
-         * @deprecated since Tailwind CSS v4.0.0
-         * @see https://github.com/tailwindlabs/tailwindcss/blob/v4.0.0/packages/tailwindcss/src/utilities.ts#L4158
-         */
-        "ring-offset-color": [{
-          "ring-offset": scaleColor()
-        }],
-        /**
-         * Inset Ring Width
-         * @see https://tailwindcss.com/docs/box-shadow#adding-an-inset-ring
-         */
-        "inset-ring-w": [{
-          "inset-ring": scaleBorderWidth()
-        }],
-        /**
-         * Inset Ring Color
-         * @see https://tailwindcss.com/docs/box-shadow#setting-the-inset-ring-color
-         */
-        "inset-ring-color": [{
-          "inset-ring": scaleColor()
-        }],
-        /**
-         * Text Shadow
-         * @see https://tailwindcss.com/docs/text-shadow
-         */
-        "text-shadow": [{
-          "text-shadow": ["none", themeTextShadow, isArbitraryVariableShadow, isArbitraryShadow]
-        }],
-        /**
-         * Text Shadow Color
-         * @see https://tailwindcss.com/docs/text-shadow#setting-the-shadow-color
-         */
-        "text-shadow-color": [{
-          "text-shadow": scaleColor()
-        }],
-        /**
-         * Opacity
-         * @see https://tailwindcss.com/docs/opacity
-         */
-        opacity: [{
-          opacity: [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Mix Blend Mode
-         * @see https://tailwindcss.com/docs/mix-blend-mode
-         */
-        "mix-blend": [{
-          "mix-blend": [...scaleBlendMode(), "plus-darker", "plus-lighter"]
-        }],
-        /**
-         * Background Blend Mode
-         * @see https://tailwindcss.com/docs/background-blend-mode
-         */
-        "bg-blend": [{
-          "bg-blend": scaleBlendMode()
-        }],
-        /**
-         * Mask Clip
-         * @see https://tailwindcss.com/docs/mask-clip
-         */
-        "mask-clip": [{
-          "mask-clip": ["border", "padding", "content", "fill", "stroke", "view"]
-        }, "mask-no-clip"],
-        /**
-         * Mask Composite
-         * @see https://tailwindcss.com/docs/mask-composite
-         */
-        "mask-composite": [{
-          mask: ["add", "subtract", "intersect", "exclude"]
-        }],
-        /**
-         * Mask Image
-         * @see https://tailwindcss.com/docs/mask-image
-         */
-        "mask-image-linear-pos": [{
-          "mask-linear": [isNumber]
-        }],
-        "mask-image-linear-from-pos": [{
-          "mask-linear-from": scaleMaskImagePosition()
-        }],
-        "mask-image-linear-to-pos": [{
-          "mask-linear-to": scaleMaskImagePosition()
-        }],
-        "mask-image-linear-from-color": [{
-          "mask-linear-from": scaleColor()
-        }],
-        "mask-image-linear-to-color": [{
-          "mask-linear-to": scaleColor()
-        }],
-        "mask-image-t-from-pos": [{
-          "mask-t-from": scaleMaskImagePosition()
-        }],
-        "mask-image-t-to-pos": [{
-          "mask-t-to": scaleMaskImagePosition()
-        }],
-        "mask-image-t-from-color": [{
-          "mask-t-from": scaleColor()
-        }],
-        "mask-image-t-to-color": [{
-          "mask-t-to": scaleColor()
-        }],
-        "mask-image-r-from-pos": [{
-          "mask-r-from": scaleMaskImagePosition()
-        }],
-        "mask-image-r-to-pos": [{
-          "mask-r-to": scaleMaskImagePosition()
-        }],
-        "mask-image-r-from-color": [{
-          "mask-r-from": scaleColor()
-        }],
-        "mask-image-r-to-color": [{
-          "mask-r-to": scaleColor()
-        }],
-        "mask-image-b-from-pos": [{
-          "mask-b-from": scaleMaskImagePosition()
-        }],
-        "mask-image-b-to-pos": [{
-          "mask-b-to": scaleMaskImagePosition()
-        }],
-        "mask-image-b-from-color": [{
-          "mask-b-from": scaleColor()
-        }],
-        "mask-image-b-to-color": [{
-          "mask-b-to": scaleColor()
-        }],
-        "mask-image-l-from-pos": [{
-          "mask-l-from": scaleMaskImagePosition()
-        }],
-        "mask-image-l-to-pos": [{
-          "mask-l-to": scaleMaskImagePosition()
-        }],
-        "mask-image-l-from-color": [{
-          "mask-l-from": scaleColor()
-        }],
-        "mask-image-l-to-color": [{
-          "mask-l-to": scaleColor()
-        }],
-        "mask-image-x-from-pos": [{
-          "mask-x-from": scaleMaskImagePosition()
-        }],
-        "mask-image-x-to-pos": [{
-          "mask-x-to": scaleMaskImagePosition()
-        }],
-        "mask-image-x-from-color": [{
-          "mask-x-from": scaleColor()
-        }],
-        "mask-image-x-to-color": [{
-          "mask-x-to": scaleColor()
-        }],
-        "mask-image-y-from-pos": [{
-          "mask-y-from": scaleMaskImagePosition()
-        }],
-        "mask-image-y-to-pos": [{
-          "mask-y-to": scaleMaskImagePosition()
-        }],
-        "mask-image-y-from-color": [{
-          "mask-y-from": scaleColor()
-        }],
-        "mask-image-y-to-color": [{
-          "mask-y-to": scaleColor()
-        }],
-        "mask-image-radial": [{
-          "mask-radial": [isArbitraryVariable, isArbitraryValue]
-        }],
-        "mask-image-radial-from-pos": [{
-          "mask-radial-from": scaleMaskImagePosition()
-        }],
-        "mask-image-radial-to-pos": [{
-          "mask-radial-to": scaleMaskImagePosition()
-        }],
-        "mask-image-radial-from-color": [{
-          "mask-radial-from": scaleColor()
-        }],
-        "mask-image-radial-to-color": [{
-          "mask-radial-to": scaleColor()
-        }],
-        "mask-image-radial-shape": [{
-          "mask-radial": ["circle", "ellipse"]
-        }],
-        "mask-image-radial-size": [{
-          "mask-radial": [{
-            closest: ["side", "corner"],
-            farthest: ["side", "corner"]
-          }]
-        }],
-        "mask-image-radial-pos": [{
-          "mask-radial-at": scalePosition()
-        }],
-        "mask-image-conic-pos": [{
-          "mask-conic": [isNumber]
-        }],
-        "mask-image-conic-from-pos": [{
-          "mask-conic-from": scaleMaskImagePosition()
-        }],
-        "mask-image-conic-to-pos": [{
-          "mask-conic-to": scaleMaskImagePosition()
-        }],
-        "mask-image-conic-from-color": [{
-          "mask-conic-from": scaleColor()
-        }],
-        "mask-image-conic-to-color": [{
-          "mask-conic-to": scaleColor()
-        }],
-        /**
-         * Mask Mode
-         * @see https://tailwindcss.com/docs/mask-mode
-         */
-        "mask-mode": [{
-          mask: ["alpha", "luminance", "match"]
-        }],
-        /**
-         * Mask Origin
-         * @see https://tailwindcss.com/docs/mask-origin
-         */
-        "mask-origin": [{
-          "mask-origin": ["border", "padding", "content", "fill", "stroke", "view"]
-        }],
-        /**
-         * Mask Position
-         * @see https://tailwindcss.com/docs/mask-position
-         */
-        "mask-position": [{
-          mask: scaleBgPosition()
-        }],
-        /**
-         * Mask Repeat
-         * @see https://tailwindcss.com/docs/mask-repeat
-         */
-        "mask-repeat": [{
-          mask: scaleBgRepeat()
-        }],
-        /**
-         * Mask Size
-         * @see https://tailwindcss.com/docs/mask-size
-         */
-        "mask-size": [{
-          mask: scaleBgSize()
-        }],
-        /**
-         * Mask Type
-         * @see https://tailwindcss.com/docs/mask-type
-         */
-        "mask-type": [{
-          "mask-type": ["alpha", "luminance"]
-        }],
-        /**
-         * Mask Image
-         * @see https://tailwindcss.com/docs/mask-image
-         */
-        "mask-image": [{
-          mask: ["none", isArbitraryVariable, isArbitraryValue]
-        }],
-        // ---------------
-        // --- Filters ---
-        // ---------------
-        /**
-         * Filter
-         * @see https://tailwindcss.com/docs/filter
-         */
-        filter: [{
-          filter: [
-            // Deprecated since Tailwind CSS v3.0.0
-            "",
-            "none",
-            isArbitraryVariable,
-            isArbitraryValue
-          ]
-        }],
-        /**
-         * Blur
-         * @see https://tailwindcss.com/docs/blur
-         */
-        blur: [{
-          blur: scaleBlur()
-        }],
-        /**
-         * Brightness
-         * @see https://tailwindcss.com/docs/brightness
-         */
-        brightness: [{
-          brightness: [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Contrast
-         * @see https://tailwindcss.com/docs/contrast
-         */
-        contrast: [{
-          contrast: [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Drop Shadow
-         * @see https://tailwindcss.com/docs/drop-shadow
-         */
-        "drop-shadow": [{
-          "drop-shadow": [
-            // Deprecated since Tailwind CSS v4.0.0
-            "",
-            "none",
-            themeDropShadow,
-            isArbitraryVariableShadow,
-            isArbitraryShadow
-          ]
-        }],
-        /**
-         * Drop Shadow Color
-         * @see https://tailwindcss.com/docs/filter-drop-shadow#setting-the-shadow-color
-         */
-        "drop-shadow-color": [{
-          "drop-shadow": scaleColor()
-        }],
-        /**
-         * Grayscale
-         * @see https://tailwindcss.com/docs/grayscale
-         */
-        grayscale: [{
-          grayscale: ["", isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Hue Rotate
-         * @see https://tailwindcss.com/docs/hue-rotate
-         */
-        "hue-rotate": [{
-          "hue-rotate": [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Invert
-         * @see https://tailwindcss.com/docs/invert
-         */
-        invert: [{
-          invert: ["", isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Saturate
-         * @see https://tailwindcss.com/docs/saturate
-         */
-        saturate: [{
-          saturate: [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Sepia
-         * @see https://tailwindcss.com/docs/sepia
-         */
-        sepia: [{
-          sepia: ["", isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Backdrop Filter
-         * @see https://tailwindcss.com/docs/backdrop-filter
-         */
-        "backdrop-filter": [{
-          "backdrop-filter": [
-            // Deprecated since Tailwind CSS v3.0.0
-            "",
-            "none",
-            isArbitraryVariable,
-            isArbitraryValue
-          ]
-        }],
-        /**
-         * Backdrop Blur
-         * @see https://tailwindcss.com/docs/backdrop-blur
-         */
-        "backdrop-blur": [{
-          "backdrop-blur": scaleBlur()
-        }],
-        /**
-         * Backdrop Brightness
-         * @see https://tailwindcss.com/docs/backdrop-brightness
-         */
-        "backdrop-brightness": [{
-          "backdrop-brightness": [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Backdrop Contrast
-         * @see https://tailwindcss.com/docs/backdrop-contrast
-         */
-        "backdrop-contrast": [{
-          "backdrop-contrast": [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Backdrop Grayscale
-         * @see https://tailwindcss.com/docs/backdrop-grayscale
-         */
-        "backdrop-grayscale": [{
-          "backdrop-grayscale": ["", isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Backdrop Hue Rotate
-         * @see https://tailwindcss.com/docs/backdrop-hue-rotate
-         */
-        "backdrop-hue-rotate": [{
-          "backdrop-hue-rotate": [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Backdrop Invert
-         * @see https://tailwindcss.com/docs/backdrop-invert
-         */
-        "backdrop-invert": [{
-          "backdrop-invert": ["", isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Backdrop Opacity
-         * @see https://tailwindcss.com/docs/backdrop-opacity
-         */
-        "backdrop-opacity": [{
-          "backdrop-opacity": [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Backdrop Saturate
-         * @see https://tailwindcss.com/docs/backdrop-saturate
-         */
-        "backdrop-saturate": [{
-          "backdrop-saturate": [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Backdrop Sepia
-         * @see https://tailwindcss.com/docs/backdrop-sepia
-         */
-        "backdrop-sepia": [{
-          "backdrop-sepia": ["", isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        // --------------
-        // --- Tables ---
-        // --------------
-        /**
-         * Border Collapse
-         * @see https://tailwindcss.com/docs/border-collapse
-         */
-        "border-collapse": [{
-          border: ["collapse", "separate"]
-        }],
-        /**
-         * Border Spacing
-         * @see https://tailwindcss.com/docs/border-spacing
-         */
-        "border-spacing": [{
-          "border-spacing": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Border Spacing X
-         * @see https://tailwindcss.com/docs/border-spacing
-         */
-        "border-spacing-x": [{
-          "border-spacing-x": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Border Spacing Y
-         * @see https://tailwindcss.com/docs/border-spacing
-         */
-        "border-spacing-y": [{
-          "border-spacing-y": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Table Layout
-         * @see https://tailwindcss.com/docs/table-layout
-         */
-        "table-layout": [{
-          table: ["auto", "fixed"]
-        }],
-        /**
-         * Caption Side
-         * @see https://tailwindcss.com/docs/caption-side
-         */
-        caption: [{
-          caption: ["top", "bottom"]
-        }],
-        // ---------------------------------
-        // --- Transitions and Animation ---
-        // ---------------------------------
-        /**
-         * Transition Property
-         * @see https://tailwindcss.com/docs/transition-property
-         */
-        transition: [{
-          transition: ["", "all", "colors", "opacity", "shadow", "transform", "none", isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Transition Behavior
-         * @see https://tailwindcss.com/docs/transition-behavior
-         */
-        "transition-behavior": [{
-          transition: ["normal", "discrete"]
-        }],
-        /**
-         * Transition Duration
-         * @see https://tailwindcss.com/docs/transition-duration
-         */
-        duration: [{
-          duration: [isNumber, "initial", isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Transition Timing Function
-         * @see https://tailwindcss.com/docs/transition-timing-function
-         */
-        ease: [{
-          ease: ["linear", "initial", themeEase, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Transition Delay
-         * @see https://tailwindcss.com/docs/transition-delay
-         */
-        delay: [{
-          delay: [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Animation
-         * @see https://tailwindcss.com/docs/animation
-         */
-        animate: [{
-          animate: ["none", themeAnimate, isArbitraryVariable, isArbitraryValue]
-        }],
-        // ------------------
-        // --- Transforms ---
-        // ------------------
-        /**
-         * Backface Visibility
-         * @see https://tailwindcss.com/docs/backface-visibility
-         */
-        backface: [{
-          backface: ["hidden", "visible"]
-        }],
-        /**
-         * Perspective
-         * @see https://tailwindcss.com/docs/perspective
-         */
-        perspective: [{
-          perspective: [themePerspective, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Perspective Origin
-         * @see https://tailwindcss.com/docs/perspective-origin
-         */
-        "perspective-origin": [{
-          "perspective-origin": scalePositionWithArbitrary()
-        }],
-        /**
-         * Rotate
-         * @see https://tailwindcss.com/docs/rotate
-         */
-        rotate: [{
-          rotate: scaleRotate()
-        }],
-        /**
-         * Rotate X
-         * @see https://tailwindcss.com/docs/rotate
-         */
-        "rotate-x": [{
-          "rotate-x": scaleRotate()
-        }],
-        /**
-         * Rotate Y
-         * @see https://tailwindcss.com/docs/rotate
-         */
-        "rotate-y": [{
-          "rotate-y": scaleRotate()
-        }],
-        /**
-         * Rotate Z
-         * @see https://tailwindcss.com/docs/rotate
-         */
-        "rotate-z": [{
-          "rotate-z": scaleRotate()
-        }],
-        /**
-         * Scale
-         * @see https://tailwindcss.com/docs/scale
-         */
-        scale: [{
-          scale: scaleScale()
-        }],
-        /**
-         * Scale X
-         * @see https://tailwindcss.com/docs/scale
-         */
-        "scale-x": [{
-          "scale-x": scaleScale()
-        }],
-        /**
-         * Scale Y
-         * @see https://tailwindcss.com/docs/scale
-         */
-        "scale-y": [{
-          "scale-y": scaleScale()
-        }],
-        /**
-         * Scale Z
-         * @see https://tailwindcss.com/docs/scale
-         */
-        "scale-z": [{
-          "scale-z": scaleScale()
-        }],
-        /**
-         * Scale 3D
-         * @see https://tailwindcss.com/docs/scale
-         */
-        "scale-3d": ["scale-3d"],
-        /**
-         * Skew
-         * @see https://tailwindcss.com/docs/skew
-         */
-        skew: [{
-          skew: scaleSkew()
-        }],
-        /**
-         * Skew X
-         * @see https://tailwindcss.com/docs/skew
-         */
-        "skew-x": [{
-          "skew-x": scaleSkew()
-        }],
-        /**
-         * Skew Y
-         * @see https://tailwindcss.com/docs/skew
-         */
-        "skew-y": [{
-          "skew-y": scaleSkew()
-        }],
-        /**
-         * Transform
-         * @see https://tailwindcss.com/docs/transform
-         */
-        transform: [{
-          transform: [isArbitraryVariable, isArbitraryValue, "", "none", "gpu", "cpu"]
-        }],
-        /**
-         * Transform Origin
-         * @see https://tailwindcss.com/docs/transform-origin
-         */
-        "transform-origin": [{
-          origin: scalePositionWithArbitrary()
-        }],
-        /**
-         * Transform Style
-         * @see https://tailwindcss.com/docs/transform-style
-         */
-        "transform-style": [{
-          transform: ["3d", "flat"]
-        }],
-        /**
-         * Translate
-         * @see https://tailwindcss.com/docs/translate
-         */
-        translate: [{
-          translate: scaleTranslate()
-        }],
-        /**
-         * Translate X
-         * @see https://tailwindcss.com/docs/translate
-         */
-        "translate-x": [{
-          "translate-x": scaleTranslate()
-        }],
-        /**
-         * Translate Y
-         * @see https://tailwindcss.com/docs/translate
-         */
-        "translate-y": [{
-          "translate-y": scaleTranslate()
-        }],
-        /**
-         * Translate Z
-         * @see https://tailwindcss.com/docs/translate
-         */
-        "translate-z": [{
-          "translate-z": scaleTranslate()
-        }],
-        /**
-         * Translate None
-         * @see https://tailwindcss.com/docs/translate
-         */
-        "translate-none": ["translate-none"],
-        /**
-         * Zoom
-         * @see https://tailwindcss.com/docs/zoom
-         */
-        zoom: [{
-          zoom: [isInteger, isArbitraryVariable, isArbitraryValue]
-        }],
-        // ---------------------
-        // --- Interactivity ---
-        // ---------------------
-        /**
-         * Accent Color
-         * @see https://tailwindcss.com/docs/accent-color
-         */
-        accent: [{
-          accent: scaleColor()
-        }],
-        /**
-         * Appearance
-         * @see https://tailwindcss.com/docs/appearance
-         */
-        appearance: [{
-          appearance: ["none", "auto"]
-        }],
-        /**
-         * Caret Color
-         * @see https://tailwindcss.com/docs/just-in-time-mode#caret-color-utilities
-         */
-        "caret-color": [{
-          caret: scaleColor()
-        }],
-        /**
-         * Color Scheme
-         * @see https://tailwindcss.com/docs/color-scheme
-         */
-        "color-scheme": [{
-          scheme: ["normal", "dark", "light", "light-dark", "only-dark", "only-light"]
-        }],
-        /**
-         * Cursor
-         * @see https://tailwindcss.com/docs/cursor
-         */
-        cursor: [{
-          cursor: ["auto", "default", "pointer", "wait", "text", "move", "help", "not-allowed", "none", "context-menu", "progress", "cell", "crosshair", "vertical-text", "alias", "copy", "no-drop", "grab", "grabbing", "all-scroll", "col-resize", "row-resize", "n-resize", "e-resize", "s-resize", "w-resize", "ne-resize", "nw-resize", "se-resize", "sw-resize", "ew-resize", "ns-resize", "nesw-resize", "nwse-resize", "zoom-in", "zoom-out", isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Field Sizing
-         * @see https://tailwindcss.com/docs/field-sizing
-         */
-        "field-sizing": [{
-          "field-sizing": ["fixed", "content"]
-        }],
-        /**
-         * Pointer Events
-         * @see https://tailwindcss.com/docs/pointer-events
-         */
-        "pointer-events": [{
-          "pointer-events": ["auto", "none"]
-        }],
-        /**
-         * Resize
-         * @see https://tailwindcss.com/docs/resize
-         */
-        resize: [{
-          resize: ["none", "", "y", "x"]
-        }],
-        /**
-         * Scroll Behavior
-         * @see https://tailwindcss.com/docs/scroll-behavior
-         */
-        "scroll-behavior": [{
-          scroll: ["auto", "smooth"]
-        }],
-        /**
-         * Scrollbar Thumb Color
-         * @see https://tailwindcss.com/docs/scrollbar-color
-         */
-        "scrollbar-thumb-color": [{
-          "scrollbar-thumb": scaleColor()
-        }],
-        /**
-         * Scrollbar Track Color
-         * @see https://tailwindcss.com/docs/scrollbar-color
-         */
-        "scrollbar-track-color": [{
-          "scrollbar-track": scaleColor()
-        }],
-        /**
-         * Scrollbar Gutter
-         * @see https://tailwindcss.com/docs/scrollbar-gutter
-         */
-        "scrollbar-gutter": [{
-          "scrollbar-gutter": ["auto", "stable", "both"]
-        }],
-        /**
-         * Scrollbar Width
-         * @see https://tailwindcss.com/docs/scrollbar-width
-         */
-        "scrollbar-w": [{
-          scrollbar: ["auto", "thin", "none"]
-        }],
-        /**
-         * Scroll Margin
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-m": [{
-          "scroll-m": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Inline
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-mx": [{
-          "scroll-mx": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Block
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-my": [{
-          "scroll-my": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Inline Start
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-ms": [{
-          "scroll-ms": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Inline End
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-me": [{
-          "scroll-me": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Block Start
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-mbs": [{
-          "scroll-mbs": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Block End
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-mbe": [{
-          "scroll-mbe": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Top
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-mt": [{
-          "scroll-mt": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Right
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-mr": [{
-          "scroll-mr": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Bottom
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-mb": [{
-          "scroll-mb": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Left
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-ml": [{
-          "scroll-ml": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-p": [{
-          "scroll-p": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Inline
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-px": [{
-          "scroll-px": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Block
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-py": [{
-          "scroll-py": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Inline Start
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-ps": [{
-          "scroll-ps": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Inline End
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-pe": [{
-          "scroll-pe": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Block Start
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-pbs": [{
-          "scroll-pbs": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Block End
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-pbe": [{
-          "scroll-pbe": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Top
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-pt": [{
-          "scroll-pt": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Right
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-pr": [{
-          "scroll-pr": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Bottom
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-pb": [{
-          "scroll-pb": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Left
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-pl": [{
-          "scroll-pl": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Snap Align
-         * @see https://tailwindcss.com/docs/scroll-snap-align
-         */
-        "snap-align": [{
-          snap: ["start", "end", "center", "align-none"]
-        }],
-        /**
-         * Scroll Snap Stop
-         * @see https://tailwindcss.com/docs/scroll-snap-stop
-         */
-        "snap-stop": [{
-          snap: ["normal", "always"]
-        }],
-        /**
-         * Scroll Snap Type
-         * @see https://tailwindcss.com/docs/scroll-snap-type
-         */
-        "snap-type": [{
-          snap: ["none", "x", "y", "both"]
-        }],
-        /**
-         * Scroll Snap Type Strictness
-         * @see https://tailwindcss.com/docs/scroll-snap-type
-         */
-        "snap-strictness": [{
-          snap: ["mandatory", "proximity"]
-        }],
-        /**
-         * Touch Action
-         * @see https://tailwindcss.com/docs/touch-action
-         */
-        touch: [{
-          touch: ["auto", "none", "manipulation"]
-        }],
-        /**
-         * Touch Action X
-         * @see https://tailwindcss.com/docs/touch-action
-         */
-        "touch-x": [{
-          "touch-pan": ["x", "left", "right"]
-        }],
-        /**
-         * Touch Action Y
-         * @see https://tailwindcss.com/docs/touch-action
-         */
-        "touch-y": [{
-          "touch-pan": ["y", "up", "down"]
-        }],
-        /**
-         * Touch Action Pinch Zoom
-         * @see https://tailwindcss.com/docs/touch-action
-         */
-        "touch-pz": ["touch-pinch-zoom"],
-        /**
-         * User Select
-         * @see https://tailwindcss.com/docs/user-select
-         */
-        select: [{
-          select: ["none", "text", "all", "auto"]
-        }],
-        /**
-         * Will Change
-         * @see https://tailwindcss.com/docs/will-change
-         */
-        "will-change": [{
-          "will-change": ["auto", "scroll", "contents", "transform", isArbitraryVariable, isArbitraryValue]
-        }],
-        // -----------
-        // --- SVG ---
-        // -----------
-        /**
-         * Fill
-         * @see https://tailwindcss.com/docs/fill
-         */
-        fill: [{
-          fill: ["none", ...scaleColor()]
-        }],
-        /**
-         * Stroke Width
-         * @see https://tailwindcss.com/docs/stroke-width
-         */
-        "stroke-w": [{
-          stroke: [isNumber, isArbitraryVariableLength, isArbitraryLength, isArbitraryNumber]
-        }],
-        /**
-         * Stroke
-         * @see https://tailwindcss.com/docs/stroke
-         */
-        stroke: [{
-          stroke: ["none", ...scaleColor()]
-        }],
-        // ---------------------
-        // --- Accessibility ---
-        // ---------------------
-        /**
-         * Forced Color Adjust
-         * @see https://tailwindcss.com/docs/forced-color-adjust
-         */
-        "forced-color-adjust": [{
-          "forced-color-adjust": ["auto", "none"]
-        }]
-      },
-      conflictingClassGroups: {
-        "container-named": ["container-type"],
-        overflow: ["overflow-x", "overflow-y"],
-        overscroll: ["overscroll-x", "overscroll-y"],
-        inset: ["inset-x", "inset-y", "inset-bs", "inset-be", "start", "end", "top", "right", "bottom", "left"],
-        "inset-x": ["start", "end", "right", "left"],
-        "inset-y": ["inset-bs", "inset-be", "top", "bottom"],
-        flex: ["basis", "grow", "shrink"],
-        gap: ["gap-x", "gap-y"],
-        p: ["px", "py", "ps", "pe", "pbs", "pbe", "pt", "pr", "pb", "pl"],
-        px: ["ps", "pe", "pr", "pl"],
-        py: ["pbs", "pbe", "pt", "pb"],
-        m: ["mx", "my", "ms", "me", "mbs", "mbe", "mt", "mr", "mb", "ml"],
-        mx: ["ms", "me", "mr", "ml"],
-        my: ["mbs", "mbe", "mt", "mb"],
-        size: ["w", "h"],
-        "font-size": ["leading"],
-        "fvn-normal": ["fvn-ordinal", "fvn-slashed-zero", "fvn-figure", "fvn-spacing", "fvn-fraction"],
-        "fvn-ordinal": ["fvn-normal"],
-        "fvn-slashed-zero": ["fvn-normal"],
-        "fvn-figure": ["fvn-normal"],
-        "fvn-spacing": ["fvn-normal"],
-        "fvn-fraction": ["fvn-normal"],
-        "line-clamp": ["display", "overflow"],
-        rounded: ["rounded-s", "rounded-e", "rounded-t", "rounded-r", "rounded-b", "rounded-l", "rounded-ss", "rounded-se", "rounded-ee", "rounded-es", "rounded-tl", "rounded-tr", "rounded-br", "rounded-bl"],
-        "rounded-s": ["rounded-ss", "rounded-es"],
-        "rounded-e": ["rounded-se", "rounded-ee"],
-        "rounded-t": ["rounded-tl", "rounded-tr"],
-        "rounded-r": ["rounded-tr", "rounded-br"],
-        "rounded-b": ["rounded-br", "rounded-bl"],
-        "rounded-l": ["rounded-tl", "rounded-bl"],
-        "border-spacing": ["border-spacing-x", "border-spacing-y"],
-        "border-w": ["border-w-x", "border-w-y", "border-w-s", "border-w-e", "border-w-bs", "border-w-be", "border-w-t", "border-w-r", "border-w-b", "border-w-l"],
-        "border-w-x": ["border-w-s", "border-w-e", "border-w-r", "border-w-l"],
-        "border-w-y": ["border-w-bs", "border-w-be", "border-w-t", "border-w-b"],
-        "border-color": ["border-color-x", "border-color-y", "border-color-s", "border-color-e", "border-color-bs", "border-color-be", "border-color-t", "border-color-r", "border-color-b", "border-color-l"],
-        "border-color-x": ["border-color-s", "border-color-e", "border-color-r", "border-color-l"],
-        "border-color-y": ["border-color-bs", "border-color-be", "border-color-t", "border-color-b"],
-        translate: ["translate-x", "translate-y", "translate-none"],
-        "translate-none": ["translate", "translate-x", "translate-y", "translate-z"],
-        "scroll-m": ["scroll-mx", "scroll-my", "scroll-ms", "scroll-me", "scroll-mbs", "scroll-mbe", "scroll-mt", "scroll-mr", "scroll-mb", "scroll-ml"],
-        "scroll-mx": ["scroll-ms", "scroll-me", "scroll-mr", "scroll-ml"],
-        "scroll-my": ["scroll-mbs", "scroll-mbe", "scroll-mt", "scroll-mb"],
-        "scroll-p": ["scroll-px", "scroll-py", "scroll-ps", "scroll-pe", "scroll-pbs", "scroll-pbe", "scroll-pt", "scroll-pr", "scroll-pb", "scroll-pl"],
-        "scroll-px": ["scroll-ps", "scroll-pe", "scroll-pr", "scroll-pl"],
-        "scroll-py": ["scroll-pbs", "scroll-pbe", "scroll-pt", "scroll-pb"],
-        touch: ["touch-x", "touch-y", "touch-pz"],
-        "touch-x": ["touch"],
-        "touch-y": ["touch"],
-        "touch-pz": ["touch"]
-      },
-      conflictingClassGroupModifiers: {
-        "font-size": ["leading"]
-      },
-      postfixLookupClassGroups: ["container-type"],
-      orderSensitiveModifiers: ["*", "**", "after", "backdrop", "before", "details-content", "file", "first-letter", "first-line", "marker", "placeholder", "selection"]
+      merge,
+      mergeString,
+      seenBefore: cacheSize === 0 ? () => false : seenBefore,
+      mergeUncached: mergeClassList
     };
   };
-  var twMerge = /* @__PURE__ */ createTailwindMerge(getDefaultConfig);
+  var resolveValue = (v, clsxMode) => {
+    if (!v) return "";
+    if (typeof v === "string") return v;
+    let out = "";
+    if (typeof v.length === "number" && (clsxMode ? Array.isArray(v) : true)) {
+      const arr = v;
+      for (let i = 0; i < arr.length; i++) {
+        const item = arr[i];
+        if (!item) continue;
+        const r2 = typeof item === "string" ? item : resolveValue(item, clsxMode);
+        if (r2) {
+          if (out) out += " ";
+          out += r2;
+        }
+      }
+      return out;
+    }
+    if (clsxMode) {
+      if (typeof v === "number") return "" + v;
+      if (typeof v === "object") {
+        for (const k in v) if (v[k]) {
+          if (out) out += " ";
+          out += k;
+        }
+      }
+    }
+    return out;
+  };
+  var joinArgs = (args, clsxMode) => {
+    let s = "";
+    for (let i = 0; i < args.length; i++) {
+      const a = args[i];
+      if (!a) continue;
+      const r2 = typeof a === "string" ? a : resolveValue(a, clsxMode);
+      if (r2) {
+        if (s) s += " ";
+        s += r2;
+      }
+    }
+    return s;
+  };
+  var twJoin = function() {
+    return joinArgs(arguments, false);
+  };
+  var BUCKET_CAP = 256;
+  var BUCKET_MISS_CAP = 16;
+  var BUCKET_SKIP = 1024;
+  var CHURN_SIZE = 4096;
+  var wrapClsx = (mergeString, fresh) => {
+    const seenBefore = fresh === void 0 ? () => true : fresh.seenBefore;
+    const mergeUncached = fresh === void 0 ? mergeString : fresh.mergeUncached;
+    let argCache = /* @__PURE__ */ new Map();
+    let prevArgCache = /* @__PURE__ */ new Map();
+    let argCount = 0;
+    let lastHit = null;
+    let churnKey = null;
+    let churnOwn = [];
+    let churnVal = [];
+    let churnTick = 0;
+    const churnLookup = (key, own, join) => {
+      if (churnKey === null) {
+        churnKey = new Array(CHURN_SIZE).fill("");
+        churnOwn = new Array(CHURN_SIZE).fill("");
+        churnVal = new Array(CHURN_SIZE).fill("");
+      }
+      const way0 = spanHash(key, 0, key.length) & 4094;
+      if (churnKey[way0] === key && churnOwn[way0] === own) return churnVal[way0];
+      if (churnKey[way0 | 1] === key && churnOwn[way0 | 1] === own) return churnVal[way0 | 1];
+      const merged = mergeString(join ? own + " " + key : key);
+      const slot = churnKey[way0] === "" ? way0 : way0 | (churnKey[way0 | 1] === "" ? 1 : churnTick++ & 1);
+      churnKey[slot] = key;
+      churnOwn[slot] = own;
+      churnVal[slot] = merged;
+      return merged;
+    };
+    const match3 = (e, v0, v1, v2) => {
+      let k = 0;
+      if (v0) {
+        if (v0 !== e.a0) return false;
+        k = 1;
+      }
+      if (v1) {
+        if (v1 !== (k === 0 ? e.a0 : e.a1)) return false;
+        k++;
+      }
+      if (v2) {
+        if (v2 !== (k === 0 ? e.a0 : k === 1 ? e.a1 : e.a2)) return false;
+        k++;
+      }
+      return k === e.t;
+    };
+    const matchN = (e, vals) => {
+      const ea = e.a;
+      let k = 0;
+      for (let i = 0; i < vals.length; i++) {
+        const v = vals[i];
+        if (!v) continue;
+        if (v !== ea[k]) return false;
+        k++;
+      }
+      return k === e.t;
+    };
+    const resolveArgs = (vals, probed) => {
+      const nArgs = vals.length;
+      const pred = lastHit === null ? null : lastHit.n;
+      if (!probed) {
+        if (pred !== null && matchN(pred, vals)) {
+          lastHit = pred;
+          return pred.r;
+        }
+        if (lastHit !== null && lastHit !== pred && matchN(lastHit, vals)) return lastHit.r;
+      }
+      let first = "";
+      let firstIdx = -1;
+      let truthy = 0;
+      let hasResolvedValue = false;
+      for (let i = 0; i < nArgs; i++) {
+        let v = vals[i];
+        if (!v) continue;
+        if (typeof v !== "string") {
+          v = vals[i] = resolveValue(v, true);
+          if (!v) continue;
+          hasResolvedValue = true;
+        }
+        if (firstIdx < 0) {
+          first = v;
+          firstIdx = i;
+        }
+        truthy++;
+      }
+      if (truthy === 0) return "";
+      if (truthy === 1) return mergeString(first);
+      if (hasResolvedValue) {
+        if (pred !== null && matchN(pred, vals)) {
+          lastHit = pred;
+          return pred.r;
+        }
+        if (lastHit !== null && lastHit !== pred && matchN(lastHit, vals)) return lastHit.r;
+      }
+      let bucket = argCache.get(first);
+      if (bucket === void 0) {
+        bucket = prevArgCache.get(first);
+        if (bucket !== void 0) argCache.set(first, bucket);
+      }
+      let hit = null;
+      if (bucket !== void 0) {
+        if (bucket.skip > 0) {
+          bucket.skip--;
+          lastHit = null;
+          let joined = first;
+          for (let i = firstIdx + 1; i < nArgs; i++) {
+            const v = vals[i];
+            if (v) joined += " " + v;
+          }
+          return churnLookup(joined, "", false);
+        }
+        const entries = bucket.e;
+        outer: for (let b = 0; b < entries.length; b++) {
+          const e = entries[b];
+          if (e.t !== truthy) continue;
+          const ea = e.a;
+          let k = 1;
+          for (let i = firstIdx + 1; i < nArgs; i++) {
+            const v = vals[i];
+            if (v && v !== ea[k++]) continue outer;
+          }
+          hit = e;
+          break;
+        }
+        if (hit !== null) bucket.miss = 0;
+      }
+      if (hit === null) {
+        let joined = first;
+        const a = [first];
+        for (let i = firstIdx + 1; i < nArgs; i++) {
+          const v = vals[i];
+          if (!v) continue;
+          joined += " " + v;
+          a.push(v);
+        }
+        if (!seenBefore(joined)) return mergeUncached(joined);
+        hit = {
+          r: mergeString(joined),
+          t: a.length,
+          a0: a[0],
+          a1: a[1],
+          a2: a[2] ?? "",
+          a,
+          n: null
+        };
+        if (bucket === void 0) argCache.set(first, bucket = {
+          e: [],
+          miss: 0,
+          skip: 0,
+          at: 0
+        });
+        else if (++bucket.miss > BUCKET_MISS_CAP) {
+          bucket.miss = BUCKET_MISS_CAP;
+          bucket.skip = BUCKET_SKIP;
+          bucket.e.length = 0;
+          bucket.at = 0;
+        }
+        const entries = bucket.e;
+        if (entries.length < BUCKET_CAP) entries.push(hit);
+        else {
+          entries[bucket.at] = hit;
+          bucket.at = bucket.at + 1 & 255;
+        }
+        if (++argCount > 1e3) {
+          argCount = 0;
+          prevArgCache = argCache;
+          argCache = /* @__PURE__ */ new Map();
+        }
+      }
+      if (lastHit !== null && lastHit !== hit) lastHit.n = hit;
+      lastHit = hit;
+      return hit.r;
+    };
+    const mergeSingleValue = (value) => Array.isArray(value) ? resolveArgs(value.slice(), false) : mergeString(resolveValue(value, true));
+    return function(v0, v1, v2) {
+      const nArgs = arguments.length;
+      if ((nArgs | 1) === 3) {
+        const lh2 = lastHit;
+        if (lh2 !== null) {
+          const pred = lh2.n;
+          if (pred !== null && match3(pred, v0, v1, v2)) {
+            lastHit = pred;
+            return pred.r;
+          }
+          if (lh2 !== pred && match3(lh2, v0, v1, v2)) return lh2.r;
+        }
+        if (nArgs === 2 && typeof v1 === "string" && v1 !== "") {
+          const bucket = argCache.get(v0);
+          if (bucket !== void 0 && bucket.skip > 0) {
+            bucket.skip--;
+            lastHit = null;
+            return churnLookup(v1, v0, true);
+          }
+        }
+        return resolveArgs([
+          v0,
+          v1,
+          v2
+        ], true);
+      }
+      if (nArgs === 1) return typeof v0 === "string" ? mergeString(v0) : mergeSingleValue(v0);
+      const lh = lastHit;
+      if (lh !== null) {
+        const pred = lh.n;
+        if (pred !== null) {
+          const pa = pred.a;
+          let k = 0;
+          let ok = true;
+          for (let i = 0; i < nArgs; i++) {
+            const v = arguments[i];
+            if (!v) continue;
+            if (v !== pa[k]) {
+              ok = false;
+              break;
+            }
+            k++;
+          }
+          if (ok && k === pred.t) {
+            lastHit = pred;
+            return pred.r;
+          }
+        }
+        if (lh !== pred) {
+          const la = lh.a;
+          let k = 0;
+          let ok = true;
+          for (let i = 0; i < nArgs; i++) {
+            const v = arguments[i];
+            if (!v) continue;
+            if (v !== la[k]) {
+              ok = false;
+              break;
+            }
+            k++;
+          }
+          if (ok && k === lh.t) return lh.r;
+        }
+      }
+      const vals = [];
+      for (let i = 0; i < nArgs; i++) vals.push(arguments[i]);
+      return resolveArgs(vals, true);
+    };
+  };
 
-  // src/lib/utils.ts
-  function cn(...inputs) {
-    return twMerge(clsx(inputs));
-  }
+  // node_modules/.pnpm/cn@0.5.0/node_modules/cn/dist/index.js
+  var instance = /* @__PURE__ */ createEngine(tables_generated_default);
+  var cn = /* @__PURE__ */ wrapClsx(instance.mergeString, instance);
+  var twMerge = instance.merge;
 
   // node_modules/.pnpm/@radix-ui+react-primitive@2_8110221bfe749bbb617b2ef4d8402995/node_modules/@radix-ui/react-primitive/dist/index.mjs
   var React3 = __toESM(require_react(), 1);

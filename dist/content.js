@@ -230,9 +230,9 @@
       }
       function mapChildren(children, func, context) {
         if (null == children) return children;
-        var result = [], count3 = 0;
+        var result = [], count2 = 0;
         mapIntoArray(children, result, "", "", function(child) {
-          return func.call(context, child, count3++);
+          return func.call(context, child, count2++);
         });
         return result;
       }
@@ -290,7 +290,7 @@
           null === transitionTypes ? transition.types = [type] : -1 === transitionTypes.indexOf(type) && transitionTypes.push(type);
         } else startTransition(addTransitionType.bind(null, type));
       }
-      var Children5 = {
+      var Children3 = {
         map: mapChildren,
         forEach: function(children, forEachFunc, forEachContext) {
           mapChildren(
@@ -322,7 +322,7 @@
         }
       };
       exports.Activity = REACT_ACTIVITY_TYPE;
-      exports.Children = Children5;
+      exports.Children = Children3;
       exports.Component = Component;
       exports.Fragment = REACT_FRAGMENT_TYPE;
       exports.Profiler = REACT_PROFILER_TYPE;
@@ -724,9 +724,9 @@
           currentPriorityLevel = previousPriorityLevel;
         }
       };
-      exports.unstable_scheduleCallback = function(priorityLevel, callback, options2) {
+      exports.unstable_scheduleCallback = function(priorityLevel, callback, options) {
         var currentTime = exports.unstable_now();
-        "object" === typeof options2 && null !== options2 ? (options2 = options2.delay, options2 = "number" === typeof options2 && 0 < options2 ? currentTime + options2 : currentTime) : options2 = currentTime;
+        "object" === typeof options && null !== options ? (options = options.delay, options = "number" === typeof options && 0 < options ? currentTime + options : currentTime) : options = currentTime;
         switch (priorityLevel) {
           case 1:
             var timeout = -1;
@@ -743,16 +743,16 @@
           default:
             timeout = 5e3;
         }
-        timeout = options2 + timeout;
+        timeout = options + timeout;
         priorityLevel = {
           id: taskIdCounter++,
           callback,
           priorityLevel,
-          startTime: options2,
+          startTime: options,
           expirationTime: timeout,
           sortIndex: -1
         };
-        options2 > currentTime ? (priorityLevel.sortIndex = options2, push(timerQueue, priorityLevel), null === peek(taskQueue) && priorityLevel === peek(timerQueue) && (isHostTimeoutScheduled ? (localClearTimeout(taskTimeoutID), taskTimeoutID = -1) : isHostTimeoutScheduled = true, requestHostTimeout(handleTimeout, options2 - currentTime))) : (priorityLevel.sortIndex = timeout, push(taskQueue, priorityLevel), isHostCallbackScheduled || isPerformingWork || (isHostCallbackScheduled = true, isMessageLoopRunning || (isMessageLoopRunning = true, schedulePerformWorkUntilDeadline())));
+        options > currentTime ? (priorityLevel.sortIndex = options, push(timerQueue, priorityLevel), null === peek(taskQueue) && priorityLevel === peek(timerQueue) && (isHostTimeoutScheduled ? (localClearTimeout(taskTimeoutID), taskTimeoutID = -1) : isHostTimeoutScheduled = true, requestHostTimeout(handleTimeout, options - currentTime))) : (priorityLevel.sortIndex = timeout, push(taskQueue, priorityLevel), isHostCallbackScheduled || isPerformingWork || (isHostCallbackScheduled = true, isMessageLoopRunning || (isMessageLoopRunning = true, schedulePerformWorkUntilDeadline())));
         return priorityLevel;
       };
       exports.unstable_shouldYield = shouldYieldToHost;
@@ -787,7 +787,7 @@
   var require_react_dom_production = __commonJS({
     "node_modules/.pnpm/react-dom@19.3.1_react@19.3.1/node_modules/react-dom/cjs/react-dom.production.js"(exports) {
       "use strict";
-      var React39 = require_react();
+      var React28 = require_react();
       function formatProdErrorMessage(code) {
         var url = "https://react.dev/errors/" + code;
         if (1 < arguments.length) {
@@ -829,7 +829,7 @@
           implementation
         };
       }
-      var ReactSharedInternals = React39.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      var ReactSharedInternals = React28.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       function getCrossOriginStringAs(as, input) {
         if ("font" === as) return "";
         if ("string" === typeof input)
@@ -853,18 +853,18 @@
           ReactSharedInternals.T = previousTransition, Internals.p = previousUpdatePriority, Internals.d.f();
         }
       };
-      exports.preconnect = function(href, options2) {
-        "string" === typeof href && (options2 ? (options2 = options2.crossOrigin, options2 = "string" === typeof options2 ? "use-credentials" === options2 ? options2 : "" : void 0) : options2 = null, Internals.d.C(href, options2));
+      exports.preconnect = function(href, options) {
+        "string" === typeof href && (options ? (options = options.crossOrigin, options = "string" === typeof options ? "use-credentials" === options ? options : "" : void 0) : options = null, Internals.d.C(href, options));
       };
       exports.prefetchDNS = function(href) {
         "string" === typeof href && Internals.d.D(href);
       };
-      exports.preinit = function(href, options2) {
-        if ("string" === typeof href && options2 && "string" === typeof options2.as) {
-          var as = options2.as, crossOrigin = getCrossOriginStringAs(as, options2.crossOrigin), integrity = "string" === typeof options2.integrity ? options2.integrity : void 0, fetchPriority = "string" === typeof options2.fetchPriority ? options2.fetchPriority : void 0;
+      exports.preinit = function(href, options) {
+        if ("string" === typeof href && options && "string" === typeof options.as) {
+          var as = options.as, crossOrigin = getCrossOriginStringAs(as, options.crossOrigin), integrity = "string" === typeof options.integrity ? options.integrity : void 0, fetchPriority = "string" === typeof options.fetchPriority ? options.fetchPriority : void 0;
           "style" === as ? Internals.d.S(
             href,
-            "string" === typeof options2.precedence ? options2.precedence : void 0,
+            "string" === typeof options.precedence ? options.precedence : void 0,
             {
               crossOrigin,
               integrity,
@@ -874,53 +874,53 @@
             crossOrigin,
             integrity,
             fetchPriority,
-            nonce: "string" === typeof options2.nonce ? options2.nonce : void 0
+            nonce: "string" === typeof options.nonce ? options.nonce : void 0
           });
         }
       };
-      exports.preinitModule = function(href, options2) {
+      exports.preinitModule = function(href, options) {
         if ("string" === typeof href)
-          if ("object" === typeof options2 && null !== options2) {
-            if (null == options2.as || "script" === options2.as) {
+          if ("object" === typeof options && null !== options) {
+            if (null == options.as || "script" === options.as) {
               var crossOrigin = getCrossOriginStringAs(
-                options2.as,
-                options2.crossOrigin
+                options.as,
+                options.crossOrigin
               );
               Internals.d.M(href, {
                 crossOrigin,
-                integrity: "string" === typeof options2.integrity ? options2.integrity : void 0,
-                nonce: "string" === typeof options2.nonce ? options2.nonce : void 0,
-                fetchPriority: "string" === typeof options2.fetchPriority ? options2.fetchPriority : void 0
+                integrity: "string" === typeof options.integrity ? options.integrity : void 0,
+                nonce: "string" === typeof options.nonce ? options.nonce : void 0,
+                fetchPriority: "string" === typeof options.fetchPriority ? options.fetchPriority : void 0
               });
             }
-          } else null == options2 && Internals.d.M(href);
+          } else null == options && Internals.d.M(href);
       };
-      exports.preload = function(href, options2) {
-        if ("string" === typeof href && "object" === typeof options2 && null !== options2 && "string" === typeof options2.as) {
-          var as = options2.as, crossOrigin = getCrossOriginStringAs(as, options2.crossOrigin);
+      exports.preload = function(href, options) {
+        if ("string" === typeof href && "object" === typeof options && null !== options && "string" === typeof options.as) {
+          var as = options.as, crossOrigin = getCrossOriginStringAs(as, options.crossOrigin);
           Internals.d.L(href, as, {
             crossOrigin,
-            integrity: "string" === typeof options2.integrity ? options2.integrity : void 0,
-            nonce: "string" === typeof options2.nonce ? options2.nonce : void 0,
-            type: "string" === typeof options2.type ? options2.type : void 0,
-            fetchPriority: "string" === typeof options2.fetchPriority ? options2.fetchPriority : void 0,
-            referrerPolicy: "string" === typeof options2.referrerPolicy ? options2.referrerPolicy : void 0,
-            imageSrcSet: "string" === typeof options2.imageSrcSet ? options2.imageSrcSet : void 0,
-            imageSizes: "string" === typeof options2.imageSizes ? options2.imageSizes : void 0,
-            media: "string" === typeof options2.media ? options2.media : void 0
+            integrity: "string" === typeof options.integrity ? options.integrity : void 0,
+            nonce: "string" === typeof options.nonce ? options.nonce : void 0,
+            type: "string" === typeof options.type ? options.type : void 0,
+            fetchPriority: "string" === typeof options.fetchPriority ? options.fetchPriority : void 0,
+            referrerPolicy: "string" === typeof options.referrerPolicy ? options.referrerPolicy : void 0,
+            imageSrcSet: "string" === typeof options.imageSrcSet ? options.imageSrcSet : void 0,
+            imageSizes: "string" === typeof options.imageSizes ? options.imageSizes : void 0,
+            media: "string" === typeof options.media ? options.media : void 0
           });
         }
       };
-      exports.preloadModule = function(href, options2) {
+      exports.preloadModule = function(href, options) {
         if ("string" === typeof href)
-          if (options2) {
-            var crossOrigin = getCrossOriginStringAs(options2.as, options2.crossOrigin);
+          if (options) {
+            var crossOrigin = getCrossOriginStringAs(options.as, options.crossOrigin);
             Internals.d.m(href, {
-              as: "string" === typeof options2.as && "script" !== options2.as ? options2.as : void 0,
+              as: "string" === typeof options.as && "script" !== options.as ? options.as : void 0,
               crossOrigin,
-              integrity: "string" === typeof options2.integrity ? options2.integrity : void 0,
-              nonce: "string" === typeof options2.nonce ? options2.nonce : void 0,
-              fetchPriority: "string" === typeof options2.fetchPriority ? options2.fetchPriority : void 0
+              integrity: "string" === typeof options.integrity ? options.integrity : void 0,
+              nonce: "string" === typeof options.nonce ? options.nonce : void 0,
+              fetchPriority: "string" === typeof options.fetchPriority ? options.fetchPriority : void 0
             });
           } else Internals.d.m(href);
       };
@@ -971,8 +971,8 @@
     "node_modules/.pnpm/react-dom@19.3.1_react@19.3.1/node_modules/react-dom/cjs/react-dom-client.production.js"(exports) {
       "use strict";
       var Scheduler = require_scheduler();
-      var React39 = require_react();
-      var ReactDOM3 = require_react_dom();
+      var React28 = require_react();
+      var ReactDOM2 = require_react_dom();
       function formatProdErrorMessage(code) {
         var url = "https://react.dev/errors/" + code;
         if (1 < arguments.length) {
@@ -1262,8 +1262,8 @@
         return null;
       }
       var isArrayImpl = Array.isArray;
-      var ReactSharedInternals = React39.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
-      var ReactDOMSharedInternals = ReactDOM3.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      var ReactSharedInternals = React28.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      var ReactDOMSharedInternals = ReactDOM2.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       var sharedNotPendingObject = {
         pending: false,
         data: null,
@@ -2307,18 +2307,18 @@
       var passiveBrowserEventsSupported = false;
       if (canUseDOM2)
         try {
-          options2 = {};
-          Object.defineProperty(options2, "passive", {
+          options = {};
+          Object.defineProperty(options, "passive", {
             get: function() {
               passiveBrowserEventsSupported = true;
             }
           });
-          window.addEventListener("test", options2, options2);
-          window.removeEventListener("test", options2, options2);
+          window.addEventListener("test", options, options);
+          window.removeEventListener("test", options, options);
         } catch (e) {
           passiveBrowserEventsSupported = false;
         }
-      var options2;
+      var options;
       var root = null;
       var startText = null;
       var fallbackText = null;
@@ -2863,13 +2863,13 @@
         registerTwoPhaseEvent(reactName, [domEventName]);
       }
       var globalClientIdCounter$1 = 0;
-      function getViewTransitionName(props, instance) {
+      function getViewTransitionName(props, instance2) {
         if (null != props.name && "auto" !== props.name) return props.name;
-        if (null !== instance.autoName) return instance.autoName;
+        if (null !== instance2.autoName) return instance2.autoName;
         props = pendingEffectsRoot.identifierPrefix;
         var globalClientId = globalClientIdCounter$1++;
         props = "_" + props + "t_" + globalClientId.toString(32) + "_";
-        return instance.autoName = props;
+        return instance2.autoName = props;
       }
       function getClassNameByType(classByType) {
         if (null == classByType || "string" === typeof classByType)
@@ -2948,9 +2948,9 @@
         sourceFiber.lanes |= lane;
         var alternate = sourceFiber.alternate;
         null !== alternate && (alternate.lanes |= lane);
-        for (var isHidden2 = false, parent = sourceFiber.return; null !== parent; )
-          parent.childLanes |= lane, alternate = parent.alternate, null !== alternate && (alternate.childLanes |= lane), 22 === parent.tag && (sourceFiber = parent.stateNode, null === sourceFiber || sourceFiber._visibility & 1 || (isHidden2 = true)), sourceFiber = parent, parent = parent.return;
-        return 3 === sourceFiber.tag ? (parent = sourceFiber.stateNode, isHidden2 && null !== update && (isHidden2 = 31 - clz32(lane), sourceFiber = parent.hiddenUpdates, alternate = sourceFiber[isHidden2], null === alternate ? sourceFiber[isHidden2] = [update] : alternate.push(update), update.lane = lane | 536870912), parent) : null;
+        for (var isHidden = false, parent = sourceFiber.return; null !== parent; )
+          parent.childLanes |= lane, alternate = parent.alternate, null !== alternate && (alternate.childLanes |= lane), 22 === parent.tag && (sourceFiber = parent.stateNode, null === sourceFiber || sourceFiber._visibility & 1 || (isHidden = true)), sourceFiber = parent, parent = parent.return;
+        return 3 === sourceFiber.tag ? (parent = sourceFiber.stateNode, isHidden && null !== update && (isHidden = 31 - clz32(lane), sourceFiber = parent.hiddenUpdates, alternate = sourceFiber[isHidden], null === alternate ? sourceFiber[isHidden] = [update] : alternate.push(update), update.lane = lane | 536870912), parent) : null;
       }
       function getRootForUpdatedFiber(sourceFiber) {
         if (50 < nestedUpdateCount)
@@ -3199,40 +3199,40 @@
         throw HydrationMismatchException;
       }
       function prepareToHydrateHostInstance(fiber) {
-        var instance = fiber.stateNode, type = fiber.type, props = fiber.memoizedProps;
-        instance[internalInstanceKey] = fiber;
-        instance[internalPropsKey] = props;
+        var instance2 = fiber.stateNode, type = fiber.type, props = fiber.memoizedProps;
+        instance2[internalInstanceKey] = fiber;
+        instance2[internalPropsKey] = props;
         switch (type) {
           case "dialog":
-            listenToNonDelegatedEvent("cancel", instance);
-            listenToNonDelegatedEvent("close", instance);
+            listenToNonDelegatedEvent("cancel", instance2);
+            listenToNonDelegatedEvent("close", instance2);
             break;
           case "iframe":
           case "object":
           case "embed":
-            listenToNonDelegatedEvent("load", instance);
+            listenToNonDelegatedEvent("load", instance2);
             break;
           case "video":
           case "audio":
             for (type = 0; type < mediaEventTypes.length; type++)
-              listenToNonDelegatedEvent(mediaEventTypes[type], instance);
+              listenToNonDelegatedEvent(mediaEventTypes[type], instance2);
             break;
           case "source":
-            listenToNonDelegatedEvent("error", instance);
+            listenToNonDelegatedEvent("error", instance2);
             break;
           case "img":
           case "image":
           case "link":
-            listenToNonDelegatedEvent("error", instance);
-            listenToNonDelegatedEvent("load", instance);
+            listenToNonDelegatedEvent("error", instance2);
+            listenToNonDelegatedEvent("load", instance2);
             break;
           case "details":
-            listenToNonDelegatedEvent("toggle", instance);
+            listenToNonDelegatedEvent("toggle", instance2);
             break;
           case "input":
-            listenToNonDelegatedEvent("invalid", instance);
+            listenToNonDelegatedEvent("invalid", instance2);
             initInput(
-              instance,
+              instance2,
               props.value,
               props.defaultValue,
               props.checked,
@@ -3243,14 +3243,14 @@
             );
             break;
           case "select":
-            listenToNonDelegatedEvent("invalid", instance);
+            listenToNonDelegatedEvent("invalid", instance2);
             break;
           case "textarea":
-            listenToNonDelegatedEvent("invalid", instance), initTextarea(instance, props.value, props.defaultValue, props.children);
+            listenToNonDelegatedEvent("invalid", instance2), initTextarea(instance2, props.value, props.defaultValue, props.children);
         }
         type = props.children;
-        "string" !== typeof type && "number" !== typeof type && "bigint" !== typeof type || instance.textContent === "" + type || true === props.suppressHydrationWarning || checkForUnmatchedText(instance.textContent, type) ? (null != props.popover && (listenToNonDelegatedEvent("beforetoggle", instance), listenToNonDelegatedEvent("toggle", instance)), null != props.onScroll && listenToNonDelegatedEvent("scroll", instance), null != props.onScrollEnd && listenToNonDelegatedEvent("scrollend", instance), null != props.onClick && (instance.onclick = noop$1), instance = true) : instance = false;
-        instance || throwOnHydrationMismatch(fiber, true);
+        "string" !== typeof type && "number" !== typeof type && "bigint" !== typeof type || instance2.textContent === "" + type || true === props.suppressHydrationWarning || checkForUnmatchedText(instance2.textContent, type) ? (null != props.popover && (listenToNonDelegatedEvent("beforetoggle", instance2), listenToNonDelegatedEvent("toggle", instance2)), null != props.onScroll && listenToNonDelegatedEvent("scroll", instance2), null != props.onScrollEnd && listenToNonDelegatedEvent("scrollend", instance2), null != props.onClick && (instance2.onclick = noop$1), instance2 = true) : instance2 = false;
+        instance2 || throwOnHydrationMismatch(fiber, true);
       }
       function popToNextHostParent(fiber) {
         for (hydrationParentFiber = fiber.return; hydrationParentFiber; )
@@ -4254,12 +4254,12 @@
               a: {
                 var workInProgress2 = workInProgress$jscomp$0, update = pendingQueue;
                 updateLane = props;
-                var instance = instance$jscomp$0;
+                var instance2 = instance$jscomp$0;
                 switch (update.tag) {
                   case 1:
                     workInProgress2 = update.payload;
                     if ("function" === typeof workInProgress2) {
-                      newState = workInProgress2.call(instance, newState, updateLane);
+                      newState = workInProgress2.call(instance2, newState, updateLane);
                       break a;
                     }
                     newState = workInProgress2;
@@ -4268,7 +4268,7 @@
                     workInProgress2.flags = workInProgress2.flags & -65537 | 128;
                   case 0:
                     workInProgress2 = update.payload;
-                    updateLane = "function" === typeof workInProgress2 ? workInProgress2.call(instance, newState, updateLane) : workInProgress2;
+                    updateLane = "function" === typeof workInProgress2 ? workInProgress2.call(instance2, newState, updateLane) : workInProgress2;
                     if (null === updateLane || void 0 === updateLane) break a;
                     newState = assign({}, newState, updateLane);
                     break a;
@@ -5650,11 +5650,11 @@
         workInProgress2 = workInProgress2.stateNode;
         return "function" === typeof workInProgress2.shouldComponentUpdate ? workInProgress2.shouldComponentUpdate(newProps, newState, nextContext) : ctor.prototype && ctor.prototype.isPureReactComponent ? !shallowEqual2(oldProps, newProps) || !shallowEqual2(oldState, newState) : true;
       }
-      function callComponentWillReceiveProps(workInProgress2, instance, newProps, nextContext) {
-        workInProgress2 = instance.state;
-        "function" === typeof instance.componentWillReceiveProps && instance.componentWillReceiveProps(newProps, nextContext);
-        "function" === typeof instance.UNSAFE_componentWillReceiveProps && instance.UNSAFE_componentWillReceiveProps(newProps, nextContext);
-        instance.state !== workInProgress2 && classComponentUpdater.enqueueReplaceState(instance, instance.state, null);
+      function callComponentWillReceiveProps(workInProgress2, instance2, newProps, nextContext) {
+        workInProgress2 = instance2.state;
+        "function" === typeof instance2.componentWillReceiveProps && instance2.componentWillReceiveProps(newProps, nextContext);
+        "function" === typeof instance2.UNSAFE_componentWillReceiveProps && instance2.UNSAFE_componentWillReceiveProps(newProps, nextContext);
+        instance2.state !== workInProgress2 && classComponentUpdater.enqueueReplaceState(instance2, instance2.state, null);
       }
       function resolveClassComponentProps(Component, baseProps) {
         var newProps = baseProps;
@@ -7567,22 +7567,22 @@
       function commitClassCallbacks(finishedWork) {
         var updateQueue = finishedWork.updateQueue;
         if (null !== updateQueue) {
-          var instance = finishedWork.stateNode;
+          var instance2 = finishedWork.stateNode;
           try {
-            commitCallbacks(updateQueue, instance);
+            commitCallbacks(updateQueue, instance2);
           } catch (error) {
             captureCommitPhaseError(finishedWork, finishedWork.return, error);
           }
         }
       }
-      function safelyCallComponentWillUnmount(current, nearestMountedAncestor, instance) {
-        instance.props = resolveClassComponentProps(
+      function safelyCallComponentWillUnmount(current, nearestMountedAncestor, instance2) {
+        instance2.props = resolveClassComponentProps(
           current.type,
           current.memoizedProps
         );
-        instance.state = current.memoizedState;
+        instance2.state = current.memoizedState;
         try {
-          instance.componentWillUnmount();
+          instance2.componentWillUnmount();
         } catch (error) {
           captureCommitPhaseError(current, nearestMountedAncestor, error);
         }
@@ -7598,10 +7598,10 @@
                 var instanceToUse = current.stateNode;
                 break;
               case 30:
-                var instance = current.stateNode, name = getViewTransitionName(current.memoizedProps, instance);
-                if (null === instance.ref || instance.ref.name !== name)
-                  instance.ref = createViewTransitionInstance(name);
-                instanceToUse = instance.ref;
+                var instance2 = current.stateNode, name = getViewTransitionName(current.memoizedProps, instance2);
+                if (null === instance2.ref || instance2.ref.name !== name)
+                  instance2.ref = createViewTransitionInstance(name);
+                instanceToUse = instance2.ref;
                 break;
               case 7:
                 if (null === current.stateNode) {
@@ -7675,17 +7675,17 @@
         return fiber && 7 === fiber.tag && null !== fiber.stateNode;
       }
       function commitHostMount(finishedWork) {
-        var type = finishedWork.type, props = finishedWork.memoizedProps, instance = finishedWork.stateNode;
+        var type = finishedWork.type, props = finishedWork.memoizedProps, instance2 = finishedWork.stateNode;
         try {
           a: switch (type) {
             case "button":
             case "input":
             case "select":
             case "textarea":
-              props.autoFocus && instance.focus();
+              props.autoFocus && instance2.focus();
               break a;
             case "img":
-              props.src ? instance.src = props.src : props.srcSet && (instance.srcset = props.srcSet);
+              props.src ? instance2.src = props.src : props.srcSet && (instance2.srcset = props.srcSet);
           }
         } catch (error) {
           captureCommitPhaseError(finishedWork, finishedWork.return, error);
@@ -7793,16 +7793,16 @@
       function applyViewTransitionToHostInstancesRecursive(child, name, className, collectMeasurements, stopAtNestedViewTransitions) {
         for (var inViewport = false; null !== child; ) {
           if (5 === child.tag) {
-            var instance = child.stateNode;
+            var instance2 = child.stateNode;
             if (null !== collectMeasurements) {
-              var measurement = measureInstance(instance);
+              var measurement = measureInstance(instance2);
               collectMeasurements.push(measurement);
               measurement.view && (inViewport = true);
             } else
-              inViewport || measureInstance(instance).view && (inViewport = true);
+              inViewport || measureInstance(instance2).view && (inViewport = true);
             shouldStartViewTransition = true;
             applyViewTransitionName(
-              instance,
+              instance2,
               0 === viewTransitionHostInstanceIdx ? name : name + "_" + viewTransitionHostInstanceIdx,
               className
             );
@@ -7935,8 +7935,8 @@
           for (parent = parent.child; null !== parent; ) {
             if (22 !== parent.tag || null === parent.memoizedState) {
               if (30 === parent.tag && 0 !== (parent.flags & 18874368)) {
-                var instance = parent.stateNode;
-                null !== instance.paired && (instance.paired = null, restoreViewTransitionOnHostInstances(parent.child, false));
+                var instance2 = parent.stateNode;
+                null !== instance2.paired && (instance2.paired = null, restoreViewTransitionOnHostInstances(parent.child, false));
               }
               restorePairedViewTransitions(parent);
             }
@@ -7958,9 +7958,9 @@
       function measureViewTransitionHostInstancesRecursive(parentViewTransition, child, newName, oldName, className, previousMeasurements, stopAtNestedViewTransitions) {
         for (var inViewport = false; null !== child; ) {
           if (5 === child.tag) {
-            var instance = child.stateNode;
+            var instance2 = child.stateNode;
             if (null !== previousMeasurements && viewTransitionHostInstanceIdx < previousMeasurements.length) {
-              var previousMeasurement = previousMeasurements[viewTransitionHostInstanceIdx], nextMeasurement = measureInstance(instance);
+              var previousMeasurement = previousMeasurements[viewTransitionHostInstanceIdx], nextMeasurement = measureInstance(instance2);
               if (previousMeasurement.view || nextMeasurement.view) inViewport = true;
               var JSCompiler_temp;
               if (JSCompiler_temp = 0 === (parentViewTransition.flags & 4))
@@ -7975,12 +7975,12 @@
               nextMeasurement && (parentViewTransition.flags |= 32);
             } else parentViewTransition.flags |= 32;
             0 !== (parentViewTransition.flags & 4) && applyViewTransitionName(
-              instance,
+              instance2,
               0 === viewTransitionHostInstanceIdx ? newName : newName + "_" + viewTransitionHostInstanceIdx,
               className
             );
             inViewport && 0 !== (parentViewTransition.flags & 4) || (null === viewTransitionCancelableChildren && (viewTransitionCancelableChildren = []), viewTransitionCancelableChildren.push(
-              instance,
+              instance2,
               0 === viewTransitionHostInstanceIdx ? oldName : oldName + "_" + viewTransitionHostInstanceIdx,
               child.memoizedProps
             ));
@@ -8127,17 +8127,17 @@
                 isViewTransitionEligible = void 0;
                 flags = current.memoizedProps;
                 current = current.memoizedState;
-                var instance = fiber.stateNode;
+                var instance2 = fiber.stateNode;
                 try {
                   var resolvedPrevProps = resolveClassComponentProps(
                     fiber.type,
                     flags
                   );
-                  isViewTransitionEligible = instance.getSnapshotBeforeUpdate(
+                  isViewTransitionEligible = instance2.getSnapshotBeforeUpdate(
                     resolvedPrevProps,
                     current
                   );
-                  instance.__reactInternalSnapshotBeforeUpdate = isViewTransitionEligible;
+                  instance2.__reactInternalSnapshotBeforeUpdate = isViewTransitionEligible;
                 } catch (error) {
                   captureCommitPhaseError(fiber, fiber.return, error);
                 }
@@ -8300,18 +8300,18 @@
             recursivelyTraverseLayoutEffects(finishedRoot, finishedWork);
         }
       }
-      function hideOrUnhideAllChildren(parentFiber, isHidden2) {
+      function hideOrUnhideAllChildren(parentFiber, isHidden) {
         for (parentFiber = parentFiber.child; null !== parentFiber; )
-          hideOrUnhideAllChildrenOnFiber(parentFiber, isHidden2), parentFiber = parentFiber.sibling;
+          hideOrUnhideAllChildrenOnFiber(parentFiber, isHidden), parentFiber = parentFiber.sibling;
       }
-      function hideOrUnhideAllChildrenOnFiber(fiber, isHidden2) {
+      function hideOrUnhideAllChildrenOnFiber(fiber, isHidden) {
         switch (fiber.tag) {
           case 5:
           case 26:
             try {
-              var instance = fiber.stateNode;
-              if (isHidden2) {
-                var style2 = instance.style;
+              var instance2 = fiber.stateNode;
+              if (isHidden) {
+                var style2 = instance2.style;
                 "function" === typeof style2.setProperty ? style2.setProperty("display", "none", "important") : style2.display = "none";
               } else {
                 var instance$jscomp$0 = fiber.stateNode, styleProp = fiber.memoizedProps.style, display = void 0 !== styleProp && null !== styleProp && styleProp.hasOwnProperty("display") ? styleProp.display : null;
@@ -8320,11 +8320,11 @@
             } catch (error) {
               captureCommitPhaseError(fiber, fiber.return, error);
             }
-            hideOrUnhideNearestPortals(fiber, isHidden2);
+            hideOrUnhideNearestPortals(fiber, isHidden);
             break;
           case 6:
             try {
-              fiber.stateNode.nodeValue = isHidden2 ? "" : fiber.memoizedProps, viewTransitionMutationContext = true;
+              fiber.stateNode.nodeValue = isHidden ? "" : fiber.memoizedProps, viewTransitionMutationContext = true;
             } catch (error) {
               captureCommitPhaseError(fiber, fiber.return, error);
             }
@@ -8332,33 +8332,33 @@
           case 18:
             try {
               var instance$jscomp$1 = fiber.stateNode;
-              isHidden2 ? hideOrUnhideDehydratedBoundary(instance$jscomp$1, true) : hideOrUnhideDehydratedBoundary(fiber.stateNode, false);
+              isHidden ? hideOrUnhideDehydratedBoundary(instance$jscomp$1, true) : hideOrUnhideDehydratedBoundary(fiber.stateNode, false);
             } catch (error) {
               captureCommitPhaseError(fiber, fiber.return, error);
             }
             break;
           case 22:
           case 23:
-            null === fiber.memoizedState && hideOrUnhideAllChildren(fiber, isHidden2);
+            null === fiber.memoizedState && hideOrUnhideAllChildren(fiber, isHidden);
             break;
           default:
-            hideOrUnhideAllChildren(fiber, isHidden2);
+            hideOrUnhideAllChildren(fiber, isHidden);
         }
       }
       function hideOrUnhideNearestPortals(parentFiber, isHidden$jscomp$0) {
         if (parentFiber.subtreeFlags & 67108864)
           for (parentFiber = parentFiber.child; null !== parentFiber; ) {
             a: {
-              var fiber = parentFiber, isHidden2 = isHidden$jscomp$0;
+              var fiber = parentFiber, isHidden = isHidden$jscomp$0;
               switch (fiber.tag) {
                 case 4:
-                  hideOrUnhideAllChildrenOnFiber(fiber, isHidden2);
+                  hideOrUnhideAllChildrenOnFiber(fiber, isHidden);
                   break a;
                 case 22:
-                  null === fiber.memoizedState && hideOrUnhideNearestPortals(fiber, isHidden2);
+                  null === fiber.memoizedState && hideOrUnhideNearestPortals(fiber, isHidden);
                   break a;
                 default:
-                  hideOrUnhideNearestPortals(fiber, isHidden2);
+                  hideOrUnhideNearestPortals(fiber, isHidden);
               }
             }
             parentFiber = parentFiber.sibling;
@@ -9058,11 +9058,11 @@
               break;
             case 1:
               safelyDetachRef(finishedWork, finishedWork.return);
-              var instance = finishedWork.stateNode;
-              "function" === typeof instance.componentWillUnmount && safelyCallComponentWillUnmount(
+              var instance2 = finishedWork.stateNode;
+              "function" === typeof instance2.componentWillUnmount && safelyCallComponentWillUnmount(
                 finishedWork,
                 finishedWork.return,
-                instance
+                instance2
               );
               recursivelyTraverseDisappearLayoutEffects(
                 finishedWork,
@@ -9088,8 +9088,8 @@
               break;
             case 26:
               safelyDetachRef(finishedWork, finishedWork.return);
-              instance = finishedWork.stateNode;
-              null !== finishedWork.memoizedState || null === instance || offscreenSubtreeWasHidden || instance.parentNode.removeChild(instance);
+              instance2 = finishedWork.stateNode;
+              null !== finishedWork.memoizedState || null === instance2 || offscreenSubtreeWasHidden || instance2.parentNode.removeChild(instance2);
               recursivelyTraverseDisappearLayoutEffects(
                 finishedWork,
                 layoutEffectTraversalFlags
@@ -9151,12 +9151,12 @@
               current = finishedWork;
               finishedRoot = current.updateQueue;
               if (null !== finishedRoot) {
-                var instance = current.stateNode;
+                var instance2 = current.stateNode;
                 try {
                   var hiddenCallbacks = finishedRoot.shared.hiddenCallbacks;
                   if (null !== hiddenCallbacks)
                     for (finishedRoot.shared.hiddenCallbacks = null, finishedRoot = 0; finishedRoot < hiddenCallbacks.length; finishedRoot++)
-                      callCallback(hiddenCallbacks[finishedRoot], instance);
+                      callCallback(hiddenCallbacks[finishedRoot], instance2);
                 } catch (error) {
                   captureCommitPhaseError(current, current.return, error);
                 }
@@ -9180,11 +9180,11 @@
               commitFragmentInstanceInsertionEffects(finishedWork);
               break;
             case 26:
-              instance = finishedWork.stateNode;
-              null !== finishedWork.memoizedState || null === instance || offscreenSubtreeIsHidden || mountHoistable(
-                getHoistableRoot(instance.ownerDocument),
+              instance2 = finishedWork.stateNode;
+              null !== finishedWork.memoizedState || null === instance2 || offscreenSubtreeIsHidden || mountHoistable(
+                getHoistableRoot(instance2.ownerDocument),
                 finishedWork.type,
-                instance
+                instance2
               );
               recursivelyTraverseReappearLayoutEffects(
                 finishedRoot,
@@ -9422,8 +9422,8 @@
             case 23:
               break;
             case 22:
-              var instance = finishedWork.stateNode;
-              null !== finishedWork.memoizedState ? instance._visibility & 2 ? recursivelyTraverseReconnectPassiveEffects(
+              var instance2 = finishedWork.stateNode;
+              null !== finishedWork.memoizedState ? instance2._visibility & 2 ? recursivelyTraverseReconnectPassiveEffects(
                 finishedRoot,
                 finishedWork,
                 committedLanes,
@@ -9432,7 +9432,7 @@
               ) : recursivelyTraverseAtomicPassiveEffects(
                 finishedRoot,
                 finishedWork
-              ) : (instance._visibility |= 2, recursivelyTraverseReconnectPassiveEffects(
+              ) : (instance2._visibility |= 2, recursivelyTraverseReconnectPassiveEffects(
                 finishedRoot,
                 finishedWork,
                 committedLanes,
@@ -9606,8 +9606,8 @@
             recursivelyTraversePassiveUnmountEffects(finishedWork);
             break;
           case 22:
-            var instance = finishedWork.stateNode;
-            null !== finishedWork.memoizedState && instance._visibility & 2 && (null === finishedWork.return || 13 !== finishedWork.return.tag) ? (instance._visibility &= -3, recursivelyTraverseDisconnectPassiveEffects(finishedWork)) : recursivelyTraversePassiveUnmountEffects(finishedWork);
+            var instance2 = finishedWork.stateNode;
+            null !== finishedWork.memoizedState && instance2._visibility & 2 && (null === finishedWork.return || 13 !== finishedWork.return.tag) ? (instance2._visibility &= -3, recursivelyTraverseDisconnectPassiveEffects(finishedWork)) : recursivelyTraversePassiveUnmountEffects(finishedWork);
             break;
           default:
             recursivelyTraversePassiveUnmountEffects(finishedWork);
@@ -9749,12 +9749,12 @@
       }
       function scheduleViewTransitionEvent(fiber, callback) {
         if (null != callback) {
-          var state = fiber.stateNode, instance = state.ref;
-          null === instance && (instance = state.ref = createViewTransitionInstance(
+          var state = fiber.stateNode, instance2 = state.ref;
+          null === instance2 && (instance2 = state.ref = createViewTransitionInstance(
             getViewTransitionName(fiber.memoizedProps, state)
           ));
           null === pendingViewTransitionEvents && (pendingViewTransitionEvents = []);
-          pendingViewTransitionEvents.push(callback.bind(null, instance));
+          pendingViewTransitionEvents.push(callback.bind(null, instance2));
         }
       }
       function scheduleUpdateOnFiber(root2, fiber, lane) {
@@ -10660,17 +10660,17 @@
               );
               break;
             } else if (1 === nearestMountedAncestor.tag) {
-              var instance = nearestMountedAncestor.stateNode;
-              if ("function" === typeof nearestMountedAncestor.type.getDerivedStateFromError || "function" === typeof instance.componentDidCatch && (null === legacyErrorBoundariesThatAlreadyFailed || !legacyErrorBoundariesThatAlreadyFailed.has(instance))) {
+              var instance2 = nearestMountedAncestor.stateNode;
+              if ("function" === typeof nearestMountedAncestor.type.getDerivedStateFromError || "function" === typeof instance2.componentDidCatch && (null === legacyErrorBoundariesThatAlreadyFailed || !legacyErrorBoundariesThatAlreadyFailed.has(instance2))) {
                 sourceFiber = createCapturedValueAtFiber(error, sourceFiber);
                 error = createClassErrorUpdate(2);
-                instance = enqueueUpdate(nearestMountedAncestor, error, 2);
-                null !== instance && (initializeClassErrorUpdate(
+                instance2 = enqueueUpdate(nearestMountedAncestor, error, 2);
+                null !== instance2 && (initializeClassErrorUpdate(
                   error,
-                  instance,
+                  instance2,
                   nearestMountedAncestor,
                   sourceFiber
-                ), markRootUpdated$1(instance, 2), ensureRootIsScheduled(instance));
+                ), markRootUpdated$1(instance2, 2), ensureRootIsScheduled(instance2));
                 break;
               }
             }
@@ -10996,9 +10996,9 @@
             var previousInstance = void 0;
             if (eventSystemFlags)
               for (var i$jscomp$0 = _dispatchQueue$i.length - 1; 0 <= i$jscomp$0; i$jscomp$0--) {
-                var _dispatchListeners$i = _dispatchQueue$i[i$jscomp$0], instance = _dispatchListeners$i.instance, currentTarget = _dispatchListeners$i.currentTarget;
+                var _dispatchListeners$i = _dispatchQueue$i[i$jscomp$0], instance2 = _dispatchListeners$i.instance, currentTarget = _dispatchListeners$i.currentTarget;
                 _dispatchListeners$i = _dispatchListeners$i.listener;
-                if (instance !== previousInstance && event.isPropagationStopped())
+                if (instance2 !== previousInstance && event.isPropagationStopped())
                   break a;
                 previousInstance = _dispatchListeners$i;
                 event.currentTarget = currentTarget;
@@ -11008,15 +11008,15 @@
                   reportGlobalError(error);
                 }
                 event.currentTarget = null;
-                previousInstance = instance;
+                previousInstance = instance2;
               }
             else
               for (i$jscomp$0 = 0; i$jscomp$0 < _dispatchQueue$i.length; i$jscomp$0++) {
                 _dispatchListeners$i = _dispatchQueue$i[i$jscomp$0];
-                instance = _dispatchListeners$i.instance;
+                instance2 = _dispatchListeners$i.instance;
                 currentTarget = _dispatchListeners$i.currentTarget;
                 _dispatchListeners$i = _dispatchListeners$i.listener;
-                if (instance !== previousInstance && event.isPropagationStopped())
+                if (instance2 !== previousInstance && event.isPropagationStopped())
                   break a;
                 previousInstance = _dispatchListeners$i;
                 event.currentTarget = currentTarget;
@@ -11026,7 +11026,7 @@
                   reportGlobalError(error);
                 }
                 event.currentTarget = null;
-                previousInstance = instance;
+                previousInstance = instance2;
               }
           }
         }
@@ -11205,15 +11205,15 @@
               }
               var inCapturePhase = 0 !== (eventSystemFlags & 4), accumulateTargetOnly = !inCapturePhase && ("scroll" === domEventName || "scrollend" === domEventName), reactEventName = inCapturePhase ? null !== reactName ? reactName + "Capture" : null : reactName;
               inCapturePhase = [];
-              for (var instance = targetInst, lastHostComponent; null !== instance; ) {
-                var _instance = instance;
+              for (var instance2 = targetInst, lastHostComponent; null !== instance2; ) {
+                var _instance = instance2;
                 lastHostComponent = _instance.stateNode;
                 _instance = _instance.tag;
-                5 !== _instance && 26 !== _instance && 27 !== _instance || null === lastHostComponent || null === reactEventName || (_instance = getListener(instance, reactEventName), null != _instance && inCapturePhase.push(
-                  createDispatchListener(instance, _instance, lastHostComponent)
+                5 !== _instance && 26 !== _instance && 27 !== _instance || null === lastHostComponent || null === reactEventName || (_instance = getListener(instance2, reactEventName), null != _instance && inCapturePhase.push(
+                  createDispatchListener(instance2, _instance, lastHostComponent)
                 ));
                 if (accumulateTargetOnly) break;
-                instance = instance.return;
+                instance2 = instance2.return;
               }
               0 < inCapturePhase.length && (reactName = new SyntheticEventCtor(
                 reactName,
@@ -11240,14 +11240,14 @@
                   inCapturePhase = SyntheticMouseEvent;
                   _instance = "onMouseLeave";
                   reactEventName = "onMouseEnter";
-                  instance = "mouse";
+                  instance2 = "mouse";
                   if ("pointerout" === domEventName || "pointerover" === domEventName)
-                    inCapturePhase = SyntheticPointerEvent, _instance = "onPointerLeave", reactEventName = "onPointerEnter", instance = "pointer";
+                    inCapturePhase = SyntheticPointerEvent, _instance = "onPointerLeave", reactEventName = "onPointerEnter", instance2 = "pointer";
                   accumulateTargetOnly = null == reactName ? reactEventType : getNodeFromInstance(reactName);
                   lastHostComponent = null == SyntheticEventCtor ? reactEventType : getNodeFromInstance(SyntheticEventCtor);
                   reactEventType = new inCapturePhase(
                     _instance,
-                    instance + "leave",
+                    instance2 + "leave",
                     reactName,
                     nativeEvent,
                     nativeEventTarget
@@ -11257,7 +11257,7 @@
                   _instance = null;
                   getClosestInstanceFromNode(nativeEventTarget) === targetInst && (inCapturePhase = new inCapturePhase(
                     reactEventName,
-                    instance + "enter",
+                    instance2 + "enter",
                     SyntheticEventCtor,
                     nativeEvent,
                     nativeEventTarget
@@ -11381,9 +11381,9 @@
           processDispatchQueue(dispatchQueue, eventSystemFlags);
         });
       }
-      function createDispatchListener(instance, listener, currentTarget) {
+      function createDispatchListener(instance2, listener, currentTarget) {
         return {
-          instance,
+          instance: instance2,
           listener,
           currentTarget
         };
@@ -12235,7 +12235,7 @@
       }
       function estimateBandwidth() {
         if ("function" === typeof performance.getEntriesByType) {
-          for (var count3 = 0, bits = 0, resourceEntries = performance.getEntriesByType("resource"), i = 0; i < resourceEntries.length; i++) {
+          for (var count2 = 0, bits = 0, resourceEntries = performance.getEntriesByType("resource"), i = 0; i < resourceEntries.length; i++) {
             var entry = resourceEntries[i], transferSize = entry.transferSize, initiatorType = entry.initiatorType, duration = entry.duration;
             if (transferSize && duration && isLikelyStaticResource(initiatorType)) {
               initiatorType = 0;
@@ -12248,13 +12248,13 @@
               }
               --i;
               bits += 8 * (transferSize + initiatorType) / (entry.duration / 1e3);
-              count3++;
-              if (10 < count3) break;
+              count2++;
+              if (10 < count2) break;
             }
           }
-          if (0 < count3) return bits / count3 / 1e6;
+          if (0 < count2) return bits / count2 / 1e6;
         }
-        return navigator.connection && (count3 = navigator.connection.downlink, "number" === typeof count3) ? count3 : 5;
+        return navigator.connection && (count2 = navigator.connection.downlink, "number" === typeof count2) ? count2 : 5;
       }
       var eventsEnabled = null;
       var selectionInformation = null;
@@ -12355,12 +12355,12 @@
         } while (node);
         retryIfBlockedOn(hydrationInstance);
       }
-      function hideOrUnhideDehydratedBoundary(suspenseInstance, isHidden2) {
+      function hideOrUnhideDehydratedBoundary(suspenseInstance, isHidden) {
         var node = suspenseInstance;
         suspenseInstance = 0;
         do {
           var nextNode = node.nextSibling;
-          1 === node.nodeType ? isHidden2 ? (node._stashedDisplay = node.style.display, node.style.display = "none") : (node.style.display = node._stashedDisplay || "", "" === node.getAttribute("style") && node.removeAttribute("style")) : 3 === node.nodeType && (isHidden2 ? (node._stashedText = node.nodeValue, node.nodeValue = "") : node.nodeValue = node._stashedText || "");
+          1 === node.nodeType ? isHidden ? (node._stashedDisplay = node.style.display, node.style.display = "none") : (node.style.display = node._stashedDisplay || "", "" === node.getAttribute("style") && node.removeAttribute("style")) : 3 === node.nodeType && (isHidden ? (node._stashedText = node.nodeValue, node.nodeValue = "") : node.nodeValue = node._stashedText || "");
           if (nextNode && 8 === nextNode.nodeType)
             if (node = nextNode.data, "/$" === node)
               if (0 === suspenseInstance) break;
@@ -12370,30 +12370,30 @@
           node = nextNode;
         } while (node);
       }
-      function applyViewTransitionName(instance, name, className) {
+      function applyViewTransitionName(instance2, name, className) {
         name = CSS.escape(name) !== name ? "r-" + btoa(name).replace(/=/g, "") : name;
-        instance.style.viewTransitionName = name;
-        null != className && (instance.style.viewTransitionClass = className);
-        className = getComputedStyle(instance);
+        instance2.style.viewTransitionName = name;
+        null != className && (instance2.style.viewTransitionClass = className);
+        className = getComputedStyle(instance2);
         if ("inline" === className.display) {
-          name = instance.getClientRects();
+          name = instance2.getClientRects();
           if (1 === name.length) var JSCompiler_inline_result = 1;
           else
             for (var i = JSCompiler_inline_result = 0; i < name.length; i++) {
               var rect = name[i];
               0 < rect.width && 0 < rect.height && JSCompiler_inline_result++;
             }
-          1 === JSCompiler_inline_result && (instance = instance.style, instance.display = 1 === name.length ? "inline-block" : "block", instance.marginTop = "-" + className.paddingTop, instance.marginBottom = "-" + className.paddingBottom);
+          1 === JSCompiler_inline_result && (instance2 = instance2.style, instance2.display = 1 === name.length ? "inline-block" : "block", instance2.marginTop = "-" + className.paddingTop, instance2.marginBottom = "-" + className.paddingBottom);
         }
       }
-      function restoreViewTransitionName(instance, props) {
-        instance = instance.style;
+      function restoreViewTransitionName(instance2, props) {
+        instance2 = instance2.style;
         props = props.style;
         var viewTransitionName = null != props ? props.hasOwnProperty("viewTransitionName") ? props.viewTransitionName : props.hasOwnProperty("view-transition-name") ? props["view-transition-name"] : null : null;
-        instance.viewTransitionName = null == viewTransitionName || "boolean" === typeof viewTransitionName ? "" : ("" + viewTransitionName).trim();
+        instance2.viewTransitionName = null == viewTransitionName || "boolean" === typeof viewTransitionName ? "" : ("" + viewTransitionName).trim();
         viewTransitionName = null != props ? props.hasOwnProperty("viewTransitionClass") ? props.viewTransitionClass : props.hasOwnProperty("view-transition-class") ? props["view-transition-class"] : null : null;
-        instance.viewTransitionClass = null == viewTransitionName || "boolean" === typeof viewTransitionName ? "" : ("" + viewTransitionName).trim();
-        "inline-block" === instance.display && (null == props ? instance.display = instance.margin = "" : (viewTransitionName = props.display, instance.display = null == viewTransitionName || "boolean" === typeof viewTransitionName ? "" : viewTransitionName, viewTransitionName = props.margin, null != viewTransitionName ? instance.margin = viewTransitionName : (viewTransitionName = props.hasOwnProperty("marginTop") ? props.marginTop : props["margin-top"], instance.marginTop = null == viewTransitionName || "boolean" === typeof viewTransitionName ? "" : viewTransitionName, props = props.hasOwnProperty("marginBottom") ? props.marginBottom : props["margin-bottom"], instance.marginBottom = null == props || "boolean" === typeof props ? "" : props)));
+        instance2.viewTransitionClass = null == viewTransitionName || "boolean" === typeof viewTransitionName ? "" : ("" + viewTransitionName).trim();
+        "inline-block" === instance2.display && (null == props ? instance2.display = instance2.margin = "" : (viewTransitionName = props.display, instance2.display = null == viewTransitionName || "boolean" === typeof viewTransitionName ? "" : viewTransitionName, viewTransitionName = props.margin, null != viewTransitionName ? instance2.margin = viewTransitionName : (viewTransitionName = props.hasOwnProperty("marginTop") ? props.marginTop : props["margin-top"], instance2.marginTop = null == viewTransitionName || "boolean" === typeof viewTransitionName ? "" : viewTransitionName, props = props.hasOwnProperty("marginBottom") ? props.marginBottom : props["margin-bottom"], instance2.marginBottom = null == props || "boolean" === typeof props ? "" : props)));
       }
       function createMeasurement(rect, computedStyle, element) {
         element = element.ownerDocument.defaultView;
@@ -12404,20 +12404,20 @@
           view: 0 <= rect.bottom && 0 <= rect.right && rect.top <= element.innerHeight && rect.left <= element.innerWidth
         };
       }
-      function measureInstance(instance) {
-        var rect = instance.getBoundingClientRect(), computedStyle = getComputedStyle(instance);
-        return createMeasurement(rect, computedStyle, instance);
+      function measureInstance(instance2) {
+        var rect = instance2.getBoundingClientRect(), computedStyle = getComputedStyle(instance2);
+        return createMeasurement(rect, computedStyle, instance2);
       }
-      function measureClonedInstance(instance) {
-        var measuredRect = instance.getBoundingClientRect();
+      function measureClonedInstance(instance2) {
+        var measuredRect = instance2.getBoundingClientRect();
         measuredRect = new DOMRect(
           measuredRect.x + 2e4,
           measuredRect.y + 2e4,
           measuredRect.width,
           measuredRect.height
         );
-        var computedStyle = getComputedStyle(instance);
-        return createMeasurement(measuredRect, computedStyle, instance);
+        var computedStyle = getComputedStyle(instance2);
+        return createMeasurement(measuredRect, computedStyle, instance2);
       }
       function forceLayout(ownerDocument) {
         return ownerDocument.documentElement.clientHeight;
@@ -12537,10 +12537,10 @@
         this._scope = document.documentElement;
         this._selector = "::view-transition-" + pseudo + "(" + name + ")";
       }
-      ViewTransitionPseudoElement.prototype.animate = function(keyframes, options3) {
-        options3 = "number" === typeof options3 ? { duration: options3 } : assign({}, options3);
-        options3.pseudoElement = this._selector;
-        return this._scope.animate(keyframes, options3);
+      ViewTransitionPseudoElement.prototype.animate = function(keyframes, options2) {
+        options2 = "number" === typeof options2 ? { duration: options2 } : assign({}, options2);
+        options2.pseudoElement = this._selector;
+        return this._scope.animate(keyframes, options2);
       };
       ViewTransitionPseudoElement.prototype.getAnimations = function() {
         for (var scope = this._scope, selector = this._selector, animations = scope.getAnimations({ subtree: true }), result = [], i = 0; i < animations.length; i++) {
@@ -12788,11 +12788,11 @@
       }
       var pendingIntersectionUnobserves = [];
       var intersectionUnobserveScheduled = false;
-      function schedulePendingIntersectionUnobserve(fragmentInstance, observer, instance) {
+      function schedulePendingIntersectionUnobserve(fragmentInstance, observer, instance2) {
         pendingIntersectionUnobserves.push({
           fragmentInstance,
           observer,
-          instance
+          instance: instance2
         });
         intersectionUnobserveScheduled || (intersectionUnobserveScheduled = true, requestPostPaintCallback(function() {
           intersectionUnobserveScheduled = false;
@@ -12996,9 +12996,9 @@
         addFragmentHandleToInstance(child, fragmentInstance);
         return false;
       }
-      function addFragmentHandleToInstance(instance, fragmentInstance) {
-        null == instance.reactFragments && (instance.reactFragments = /* @__PURE__ */ new Set());
-        instance.reactFragments.add(fragmentInstance);
+      function addFragmentHandleToInstance(instance2, fragmentInstance) {
+        null == instance2.reactFragments && (instance2.reactFragments = /* @__PURE__ */ new Set());
+        instance2.reactFragments.add(fragmentInstance);
       }
       function commitNewChildToFragmentInstance(childInstance, fragmentInstance) {
         var eventListeners = fragmentInstance._eventListeners;
@@ -13062,75 +13062,75 @@
           container.removeChild(node);
         }
       }
-      function canHydrateInstance(instance, type, props, inRootOrSingleton) {
-        for (; 1 === instance.nodeType; ) {
+      function canHydrateInstance(instance2, type, props, inRootOrSingleton) {
+        for (; 1 === instance2.nodeType; ) {
           var anyProps = props;
-          if (instance.nodeName.toLowerCase() !== type.toLowerCase()) {
-            if (!inRootOrSingleton && ("INPUT" !== instance.nodeName || "hidden" !== instance.type))
+          if (instance2.nodeName.toLowerCase() !== type.toLowerCase()) {
+            if (!inRootOrSingleton && ("INPUT" !== instance2.nodeName || "hidden" !== instance2.type))
               break;
           } else if (!inRootOrSingleton)
-            if ("input" === type && "hidden" === instance.type) {
+            if ("input" === type && "hidden" === instance2.type) {
               var name = null == anyProps.name ? null : "" + anyProps.name;
-              if ("hidden" === anyProps.type && instance.getAttribute("name") === name)
-                return instance;
-            } else return instance;
-          else if (!instance[internalHoistableMarker])
+              if ("hidden" === anyProps.type && instance2.getAttribute("name") === name)
+                return instance2;
+            } else return instance2;
+          else if (!instance2[internalHoistableMarker])
             switch (type) {
               case "meta":
-                if (!instance.hasAttribute("itemprop")) break;
-                return instance;
+                if (!instance2.hasAttribute("itemprop")) break;
+                return instance2;
               case "link":
-                name = instance.getAttribute("rel");
-                if ("stylesheet" === name && instance.hasAttribute("data-precedence"))
+                name = instance2.getAttribute("rel");
+                if ("stylesheet" === name && instance2.hasAttribute("data-precedence"))
                   break;
-                else if (name !== anyProps.rel || instance.getAttribute("href") !== (null == anyProps.href || "" === anyProps.href ? null : anyProps.href) || instance.getAttribute("crossorigin") !== (null == anyProps.crossOrigin ? null : anyProps.crossOrigin) || instance.getAttribute("title") !== (null == anyProps.title ? null : anyProps.title))
+                else if (name !== anyProps.rel || instance2.getAttribute("href") !== (null == anyProps.href || "" === anyProps.href ? null : anyProps.href) || instance2.getAttribute("crossorigin") !== (null == anyProps.crossOrigin ? null : anyProps.crossOrigin) || instance2.getAttribute("title") !== (null == anyProps.title ? null : anyProps.title))
                   break;
-                return instance;
+                return instance2;
               case "style":
-                if (instance.hasAttribute("data-precedence")) break;
-                return instance;
+                if (instance2.hasAttribute("data-precedence")) break;
+                return instance2;
               case "script":
-                name = instance.getAttribute("src");
-                if ((name !== (null == anyProps.src ? null : anyProps.src) || instance.getAttribute("type") !== (null == anyProps.type ? null : anyProps.type) || instance.getAttribute("crossorigin") !== (null == anyProps.crossOrigin ? null : anyProps.crossOrigin)) && name && instance.hasAttribute("async") && !instance.hasAttribute("itemprop"))
+                name = instance2.getAttribute("src");
+                if ((name !== (null == anyProps.src ? null : anyProps.src) || instance2.getAttribute("type") !== (null == anyProps.type ? null : anyProps.type) || instance2.getAttribute("crossorigin") !== (null == anyProps.crossOrigin ? null : anyProps.crossOrigin)) && name && instance2.hasAttribute("async") && !instance2.hasAttribute("itemprop"))
                   break;
-                return instance;
+                return instance2;
               default:
-                return instance;
+                return instance2;
             }
-          instance = getNextHydratable(instance.nextSibling);
-          if (null === instance) break;
+          instance2 = getNextHydratable(instance2.nextSibling);
+          if (null === instance2) break;
         }
         return null;
       }
-      function canHydrateTextInstance(instance, text, inRootOrSingleton) {
+      function canHydrateTextInstance(instance2, text, inRootOrSingleton) {
         if ("" === text) return null;
-        for (; 3 !== instance.nodeType; ) {
-          if ((1 !== instance.nodeType || "INPUT" !== instance.nodeName || "hidden" !== instance.type) && !inRootOrSingleton)
+        for (; 3 !== instance2.nodeType; ) {
+          if ((1 !== instance2.nodeType || "INPUT" !== instance2.nodeName || "hidden" !== instance2.type) && !inRootOrSingleton)
             return null;
-          instance = getNextHydratable(instance.nextSibling);
-          if (null === instance) return null;
+          instance2 = getNextHydratable(instance2.nextSibling);
+          if (null === instance2) return null;
         }
-        return instance;
+        return instance2;
       }
-      function canHydrateHydrationBoundary(instance, inRootOrSingleton) {
-        for (; 8 !== instance.nodeType; ) {
-          if ((1 !== instance.nodeType || "INPUT" !== instance.nodeName || "hidden" !== instance.type) && !inRootOrSingleton)
+      function canHydrateHydrationBoundary(instance2, inRootOrSingleton) {
+        for (; 8 !== instance2.nodeType; ) {
+          if ((1 !== instance2.nodeType || "INPUT" !== instance2.nodeName || "hidden" !== instance2.type) && !inRootOrSingleton)
             return null;
-          instance = getNextHydratable(instance.nextSibling);
-          if (null === instance) return null;
+          instance2 = getNextHydratable(instance2.nextSibling);
+          if (null === instance2) return null;
         }
-        return instance;
+        return instance2;
       }
-      function isSuspenseInstancePending(instance) {
-        return "$?" === instance.data || "$~" === instance.data;
+      function isSuspenseInstancePending(instance2) {
+        return "$?" === instance2.data || "$~" === instance2.data;
       }
-      function isSuspenseInstanceFallback(instance) {
-        return "$!" === instance.data || "$?" === instance.data && "loading" !== instance.ownerDocument.readyState;
+      function isSuspenseInstanceFallback(instance2) {
+        return "$!" === instance2.data || "$?" === instance2.data && "loading" !== instance2.ownerDocument.readyState;
       }
-      function registerSuspenseInstanceRetry(instance, callback) {
-        var ownerDocument = instance.ownerDocument;
-        if ("$~" === instance.data) instance._reactRetry = callback;
-        else if ("$?" !== instance.data || "loading" !== ownerDocument.readyState)
+      function registerSuspenseInstanceRetry(instance2, callback) {
+        var ownerDocument = instance2.ownerDocument;
+        if ("$~" === instance2.data) instance2._reactRetry = callback;
+        else if ("$?" !== instance2.data || "loading" !== ownerDocument.readyState)
           callback();
         else {
           var listener = function() {
@@ -13138,7 +13138,7 @@
             ownerDocument.removeEventListener("DOMContentLoaded", listener);
           };
           ownerDocument.addEventListener("DOMContentLoaded", listener);
-          instance._reactRetry = listener;
+          instance2._reactRetry = listener;
         }
       }
       function getNextHydratable(node) {
@@ -13224,19 +13224,19 @@
             throw Error(formatProdErrorMessage(451));
         }
       }
-      function releaseSingletonInstance(instance, type, props) {
+      function releaseSingletonInstance(instance2, type, props) {
         for (var propKey in props) {
           var propValue = props[propKey];
-          props.hasOwnProperty(propKey) && null != propValue && setProp(instance, type, propKey, null, emptyProps, propValue);
+          props.hasOwnProperty(propKey) && null != propValue && setProp(instance2, type, propKey, null, emptyProps, propValue);
         }
-        null != props.dangerouslySetInnerHTML && (instance.textContent = "");
-        instance.onclick === noop$1 && (instance.onclick = null);
-        detachDeletedInstance(instance);
+        null != props.dangerouslySetInnerHTML && (instance2.textContent = "");
+        instance2.onclick === noop$1 && (instance2.onclick = null);
+        detachDeletedInstance(instance2);
       }
-      function clearSingletonPreambleContribution(instance) {
-        for (var attributes = instance.attributes; attributes.length; )
-          instance.removeAttributeNode(attributes[0]);
-        detachDeletedInstance(instance);
+      function clearSingletonPreambleContribution(instance2) {
+        for (var attributes = instance2.attributes; attributes.length; )
+          instance2.removeAttributeNode(attributes[0]);
+        detachDeletedInstance(instance2);
       }
       var preloadPropsMap = /* @__PURE__ */ new Map();
       var preconnectsSet = /* @__PURE__ */ new Set();
@@ -13285,15 +13285,15 @@
         previousDispatcher.C(href, crossOrigin);
         preconnectAs("preconnect", href, crossOrigin);
       }
-      function preload(href, as, options3) {
-        previousDispatcher.L(href, as, options3);
+      function preload(href, as, options2) {
+        previousDispatcher.L(href, as, options2);
         var ownerDocument = globalDocument;
         if (ownerDocument && href && as) {
           var preloadSelector = 'link[rel="preload"][as="' + escapeSelectorAttributeValueInsideDoubleQuotes(as) + '"]';
-          "image" === as ? options3 && options3.imageSrcSet ? (preloadSelector += '[imagesrcset="' + escapeSelectorAttributeValueInsideDoubleQuotes(
-            options3.imageSrcSet
-          ) + '"]', "string" === typeof options3.imageSizes && (preloadSelector += '[imagesizes="' + escapeSelectorAttributeValueInsideDoubleQuotes(
-            options3.imageSizes
+          "image" === as ? options2 && options2.imageSrcSet ? (preloadSelector += '[imagesrcset="' + escapeSelectorAttributeValueInsideDoubleQuotes(
+            options2.imageSrcSet
+          ) + '"]', "string" === typeof options2.imageSizes && (preloadSelector += '[imagesizes="' + escapeSelectorAttributeValueInsideDoubleQuotes(
+            options2.imageSizes
           ) + '"]')) : preloadSelector += '[href="' + escapeSelectorAttributeValueInsideDoubleQuotes(href) + '"]' : preloadSelector += '[href="' + escapeSelectorAttributeValueInsideDoubleQuotes(href) + '"]';
           var key = preloadSelector;
           switch (as) {
@@ -13306,26 +13306,26 @@
           if (!(preloadPropsMap.has(key) || (href = assign(
             {
               rel: "preload",
-              href: "image" === as && options3 && options3.imageSrcSet ? void 0 : href,
+              href: "image" === as && options2 && options2.imageSrcSet ? void 0 : href,
               as
             },
-            options3
+            options2
           ), preloadPropsMap.set(key, href), null !== ownerDocument.querySelector(preloadSelector) || "style" === as && ownerDocument.querySelector(getStylesheetSelectorFromKey(key)) || "script" === as && ownerDocument.querySelector(getScriptSelectorFromKey(key))))) {
-            var instance = ownerDocument.createElement("link");
-            setInitialProperties(instance, "link", href);
-            "style" === as && (instance[internalLoadPendingKey] = true, instance.onload = instance.onerror = function() {
-              clearPendingLoadOnNode(instance);
+            var instance2 = ownerDocument.createElement("link");
+            setInitialProperties(instance2, "link", href);
+            "style" === as && (instance2[internalLoadPendingKey] = true, instance2.onload = instance2.onerror = function() {
+              clearPendingLoadOnNode(instance2);
             });
-            markNodeAsHoistable(instance);
-            ownerDocument.head.appendChild(instance);
+            markNodeAsHoistable(instance2);
+            ownerDocument.head.appendChild(instance2);
           }
         }
       }
-      function preloadModule(href, options3) {
-        previousDispatcher.m(href, options3);
+      function preloadModule(href, options2) {
+        previousDispatcher.m(href, options2);
         var ownerDocument = globalDocument;
         if (ownerDocument && href) {
-          var as = options3 && "string" === typeof options3.as ? options3.as : "script", preloadSelector = 'link[rel="modulepreload"][as="' + escapeSelectorAttributeValueInsideDoubleQuotes(as) + '"][href="' + escapeSelectorAttributeValueInsideDoubleQuotes(href) + '"]', key = preloadSelector;
+          var as = options2 && "string" === typeof options2.as ? options2.as : "script", preloadSelector = 'link[rel="modulepreload"][as="' + escapeSelectorAttributeValueInsideDoubleQuotes(as) + '"][href="' + escapeSelectorAttributeValueInsideDoubleQuotes(href) + '"]', key = preloadSelector;
           switch (as) {
             case "audioworklet":
             case "paintworklet":
@@ -13335,7 +13335,7 @@
             case "script":
               key = getScriptKey(href);
           }
-          if (!preloadPropsMap.has(key) && (href = assign({ rel: "modulepreload", href }, options3), preloadPropsMap.set(key, href), null === ownerDocument.querySelector(preloadSelector))) {
+          if (!preloadPropsMap.has(key) && (href = assign({ rel: "modulepreload", href }, options2), preloadPropsMap.set(key, href), null === ownerDocument.querySelector(preloadSelector))) {
             switch (as) {
               case "audioworklet":
               case "paintworklet":
@@ -13353,8 +13353,8 @@
           }
         }
       }
-      function preinitStyle(href, precedence, options3) {
-        previousDispatcher.S(href, precedence, options3);
+      function preinitStyle(href, precedence, options2) {
+        previousDispatcher.S(href, precedence, options2);
         var ownerDocument = globalDocument;
         if (ownerDocument && href) {
           var styles = getResourcesFromRoot(ownerDocument).hoistableStyles, key = getStyleKey(href);
@@ -13369,9 +13369,9 @@
             else {
               href = assign(
                 { rel: "stylesheet", href, "data-precedence": precedence },
-                options3
+                options2
               );
-              (options3 = preloadPropsMap.get(key)) && adoptPreloadPropsForStylesheet(href, options3);
+              (options2 = preloadPropsMap.get(key)) && adoptPreloadPropsForStylesheet(href, options2);
               var link = resource = ownerDocument.createElement("link");
               markNodeAsHoistable(link);
               setInitialProperties(link, "link", href);
@@ -13398,12 +13398,12 @@
           }
         }
       }
-      function preinitScript(src, options3) {
-        previousDispatcher.X(src, options3);
+      function preinitScript(src, options2) {
+        previousDispatcher.X(src, options2);
         var ownerDocument = globalDocument;
         if (ownerDocument && src) {
           var scripts = getResourcesFromRoot(ownerDocument).hoistableScripts, key = getScriptKey(src), resource = scripts.get(key);
-          resource || (resource = ownerDocument.querySelector(getScriptSelectorFromKey(key)), resource || (src = assign({ src, async: true }, options3), (options3 = preloadPropsMap.get(key)) && adoptPreloadPropsForScript(src, options3), resource = ownerDocument.createElement("script"), markNodeAsHoistable(resource), setInitialProperties(resource, "link", src), ownerDocument.head.appendChild(resource)), resource = {
+          resource || (resource = ownerDocument.querySelector(getScriptSelectorFromKey(key)), resource || (src = assign({ src, async: true }, options2), (options2 = preloadPropsMap.get(key)) && adoptPreloadPropsForScript(src, options2), resource = ownerDocument.createElement("script"), markNodeAsHoistable(resource), setInitialProperties(resource, "link", src), ownerDocument.head.appendChild(resource)), resource = {
             type: "script",
             instance: resource,
             count: 1,
@@ -13411,12 +13411,12 @@
           }, scripts.set(key, resource));
         }
       }
-      function preinitModuleScript(src, options3) {
-        previousDispatcher.M(src, options3);
+      function preinitModuleScript(src, options2) {
+        previousDispatcher.M(src, options2);
         var ownerDocument = globalDocument;
         if (ownerDocument && src) {
           var scripts = getResourcesFromRoot(ownerDocument).hoistableScripts, key = getScriptKey(src), resource = scripts.get(key);
-          resource || (resource = ownerDocument.querySelector(getScriptSelectorFromKey(key)), resource || (src = assign({ src, async: true, type: "module" }, options3), (options3 = preloadPropsMap.get(key)) && adoptPreloadPropsForScript(src, options3), resource = ownerDocument.createElement("script"), markNodeAsHoistable(resource), setInitialProperties(resource, "link", src), ownerDocument.head.appendChild(resource)), resource = {
+          resource || (resource = ownerDocument.querySelector(getScriptSelectorFromKey(key)), resource || (src = assign({ src, async: true, type: "module" }, options2), (options2 = preloadPropsMap.get(key)) && adoptPreloadPropsForScript(src, options2), resource = ownerDocument.createElement("script"), markNodeAsHoistable(resource), setInitialProperties(resource, "link", src), ownerDocument.head.appendChild(resource)), resource = {
             type: "script",
             instance: resource,
             count: 1,
@@ -13529,24 +13529,24 @@
         if (null === resource.instance)
           switch (resource.type) {
             case "style":
-              var instance = hoistableRoot.querySelector(
+              var instance2 = hoistableRoot.querySelector(
                 'style[data-href~="' + escapeSelectorAttributeValueInsideDoubleQuotes(props.href) + '"]'
               );
-              if (instance)
-                return resource.instance = instance, markNodeAsHoistable(instance), instance;
+              if (instance2)
+                return resource.instance = instance2, markNodeAsHoistable(instance2), instance2;
               var styleProps = assign({}, props, {
                 "data-href": props.href,
                 "data-precedence": props.precedence,
                 href: null,
                 precedence: null
               });
-              instance = (hoistableRoot.ownerDocument || hoistableRoot).createElement(
+              instance2 = (hoistableRoot.ownerDocument || hoistableRoot).createElement(
                 "style"
               );
-              markNodeAsHoistable(instance);
-              setInitialProperties(instance, "style", styleProps);
-              insertStylesheet(instance, props.precedence, hoistableRoot);
-              return resource.instance = instance;
+              markNodeAsHoistable(instance2);
+              setInitialProperties(instance2, "style", styleProps);
+              insertStylesheet(instance2, props.precedence, hoistableRoot);
+              return resource.instance = instance2;
             case "stylesheet":
               styleProps = getStyleKey(props.href);
               var instance$274 = hoistableRoot.querySelector(
@@ -13554,8 +13554,8 @@
               );
               if (instance$274)
                 return resource.state.loading |= 4, resource.instance = instance$274, markNodeAsHoistable(instance$274), instance$274;
-              instance = stylesheetPropsFromRawProps(props);
-              (styleProps = preloadPropsMap.get(styleProps)) && adoptPreloadPropsForStylesheet(instance, styleProps);
+              instance2 = stylesheetPropsFromRawProps(props);
+              (styleProps = preloadPropsMap.get(styleProps)) && adoptPreloadPropsForStylesheet(instance2, styleProps);
               instance$274 = (hoistableRoot.ownerDocument || hoistableRoot).createElement("link");
               markNodeAsHoistable(instance$274);
               var linkInstance = instance$274;
@@ -13563,7 +13563,7 @@
                 linkInstance.onload = resolve;
                 linkInstance.onerror = reject;
               });
-              setInitialProperties(instance$274, "link", instance);
+              setInitialProperties(instance$274, "link", instance2);
               resource.state.loading |= 4;
               insertStylesheet(instance$274, props.precedence, hoistableRoot);
               return resource.instance = instance$274;
@@ -13573,13 +13573,13 @@
                 getScriptSelectorFromKey(instance$274)
               ))
                 return resource.instance = styleProps, markNodeAsHoistable(styleProps), styleProps;
-              instance = props;
+              instance2 = props;
               if (styleProps = preloadPropsMap.get(instance$274))
-                instance = assign({}, props), adoptPreloadPropsForScript(instance, styleProps);
+                instance2 = assign({}, props), adoptPreloadPropsForScript(instance2, styleProps);
               hoistableRoot = hoistableRoot.ownerDocument || hoistableRoot;
               styleProps = hoistableRoot.createElement("script");
               markNodeAsHoistable(styleProps);
-              setInitialProperties(styleProps, "link", instance);
+              setInitialProperties(styleProps, "link", instance2);
               hoistableRoot.head.appendChild(styleProps);
               return resource.instance = styleProps;
             case "void":
@@ -13588,10 +13588,10 @@
               throw Error(formatProdErrorMessage(443, resource.type));
           }
         else
-          "stylesheet" === resource.type && 0 === (resource.state.loading & 4) && (instance = resource.instance, resource.state.loading |= 4, insertStylesheet(instance, props.precedence, hoistableRoot));
+          "stylesheet" === resource.type && 0 === (resource.state.loading & 4) && (instance2 = resource.instance, resource.state.loading |= 4, insertStylesheet(instance2, props.precedence, hoistableRoot));
         return resource.instance;
       }
-      function insertStylesheet(instance, precedence, root2) {
+      function insertStylesheet(instance2, precedence, root2) {
         for (var nodes = root2.querySelectorAll(
           'link[rel="stylesheet"][data-precedence],style[data-precedence]'
         ), last = nodes.length ? nodes[nodes.length - 1] : null, prior = last, i = 0; i < nodes.length; i++) {
@@ -13599,7 +13599,7 @@
           if (node.dataset.precedence === precedence) prior = node;
           else if (prior !== last) break;
         }
-        prior ? prior.parentNode.insertBefore(instance, prior.nextSibling) : (precedence = 9 === root2.nodeType ? root2.head : root2, precedence.insertBefore(instance, precedence.firstChild));
+        prior ? prior.parentNode.insertBefore(instance2, prior.nextSibling) : (precedence = 9 === root2.nodeType ? root2.head : root2, precedence.insertBefore(instance2, precedence.firstChild));
       }
       function adoptPreloadPropsForStylesheet(stylesheetProps, preloadProps) {
         null == stylesheetProps.crossOrigin && (stylesheetProps.crossOrigin = preloadProps.crossOrigin);
@@ -13633,10 +13633,10 @@
         }
         return cache;
       }
-      function mountHoistable(hoistableRoot, type, instance) {
+      function mountHoistable(hoistableRoot, type, instance2) {
         hoistableRoot = hoistableRoot.ownerDocument || hoistableRoot;
         hoistableRoot.head.insertBefore(
-          instance,
+          instance2,
           "title" === type ? hoistableRoot.querySelector("head > title") : null
         );
       }
@@ -13671,38 +13671,38 @@
       function preloadResource(resource) {
         return "stylesheet" === resource.type && 0 === (resource.state.loading & 3) ? false : true;
       }
-      function estimateImageBytes(instance) {
-        return (instance.width || 100) * (instance.height || 100) * ("number" === typeof devicePixelRatio ? devicePixelRatio : 1) * 0.25;
+      function estimateImageBytes(instance2) {
+        return (instance2.width || 100) * (instance2.height || 100) * ("number" === typeof devicePixelRatio ? devicePixelRatio : 1) * 0.25;
       }
-      function suspendInstance(state, instance) {
-        "function" === typeof instance.decode && (state.imgCount++, instance.complete || (state.imgBytes += estimateImageBytes(instance), state.suspenseyImages.push(instance)), state = onUnsuspendImg.bind(state), instance.decode().then(state, state));
+      function suspendInstance(state, instance2) {
+        "function" === typeof instance2.decode && (state.imgCount++, instance2.complete || (state.imgBytes += estimateImageBytes(instance2), state.suspenseyImages.push(instance2)), state = onUnsuspendImg.bind(state), instance2.decode().then(state, state));
       }
       function suspendResource(state, hoistableRoot, resource, props) {
         if ("stylesheet" === resource.type && ("string" !== typeof props.media || false !== matchMedia(props.media).matches) && 0 === (resource.state.loading & 4)) {
           if (null === resource.instance) {
-            var key = getStyleKey(props.href), instance = hoistableRoot.querySelector(
+            var key = getStyleKey(props.href), instance2 = hoistableRoot.querySelector(
               getStylesheetSelectorFromKey(key)
             );
-            if (instance) {
-              hoistableRoot = instance._p;
+            if (instance2) {
+              hoistableRoot = instance2._p;
               null !== hoistableRoot && "object" === typeof hoistableRoot && "function" === typeof hoistableRoot.then && (state.count++, state = onUnsuspend.bind(state), hoistableRoot.then(state, state));
               resource.state.loading |= 4;
-              resource.instance = instance;
-              markNodeAsHoistable(instance);
+              resource.instance = instance2;
+              markNodeAsHoistable(instance2);
               return;
             }
-            instance = hoistableRoot.ownerDocument || hoistableRoot;
+            instance2 = hoistableRoot.ownerDocument || hoistableRoot;
             props = stylesheetPropsFromRawProps(props);
             (key = preloadPropsMap.get(key)) && adoptPreloadPropsForStylesheet(props, key);
-            instance = instance.createElement("link");
-            markNodeAsHoistable(instance);
-            var linkInstance = instance;
+            instance2 = instance2.createElement("link");
+            markNodeAsHoistable(instance2);
+            var linkInstance = instance2;
             linkInstance._p = new Promise(function(resolve, reject) {
               linkInstance.onload = resolve;
               linkInstance.onerror = reject;
             });
-            setInitialProperties(instance, "link", props);
-            resource.instance = instance;
+            setInitialProperties(instance2, "link", props);
+            resource.instance = instance2;
           }
           null === state.stylesheets && (state.stylesheets = /* @__PURE__ */ new Map());
           state.stylesheets.set(resource, hoistableRoot);
@@ -14411,7 +14411,7 @@
           0 === i && attemptExplicitHydrationTarget(target);
         }
       };
-      var isomorphicReactPackageVersion$jscomp$inline_2043 = React39.version;
+      var isomorphicReactPackageVersion$jscomp$inline_2043 = React28.version;
       if ("19.3.1" !== isomorphicReactPackageVersion$jscomp$inline_2043)
         throw Error(
           formatProdErrorMessage(
@@ -14451,11 +14451,11 @@
           }
       }
       var hook$jscomp$inline_2587;
-      exports.createRoot = function(container, options3) {
+      exports.createRoot = function(container, options2) {
         if (!isValidContainer(container)) throw Error(formatProdErrorMessage(299));
         var isStrictMode = false, identifierPrefix = "", onUncaughtError = defaultOnUncaughtError, onCaughtError = defaultOnCaughtError, onRecoverableError = defaultOnRecoverableError;
-        null !== options3 && void 0 !== options3 && (true === options3.unstable_strictMode && (isStrictMode = true), void 0 !== options3.identifierPrefix && (identifierPrefix = options3.identifierPrefix), void 0 !== options3.onUncaughtError && (onUncaughtError = options3.onUncaughtError), void 0 !== options3.onCaughtError && (onCaughtError = options3.onCaughtError), void 0 !== options3.onRecoverableError && (onRecoverableError = options3.onRecoverableError));
-        options3 = createFiberRoot(
+        null !== options2 && void 0 !== options2 && (true === options2.unstable_strictMode && (isStrictMode = true), void 0 !== options2.identifierPrefix && (identifierPrefix = options2.identifierPrefix), void 0 !== options2.onUncaughtError && (onUncaughtError = options2.onUncaughtError), void 0 !== options2.onCaughtError && (onCaughtError = options2.onCaughtError), void 0 !== options2.onRecoverableError && (onRecoverableError = options2.onRecoverableError));
+        options2 = createFiberRoot(
           container,
           1,
           false,
@@ -14469,20 +14469,20 @@
           onRecoverableError,
           defaultOnDefaultTransitionIndicator
         );
-        container[internalContainerInstanceKey] = options3.current;
+        container[internalContainerInstanceKey] = options2.current;
         listenToAllSupportedEvents(container);
-        return new ReactDOMRoot(options3);
+        return new ReactDOMRoot(options2);
       };
-      exports.hydrateRoot = function(container, initialChildren, options3) {
+      exports.hydrateRoot = function(container, initialChildren, options2) {
         if (!isValidContainer(container)) throw Error(formatProdErrorMessage(299));
         var isStrictMode = false, identifierPrefix = "", onUncaughtError = defaultOnUncaughtError, onCaughtError = defaultOnCaughtError, onRecoverableError = defaultOnRecoverableError, formState = null;
-        null !== options3 && void 0 !== options3 && (true === options3.unstable_strictMode && (isStrictMode = true), void 0 !== options3.identifierPrefix && (identifierPrefix = options3.identifierPrefix), void 0 !== options3.onUncaughtError && (onUncaughtError = options3.onUncaughtError), void 0 !== options3.onCaughtError && (onCaughtError = options3.onCaughtError), void 0 !== options3.onRecoverableError && (onRecoverableError = options3.onRecoverableError), void 0 !== options3.formState && (formState = options3.formState));
+        null !== options2 && void 0 !== options2 && (true === options2.unstable_strictMode && (isStrictMode = true), void 0 !== options2.identifierPrefix && (identifierPrefix = options2.identifierPrefix), void 0 !== options2.onUncaughtError && (onUncaughtError = options2.onUncaughtError), void 0 !== options2.onCaughtError && (onCaughtError = options2.onCaughtError), void 0 !== options2.onRecoverableError && (onRecoverableError = options2.onRecoverableError), void 0 !== options2.formState && (formState = options2.formState));
         initialChildren = createFiberRoot(
           container,
           1,
           true,
           initialChildren,
-          null != options3 ? options3 : null,
+          null != options2 ? options2 : null,
           isStrictMode,
           identifierPrefix,
           formState,
@@ -14492,15 +14492,15 @@
           defaultOnDefaultTransitionIndicator
         );
         initialChildren.context = getContextForSubtree(null);
-        options3 = initialChildren.current;
+        options2 = initialChildren.current;
         isStrictMode = requestUpdateLane();
         isStrictMode = getBumpedLaneForHydrationByLane(isStrictMode);
         identifierPrefix = createUpdate(isStrictMode);
         identifierPrefix.callback = null;
-        enqueueUpdate(options3, identifierPrefix, isStrictMode);
-        options3 = isStrictMode;
-        initialChildren.current.lanes = options3;
-        markRootUpdated$1(initialChildren, options3);
+        enqueueUpdate(options2, identifierPrefix, isStrictMode);
+        options2 = isStrictMode;
+        initialChildren.current.lanes = options2;
+        markRootUpdated$1(initialChildren, options2);
         ensureRootIsScheduled(initialChildren);
         container[internalContainerInstanceKey] = initialChildren.current;
         listenToAllSupportedEvents(container);
@@ -14620,7 +14620,7 @@
   var execGameAction = (action, payload = {}) => callPageHook("EXEC_GAME_ACTION", action, payload);
 
   // src/content/ui/hud-core.tsx
-  var import_react6 = __toESM(require_react(), 1);
+  var import_react5 = __toESM(require_react(), 1);
   var import_client = __toESM(require_client(), 1);
 
   // src/shared/constants/default-config.ts
@@ -14787,7 +14787,7 @@
   };
 
   // src/content/ui/HudApp.tsx
-  var import_react5 = __toESM(require_react(), 1);
+  var import_react4 = __toESM(require_react(), 1);
 
   // node_modules/.pnpm/clsx@2.1.1/node_modules/clsx/dist/clsx.mjs
   function r(e) {
@@ -14846,3268 +14846,1180 @@
     return cx(base, getVariantClassNames, getCompoundVariantClassNames, props === null || props === void 0 ? void 0 : props.class, props === null || props === void 0 ? void 0 : props.className);
   };
 
-  // node_modules/.pnpm/tailwind-merge@3.7.0/node_modules/tailwind-merge/dist/bundle-mjs.mjs
-  var concatArrays = (array1, array2) => {
-    const combinedArray = new Array(array1.length + array2.length);
-    for (let i = 0; i < array1.length; i++) {
-      combinedArray[i] = array1[i];
-    }
-    for (let i = 0; i < array2.length; i++) {
-      combinedArray[array1.length + i] = array2[i];
-    }
-    return combinedArray;
+  // node_modules/.pnpm/cn@0.5.0/node_modules/cn/dist/tables.js
+  var P = 48;
+  var U = (s, o = 0) => {
+    const out = new Int32Array(s.length);
+    for (let i = 0; i < s.length; i++) out[i] = s.charCodeAt(i) - P - o;
+    return out;
   };
-  var createClassValidatorObject = (classGroupId, validator) => ({
-    classGroupId,
-    validator
-  });
-  var createClassPartObject = (nextPart = /* @__PURE__ */ new Map(), validators = null, classGroupId) => ({
-    nextPart,
-    validators,
-    classGroupId
-  });
-  var CLASS_PART_SEPARATOR = "-";
-  var EMPTY_CONFLICTS = [];
-  var ARBITRARY_PROPERTY_PREFIX = "arbitrary..";
-  var createClassGroupUtils = (config2) => {
-    const classMap = createClassMap(config2);
-    const {
-      conflictingClassGroups,
-      conflictingClassGroupModifiers
-    } = config2;
-    const getClassGroupId = (className) => {
-      if (className.startsWith("[") && className.endsWith("]")) {
-        return getGroupIdForArbitraryProperty(className);
-      }
-      const classParts = className.split(CLASS_PART_SEPARATOR);
-      const startIndex = classParts[0] === "" && classParts.length > 1 ? 1 : 0;
-      return getGroupRecursive(classParts, startIndex, classMap);
-    };
-    const getConflictingClassGroupIds = (classGroupId, hasPostfixModifier) => {
-      if (hasPostfixModifier) {
-        const modifierConflicts = conflictingClassGroupModifiers[classGroupId];
-        const baseConflicts = conflictingClassGroups[classGroupId];
-        if (modifierConflicts) {
-          if (baseConflicts) {
-            return concatArrays(baseConflicts, modifierConflicts);
-          }
-          return modifierConflicts;
-        }
-        return baseConflicts || EMPTY_CONFLICTS;
-      }
-      return conflictingClassGroups[classGroupId] || EMPTY_CONFLICTS;
-    };
-    return {
-      getClassGroupId,
-      getConflictingClassGroupIds
-    };
+  var PS = (counts) => {
+    const out = new Int32Array(counts.length + 1);
+    for (let i = 0; i < counts.length; i++) out[i + 1] = out[i] + counts[i];
+    return out;
   };
-  var getGroupRecursive = (classParts, startIndex, classPartObject) => {
-    const classPathsLength = classParts.length - startIndex;
-    if (classPathsLength === 0) {
-      return classPartObject.classGroupId;
+  var DZ = (s) => {
+    const out = new Int32Array(s.length);
+    let a = 0;
+    for (let i = 0; i < s.length; i++) {
+      const z = s.charCodeAt(i) - P;
+      a += z >>> 1 ^ -(z & 1);
+      out[i] = a;
     }
-    const currentClassPart = classParts[startIndex];
-    const nextClassPartObject = classPartObject.nextPart.get(currentClassPart);
-    if (nextClassPartObject) {
-      const result = getGroupRecursive(classParts, startIndex + 1, nextClassPartObject);
-      if (result) return result;
+    return out;
+  };
+  var GROUP_COUNT = 384;
+  var customValidatorNames = [];
+  var edgeStart = PS(U("E0500002005282000000002000150000020021820000011200000003022202000300004200120000200420001200021200301200010400162000010000220021010:2192001200220012000220012000200200200400010200040000000000400200108200110100000022010313000162002000020020012020080213000228200000000082000000000120002000120020020040101020300130001001010"));
+  var labelStart = PS(U(":11111111211111119311546544411119731869:671397415686432441111111111161114151214313433415:78311132233313187211117221449443411141111151152226611131111112212518142224214215421421542142424242516171151615616347111111111197911327451111111111111111111113134714133513411111311111111111111111111112444411111342312715245411117:3"));
+  var labelText = "@containerabcdefghinlmoprstunderlineviawzccentlignnimatespectuto-colsrowsaglorightnessckdrop-sisbcontrastfiltergrayscalehue-rotateinvertopacityslurrightnessaturateepia-coniclinearpositionradialsizeockurrderttom-belrstxyespacing-xyaretoursorlnt-umnsendspantartainentrasteividerop-shadowurationcorationlay-xyasendillexontromlter-featuresstretchapr-xyayscaleidow-colsrowsue-rotatedentlinesetvert-beringsxyeshadoweiadingftnest-clamp-imageabein-lrstxyskx--b-coniclpositionrsizet-x-y-fromto-fromto-inearfromto-fromto-adialfromto-fromtofromtofromtofromtoblockhinlinew-screenesblockhinlinewbjectpacityrutlinederigin-offsetbelrstxyesrspective-originaceholderioghtng-offsettateundedw-xyz-belrstlreseslr-endspantartaturatecepiahizekewpace-taleroll-xyz-barmpbelrstxyesbelrstxyes-thumbrackadowrink-xyxyartrokeabextora-shadowpckingnsformitionlate-xyz-offsetill-changeoom";
+  var edgeTarget = (() => {
+    const N = edgeStart.length - 1;
+    const sizes = new Int32Array(N);
+    for (let i = N - 1; i >= 0; i--) {
+      let s = 1;
+      let c = i + 1;
+      for (let k = edgeStart[i]; k < edgeStart[i + 1]; k++) {
+        s += sizes[c];
+        c += sizes[c];
+      }
+      sizes[i] = s;
     }
-    const validators = classPartObject.validators;
-    if (validators === null) {
-      return void 0;
-    }
-    const classRest = startIndex === 0 ? classParts.join(CLASS_PART_SEPARATOR) : classParts.slice(startIndex).join(CLASS_PART_SEPARATOR);
-    const validatorsLength = validators.length;
-    for (let i = 0; i < validatorsLength; i++) {
-      const validatorObj = validators[i];
-      if (validatorObj.validator(classRest)) {
-        return validatorObj.classGroupId;
+    const out = new Int32Array(edgeStart[N]);
+    let e = 0;
+    for (let i = 0; i < N; i++) {
+      let c = i + 1;
+      for (let k = edgeStart[i]; k < edgeStart[i + 1]; k++) {
+        out[e++] = c;
+        c += sizes[c];
       }
     }
-    return void 0;
-  };
-  var getGroupIdForArbitraryProperty = (className) => className.slice(1, -1).indexOf(":") === -1 ? void 0 : (() => {
-    const content = className.slice(1, -1);
-    const colonIndex = content.indexOf(":");
-    const property = content.slice(0, colonIndex);
-    return property ? ARBITRARY_PROPERTY_PREFIX + property : void 0;
+    return out;
   })();
-  var createClassMap = (config2) => {
-    const {
-      theme,
-      classGroups
-    } = config2;
-    return processClassGroups(classGroups, theme);
-  };
-  var processClassGroups = (classGroups, theme) => {
-    const classMap = createClassPartObject();
-    for (const classGroupId in classGroups) {
-      const group = classGroups[classGroupId];
-      processClassesRecursively(group, classMap, classGroupId, theme);
-    }
-    return classMap;
-  };
-  var processClassesRecursively = (classGroup, classPartObject, classGroupId, theme) => {
-    const len = classGroup.length;
-    for (let i = 0; i < len; i++) {
-      const classDefinition = classGroup[i];
-      processClassDefinition(classDefinition, classPartObject, classGroupId, theme);
-    }
-  };
-  var processClassDefinition = (classDefinition, classPartObject, classGroupId, theme) => {
-    if (typeof classDefinition === "string") {
-      processStringDefinition(classDefinition, classPartObject, classGroupId);
-      return;
-    }
-    if (typeof classDefinition === "function") {
-      processFunctionDefinition(classDefinition, classPartObject, classGroupId, theme);
-      return;
-    }
-    processObjectDefinition(classDefinition, classPartObject, classGroupId, theme);
-  };
-  var processStringDefinition = (classDefinition, classPartObject, classGroupId) => {
-    const classPartObjectToEdit = classDefinition === "" ? classPartObject : getPart(classPartObject, classDefinition);
-    classPartObjectToEdit.classGroupId = classGroupId;
-  };
-  var processFunctionDefinition = (classDefinition, classPartObject, classGroupId, theme) => {
-    if (isThemeGetter(classDefinition)) {
-      processClassesRecursively(classDefinition(theme), classPartObject, classGroupId, theme);
-      return;
-    }
-    if (classPartObject.validators === null) {
-      classPartObject.validators = [];
-    }
-    classPartObject.validators.push(createClassValidatorObject(classGroupId, classDefinition));
-  };
-  var processObjectDefinition = (classDefinition, classPartObject, classGroupId, theme) => {
-    const entries = Object.entries(classDefinition);
-    const len = entries.length;
-    for (let i = 0; i < len; i++) {
-      const [key, value] = entries[i];
-      processClassesRecursively(value, getPart(classPartObject, key), classGroupId, theme);
-    }
-  };
-  var getPart = (classPartObject, path) => {
-    let current = classPartObject;
-    const parts = path.split(CLASS_PART_SEPARATOR);
-    const len = parts.length;
-    for (let i = 0; i < len; i++) {
-      const part = parts[i];
-      let next = current.nextPart.get(part);
-      if (!next) {
-        next = createClassPartObject();
-        current.nextPart.set(part, next);
-      }
-      current = next;
-    }
-    return current;
-  };
-  var isThemeGetter = (func) => "isThemeGetter" in func && func.isThemeGetter === true;
-  var createLruCache = (maxCacheSize) => {
-    if (maxCacheSize < 1) {
-      return {
-        get: () => void 0,
-        set: () => {
-        }
-      };
-    }
-    let cacheSize = 0;
-    let cache = /* @__PURE__ */ Object.create(null);
-    let previousCache = /* @__PURE__ */ Object.create(null);
-    const update = (key, value) => {
-      cache[key] = value;
-      cacheSize++;
-      if (cacheSize > maxCacheSize) {
-        cacheSize = 0;
-        previousCache = cache;
-        cache = /* @__PURE__ */ Object.create(null);
-      }
-    };
-    return {
-      get(key) {
-        let value = cache[key];
-        if (value !== void 0) {
-          return value;
-        }
-        if ((value = previousCache[key]) !== void 0) {
-          update(key, value);
-          return value;
-        }
-      },
-      set(key, value) {
-        if (key in cache) {
-          cache[key] = value;
-        } else {
-          update(key, value);
-        }
-      }
-    };
-  };
-  var IMPORTANT_MODIFIER = "!";
-  var MODIFIER_SEPARATOR = ":";
-  var EMPTY_MODIFIERS = [];
-  var createResultObject = (modifiers, hasImportantModifier, baseClassName, maybePostfixModifierPosition, isExternal) => ({
-    modifiers,
-    hasImportantModifier,
-    baseClassName,
-    maybePostfixModifierPosition,
-    isExternal
+  var nodeGroup = U("02000000000000900<=0?000B000F00F00\u014FI0J0LNPRTVX0000]_a00000000000000000000000rst0000000z\u014F00000000000\x85\u014F000\x880000\u014F000000\x900000\x970000000000000000000000000000000000000000000000000000\xCB000000000000000000000\xDE000000000000000000\xF00000000\xF80\xF9\xFA\xFB\xFC\xFD\xFE\xFF\u0100\u0101\u0102\u0103\u0104\u0105\u0106000000000000000000000000000000000000000000\u01270\u0128\u012A00000000000000000000\u013C\u013D00000\u016C000000", 1);
+  var vlistPat = PS(U("123333359346463635126536711576"));
+  var vlistOps = U("93203242332583253248325D>E?F@03263243255B:032523853:0325B:8GA032542H<C=12727B:0328432553;D>E?3257D>032585:0325B:;0328B:032");
+  var vlistRef = U("012113445661666666789111:5;;;;;;;;444;;;:62999<1161=62>>?61:21@ABCD4446996:64E:::;:?::64:F114GHHIHHHHIHH1HH1HH1HHHHHH::EEJ4444::EE4444441691;644444114244444:;K6666555555555555555999666664444444444444444444444226?6:66644L9M?D:111::::6DE199");
+  var vlistGroup = DZ("020200202020020020020020020020200200200200200200200002020202001003040106000200200200200200200200200200200200200200200200200200200200200200200200200200200200020020020020020020002020200202002002002002002002002002002020002002020020200220200200200200200200200200200200020020020000200020002000200200200020020020002000200200200020020202002020202000200200020022000200200020020002002000200220002002000200W0Z00020020002002020002002000200g0j0002002000200200020020002002000200200020020002000200002000002002002002002000200020000200002002002002002002002020020020200200200200200200200200202020020020020020020020020002002002020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020020002002002002002002000200200200200200200200200200020202020002000200020002002002002000020200200");
+  var nodeVlist = (() => {
+    const out = (/* @__PURE__ */ new Int32Array(319)).fill(-1);
+    const A = DZ("02422242:222222242224222242442222222422222244442242226224222426222422442462222422622222222626222462242622422622422424242422222222422222222242422222222222222222622442224222222222222224424442262222222222222222222226224222424242422224422422422222");
+    const V = DZ("02222222222222222222202222222222222222222222221422222222222222222222222222222222222Y\\222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222221422222222222222222222222222222222222222\u013F\u0142222222222222222222");
+    for (let i = 0; i < A.length; i++) out[A[i]] = V[i];
+    return out;
+  })();
+  var SETS = "container |break-after- all auto avoid avoid-page column left page right|break-before- all auto avoid avoid-page column left page right|break-inside-a uto void void-column void-page|box-decoration- clone slice|box- border content| contents flow-root hidden table table-caption table-cell table-column table-column-group table-footer-group table-header-group table-row table-row-group| not-sr-only sr-only|float- end left none right start|clear- both end left none right start|isolat e ion-auto|overflow- auto clip hidden scroll visible|overflow-x- auto clip hidden scroll visible|overflow-y- auto clip hidden scroll visible|overscroll- auto contain none|overscroll-x- auto contain none|overscroll-y- auto contain none| absolute fixed relative static sticky| collapse invisible visible|justify- around baseline between center center-safe end end-safe evenly normal start stretch|justify-items- center center-safe end end-safe normal start stretch|justify-self- auto center center-safe end end-safe start stretch|items- baseline baseline-last center center-safe end end-safe start stretch|self- auto baseline baseline-last center center-safe end end-safe start stretch|place-content- around baseline between center center-safe end end-safe evenly start stretch|place-items- baseline center center-safe end end-safe start stretch|place-self- auto center center-safe end end-safe start stretch| antialiased subpixel-antialiased| italic not-italic|normal-nums |ordinal |slashed-zero | lining-nums oldstyle-nums| proportional-nums tabular-nums| diagonal-fractions stacked-fractions| no-underline overline| capitalize lowercase normal-case uppercase|truncate |whitespace- break-spaces normal nowrap pre pre-line pre-wrap|break- all keep normal words|wrap- anywhere break-word normal|hyphens- auto manual none|mix-blend- color color-burn color-dodge darken difference exclusion hard-light hue lighten luminosity multiply normal overlay plus-darker plus-lighter saturation screen soft-light|table- auto fixed|caption- bottom top|backface- hidden visible|appearance- auto none|scheme- dark light light-dark normal only-dark only-light|field-sizing- content fixed|pointer-events- auto none|resize  -none -x -y|snap- align-none center end start|snap- always normal|snap- both none x y|snap- mandatory proximity|touch- auto manipulation none|touch-pan- left right x|touch-pan- down up y|touch-pinch-zoom |select- all auto none text|forced-color-adjust- auto none| normal size| baseline bottom middle sub super text-bottom text-top top| bounce none ping pulse spin| auto square video| auto fr max min px|none | auto full px| fixed local scroll|clip- border content padding text|origin- border content padding| bottom bottom-left bottom-right center left left-bottom left-top right right-bottom right-top top top-left top-right| no-repeat repeat repeat-round repeat-space repeat-x repeat-y| auto contain cover| gradient-to-b gradient-to-bl gradient-to-br gradient-to-l gradient-to-r gradient-to-t gradient-to-tl gradient-to-tr none|blend- color color-burn color-dodge darken difference exclusion hard-light hue lighten luminosity multiply normal overlay saturation screen soft-light|to- b bl br l r t tl tr| auto dvh fit full lh lvh max min px screen svh| dashed dotted double hidden none solid| collapse separate|px |auto |full | content none strict| inline-size size|layout |paint |style | around baseline between center center-safe end end-safe evenly normal start stretch| alias all-scroll auto cell col-resize context-menu copy crosshair default e-resize ew-resize grab grabbing help move n-resize ne-resize nesw-resize no-drop none not-allowed ns-resize nw-resize nwse-resize pointer progress row-resize s-resize se-resize sw-resize text vertical-text w-resize wait zoom-in zoom-out| dashed dotted double solid wavy| auto from-font|reverse |initial | in in-out initial linear out| col col-reverse row row-reverse| nowrap wrap wrap-reverse| auto initial none| black bold extrabold extralight light medium normal semibold thin| condensed expanded extra-condensed extra-expanded normal semi-condensed semi-expanded ultra-condensed ultra-expanded|flow- col col-dense dense row row-dense| none subgrid| auto dvh dvw fit full lh lvh lvw max min px screen svh svw| block flex grid table| auto dvw fit full lvw max min px screen svw| loose none normal px relaxed snug tight|through |item | inside outside| decimal disc none| auto px| clip-border clip-content clip-fill clip-padding clip-stroke clip-view no-clip| add exclude intersect subtract| alpha luminance match|origin- border content fill padding stroke view|type- alpha luminance| circle ellipse| closest-corner closest-side farthest-corner farthest-side|at- bottom bottom-left bottom-right center left left-bottom left-top right right-bottom right-top top top-left top-right| dvh fit full lh lvh max min none px screen svh| auto dvh dvw fit full lh lvh lvw max min none px screen svh svw| dvw fit full lvw max min none px screen svw| auto dvh dvw fit full lvh lvw max min none prose px svh svw| auto dvh dvw fit full lvh lvw max min none px screen svh svw| contain cover fill none scale-down| first last none| distant dramatic midrange near none normal|inset | full none|3d | auto smooth|gutter- auto both stable| auto none thin| inner none| auto dvh dvw fit full lvh lvw max min px svh svw|base | center end justify left right start| clip ellipsis| balance nowrap pretty wrap| normal tight tighter wide wider widest| cpu gpu none| 3d flat| all colors none opacity shadow transform| discrete normal| full px| auto dvh dvw fit full lvh lvw max min px screen svh svw| auto contents scroll transform".split("|").map((s) => {
+    const tails = s.split(" ");
+    const prefix = tails.shift();
+    for (let i = 0; i < tails.length; i++) tails[i] = prefix + tails[i];
+    return tails;
   });
-  var createParseClassName = (config2) => {
-    const {
-      prefix,
-      experimentalParseClassName
-    } = config2;
-    let parseClassName = (className) => {
-      const modifiers = [];
-      let bracketDepth = 0;
-      let parenDepth = 0;
-      let modifierStart = 0;
-      let postfixModifierPosition;
-      const len = className.length;
-      for (let index = 0; index < len; index++) {
-        const currentCharacter = className[index];
-        if (bracketDepth === 0 && parenDepth === 0) {
-          if (currentCharacter === MODIFIER_SEPARATOR) {
-            modifiers.push(className.slice(modifierStart, index));
-            modifierStart = index + 1;
-            continue;
-          }
-          if (currentCharacter === "/") {
-            postfixModifierPosition = index;
-            continue;
-          }
-        }
-        if (currentCharacter === "[") bracketDepth++;
-        else if (currentCharacter === "]") bracketDepth--;
-        else if (currentCharacter === "(") parenDepth++;
-        else if (currentCharacter === ")") parenDepth--;
+  var AA = DZ("0000000000000000000000000000000000000000000000000000000000000262242:6@200000006:240B428:4422400002046044222426220026642642462026224222824220022400000000\\00N222422242222222224062242222222422226264222422222222222222442804222422222222222222222222220<4<0204260002444020204224422");
+  var AG = DZ("\u0260222222222222222222222222222222222222222222222222222222222222\u02D54222226>\u02B622\u02B7\u02BA\u02B72\u02B8\u02B742\u02B42\u029322>621422\u0276222\u0279\u027C\u0277\u027A\u0277\u027A22\u027142222\u02682\u026726622\u0258\u0253244\u01B8\u01B5222]d24242\u01D6\u01D3\u019A\xC4\u022B2263\u0228\u0225\u02282222222\u01E3222222222222222222\u01C2\u01BD2\u01BE\u01B52222222422222\u019C\u019122222222222222222222144\u0166\u016322\u0162\u015F222222222222222222222\u01382\u013168\u0126\u0123\u0126\u0261\u01704\u0120\xAB\xAE\u011D822\u0114\u0111\u01142\u01132222622");
+  var AS = DZ("02222222222222222222222222222222222222222222222222222222222222222202022222222222EH2200IL021042222Y\\222IL0cf2e10j2222U00X202[^2y0000120|{~\x7F\x8222\x85\x88\x87:22|22222222222G000q\x86OVI00000}\x9A2\x9B>40000\x8C\x9DB00000I\xA8\xA9000\xAC00000000000000\x8D021M\xAE\xAD00\xB0\x93000000000000000000000\x96222\x9BHGHa1\xBA222\xBF2\xC02222\xC9\xCC000\xAD\xB02\xB1");
+  var litAnchor = /* @__PURE__ */ new Int32Array(995);
+  var litGroup = /* @__PURE__ */ new Int32Array(995);
+  var litPool = /* @__PURE__ */ new Int32Array(995);
+  var poolText = "";
+  var poolOffsets = /* @__PURE__ */ new Int32Array(1038);
+  {
+    const tailRef = /* @__PURE__ */ new Map();
+    let nextRef = 0;
+    let e = 0;
+    for (let i = 0; i < AA.length; i++) for (const tail of SETS[AS[i]]) {
+      let r2 = tailRef.get(tail);
+      if (r2 === void 0) {
+        r2 = nextRef++;
+        tailRef.set(tail, r2);
+        poolOffsets[r2 * 2] = poolText.length;
+        poolOffsets[r2 * 2 + 1] = tail.length;
+        poolText += tail;
       }
-      const baseClassNameWithImportantModifier = modifiers.length === 0 ? className : className.slice(modifierStart);
-      let baseClassName = baseClassNameWithImportantModifier;
-      let hasImportantModifier = false;
-      if (baseClassNameWithImportantModifier.endsWith(IMPORTANT_MODIFIER)) {
-        baseClassName = baseClassNameWithImportantModifier.slice(0, -1);
-        hasImportantModifier = true;
-      } else if (
-        /**
-         * In Tailwind CSS v3 the important modifier was at the start of the base class name. This is still supported for legacy reasons.
-         * @see https://github.com/dcastil/tailwind-merge/issues/513#issuecomment-2614029864
-         */
-        baseClassNameWithImportantModifier.startsWith(IMPORTANT_MODIFIER)
-      ) {
-        baseClassName = baseClassNameWithImportantModifier.slice(1);
-        hasImportantModifier = true;
-      }
-      const maybePostfixModifierPosition = postfixModifierPosition && postfixModifierPosition > modifierStart ? postfixModifierPosition - modifierStart : void 0;
-      return createResultObject(modifiers, hasImportantModifier, baseClassName, maybePostfixModifierPosition);
-    };
-    if (prefix) {
-      const fullPrefix = prefix + MODIFIER_SEPARATOR;
-      const parseClassNameOriginal = parseClassName;
-      parseClassName = (className) => className.startsWith(fullPrefix) ? parseClassNameOriginal(className.slice(fullPrefix.length)) : createResultObject(EMPTY_MODIFIERS, false, className, void 0, true);
+      litAnchor[e] = AA[i];
+      litGroup[e] = AG[i];
+      litPool[e] = r2;
+      e++;
     }
-    if (experimentalParseClassName) {
-      const parseClassNameOriginal = parseClassName;
-      parseClassName = (className) => experimentalParseClassName({
-        className,
-        parseClassName: parseClassNameOriginal
-      });
-    }
-    return parseClassName;
+  }
+  var adjGid = DZ("0b2N:222@R>F@286\xA62@H2D266226FB22B2>BD\\6N22222Z222D222p");
+  var adjStart = PS(U("1::24444432:442:44:44>222222:44:4421322511111311111114"));
+  var adjTgt = DZ("2\x8A4A;33N=C@H4A;33N=C@<27;83:;8393NQ:3NQ\u02B0222\u02C9\xBA\u0174\u017D2R2=18c\u01B4\xC5\u0147\x9C=c\u011E\xDBC1\u0188\u01DD\u0208:\u012725=11D3A@4=<1;1DEr25;11B3?<6;:371BCn9@7=<8192>2E121@9@EHE@9>2T25511<398454131<=V25511<398454131<=\x84\u01A7N\u017E2\u0110\xE5242L222290000f22500\u025B000\u01D8222");
+  var patGid = U("\u0133");
+  var patTgt = U("\x97");
+  var postfixLookupGroups = U("1");
+  var orderSensitiveModifiers = "* ** after backdrop before details-content file first-letter first-line marker placeholder selection";
+  var tables_generated_default = {
+    GROUP_COUNT,
+    customValidatorNames,
+    edgeStart,
+    labelStart,
+    labelText,
+    edgeTarget,
+    nodeGroup,
+    nodeVlist,
+    vlistPat,
+    vlistOps,
+    vlistRef,
+    vlistGroup,
+    litAnchor,
+    litGroup,
+    litPool,
+    poolOffsets,
+    poolText,
+    adjGid,
+    adjStart,
+    adjTgt,
+    patGid,
+    patTgt,
+    postfixLookupGroups,
+    orderSensitiveModifiers
   };
-  var createSortModifiers = (config2) => {
-    const modifierWeights = /* @__PURE__ */ new Map();
-    config2.orderSensitiveModifiers.forEach((mod, index) => {
-      modifierWeights.set(mod, 1e6 + index);
+
+  // node_modules/.pnpm/cn@0.5.0/node_modules/cn/dist/engine.js
+  var IS_JSC = "line" in /* @__PURE__ */ new Error();
+  var EXTERNAL = -1;
+  var DEAD = -1;
+  var fnv = (str, s, e) => {
+    let h = 2166136261;
+    for (let p = s; p < e; p++) h = Math.imul(h ^ str.charCodeAt(p), 16777619);
+    return h;
+  };
+  var spanHash = (str, s, e) => {
+    const len = e - s;
+    let h = Math.imul(len, 2654435761) ^ str.charCodeAt(s);
+    if (len > 3) {
+      const q = len >> 2;
+      const m = len >> 1;
+      h = Math.imul(h ^ str.charCodeAt(s + 1) << 8 ^ str.charCodeAt(s + 2) << 16 ^ str.charCodeAt(s + q), 2246822507);
+      h = Math.imul(h ^ str.charCodeAt(s + m) << 8 ^ str.charCodeAt(s + m + q) << 16 ^ str.charCodeAt(e - 3), 3266489909);
+      h ^= str.charCodeAt(e - 2) << 8 ^ str.charCodeAt(e - 1) << 16;
+      for (let p = s + 3, q2 = e - 4; p < s + 8 && p < q2; p++, q2--) h = Math.imul(h ^ str.charCodeAt(p) ^ str.charCodeAt(q2) << 8, 16777619);
+    }
+    return h ^ h >>> 15 | 0;
+  };
+  var createEngine = (T, validatorImpls, options = {}) => {
+    const { GROUP_COUNT: GROUP_COUNT2, edgeStart: edgeStart2, labelStart: labelStart2, labelText: labelText2, edgeTarget: edgeTarget2, nodeGroup: nodeGroup2, nodeVlist: nodeVlist2, vlistPat: vlistPat2, vlistOps: vlistOps2, vlistRef: vlistRef2, vlistGroup: vlistGroup2, litAnchor: litAnchor2, litGroup: litGroup2, litPool: litPool2, poolOffsets: poolOffsets2, poolText: poolText2, adjGid: adjGid2, adjStart: adjStart2, adjTgt: adjTgt2, patGid: patGid2, patTgt: patTgt2, postfixLookupGroups: postfixLookupGroups2, customValidatorNames: customValidatorNames2, orderSensitiveModifiers: orderSensitiveModifiers2 } = T;
+    const adjRow = new Int32Array(GROUP_COUNT2).fill(-1);
+    for (let i = 0; i < adjGid2.length; i++) adjRow[adjGid2[i]] = i;
+    let maxAdj = 0;
+    for (let r2 = 0; r2 + 1 < adjStart2.length; r2++) {
+      const n = adjStart2[r2 + 1] - adjStart2[r2];
+      if (n > maxAdj) maxAdj = n;
+    }
+    let CLAIM_PER_TOKEN = 32;
+    while (CLAIM_PER_TOKEN < 2 * (1 + maxAdj + patGid2.length)) CLAIM_PER_TOKEN <<= 1;
+    const vgStart = new Int32Array(vlistRef2.length + 1);
+    for (let l = 0; l < vlistRef2.length; l++) vgStart[l + 1] = vgStart[l] + vlistPat2[vlistRef2[l] + 1] - vlistPat2[vlistRef2[l]];
+    const postfixLookupSet = new Uint8Array(GROUP_COUNT2);
+    for (let i = 0; i < postfixLookupGroups2.length; i++) postfixLookupSet[postfixLookupGroups2[i]] = 1;
+    const nodeCount = edgeStart2.length - 1;
+    const nodeHasLit = new Uint8Array(nodeCount);
+    let litMaxLen = 0;
+    let litNoArb = true;
+    for (let i = 0; i < litAnchor2.length; i++) {
+      nodeHasLit[litAnchor2[i]] = 1;
+      const len = poolOffsets2[litPool2[i] * 2 + 1];
+      if (len > litMaxLen) litMaxLen = len;
+      const c0 = poolText2.charCodeAt(poolOffsets2[litPool2[i] * 2]);
+      if (c0 === 91 || c0 === 40) litNoArb = false;
+    }
+    let LIT_SIZE = 1;
+    while (LIT_SIZE < litAnchor2.length * 2) LIT_SIZE <<= 1;
+    const litTable = new Int32Array(LIT_SIZE).fill(-1);
+    for (let i = 0; i < litAnchor2.length; i++) {
+      const off = poolOffsets2[litPool2[i] * 2];
+      let idx = (fnv(poolText2, off, off + poolOffsets2[litPool2[i] * 2 + 1]) ^ Math.imul(litAnchor2[i], 2654435761) | 0) & LIT_SIZE - 1;
+      while (litTable[idx] !== -1) idx = idx + 1 & LIT_SIZE - 1;
+      litTable[idx] = i;
+    }
+    const litProbe = (anchor, input, s, e) => {
+      let idx = (fnv(input, s, e) ^ Math.imul(anchor, 2654435761) | 0) & LIT_SIZE - 1;
+      const len = e - s;
+      for (; ; ) {
+        const entry = litTable[idx];
+        if (entry === -1) return -1;
+        if (litAnchor2[entry] === anchor && poolOffsets2[litPool2[entry] * 2 + 1] === len) {
+          const off = poolOffsets2[litPool2[entry] * 2];
+          let ok = true;
+          for (let k = 0; k < len; k++) if (poolText2.charCodeAt(off + k) !== input.charCodeAt(s + k)) {
+            ok = false;
+            break;
+          }
+          if (ok) return litGroup2[entry];
+        }
+        idx = idx + 1 & LIT_SIZE - 1;
+      }
+    };
+    const cacheSize = options.cacheSize ?? 8192;
+    const RAW_PREFIX = options.prefix ?? T.prefix ?? "";
+    const FULL_PREFIX = RAW_PREFIX === "" ? "" : RAW_PREFIX + ":";
+    const FPL = FULL_PREFIX.length;
+    const vCustom = (customValidatorNames2 ?? []).map((name) => {
+      const fn = validatorImpls && validatorImpls[name];
+      if (!fn) throw new Error("cn: missing validator " + name);
+      return fn;
     });
-    return (modifiers) => {
-      const result = [];
-      let currentSegment = [];
-      for (let i = 0; i < modifiers.length; i++) {
-        const modifier = modifiers[i];
-        const isArbitrary = modifier[0] === "[";
-        const isOrderSensitive = modifierWeights.has(modifier);
-        if (isArbitrary || isOrderSensitive) {
-          if (currentSegment.length > 0) {
-            currentSegment.sort();
-            result.push(...currentSegment);
-            currentSegment = [];
-          }
-          result.push(modifier);
-        } else {
-          currentSegment.push(modifier);
+    const lengthUnitRegex = /\d+(%|px|r?em|[sdl]?v([hwib]|min|max)|pt|pc|in|cm|mm|cap|ch|ex|r?lh|cq(w|h|i|b|min|max))|\b(calc|min|max|clamp)\(.+\)|^0$/;
+    const colorFunctionRegex = /^(rgba?|hsla?|hwb|(ok)?(lab|lch)|color-mix)\(.+\)$/;
+    const shadowRegex = /^(inset_)?-?((\d+)?\.?(\d+)[a-z]+|0)_-?((\d+)?\.?(\d+)[a-z]+|0)/;
+    const imageRegex = /^(url|image|image-set|cross-fade|element|(repeating-)?(linear|radial|conic)-gradient)\(.+\)$/;
+    let aKind = 0;
+    let aLabelS = -1;
+    let aLabelE = -1;
+    let aValS = -1;
+    let aValE = -1;
+    const isWordCode = (c) => c >= 97 && c <= 122 || c >= 65 && c <= 90 || c >= 48 && c <= 57 || c === 95;
+    const isUniWS = (c) => /\s/.test(String.fromCharCode(c));
+    const analyzeArb = (input, s, e) => {
+      aKind = 0;
+      aLabelS = -1;
+      if (e - s < 3) return;
+      const c0 = input.charCodeAt(s);
+      const cl = input.charCodeAt(e - 1);
+      if (c0 === 91 && cl === 93) aKind = 1;
+      else if (c0 === 40 && cl === 41) aKind = 2;
+      else return;
+      aValS = s + 1;
+      aValE = e - 1;
+      let p = s + 1;
+      if (isWordCode(input.charCodeAt(p))) {
+        p++;
+        while (p < e - 1) {
+          const c = input.charCodeAt(p);
+          if (!isWordCode(c) && c !== 45) break;
+          p++;
+        }
+        if (p < e - 2 && input.charCodeAt(p) === 58) {
+          aLabelS = s + 1;
+          aLabelE = p;
+          aValS = p + 1;
         }
       }
-      if (currentSegment.length > 0) {
-        currentSegment.sort();
-        result.push(...currentSegment);
-      }
-      return result;
     };
-  };
-  var createConfigUtils = (config2) => ({
-    cache: createLruCache(config2.cacheSize),
-    parseClassName: createParseClassName(config2),
-    sortModifiers: createSortModifiers(config2),
-    postfixLookupClassGroupIds: createPostfixLookupClassGroupIds(config2),
-    ...createClassGroupUtils(config2)
-  });
-  var createPostfixLookupClassGroupIds = (config2) => {
-    const lookup = /* @__PURE__ */ Object.create(null);
-    const classGroupIds = config2.postfixLookupClassGroups;
-    if (classGroupIds) {
-      for (let i = 0; i < classGroupIds.length; i++) {
-        lookup[classGroupIds[i]] = true;
+    const spanEq = (input, s, e, str) => {
+      if (e - s !== str.length) return false;
+      for (let i = 0; i < str.length; i++) if (input.charCodeAt(s + i) !== str.charCodeAt(i)) return false;
+      return true;
+    };
+    const fractionRegex = /^\d+(?:\.\d+)?\/\d+(?:\.\d+)?$/;
+    const tshirtRegex = /^(\d+(\.\d+)?)?(xs|sm|md|lg|xl)$/;
+    const isNumStr = (v) => !!v && !Number.isNaN(Number(v));
+    const spanIsNamedContainerQuery = (input, s, e) => {
+      if (e - s < 11 || !spanEq(input, s, s + 10, "@container")) return false;
+      if (input.charCodeAt(s + 10) === 47) return e - s >= 12;
+      const c11 = input.charCodeAt(s + 11);
+      return c11 === 115 && e - s >= 17 && spanEq(input, s + 10, s + 16, "-size/") || c11 === 110 && e - s >= 19 && spanEq(input, s + 10, s + 18, "-normal/");
+    };
+    const VKIND = [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+    ];
+    const VLABELS = "length|number|number weight|family-name|position percentage|length size bg-size|image url|shadow|length|family-name|position percentage|length size bg-size|image url|shadow|number weight".split("|").map((s) => s.split(" "));
+    const VFALL = [
+      2,
+      3,
+      1,
+      0,
+      0,
+      0,
+      4,
+      5,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1
+    ];
+    const runValidator = (op, input, s, e) => {
+      if (op >= 10) {
+        if (op >= 25) return vCustom[op - 25](input.slice(s, e));
+        const i = op - 10;
+        if (aKind !== VKIND[i]) return false;
+        if (aLabelS >= 0) {
+          for (const L of VLABELS[i]) if (spanEq(input, aLabelS, aLabelE, L)) return true;
+          return false;
+        }
+        switch (VFALL[i]) {
+          case 0:
+            return false;
+          case 1:
+            return true;
+          case 2: {
+            const v = input.slice(aValS, aValE);
+            return lengthUnitRegex.test(v) && !colorFunctionRegex.test(v);
+          }
+          case 3:
+            return isNumStr(input.slice(aValS, aValE));
+          case 4:
+            return imageRegex.test(input.slice(aValS, aValE));
+          default:
+            return shadowRegex.test(input.slice(aValS, aValE));
+        }
       }
-    }
-    return lookup;
-  };
-  var SPLIT_CLASSES_REGEX = /\s+/;
-  var mergeClassList = (classList, configUtils) => {
-    const {
-      parseClassName,
-      getClassGroupId,
-      getConflictingClassGroupIds,
-      sortModifiers,
-      postfixLookupClassGroupIds
-    } = configUtils;
-    const classGroupsInConflict = [];
-    const classNames = classList.trim().split(SPLIT_CLASSES_REGEX);
-    let result = "";
-    for (let index = classNames.length - 1; index >= 0; index -= 1) {
-      const originalClassName = classNames[index];
-      const {
-        isExternal,
-        modifiers,
-        hasImportantModifier,
-        baseClassName,
-        maybePostfixModifierPosition
-      } = parseClassName(originalClassName);
-      if (isExternal) {
-        result = originalClassName + (result.length > 0 ? " " + result : result);
-        continue;
+      switch (op) {
+        case 0:
+          return true;
+        case 1:
+          return aKind === 0;
+        case 2:
+          return aKind === 1;
+        case 3:
+          return aKind === 2;
+        case 4:
+          return fractionRegex.test(input.slice(s, e));
+        case 5:
+          return isNumStr(input.slice(s, e));
+        case 6: {
+          const v = input.slice(s, e);
+          return !!v && Number.isInteger(Number(v));
+        }
+        case 7:
+          return e > s && input.charCodeAt(e - 1) === 37 && isNumStr(input.slice(s, e - 1));
+        case 8:
+          return tshirtRegex.test(input.slice(s, e));
+        default:
+          return spanIsNamedContainerQuery(input, s, e);
       }
-      let hasPostfixModifier = !!maybePostfixModifierPosition;
-      let classGroupId;
-      if (hasPostfixModifier) {
-        const baseClassNameWithoutPostfix = baseClassName.substring(0, maybePostfixModifierPosition);
-        classGroupId = getClassGroupId(baseClassNameWithoutPostfix);
-        const classGroupIdWithPostfix = classGroupId && postfixLookupClassGroupIds[classGroupId] ? getClassGroupId(baseClassName) : void 0;
-        if (classGroupIdWithPostfix && classGroupIdWithPostfix !== classGroupId) {
-          classGroupId = classGroupIdWithPostfix;
-          hasPostfixModifier = false;
+    };
+    const orderSensitive = new Set(typeof orderSensitiveModifiers2 === "string" ? orderSensitiveModifiers2.split(" ") : orderSensitiveModifiers2);
+    const internSpan = (map, input, s, e, imp, make) => {
+      const h = fnv(input, s, e) ^ (imp ? 2654435769 : 0) | 0;
+      let bucket = map.get(h);
+      if (bucket !== void 0) outer: for (let b = 0; b < bucket.length; b++) {
+        const en = bucket[b];
+        if (en.imp !== imp || en.k.length !== e - s) continue;
+        for (let i = 0; i < en.k.length; i++) if (en.k.charCodeAt(i) !== input.charCodeAt(s + i)) continue outer;
+        return en.id;
+      }
+      else map.set(h, bucket = []);
+      const k = input.slice(s, e);
+      const id = make(k);
+      bucket.push({
+        k,
+        imp,
+        id
+      });
+      return id;
+    };
+    let ctxByHash = /* @__PURE__ */ new Map();
+    let ctxByCanon = /* @__PURE__ */ new Map();
+    let nextCtxId = 2;
+    const MAX_CTX = 4096;
+    const canonicalizeContext = (raw, important) => {
+      const mods = [];
+      let dB = 0, dP = 0, start = 0;
+      for (let i = 0; i < raw.length; i++) {
+        const c = raw.charCodeAt(i);
+        if (dB === 0 && dP === 0 && c === 58) {
+          mods.push(raw.slice(start, i));
+          start = i + 1;
+        } else if (c === 91) dB++;
+        else if (c === 93) dB--;
+        else if (c === 40) dP++;
+        else if (c === 41) dP--;
+      }
+      mods.push(raw.slice(start));
+      let canonical = mods[0];
+      if (mods.length > 1) {
+        const result = [];
+        let segment = [];
+        for (const mod of mods) if (mod.charCodeAt(0) === 91 || orderSensitive.has(mod)) {
+          if (segment.length) {
+            result.push(...segment.sort());
+            segment = [];
+          }
+          result.push(mod);
+        } else segment.push(mod);
+        if (segment.length) result.push(...segment.sort());
+        canonical = result.join(":");
+      }
+      const key = important ? canonical + " !" : canonical;
+      let id = ctxByCanon.get(key);
+      if (id === void 0) ctxByCanon.set(key, id = nextCtxId++);
+      return id;
+    };
+    let dynByHash = /* @__PURE__ */ new Map();
+    let nextDynId = GROUP_COUNT2;
+    const MAX_DYN = GROUP_COUNT2 + 4096;
+    const newDynId = () => nextDynId++;
+    const ID_LIMIT = 2097152;
+    const TOKEN_TABLE = 8192;
+    const memoHash = new Int32Array(TOKEN_TABLE);
+    const memoStr = new Array(TOKEN_TABLE).fill(null);
+    const memoGid = new Int32Array(TOKEN_TABLE);
+    const memoCtx = new Int32Array(TOKEN_TABLE);
+    const memoFlags = new Uint8Array(TOKEN_TABLE);
+    let memoTick = 0;
+    const memoPut = (way0, input, ts, te, h, gid, ctxId, flags) => {
+      let slot = way0;
+      if (memoStr[way0] !== null) {
+        if (memoStr[way0 | 1] === null) slot = way0 | 1;
+        else if ((memoTick++ & 3) === 0) slot = way0 | memoTick >> 2 & 1;
+        else return;
+      }
+      memoStr[slot] = input.slice(ts, te);
+      memoHash[slot] = h;
+      memoGid[slot] = gid;
+      memoCtx[slot] = ctxId;
+      memoFlags[slot] = flags;
+    };
+    const memoReset = () => memoStr.fill(null);
+    let cap = 256;
+    let tokI32 = [
+      new Int32Array(cap),
+      new Int32Array(cap),
+      new Int32Array(cap),
+      new Int32Array(cap)
+    ];
+    let [tokStart, tokEnd, tokGid, tokCtx] = tokI32;
+    let tokFlags = new Uint8Array(cap);
+    let keep = new Uint8Array(cap);
+    const growTokens = () => {
+      cap *= 2;
+      tokI32 = tokI32.map((a) => {
+        const n = new Int32Array(cap);
+        n.set(a);
+        return n;
+      });
+      [tokStart, tokEnd, tokGid, tokCtx] = tokI32;
+      const nf = new Uint8Array(cap);
+      nf.set(tokFlags);
+      tokFlags = nf;
+      keep = new Uint8Array(cap);
+    };
+    let ckptCap = 64;
+    let ckptNode = new Int32Array(ckptCap);
+    let ckptTail = new Int32Array(ckptCap);
+    const claim0 = new Int32Array(GROUP_COUNT2);
+    let CLAIM_TABLE = 2048;
+    let claimShift = 21;
+    let claimKeys = new Float64Array(CLAIM_TABLE);
+    let claimEpochs = new Int32Array(CLAIM_TABLE);
+    let epoch = 0;
+    const claimTest = (ctx, gid) => {
+      if (ctx === 0 && gid < GROUP_COUNT2) {
+        if (claim0[gid] === epoch) return 1;
+        claim0[gid] = epoch;
+        return 0;
+      }
+      const key = ctx * 2097152 + gid + 1;
+      let idx = Math.imul(key, 2654435761) >>> claimShift;
+      for (; ; ) {
+        if (claimEpochs[idx] !== epoch) break;
+        if (claimKeys[idx] === key) return 1;
+        idx = idx + 1 & CLAIM_TABLE - 1;
+      }
+      claimKeys[idx] = key;
+      claimEpochs[idx] = epoch;
+      return 0;
+    };
+    const resolveAt = (input, bs, endPos, nodeAt, ckptAt) => {
+      if (endPos - bs >= 2 && input.charCodeAt(bs) === 91 && input.charCodeAt(endPos - 1) === 93) {
+        let colon = -1;
+        for (let p = bs + 1; p < endPos - 1; p++) if (input.charCodeAt(p) === 58) {
+          colon = p;
+          break;
+        }
+        if (colon === -1 || colon === bs + 1) return EXTERNAL;
+        return internSpan(dynByHash, input, bs + 1, colon, 0, newDynId);
+      }
+      if (nodeAt >= 0 && nodeGroup2[nodeAt] >= 0) return nodeGroup2[nodeAt];
+      for (let k = ckptAt - 1; k >= 0; k--) {
+        const tailStart = ckptTail[k];
+        if (tailStart > endPos) continue;
+        const nodeId = ckptNode[k];
+        const tlen = endPos - tailStart;
+        if (nodeHasLit[nodeId] === 1 && tlen > 0 && tlen <= litMaxLen) {
+          const c0 = input.charCodeAt(tailStart);
+          if (litNoArb === false || c0 !== 91 && c0 !== 40) {
+            const g = litProbe(nodeId, input, tailStart, endPos);
+            if (g >= 0) return g;
+          }
+        }
+        const vl = nodeVlist2[nodeId];
+        if (vl < 0) continue;
+        const pat = vlistRef2[vl];
+        const vs = vlistPat2[pat];
+        const ve = vlistPat2[pat + 1];
+        if (vs === ve) continue;
+        analyzeArb(input, tailStart, endPos);
+        const g0 = vgStart[vl] - vs;
+        for (let v = vs; v < ve; v++) if (runValidator(vlistOps2[v], input, tailStart, endPos)) return vlistGroup2[g0 + v];
+      }
+      return EXTERNAL;
+    };
+    const mergeClassList = (input) => {
+      const n = input.length;
+      let tokenCount = 0;
+      let totalTokenChars = 0;
+      let sawNonSpaceWS = false;
+      if (nextCtxId > MAX_CTX || ctxByHash.size > MAX_CTX) {
+        ctxByHash = /* @__PURE__ */ new Map();
+        ctxByCanon = /* @__PURE__ */ new Map();
+        nextCtxId = 2;
+        memoReset();
+      }
+      if (nextDynId > MAX_DYN) {
+        dynByHash = /* @__PURE__ */ new Map();
+        nextDynId = GROUP_COUNT2;
+        memoReset();
+      }
+      let i = 0;
+      while (i < n) {
+        let c = input.charCodeAt(i);
+        if (c === 32 || c >= 9 && c <= 13 || c >= 160 && isUniWS(c)) {
+          if (c !== 32) sawNonSpaceWS = true;
+          i++;
+          continue;
+        }
+        const ts = i;
+        let th = 0;
+        while (i < n) {
+          c = input.charCodeAt(i);
+          if (c <= 32) {
+            if (c === 32) break;
+            if (c >= 9 && c <= 13) {
+              sawNonSpaceWS = true;
+              break;
+            }
+          } else if (c >= 160 && isUniWS(c)) {
+            sawNonSpaceWS = true;
+            break;
+          }
+          th = Math.imul(th ^ c, 16777619);
+          i++;
+        }
+        const te = i;
+        const len = te - ts;
+        if (tokenCount === cap) growTokens();
+        const t2 = tokenCount++;
+        tokStart[t2] = ts;
+        tokEnd[t2] = te;
+        totalTokenChars += len;
+        th ^= Math.imul(len, 2654435761);
+        const h = th ^ th >>> 15 | 0;
+        const way0 = h & 8190;
+        {
+          let hitAt = -1;
+          if (memoHash[way0] === h && memoStr[way0] !== null && memoStr[way0].length === len) hitAt = way0;
+          else if (memoHash[way0 | 1] === h && memoStr[way0 | 1] !== null && memoStr[way0 | 1].length === len) hitAt = way0 | 1;
+          if (hitAt >= 0) {
+            const s = memoStr[hitAt];
+            let ok = true;
+            for (let k = 0; k < len; k++) if (s.charCodeAt(k) !== input.charCodeAt(ts + k)) {
+              ok = false;
+              break;
+            }
+            if (ok) {
+              tokGid[t2] = memoGid[hitAt];
+              tokCtx[t2] = memoCtx[hitAt];
+              tokFlags[t2] = memoFlags[hitAt];
+              continue;
+            }
+          }
+        }
+        let pts = ts;
+        if (FPL !== 0) {
+          if (te - ts <= FPL || !input.startsWith(FULL_PREFIX, ts)) {
+            tokGid[t2] = EXTERNAL;
+            memoPut(way0, input, ts, te, h, EXTERNAL, 0, 0);
+            continue;
+          }
+          pts = ts + FPL;
+        }
+        let depthB = 0, depthP = 0;
+        let lastColon = -1, lastSlash = -1;
+        for (let p = pts; p < te; p++) {
+          const pc = input.charCodeAt(p);
+          if (depthB === 0 && depthP === 0) {
+            if (pc === 58) {
+              lastColon = p;
+              continue;
+            }
+            if (pc === 47) {
+              lastSlash = p;
+              continue;
+            }
+          }
+          if (pc === 91) depthB++;
+          else if (pc === 93) depthB--;
+          else if (pc === 40) depthP++;
+          else if (pc === 41) depthP--;
+        }
+        const modStart = lastColon >= pts ? lastColon + 1 : pts;
+        let bs = modStart;
+        let be = te;
+        let important = false;
+        let prefixShift = 0;
+        if (be > bs && input.charCodeAt(be - 1) === 33) {
+          important = true;
+          be--;
+        } else if (be > bs && input.charCodeAt(bs) === 33) {
+          important = true;
+          bs++;
+          prefixShift = 1;
+        }
+        let postfixEnd = -1;
+        if (lastSlash > modStart) {
+          postfixEnd = lastSlash + prefixShift;
+          if (postfixEnd >= be) postfixEnd = -1;
+        }
+        let feedStart = bs;
+        if (be - bs > 1 && input.charCodeAt(bs) === 45) feedStart = bs + 1;
+        let node = 0;
+        let lp = 0;
+        let le = 0;
+        let pending = -1;
+        let ckptTop = 0;
+        if (nodeVlist2[0] >= 0 || nodeHasLit[0] === 1) {
+          ckptNode[0] = 0;
+          ckptTail[0] = feedStart;
+          ckptTop = 1;
+        }
+        let slashNode = DEAD;
+        let slashCkpt = 0;
+        for (let p = feedStart; p < be; p++) {
+          if (p === postfixEnd) {
+            slashNode = lp < le ? DEAD : node;
+            slashCkpt = ckptTop;
+          }
+          if (node !== DEAD) {
+            const cc = input.charCodeAt(p);
+            let arrived = -1;
+            if (lp < le) {
+              if (labelText2.charCodeAt(lp) === cc) {
+                lp++;
+                if (lp === le) arrived = node = pending;
+              } else node = DEAD;
+            } else {
+              const es = edgeStart2[node];
+              const ee = edgeStart2[node + 1];
+              let next = DEAD;
+              for (let e = es; e < ee; e++) {
+                const ls = labelStart2[e];
+                if (labelText2.charCodeAt(ls) === cc) {
+                  if (labelStart2[e + 1] - ls === 1) arrived = next = edgeTarget2[e];
+                  else {
+                    lp = ls + 1;
+                    le = labelStart2[e + 1];
+                    pending = edgeTarget2[e];
+                    next = node;
+                  }
+                  break;
+                }
+              }
+              node = next;
+            }
+            if (arrived >= 0 && (nodeVlist2[arrived] >= 0 || nodeHasLit[arrived] === 1) && p + 1 < be && input.charCodeAt(p + 1) === 45) {
+              if (ckptTop === ckptCap) {
+                ckptCap *= 2;
+                const nv = new Int32Array(ckptCap);
+                nv.set(ckptNode);
+                ckptNode = nv;
+                const nt = new Int32Array(ckptCap);
+                nt.set(ckptTail);
+                ckptTail = nt;
+              }
+              ckptNode[ckptTop] = arrived;
+              ckptTail[ckptTop] = p + 2;
+              ckptTop++;
+            }
+          }
+        }
+        if (postfixEnd === be) {
+          slashNode = lp < le ? DEAD : node;
+          slashCkpt = ckptTop;
+        }
+        const endNode = lp < le ? DEAD : node;
+        let gid;
+        let hasPostfix = false;
+        if (postfixEnd >= 0) {
+          hasPostfix = true;
+          gid = resolveAt(input, bs, postfixEnd, slashNode, slashCkpt);
+          if (gid !== EXTERNAL && gid < GROUP_COUNT2 && postfixLookupSet[gid]) {
+            const gidFull = resolveAt(input, bs, be, endNode, ckptTop);
+            if (gidFull !== EXTERNAL && gidFull !== gid) {
+              gid = gidFull;
+              hasPostfix = false;
+            }
+          } else if (gid === EXTERNAL) {
+            gid = resolveAt(input, bs, be, endNode, ckptTop);
+            hasPostfix = false;
+          }
+        } else gid = resolveAt(input, bs, be, endNode, ckptTop);
+        let ctxId = 0;
+        let flags = 0;
+        if (gid === EXTERNAL) tokGid[t2] = EXTERNAL;
+        else {
+          flags = hasPostfix ? 1 : 0;
+          ctxId = pts >= lastColon ? important ? 1 : 0 : internSpan(ctxByHash, input, pts, lastColon, important ? 1 : 0, (k) => canonicalizeContext(k, important));
+          tokGid[t2] = gid;
+          tokFlags[t2] = flags;
+          tokCtx[t2] = ctxId;
+        }
+        memoPut(way0, input, ts, te, h, gid, ctxId, flags);
+      }
+      if (tokenCount === 0) return "";
+      if (tokenCount === 1) return tokStart[0] === 0 && tokEnd[0] === n ? input : input.slice(tokStart[0], tokEnd[0]);
+      if (tokenCount * CLAIM_PER_TOKEN > CLAIM_TABLE) {
+        while (tokenCount * CLAIM_PER_TOKEN > CLAIM_TABLE) {
+          CLAIM_TABLE <<= 1;
+          claimShift--;
+        }
+        claimKeys = new Float64Array(CLAIM_TABLE);
+        claimEpochs = new Int32Array(CLAIM_TABLE);
+      }
+      if (nextCtxId >= ID_LIMIT || nextDynId >= ID_LIMIT) throw new Error("cn: too many distinct classes in one merge");
+      epoch = epoch + 1 | 0;
+      if (epoch === 0) {
+        claim0.fill(0);
+        claimEpochs.fill(0);
+        epoch = 1;
+      }
+      let didDrop = false;
+      for (let t2 = tokenCount - 1; t2 >= 0; t2--) {
+        const gid = tokGid[t2];
+        if (gid === EXTERNAL) {
+          keep[t2] = 1;
+          continue;
+        }
+        const ctxId = tokCtx[t2];
+        if (claimTest(ctxId, gid) === 1) {
+          keep[t2] = 0;
+          didDrop = true;
+          continue;
+        }
+        keep[t2] = 1;
+        if (gid < GROUP_COUNT2) {
+          const r2 = adjRow[gid];
+          if (r2 >= 0) for (let k = adjStart2[r2]; k < adjStart2[r2 + 1]; k++) claimTest(ctxId, adjTgt2[k]);
+          if (tokFlags[t2] & 1) {
+            for (let k = 0; k < patGid2.length; k++) if (patGid2[k] === gid) claimTest(ctxId, patTgt2[k]);
+          }
+        }
+      }
+      if (!didDrop && !sawNonSpaceWS && n === totalTokenChars + tokenCount - 1) return input;
+      let out = "";
+      let t = 0;
+      while (t < tokenCount) {
+        if (!keep[t]) {
+          t++;
+          continue;
+        }
+        const runStart = tokStart[t];
+        let runEnd = tokEnd[t];
+        let u = t + 1;
+        while (u < tokenCount && keep[u] && tokStart[u] === runEnd + 1 && input.charCodeAt(runEnd) === 32) {
+          runEnd = tokEnd[u];
+          u++;
+        }
+        if (out.length > 0) out += " ";
+        out += input.slice(runStart, runEnd);
+        t = u;
+      }
+      return out;
+    };
+    const DOOR_SIZE = 16384;
+    const door = new Int32Array(DOOR_SIZE * 2);
+    let doorBase = 0;
+    let doorEpoch = 1;
+    let cache = /* @__PURE__ */ Object.create(null);
+    let prevCache = /* @__PURE__ */ Object.create(null);
+    let cacheMap = /* @__PURE__ */ new Map();
+    let prevCacheMap = /* @__PURE__ */ new Map();
+    let cacheCount = 0;
+    let doorMarks = 0;
+    const rotateDoor = () => {
+      doorBase ^= DOOR_SIZE;
+      doorEpoch = doorEpoch + 1 | 0;
+      doorMarks = 0;
+    };
+    const mergeCached = (input) => {
+      let merged = cache[input];
+      if (merged !== void 0) return merged;
+      const hash = spanHash(input, 0, input.length);
+      const slot = (hash & 16383) + doorBase;
+      const wasSeen = door[slot] === (hash ^ doorEpoch) || door[slot ^ DOOR_SIZE] === (hash ^ doorEpoch - 1);
+      if (wasSeen) {
+        merged = prevCache[input];
+        if (merged !== void 0) {
+          cache[input] = merged;
+          return merged;
+        }
+      }
+      merged = mergeClassList(input);
+      if (wasSeen) {
+        cache[input] = merged;
+        if (++cacheCount > cacheSize) {
+          cacheCount = 0;
+          prevCache = cache;
+          cache = /* @__PURE__ */ Object.create(null);
+          rotateDoor();
         }
       } else {
-        classGroupId = getClassGroupId(baseClassName);
+        door[slot] = hash ^ doorEpoch;
+        if (++doorMarks > DOOR_SIZE) rotateDoor();
       }
-      if (!classGroupId) {
-        if (!hasPostfixModifier) {
-          result = originalClassName + (result.length > 0 ? " " + result : result);
-          continue;
-        }
-        classGroupId = getClassGroupId(baseClassName);
-        if (!classGroupId) {
-          result = originalClassName + (result.length > 0 ? " " + result : result);
-          continue;
-        }
-        hasPostfixModifier = false;
-      }
-      const variantModifier = modifiers.length === 0 ? "" : modifiers.length === 1 ? modifiers[0] : sortModifiers(modifiers).join(":");
-      const modifierId = hasImportantModifier ? variantModifier + IMPORTANT_MODIFIER : variantModifier;
-      const classId = modifierId + classGroupId;
-      if (classGroupsInConflict.indexOf(classId) > -1) {
-        continue;
-      }
-      classGroupsInConflict.push(classId);
-      const conflictGroups = getConflictingClassGroupIds(classGroupId, hasPostfixModifier);
-      for (let i = 0; i < conflictGroups.length; ++i) {
-        const group = conflictGroups[i];
-        classGroupsInConflict.push(modifierId + group);
-      }
-      result = originalClassName + (result.length > 0 ? " " + result : result);
-    }
-    return result;
-  };
-  var twJoin = (...classLists) => {
-    let index = 0;
-    let argument;
-    let resolvedValue;
-    let string = "";
-    while (index < classLists.length) {
-      if (argument = classLists[index++]) {
-        if (resolvedValue = toValue(argument)) {
-          string && (string += " ");
-          string += resolvedValue;
-        }
-      }
-    }
-    return string;
-  };
-  var toValue = (mix) => {
-    if (typeof mix === "string") {
-      return mix;
-    }
-    let resolvedValue;
-    let string = "";
-    for (let k = 0; k < mix.length; k++) {
-      if (mix[k]) {
-        if (resolvedValue = toValue(mix[k])) {
-          string && (string += " ");
-          string += resolvedValue;
-        }
-      }
-    }
-    return string;
-  };
-  var createTailwindMerge = (createConfigFirst, ...createConfigRest) => {
-    let configUtils;
-    let cacheGet;
-    let cacheSet;
-    let functionToCall;
-    const initTailwindMerge = (classList) => {
-      const config2 = createConfigRest.reduce((previousConfig, createConfigCurrent) => createConfigCurrent(previousConfig), createConfigFirst());
-      configUtils = createConfigUtils(config2);
-      cacheGet = configUtils.cache.get;
-      cacheSet = configUtils.cache.set;
-      functionToCall = tailwindMerge;
-      return tailwindMerge(classList);
+      return merged;
     };
-    const tailwindMerge = (classList) => {
-      const cachedResult = cacheGet(classList);
-      if (cachedResult) {
-        return cachedResult;
+    const mergeCachedMap = (input) => {
+      let merged = cacheMap.get(input);
+      if (merged !== void 0) return merged;
+      const hash = spanHash(input, 0, input.length);
+      const slot = (hash & 16383) + doorBase;
+      const wasSeen = door[slot] === (hash ^ doorEpoch) || door[slot ^ DOOR_SIZE] === (hash ^ doorEpoch - 1);
+      if (wasSeen) {
+        merged = prevCacheMap.get(input);
+        if (merged !== void 0) {
+          cacheMap.set(input, merged);
+          return merged;
+        }
       }
-      const result = mergeClassList(classList, configUtils);
-      cacheSet(classList, result);
-      return result;
+      merged = mergeClassList(input);
+      if (wasSeen) {
+        cacheMap.set(input, merged);
+        if (++cacheCount > cacheSize) {
+          cacheCount = 0;
+          prevCacheMap = cacheMap;
+          cacheMap = /* @__PURE__ */ new Map();
+          rotateDoor();
+        }
+      } else {
+        door[slot] = hash ^ doorEpoch;
+        if (++doorMarks > DOOR_SIZE) rotateDoor();
+      }
+      return merged;
     };
-    functionToCall = initTailwindMerge;
-    return (...args) => functionToCall(twJoin(...args));
-  };
-  var fallbackThemeArr = [];
-  var fromTheme = (key) => {
-    const themeGetter = (theme) => theme[key] || fallbackThemeArr;
-    themeGetter.isThemeGetter = true;
-    themeGetter.themeKey = key;
-    return themeGetter;
-  };
-  var arbitraryValueRegex = /^\[(?:(\w[\w-]*):)?(.+)\]$/i;
-  var arbitraryVariableRegex = /^\((?:(\w[\w-]*):)?(.+)\)$/i;
-  var fractionRegex = /^\d+(?:\.\d+)?\/\d+(?:\.\d+)?$/;
-  var tshirtUnitRegex = /^(\d+(\.\d+)?)?(xs|sm|md|lg|xl)$/;
-  var lengthUnitRegex = /\d+(%|px|r?em|[sdl]?v([hwib]|min|max)|pt|pc|in|cm|mm|cap|ch|ex|r?lh|cq(w|h|i|b|min|max))|\b(calc|min|max|clamp)\(.+\)|^0$/;
-  var colorFunctionRegex = /^(rgba?|hsla?|hwb|(ok)?(lab|lch)|color-mix|color|light-dark)\(.+\)$/;
-  var shadowRegex = /^(inset_)?-?((\d+)?\.?(\d+)[a-z]+|0)_-?((\d+)?\.?(\d+)[a-z]+|0)/;
-  var imageRegex = /^(url|image|image-set|cross-fade|element|(repeating-)?(linear|radial|conic)-gradient)\(.+\)$/;
-  var isFraction = (value) => fractionRegex.test(value);
-  var isNumber = (value) => !!value && !Number.isNaN(Number(value));
-  var isInteger = (value) => !!value && Number.isInteger(Number(value));
-  var isPercent = (value) => value.endsWith("%") && isNumber(value.slice(0, -1));
-  var isTshirtSize = (value) => tshirtUnitRegex.test(value);
-  var isAny = () => true;
-  var isLengthOnly = (value) => (
-    // `colorFunctionRegex` check is necessary because color functions can have percentages in them which which would be incorrectly classified as lengths.
-    // For example, `hsl(0 0% 0%)` would be classified as a length without this check.
-    // I could also use lookbehind assertion in `lengthUnitRegex` but that isn't supported widely enough.
-    lengthUnitRegex.test(value) && !colorFunctionRegex.test(value)
-  );
-  var isNever = () => false;
-  var isShadow = (value) => shadowRegex.test(value);
-  var isImage = (value) => imageRegex.test(value);
-  var isAnyNonArbitrary = (value) => !isArbitraryValue(value) && !isArbitraryVariable(value);
-  var isNamedContainerQuery = (value) => value.startsWith("@container") && (value[10] === "/" && value[11] !== void 0 || value[11] === "s" && value[16] !== void 0 && value.startsWith("-size/", 10) || value[11] === "n" && value[18] !== void 0 && value.startsWith("-normal/", 10));
-  var isArbitrarySize = (value) => getIsArbitraryValue(value, isLabelSize, isNever);
-  var isArbitraryValue = (value) => arbitraryValueRegex.test(value);
-  var isArbitraryLength = (value) => getIsArbitraryValue(value, isLabelLength, isLengthOnly);
-  var isArbitraryNumber = (value) => getIsArbitraryValue(value, isLabelNumber, isNumber);
-  var isArbitraryWeight = (value) => getIsArbitraryValue(value, isLabelWeight, isAny);
-  var isArbitraryFamilyName = (value) => getIsArbitraryValue(value, isLabelFamilyName, isNever);
-  var isArbitraryPosition = (value) => getIsArbitraryValue(value, isLabelPosition, isNever);
-  var isArbitraryImage = (value) => getIsArbitraryValue(value, isLabelImage, isImage);
-  var isArbitraryShadow = (value) => getIsArbitraryValue(value, isLabelShadow, isShadow);
-  var isArbitraryVariable = (value) => arbitraryVariableRegex.test(value);
-  var isArbitraryVariableLength = (value) => getIsArbitraryVariable(value, isLabelLength);
-  var isArbitraryVariableFamilyName = (value) => getIsArbitraryVariable(value, isLabelFamilyName);
-  var isArbitraryVariablePosition = (value) => getIsArbitraryVariable(value, isLabelPosition);
-  var isArbitraryVariableSize = (value) => getIsArbitraryVariable(value, isLabelSize);
-  var isArbitraryVariableImage = (value) => getIsArbitraryVariable(value, isLabelImage);
-  var isArbitraryVariableShadow = (value) => getIsArbitraryVariable(value, isLabelShadow, true);
-  var isArbitraryVariableWeight = (value) => getIsArbitraryVariable(value, isLabelWeight, true);
-  var getIsArbitraryValue = (value, testLabel, testValue) => {
-    const result = arbitraryValueRegex.exec(value);
-    if (result) {
-      if (result[1]) {
-        return testLabel(result[1]);
-      }
-      return testValue(result[2]);
-    }
-    return false;
-  };
-  var getIsArbitraryVariable = (value, testLabel, shouldMatchNoLabel = false) => {
-    const result = arbitraryVariableRegex.exec(value);
-    if (result) {
-      if (result[1]) {
-        return testLabel(result[1]);
-      }
-      return shouldMatchNoLabel;
-    }
-    return false;
-  };
-  var isLabelPosition = (label) => label === "position" || label === "percentage";
-  var isLabelImage = (label) => label === "image" || label === "url";
-  var isLabelSize = (label) => label === "length" || label === "size" || label === "bg-size";
-  var isLabelLength = (label) => label === "length";
-  var isLabelNumber = (label) => label === "number";
-  var isLabelFamilyName = (label) => label === "family-name";
-  var isLabelWeight = (label) => label === "number" || label === "weight";
-  var isLabelShadow = (label) => label === "shadow";
-  var getDefaultConfig = () => {
-    const themeColor = fromTheme("color");
-    const themeFont = fromTheme("font");
-    const themeText = fromTheme("text");
-    const themeFontWeight = fromTheme("font-weight");
-    const themeTracking = fromTheme("tracking");
-    const themeLeading = fromTheme("leading");
-    const themeBreakpoint = fromTheme("breakpoint");
-    const themeContainer = fromTheme("container");
-    const themeSpacing = fromTheme("spacing");
-    const themeRadius = fromTheme("radius");
-    const themeShadow = fromTheme("shadow");
-    const themeInsetShadow = fromTheme("inset-shadow");
-    const themeTextShadow = fromTheme("text-shadow");
-    const themeDropShadow = fromTheme("drop-shadow");
-    const themeBlur = fromTheme("blur");
-    const themePerspective = fromTheme("perspective");
-    const themeAspect = fromTheme("aspect");
-    const themeEase = fromTheme("ease");
-    const themeAnimate = fromTheme("animate");
-    const scaleBreak = () => ["auto", "avoid", "all", "avoid-page", "page", "left", "right", "column"];
-    const scalePosition = () => [
-      "center",
-      "top",
-      "bottom",
-      "left",
-      "right",
-      "top-left",
-      // Deprecated since Tailwind CSS v4.1.0, see https://github.com/tailwindlabs/tailwindcss/pull/17378
-      "left-top",
-      "top-right",
-      // Deprecated since Tailwind CSS v4.1.0, see https://github.com/tailwindlabs/tailwindcss/pull/17378
-      "right-top",
-      "bottom-right",
-      // Deprecated since Tailwind CSS v4.1.0, see https://github.com/tailwindlabs/tailwindcss/pull/17378
-      "right-bottom",
-      "bottom-left",
-      // Deprecated since Tailwind CSS v4.1.0, see https://github.com/tailwindlabs/tailwindcss/pull/17378
-      "left-bottom"
-    ];
-    const scalePositionWithArbitrary = () => [...scalePosition(), isArbitraryVariable, isArbitraryValue];
-    const scaleOverflow = () => ["auto", "hidden", "clip", "visible", "scroll"];
-    const scaleOverscroll = () => ["auto", "contain", "none"];
-    const scaleUnambiguousSpacing = () => [isArbitraryVariable, isArbitraryValue, themeSpacing];
-    const scaleInset = () => [isFraction, "full", "auto", ...scaleUnambiguousSpacing()];
-    const scaleGridTemplateColsRows = () => [isInteger, "none", "subgrid", isArbitraryVariable, isArbitraryValue];
-    const scaleGridColRowStartAndEnd = () => ["auto", {
-      span: ["full", isInteger, isArbitraryVariable, isArbitraryValue]
-    }, isInteger, isArbitraryVariable, isArbitraryValue];
-    const scaleGridColRowStartOrEnd = () => [isInteger, "auto", isArbitraryVariable, isArbitraryValue];
-    const scaleGridAutoColsRows = () => ["auto", "min", "max", "fr", isArbitraryVariable, isArbitraryValue];
-    const scaleAlignPrimaryAxis = () => ["start", "end", "center", "between", "around", "evenly", "stretch", "baseline", "center-safe", "end-safe"];
-    const scaleAlignSecondaryAxis = () => ["start", "end", "center", "stretch", "center-safe", "end-safe"];
-    const scaleMargin = () => ["auto", ...scaleUnambiguousSpacing()];
-    const scaleSizing = () => [isFraction, "auto", "full", "dvw", "dvh", "lvw", "lvh", "svw", "svh", "min", "max", "fit", ...scaleUnambiguousSpacing()];
-    const scaleSizingInline = () => [themeContainer, isFraction, "screen", "full", "dvw", "lvw", "svw", "min", "max", "fit", ...scaleUnambiguousSpacing()];
-    const scaleSizingBlock = () => [isFraction, "screen", "full", "lh", "dvh", "lvh", "svh", "min", "max", "fit", ...scaleUnambiguousSpacing()];
-    const scaleColor = () => [themeColor, isArbitraryVariable, isArbitraryValue];
-    const scaleBgPosition = () => [...scalePosition(), isArbitraryVariablePosition, isArbitraryPosition, {
-      position: [isArbitraryVariable, isArbitraryValue]
-    }];
-    const scaleBgRepeat = () => ["no-repeat", {
-      repeat: ["", "x", "y", "space", "round"]
-    }];
-    const scaleBgSize = () => ["auto", "cover", "contain", isArbitraryVariableSize, isArbitrarySize, {
-      size: [isArbitraryVariable, isArbitraryValue]
-    }];
-    const scaleGradientStopPosition = () => [isPercent, isArbitraryVariableLength, isArbitraryLength];
-    const scaleRadius = () => [
-      // Deprecated since Tailwind CSS v4.0.0
-      "",
-      "none",
-      "full",
-      themeRadius,
-      isArbitraryVariable,
-      isArbitraryValue
-    ];
-    const scaleBorderWidth = () => ["", isNumber, isArbitraryVariableLength, isArbitraryLength];
-    const scaleLineStyle = () => ["solid", "dashed", "dotted", "double"];
-    const scaleBlendMode = () => ["normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion", "hue", "saturation", "color", "luminosity"];
-    const scaleMaskImagePosition = () => [isNumber, isPercent, isArbitraryVariablePosition, isArbitraryPosition];
-    const scaleBlur = () => [
-      // Deprecated since Tailwind CSS v4.0.0
-      "",
-      "none",
-      themeBlur,
-      isArbitraryVariable,
-      isArbitraryValue
-    ];
-    const scaleRotate = () => ["none", isNumber, isArbitraryVariable, isArbitraryValue];
-    const scaleScale = () => ["none", isNumber, isArbitraryVariable, isArbitraryValue];
-    const scaleSkew = () => [isNumber, isArbitraryVariable, isArbitraryValue];
-    const scaleTranslate = () => [isFraction, "full", ...scaleUnambiguousSpacing()];
+    const seenBefore = (input) => {
+      const hash = spanHash(input, 0, input.length);
+      const slot = (hash & 16383) + doorBase;
+      if (door[slot] === (hash ^ doorEpoch) || door[slot ^ DOOR_SIZE] === (hash ^ doorEpoch - 1)) return true;
+      door[slot] = hash ^ doorEpoch;
+      if (++doorMarks > DOOR_SIZE) rotateDoor();
+      return false;
+    };
+    const mergeString = cacheSize === 0 ? mergeClassList : IS_JSC ? (input) => {
+      const merged = cacheMap.get(input);
+      return merged !== void 0 ? merged : mergeCachedMap(input);
+    } : mergeCached;
+    const merge = function() {
+      return arguments.length === 1 && typeof arguments[0] === "string" ? mergeString(arguments[0]) : mergeString(twJoin.apply(null, arguments));
+    };
     return {
-      cacheSize: 500,
-      theme: {
-        animate: ["spin", "ping", "pulse", "bounce"],
-        aspect: ["video"],
-        blur: [isTshirtSize],
-        breakpoint: [isTshirtSize],
-        color: [isAny],
-        container: [isTshirtSize],
-        "drop-shadow": [isTshirtSize],
-        ease: ["in", "out", "in-out"],
-        font: [isAnyNonArbitrary],
-        "font-weight": ["thin", "extralight", "light", "normal", "medium", "semibold", "bold", "extrabold", "black"],
-        "inset-shadow": [isTshirtSize],
-        leading: ["none", "tight", "snug", "normal", "relaxed", "loose"],
-        perspective: ["dramatic", "near", "normal", "midrange", "distant", "none"],
-        radius: [isTshirtSize],
-        shadow: [isTshirtSize],
-        spacing: ["px", isNumber],
-        text: [isTshirtSize],
-        "text-shadow": [isTshirtSize],
-        tracking: ["tighter", "tight", "normal", "wide", "wider", "widest"]
-      },
-      classGroups: {
-        // --------------
-        // --- Layout ---
-        // --------------
-        /**
-         * Aspect Ratio
-         * @see https://tailwindcss.com/docs/aspect-ratio
-         */
-        aspect: [{
-          aspect: ["auto", "square", isFraction, isArbitraryValue, isArbitraryVariable, themeAspect]
-        }],
-        /**
-         * Container
-         * @see https://tailwindcss.com/docs/container
-         * @deprecated since Tailwind CSS v4.0.0
-         */
-        container: ["container"],
-        /**
-         * Container Type
-         * @see https://tailwindcss.com/docs/responsive-design#container-queries
-         */
-        "container-type": [{
-          "@container": ["", "normal", "size", isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Container Name
-         * @see https://tailwindcss.com/docs/responsive-design#named-containers
-         */
-        "container-named": [isNamedContainerQuery],
-        /**
-         * Columns
-         * @see https://tailwindcss.com/docs/columns
-         */
-        columns: [{
-          columns: [isNumber, "auto", isArbitraryValue, isArbitraryVariable, themeContainer]
-        }],
-        /**
-         * Break After
-         * @see https://tailwindcss.com/docs/break-after
-         */
-        "break-after": [{
-          "break-after": scaleBreak()
-        }],
-        /**
-         * Break Before
-         * @see https://tailwindcss.com/docs/break-before
-         */
-        "break-before": [{
-          "break-before": scaleBreak()
-        }],
-        /**
-         * Break Inside
-         * @see https://tailwindcss.com/docs/break-inside
-         */
-        "break-inside": [{
-          "break-inside": ["auto", "avoid", "avoid-page", "avoid-column"]
-        }],
-        /**
-         * Box Decoration Break
-         * @see https://tailwindcss.com/docs/box-decoration-break
-         */
-        "box-decoration": [{
-          "box-decoration": ["slice", "clone"]
-        }],
-        /**
-         * Box Sizing
-         * @see https://tailwindcss.com/docs/box-sizing
-         */
-        box: [{
-          box: ["border", "content"]
-        }],
-        /**
-         * Display
-         * @see https://tailwindcss.com/docs/display
-         */
-        display: ["block", "inline-block", "inline", "flex", "inline-flex", "table", "inline-table", "table-caption", "table-cell", "table-column", "table-column-group", "table-footer-group", "table-header-group", "table-row-group", "table-row", "flow-root", "grid", "inline-grid", "contents", "list-item", "hidden"],
-        /**
-         * Screen Reader Only
-         * @see https://tailwindcss.com/docs/display#screen-reader-only
-         */
-        sr: ["sr-only", "not-sr-only"],
-        /**
-         * Floats
-         * @see https://tailwindcss.com/docs/float
-         */
-        float: [{
-          float: ["right", "left", "none", "start", "end"]
-        }],
-        /**
-         * Clear
-         * @see https://tailwindcss.com/docs/clear
-         */
-        clear: [{
-          clear: ["left", "right", "both", "none", "start", "end"]
-        }],
-        /**
-         * Isolation
-         * @see https://tailwindcss.com/docs/isolation
-         */
-        isolation: ["isolate", "isolation-auto"],
-        /**
-         * Object Fit
-         * @see https://tailwindcss.com/docs/object-fit
-         */
-        "object-fit": [{
-          object: ["contain", "cover", "fill", "none", "scale-down"]
-        }],
-        /**
-         * Object Position
-         * @see https://tailwindcss.com/docs/object-position
-         */
-        "object-position": [{
-          object: scalePositionWithArbitrary()
-        }],
-        /**
-         * Overflow
-         * @see https://tailwindcss.com/docs/overflow
-         */
-        overflow: [{
-          overflow: scaleOverflow()
-        }],
-        /**
-         * Overflow X
-         * @see https://tailwindcss.com/docs/overflow
-         */
-        "overflow-x": [{
-          "overflow-x": scaleOverflow()
-        }],
-        /**
-         * Overflow Y
-         * @see https://tailwindcss.com/docs/overflow
-         */
-        "overflow-y": [{
-          "overflow-y": scaleOverflow()
-        }],
-        /**
-         * Overscroll Behavior
-         * @see https://tailwindcss.com/docs/overscroll-behavior
-         */
-        overscroll: [{
-          overscroll: scaleOverscroll()
-        }],
-        /**
-         * Overscroll Behavior X
-         * @see https://tailwindcss.com/docs/overscroll-behavior
-         */
-        "overscroll-x": [{
-          "overscroll-x": scaleOverscroll()
-        }],
-        /**
-         * Overscroll Behavior Y
-         * @see https://tailwindcss.com/docs/overscroll-behavior
-         */
-        "overscroll-y": [{
-          "overscroll-y": scaleOverscroll()
-        }],
-        /**
-         * Position
-         * @see https://tailwindcss.com/docs/position
-         */
-        position: ["static", "fixed", "absolute", "relative", "sticky"],
-        /**
-         * Inset
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         */
-        inset: [{
-          inset: scaleInset()
-        }],
-        /**
-         * Inset Inline
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         */
-        "inset-x": [{
-          "inset-x": scaleInset()
-        }],
-        /**
-         * Inset Block
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         */
-        "inset-y": [{
-          "inset-y": scaleInset()
-        }],
-        /**
-         * Inset Inline Start
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         * @todo class group will be renamed to `inset-s` in next major release
-         */
-        start: [{
-          "inset-s": scaleInset(),
-          /**
-           * @deprecated since Tailwind CSS v4.2.0 in favor of `inset-s-*` utilities.
-           * @see https://github.com/tailwindlabs/tailwindcss/pull/19613
-           */
-          start: scaleInset()
-        }],
-        /**
-         * Inset Inline End
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         * @todo class group will be renamed to `inset-e` in next major release
-         */
-        end: [{
-          "inset-e": scaleInset(),
-          /**
-           * @deprecated since Tailwind CSS v4.2.0 in favor of `inset-e-*` utilities.
-           * @see https://github.com/tailwindlabs/tailwindcss/pull/19613
-           */
-          end: scaleInset()
-        }],
-        /**
-         * Inset Block Start
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         */
-        "inset-bs": [{
-          "inset-bs": scaleInset()
-        }],
-        /**
-         * Inset Block End
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         */
-        "inset-be": [{
-          "inset-be": scaleInset()
-        }],
-        /**
-         * Top
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         */
-        top: [{
-          top: scaleInset()
-        }],
-        /**
-         * Right
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         */
-        right: [{
-          right: scaleInset()
-        }],
-        /**
-         * Bottom
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         */
-        bottom: [{
-          bottom: scaleInset()
-        }],
-        /**
-         * Left
-         * @see https://tailwindcss.com/docs/top-right-bottom-left
-         */
-        left: [{
-          left: scaleInset()
-        }],
-        /**
-         * Visibility
-         * @see https://tailwindcss.com/docs/visibility
-         */
-        visibility: ["visible", "invisible", "collapse"],
-        /**
-         * Z-Index
-         * @see https://tailwindcss.com/docs/z-index
-         */
-        z: [{
-          z: [isInteger, "auto", isArbitraryVariable, isArbitraryValue]
-        }],
-        // ------------------------
-        // --- Flexbox and Grid ---
-        // ------------------------
-        /**
-         * Flex Basis
-         * @see https://tailwindcss.com/docs/flex-basis
-         */
-        basis: [{
-          basis: [isFraction, "full", "auto", themeContainer, ...scaleUnambiguousSpacing()]
-        }],
-        /**
-         * Flex Direction
-         * @see https://tailwindcss.com/docs/flex-direction
-         */
-        "flex-direction": [{
-          flex: ["row", "row-reverse", "col", "col-reverse"]
-        }],
-        /**
-         * Flex Wrap
-         * @see https://tailwindcss.com/docs/flex-wrap
-         */
-        "flex-wrap": [{
-          flex: ["nowrap", "wrap", "wrap-reverse"]
-        }],
-        /**
-         * Flex
-         * @see https://tailwindcss.com/docs/flex
-         */
-        flex: [{
-          flex: [isNumber, isFraction, "auto", "initial", "none", isArbitraryValue]
-        }],
-        /**
-         * Flex Grow
-         * @see https://tailwindcss.com/docs/flex-grow
-         */
-        grow: [{
-          grow: ["", isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Flex Shrink
-         * @see https://tailwindcss.com/docs/flex-shrink
-         */
-        shrink: [{
-          shrink: ["", isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Order
-         * @see https://tailwindcss.com/docs/order
-         */
-        order: [{
-          order: [isInteger, "first", "last", "none", isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Grid Template Columns
-         * @see https://tailwindcss.com/docs/grid-template-columns
-         */
-        "grid-cols": [{
-          "grid-cols": scaleGridTemplateColsRows()
-        }],
-        /**
-         * Grid Column Start / End
-         * @see https://tailwindcss.com/docs/grid-column
-         */
-        "col-start-end": [{
-          col: scaleGridColRowStartAndEnd()
-        }],
-        /**
-         * Grid Column Start
-         * @see https://tailwindcss.com/docs/grid-column
-         */
-        "col-start": [{
-          "col-start": scaleGridColRowStartOrEnd()
-        }],
-        /**
-         * Grid Column End
-         * @see https://tailwindcss.com/docs/grid-column
-         */
-        "col-end": [{
-          "col-end": scaleGridColRowStartOrEnd()
-        }],
-        /**
-         * Grid Template Rows
-         * @see https://tailwindcss.com/docs/grid-template-rows
-         */
-        "grid-rows": [{
-          "grid-rows": scaleGridTemplateColsRows()
-        }],
-        /**
-         * Grid Row Start / End
-         * @see https://tailwindcss.com/docs/grid-row
-         */
-        "row-start-end": [{
-          row: scaleGridColRowStartAndEnd()
-        }],
-        /**
-         * Grid Row Start
-         * @see https://tailwindcss.com/docs/grid-row
-         */
-        "row-start": [{
-          "row-start": scaleGridColRowStartOrEnd()
-        }],
-        /**
-         * Grid Row End
-         * @see https://tailwindcss.com/docs/grid-row
-         */
-        "row-end": [{
-          "row-end": scaleGridColRowStartOrEnd()
-        }],
-        /**
-         * Grid Auto Flow
-         * @see https://tailwindcss.com/docs/grid-auto-flow
-         */
-        "grid-flow": [{
-          "grid-flow": ["row", "col", "dense", "row-dense", "col-dense"]
-        }],
-        /**
-         * Grid Auto Columns
-         * @see https://tailwindcss.com/docs/grid-auto-columns
-         */
-        "auto-cols": [{
-          "auto-cols": scaleGridAutoColsRows()
-        }],
-        /**
-         * Grid Auto Rows
-         * @see https://tailwindcss.com/docs/grid-auto-rows
-         */
-        "auto-rows": [{
-          "auto-rows": scaleGridAutoColsRows()
-        }],
-        /**
-         * Gap
-         * @see https://tailwindcss.com/docs/gap
-         */
-        gap: [{
-          gap: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Gap X
-         * @see https://tailwindcss.com/docs/gap
-         */
-        "gap-x": [{
-          "gap-x": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Gap Y
-         * @see https://tailwindcss.com/docs/gap
-         */
-        "gap-y": [{
-          "gap-y": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Justify Content
-         * @see https://tailwindcss.com/docs/justify-content
-         */
-        "justify-content": [{
-          justify: [...scaleAlignPrimaryAxis(), "normal"]
-        }],
-        /**
-         * Justify Items
-         * @see https://tailwindcss.com/docs/justify-items
-         */
-        "justify-items": [{
-          "justify-items": [...scaleAlignSecondaryAxis(), "normal"]
-        }],
-        /**
-         * Justify Self
-         * @see https://tailwindcss.com/docs/justify-self
-         */
-        "justify-self": [{
-          "justify-self": ["auto", ...scaleAlignSecondaryAxis()]
-        }],
-        /**
-         * Align Content
-         * @see https://tailwindcss.com/docs/align-content
-         */
-        "align-content": [{
-          content: ["normal", ...scaleAlignPrimaryAxis()]
-        }],
-        /**
-         * Align Items
-         * @see https://tailwindcss.com/docs/align-items
-         */
-        "align-items": [{
-          items: [...scaleAlignSecondaryAxis(), {
-            baseline: ["", "last"]
-          }]
-        }],
-        /**
-         * Align Self
-         * @see https://tailwindcss.com/docs/align-self
-         */
-        "align-self": [{
-          self: ["auto", ...scaleAlignSecondaryAxis(), {
-            baseline: ["", "last"]
-          }]
-        }],
-        /**
-         * Place Content
-         * @see https://tailwindcss.com/docs/place-content
-         */
-        "place-content": [{
-          "place-content": scaleAlignPrimaryAxis()
-        }],
-        /**
-         * Place Items
-         * @see https://tailwindcss.com/docs/place-items
-         */
-        "place-items": [{
-          "place-items": [...scaleAlignSecondaryAxis(), "baseline"]
-        }],
-        /**
-         * Place Self
-         * @see https://tailwindcss.com/docs/place-self
-         */
-        "place-self": [{
-          "place-self": ["auto", ...scaleAlignSecondaryAxis()]
-        }],
-        // Spacing
-        /**
-         * Padding
-         * @see https://tailwindcss.com/docs/padding
-         */
-        p: [{
-          p: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Inline
-         * @see https://tailwindcss.com/docs/padding
-         */
-        px: [{
-          px: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Block
-         * @see https://tailwindcss.com/docs/padding
-         */
-        py: [{
-          py: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Inline Start
-         * @see https://tailwindcss.com/docs/padding
-         */
-        ps: [{
-          ps: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Inline End
-         * @see https://tailwindcss.com/docs/padding
-         */
-        pe: [{
-          pe: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Block Start
-         * @see https://tailwindcss.com/docs/padding
-         */
-        pbs: [{
-          pbs: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Block End
-         * @see https://tailwindcss.com/docs/padding
-         */
-        pbe: [{
-          pbe: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Top
-         * @see https://tailwindcss.com/docs/padding
-         */
-        pt: [{
-          pt: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Right
-         * @see https://tailwindcss.com/docs/padding
-         */
-        pr: [{
-          pr: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Bottom
-         * @see https://tailwindcss.com/docs/padding
-         */
-        pb: [{
-          pb: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Padding Left
-         * @see https://tailwindcss.com/docs/padding
-         */
-        pl: [{
-          pl: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Margin
-         * @see https://tailwindcss.com/docs/margin
-         */
-        m: [{
-          m: scaleMargin()
-        }],
-        /**
-         * Margin Inline
-         * @see https://tailwindcss.com/docs/margin
-         */
-        mx: [{
-          mx: scaleMargin()
-        }],
-        /**
-         * Margin Block
-         * @see https://tailwindcss.com/docs/margin
-         */
-        my: [{
-          my: scaleMargin()
-        }],
-        /**
-         * Margin Inline Start
-         * @see https://tailwindcss.com/docs/margin
-         */
-        ms: [{
-          ms: scaleMargin()
-        }],
-        /**
-         * Margin Inline End
-         * @see https://tailwindcss.com/docs/margin
-         */
-        me: [{
-          me: scaleMargin()
-        }],
-        /**
-         * Margin Block Start
-         * @see https://tailwindcss.com/docs/margin
-         */
-        mbs: [{
-          mbs: scaleMargin()
-        }],
-        /**
-         * Margin Block End
-         * @see https://tailwindcss.com/docs/margin
-         */
-        mbe: [{
-          mbe: scaleMargin()
-        }],
-        /**
-         * Margin Top
-         * @see https://tailwindcss.com/docs/margin
-         */
-        mt: [{
-          mt: scaleMargin()
-        }],
-        /**
-         * Margin Right
-         * @see https://tailwindcss.com/docs/margin
-         */
-        mr: [{
-          mr: scaleMargin()
-        }],
-        /**
-         * Margin Bottom
-         * @see https://tailwindcss.com/docs/margin
-         */
-        mb: [{
-          mb: scaleMargin()
-        }],
-        /**
-         * Margin Left
-         * @see https://tailwindcss.com/docs/margin
-         */
-        ml: [{
-          ml: scaleMargin()
-        }],
-        /**
-         * Space Between X
-         * @see https://tailwindcss.com/docs/margin#adding-space-between-children
-         */
-        "space-x": [{
-          "space-x": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Space Between X Reverse
-         * @see https://tailwindcss.com/docs/margin#adding-space-between-children
-         */
-        "space-x-reverse": ["space-x-reverse"],
-        /**
-         * Space Between Y
-         * @see https://tailwindcss.com/docs/margin#adding-space-between-children
-         */
-        "space-y": [{
-          "space-y": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Space Between Y Reverse
-         * @see https://tailwindcss.com/docs/margin#adding-space-between-children
-         */
-        "space-y-reverse": ["space-y-reverse"],
-        // --------------
-        // --- Sizing ---
-        // --------------
-        /**
-         * Size
-         * @see https://tailwindcss.com/docs/width#setting-both-width-and-height
-         */
-        size: [{
-          size: scaleSizing()
-        }],
-        /**
-         * Inline Size
-         * @see https://tailwindcss.com/docs/inline-size
-         */
-        "inline-size": [{
-          inline: ["auto", ...scaleSizingInline()]
-        }],
-        /**
-         * Min-Inline Size
-         * @see https://tailwindcss.com/docs/min-inline-size
-         */
-        "min-inline-size": [{
-          "min-inline": ["auto", ...scaleSizingInline()]
-        }],
-        /**
-         * Max-Inline Size
-         * @see https://tailwindcss.com/docs/max-inline-size
-         */
-        "max-inline-size": [{
-          "max-inline": ["none", ...scaleSizingInline()]
-        }],
-        /**
-         * Block Size
-         * @see https://tailwindcss.com/docs/block-size
-         */
-        "block-size": [{
-          block: ["auto", ...scaleSizingBlock()]
-        }],
-        /**
-         * Min-Block Size
-         * @see https://tailwindcss.com/docs/min-block-size
-         */
-        "min-block-size": [{
-          "min-block": ["auto", ...scaleSizingBlock()]
-        }],
-        /**
-         * Max-Block Size
-         * @see https://tailwindcss.com/docs/max-block-size
-         */
-        "max-block-size": [{
-          "max-block": ["none", ...scaleSizingBlock()]
-        }],
-        /**
-         * Width
-         * @see https://tailwindcss.com/docs/width
-         */
-        w: [{
-          w: [themeContainer, "screen", ...scaleSizing()]
-        }],
-        /**
-         * Min-Width
-         * @see https://tailwindcss.com/docs/min-width
-         */
-        "min-w": [{
-          "min-w": [
-            themeContainer,
-            "screen",
-            /** Deprecated. @see https://github.com/tailwindlabs/tailwindcss.com/issues/2027#issuecomment-2620152757 */
-            "none",
-            ...scaleSizing()
-          ]
-        }],
-        /**
-         * Max-Width
-         * @see https://tailwindcss.com/docs/max-width
-         */
-        "max-w": [{
-          "max-w": [
-            themeContainer,
-            "screen",
-            "none",
-            /** Deprecated since Tailwind CSS v4.0.0. @see https://github.com/tailwindlabs/tailwindcss.com/issues/2027#issuecomment-2620152757 */
-            "prose",
-            /** Deprecated since Tailwind CSS v4.0.0. @see https://github.com/tailwindlabs/tailwindcss.com/issues/2027#issuecomment-2620152757 */
-            {
-              screen: [themeBreakpoint]
-            },
-            ...scaleSizing()
-          ]
-        }],
-        /**
-         * Height
-         * @see https://tailwindcss.com/docs/height
-         */
-        h: [{
-          h: ["screen", "lh", ...scaleSizing()]
-        }],
-        /**
-         * Min-Height
-         * @see https://tailwindcss.com/docs/min-height
-         */
-        "min-h": [{
-          "min-h": ["screen", "lh", "none", ...scaleSizing()]
-        }],
-        /**
-         * Max-Height
-         * @see https://tailwindcss.com/docs/max-height
-         */
-        "max-h": [{
-          "max-h": ["screen", "lh", "none", ...scaleSizing()]
-        }],
-        // ------------------
-        // --- Typography ---
-        // ------------------
-        /**
-         * Font Size
-         * @see https://tailwindcss.com/docs/font-size
-         */
-        "font-size": [{
-          text: ["base", themeText, isArbitraryVariableLength, isArbitraryLength]
-        }],
-        /**
-         * Font Smoothing
-         * @see https://tailwindcss.com/docs/font-smoothing
-         */
-        "font-smoothing": ["antialiased", "subpixel-antialiased"],
-        /**
-         * Font Style
-         * @see https://tailwindcss.com/docs/font-style
-         */
-        "font-style": ["italic", "not-italic"],
-        /**
-         * Font Weight
-         * @see https://tailwindcss.com/docs/font-weight
-         */
-        "font-weight": [{
-          font: [themeFontWeight, isArbitraryVariableWeight, isArbitraryWeight]
-        }],
-        /**
-         * Font Stretch
-         * @see https://tailwindcss.com/docs/font-stretch
-         */
-        "font-stretch": [{
-          "font-stretch": ["ultra-condensed", "extra-condensed", "condensed", "semi-condensed", "normal", "semi-expanded", "expanded", "extra-expanded", "ultra-expanded", isPercent, isArbitraryValue]
-        }],
-        /**
-         * Font Family
-         * @see https://tailwindcss.com/docs/font-family
-         */
-        "font-family": [{
-          font: [isArbitraryVariableFamilyName, isArbitraryFamilyName, themeFont]
-        }],
-        /**
-         * Font Feature Settings
-         * @see https://tailwindcss.com/docs/font-feature-settings
-         */
-        "font-features": [{
-          "font-features": [isArbitraryValue]
-        }],
-        /**
-         * Font Variant Numeric
-         * @see https://tailwindcss.com/docs/font-variant-numeric
-         */
-        "fvn-normal": ["normal-nums"],
-        /**
-         * Font Variant Numeric
-         * @see https://tailwindcss.com/docs/font-variant-numeric
-         */
-        "fvn-ordinal": ["ordinal"],
-        /**
-         * Font Variant Numeric
-         * @see https://tailwindcss.com/docs/font-variant-numeric
-         */
-        "fvn-slashed-zero": ["slashed-zero"],
-        /**
-         * Font Variant Numeric
-         * @see https://tailwindcss.com/docs/font-variant-numeric
-         */
-        "fvn-figure": ["lining-nums", "oldstyle-nums"],
-        /**
-         * Font Variant Numeric
-         * @see https://tailwindcss.com/docs/font-variant-numeric
-         */
-        "fvn-spacing": ["proportional-nums", "tabular-nums"],
-        /**
-         * Font Variant Numeric
-         * @see https://tailwindcss.com/docs/font-variant-numeric
-         */
-        "fvn-fraction": ["diagonal-fractions", "stacked-fractions"],
-        /**
-         * Letter Spacing
-         * @see https://tailwindcss.com/docs/letter-spacing
-         */
-        tracking: [{
-          tracking: [themeTracking, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Line Clamp
-         * @see https://tailwindcss.com/docs/line-clamp
-         */
-        "line-clamp": [{
-          "line-clamp": [isNumber, "none", isArbitraryVariable, isArbitraryNumber]
-        }],
-        /**
-         * Line Height
-         * @see https://tailwindcss.com/docs/line-height
-         */
-        leading: [{
-          leading: [
-            "none",
-            /** Deprecated since Tailwind CSS v4.0.0. @see https://github.com/tailwindlabs/tailwindcss.com/issues/2027#issuecomment-2620152757 */
-            themeLeading,
-            ...scaleUnambiguousSpacing()
-          ]
-        }],
-        /**
-         * List Style Image
-         * @see https://tailwindcss.com/docs/list-style-image
-         */
-        "list-image": [{
-          "list-image": ["none", isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * List Style Position
-         * @see https://tailwindcss.com/docs/list-style-position
-         */
-        "list-style-position": [{
-          list: ["inside", "outside"]
-        }],
-        /**
-         * List Style Type
-         * @see https://tailwindcss.com/docs/list-style-type
-         */
-        "list-style-type": [{
-          list: ["disc", "decimal", "none", isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Text Alignment
-         * @see https://tailwindcss.com/docs/text-align
-         */
-        "text-alignment": [{
-          text: ["left", "center", "right", "justify", "start", "end"]
-        }],
-        /**
-         * Placeholder Color
-         * @deprecated since Tailwind CSS v3.0.0
-         * @see https://v3.tailwindcss.com/docs/placeholder-color
-         */
-        "placeholder-color": [{
-          placeholder: scaleColor()
-        }],
-        /**
-         * Text Color
-         * @see https://tailwindcss.com/docs/text-color
-         */
-        "text-color": [{
-          text: scaleColor()
-        }],
-        /**
-         * Text Decoration
-         * @see https://tailwindcss.com/docs/text-decoration
-         */
-        "text-decoration": ["underline", "overline", "line-through", "no-underline"],
-        /**
-         * Text Decoration Style
-         * @see https://tailwindcss.com/docs/text-decoration-style
-         */
-        "text-decoration-style": [{
-          decoration: [...scaleLineStyle(), "wavy"]
-        }],
-        /**
-         * Text Decoration Thickness
-         * @see https://tailwindcss.com/docs/text-decoration-thickness
-         */
-        "text-decoration-thickness": [{
-          decoration: [isNumber, "from-font", "auto", isArbitraryVariable, isArbitraryLength]
-        }],
-        /**
-         * Text Decoration Color
-         * @see https://tailwindcss.com/docs/text-decoration-color
-         */
-        "text-decoration-color": [{
-          decoration: scaleColor()
-        }],
-        /**
-         * Text Underline Offset
-         * @see https://tailwindcss.com/docs/text-underline-offset
-         */
-        "underline-offset": [{
-          "underline-offset": [isNumber, "auto", isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Text Transform
-         * @see https://tailwindcss.com/docs/text-transform
-         */
-        "text-transform": ["uppercase", "lowercase", "capitalize", "normal-case"],
-        /**
-         * Text Overflow
-         * @see https://tailwindcss.com/docs/text-overflow
-         */
-        "text-overflow": ["truncate", "text-ellipsis", "text-clip"],
-        /**
-         * Text Wrap
-         * @see https://tailwindcss.com/docs/text-wrap
-         */
-        "text-wrap": [{
-          text: ["wrap", "nowrap", "balance", "pretty"]
-        }],
-        /**
-         * Text Indent
-         * @see https://tailwindcss.com/docs/text-indent
-         */
-        indent: [{
-          indent: scaleUnambiguousSpacing()
-        }],
-        /**
-         * Tab Size
-         * @see https://tailwindcss.com/docs/tab-size
-         */
-        "tab-size": [{
-          tab: [isInteger, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Vertical Alignment
-         * @see https://tailwindcss.com/docs/vertical-align
-         */
-        "vertical-align": [{
-          align: ["baseline", "top", "middle", "bottom", "text-top", "text-bottom", "sub", "super", isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Whitespace
-         * @see https://tailwindcss.com/docs/whitespace
-         */
-        whitespace: [{
-          whitespace: ["normal", "nowrap", "pre", "pre-line", "pre-wrap", "break-spaces"]
-        }],
-        /**
-         * Word Break
-         * @see https://tailwindcss.com/docs/word-break
-         */
-        break: [{
-          break: ["normal", "words", "all", "keep"]
-        }],
-        /**
-         * Overflow Wrap
-         * @see https://tailwindcss.com/docs/overflow-wrap
-         */
-        wrap: [{
-          wrap: ["break-word", "anywhere", "normal"]
-        }],
-        /**
-         * Hyphens
-         * @see https://tailwindcss.com/docs/hyphens
-         */
-        hyphens: [{
-          hyphens: ["none", "manual", "auto"]
-        }],
-        /**
-         * Content
-         * @see https://tailwindcss.com/docs/content
-         */
-        content: [{
-          content: ["none", isArbitraryVariable, isArbitraryValue]
-        }],
-        // -------------------
-        // --- Backgrounds ---
-        // -------------------
-        /**
-         * Background Attachment
-         * @see https://tailwindcss.com/docs/background-attachment
-         */
-        "bg-attachment": [{
-          bg: ["fixed", "local", "scroll"]
-        }],
-        /**
-         * Background Clip
-         * @see https://tailwindcss.com/docs/background-clip
-         */
-        "bg-clip": [{
-          "bg-clip": ["border", "padding", "content", "text"]
-        }],
-        /**
-         * Background Origin
-         * @see https://tailwindcss.com/docs/background-origin
-         */
-        "bg-origin": [{
-          "bg-origin": ["border", "padding", "content"]
-        }],
-        /**
-         * Background Position
-         * @see https://tailwindcss.com/docs/background-position
-         */
-        "bg-position": [{
-          bg: scaleBgPosition()
-        }],
-        /**
-         * Background Repeat
-         * @see https://tailwindcss.com/docs/background-repeat
-         */
-        "bg-repeat": [{
-          bg: scaleBgRepeat()
-        }],
-        /**
-         * Background Size
-         * @see https://tailwindcss.com/docs/background-size
-         */
-        "bg-size": [{
-          bg: scaleBgSize()
-        }],
-        /**
-         * Background Image
-         * @see https://tailwindcss.com/docs/background-image
-         */
-        "bg-image": [{
-          bg: ["none", {
-            linear: [{
-              to: ["t", "tr", "r", "br", "b", "bl", "l", "tl"]
-            }, isInteger, isArbitraryVariable, isArbitraryValue],
-            radial: ["", isArbitraryVariable, isArbitraryValue],
-            conic: ["", isInteger, isArbitraryVariable, isArbitraryValue]
-          }, isArbitraryVariableImage, isArbitraryImage]
-        }],
-        /**
-         * Background Color
-         * @see https://tailwindcss.com/docs/background-color
-         */
-        "bg-color": [{
-          bg: scaleColor()
-        }],
-        /**
-         * Gradient Color Stops From Position
-         * @see https://tailwindcss.com/docs/gradient-color-stops
-         */
-        "gradient-from-pos": [{
-          from: scaleGradientStopPosition()
-        }],
-        /**
-         * Gradient Color Stops Via Position
-         * @see https://tailwindcss.com/docs/gradient-color-stops
-         */
-        "gradient-via-pos": [{
-          via: scaleGradientStopPosition()
-        }],
-        /**
-         * Gradient Color Stops To Position
-         * @see https://tailwindcss.com/docs/gradient-color-stops
-         */
-        "gradient-to-pos": [{
-          to: scaleGradientStopPosition()
-        }],
-        /**
-         * Gradient Color Stops From
-         * @see https://tailwindcss.com/docs/gradient-color-stops
-         */
-        "gradient-from": [{
-          from: scaleColor()
-        }],
-        /**
-         * Gradient Color Stops Via
-         * @see https://tailwindcss.com/docs/gradient-color-stops
-         */
-        "gradient-via": [{
-          via: scaleColor()
-        }],
-        /**
-         * Gradient Color Stops To
-         * @see https://tailwindcss.com/docs/gradient-color-stops
-         */
-        "gradient-to": [{
-          to: scaleColor()
-        }],
-        // ---------------
-        // --- Borders ---
-        // ---------------
-        /**
-         * Border Radius
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        rounded: [{
-          rounded: scaleRadius()
-        }],
-        /**
-         * Border Radius Start
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-s": [{
-          "rounded-s": scaleRadius()
-        }],
-        /**
-         * Border Radius End
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-e": [{
-          "rounded-e": scaleRadius()
-        }],
-        /**
-         * Border Radius Top
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-t": [{
-          "rounded-t": scaleRadius()
-        }],
-        /**
-         * Border Radius Right
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-r": [{
-          "rounded-r": scaleRadius()
-        }],
-        /**
-         * Border Radius Bottom
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-b": [{
-          "rounded-b": scaleRadius()
-        }],
-        /**
-         * Border Radius Left
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-l": [{
-          "rounded-l": scaleRadius()
-        }],
-        /**
-         * Border Radius Start Start
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-ss": [{
-          "rounded-ss": scaleRadius()
-        }],
-        /**
-         * Border Radius Start End
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-se": [{
-          "rounded-se": scaleRadius()
-        }],
-        /**
-         * Border Radius End End
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-ee": [{
-          "rounded-ee": scaleRadius()
-        }],
-        /**
-         * Border Radius End Start
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-es": [{
-          "rounded-es": scaleRadius()
-        }],
-        /**
-         * Border Radius Top Left
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-tl": [{
-          "rounded-tl": scaleRadius()
-        }],
-        /**
-         * Border Radius Top Right
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-tr": [{
-          "rounded-tr": scaleRadius()
-        }],
-        /**
-         * Border Radius Bottom Right
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-br": [{
-          "rounded-br": scaleRadius()
-        }],
-        /**
-         * Border Radius Bottom Left
-         * @see https://tailwindcss.com/docs/border-radius
-         */
-        "rounded-bl": [{
-          "rounded-bl": scaleRadius()
-        }],
-        /**
-         * Border Width
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w": [{
-          border: scaleBorderWidth()
-        }],
-        /**
-         * Border Width Inline
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-x": [{
-          "border-x": scaleBorderWidth()
-        }],
-        /**
-         * Border Width Block
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-y": [{
-          "border-y": scaleBorderWidth()
-        }],
-        /**
-         * Border Width Inline Start
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-s": [{
-          "border-s": scaleBorderWidth()
-        }],
-        /**
-         * Border Width Inline End
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-e": [{
-          "border-e": scaleBorderWidth()
-        }],
-        /**
-         * Border Width Block Start
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-bs": [{
-          "border-bs": scaleBorderWidth()
-        }],
-        /**
-         * Border Width Block End
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-be": [{
-          "border-be": scaleBorderWidth()
-        }],
-        /**
-         * Border Width Top
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-t": [{
-          "border-t": scaleBorderWidth()
-        }],
-        /**
-         * Border Width Right
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-r": [{
-          "border-r": scaleBorderWidth()
-        }],
-        /**
-         * Border Width Bottom
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-b": [{
-          "border-b": scaleBorderWidth()
-        }],
-        /**
-         * Border Width Left
-         * @see https://tailwindcss.com/docs/border-width
-         */
-        "border-w-l": [{
-          "border-l": scaleBorderWidth()
-        }],
-        /**
-         * Divide Width X
-         * @see https://tailwindcss.com/docs/border-width#between-children
-         */
-        "divide-x": [{
-          "divide-x": scaleBorderWidth()
-        }],
-        /**
-         * Divide Width X Reverse
-         * @see https://tailwindcss.com/docs/border-width#between-children
-         */
-        "divide-x-reverse": ["divide-x-reverse"],
-        /**
-         * Divide Width Y
-         * @see https://tailwindcss.com/docs/border-width#between-children
-         */
-        "divide-y": [{
-          "divide-y": scaleBorderWidth()
-        }],
-        /**
-         * Divide Width Y Reverse
-         * @see https://tailwindcss.com/docs/border-width#between-children
-         */
-        "divide-y-reverse": ["divide-y-reverse"],
-        /**
-         * Border Style
-         * @see https://tailwindcss.com/docs/border-style
-         */
-        "border-style": [{
-          border: [...scaleLineStyle(), "hidden", "none"]
-        }],
-        /**
-         * Divide Style
-         * @see https://tailwindcss.com/docs/border-style#setting-the-divider-style
-         */
-        "divide-style": [{
-          divide: [...scaleLineStyle(), "hidden", "none"]
-        }],
-        /**
-         * Border Color
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color": [{
-          border: scaleColor()
-        }],
-        /**
-         * Border Color Inline
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-x": [{
-          "border-x": scaleColor()
-        }],
-        /**
-         * Border Color Block
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-y": [{
-          "border-y": scaleColor()
-        }],
-        /**
-         * Border Color Inline Start
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-s": [{
-          "border-s": scaleColor()
-        }],
-        /**
-         * Border Color Inline End
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-e": [{
-          "border-e": scaleColor()
-        }],
-        /**
-         * Border Color Block Start
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-bs": [{
-          "border-bs": scaleColor()
-        }],
-        /**
-         * Border Color Block End
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-be": [{
-          "border-be": scaleColor()
-        }],
-        /**
-         * Border Color Top
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-t": [{
-          "border-t": scaleColor()
-        }],
-        /**
-         * Border Color Right
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-r": [{
-          "border-r": scaleColor()
-        }],
-        /**
-         * Border Color Bottom
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-b": [{
-          "border-b": scaleColor()
-        }],
-        /**
-         * Border Color Left
-         * @see https://tailwindcss.com/docs/border-color
-         */
-        "border-color-l": [{
-          "border-l": scaleColor()
-        }],
-        /**
-         * Divide Color
-         * @see https://tailwindcss.com/docs/divide-color
-         */
-        "divide-color": [{
-          divide: scaleColor()
-        }],
-        /**
-         * Outline Style
-         * @see https://tailwindcss.com/docs/outline-style
-         */
-        "outline-style": [{
-          outline: [...scaleLineStyle(), "none", "hidden"]
-        }],
-        /**
-         * Outline Offset
-         * @see https://tailwindcss.com/docs/outline-offset
-         */
-        "outline-offset": [{
-          "outline-offset": [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Outline Width
-         * @see https://tailwindcss.com/docs/outline-width
-         */
-        "outline-w": [{
-          outline: ["", isNumber, isArbitraryVariableLength, isArbitraryLength]
-        }],
-        /**
-         * Outline Color
-         * @see https://tailwindcss.com/docs/outline-color
-         */
-        "outline-color": [{
-          outline: scaleColor()
-        }],
-        // ---------------
-        // --- Effects ---
-        // ---------------
-        /**
-         * Box Shadow
-         * @see https://tailwindcss.com/docs/box-shadow
-         */
-        shadow: [{
-          shadow: [
-            // Deprecated since Tailwind CSS v4.0.0
-            "",
-            // Deprecated since Tailwind CSS v4.0.0
-            "inner",
-            "none",
-            themeShadow,
-            isArbitraryVariableShadow,
-            isArbitraryShadow
-          ]
-        }],
-        /**
-         * Box Shadow Color
-         * @see https://tailwindcss.com/docs/box-shadow#setting-the-shadow-color
-         */
-        "shadow-color": [{
-          shadow: scaleColor()
-        }],
-        /**
-         * Inset Box Shadow
-         * @see https://tailwindcss.com/docs/box-shadow#adding-an-inset-shadow
-         */
-        "inset-shadow": [{
-          "inset-shadow": ["none", themeInsetShadow, isArbitraryVariableShadow, isArbitraryShadow]
-        }],
-        /**
-         * Inset Box Shadow Color
-         * @see https://tailwindcss.com/docs/box-shadow#setting-the-inset-shadow-color
-         */
-        "inset-shadow-color": [{
-          "inset-shadow": scaleColor()
-        }],
-        /**
-         * Ring Width
-         * @see https://tailwindcss.com/docs/box-shadow#adding-a-ring
-         */
-        "ring-w": [{
-          ring: scaleBorderWidth()
-        }],
-        /**
-         * Ring Width Inset
-         * @see https://v3.tailwindcss.com/docs/ring-width#inset-rings
-         * @deprecated since Tailwind CSS v4.0.0
-         * @see https://github.com/tailwindlabs/tailwindcss/blob/v4.0.0/packages/tailwindcss/src/utilities.ts#L4158
-         */
-        "ring-w-inset": ["ring-inset"],
-        /**
-         * Ring Color
-         * @see https://tailwindcss.com/docs/box-shadow#setting-the-ring-color
-         */
-        "ring-color": [{
-          ring: scaleColor()
-        }],
-        /**
-         * Ring Offset Width
-         * @see https://v3.tailwindcss.com/docs/ring-offset-width
-         * @deprecated since Tailwind CSS v4.0.0
-         * @see https://github.com/tailwindlabs/tailwindcss/blob/v4.0.0/packages/tailwindcss/src/utilities.ts#L4158
-         */
-        "ring-offset-w": [{
-          "ring-offset": [isNumber, isArbitraryLength]
-        }],
-        /**
-         * Ring Offset Color
-         * @see https://v3.tailwindcss.com/docs/ring-offset-color
-         * @deprecated since Tailwind CSS v4.0.0
-         * @see https://github.com/tailwindlabs/tailwindcss/blob/v4.0.0/packages/tailwindcss/src/utilities.ts#L4158
-         */
-        "ring-offset-color": [{
-          "ring-offset": scaleColor()
-        }],
-        /**
-         * Inset Ring Width
-         * @see https://tailwindcss.com/docs/box-shadow#adding-an-inset-ring
-         */
-        "inset-ring-w": [{
-          "inset-ring": scaleBorderWidth()
-        }],
-        /**
-         * Inset Ring Color
-         * @see https://tailwindcss.com/docs/box-shadow#setting-the-inset-ring-color
-         */
-        "inset-ring-color": [{
-          "inset-ring": scaleColor()
-        }],
-        /**
-         * Text Shadow
-         * @see https://tailwindcss.com/docs/text-shadow
-         */
-        "text-shadow": [{
-          "text-shadow": ["none", themeTextShadow, isArbitraryVariableShadow, isArbitraryShadow]
-        }],
-        /**
-         * Text Shadow Color
-         * @see https://tailwindcss.com/docs/text-shadow#setting-the-shadow-color
-         */
-        "text-shadow-color": [{
-          "text-shadow": scaleColor()
-        }],
-        /**
-         * Opacity
-         * @see https://tailwindcss.com/docs/opacity
-         */
-        opacity: [{
-          opacity: [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Mix Blend Mode
-         * @see https://tailwindcss.com/docs/mix-blend-mode
-         */
-        "mix-blend": [{
-          "mix-blend": [...scaleBlendMode(), "plus-darker", "plus-lighter"]
-        }],
-        /**
-         * Background Blend Mode
-         * @see https://tailwindcss.com/docs/background-blend-mode
-         */
-        "bg-blend": [{
-          "bg-blend": scaleBlendMode()
-        }],
-        /**
-         * Mask Clip
-         * @see https://tailwindcss.com/docs/mask-clip
-         */
-        "mask-clip": [{
-          "mask-clip": ["border", "padding", "content", "fill", "stroke", "view"]
-        }, "mask-no-clip"],
-        /**
-         * Mask Composite
-         * @see https://tailwindcss.com/docs/mask-composite
-         */
-        "mask-composite": [{
-          mask: ["add", "subtract", "intersect", "exclude"]
-        }],
-        /**
-         * Mask Image
-         * @see https://tailwindcss.com/docs/mask-image
-         */
-        "mask-image-linear-pos": [{
-          "mask-linear": [isNumber]
-        }],
-        "mask-image-linear-from-pos": [{
-          "mask-linear-from": scaleMaskImagePosition()
-        }],
-        "mask-image-linear-to-pos": [{
-          "mask-linear-to": scaleMaskImagePosition()
-        }],
-        "mask-image-linear-from-color": [{
-          "mask-linear-from": scaleColor()
-        }],
-        "mask-image-linear-to-color": [{
-          "mask-linear-to": scaleColor()
-        }],
-        "mask-image-t-from-pos": [{
-          "mask-t-from": scaleMaskImagePosition()
-        }],
-        "mask-image-t-to-pos": [{
-          "mask-t-to": scaleMaskImagePosition()
-        }],
-        "mask-image-t-from-color": [{
-          "mask-t-from": scaleColor()
-        }],
-        "mask-image-t-to-color": [{
-          "mask-t-to": scaleColor()
-        }],
-        "mask-image-r-from-pos": [{
-          "mask-r-from": scaleMaskImagePosition()
-        }],
-        "mask-image-r-to-pos": [{
-          "mask-r-to": scaleMaskImagePosition()
-        }],
-        "mask-image-r-from-color": [{
-          "mask-r-from": scaleColor()
-        }],
-        "mask-image-r-to-color": [{
-          "mask-r-to": scaleColor()
-        }],
-        "mask-image-b-from-pos": [{
-          "mask-b-from": scaleMaskImagePosition()
-        }],
-        "mask-image-b-to-pos": [{
-          "mask-b-to": scaleMaskImagePosition()
-        }],
-        "mask-image-b-from-color": [{
-          "mask-b-from": scaleColor()
-        }],
-        "mask-image-b-to-color": [{
-          "mask-b-to": scaleColor()
-        }],
-        "mask-image-l-from-pos": [{
-          "mask-l-from": scaleMaskImagePosition()
-        }],
-        "mask-image-l-to-pos": [{
-          "mask-l-to": scaleMaskImagePosition()
-        }],
-        "mask-image-l-from-color": [{
-          "mask-l-from": scaleColor()
-        }],
-        "mask-image-l-to-color": [{
-          "mask-l-to": scaleColor()
-        }],
-        "mask-image-x-from-pos": [{
-          "mask-x-from": scaleMaskImagePosition()
-        }],
-        "mask-image-x-to-pos": [{
-          "mask-x-to": scaleMaskImagePosition()
-        }],
-        "mask-image-x-from-color": [{
-          "mask-x-from": scaleColor()
-        }],
-        "mask-image-x-to-color": [{
-          "mask-x-to": scaleColor()
-        }],
-        "mask-image-y-from-pos": [{
-          "mask-y-from": scaleMaskImagePosition()
-        }],
-        "mask-image-y-to-pos": [{
-          "mask-y-to": scaleMaskImagePosition()
-        }],
-        "mask-image-y-from-color": [{
-          "mask-y-from": scaleColor()
-        }],
-        "mask-image-y-to-color": [{
-          "mask-y-to": scaleColor()
-        }],
-        "mask-image-radial": [{
-          "mask-radial": [isArbitraryVariable, isArbitraryValue]
-        }],
-        "mask-image-radial-from-pos": [{
-          "mask-radial-from": scaleMaskImagePosition()
-        }],
-        "mask-image-radial-to-pos": [{
-          "mask-radial-to": scaleMaskImagePosition()
-        }],
-        "mask-image-radial-from-color": [{
-          "mask-radial-from": scaleColor()
-        }],
-        "mask-image-radial-to-color": [{
-          "mask-radial-to": scaleColor()
-        }],
-        "mask-image-radial-shape": [{
-          "mask-radial": ["circle", "ellipse"]
-        }],
-        "mask-image-radial-size": [{
-          "mask-radial": [{
-            closest: ["side", "corner"],
-            farthest: ["side", "corner"]
-          }]
-        }],
-        "mask-image-radial-pos": [{
-          "mask-radial-at": scalePosition()
-        }],
-        "mask-image-conic-pos": [{
-          "mask-conic": [isNumber]
-        }],
-        "mask-image-conic-from-pos": [{
-          "mask-conic-from": scaleMaskImagePosition()
-        }],
-        "mask-image-conic-to-pos": [{
-          "mask-conic-to": scaleMaskImagePosition()
-        }],
-        "mask-image-conic-from-color": [{
-          "mask-conic-from": scaleColor()
-        }],
-        "mask-image-conic-to-color": [{
-          "mask-conic-to": scaleColor()
-        }],
-        /**
-         * Mask Mode
-         * @see https://tailwindcss.com/docs/mask-mode
-         */
-        "mask-mode": [{
-          mask: ["alpha", "luminance", "match"]
-        }],
-        /**
-         * Mask Origin
-         * @see https://tailwindcss.com/docs/mask-origin
-         */
-        "mask-origin": [{
-          "mask-origin": ["border", "padding", "content", "fill", "stroke", "view"]
-        }],
-        /**
-         * Mask Position
-         * @see https://tailwindcss.com/docs/mask-position
-         */
-        "mask-position": [{
-          mask: scaleBgPosition()
-        }],
-        /**
-         * Mask Repeat
-         * @see https://tailwindcss.com/docs/mask-repeat
-         */
-        "mask-repeat": [{
-          mask: scaleBgRepeat()
-        }],
-        /**
-         * Mask Size
-         * @see https://tailwindcss.com/docs/mask-size
-         */
-        "mask-size": [{
-          mask: scaleBgSize()
-        }],
-        /**
-         * Mask Type
-         * @see https://tailwindcss.com/docs/mask-type
-         */
-        "mask-type": [{
-          "mask-type": ["alpha", "luminance"]
-        }],
-        /**
-         * Mask Image
-         * @see https://tailwindcss.com/docs/mask-image
-         */
-        "mask-image": [{
-          mask: ["none", isArbitraryVariable, isArbitraryValue]
-        }],
-        // ---------------
-        // --- Filters ---
-        // ---------------
-        /**
-         * Filter
-         * @see https://tailwindcss.com/docs/filter
-         */
-        filter: [{
-          filter: [
-            // Deprecated since Tailwind CSS v3.0.0
-            "",
-            "none",
-            isArbitraryVariable,
-            isArbitraryValue
-          ]
-        }],
-        /**
-         * Blur
-         * @see https://tailwindcss.com/docs/blur
-         */
-        blur: [{
-          blur: scaleBlur()
-        }],
-        /**
-         * Brightness
-         * @see https://tailwindcss.com/docs/brightness
-         */
-        brightness: [{
-          brightness: [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Contrast
-         * @see https://tailwindcss.com/docs/contrast
-         */
-        contrast: [{
-          contrast: [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Drop Shadow
-         * @see https://tailwindcss.com/docs/drop-shadow
-         */
-        "drop-shadow": [{
-          "drop-shadow": [
-            // Deprecated since Tailwind CSS v4.0.0
-            "",
-            "none",
-            themeDropShadow,
-            isArbitraryVariableShadow,
-            isArbitraryShadow
-          ]
-        }],
-        /**
-         * Drop Shadow Color
-         * @see https://tailwindcss.com/docs/filter-drop-shadow#setting-the-shadow-color
-         */
-        "drop-shadow-color": [{
-          "drop-shadow": scaleColor()
-        }],
-        /**
-         * Grayscale
-         * @see https://tailwindcss.com/docs/grayscale
-         */
-        grayscale: [{
-          grayscale: ["", isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Hue Rotate
-         * @see https://tailwindcss.com/docs/hue-rotate
-         */
-        "hue-rotate": [{
-          "hue-rotate": [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Invert
-         * @see https://tailwindcss.com/docs/invert
-         */
-        invert: [{
-          invert: ["", isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Saturate
-         * @see https://tailwindcss.com/docs/saturate
-         */
-        saturate: [{
-          saturate: [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Sepia
-         * @see https://tailwindcss.com/docs/sepia
-         */
-        sepia: [{
-          sepia: ["", isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Backdrop Filter
-         * @see https://tailwindcss.com/docs/backdrop-filter
-         */
-        "backdrop-filter": [{
-          "backdrop-filter": [
-            // Deprecated since Tailwind CSS v3.0.0
-            "",
-            "none",
-            isArbitraryVariable,
-            isArbitraryValue
-          ]
-        }],
-        /**
-         * Backdrop Blur
-         * @see https://tailwindcss.com/docs/backdrop-blur
-         */
-        "backdrop-blur": [{
-          "backdrop-blur": scaleBlur()
-        }],
-        /**
-         * Backdrop Brightness
-         * @see https://tailwindcss.com/docs/backdrop-brightness
-         */
-        "backdrop-brightness": [{
-          "backdrop-brightness": [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Backdrop Contrast
-         * @see https://tailwindcss.com/docs/backdrop-contrast
-         */
-        "backdrop-contrast": [{
-          "backdrop-contrast": [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Backdrop Grayscale
-         * @see https://tailwindcss.com/docs/backdrop-grayscale
-         */
-        "backdrop-grayscale": [{
-          "backdrop-grayscale": ["", isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Backdrop Hue Rotate
-         * @see https://tailwindcss.com/docs/backdrop-hue-rotate
-         */
-        "backdrop-hue-rotate": [{
-          "backdrop-hue-rotate": [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Backdrop Invert
-         * @see https://tailwindcss.com/docs/backdrop-invert
-         */
-        "backdrop-invert": [{
-          "backdrop-invert": ["", isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Backdrop Opacity
-         * @see https://tailwindcss.com/docs/backdrop-opacity
-         */
-        "backdrop-opacity": [{
-          "backdrop-opacity": [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Backdrop Saturate
-         * @see https://tailwindcss.com/docs/backdrop-saturate
-         */
-        "backdrop-saturate": [{
-          "backdrop-saturate": [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Backdrop Sepia
-         * @see https://tailwindcss.com/docs/backdrop-sepia
-         */
-        "backdrop-sepia": [{
-          "backdrop-sepia": ["", isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        // --------------
-        // --- Tables ---
-        // --------------
-        /**
-         * Border Collapse
-         * @see https://tailwindcss.com/docs/border-collapse
-         */
-        "border-collapse": [{
-          border: ["collapse", "separate"]
-        }],
-        /**
-         * Border Spacing
-         * @see https://tailwindcss.com/docs/border-spacing
-         */
-        "border-spacing": [{
-          "border-spacing": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Border Spacing X
-         * @see https://tailwindcss.com/docs/border-spacing
-         */
-        "border-spacing-x": [{
-          "border-spacing-x": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Border Spacing Y
-         * @see https://tailwindcss.com/docs/border-spacing
-         */
-        "border-spacing-y": [{
-          "border-spacing-y": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Table Layout
-         * @see https://tailwindcss.com/docs/table-layout
-         */
-        "table-layout": [{
-          table: ["auto", "fixed"]
-        }],
-        /**
-         * Caption Side
-         * @see https://tailwindcss.com/docs/caption-side
-         */
-        caption: [{
-          caption: ["top", "bottom"]
-        }],
-        // ---------------------------------
-        // --- Transitions and Animation ---
-        // ---------------------------------
-        /**
-         * Transition Property
-         * @see https://tailwindcss.com/docs/transition-property
-         */
-        transition: [{
-          transition: ["", "all", "colors", "opacity", "shadow", "transform", "none", isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Transition Behavior
-         * @see https://tailwindcss.com/docs/transition-behavior
-         */
-        "transition-behavior": [{
-          transition: ["normal", "discrete"]
-        }],
-        /**
-         * Transition Duration
-         * @see https://tailwindcss.com/docs/transition-duration
-         */
-        duration: [{
-          duration: [isNumber, "initial", isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Transition Timing Function
-         * @see https://tailwindcss.com/docs/transition-timing-function
-         */
-        ease: [{
-          ease: ["linear", "initial", themeEase, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Transition Delay
-         * @see https://tailwindcss.com/docs/transition-delay
-         */
-        delay: [{
-          delay: [isNumber, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Animation
-         * @see https://tailwindcss.com/docs/animation
-         */
-        animate: [{
-          animate: ["none", themeAnimate, isArbitraryVariable, isArbitraryValue]
-        }],
-        // ------------------
-        // --- Transforms ---
-        // ------------------
-        /**
-         * Backface Visibility
-         * @see https://tailwindcss.com/docs/backface-visibility
-         */
-        backface: [{
-          backface: ["hidden", "visible"]
-        }],
-        /**
-         * Perspective
-         * @see https://tailwindcss.com/docs/perspective
-         */
-        perspective: [{
-          perspective: [themePerspective, isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Perspective Origin
-         * @see https://tailwindcss.com/docs/perspective-origin
-         */
-        "perspective-origin": [{
-          "perspective-origin": scalePositionWithArbitrary()
-        }],
-        /**
-         * Rotate
-         * @see https://tailwindcss.com/docs/rotate
-         */
-        rotate: [{
-          rotate: scaleRotate()
-        }],
-        /**
-         * Rotate X
-         * @see https://tailwindcss.com/docs/rotate
-         */
-        "rotate-x": [{
-          "rotate-x": scaleRotate()
-        }],
-        /**
-         * Rotate Y
-         * @see https://tailwindcss.com/docs/rotate
-         */
-        "rotate-y": [{
-          "rotate-y": scaleRotate()
-        }],
-        /**
-         * Rotate Z
-         * @see https://tailwindcss.com/docs/rotate
-         */
-        "rotate-z": [{
-          "rotate-z": scaleRotate()
-        }],
-        /**
-         * Scale
-         * @see https://tailwindcss.com/docs/scale
-         */
-        scale: [{
-          scale: scaleScale()
-        }],
-        /**
-         * Scale X
-         * @see https://tailwindcss.com/docs/scale
-         */
-        "scale-x": [{
-          "scale-x": scaleScale()
-        }],
-        /**
-         * Scale Y
-         * @see https://tailwindcss.com/docs/scale
-         */
-        "scale-y": [{
-          "scale-y": scaleScale()
-        }],
-        /**
-         * Scale Z
-         * @see https://tailwindcss.com/docs/scale
-         */
-        "scale-z": [{
-          "scale-z": scaleScale()
-        }],
-        /**
-         * Scale 3D
-         * @see https://tailwindcss.com/docs/scale
-         */
-        "scale-3d": ["scale-3d"],
-        /**
-         * Skew
-         * @see https://tailwindcss.com/docs/skew
-         */
-        skew: [{
-          skew: scaleSkew()
-        }],
-        /**
-         * Skew X
-         * @see https://tailwindcss.com/docs/skew
-         */
-        "skew-x": [{
-          "skew-x": scaleSkew()
-        }],
-        /**
-         * Skew Y
-         * @see https://tailwindcss.com/docs/skew
-         */
-        "skew-y": [{
-          "skew-y": scaleSkew()
-        }],
-        /**
-         * Transform
-         * @see https://tailwindcss.com/docs/transform
-         */
-        transform: [{
-          transform: [isArbitraryVariable, isArbitraryValue, "", "none", "gpu", "cpu"]
-        }],
-        /**
-         * Transform Origin
-         * @see https://tailwindcss.com/docs/transform-origin
-         */
-        "transform-origin": [{
-          origin: scalePositionWithArbitrary()
-        }],
-        /**
-         * Transform Style
-         * @see https://tailwindcss.com/docs/transform-style
-         */
-        "transform-style": [{
-          transform: ["3d", "flat"]
-        }],
-        /**
-         * Translate
-         * @see https://tailwindcss.com/docs/translate
-         */
-        translate: [{
-          translate: scaleTranslate()
-        }],
-        /**
-         * Translate X
-         * @see https://tailwindcss.com/docs/translate
-         */
-        "translate-x": [{
-          "translate-x": scaleTranslate()
-        }],
-        /**
-         * Translate Y
-         * @see https://tailwindcss.com/docs/translate
-         */
-        "translate-y": [{
-          "translate-y": scaleTranslate()
-        }],
-        /**
-         * Translate Z
-         * @see https://tailwindcss.com/docs/translate
-         */
-        "translate-z": [{
-          "translate-z": scaleTranslate()
-        }],
-        /**
-         * Translate None
-         * @see https://tailwindcss.com/docs/translate
-         */
-        "translate-none": ["translate-none"],
-        /**
-         * Zoom
-         * @see https://tailwindcss.com/docs/zoom
-         */
-        zoom: [{
-          zoom: [isInteger, isArbitraryVariable, isArbitraryValue]
-        }],
-        // ---------------------
-        // --- Interactivity ---
-        // ---------------------
-        /**
-         * Accent Color
-         * @see https://tailwindcss.com/docs/accent-color
-         */
-        accent: [{
-          accent: scaleColor()
-        }],
-        /**
-         * Appearance
-         * @see https://tailwindcss.com/docs/appearance
-         */
-        appearance: [{
-          appearance: ["none", "auto"]
-        }],
-        /**
-         * Caret Color
-         * @see https://tailwindcss.com/docs/just-in-time-mode#caret-color-utilities
-         */
-        "caret-color": [{
-          caret: scaleColor()
-        }],
-        /**
-         * Color Scheme
-         * @see https://tailwindcss.com/docs/color-scheme
-         */
-        "color-scheme": [{
-          scheme: ["normal", "dark", "light", "light-dark", "only-dark", "only-light"]
-        }],
-        /**
-         * Cursor
-         * @see https://tailwindcss.com/docs/cursor
-         */
-        cursor: [{
-          cursor: ["auto", "default", "pointer", "wait", "text", "move", "help", "not-allowed", "none", "context-menu", "progress", "cell", "crosshair", "vertical-text", "alias", "copy", "no-drop", "grab", "grabbing", "all-scroll", "col-resize", "row-resize", "n-resize", "e-resize", "s-resize", "w-resize", "ne-resize", "nw-resize", "se-resize", "sw-resize", "ew-resize", "ns-resize", "nesw-resize", "nwse-resize", "zoom-in", "zoom-out", isArbitraryVariable, isArbitraryValue]
-        }],
-        /**
-         * Field Sizing
-         * @see https://tailwindcss.com/docs/field-sizing
-         */
-        "field-sizing": [{
-          "field-sizing": ["fixed", "content"]
-        }],
-        /**
-         * Pointer Events
-         * @see https://tailwindcss.com/docs/pointer-events
-         */
-        "pointer-events": [{
-          "pointer-events": ["auto", "none"]
-        }],
-        /**
-         * Resize
-         * @see https://tailwindcss.com/docs/resize
-         */
-        resize: [{
-          resize: ["none", "", "y", "x"]
-        }],
-        /**
-         * Scroll Behavior
-         * @see https://tailwindcss.com/docs/scroll-behavior
-         */
-        "scroll-behavior": [{
-          scroll: ["auto", "smooth"]
-        }],
-        /**
-         * Scrollbar Thumb Color
-         * @see https://tailwindcss.com/docs/scrollbar-color
-         */
-        "scrollbar-thumb-color": [{
-          "scrollbar-thumb": scaleColor()
-        }],
-        /**
-         * Scrollbar Track Color
-         * @see https://tailwindcss.com/docs/scrollbar-color
-         */
-        "scrollbar-track-color": [{
-          "scrollbar-track": scaleColor()
-        }],
-        /**
-         * Scrollbar Gutter
-         * @see https://tailwindcss.com/docs/scrollbar-gutter
-         */
-        "scrollbar-gutter": [{
-          "scrollbar-gutter": ["auto", "stable", "both"]
-        }],
-        /**
-         * Scrollbar Width
-         * @see https://tailwindcss.com/docs/scrollbar-width
-         */
-        "scrollbar-w": [{
-          scrollbar: ["auto", "thin", "none"]
-        }],
-        /**
-         * Scroll Margin
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-m": [{
-          "scroll-m": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Inline
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-mx": [{
-          "scroll-mx": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Block
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-my": [{
-          "scroll-my": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Inline Start
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-ms": [{
-          "scroll-ms": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Inline End
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-me": [{
-          "scroll-me": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Block Start
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-mbs": [{
-          "scroll-mbs": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Block End
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-mbe": [{
-          "scroll-mbe": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Top
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-mt": [{
-          "scroll-mt": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Right
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-mr": [{
-          "scroll-mr": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Bottom
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-mb": [{
-          "scroll-mb": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Margin Left
-         * @see https://tailwindcss.com/docs/scroll-margin
-         */
-        "scroll-ml": [{
-          "scroll-ml": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-p": [{
-          "scroll-p": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Inline
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-px": [{
-          "scroll-px": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Block
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-py": [{
-          "scroll-py": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Inline Start
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-ps": [{
-          "scroll-ps": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Inline End
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-pe": [{
-          "scroll-pe": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Block Start
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-pbs": [{
-          "scroll-pbs": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Block End
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-pbe": [{
-          "scroll-pbe": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Top
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-pt": [{
-          "scroll-pt": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Right
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-pr": [{
-          "scroll-pr": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Bottom
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-pb": [{
-          "scroll-pb": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Padding Left
-         * @see https://tailwindcss.com/docs/scroll-padding
-         */
-        "scroll-pl": [{
-          "scroll-pl": scaleUnambiguousSpacing()
-        }],
-        /**
-         * Scroll Snap Align
-         * @see https://tailwindcss.com/docs/scroll-snap-align
-         */
-        "snap-align": [{
-          snap: ["start", "end", "center", "align-none"]
-        }],
-        /**
-         * Scroll Snap Stop
-         * @see https://tailwindcss.com/docs/scroll-snap-stop
-         */
-        "snap-stop": [{
-          snap: ["normal", "always"]
-        }],
-        /**
-         * Scroll Snap Type
-         * @see https://tailwindcss.com/docs/scroll-snap-type
-         */
-        "snap-type": [{
-          snap: ["none", "x", "y", "both"]
-        }],
-        /**
-         * Scroll Snap Type Strictness
-         * @see https://tailwindcss.com/docs/scroll-snap-type
-         */
-        "snap-strictness": [{
-          snap: ["mandatory", "proximity"]
-        }],
-        /**
-         * Touch Action
-         * @see https://tailwindcss.com/docs/touch-action
-         */
-        touch: [{
-          touch: ["auto", "none", "manipulation"]
-        }],
-        /**
-         * Touch Action X
-         * @see https://tailwindcss.com/docs/touch-action
-         */
-        "touch-x": [{
-          "touch-pan": ["x", "left", "right"]
-        }],
-        /**
-         * Touch Action Y
-         * @see https://tailwindcss.com/docs/touch-action
-         */
-        "touch-y": [{
-          "touch-pan": ["y", "up", "down"]
-        }],
-        /**
-         * Touch Action Pinch Zoom
-         * @see https://tailwindcss.com/docs/touch-action
-         */
-        "touch-pz": ["touch-pinch-zoom"],
-        /**
-         * User Select
-         * @see https://tailwindcss.com/docs/user-select
-         */
-        select: [{
-          select: ["none", "text", "all", "auto"]
-        }],
-        /**
-         * Will Change
-         * @see https://tailwindcss.com/docs/will-change
-         */
-        "will-change": [{
-          "will-change": ["auto", "scroll", "contents", "transform", isArbitraryVariable, isArbitraryValue]
-        }],
-        // -----------
-        // --- SVG ---
-        // -----------
-        /**
-         * Fill
-         * @see https://tailwindcss.com/docs/fill
-         */
-        fill: [{
-          fill: ["none", ...scaleColor()]
-        }],
-        /**
-         * Stroke Width
-         * @see https://tailwindcss.com/docs/stroke-width
-         */
-        "stroke-w": [{
-          stroke: [isNumber, isArbitraryVariableLength, isArbitraryLength, isArbitraryNumber]
-        }],
-        /**
-         * Stroke
-         * @see https://tailwindcss.com/docs/stroke
-         */
-        stroke: [{
-          stroke: ["none", ...scaleColor()]
-        }],
-        // ---------------------
-        // --- Accessibility ---
-        // ---------------------
-        /**
-         * Forced Color Adjust
-         * @see https://tailwindcss.com/docs/forced-color-adjust
-         */
-        "forced-color-adjust": [{
-          "forced-color-adjust": ["auto", "none"]
-        }]
-      },
-      conflictingClassGroups: {
-        "container-named": ["container-type"],
-        overflow: ["overflow-x", "overflow-y"],
-        overscroll: ["overscroll-x", "overscroll-y"],
-        inset: ["inset-x", "inset-y", "inset-bs", "inset-be", "start", "end", "top", "right", "bottom", "left"],
-        "inset-x": ["start", "end", "right", "left"],
-        "inset-y": ["inset-bs", "inset-be", "top", "bottom"],
-        flex: ["basis", "grow", "shrink"],
-        gap: ["gap-x", "gap-y"],
-        p: ["px", "py", "ps", "pe", "pbs", "pbe", "pt", "pr", "pb", "pl"],
-        px: ["ps", "pe", "pr", "pl"],
-        py: ["pbs", "pbe", "pt", "pb"],
-        m: ["mx", "my", "ms", "me", "mbs", "mbe", "mt", "mr", "mb", "ml"],
-        mx: ["ms", "me", "mr", "ml"],
-        my: ["mbs", "mbe", "mt", "mb"],
-        size: ["w", "h"],
-        "font-size": ["leading"],
-        "fvn-normal": ["fvn-ordinal", "fvn-slashed-zero", "fvn-figure", "fvn-spacing", "fvn-fraction"],
-        "fvn-ordinal": ["fvn-normal"],
-        "fvn-slashed-zero": ["fvn-normal"],
-        "fvn-figure": ["fvn-normal"],
-        "fvn-spacing": ["fvn-normal"],
-        "fvn-fraction": ["fvn-normal"],
-        "line-clamp": ["display", "overflow"],
-        rounded: ["rounded-s", "rounded-e", "rounded-t", "rounded-r", "rounded-b", "rounded-l", "rounded-ss", "rounded-se", "rounded-ee", "rounded-es", "rounded-tl", "rounded-tr", "rounded-br", "rounded-bl"],
-        "rounded-s": ["rounded-ss", "rounded-es"],
-        "rounded-e": ["rounded-se", "rounded-ee"],
-        "rounded-t": ["rounded-tl", "rounded-tr"],
-        "rounded-r": ["rounded-tr", "rounded-br"],
-        "rounded-b": ["rounded-br", "rounded-bl"],
-        "rounded-l": ["rounded-tl", "rounded-bl"],
-        "border-spacing": ["border-spacing-x", "border-spacing-y"],
-        "border-w": ["border-w-x", "border-w-y", "border-w-s", "border-w-e", "border-w-bs", "border-w-be", "border-w-t", "border-w-r", "border-w-b", "border-w-l"],
-        "border-w-x": ["border-w-s", "border-w-e", "border-w-r", "border-w-l"],
-        "border-w-y": ["border-w-bs", "border-w-be", "border-w-t", "border-w-b"],
-        "border-color": ["border-color-x", "border-color-y", "border-color-s", "border-color-e", "border-color-bs", "border-color-be", "border-color-t", "border-color-r", "border-color-b", "border-color-l"],
-        "border-color-x": ["border-color-s", "border-color-e", "border-color-r", "border-color-l"],
-        "border-color-y": ["border-color-bs", "border-color-be", "border-color-t", "border-color-b"],
-        translate: ["translate-x", "translate-y", "translate-none"],
-        "translate-none": ["translate", "translate-x", "translate-y", "translate-z"],
-        "scroll-m": ["scroll-mx", "scroll-my", "scroll-ms", "scroll-me", "scroll-mbs", "scroll-mbe", "scroll-mt", "scroll-mr", "scroll-mb", "scroll-ml"],
-        "scroll-mx": ["scroll-ms", "scroll-me", "scroll-mr", "scroll-ml"],
-        "scroll-my": ["scroll-mbs", "scroll-mbe", "scroll-mt", "scroll-mb"],
-        "scroll-p": ["scroll-px", "scroll-py", "scroll-ps", "scroll-pe", "scroll-pbs", "scroll-pbe", "scroll-pt", "scroll-pr", "scroll-pb", "scroll-pl"],
-        "scroll-px": ["scroll-ps", "scroll-pe", "scroll-pr", "scroll-pl"],
-        "scroll-py": ["scroll-pbs", "scroll-pbe", "scroll-pt", "scroll-pb"],
-        touch: ["touch-x", "touch-y", "touch-pz"],
-        "touch-x": ["touch"],
-        "touch-y": ["touch"],
-        "touch-pz": ["touch"]
-      },
-      conflictingClassGroupModifiers: {
-        "font-size": ["leading"]
-      },
-      postfixLookupClassGroups: ["container-type"],
-      orderSensitiveModifiers: ["*", "**", "after", "backdrop", "before", "details-content", "file", "first-letter", "first-line", "marker", "placeholder", "selection"]
+      merge,
+      mergeString,
+      seenBefore: cacheSize === 0 ? () => false : seenBefore,
+      mergeUncached: mergeClassList
     };
   };
-  var twMerge = /* @__PURE__ */ createTailwindMerge(getDefaultConfig);
+  var resolveValue = (v, clsxMode) => {
+    if (!v) return "";
+    if (typeof v === "string") return v;
+    let out = "";
+    if (typeof v.length === "number" && (clsxMode ? Array.isArray(v) : true)) {
+      const arr = v;
+      for (let i = 0; i < arr.length; i++) {
+        const item = arr[i];
+        if (!item) continue;
+        const r2 = typeof item === "string" ? item : resolveValue(item, clsxMode);
+        if (r2) {
+          if (out) out += " ";
+          out += r2;
+        }
+      }
+      return out;
+    }
+    if (clsxMode) {
+      if (typeof v === "number") return "" + v;
+      if (typeof v === "object") {
+        for (const k in v) if (v[k]) {
+          if (out) out += " ";
+          out += k;
+        }
+      }
+    }
+    return out;
+  };
+  var joinArgs = (args, clsxMode) => {
+    let s = "";
+    for (let i = 0; i < args.length; i++) {
+      const a = args[i];
+      if (!a) continue;
+      const r2 = typeof a === "string" ? a : resolveValue(a, clsxMode);
+      if (r2) {
+        if (s) s += " ";
+        s += r2;
+      }
+    }
+    return s;
+  };
+  var twJoin = function() {
+    return joinArgs(arguments, false);
+  };
+  var BUCKET_CAP = 256;
+  var BUCKET_MISS_CAP = 16;
+  var BUCKET_SKIP = 1024;
+  var CHURN_SIZE = 4096;
+  var wrapClsx = (mergeString, fresh) => {
+    const seenBefore = fresh === void 0 ? () => true : fresh.seenBefore;
+    const mergeUncached = fresh === void 0 ? mergeString : fresh.mergeUncached;
+    let argCache = /* @__PURE__ */ new Map();
+    let prevArgCache = /* @__PURE__ */ new Map();
+    let argCount = 0;
+    let lastHit = null;
+    let churnKey = null;
+    let churnOwn = [];
+    let churnVal = [];
+    let churnTick = 0;
+    const churnLookup = (key, own, join) => {
+      if (churnKey === null) {
+        churnKey = new Array(CHURN_SIZE).fill("");
+        churnOwn = new Array(CHURN_SIZE).fill("");
+        churnVal = new Array(CHURN_SIZE).fill("");
+      }
+      const way0 = spanHash(key, 0, key.length) & 4094;
+      if (churnKey[way0] === key && churnOwn[way0] === own) return churnVal[way0];
+      if (churnKey[way0 | 1] === key && churnOwn[way0 | 1] === own) return churnVal[way0 | 1];
+      const merged = mergeString(join ? own + " " + key : key);
+      const slot = churnKey[way0] === "" ? way0 : way0 | (churnKey[way0 | 1] === "" ? 1 : churnTick++ & 1);
+      churnKey[slot] = key;
+      churnOwn[slot] = own;
+      churnVal[slot] = merged;
+      return merged;
+    };
+    const match3 = (e, v0, v1, v2) => {
+      let k = 0;
+      if (v0) {
+        if (v0 !== e.a0) return false;
+        k = 1;
+      }
+      if (v1) {
+        if (v1 !== (k === 0 ? e.a0 : e.a1)) return false;
+        k++;
+      }
+      if (v2) {
+        if (v2 !== (k === 0 ? e.a0 : k === 1 ? e.a1 : e.a2)) return false;
+        k++;
+      }
+      return k === e.t;
+    };
+    const matchN = (e, vals) => {
+      const ea = e.a;
+      let k = 0;
+      for (let i = 0; i < vals.length; i++) {
+        const v = vals[i];
+        if (!v) continue;
+        if (v !== ea[k]) return false;
+        k++;
+      }
+      return k === e.t;
+    };
+    const resolveArgs = (vals, probed) => {
+      const nArgs = vals.length;
+      const pred = lastHit === null ? null : lastHit.n;
+      if (!probed) {
+        if (pred !== null && matchN(pred, vals)) {
+          lastHit = pred;
+          return pred.r;
+        }
+        if (lastHit !== null && lastHit !== pred && matchN(lastHit, vals)) return lastHit.r;
+      }
+      let first = "";
+      let firstIdx = -1;
+      let truthy = 0;
+      let hasResolvedValue = false;
+      for (let i = 0; i < nArgs; i++) {
+        let v = vals[i];
+        if (!v) continue;
+        if (typeof v !== "string") {
+          v = vals[i] = resolveValue(v, true);
+          if (!v) continue;
+          hasResolvedValue = true;
+        }
+        if (firstIdx < 0) {
+          first = v;
+          firstIdx = i;
+        }
+        truthy++;
+      }
+      if (truthy === 0) return "";
+      if (truthy === 1) return mergeString(first);
+      if (hasResolvedValue) {
+        if (pred !== null && matchN(pred, vals)) {
+          lastHit = pred;
+          return pred.r;
+        }
+        if (lastHit !== null && lastHit !== pred && matchN(lastHit, vals)) return lastHit.r;
+      }
+      let bucket = argCache.get(first);
+      if (bucket === void 0) {
+        bucket = prevArgCache.get(first);
+        if (bucket !== void 0) argCache.set(first, bucket);
+      }
+      let hit = null;
+      if (bucket !== void 0) {
+        if (bucket.skip > 0) {
+          bucket.skip--;
+          lastHit = null;
+          let joined = first;
+          for (let i = firstIdx + 1; i < nArgs; i++) {
+            const v = vals[i];
+            if (v) joined += " " + v;
+          }
+          return churnLookup(joined, "", false);
+        }
+        const entries = bucket.e;
+        outer: for (let b = 0; b < entries.length; b++) {
+          const e = entries[b];
+          if (e.t !== truthy) continue;
+          const ea = e.a;
+          let k = 1;
+          for (let i = firstIdx + 1; i < nArgs; i++) {
+            const v = vals[i];
+            if (v && v !== ea[k++]) continue outer;
+          }
+          hit = e;
+          break;
+        }
+        if (hit !== null) bucket.miss = 0;
+      }
+      if (hit === null) {
+        let joined = first;
+        const a = [first];
+        for (let i = firstIdx + 1; i < nArgs; i++) {
+          const v = vals[i];
+          if (!v) continue;
+          joined += " " + v;
+          a.push(v);
+        }
+        if (!seenBefore(joined)) return mergeUncached(joined);
+        hit = {
+          r: mergeString(joined),
+          t: a.length,
+          a0: a[0],
+          a1: a[1],
+          a2: a[2] ?? "",
+          a,
+          n: null
+        };
+        if (bucket === void 0) argCache.set(first, bucket = {
+          e: [],
+          miss: 0,
+          skip: 0,
+          at: 0
+        });
+        else if (++bucket.miss > BUCKET_MISS_CAP) {
+          bucket.miss = BUCKET_MISS_CAP;
+          bucket.skip = BUCKET_SKIP;
+          bucket.e.length = 0;
+          bucket.at = 0;
+        }
+        const entries = bucket.e;
+        if (entries.length < BUCKET_CAP) entries.push(hit);
+        else {
+          entries[bucket.at] = hit;
+          bucket.at = bucket.at + 1 & 255;
+        }
+        if (++argCount > 1e3) {
+          argCount = 0;
+          prevArgCache = argCache;
+          argCache = /* @__PURE__ */ new Map();
+        }
+      }
+      if (lastHit !== null && lastHit !== hit) lastHit.n = hit;
+      lastHit = hit;
+      return hit.r;
+    };
+    const mergeSingleValue = (value) => Array.isArray(value) ? resolveArgs(value.slice(), false) : mergeString(resolveValue(value, true));
+    return function(v0, v1, v2) {
+      const nArgs = arguments.length;
+      if ((nArgs | 1) === 3) {
+        const lh2 = lastHit;
+        if (lh2 !== null) {
+          const pred = lh2.n;
+          if (pred !== null && match3(pred, v0, v1, v2)) {
+            lastHit = pred;
+            return pred.r;
+          }
+          if (lh2 !== pred && match3(lh2, v0, v1, v2)) return lh2.r;
+        }
+        if (nArgs === 2 && typeof v1 === "string" && v1 !== "") {
+          const bucket = argCache.get(v0);
+          if (bucket !== void 0 && bucket.skip > 0) {
+            bucket.skip--;
+            lastHit = null;
+            return churnLookup(v1, v0, true);
+          }
+        }
+        return resolveArgs([
+          v0,
+          v1,
+          v2
+        ], true);
+      }
+      if (nArgs === 1) return typeof v0 === "string" ? mergeString(v0) : mergeSingleValue(v0);
+      const lh = lastHit;
+      if (lh !== null) {
+        const pred = lh.n;
+        if (pred !== null) {
+          const pa = pred.a;
+          let k = 0;
+          let ok = true;
+          for (let i = 0; i < nArgs; i++) {
+            const v = arguments[i];
+            if (!v) continue;
+            if (v !== pa[k]) {
+              ok = false;
+              break;
+            }
+            k++;
+          }
+          if (ok && k === pred.t) {
+            lastHit = pred;
+            return pred.r;
+          }
+        }
+        if (lh !== pred) {
+          const la = lh.a;
+          let k = 0;
+          let ok = true;
+          for (let i = 0; i < nArgs; i++) {
+            const v = arguments[i];
+            if (!v) continue;
+            if (v !== la[k]) {
+              ok = false;
+              break;
+            }
+            k++;
+          }
+          if (ok && k === lh.t) return lh.r;
+        }
+      }
+      const vals = [];
+      for (let i = 0; i < nArgs; i++) vals.push(arguments[i]);
+      return resolveArgs(vals, true);
+    };
+  };
 
-  // src/lib/utils.ts
-  function cn(...inputs) {
-    return twMerge(clsx(inputs));
-  }
+  // node_modules/.pnpm/cn@0.5.0/node_modules/cn/dist/index.js
+  var instance = /* @__PURE__ */ createEngine(tables_generated_default);
+  var cn = /* @__PURE__ */ wrapClsx(instance.mergeString, instance);
+  var twMerge = instance.merge;
 
   // node_modules/.pnpm/@radix-ui+react-primitive@2_8110221bfe749bbb617b2ef4d8402995/node_modules/@radix-ui/react-primitive/dist/index.mjs
   var React3 = __toESM(require_react(), 1);
@@ -18171,7 +16083,7 @@
   var __name2 = (target, value) => __defProp3(target, "name", { value, configurable: true });
   // @__NO_SIDE_EFFECTS__
   function createSlot(ownerName) {
-    const Slot22 = React2.forwardRef((props, forwardedRef) => {
+    const Slot2 = React2.forwardRef((props, forwardedRef) => {
       let { children, ...slotProps } = props;
       let slottableElement = null;
       let hasSlottable = false;
@@ -18218,8 +16130,8 @@
       }
       return React2.cloneElement(slottableElement, mergedProps);
     });
-    Slot22.displayName = `${ownerName}.Slot`;
-    return Slot22;
+    Slot2.displayName = `${ownerName}.Slot`;
+    return Slot2;
   }
   __name2(createSlot, "createSlot");
   var Slot = /* @__PURE__ */ createSlot("Slot");
@@ -18345,10 +16257,10 @@
     "ul"
   ];
   var Primitive = NODES.reduce((primitive, node) => {
-    const Slot3 = createSlot(`Primitive.${node}`);
+    const Slot2 = createSlot(`Primitive.${node}`);
     const Node2 = React3.forwardRef((props, forwardedRef) => {
       const { asChild, ...primitiveProps } = props;
-      const Comp = asChild ? Slot3 : node;
+      const Comp = asChild ? Slot2 : node;
       if (typeof window !== "undefined") {
         window[/* @__PURE__ */ Symbol.for("radix-ui")] = true;
       }
@@ -18394,8 +16306,8 @@
       return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Context.Provider, { value, children });
     }, "Provider");
     Provider.displayName = rootComponentName + "Provider";
-    function useContext22(consumerName, options2 = {}) {
-      const { optional = false } = options2;
+    function useContext22(consumerName, options = {}) {
+      const { optional = false } = options;
       const context = React4.useContext(Context);
       if (context) return context;
       if (defaultContext !== void 0) return defaultContext;
@@ -18421,8 +16333,8 @@
         return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Context.Provider, { value, children });
       }, "Provider");
       Provider.displayName = rootComponentName + "Provider";
-      function useContext22(consumerName, scope, options2 = {}) {
-        const { optional = false } = options2;
+      function useContext22(consumerName, scope, options = {}) {
+        const { optional = false } = options;
         const Context = scope?.[scopeName]?.[index] || BaseContext;
         const context = React4.useContext(Context);
         if (context) return context;
@@ -19991,33 +17903,6 @@
   }
   __name13(getState2, "getState");
 
-  // node_modules/.pnpm/@radix-ui+react-dialog@1.3._4dc34b117641e6b0d7103bbf4056ed99/node_modules/@radix-ui/react-dialog/dist/index.mjs
-  var dist_exports4 = {};
-  __export(dist_exports4, {
-    Close: () => DialogClose,
-    Content: () => DialogContent,
-    Description: () => DialogDescription,
-    Dialog: () => Dialog,
-    DialogClose: () => DialogClose,
-    DialogContent: () => DialogContent,
-    DialogDescription: () => DialogDescription,
-    DialogOverlay: () => DialogOverlay,
-    DialogPortal: () => DialogPortal,
-    DialogTitle: () => DialogTitle,
-    DialogTrigger: () => DialogTrigger,
-    Overlay: () => DialogOverlay,
-    Portal: () => DialogPortal,
-    Root: () => Dialog,
-    Title: () => DialogTitle,
-    Trigger: () => DialogTrigger,
-    WarningProvider: () => WarningProvider,
-    createDialogScope: () => createDialogScope
-  });
-  var React29 = __toESM(require_react(), 1);
-
-  // node_modules/.pnpm/@radix-ui+react-dismissable_aa9a2defeade16af3bdfd2945af978c3/node_modules/@radix-ui/react-dismissable-layer/dist/index.mjs
-  var React15 = __toESM(require_react(), 1);
-
   // node_modules/.pnpm/@radix-ui+react-use-callbac_69a3fb791ef61c6e6ef64d5483eb0094/node_modules/@radix-ui/react-use-callback-ref/dist/index.mjs
   var React14 = __toESM(require_react(), 1);
   var __defProp15 = Object.defineProperty;
@@ -20038,1834 +17923,12 @@
   }
   __name14(useCallbackRef, "useCallbackRef");
 
-  // node_modules/.pnpm/@radix-ui+react-dismissable_aa9a2defeade16af3bdfd2945af978c3/node_modules/@radix-ui/react-dismissable-layer/dist/index.mjs
-  var import_jsx_runtime8 = __toESM(require_jsx_runtime(), 1);
+  // node_modules/.pnpm/@radix-ui+react-use-size@1._2b848c55b0857f8c7546508027700b89/node_modules/@radix-ui/react-use-size/dist/index.mjs
+  var React15 = __toESM(require_react(), 1);
   var __defProp16 = Object.defineProperty;
   var __name15 = (target, value) => __defProp16(target, "name", { value, configurable: true });
-  var CONTEXT_UPDATE = "dismissableLayer.update";
-  var POINTER_DOWN_OUTSIDE = "dismissableLayer.pointerDownOutside";
-  var FOCUS_OUTSIDE = "dismissableLayer.focusOutside";
-  var originalBodyPointerEvents;
-  var DismissableLayerContext = React15.createContext({
-    layers: /* @__PURE__ */ new Set(),
-    layersWithOutsidePointerEventsDisabled: /* @__PURE__ */ new Set(),
-    branches: /* @__PURE__ */ new Set(),
-    // Outside elements that belong to a layer's own dismiss affordance (eg, a
-    // dialog overlay). Pressing them should dismiss the layer regardless of
-    // whether or not they stop propagation.
-    //
-    // See https://github.com/radix-ui/primitives/issues/3346
-    dismissableSurfaces: /* @__PURE__ */ new Set()
-  });
-  var DismissableLayer = /* @__PURE__ */ React15.forwardRef(
-    // blank line to reduce diff noise
-    /* @__PURE__ */ __name15(function DismissableLayer2(props, forwardedRef) {
-      const {
-        disableOutsidePointerEvents = false,
-        deferPointerDownOutside = false,
-        onEscapeKeyDown,
-        onPointerDownOutside,
-        onFocusOutside,
-        onInteractOutside,
-        onDismiss,
-        ...layerProps
-      } = props;
-      const context = React15.useContext(DismissableLayerContext);
-      const [node, setNode] = React15.useState(null);
-      const ownerDocument = node?.ownerDocument ?? globalThis?.document;
-      const [, force] = React15.useState({});
-      const composedRefs = useComposedRefs(forwardedRef, setNode);
-      const layers = Array.from(context.layers);
-      const [highestLayerWithOutsidePointerEventsDisabled] = [
-        ...context.layersWithOutsidePointerEventsDisabled
-      ].slice(-1);
-      const highestLayerWithOutsidePointerEventsDisabledIndex = highestLayerWithOutsidePointerEventsDisabled ? layers.indexOf(highestLayerWithOutsidePointerEventsDisabled) : -1;
-      const index = node ? layers.indexOf(node) : -1;
-      const isBodyPointerEventsDisabled = context.layersWithOutsidePointerEventsDisabled.size > 0;
-      const isPointerEventsEnabled = index >= highestLayerWithOutsidePointerEventsDisabledIndex;
-      const isDeferredPointerDownOutsideRef = React15.useRef(false);
-      const pointerDownOutside = usePointerDownOutside(
-        (event) => {
-          onPointerDownOutside?.(event);
-          onInteractOutside?.(event);
-          if (!event.defaultPrevented) onDismiss?.();
-        },
-        {
-          ownerDocument,
-          deferPointerDownOutside,
-          isDeferredPointerDownOutsideRef,
-          dismissableSurfaces: context.dismissableSurfaces,
-          shouldHandlePointerDownOutside: React15.useCallback(
-            (target) => {
-              if (!(target instanceof Node)) {
-                return false;
-              }
-              const isPointerDownOnBranch = [...context.branches].some(
-                (branch) => branch.contains(target)
-              );
-              return isPointerEventsEnabled && !isPointerDownOnBranch;
-            },
-            [context.branches, isPointerEventsEnabled]
-          )
-        }
-      );
-      const focusOutside = useFocusOutside((event) => {
-        if (deferPointerDownOutside && isDeferredPointerDownOutsideRef.current) {
-          return;
-        }
-        const target = event.target;
-        const isFocusInBranch = [...context.branches].some((branch) => branch.contains(target));
-        if (isFocusInBranch) return;
-        onFocusOutside?.(event);
-        onInteractOutside?.(event);
-        if (!event.defaultPrevented) onDismiss?.();
-      }, ownerDocument);
-      const isHighestLayer = node ? index === layers.length - 1 : false;
-      const handleKeyDown = useCallbackRef((event) => {
-        if (event.key !== "Escape") {
-          return;
-        }
-        onEscapeKeyDown?.(event);
-        if (!event.defaultPrevented && onDismiss) {
-          event.preventDefault();
-          onDismiss();
-        }
-      });
-      React15.useEffect(() => {
-        if (!isHighestLayer) {
-          return;
-        }
-        ownerDocument.addEventListener("keydown", handleKeyDown, { capture: true });
-        return () => ownerDocument.removeEventListener("keydown", handleKeyDown, { capture: true });
-      }, [ownerDocument, isHighestLayer, handleKeyDown]);
-      React15.useEffect(() => {
-        if (!node) return;
-        if (disableOutsidePointerEvents) {
-          if (context.layersWithOutsidePointerEventsDisabled.size === 0) {
-            originalBodyPointerEvents = ownerDocument.body.style.pointerEvents;
-            ownerDocument.body.style.pointerEvents = "none";
-          }
-          context.layersWithOutsidePointerEventsDisabled.add(node);
-        }
-        context.layers.add(node);
-        dispatchUpdate();
-        return () => {
-          if (disableOutsidePointerEvents) {
-            context.layersWithOutsidePointerEventsDisabled.delete(node);
-            if (context.layersWithOutsidePointerEventsDisabled.size === 0) {
-              ownerDocument.body.style.pointerEvents = originalBodyPointerEvents;
-            }
-          }
-        };
-      }, [node, ownerDocument, disableOutsidePointerEvents, context]);
-      React15.useEffect(() => {
-        return () => {
-          if (!node) return;
-          context.layers.delete(node);
-          context.layersWithOutsidePointerEventsDisabled.delete(node);
-          dispatchUpdate();
-        };
-      }, [node, context]);
-      React15.useEffect(() => {
-        const handleUpdate = /* @__PURE__ */ __name15(() => force({}), "handleUpdate");
-        document.addEventListener(CONTEXT_UPDATE, handleUpdate);
-        return () => document.removeEventListener(CONTEXT_UPDATE, handleUpdate);
-      }, []);
-      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
-        Primitive.div,
-        {
-          ...layerProps,
-          ref: composedRefs,
-          style: {
-            pointerEvents: isBodyPointerEventsDisabled ? isPointerEventsEnabled ? "auto" : "none" : void 0,
-            ...props.style
-          },
-          onFocusCapture: composeEventHandlers(props.onFocusCapture, focusOutside.onFocusCapture),
-          onBlurCapture: composeEventHandlers(props.onBlurCapture, focusOutside.onBlurCapture),
-          onPointerDownCapture: composeEventHandlers(
-            props.onPointerDownCapture,
-            pointerDownOutside.onPointerDownCapture
-          )
-        }
-      );
-    }, "DismissableLayer")
-  );
-  function useDismissableLayerSurface() {
-    const context = React15.useContext(DismissableLayerContext);
-    const [node, setNode] = React15.useState(null);
-    React15.useEffect(() => {
-      if (!node) {
-        return;
-      }
-      context.dismissableSurfaces.add(node);
-      return () => {
-        context.dismissableSurfaces.delete(node);
-      };
-    }, [node, context.dismissableSurfaces]);
-    return setNode;
-  }
-  __name15(useDismissableLayerSurface, "useDismissableLayerSurface");
-  var IS_TRUE = /* @__PURE__ */ __name15(() => true, "IS_TRUE");
-  function usePointerDownOutside(onPointerDownOutside, args) {
-    const {
-      ownerDocument = globalThis?.document,
-      deferPointerDownOutside = false,
-      isDeferredPointerDownOutsideRef,
-      dismissableSurfaces,
-      shouldHandlePointerDownOutside = IS_TRUE
-    } = args;
-    const handlePointerDownOutside = useCallbackRef(onPointerDownOutside);
-    const isPointerInsideReactTreeRef = React15.useRef(false);
-    const isPointerDownOutsideRef = React15.useRef(false);
-    const interceptedOutsideInteractionEventsRef = React15.useRef(/* @__PURE__ */ new Map());
-    const handleClickRef = React15.useRef(() => {
-    });
-    React15.useEffect(() => {
-      function resetOutsideInteraction() {
-        isPointerDownOutsideRef.current = false;
-        isDeferredPointerDownOutsideRef.current = false;
-        interceptedOutsideInteractionEventsRef.current.clear();
-      }
-      __name15(resetOutsideInteraction, "resetOutsideInteraction");
-      function isOutsideInteractionIntercepted() {
-        return Array.from(interceptedOutsideInteractionEventsRef.current.values()).some(Boolean);
-      }
-      __name15(isOutsideInteractionIntercepted, "isOutsideInteractionIntercepted");
-      function handleInteractionCapture(event) {
-        if (!isPointerDownOutsideRef.current) {
-          return;
-        }
-        const target = event.target;
-        const isDismissableSurface = target instanceof Node && [...dismissableSurfaces].some((surface) => surface.contains(target));
-        if (!isDismissableSurface) {
-          interceptedOutsideInteractionEventsRef.current.set(event.type, true);
-        }
-        if (event.type === "click") {
-          window.setTimeout(() => {
-            if (isPointerDownOutsideRef.current) {
-              handleClickRef.current();
-            }
-          }, 0);
-        }
-      }
-      __name15(handleInteractionCapture, "handleInteractionCapture");
-      function handleInteractionBubble(event) {
-        if (isPointerDownOutsideRef.current) {
-          interceptedOutsideInteractionEventsRef.current.set(event.type, false);
-        }
-      }
-      __name15(handleInteractionBubble, "handleInteractionBubble");
-      const handlePointerDown = /* @__PURE__ */ __name15((event) => {
-        if (event.target && !isPointerInsideReactTreeRef.current) {
-          let handleAndDispatchPointerDownOutsideEvent2 = function() {
-            ownerDocument.removeEventListener("click", handleClickRef.current);
-            const wasOutsideInteractionIntercepted = isOutsideInteractionIntercepted();
-            resetOutsideInteraction();
-            if (!wasOutsideInteractionIntercepted) {
-              handleAndDispatchCustomEvent(
-                POINTER_DOWN_OUTSIDE,
-                handlePointerDownOutside,
-                eventDetail,
-                { discrete: true }
-              );
-            }
-          };
-          var handleAndDispatchPointerDownOutsideEvent = handleAndDispatchPointerDownOutsideEvent2;
-          __name15(handleAndDispatchPointerDownOutsideEvent2, "handleAndDispatchPointerDownOutsideEvent");
-          if (!shouldHandlePointerDownOutside(event.target)) {
-            ownerDocument.removeEventListener("click", handleClickRef.current);
-            resetOutsideInteraction();
-            isPointerInsideReactTreeRef.current = false;
-            return;
-          }
-          const eventDetail = { originalEvent: event };
-          isPointerDownOutsideRef.current = true;
-          isDeferredPointerDownOutsideRef.current = deferPointerDownOutside && event.button === 0;
-          interceptedOutsideInteractionEventsRef.current.clear();
-          if (!deferPointerDownOutside || event.button !== 0) {
-            handleAndDispatchPointerDownOutsideEvent2();
-          } else {
-            ownerDocument.removeEventListener("click", handleClickRef.current);
-            handleClickRef.current = handleAndDispatchPointerDownOutsideEvent2;
-            ownerDocument.addEventListener("click", handleClickRef.current, { once: true });
-          }
-        } else {
-          ownerDocument.removeEventListener("click", handleClickRef.current);
-          resetOutsideInteraction();
-        }
-        isPointerInsideReactTreeRef.current = false;
-      }, "handlePointerDown");
-      const outsideInteractionEvents = [
-        "pointerup",
-        "mousedown",
-        "mouseup",
-        "touchstart",
-        "touchend",
-        "click"
-      ];
-      for (const eventName of outsideInteractionEvents) {
-        ownerDocument.addEventListener(eventName, handleInteractionCapture, true);
-        ownerDocument.addEventListener(eventName, handleInteractionBubble);
-      }
-      const timerId = window.setTimeout(() => {
-        ownerDocument.addEventListener("pointerdown", handlePointerDown);
-      }, 0);
-      return () => {
-        window.clearTimeout(timerId);
-        ownerDocument.removeEventListener("pointerdown", handlePointerDown);
-        ownerDocument.removeEventListener("click", handleClickRef.current);
-        for (const eventName of outsideInteractionEvents) {
-          ownerDocument.removeEventListener(eventName, handleInteractionCapture, true);
-          ownerDocument.removeEventListener(eventName, handleInteractionBubble);
-        }
-      };
-    }, [
-      ownerDocument,
-      handlePointerDownOutside,
-      deferPointerDownOutside,
-      isDeferredPointerDownOutsideRef,
-      dismissableSurfaces,
-      shouldHandlePointerDownOutside
-    ]);
-    return {
-      // ensures we check React component tree (not just DOM tree)
-      onPointerDownCapture: /* @__PURE__ */ __name15(() => isPointerInsideReactTreeRef.current = true, "onPointerDownCapture")
-    };
-  }
-  __name15(usePointerDownOutside, "usePointerDownOutside");
-  function useFocusOutside(onFocusOutside, ownerDocument = globalThis?.document) {
-    const handleFocusOutside = useCallbackRef(onFocusOutside);
-    const isFocusInsideReactTreeRef = React15.useRef(false);
-    React15.useEffect(() => {
-      const handleFocus = /* @__PURE__ */ __name15((event) => {
-        if (event.target && !isFocusInsideReactTreeRef.current) {
-          const eventDetail = { originalEvent: event };
-          handleAndDispatchCustomEvent(FOCUS_OUTSIDE, handleFocusOutside, eventDetail, {
-            discrete: false
-          });
-        }
-      }, "handleFocus");
-      ownerDocument.addEventListener("focusin", handleFocus);
-      return () => ownerDocument.removeEventListener("focusin", handleFocus);
-    }, [ownerDocument, handleFocusOutside]);
-    return {
-      onFocusCapture: /* @__PURE__ */ __name15(() => isFocusInsideReactTreeRef.current = true, "onFocusCapture"),
-      onBlurCapture: /* @__PURE__ */ __name15(() => isFocusInsideReactTreeRef.current = false, "onBlurCapture")
-    };
-  }
-  __name15(useFocusOutside, "useFocusOutside");
-  function dispatchUpdate() {
-    const event = new CustomEvent(CONTEXT_UPDATE);
-    document.dispatchEvent(event);
-  }
-  __name15(dispatchUpdate, "dispatchUpdate");
-  function handleAndDispatchCustomEvent(name, handler, detail, { discrete }) {
-    const target = detail.originalEvent.target;
-    const event = new CustomEvent(name, { bubbles: false, cancelable: true, detail });
-    if (handler) target.addEventListener(name, handler, { once: true });
-    if (discrete) {
-      dispatchDiscreteCustomEvent(target, event);
-    } else {
-      target.dispatchEvent(event);
-    }
-  }
-  __name15(handleAndDispatchCustomEvent, "handleAndDispatchCustomEvent");
-
-  // node_modules/.pnpm/@radix-ui+react-focus-scope_6d7db95e6b4b16578fd42789685673fa/node_modules/@radix-ui/react-focus-scope/dist/index.mjs
-  var React16 = __toESM(require_react(), 1);
-  var import_jsx_runtime9 = __toESM(require_jsx_runtime(), 1);
-  var __defProp17 = Object.defineProperty;
-  var __name16 = (target, value) => __defProp17(target, "name", { value, configurable: true });
-  var AUTOFOCUS_ON_MOUNT = "focusScope.autoFocusOnMount";
-  var AUTOFOCUS_ON_UNMOUNT = "focusScope.autoFocusOnUnmount";
-  var EVENT_OPTIONS = { bubbles: false, cancelable: true };
-  var FocusScope = /* @__PURE__ */ React16.forwardRef(
-    /* @__PURE__ */ __name16(function FocusScope2(props, forwardedRef) {
-      const {
-        loop = false,
-        trapped = false,
-        branches,
-        onMountAutoFocus: onMountAutoFocusProp,
-        onUnmountAutoFocus: onUnmountAutoFocusProp,
-        ...scopeProps
-      } = props;
-      const [container, setContainer] = React16.useState(null);
-      const onMountAutoFocus = useCallbackRef(onMountAutoFocusProp);
-      const onUnmountAutoFocus = useCallbackRef(onUnmountAutoFocusProp);
-      const lastFocusedElementRef = React16.useRef(null);
-      const composedRefs = useComposedRefs(forwardedRef, setContainer);
-      const branchesRef = React16.useRef(branches);
-      React16.useEffect(() => {
-        branchesRef.current = branches;
-      });
-      const isTargetInScope = React16.useCallback(
-        (target) => {
-          if (!target) return false;
-          if (container?.contains(target)) return true;
-          return Boolean(branchesRef.current?.some((branch) => branch.contains(target)));
-        },
-        [container]
-      );
-      const focusScope = React16.useRef({
-        paused: false,
-        pause() {
-          this.paused = true;
-        },
-        resume() {
-          this.paused = false;
-        }
-      }).current;
-      React16.useEffect(() => {
-        if (trapped) {
-          let handleFocusIn2 = function(event) {
-            if (focusScope.paused || !container) return;
-            const target = event.target;
-            if (isTargetInScope(target)) {
-              lastFocusedElementRef.current = target;
-            } else {
-              focus(lastFocusedElementRef.current, { select: true });
-            }
-          }, handleFocusOut2 = function(event) {
-            if (focusScope.paused || !container) return;
-            const relatedTarget = event.relatedTarget;
-            if (relatedTarget === null) return;
-            if (!isTargetInScope(relatedTarget)) {
-              focus(lastFocusedElementRef.current, { select: true });
-            }
-          }, handleMutations2 = function(mutations) {
-            const focusedElement = document.activeElement;
-            if (focusedElement !== document.body) return;
-            for (const mutation of mutations) {
-              if (mutation.removedNodes.length > 0) focus(container);
-            }
-          };
-          var handleFocusIn = handleFocusIn2, handleFocusOut = handleFocusOut2, handleMutations = handleMutations2;
-          __name16(handleFocusIn2, "handleFocusIn");
-          __name16(handleFocusOut2, "handleFocusOut");
-          __name16(handleMutations2, "handleMutations");
-          document.addEventListener("focusin", handleFocusIn2);
-          document.addEventListener("focusout", handleFocusOut2);
-          const mutationObserver = new MutationObserver(handleMutations2);
-          if (container) mutationObserver.observe(container, { childList: true, subtree: true });
-          return () => {
-            document.removeEventListener("focusin", handleFocusIn2);
-            document.removeEventListener("focusout", handleFocusOut2);
-            mutationObserver.disconnect();
-          };
-        }
-      }, [trapped, container, focusScope.paused, isTargetInScope]);
-      React16.useEffect(() => {
-        if (container) {
-          focusScopesStack.add(focusScope);
-          const previouslyFocusedElement = document.activeElement;
-          const hasFocusedCandidate = container.contains(previouslyFocusedElement);
-          if (!hasFocusedCandidate) {
-            const mountEvent = new CustomEvent(AUTOFOCUS_ON_MOUNT, EVENT_OPTIONS);
-            container.addEventListener(AUTOFOCUS_ON_MOUNT, onMountAutoFocus);
-            container.dispatchEvent(mountEvent);
-            if (!mountEvent.defaultPrevented) {
-              focusFirst(removeLinks(getTabbableCandidates(container)), { select: true });
-              if (document.activeElement === previouslyFocusedElement) {
-                focus(container);
-              }
-            }
-          }
-          return () => {
-            container.removeEventListener(AUTOFOCUS_ON_MOUNT, onMountAutoFocus);
-            const ownerDocument = container.ownerDocument;
-            const UnmountEvent = CustomEvent;
-            setTimeout(() => {
-              const unmountEvent = new UnmountEvent(AUTOFOCUS_ON_UNMOUNT, EVENT_OPTIONS);
-              container.addEventListener(AUTOFOCUS_ON_UNMOUNT, onUnmountAutoFocus);
-              container.dispatchEvent(unmountEvent);
-              if (!unmountEvent.defaultPrevented) {
-                focus(previouslyFocusedElement ?? ownerDocument.body, { select: true });
-              }
-              container.removeEventListener(AUTOFOCUS_ON_UNMOUNT, onUnmountAutoFocus);
-              focusScopesStack.remove(focusScope);
-            }, 0);
-          };
-        }
-      }, [container, onMountAutoFocus, onUnmountAutoFocus, focusScope]);
-      const handleKeyDown = React16.useCallback(
-        (event) => {
-          if (!loop && !trapped) return;
-          if (focusScope.paused) return;
-          const isTabKey = event.key === "Tab" && !event.altKey && !event.ctrlKey && !event.metaKey;
-          const focusedElement = document.activeElement;
-          if (isTabKey && focusedElement) {
-            const container2 = event.currentTarget;
-            const [first, last] = getTabbableEdges(container2);
-            const hasTabbableElementsInside = first && last;
-            if (!hasTabbableElementsInside) {
-              if (focusedElement === container2) event.preventDefault();
-            } else {
-              if (!event.shiftKey && focusedElement === last) {
-                event.preventDefault();
-                if (loop) focus(first, { select: true });
-              } else if (event.shiftKey && focusedElement === first) {
-                event.preventDefault();
-                if (loop) focus(last, { select: true });
-              }
-            }
-          }
-        },
-        [loop, trapped, focusScope.paused]
-      );
-      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Primitive.div, { tabIndex: -1, ...scopeProps, ref: composedRefs, onKeyDown: handleKeyDown });
-    }, "FocusScope")
-  );
-  var FocusScopeBranchContext = React16.createContext(null);
-  function FocusScopeBranchProvider({ registry, children }) {
-    if (!registry) {
-      return children;
-    }
-    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(FocusScopeBranchContext.Provider, { value: registry, children });
-  }
-  __name16(FocusScopeBranchProvider, "FocusScopeBranchProvider");
-  function useFocusScopeBranchRegistry() {
-    const [nodes, setNodes] = React16.useState([]);
-    const registry = React16.useMemo(
-      () => ({
-        add: /* @__PURE__ */ __name16((node) => setNodes((prev) => prev.includes(node) ? prev : [...prev, node]), "add"),
-        remove: /* @__PURE__ */ __name16((node) => setNodes((prev) => prev.filter((current) => current !== node)), "remove")
-      }),
-      []
-    );
-    return { nodes, registry };
-  }
-  __name16(useFocusScopeBranchRegistry, "useFocusScopeBranchRegistry");
-  function useFocusScopeBranch(node) {
-    const registry = React16.useContext(FocusScopeBranchContext);
-    React16.useEffect(() => {
-      if (!node || !registry) return;
-      registry.add(node);
-      return () => registry.remove(node);
-    }, [node, registry]);
-  }
-  __name16(useFocusScopeBranch, "useFocusScopeBranch");
-  function focusFirst(candidates, { select = false } = {}) {
-    const previouslyFocusedElement = document.activeElement;
-    for (const candidate of candidates) {
-      focus(candidate, { select });
-      if (document.activeElement !== previouslyFocusedElement) return;
-    }
-  }
-  __name16(focusFirst, "focusFirst");
-  function getTabbableEdges(container) {
-    const candidates = getTabbableCandidates(container);
-    const first = findVisible(candidates, container);
-    const last = findVisible(candidates.reverse(), container);
-    return [first, last];
-  }
-  __name16(getTabbableEdges, "getTabbableEdges");
-  function getTabbableCandidates(container) {
-    const nodes = [];
-    const document2 = container.ownerDocument;
-    const walker = document2.createTreeWalker(container, NodeFilter.SHOW_ELEMENT, {
-      acceptNode: /* @__PURE__ */ __name16((node) => {
-        const isHiddenInput = node.tagName === "INPUT" && node.type === "hidden";
-        if (node.disabled || node.hidden || isHiddenInput) {
-          return NodeFilter.FILTER_SKIP;
-        }
-        return node.tabIndex >= 0 ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
-      }, "acceptNode")
-    });
-    while (walker.nextNode()) {
-      nodes.push(walker.currentNode);
-    }
-    return nodes;
-  }
-  __name16(getTabbableCandidates, "getTabbableCandidates");
-  function findVisible(elements, container) {
-    const canUseCheckVisibility = typeof container.checkVisibility === "function" && container.checkVisibility({ checkVisibilityCSS: true });
-    for (const element of elements) {
-      const hidden = canUseCheckVisibility ? !element.checkVisibility({ checkVisibilityCSS: true }) : isHidden(element, { upTo: container });
-      if (!hidden) {
-        return element;
-      }
-    }
-  }
-  __name16(findVisible, "findVisible");
-  function isHidden(node, { upTo }) {
-    if (getComputedStyle(node).visibility === "hidden") return true;
-    while (node) {
-      if (upTo !== void 0 && node === upTo) return false;
-      if (getComputedStyle(node).display === "none") return true;
-      node = node.parentElement;
-    }
-    return false;
-  }
-  __name16(isHidden, "isHidden");
-  function isSelectableInput(element) {
-    return element.tagName === "INPUT" && typeof element.select === "function";
-  }
-  __name16(isSelectableInput, "isSelectableInput");
-  function focus(element, { select = false } = {}) {
-    if (element && element.focus) {
-      const ownerDocument = element.ownerDocument ?? document;
-      const previouslyFocusedElement = ownerDocument.activeElement;
-      element.focus({ preventScroll: true });
-      if (element !== previouslyFocusedElement && isSelectableInput(element) && select)
-        element.select();
-    }
-  }
-  __name16(focus, "focus");
-  var focusScopesStack = createFocusScopesStack();
-  function createFocusScopesStack() {
-    let stack = [];
-    return {
-      add(focusScope) {
-        const activeFocusScope = stack[0];
-        if (focusScope !== activeFocusScope) {
-          activeFocusScope?.pause();
-        }
-        stack = arrayRemove(stack, focusScope);
-        stack.unshift(focusScope);
-      },
-      remove(focusScope) {
-        stack = arrayRemove(stack, focusScope);
-        stack[0]?.resume();
-      }
-    };
-  }
-  __name16(createFocusScopesStack, "createFocusScopesStack");
-  function arrayRemove(array, item) {
-    const updatedArray = [...array];
-    const index = updatedArray.indexOf(item);
-    if (index !== -1) {
-      updatedArray.splice(index, 1);
-    }
-    return updatedArray;
-  }
-  __name16(arrayRemove, "arrayRemove");
-  function removeLinks(items) {
-    return items.filter((item) => item.tagName !== "A");
-  }
-  __name16(removeLinks, "removeLinks");
-
-  // node_modules/.pnpm/@radix-ui+react-portal@1.2._058d94c3625e9af8e54f0154a66c0818/node_modules/@radix-ui/react-portal/dist/index.mjs
-  var React17 = __toESM(require_react(), 1);
-  var ReactDOM2 = __toESM(require_react_dom(), 1);
-  var import_jsx_runtime10 = __toESM(require_jsx_runtime(), 1);
-  var __defProp18 = Object.defineProperty;
-  var __name17 = (target, value) => __defProp18(target, "name", { value, configurable: true });
-  var Portal = /* @__PURE__ */ React17.forwardRef(
-    /* @__PURE__ */ __name17(function Portal2(props, forwardedRef) {
-      const { container: containerProp, ...portalProps } = props;
-      const [mounted, setMounted] = React17.useState(false);
-      useLayoutEffect2(() => setMounted(true), []);
-      const container = containerProp || mounted && globalThis?.document?.body;
-      return container ? ReactDOM2.createPortal(/* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Primitive.div, { ...portalProps, ref: forwardedRef }), container) : null;
-    }, "Portal")
-  );
-
-  // node_modules/.pnpm/@radix-ui+react-focus-guard_c0670c59f51feaa6adb45a3bc8fcd0e3/node_modules/@radix-ui/react-focus-guards/dist/index.mjs
-  var React18 = __toESM(require_react(), 1);
-  var __defProp19 = Object.defineProperty;
-  var __name18 = (target, value) => __defProp19(target, "name", { value, configurable: true });
-  var count2 = 0;
-  var guards = null;
-  function FocusGuards(props) {
-    useFocusGuards();
-    return props.children;
-  }
-  __name18(FocusGuards, "FocusGuards");
-  function useFocusGuards() {
-    React18.useEffect(() => {
-      if (!guards) {
-        guards = { start: createFocusGuard(), end: createFocusGuard() };
-      }
-      const { start, end } = guards;
-      if (document.body.firstElementChild !== start) {
-        document.body.insertAdjacentElement("afterbegin", start);
-      }
-      if (document.body.lastElementChild !== end) {
-        document.body.insertAdjacentElement("beforeend", end);
-      }
-      count2++;
-      return () => {
-        if (count2 === 1) {
-          guards?.start.remove();
-          guards?.end.remove();
-          guards = null;
-        }
-        count2 = Math.max(0, count2 - 1);
-      };
-    }, []);
-  }
-  __name18(useFocusGuards, "useFocusGuards");
-  function createFocusGuard() {
-    const element = document.createElement("span");
-    element.setAttribute("data-radix-focus-guard", "");
-    element.tabIndex = 0;
-    element.style.outline = "none";
-    element.style.opacity = "0";
-    element.style.position = "fixed";
-    element.style.pointerEvents = "none";
-    return element;
-  }
-  __name18(createFocusGuard, "createFocusGuard");
-
-  // node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.es6.mjs
-  var __assign = function() {
-    __assign = Object.assign || function __assign2(t) {
-      for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-      }
-      return t;
-    };
-    return __assign.apply(this, arguments);
-  };
-  function __rest(s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-      t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-      for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-        if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-          t[p[i]] = s[p[i]];
-      }
-    return t;
-  }
-  function __spreadArray(to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-      if (ar || !(i in from)) {
-        if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-        ar[i] = from[i];
-      }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-  }
-
-  // node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.3.0_react@19.3.1/node_modules/react-remove-scroll/dist/es2015/Combination.js
-  var React28 = __toESM(require_react());
-
-  // node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.3.0_react@19.3.1/node_modules/react-remove-scroll/dist/es2015/UI.js
-  var React21 = __toESM(require_react());
-
-  // node_modules/.pnpm/react-remove-scroll-bar@2.3_4bc8444c555b29ac9388a23b7e4da306/node_modules/react-remove-scroll-bar/dist/es2015/constants.js
-  var zeroRightClassName = "right-scroll-bar-position";
-  var fullWidthClassName = "width-before-scroll-bar";
-  var noScrollbarsClassName = "with-scroll-bars-hidden";
-  var removedBarSizeVariable = "--removed-body-scroll-bar-size";
-
-  // node_modules/.pnpm/use-callback-ref@1.3.3_@types+react@19.3.0_react@19.3.1/node_modules/use-callback-ref/dist/es2015/assignRef.js
-  function assignRef(ref, value) {
-    if (typeof ref === "function") {
-      ref(value);
-    } else if (ref) {
-      ref.current = value;
-    }
-    return ref;
-  }
-
-  // node_modules/.pnpm/use-callback-ref@1.3.3_@types+react@19.3.0_react@19.3.1/node_modules/use-callback-ref/dist/es2015/useRef.js
-  var import_react = __toESM(require_react());
-  function useCallbackRef2(initialValue, callback) {
-    var ref = (0, import_react.useState)(function() {
-      return {
-        // value
-        value: initialValue,
-        // last callback
-        callback,
-        // "memoized" public interface
-        facade: {
-          get current() {
-            return ref.value;
-          },
-          set current(value) {
-            var last = ref.value;
-            if (last !== value) {
-              ref.value = value;
-              ref.callback(value, last);
-            }
-          }
-        }
-      };
-    })[0];
-    ref.callback = callback;
-    return ref.facade;
-  }
-
-  // node_modules/.pnpm/use-callback-ref@1.3.3_@types+react@19.3.0_react@19.3.1/node_modules/use-callback-ref/dist/es2015/useMergeRef.js
-  var React19 = __toESM(require_react());
-  var useIsomorphicLayoutEffect = typeof window !== "undefined" ? React19.useLayoutEffect : React19.useEffect;
-  var currentValues = /* @__PURE__ */ new WeakMap();
-  function useMergeRefs(refs, defaultValue) {
-    var callbackRef = useCallbackRef2(defaultValue || null, function(newValue) {
-      return refs.forEach(function(ref) {
-        return assignRef(ref, newValue);
-      });
-    });
-    useIsomorphicLayoutEffect(function() {
-      var oldValue = currentValues.get(callbackRef);
-      if (oldValue) {
-        var prevRefs_1 = new Set(oldValue);
-        var nextRefs_1 = new Set(refs);
-        var current_1 = callbackRef.current;
-        prevRefs_1.forEach(function(ref) {
-          if (!nextRefs_1.has(ref)) {
-            assignRef(ref, null);
-          }
-        });
-        nextRefs_1.forEach(function(ref) {
-          if (!prevRefs_1.has(ref)) {
-            assignRef(ref, current_1);
-          }
-        });
-      }
-      currentValues.set(callbackRef, refs);
-    }, [refs]);
-    return callbackRef;
-  }
-
-  // node_modules/.pnpm/use-sidecar@1.1.3_@types+react@19.3.0_react@19.3.1/node_modules/use-sidecar/dist/es2015/medium.js
-  function ItoI(a) {
-    return a;
-  }
-  function innerCreateMedium(defaults, middleware) {
-    if (middleware === void 0) {
-      middleware = ItoI;
-    }
-    var buffer = [];
-    var assigned = false;
-    var medium = {
-      read: function() {
-        if (assigned) {
-          throw new Error("Sidecar: could not `read` from an `assigned` medium. `read` could be used only with `useMedium`.");
-        }
-        if (buffer.length) {
-          return buffer[buffer.length - 1];
-        }
-        return defaults;
-      },
-      useMedium: function(data) {
-        var item = middleware(data, assigned);
-        buffer.push(item);
-        return function() {
-          buffer = buffer.filter(function(x) {
-            return x !== item;
-          });
-        };
-      },
-      assignSyncMedium: function(cb) {
-        assigned = true;
-        while (buffer.length) {
-          var cbs = buffer;
-          buffer = [];
-          cbs.forEach(cb);
-        }
-        buffer = {
-          push: function(x) {
-            return cb(x);
-          },
-          filter: function() {
-            return buffer;
-          }
-        };
-      },
-      assignMedium: function(cb) {
-        assigned = true;
-        var pendingQueue = [];
-        if (buffer.length) {
-          var cbs = buffer;
-          buffer = [];
-          cbs.forEach(cb);
-          pendingQueue = buffer;
-        }
-        var executeQueue = function() {
-          var cbs2 = pendingQueue;
-          pendingQueue = [];
-          cbs2.forEach(cb);
-        };
-        var cycle = function() {
-          return Promise.resolve().then(executeQueue);
-        };
-        cycle();
-        buffer = {
-          push: function(x) {
-            pendingQueue.push(x);
-            cycle();
-          },
-          filter: function(filter) {
-            pendingQueue = pendingQueue.filter(filter);
-            return buffer;
-          }
-        };
-      }
-    };
-    return medium;
-  }
-  function createSidecarMedium(options2) {
-    if (options2 === void 0) {
-      options2 = {};
-    }
-    var medium = innerCreateMedium(null);
-    medium.options = __assign({ async: true, ssr: false }, options2);
-    return medium;
-  }
-
-  // node_modules/.pnpm/use-sidecar@1.1.3_@types+react@19.3.0_react@19.3.1/node_modules/use-sidecar/dist/es2015/exports.js
-  var React20 = __toESM(require_react());
-  var SideCar = function(_a) {
-    var sideCar = _a.sideCar, rest = __rest(_a, ["sideCar"]);
-    if (!sideCar) {
-      throw new Error("Sidecar: please provide `sideCar` property to import the right car");
-    }
-    var Target = sideCar.read();
-    if (!Target) {
-      throw new Error("Sidecar medium not found");
-    }
-    return React20.createElement(Target, __assign({}, rest));
-  };
-  SideCar.isSideCarExport = true;
-  function exportSidecar(medium, exported) {
-    medium.useMedium(exported);
-    return SideCar;
-  }
-
-  // node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.3.0_react@19.3.1/node_modules/react-remove-scroll/dist/es2015/medium.js
-  var effectCar = createSidecarMedium();
-
-  // node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.3.0_react@19.3.1/node_modules/react-remove-scroll/dist/es2015/UI.js
-  var nothing = function() {
-    return;
-  };
-  var RemoveScroll = React21.forwardRef(function(props, parentRef) {
-    var ref = React21.useRef(null);
-    var _a = React21.useState({
-      onScrollCapture: nothing,
-      onWheelCapture: nothing,
-      onTouchMoveCapture: nothing
-    }), callbacks = _a[0], setCallbacks = _a[1];
-    var forwardProps = props.forwardProps, children = props.children, className = props.className, removeScrollBar = props.removeScrollBar, enabled = props.enabled, shards = props.shards, sideCar = props.sideCar, noRelative = props.noRelative, noIsolation = props.noIsolation, inert = props.inert, allowPinchZoom = props.allowPinchZoom, _b = props.as, Container = _b === void 0 ? "div" : _b, gapMode = props.gapMode, rest = __rest(props, ["forwardProps", "children", "className", "removeScrollBar", "enabled", "shards", "sideCar", "noRelative", "noIsolation", "inert", "allowPinchZoom", "as", "gapMode"]);
-    var SideCar2 = sideCar;
-    var containerRef = useMergeRefs([ref, parentRef]);
-    var containerProps = __assign(__assign({}, rest), callbacks);
-    return React21.createElement(
-      React21.Fragment,
-      null,
-      enabled && React21.createElement(SideCar2, { sideCar: effectCar, removeScrollBar, shards, noRelative, noIsolation, inert, setCallbacks, allowPinchZoom: !!allowPinchZoom, lockRef: ref, gapMode }),
-      forwardProps ? React21.cloneElement(React21.Children.only(children), __assign(__assign({}, containerProps), { ref: containerRef })) : React21.createElement(Container, __assign({}, containerProps, { className, ref: containerRef }), children)
-    );
-  });
-  RemoveScroll.defaultProps = {
-    enabled: true,
-    removeScrollBar: true,
-    inert: false
-  };
-  RemoveScroll.classNames = {
-    fullWidth: fullWidthClassName,
-    zeroRight: zeroRightClassName
-  };
-
-  // node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.3.0_react@19.3.1/node_modules/react-remove-scroll/dist/es2015/SideEffect.js
-  var React27 = __toESM(require_react());
-
-  // node_modules/.pnpm/react-remove-scroll-bar@2.3_4bc8444c555b29ac9388a23b7e4da306/node_modules/react-remove-scroll-bar/dist/es2015/component.js
-  var React26 = __toESM(require_react());
-
-  // node_modules/.pnpm/react-style-singleton@2.2.3_@types+react@19.3.0_react@19.3.1/node_modules/react-style-singleton/dist/es2015/hook.js
-  var React25 = __toESM(require_react());
-
-  // node_modules/.pnpm/get-nonce@1.0.1/node_modules/get-nonce/dist/es2015/index.js
-  var currentNonce;
-  var getNonce = function() {
-    if (currentNonce) {
-      return currentNonce;
-    }
-    if (typeof __webpack_nonce__ !== "undefined") {
-      return __webpack_nonce__;
-    }
-    return void 0;
-  };
-
-  // node_modules/.pnpm/react-style-singleton@2.2.3_@types+react@19.3.0_react@19.3.1/node_modules/react-style-singleton/dist/es2015/singleton.js
-  function makeStyleTag() {
-    if (!document)
-      return null;
-    var tag = document.createElement("style");
-    tag.type = "text/css";
-    var nonce = getNonce();
-    if (nonce) {
-      tag.setAttribute("nonce", nonce);
-    }
-    return tag;
-  }
-  function injectStyles(tag, css) {
-    if (tag.styleSheet) {
-      tag.styleSheet.cssText = css;
-    } else {
-      tag.appendChild(document.createTextNode(css));
-    }
-  }
-  function insertStyleTag(tag) {
-    var head = document.head || document.getElementsByTagName("head")[0];
-    head.appendChild(tag);
-  }
-  var stylesheetSingleton = function() {
-    var counter = 0;
-    var stylesheet = null;
-    return {
-      add: function(style) {
-        if (counter == 0) {
-          if (stylesheet = makeStyleTag()) {
-            injectStyles(stylesheet, style);
-            insertStyleTag(stylesheet);
-          }
-        }
-        counter++;
-      },
-      remove: function() {
-        counter--;
-        if (!counter && stylesheet) {
-          stylesheet.parentNode && stylesheet.parentNode.removeChild(stylesheet);
-          stylesheet = null;
-        }
-      }
-    };
-  };
-
-  // node_modules/.pnpm/react-style-singleton@2.2.3_@types+react@19.3.0_react@19.3.1/node_modules/react-style-singleton/dist/es2015/hook.js
-  var styleHookSingleton = function() {
-    var sheet = stylesheetSingleton();
-    return function(styles, isDynamic) {
-      React25.useEffect(function() {
-        sheet.add(styles);
-        return function() {
-          sheet.remove();
-        };
-      }, [styles && isDynamic]);
-    };
-  };
-
-  // node_modules/.pnpm/react-style-singleton@2.2.3_@types+react@19.3.0_react@19.3.1/node_modules/react-style-singleton/dist/es2015/component.js
-  var styleSingleton = function() {
-    var useStyle = styleHookSingleton();
-    var Sheet = function(_a) {
-      var styles = _a.styles, dynamic = _a.dynamic;
-      useStyle(styles, dynamic);
-      return null;
-    };
-    return Sheet;
-  };
-
-  // node_modules/.pnpm/react-remove-scroll-bar@2.3_4bc8444c555b29ac9388a23b7e4da306/node_modules/react-remove-scroll-bar/dist/es2015/utils.js
-  var zeroGap = {
-    left: 0,
-    top: 0,
-    right: 0,
-    gap: 0
-  };
-  var parse = function(x) {
-    return parseInt(x || "", 10) || 0;
-  };
-  var getOffset = function(gapMode) {
-    var cs = window.getComputedStyle(document.body);
-    var left = cs[gapMode === "padding" ? "paddingLeft" : "marginLeft"];
-    var top = cs[gapMode === "padding" ? "paddingTop" : "marginTop"];
-    var right = cs[gapMode === "padding" ? "paddingRight" : "marginRight"];
-    return [parse(left), parse(top), parse(right)];
-  };
-  var getGapWidth = function(gapMode) {
-    if (gapMode === void 0) {
-      gapMode = "margin";
-    }
-    if (typeof window === "undefined") {
-      return zeroGap;
-    }
-    var offsets = getOffset(gapMode);
-    var documentWidth = document.documentElement.clientWidth;
-    var windowWidth = window.innerWidth;
-    return {
-      left: offsets[0],
-      top: offsets[1],
-      right: offsets[2],
-      gap: Math.max(0, windowWidth - documentWidth + offsets[2] - offsets[0])
-    };
-  };
-
-  // node_modules/.pnpm/react-remove-scroll-bar@2.3_4bc8444c555b29ac9388a23b7e4da306/node_modules/react-remove-scroll-bar/dist/es2015/component.js
-  var Style = styleSingleton();
-  var lockAttribute = "data-scroll-locked";
-  var getStyles = function(_a, allowRelative, gapMode, important) {
-    var left = _a.left, top = _a.top, right = _a.right, gap = _a.gap;
-    if (gapMode === void 0) {
-      gapMode = "margin";
-    }
-    return "\n  .".concat(noScrollbarsClassName, " {\n   overflow: hidden ").concat(important, ";\n   padding-right: ").concat(gap, "px ").concat(important, ";\n  }\n  body[").concat(lockAttribute, "] {\n    overflow: hidden ").concat(important, ";\n    overscroll-behavior: contain;\n    ").concat([
-      allowRelative && "position: relative ".concat(important, ";"),
-      gapMode === "margin" && "\n    padding-left: ".concat(left, "px;\n    padding-top: ").concat(top, "px;\n    padding-right: ").concat(right, "px;\n    margin-left:0;\n    margin-top:0;\n    margin-right: ").concat(gap, "px ").concat(important, ";\n    "),
-      gapMode === "padding" && "padding-right: ".concat(gap, "px ").concat(important, ";")
-    ].filter(Boolean).join(""), "\n  }\n  \n  .").concat(zeroRightClassName, " {\n    right: ").concat(gap, "px ").concat(important, ";\n  }\n  \n  .").concat(fullWidthClassName, " {\n    margin-right: ").concat(gap, "px ").concat(important, ";\n  }\n  \n  .").concat(zeroRightClassName, " .").concat(zeroRightClassName, " {\n    right: 0 ").concat(important, ";\n  }\n  \n  .").concat(fullWidthClassName, " .").concat(fullWidthClassName, " {\n    margin-right: 0 ").concat(important, ";\n  }\n  \n  body[").concat(lockAttribute, "] {\n    ").concat(removedBarSizeVariable, ": ").concat(gap, "px;\n  }\n");
-  };
-  var getCurrentUseCounter = function() {
-    var counter = parseInt(document.body.getAttribute(lockAttribute) || "0", 10);
-    return isFinite(counter) ? counter : 0;
-  };
-  var useLockAttribute = function() {
-    React26.useEffect(function() {
-      document.body.setAttribute(lockAttribute, (getCurrentUseCounter() + 1).toString());
-      return function() {
-        var newCounter = getCurrentUseCounter() - 1;
-        if (newCounter <= 0) {
-          document.body.removeAttribute(lockAttribute);
-        } else {
-          document.body.setAttribute(lockAttribute, newCounter.toString());
-        }
-      };
-    }, []);
-  };
-  var RemoveScrollBar = function(_a) {
-    var noRelative = _a.noRelative, noImportant = _a.noImportant, _b = _a.gapMode, gapMode = _b === void 0 ? "margin" : _b;
-    useLockAttribute();
-    var gap = React26.useMemo(function() {
-      return getGapWidth(gapMode);
-    }, [gapMode]);
-    return React26.createElement(Style, { styles: getStyles(gap, !noRelative, gapMode, !noImportant ? "!important" : "") });
-  };
-
-  // node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.3.0_react@19.3.1/node_modules/react-remove-scroll/dist/es2015/aggresiveCapture.js
-  var passiveSupported = false;
-  if (typeof window !== "undefined") {
-    try {
-      options = Object.defineProperty({}, "passive", {
-        get: function() {
-          passiveSupported = true;
-          return true;
-        }
-      });
-      window.addEventListener("test", options, options);
-      window.removeEventListener("test", options, options);
-    } catch (err) {
-      passiveSupported = false;
-    }
-  }
-  var options;
-  var nonPassive = passiveSupported ? { passive: false } : false;
-
-  // node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.3.0_react@19.3.1/node_modules/react-remove-scroll/dist/es2015/handleScroll.js
-  var alwaysContainsScroll = function(node) {
-    return node.tagName === "TEXTAREA";
-  };
-  var elementCanBeScrolled = function(node, overflow) {
-    if (!(node instanceof Element)) {
-      return false;
-    }
-    var styles = window.getComputedStyle(node);
-    return (
-      // not-not-scrollable
-      styles[overflow] !== "hidden" && // contains scroll inside self
-      !(styles.overflowY === styles.overflowX && !alwaysContainsScroll(node) && styles[overflow] === "visible")
-    );
-  };
-  var elementCouldBeVScrolled = function(node) {
-    return elementCanBeScrolled(node, "overflowY");
-  };
-  var elementCouldBeHScrolled = function(node) {
-    return elementCanBeScrolled(node, "overflowX");
-  };
-  var locationCouldBeScrolled = function(axis, node) {
-    var ownerDocument = node.ownerDocument;
-    var current = node;
-    do {
-      if (typeof ShadowRoot !== "undefined" && current instanceof ShadowRoot) {
-        current = current.host;
-      }
-      var isScrollable = elementCouldBeScrolled(axis, current);
-      if (isScrollable) {
-        var _a = getScrollVariables(axis, current), scrollHeight = _a[1], clientHeight = _a[2];
-        if (scrollHeight > clientHeight) {
-          return true;
-        }
-      }
-      current = current.parentNode;
-    } while (current && current !== ownerDocument.body);
-    return false;
-  };
-  var getVScrollVariables = function(_a) {
-    var scrollTop = _a.scrollTop, scrollHeight = _a.scrollHeight, clientHeight = _a.clientHeight;
-    return [
-      scrollTop,
-      scrollHeight,
-      clientHeight
-    ];
-  };
-  var getHScrollVariables = function(_a) {
-    var scrollLeft = _a.scrollLeft, scrollWidth = _a.scrollWidth, clientWidth = _a.clientWidth;
-    return [
-      scrollLeft,
-      scrollWidth,
-      clientWidth
-    ];
-  };
-  var elementCouldBeScrolled = function(axis, node) {
-    return axis === "v" ? elementCouldBeVScrolled(node) : elementCouldBeHScrolled(node);
-  };
-  var getScrollVariables = function(axis, node) {
-    return axis === "v" ? getVScrollVariables(node) : getHScrollVariables(node);
-  };
-  var getDirectionFactor = function(axis, direction) {
-    return axis === "h" && direction === "rtl" ? -1 : 1;
-  };
-  var handleScroll = function(axis, endTarget, event, sourceDelta, noOverscroll) {
-    var directionFactor = getDirectionFactor(axis, window.getComputedStyle(endTarget).direction);
-    var delta = directionFactor * sourceDelta;
-    var target = event.target;
-    var targetInLock = endTarget.contains(target);
-    var shouldCancelScroll = false;
-    var isDeltaPositive = delta > 0;
-    var availableScroll = 0;
-    var availableScrollTop = 0;
-    do {
-      if (!target) {
-        break;
-      }
-      var _a = getScrollVariables(axis, target), position = _a[0], scroll_1 = _a[1], capacity = _a[2];
-      var elementScroll = scroll_1 - capacity - directionFactor * position;
-      if (position || elementScroll) {
-        if (elementCouldBeScrolled(axis, target)) {
-          availableScroll += elementScroll;
-          availableScrollTop += position;
-        }
-      }
-      var parent_1 = target.parentNode;
-      target = parent_1 && parent_1.nodeType === Node.DOCUMENT_FRAGMENT_NODE ? parent_1.host : parent_1;
-    } while (
-      // portaled content
-      !targetInLock && target !== document.body || // self content
-      targetInLock && (endTarget.contains(target) || endTarget === target)
-    );
-    if (isDeltaPositive && (noOverscroll && Math.abs(availableScroll) < 1 || !noOverscroll && delta > availableScroll)) {
-      shouldCancelScroll = true;
-    } else if (!isDeltaPositive && (noOverscroll && Math.abs(availableScrollTop) < 1 || !noOverscroll && -delta > availableScrollTop)) {
-      shouldCancelScroll = true;
-    }
-    return shouldCancelScroll;
-  };
-
-  // node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.3.0_react@19.3.1/node_modules/react-remove-scroll/dist/es2015/SideEffect.js
-  var getTouchXY = function(event) {
-    return "changedTouches" in event ? [event.changedTouches[0].clientX, event.changedTouches[0].clientY] : [0, 0];
-  };
-  var getDeltaXY = function(event) {
-    return [event.deltaX, event.deltaY];
-  };
-  var extractRef = function(ref) {
-    return ref && "current" in ref ? ref.current : ref;
-  };
-  var deltaCompare = function(x, y) {
-    return x[0] === y[0] && x[1] === y[1];
-  };
-  var generateStyle = function(id) {
-    return "\n  .block-interactivity-".concat(id, " {pointer-events: none;}\n  .allow-interactivity-").concat(id, " {pointer-events: all;}\n");
-  };
-  var idCounter = 0;
-  var lockStack = [];
-  function RemoveScrollSideCar(props) {
-    var shouldPreventQueue = React27.useRef([]);
-    var touchStartRef = React27.useRef([0, 0]);
-    var activeAxis = React27.useRef();
-    var id = React27.useState(idCounter++)[0];
-    var Style2 = React27.useState(styleSingleton)[0];
-    var lastProps = React27.useRef(props);
-    React27.useEffect(function() {
-      lastProps.current = props;
-    }, [props]);
-    React27.useEffect(function() {
-      if (props.inert) {
-        document.body.classList.add("block-interactivity-".concat(id));
-        var allow_1 = __spreadArray([props.lockRef.current], (props.shards || []).map(extractRef), true).filter(Boolean);
-        allow_1.forEach(function(el) {
-          return el.classList.add("allow-interactivity-".concat(id));
-        });
-        return function() {
-          document.body.classList.remove("block-interactivity-".concat(id));
-          allow_1.forEach(function(el) {
-            return el.classList.remove("allow-interactivity-".concat(id));
-          });
-        };
-      }
-      return;
-    }, [props.inert, props.lockRef.current, props.shards]);
-    var shouldCancelEvent = React27.useCallback(function(event, parent) {
-      if ("touches" in event && event.touches.length === 2 || event.type === "wheel" && event.ctrlKey) {
-        return !lastProps.current.allowPinchZoom;
-      }
-      var touch = getTouchXY(event);
-      var touchStart = touchStartRef.current;
-      var deltaX = "deltaX" in event ? event.deltaX : touchStart[0] - touch[0];
-      var deltaY = "deltaY" in event ? event.deltaY : touchStart[1] - touch[1];
-      var currentAxis;
-      var target = event.target;
-      var moveDirection = Math.abs(deltaX) > Math.abs(deltaY) ? "h" : "v";
-      if ("touches" in event && moveDirection === "h" && target.type === "range") {
-        return false;
-      }
-      var selection = window.getSelection();
-      var anchorNode = selection && selection.anchorNode;
-      var isTouchingSelection = anchorNode ? anchorNode === target || anchorNode.contains(target) : false;
-      if (isTouchingSelection) {
-        return false;
-      }
-      var canBeScrolledInMainDirection = locationCouldBeScrolled(moveDirection, target);
-      if (!canBeScrolledInMainDirection) {
-        return true;
-      }
-      if (canBeScrolledInMainDirection) {
-        currentAxis = moveDirection;
-      } else {
-        currentAxis = moveDirection === "v" ? "h" : "v";
-        canBeScrolledInMainDirection = locationCouldBeScrolled(moveDirection, target);
-      }
-      if (!canBeScrolledInMainDirection) {
-        return false;
-      }
-      if (!activeAxis.current && "changedTouches" in event && (deltaX || deltaY)) {
-        activeAxis.current = currentAxis;
-      }
-      if (!currentAxis) {
-        return true;
-      }
-      var cancelingAxis = activeAxis.current || currentAxis;
-      return handleScroll(cancelingAxis, parent, event, cancelingAxis === "h" ? deltaX : deltaY, true);
-    }, []);
-    var shouldPrevent = React27.useCallback(function(_event) {
-      var event = _event;
-      if (!lockStack.length || lockStack[lockStack.length - 1] !== Style2) {
-        return;
-      }
-      var delta = "deltaY" in event ? getDeltaXY(event) : getTouchXY(event);
-      var sourceEvent = shouldPreventQueue.current.filter(function(e) {
-        return e.name === event.type && (e.target === event.target || event.target === e.shadowParent) && deltaCompare(e.delta, delta);
-      })[0];
-      if (sourceEvent && sourceEvent.should) {
-        if (event.cancelable) {
-          event.preventDefault();
-        }
-        return;
-      }
-      if (!sourceEvent) {
-        var shardNodes = (lastProps.current.shards || []).map(extractRef).filter(Boolean).filter(function(node) {
-          return node.contains(event.target);
-        });
-        var shouldStop = shardNodes.length > 0 ? shouldCancelEvent(event, shardNodes[0]) : !lastProps.current.noIsolation;
-        if (shouldStop) {
-          if (event.cancelable) {
-            event.preventDefault();
-          }
-        }
-      }
-    }, []);
-    var shouldCancel = React27.useCallback(function(name, delta, target, should) {
-      var event = { name, delta, target, should, shadowParent: getOutermostShadowParent(target) };
-      shouldPreventQueue.current.push(event);
-      setTimeout(function() {
-        shouldPreventQueue.current = shouldPreventQueue.current.filter(function(e) {
-          return e !== event;
-        });
-      }, 1);
-    }, []);
-    var scrollTouchStart = React27.useCallback(function(event) {
-      touchStartRef.current = getTouchXY(event);
-      activeAxis.current = void 0;
-    }, []);
-    var scrollWheel = React27.useCallback(function(event) {
-      shouldCancel(event.type, getDeltaXY(event), event.target, shouldCancelEvent(event, props.lockRef.current));
-    }, []);
-    var scrollTouchMove = React27.useCallback(function(event) {
-      shouldCancel(event.type, getTouchXY(event), event.target, shouldCancelEvent(event, props.lockRef.current));
-    }, []);
-    React27.useEffect(function() {
-      lockStack.push(Style2);
-      props.setCallbacks({
-        onScrollCapture: scrollWheel,
-        onWheelCapture: scrollWheel,
-        onTouchMoveCapture: scrollTouchMove
-      });
-      document.addEventListener("wheel", shouldPrevent, nonPassive);
-      document.addEventListener("touchmove", shouldPrevent, nonPassive);
-      document.addEventListener("touchstart", scrollTouchStart, nonPassive);
-      return function() {
-        lockStack = lockStack.filter(function(inst) {
-          return inst !== Style2;
-        });
-        document.removeEventListener("wheel", shouldPrevent, nonPassive);
-        document.removeEventListener("touchmove", shouldPrevent, nonPassive);
-        document.removeEventListener("touchstart", scrollTouchStart, nonPassive);
-      };
-    }, []);
-    var removeScrollBar = props.removeScrollBar, inert = props.inert;
-    return React27.createElement(
-      React27.Fragment,
-      null,
-      inert ? React27.createElement(Style2, { styles: generateStyle(id) }) : null,
-      removeScrollBar ? React27.createElement(RemoveScrollBar, { noRelative: props.noRelative, gapMode: props.gapMode }) : null
-    );
-  }
-  function getOutermostShadowParent(node) {
-    var shadowParent = null;
-    while (node !== null) {
-      if (node instanceof ShadowRoot) {
-        shadowParent = node.host;
-        node = node.host;
-      }
-      node = node.parentNode;
-    }
-    return shadowParent;
-  }
-
-  // node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.3.0_react@19.3.1/node_modules/react-remove-scroll/dist/es2015/sidecar.js
-  var sidecar_default = exportSidecar(effectCar, RemoveScrollSideCar);
-
-  // node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.3.0_react@19.3.1/node_modules/react-remove-scroll/dist/es2015/Combination.js
-  var ReactRemoveScroll = React28.forwardRef(function(props, ref) {
-    return React28.createElement(RemoveScroll, __assign({}, props, { ref, sideCar: sidecar_default }));
-  });
-  ReactRemoveScroll.classNames = RemoveScroll.classNames;
-  var Combination_default = ReactRemoveScroll;
-
-  // node_modules/.pnpm/aria-hidden@1.2.6/node_modules/aria-hidden/dist/es2015/index.js
-  var getDefaultParent = function(originalTarget) {
-    if (typeof document === "undefined") {
-      return null;
-    }
-    var sampleTarget = Array.isArray(originalTarget) ? originalTarget[0] : originalTarget;
-    return sampleTarget.ownerDocument.body;
-  };
-  var counterMap = /* @__PURE__ */ new WeakMap();
-  var uncontrolledNodes = /* @__PURE__ */ new WeakMap();
-  var markerMap = {};
-  var lockCount = 0;
-  var unwrapHost = function(node) {
-    return node && (node.host || unwrapHost(node.parentNode));
-  };
-  var correctTargets = function(parent, targets) {
-    return targets.map(function(target) {
-      if (parent.contains(target)) {
-        return target;
-      }
-      var correctedTarget = unwrapHost(target);
-      if (correctedTarget && parent.contains(correctedTarget)) {
-        return correctedTarget;
-      }
-      console.error("aria-hidden", target, "in not contained inside", parent, ". Doing nothing");
-      return null;
-    }).filter(function(x) {
-      return Boolean(x);
-    });
-  };
-  var applyAttributeToOthers = function(originalTarget, parentNode, markerName, controlAttribute) {
-    var targets = correctTargets(parentNode, Array.isArray(originalTarget) ? originalTarget : [originalTarget]);
-    if (!markerMap[markerName]) {
-      markerMap[markerName] = /* @__PURE__ */ new WeakMap();
-    }
-    var markerCounter = markerMap[markerName];
-    var hiddenNodes = [];
-    var elementsToKeep = /* @__PURE__ */ new Set();
-    var elementsToStop = new Set(targets);
-    var keep = function(el) {
-      if (!el || elementsToKeep.has(el)) {
-        return;
-      }
-      elementsToKeep.add(el);
-      keep(el.parentNode);
-    };
-    targets.forEach(keep);
-    var deep = function(parent) {
-      if (!parent || elementsToStop.has(parent)) {
-        return;
-      }
-      Array.prototype.forEach.call(parent.children, function(node) {
-        if (elementsToKeep.has(node)) {
-          deep(node);
-        } else {
-          try {
-            var attr = node.getAttribute(controlAttribute);
-            var alreadyHidden = attr !== null && attr !== "false";
-            var counterValue = (counterMap.get(node) || 0) + 1;
-            var markerValue = (markerCounter.get(node) || 0) + 1;
-            counterMap.set(node, counterValue);
-            markerCounter.set(node, markerValue);
-            hiddenNodes.push(node);
-            if (counterValue === 1 && alreadyHidden) {
-              uncontrolledNodes.set(node, true);
-            }
-            if (markerValue === 1) {
-              node.setAttribute(markerName, "true");
-            }
-            if (!alreadyHidden) {
-              node.setAttribute(controlAttribute, "true");
-            }
-          } catch (e) {
-            console.error("aria-hidden: cannot operate on ", node, e);
-          }
-        }
-      });
-    };
-    deep(parentNode);
-    elementsToKeep.clear();
-    lockCount++;
-    return function() {
-      hiddenNodes.forEach(function(node) {
-        var counterValue = counterMap.get(node) - 1;
-        var markerValue = markerCounter.get(node) - 1;
-        counterMap.set(node, counterValue);
-        markerCounter.set(node, markerValue);
-        if (!counterValue) {
-          if (!uncontrolledNodes.has(node)) {
-            node.removeAttribute(controlAttribute);
-          }
-          uncontrolledNodes.delete(node);
-        }
-        if (!markerValue) {
-          node.removeAttribute(markerName);
-        }
-      });
-      lockCount--;
-      if (!lockCount) {
-        counterMap = /* @__PURE__ */ new WeakMap();
-        counterMap = /* @__PURE__ */ new WeakMap();
-        uncontrolledNodes = /* @__PURE__ */ new WeakMap();
-        markerMap = {};
-      }
-    };
-  };
-  var hideOthers = function(originalTarget, parentNode, markerName) {
-    if (markerName === void 0) {
-      markerName = "data-aria-hidden";
-    }
-    var targets = Array.from(Array.isArray(originalTarget) ? originalTarget : [originalTarget]);
-    var activeParentNode = parentNode || getDefaultParent(originalTarget);
-    if (!activeParentNode) {
-      return function() {
-        return null;
-      };
-    }
-    targets.push.apply(targets, Array.from(activeParentNode.querySelectorAll("[aria-live], script")));
-    return applyAttributeToOthers(targets, activeParentNode, markerName, "aria-hidden");
-  };
-
-  // node_modules/.pnpm/@radix-ui+react-dialog@1.3._4dc34b117641e6b0d7103bbf4056ed99/node_modules/@radix-ui/react-dialog/dist/index.mjs
-  var import_jsx_runtime11 = __toESM(require_jsx_runtime(), 1);
-  var __defProp20 = Object.defineProperty;
-  var __name19 = (target, value) => __defProp20(target, "name", { value, configurable: true });
-  var DIALOG_NAME = "Dialog";
-  var [createDialogContext, createDialogScope] = createContextScope(DIALOG_NAME);
-  var [DialogProvider, useDialogContext] = createDialogContext(DIALOG_NAME);
-  var Dialog = /* @__PURE__ */ __name19((props) => {
-    const {
-      __scopeDialog,
-      children,
-      open: openProp,
-      defaultOpen,
-      onOpenChange,
-      modal = true
-    } = props;
-    const triggerRef = React29.useRef(null);
-    const contentRef = React29.useRef(null);
-    const { nodes: branchNodes, registry: branchRegistry } = useFocusScopeBranchRegistry();
-    const [open, setOpen] = useControllableState({
-      prop: openProp,
-      defaultProp: defaultOpen ?? false,
-      onChange: onOpenChange,
-      caller: DIALOG_NAME
-    });
-    const [titleCount, setTitleCount] = React29.useState(0);
-    const [descriptionCount, setDescriptionCount] = React29.useState(0);
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-      DialogProvider,
-      {
-        scope: __scopeDialog,
-        triggerRef,
-        contentRef,
-        contentId: useId(),
-        titleId: useId(),
-        descriptionId: useId(),
-        titlePresent: titleCount > 0,
-        descriptionPresent: descriptionCount > 0,
-        setTitleCount,
-        setDescriptionCount,
-        open,
-        onOpenChange: setOpen,
-        onOpenToggle: React29.useCallback(() => setOpen((prevOpen) => !prevOpen), [setOpen]),
-        modal,
-        branchNodes,
-        branchRegistry,
-        children
-      }
-    );
-  }, "Dialog");
-  var TRIGGER_NAME3 = "DialogTrigger";
-  var DialogTrigger = /* @__PURE__ */ React29.forwardRef(
-    /* @__PURE__ */ __name19(function DialogTrigger2(props, forwardedRef) {
-      const { __scopeDialog, ...triggerProps } = props;
-      const context = useDialogContext(TRIGGER_NAME3, __scopeDialog);
-      const composedTriggerRef = useComposedRefs(forwardedRef, context.triggerRef);
-      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-        Primitive.button,
-        {
-          type: "button",
-          "aria-haspopup": "dialog",
-          "aria-expanded": context.open,
-          "aria-controls": context.open ? context.contentId : void 0,
-          "data-state": getState3(context.open),
-          ...triggerProps,
-          ref: composedTriggerRef,
-          onClick: composeEventHandlers(props.onClick, context.onOpenToggle)
-        }
-      );
-    }, "DialogTrigger")
-  );
-  var PORTAL_NAME = "DialogPortal";
-  var [PortalProvider, usePortalContext] = createDialogContext(PORTAL_NAME, {
-    forceMount: void 0
-  });
-  var DialogPortal = /* @__PURE__ */ __name19((props) => {
-    const { __scopeDialog, forceMount, children, container } = props;
-    const context = useDialogContext(PORTAL_NAME, __scopeDialog);
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(PortalProvider, { scope: __scopeDialog, forceMount, children: React29.Children.map(children, (child) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Presence, { present: forceMount || context.open, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Portal, { asChild: true, container, children: child }) })) });
-  }, "DialogPortal");
-  var OVERLAY_NAME = "DialogOverlay";
-  var DialogOverlay = /* @__PURE__ */ React29.forwardRef(
-    /* @__PURE__ */ __name19(function DialogOverlay2(props, forwardedRef) {
-      const portalContext = usePortalContext(OVERLAY_NAME, props.__scopeDialog);
-      const { forceMount = portalContext.forceMount, ...overlayProps } = props;
-      const context = useDialogContext(OVERLAY_NAME, props.__scopeDialog);
-      return context.modal ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Presence, { present: forceMount || context.open, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(DialogOverlayImpl, { ...overlayProps, ref: forwardedRef }) }) : null;
-    }, "DialogOverlay")
-  );
-  var Slot2 = createSlot("DialogOverlay.RemoveScroll");
-  var DialogOverlayImpl = /* @__PURE__ */ React29.forwardRef(
-    // blank line to reduce diff noise
-    /* @__PURE__ */ __name19(function DialogOverlayImpl2(props, forwardedRef) {
-      const { __scopeDialog, ...overlayProps } = props;
-      const context = useDialogContext(OVERLAY_NAME, __scopeDialog);
-      const registerDismissableSurface = useDismissableLayerSurface();
-      const composedRefs = useComposedRefs(forwardedRef, registerDismissableSurface);
-      return (
-        // Make sure `Content` is scrollable even when it doesn't live inside
-        // `RemoveScroll` (eg. when `Overlay` and `Content` are siblings). Nested
-        // layers are registered as branches and added as shards so they remain
-        // scrollable too. See https://github.com/radix-ui/primitives/issues/3423
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-          Combination_default,
-          {
-            as: Slot2,
-            allowPinchZoom: true,
-            shards: React29.useMemo(
-              () => [context.contentRef, ...context.branchNodes.map((node) => ({ current: node }))],
-              [context.contentRef, context.branchNodes]
-            ),
-            children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-              Primitive.div,
-              {
-                "data-state": getState3(context.open),
-                ...overlayProps,
-                ref: composedRefs,
-                style: { pointerEvents: "auto", ...overlayProps.style }
-              }
-            )
-          }
-        )
-      );
-    }, "DialogOverlayImpl")
-  );
-  var CONTENT_NAME3 = "DialogContent";
-  var DialogContent = /* @__PURE__ */ React29.forwardRef(
-    /* @__PURE__ */ __name19(function DialogContent2(props, forwardedRef) {
-      const portalContext = usePortalContext(CONTENT_NAME3, props.__scopeDialog);
-      const { forceMount = portalContext.forceMount, ...contentProps } = props;
-      const context = useDialogContext(CONTENT_NAME3, props.__scopeDialog);
-      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Presence, { present: forceMount || context.open, children: context.modal ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(DialogContentModal, { ...contentProps, ref: forwardedRef }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(DialogContentNonModal, { ...contentProps, ref: forwardedRef }) });
-    }, "DialogContent")
-  );
-  var DialogContentModal = /* @__PURE__ */ React29.forwardRef(
-    // blank line to reduce diff noise
-    /* @__PURE__ */ __name19(function DialogContentModal2(props, forwardedRef) {
-      const context = useDialogContext(CONTENT_NAME3, props.__scopeDialog);
-      const contentRef = React29.useRef(null);
-      const composedRefs = useComposedRefs(forwardedRef, context.contentRef, contentRef);
-      React29.useEffect(() => {
-        const content = contentRef.current;
-        if (content) return hideOthers(content);
-      }, []);
-      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-        DialogContentImpl,
-        {
-          ...props,
-          ref: composedRefs,
-          trapFocus: context.open,
-          disableOutsidePointerEvents: context.open,
-          onCloseAutoFocus: composeEventHandlers(props.onCloseAutoFocus, (event) => {
-            event.preventDefault();
-            context.triggerRef.current?.focus();
-          }),
-          onPointerDownOutside: composeEventHandlers(props.onPointerDownOutside, (event) => {
-            const originalEvent = event.detail.originalEvent;
-            const ctrlLeftClick = originalEvent.button === 0 && originalEvent.ctrlKey === true;
-            const isRightClick = originalEvent.button === 2 || ctrlLeftClick;
-            if (isRightClick) event.preventDefault();
-          }),
-          onFocusOutside: composeEventHandlers(
-            props.onFocusOutside,
-            (event) => event.preventDefault()
-          )
-        }
-      );
-    }, "DialogContentModal")
-  );
-  var DialogContentNonModal = /* @__PURE__ */ React29.forwardRef(
-    // blank line to reduce diff noise
-    /* @__PURE__ */ __name19(function DialogContentNonModal2(props, forwardedRef) {
-      const context = useDialogContext(CONTENT_NAME3, props.__scopeDialog);
-      const hasInteractedOutsideRef = React29.useRef(false);
-      const hasPointerDownOutsideRef = React29.useRef(false);
-      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-        DialogContentImpl,
-        {
-          ...props,
-          ref: forwardedRef,
-          trapFocus: false,
-          disableOutsidePointerEvents: false,
-          onCloseAutoFocus: (event) => {
-            props.onCloseAutoFocus?.(event);
-            if (!event.defaultPrevented) {
-              if (!hasInteractedOutsideRef.current) context.triggerRef.current?.focus();
-              event.preventDefault();
-            }
-            hasInteractedOutsideRef.current = false;
-            hasPointerDownOutsideRef.current = false;
-          },
-          onInteractOutside: (event) => {
-            props.onInteractOutside?.(event);
-            if (!event.defaultPrevented) {
-              hasInteractedOutsideRef.current = true;
-              if (event.detail.originalEvent.type === "pointerdown") {
-                hasPointerDownOutsideRef.current = true;
-              }
-            }
-            const target = event.target;
-            const targetIsTrigger = context.triggerRef.current?.contains(target);
-            if (targetIsTrigger) event.preventDefault();
-            if (event.detail.originalEvent.type === "focusin" && hasPointerDownOutsideRef.current) {
-              event.preventDefault();
-            }
-          }
-        }
-      );
-    }, "DialogContentNonModal")
-  );
-  var DialogContentImpl = /* @__PURE__ */ React29.forwardRef(
-    // blank line to reduce diff noise
-    /* @__PURE__ */ __name19(function DialogContentImpl2(props, forwardedRef) {
-      const {
-        __scopeDialog,
-        trapFocus,
-        onOpenAutoFocus,
-        onCloseAutoFocus,
-        "aria-describedby": ariaDescribedby,
-        children,
-        ...contentProps
-      } = props;
-      const context = useDialogContext(CONTENT_NAME3, __scopeDialog);
-      useFocusGuards();
-      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FocusScopeBranchProvider, { registry: context.branchRegistry, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-        FocusScope,
-        {
-          asChild: true,
-          loop: true,
-          trapped: trapFocus,
-          branches: context.branchNodes,
-          onMountAutoFocus: onOpenAutoFocus,
-          onUnmountAutoFocus: onCloseAutoFocus,
-          children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-            DismissableLayer,
-            {
-              role: "dialog",
-              id: context.contentId,
-              "aria-labelledby": context.titlePresent ? context.titleId : void 0,
-              "aria-describedby": context.descriptionPresent ? concatAriaDescribedby2(ariaDescribedby, context.descriptionId) : ariaDescribedby,
-              "data-state": getState3(context.open),
-              ...contentProps,
-              ref: forwardedRef,
-              deferPointerDownOutside: true,
-              onDismiss: () => context.onOpenChange(false),
-              children
-            }
-          )
-        }
-      ) });
-    }, "DialogContentImpl")
-  );
-  var DialogTitle = /* @__PURE__ */ React29.forwardRef(
-    /* @__PURE__ */ __name19(function DialogTitle2(props, forwardedRef) {
-      const { __scopeDialog, ...titleProps } = props;
-      const context = useDialogContext("DialogTitle", __scopeDialog);
-      const { setTitleCount } = context;
-      useLayoutEffect2(() => {
-        setTitleCount((count3) => count3 + 1);
-        return () => setTitleCount((count3) => count3 - 1);
-      }, [setTitleCount]);
-      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Primitive.h2, { id: context.titleId, ...titleProps, ref: forwardedRef });
-    }, "DialogTitle")
-  );
-  var DialogDescription = /* @__PURE__ */ React29.forwardRef(
-    // blank line to reduce diff noise
-    /* @__PURE__ */ __name19(function DialogDescription2(props, forwardedRef) {
-      const { __scopeDialog, ...descriptionProps } = props;
-      const context = useDialogContext("DialogDescription", __scopeDialog);
-      const { setDescriptionCount } = context;
-      useLayoutEffect2(() => {
-        setDescriptionCount((count3) => count3 + 1);
-        return () => setDescriptionCount((count3) => count3 - 1);
-      }, [setDescriptionCount]);
-      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Primitive.p, { id: context.descriptionId, ...descriptionProps, ref: forwardedRef });
-    }, "DialogDescription")
-  );
-  var CLOSE_NAME = "DialogClose";
-  var DialogClose = /* @__PURE__ */ React29.forwardRef(
-    /* @__PURE__ */ __name19(function DialogClose2(props, forwardedRef) {
-      const { __scopeDialog, ...closeProps } = props;
-      const context = useDialogContext(CLOSE_NAME, __scopeDialog);
-      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-        Primitive.button,
-        {
-          type: "button",
-          ...closeProps,
-          ref: forwardedRef,
-          onClick: composeEventHandlers(props.onClick, () => context.onOpenChange(false))
-        }
-      );
-    }, "DialogClose")
-  );
-  var WarningProvider = /* @__PURE__ */ __name19((props) => {
-    return props.children;
-  }, "WarningProvider");
-  function concatAriaDescribedby2(...values) {
-    const ids = /* @__PURE__ */ new Set();
-    for (const value of values) {
-      if (typeof value !== "string") continue;
-      for (const id of String(value).trim().split(/\s+/)) {
-        if (id) ids.add(id);
-      }
-    }
-    return ids.size > 0 ? Array.from(ids).join(" ") : void 0;
-  }
-  __name19(concatAriaDescribedby2, "concatAriaDescribedby");
-  function getState3(open) {
-    return open ? "open" : "closed";
-  }
-  __name19(getState3, "getState");
-
-  // node_modules/.pnpm/@radix-ui+react-use-size@1._2b848c55b0857f8c7546508027700b89/node_modules/@radix-ui/react-use-size/dist/index.mjs
-  var React30 = __toESM(require_react(), 1);
-  var __defProp21 = Object.defineProperty;
-  var __name20 = (target, value) => __defProp21(target, "name", { value, configurable: true });
   function useSize(element) {
-    const [size, setSize] = React30.useState(void 0);
+    const [size, setSize] = React15.useState(void 0);
     useLayoutEffect2(() => {
       if (element) {
         setSize({ width: element.offsetWidth, height: element.offsetHeight });
@@ -21905,20 +17968,20 @@
     }, [element]);
     return size;
   }
-  __name20(useSize, "useSize");
+  __name15(useSize, "useSize");
 
   // node_modules/.pnpm/@radix-ui+react-roving-focu_bed290ae4c554285fceef8952991064b/node_modules/@radix-ui/react-roving-focus/dist/index.mjs
-  var React32 = __toESM(require_react(), 1);
+  var React17 = __toESM(require_react(), 1);
 
   // node_modules/.pnpm/@radix-ui+react-use-is-hydr_d5f02d66173c49c68cbede894417d34b/node_modules/@radix-ui/react-use-is-hydrated/dist/index.mjs
-  var React210 = __toESM(require_react(), 1);
-  var React31 = __toESM(require_react(), 1);
-  var __defProp22 = Object.defineProperty;
-  var __name21 = (target, value) => __defProp22(target, "name", { value, configurable: true });
+  var React25 = __toESM(require_react(), 1);
+  var React16 = __toESM(require_react(), 1);
+  var __defProp17 = Object.defineProperty;
+  var __name16 = (target, value) => __defProp17(target, "name", { value, configurable: true });
   var _isHydrated = false;
   function useIsHydrated() {
-    const [isHydrated, setIsHydrated] = React31.useState(_isHydrated);
-    React31.useEffect(() => {
+    const [isHydrated, setIsHydrated] = React16.useState(_isHydrated);
+    React16.useEffect(() => {
       if (!_isHydrated) {
         _isHydrated = true;
         setIsHydrated(true);
@@ -21926,13 +17989,13 @@
     }, []);
     return isHydrated;
   }
-  __name21(useIsHydrated, "useIsHydrated");
-  var useReactSyncExternalStore = React210[" useSyncExternalStore ".trim().toString()];
+  __name16(useIsHydrated, "useIsHydrated");
+  var useReactSyncExternalStore = React25[" useSyncExternalStore ".trim().toString()];
   function subscribe() {
     return () => {
     };
   }
-  __name21(subscribe, "subscribe");
+  __name16(subscribe, "subscribe");
   function useIsHydratedModern() {
     return useReactSyncExternalStore(
       subscribe,
@@ -21940,15 +18003,15 @@
       () => false
     );
   }
-  __name21(useIsHydratedModern, "useIsHydratedModern");
+  __name16(useIsHydratedModern, "useIsHydratedModern");
   var useIsHydrated2 = typeof useReactSyncExternalStore === "function" ? useIsHydratedModern : useIsHydrated;
 
   // node_modules/.pnpm/@radix-ui+react-roving-focu_bed290ae4c554285fceef8952991064b/node_modules/@radix-ui/react-roving-focus/dist/index.mjs
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime(), 1);
-  var __defProp23 = Object.defineProperty;
-  var __name22 = (target, value) => __defProp23(target, "name", { value, configurable: true });
+  var import_jsx_runtime8 = __toESM(require_jsx_runtime(), 1);
+  var __defProp18 = Object.defineProperty;
+  var __name17 = (target, value) => __defProp18(target, "name", { value, configurable: true });
   var ENTRY_FOCUS = "rovingFocusGroup.onEntryFocus";
-  var EVENT_OPTIONS2 = { bubbles: false, cancelable: true };
+  var EVENT_OPTIONS = { bubbles: false, cancelable: true };
   var GROUP_NAME = "RovingFocusGroup";
   var [Collection2, useCollection, createCollectionScope2] = createCollection(GROUP_NAME);
   var [createRovingFocusGroupContext, createRovingFocusGroupScope] = createContextScope(
@@ -21964,13 +18027,13 @@
     RTL: "rtl"
   };
   var [RovingFocusProvider, useRovingFocusContext] = createRovingFocusGroupContext(GROUP_NAME);
-  var RovingFocusGroup = /* @__PURE__ */ React32.forwardRef(
+  var RovingFocusGroup = /* @__PURE__ */ React17.forwardRef(
     // blank line to reduce diff noise
-    /* @__PURE__ */ __name22(function RovingFocusGroup2(props, forwardedRef) {
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Collection2.Provider, { scope: props.__scopeRovingFocusGroup, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Collection2.Slot, { scope: props.__scopeRovingFocusGroup, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(RovingFocusGroupImpl, { ...props, ref: forwardedRef }) }) });
+    /* @__PURE__ */ __name17(function RovingFocusGroup2(props, forwardedRef) {
+      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Collection2.Provider, { scope: props.__scopeRovingFocusGroup, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Collection2.Slot, { scope: props.__scopeRovingFocusGroup, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(RovingFocusGroupImpl, { ...props, ref: forwardedRef }) }) });
     }, "RovingFocusGroup")
   );
-  var RovingFocusGroupImpl = /* @__PURE__ */ React32.forwardRef(/* @__PURE__ */ __name22(function RovingFocusGroupImpl2(props, forwardedRef) {
+  var RovingFocusGroupImpl = /* @__PURE__ */ React17.forwardRef(/* @__PURE__ */ __name17(function RovingFocusGroupImpl2(props, forwardedRef) {
     const {
       __scopeRovingFocusGroup,
       orientation,
@@ -21983,7 +18046,7 @@
       preventScrollOnEntryFocus = false,
       ...groupProps
     } = props;
-    const ref = React32.useRef(null);
+    const ref = React17.useRef(null);
     const composedRefs = useComposedRefs(forwardedRef, ref);
     const direction = useDirection(dir);
     const [currentTabStopId, setCurrentTabStopId] = useControllableState({
@@ -21992,19 +18055,19 @@
       onChange: onCurrentTabStopIdChange,
       caller: GROUP_NAME
     });
-    const [isTabbingBackOut, setIsTabbingBackOut] = React32.useState(false);
+    const [isTabbingBackOut, setIsTabbingBackOut] = React17.useState(false);
     const handleEntryFocus = useCallbackRef(onEntryFocus);
     const getItems = useCollection(__scopeRovingFocusGroup);
-    const isClickFocusRef = React32.useRef(false);
-    const [focusableItemsCount, setFocusableItemsCount] = React32.useState(0);
-    React32.useEffect(() => {
+    const isClickFocusRef = React17.useRef(false);
+    const [focusableItemsCount, setFocusableItemsCount] = React17.useState(0);
+    React17.useEffect(() => {
       const node = ref.current;
       if (node) {
         node.addEventListener(ENTRY_FOCUS, handleEntryFocus);
         return () => node.removeEventListener(ENTRY_FOCUS, handleEntryFocus);
       }
     }, [handleEntryFocus]);
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
       RovingFocusProvider,
       {
         scope: __scopeRovingFocusGroup,
@@ -22012,20 +18075,20 @@
         dir: direction,
         loop,
         currentTabStopId,
-        onItemFocus: React32.useCallback(
+        onItemFocus: React17.useCallback(
           (tabStopId) => setCurrentTabStopId(tabStopId),
           [setCurrentTabStopId]
         ),
-        onItemShiftTab: React32.useCallback(() => setIsTabbingBackOut(true), []),
-        onFocusableItemAdd: React32.useCallback(
+        onItemShiftTab: React17.useCallback(() => setIsTabbingBackOut(true), []),
+        onFocusableItemAdd: React17.useCallback(
           () => setFocusableItemsCount((prevCount) => prevCount + 1),
           []
         ),
-        onFocusableItemRemove: React32.useCallback(
+        onFocusableItemRemove: React17.useCallback(
           () => setFocusableItemsCount((prevCount) => prevCount - 1),
           []
         ),
-        children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+        children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
           Primitive.div,
           {
             tabIndex: isTabbingBackOut || focusableItemsCount === 0 ? -1 : 0,
@@ -22039,7 +18102,7 @@
             onFocus: composeEventHandlers(props.onFocus, (event) => {
               const isKeyboardFocus = !isClickFocusRef.current;
               if (event.target === event.currentTarget && isKeyboardFocus && !isTabbingBackOut) {
-                const entryFocusEvent = new CustomEvent(ENTRY_FOCUS, EVENT_OPTIONS2);
+                const entryFocusEvent = new CustomEvent(ENTRY_FOCUS, EVENT_OPTIONS);
                 event.currentTarget.dispatchEvent(entryFocusEvent);
                 if (!entryFocusEvent.defaultPrevented) {
                   const items = getItems().filter((item) => item.focusable);
@@ -22049,7 +18112,7 @@
                     Boolean
                   );
                   const candidateNodes = candidateItems.map((item) => item.ref.current);
-                  focusFirst2(candidateNodes, preventScrollOnEntryFocus);
+                  focusFirst(candidateNodes, preventScrollOnEntryFocus);
                 }
               }
               isClickFocusRef.current = false;
@@ -22061,9 +18124,9 @@
     );
   }, "RovingFocusGroupImpl"));
   var ITEM_NAME2 = "RovingFocusGroupItem";
-  var RovingFocusGroupItem = /* @__PURE__ */ React32.forwardRef(
+  var RovingFocusGroupItem = /* @__PURE__ */ React17.forwardRef(
     // blank line to reduce diff noise
-    /* @__PURE__ */ __name22(function RovingFocusGroupItem2(props, forwardedRef) {
+    /* @__PURE__ */ __name17(function RovingFocusGroupItem2(props, forwardedRef) {
       const {
         __scopeRovingFocusGroup,
         focusable = true,
@@ -22086,21 +18149,21 @@
         onFocusableItemAdd();
         return () => onFocusableItemRemove();
       }, [isHydrated, focusable, onFocusableItemAdd, onFocusableItemRemove]);
-      React32.useEffect(() => {
+      React17.useEffect(() => {
         if (isHydrated || !focusable) {
           return;
         }
         onFocusableItemAdd();
         return () => onFocusableItemRemove();
       }, [isHydrated, focusable, onFocusableItemAdd, onFocusableItemRemove]);
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
         Collection2.ItemSlot,
         {
           scope: __scopeRovingFocusGroup,
           id,
           focusable,
           active,
-          children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+          children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
             Primitive.span,
             {
               tabIndex: isCurrentTabStop ? 0 : -1,
@@ -22130,7 +18193,7 @@
                     const currentIndex = candidateNodes.indexOf(event.currentTarget);
                     candidateNodes = context.loop ? wrapArray(candidateNodes, currentIndex + 1) : candidateNodes.slice(currentIndex + 1);
                   }
-                  setTimeout(() => focusFirst2(candidateNodes));
+                  setTimeout(() => focusFirst(candidateNodes));
                 }
               }),
               children: typeof children === "function" ? children({ isCurrentTabStop, hasTabStop: currentTabStopId != null }) : children
@@ -22154,7 +18217,7 @@
     if (dir !== Direction3.RTL) return key;
     return key === "ArrowLeft" ? "ArrowRight" : key === "ArrowRight" ? "ArrowLeft" : key;
   }
-  __name22(getDirectionAwareKey, "getDirectionAwareKey");
+  __name17(getDirectionAwareKey, "getDirectionAwareKey");
   function getFocusIntent(event, orientation, dir) {
     const key = getDirectionAwareKey(event.key, dir);
     if (orientation === Orientation2.Vertical && ["ArrowLeft", "ArrowRight"].includes(key)) {
@@ -22165,8 +18228,8 @@
     }
     return MAP_KEY_TO_FOCUS_INTENT[key];
   }
-  __name22(getFocusIntent, "getFocusIntent");
-  function focusFirst2(candidates, preventScroll = false) {
+  __name17(getFocusIntent, "getFocusIntent");
+  function focusFirst(candidates, preventScroll = false) {
     const PREVIOUSLY_FOCUSED_ELEMENT = document.activeElement;
     for (const candidate of candidates) {
       if (candidate === PREVIOUSLY_FOCUSED_ELEMENT) return;
@@ -22174,23 +18237,23 @@
       if (document.activeElement !== PREVIOUSLY_FOCUSED_ELEMENT) return;
     }
   }
-  __name22(focusFirst2, "focusFirst");
+  __name17(focusFirst, "focusFirst");
   function wrapArray(array, startIndex) {
     return array.map((_, index) => array[(startIndex + index) % array.length]);
   }
-  __name22(wrapArray, "wrapArray");
+  __name17(wrapArray, "wrapArray");
 
   // node_modules/.pnpm/@radix-ui+number@1.1.3/node_modules/@radix-ui/number/dist/index.mjs
-  var __defProp24 = Object.defineProperty;
-  var __name23 = (target, value) => __defProp24(target, "name", { value, configurable: true });
+  var __defProp19 = Object.defineProperty;
+  var __name18 = (target, value) => __defProp19(target, "name", { value, configurable: true });
   function clamp(value, [min, max]) {
     return Math.min(max, Math.max(min, value));
   }
-  __name23(clamp, "clamp");
+  __name18(clamp, "clamp");
 
   // node_modules/.pnpm/@radix-ui+react-slider@1.6._765b153b67a05696a8c1e7a0683224be/node_modules/@radix-ui/react-slider/dist/index.mjs
-  var dist_exports5 = {};
-  __export(dist_exports5, {
+  var dist_exports4 = {};
+  __export(dist_exports4, {
     Range: () => SliderRange,
     Root: () => Slider,
     Slider: () => Slider,
@@ -22207,10 +18270,10 @@
     unstable_ThumbProvider: () => SliderThumbProvider,
     unstable_ThumbTrigger: () => SliderThumbTrigger
   });
-  var React33 = __toESM(require_react(), 1);
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
-  var __defProp25 = Object.defineProperty;
-  var __name24 = (target, value) => __defProp25(target, "name", { value, configurable: true });
+  var React18 = __toESM(require_react(), 1);
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime(), 1);
+  var __defProp20 = Object.defineProperty;
+  var __name19 = (target, value) => __defProp20(target, "name", { value, configurable: true });
   var Orientation3 = {
     Vertical: "vertical",
     Horizontal: "horizontal"
@@ -22233,9 +18296,9 @@
     createCollectionScope3
   ]);
   var [SliderProvider, useSliderContext] = createSliderContext(SLIDER_NAME);
-  var Slider = /* @__PURE__ */ React33.forwardRef(
+  var Slider = /* @__PURE__ */ React18.forwardRef(
     // blank line to reduce diff noise
-    /* @__PURE__ */ __name24(function Slider2(props, forwardedRef) {
+    /* @__PURE__ */ __name19(function Slider2(props, forwardedRef) {
       const {
         name,
         min = 0,
@@ -22247,26 +18310,26 @@
         preserveThumbOrder = false,
         defaultValue = [min],
         value,
-        onValueChange = /* @__PURE__ */ __name24(() => {
+        onValueChange = /* @__PURE__ */ __name19(() => {
         }, "onValueChange"),
-        onValueCommit = /* @__PURE__ */ __name24(() => {
+        onValueCommit = /* @__PURE__ */ __name19(() => {
         }, "onValueCommit"),
         inverted = false,
         form,
         ...sliderProps
       } = props;
-      const thumbRefs = React33.useRef(/* @__PURE__ */ new Set());
-      const valueIndexToChangeRef = React33.useRef(0);
-      const isKeyboardInteractionRef = React33.useRef(false);
-      const [userRequestedValues, setUserRequestedValues] = React33.useState(null);
+      const thumbRefs = React18.useRef(/* @__PURE__ */ new Set());
+      const valueIndexToChangeRef = React18.useRef(0);
+      const isKeyboardInteractionRef = React18.useRef(false);
+      const [userRequestedValues, setUserRequestedValues] = React18.useState(null);
       const isHorizontal = orientation === Orientation3.Horizontal;
       const SliderOrientation = isHorizontal ? SliderHorizontal : SliderVertical;
-      const [control, setControl] = React33.useState(null);
+      const [control, setControl] = React18.useState(null);
       const composedRefs = useComposedRefs(forwardedRef, setControl);
       const [values = [], setValues] = useControllableState({
         prop: value,
         defaultProp: defaultValue,
-        onChange: /* @__PURE__ */ __name24((value2) => {
+        onChange: /* @__PURE__ */ __name19((value2) => {
           const thumbs = [...thumbRefs.current];
           thumbs[valueIndexToChangeRef.current]?.focus({
             preventScroll: true,
@@ -22276,12 +18339,12 @@
           onValueChange(value2);
         }, "onChange")
       });
-      const valuesBeforeSlideStartRef = React33.useRef(values);
-      const initialValuesRef = React33.useRef(values);
-      React33.useEffect(() => {
+      const valuesBeforeSlideStartRef = React18.useRef(values);
+      const initialValuesRef = React18.useRef(values);
+      React18.useEffect(() => {
         const associatedForm = form ? control?.ownerDocument.getElementById(form) : control?.closest("form");
         if (associatedForm instanceof HTMLFormElement) {
-          const reset = /* @__PURE__ */ __name24(() => setValues(initialValuesRef.current), "reset");
+          const reset = /* @__PURE__ */ __name19(() => setValues(initialValuesRef.current), "reset");
           associatedForm.addEventListener("reset", reset);
           return () => associatedForm.removeEventListener("reset", reset);
         }
@@ -22290,16 +18353,16 @@
         const closestIndex = getClosestValueIndex(values, value2);
         updateValues(value2, closestIndex);
       }
-      __name24(handleSlideStart, "handleSlideStart");
+      __name19(handleSlideStart, "handleSlideStart");
       function handleSlideMove(value2) {
         updateValues(value2, valueIndexToChangeRef.current);
       }
-      __name24(handleSlideMove, "handleSlideMove");
+      __name19(handleSlideMove, "handleSlideMove");
       function handleSlideEnd() {
         const hasChanged = String(values) !== String(valuesBeforeSlideStartRef.current);
         if (hasChanged) onValueCommit(values);
       }
-      __name24(handleSlideEnd, "handleSlideEnd");
+      __name19(handleSlideEnd, "handleSlideEnd");
       function updateValues(value2, atIndex, { commit } = { commit: false }) {
         const decimalCount = getDecimalCount(step);
         const snapToStep = roundValue(Math.round((value2 - min) / step) * step + min, decimalCount);
@@ -22320,7 +18383,7 @@
             hasChanged: String(nextValues) !== String(prevValues)
           };
         }
-        __name24(getNextValues, "getNextValues");
+        __name19(getNextValues, "getNextValues");
         const requested = getNextValues(values);
         if (requested?.hasChanged) {
           setUserRequestedValues(requested.nextValues);
@@ -22337,8 +18400,8 @@
           return next.hasChanged ? next.nextValues : prevValues;
         });
       }
-      __name24(updateValues, "updateValues");
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      __name19(updateValues, "updateValues");
+      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         SliderProvider,
         {
           scope: props.__scopeSlider,
@@ -22352,7 +18415,7 @@
           orientation,
           form,
           userRequestedValues,
-          children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Collection3.Provider, { scope: props.__scopeSlider, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Collection3.Slot, { scope: props.__scopeSlider, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+          children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Collection3.Provider, { scope: props.__scopeSlider, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Collection3.Slot, { scope: props.__scopeSlider, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
             SliderOrientation,
             {
               "aria-disabled": disabled,
@@ -22412,9 +18475,9 @@
     size: "width",
     direction: 1
   });
-  var SliderHorizontal = /* @__PURE__ */ React33.forwardRef(
+  var SliderHorizontal = /* @__PURE__ */ React18.forwardRef(
     // blank line to reduce diff noise
-    /* @__PURE__ */ __name24(function SliderHorizontal2(props, forwardedRef) {
+    /* @__PURE__ */ __name19(function SliderHorizontal2(props, forwardedRef) {
       const {
         min,
         max,
@@ -22426,9 +18489,9 @@
         onStepKeyDown,
         ...sliderProps
       } = props;
-      const [slider, setSlider] = React33.useState(null);
+      const [slider, setSlider] = React18.useState(null);
       const composedRefs = useComposedRefs(forwardedRef, setSlider);
-      const rectRef = React33.useRef(void 0);
+      const rectRef = React18.useRef(void 0);
       const direction = useDirection(dir);
       const isDirectionLTR = direction === Direction4.LTR;
       const isSlidingFromLeft = isDirectionLTR && !inverted || !isDirectionLTR && inverted;
@@ -22440,8 +18503,8 @@
         rectRef.current = rect;
         return value(pointerPosition - rect.left);
       }
-      __name24(getValueFromPointer, "getValueFromPointer");
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      __name19(getValueFromPointer, "getValueFromPointer");
+      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         SliderOrientationProvider,
         {
           scope: props.__scopeSlider,
@@ -22449,7 +18512,7 @@
           endEdge: isSlidingFromLeft ? "right" : "left",
           direction: isSlidingFromLeft ? 1 : -1,
           size: "width",
-          children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+          children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
             SliderImpl,
             {
               dir: direction,
@@ -22483,8 +18546,8 @@
       );
     }, "SliderHorizontal")
   );
-  var SliderVertical = /* @__PURE__ */ React33.forwardRef(
-    /* @__PURE__ */ __name24(function SliderVertical2(props, forwardedRef) {
+  var SliderVertical = /* @__PURE__ */ React18.forwardRef(
+    /* @__PURE__ */ __name19(function SliderVertical2(props, forwardedRef) {
       const {
         min,
         max,
@@ -22495,9 +18558,9 @@
         onStepKeyDown,
         ...sliderProps
       } = props;
-      const sliderRef = React33.useRef(null);
+      const sliderRef = React18.useRef(null);
       const ref = useComposedRefs(forwardedRef, sliderRef);
-      const rectRef = React33.useRef(void 0);
+      const rectRef = React18.useRef(void 0);
       const isSlidingFromBottom = !inverted;
       function getValueFromPointer(pointerPosition) {
         const rect = rectRef.current || sliderRef.current.getBoundingClientRect();
@@ -22507,8 +18570,8 @@
         rectRef.current = rect;
         return value(pointerPosition - rect.top);
       }
-      __name24(getValueFromPointer, "getValueFromPointer");
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      __name19(getValueFromPointer, "getValueFromPointer");
+      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         SliderOrientationProvider,
         {
           scope: props.__scopeSlider,
@@ -22516,7 +18579,7 @@
           endEdge: isSlidingFromBottom ? "top" : "bottom",
           size: "height",
           direction: isSlidingFromBottom ? 1 : -1,
-          children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+          children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
             SliderImpl,
             {
               "data-orientation": "vertical",
@@ -22549,8 +18612,8 @@
       );
     }, "SliderVertical")
   );
-  var SliderImpl = /* @__PURE__ */ React33.forwardRef(
-    /* @__PURE__ */ __name24(function SliderImpl2(props, forwardedRef) {
+  var SliderImpl = /* @__PURE__ */ React18.forwardRef(
+    /* @__PURE__ */ __name19(function SliderImpl2(props, forwardedRef) {
       const {
         __scopeSlider,
         onSlideStart,
@@ -22562,7 +18625,7 @@
         ...sliderProps
       } = props;
       const context = useSliderContext(SLIDER_NAME, __scopeSlider);
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         Primitive.span,
         {
           ...sliderProps,
@@ -22605,11 +18668,11 @@
     }, "SliderImpl")
   );
   var TRACK_NAME = "SliderTrack";
-  var SliderTrack = /* @__PURE__ */ React33.forwardRef(
-    /* @__PURE__ */ __name24(function SliderTrack2(props, forwardedRef) {
+  var SliderTrack = /* @__PURE__ */ React18.forwardRef(
+    /* @__PURE__ */ __name19(function SliderTrack2(props, forwardedRef) {
       const { __scopeSlider, ...trackProps } = props;
       const context = useSliderContext(TRACK_NAME, __scopeSlider);
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         Primitive.span,
         {
           "data-disabled": context.disabled ? "" : void 0,
@@ -22621,12 +18684,12 @@
     }, "SliderTrack")
   );
   var RANGE_NAME = "SliderRange";
-  var SliderRange = /* @__PURE__ */ React33.forwardRef(
-    /* @__PURE__ */ __name24(function SliderRange2(props, forwardedRef) {
+  var SliderRange = /* @__PURE__ */ React18.forwardRef(
+    /* @__PURE__ */ __name19(function SliderRange2(props, forwardedRef) {
       const { __scopeSlider, ...rangeProps } = props;
       const context = useSliderContext(RANGE_NAME, __scopeSlider);
       const orientation = useSliderOrientationContext(RANGE_NAME, __scopeSlider);
-      const ref = React33.useRef(null);
+      const ref = React18.useRef(null);
       const composedRefs = useComposedRefs(forwardedRef, ref);
       const valuesCount = context.values.length;
       const percentages = context.values.map(
@@ -22634,7 +18697,7 @@
       );
       const offsetStart = valuesCount > 1 ? Math.min(...percentages) : 0;
       const offsetEnd = 100 - Math.max(...percentages);
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         Primitive.span,
         {
           "data-orientation": context.orientation,
@@ -22663,8 +18726,8 @@
     } = props;
     const context = useSliderContext(THUMB_PROVIDER_NAME, __scopeSlider);
     const getItems = useCollection2(__scopeSlider);
-    const [thumb, setThumb] = React33.useState(null);
-    const index = React33.useMemo(
+    const [thumb, setThumb] = React18.useState(null);
+    const index = React18.useMemo(
       () => thumb ? getItems().findIndex((item) => item.ref.current === thumb) : -1,
       [getItems, thumb]
     );
@@ -22673,7 +18736,7 @@
     const value = context.values[index];
     const resolvedName = name ?? (context.name ? context.name + (context.values.length > 1 ? "[]" : "") : void 0);
     const percent = value === void 0 ? 0 : convertValueToPercentage(value, context.min, context.max);
-    React33.useEffect(() => {
+    React18.useEffect(() => {
       if (thumb) {
         context.thumbs.add(thumb);
         return () => {
@@ -22692,13 +18755,13 @@
       percent,
       size
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SliderThumbContextProvider, { scope: __scopeSlider, ...thumbContext, children: isFunction2(internal_do_not_use_render) ? internal_do_not_use_render(thumbContext) : children });
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SliderThumbContextProvider, { scope: __scopeSlider, ...thumbContext, children: isFunction2(internal_do_not_use_render) ? internal_do_not_use_render(thumbContext) : children });
   }
-  __name24(SliderThumbProvider, "SliderThumbProvider");
+  __name19(SliderThumbProvider, "SliderThumbProvider");
   var THUMB_TRIGGER_NAME = "SliderThumbTrigger";
-  var SliderThumbTrigger = /* @__PURE__ */ React33.forwardRef(
+  var SliderThumbTrigger = /* @__PURE__ */ React18.forwardRef(
     // blank line to reduce diff noise
-    /* @__PURE__ */ __name24(function SliderThumbTrigger2(props, forwardedRef) {
+    /* @__PURE__ */ __name19(function SliderThumbTrigger2(props, forwardedRef) {
       const { __scopeSlider, ...thumbProps } = props;
       const context = useSliderContext(THUMB_TRIGGER_NAME, __scopeSlider);
       const orientation = useSliderOrientationContext(THUMB_TRIGGER_NAME, __scopeSlider);
@@ -22710,7 +18773,7 @@
       const label = getLabel(index, context.values.length);
       const orientationSize = size?.[orientation.size];
       const thumbInBoundsOffset = orientationSize ? getThumbInBoundsOffset(orientationSize, percent, orientation.direction) : 0;
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         "span",
         {
           style: {
@@ -22718,7 +18781,7 @@
             position: "absolute",
             [orientation.startEdge]: `calc(${percent}% + ${thumbInBoundsOffset}px)`
           },
-          children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Collection3.ItemSlot, { scope: __scopeSlider, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+          children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Collection3.ItemSlot, { scope: __scopeSlider, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
             Primitive.span,
             {
               role: "slider",
@@ -22742,16 +18805,16 @@
       );
     }, "SliderThumbTrigger")
   );
-  var SliderThumb = /* @__PURE__ */ React33.forwardRef(
-    /* @__PURE__ */ __name24(function SliderThumb2(props, forwardedRef) {
+  var SliderThumb = /* @__PURE__ */ React18.forwardRef(
+    /* @__PURE__ */ __name19(function SliderThumb2(props, forwardedRef) {
       const { __scopeSlider, name, ...thumbProps } = props;
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         SliderThumbProvider,
         {
           __scopeSlider,
           name,
-          internal_do_not_use_render: ({ index, isFormControl }) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_jsx_runtime13.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+          internal_do_not_use_render: ({ index, isFormControl }) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
               SliderThumbTrigger,
               {
                 ...thumbProps,
@@ -22759,7 +18822,7 @@
                 __scopeSlider
               }
             ),
-            isFormControl ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+            isFormControl ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
               SliderBubbleInput,
               {
                 __scopeSlider
@@ -22772,18 +18835,18 @@
     }, "SliderThumb")
   );
   var BUBBLE_INPUT_NAME = "SliderBubbleInput";
-  var SliderBubbleInput = /* @__PURE__ */ React33.forwardRef(
+  var SliderBubbleInput = /* @__PURE__ */ React18.forwardRef(
     // blank line to reduce diff noise
-    /* @__PURE__ */ __name24(function SliderBubbleInput2({ __scopeSlider, onInput, ...props }, forwardedRef) {
+    /* @__PURE__ */ __name19(function SliderBubbleInput2({ __scopeSlider, onInput, ...props }, forwardedRef) {
       const { index, value, name, form } = useSliderThumbContext(BUBBLE_INPUT_NAME, __scopeSlider);
       const { userRequestedValues } = useSliderContext(BUBBLE_INPUT_NAME, __scopeSlider);
-      const ref = React33.useRef(null);
+      const ref = React18.useRef(null);
       const composedRefs = useComposedRefs(ref, forwardedRef);
-      const shouldStopInputPropagationRef = React33.useRef(false);
-      const prevValueRef = React33.useRef(value);
-      const handledUserRequestedValuesRef = React33.useRef(userRequestedValues);
-      const prevUserRequestedValuesRef = React33.useRef(userRequestedValues);
-      React33.useEffect(() => {
+      const shouldStopInputPropagationRef = React18.useRef(false);
+      const prevValueRef = React18.useRef(value);
+      const handledUserRequestedValuesRef = React18.useRef(userRequestedValues);
+      const prevUserRequestedValuesRef = React18.useRef(userRequestedValues);
+      React18.useEffect(() => {
         const input = ref.current;
         if (!input) {
           return;
@@ -22808,7 +18871,7 @@
           shouldStopInputPropagationRef.current = false;
         }
       }, [index, value, userRequestedValues]);
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         Primitive.input,
         {
           style: { display: "none" },
@@ -22831,14 +18894,14 @@
     nextValues[atIndex] = nextValue;
     return nextValues.sort((a, b) => a - b);
   }
-  __name24(getNextSortedValues, "getNextSortedValues");
+  __name19(getNextSortedValues, "getNextSortedValues");
   function convertValueToPercentage(value, min, max) {
     const maxSteps = max - min;
     const percentPerStep = 100 / maxSteps;
     const percentage = percentPerStep * (value - min);
     return clamp(percentage, [0, 100]);
   }
-  __name24(convertValueToPercentage, "convertValueToPercentage");
+  __name19(convertValueToPercentage, "convertValueToPercentage");
   function getLabel(index, totalValues) {
     if (totalValues > 2) {
       return `Value ${index + 1} of ${totalValues}`;
@@ -22848,25 +18911,25 @@
       return void 0;
     }
   }
-  __name24(getLabel, "getLabel");
+  __name19(getLabel, "getLabel");
   function getClosestValueIndex(values, nextValue) {
     if (values.length === 1) return 0;
     const distances = values.map((value) => Math.abs(value - nextValue));
     const closestDistance = Math.min(...distances);
     return distances.indexOf(closestDistance);
   }
-  __name24(getClosestValueIndex, "getClosestValueIndex");
+  __name19(getClosestValueIndex, "getClosestValueIndex");
   function getThumbInBoundsOffset(width, left, direction) {
     const halfWidth = width / 2;
     const halfPercent = 50;
     const offset = linearScale([0, halfPercent], [0, halfWidth]);
     return (halfWidth - offset(left) * direction) * direction;
   }
-  __name24(getThumbInBoundsOffset, "getThumbInBoundsOffset");
+  __name19(getThumbInBoundsOffset, "getThumbInBoundsOffset");
   function getStepsBetweenValues(values) {
     return values.slice(0, -1).map((value, index) => values[index + 1] - value);
   }
-  __name24(getStepsBetweenValues, "getStepsBetweenValues");
+  __name19(getStepsBetweenValues, "getStepsBetweenValues");
   function hasMinStepsBetweenValues(values, minStepsBetweenValues) {
     if (minStepsBetweenValues > 0) {
       const stepsBetweenValues = getStepsBetweenValues(values);
@@ -22875,7 +18938,7 @@
     }
     return true;
   }
-  __name24(hasMinStepsBetweenValues, "hasMinStepsBetweenValues");
+  __name19(hasMinStepsBetweenValues, "hasMinStepsBetweenValues");
   function linearScale(input, output) {
     return (value) => {
       if (input[0] === input[1] || output[0] === output[1]) return output[0];
@@ -22883,7 +18946,7 @@
       return output[0] + ratio * (value - input[0]);
     };
   }
-  __name24(linearScale, "linearScale");
+  __name19(linearScale, "linearScale");
   function getDecimalCount(value) {
     if (!Number.isFinite(value)) return 0;
     const str = value.toString();
@@ -22896,12 +18959,12 @@
     const decimalPart = str.split(".")[1];
     return decimalPart ? decimalPart.length : 0;
   }
-  __name24(getDecimalCount, "getDecimalCount");
+  __name19(getDecimalCount, "getDecimalCount");
   function roundValue(value, decimalCount) {
     const rounder = Math.pow(10, decimalCount);
     return Math.round(value * rounder) / rounder;
   }
-  __name24(roundValue, "roundValue");
+  __name19(roundValue, "roundValue");
   function getNextStepValue(value, {
     min,
     step,
@@ -22922,15 +18985,15 @@
     }
     return roundValue(nextSteps * step + min, decimalCount);
   }
-  __name24(getNextStepValue, "getNextStepValue");
+  __name19(getNextStepValue, "getNextStepValue");
   function isFunction2(value) {
     return typeof value === "function";
   }
-  __name24(isFunction2, "isFunction");
+  __name19(isFunction2, "isFunction");
 
   // node_modules/.pnpm/@radix-ui+react-switch@1.4._dbc6bc0388ff9f62e93d3b1b7c97be50/node_modules/@radix-ui/react-switch/dist/index.mjs
-  var dist_exports6 = {};
-  __export(dist_exports6, {
+  var dist_exports5 = {};
+  __export(dist_exports5, {
     Root: () => Switch,
     Switch: () => Switch,
     SwitchThumb: () => SwitchThumb,
@@ -22943,10 +19006,10 @@
     unstable_SwitchTrigger: () => SwitchTrigger,
     unstable_Trigger: () => SwitchTrigger
   });
-  var React34 = __toESM(require_react(), 1);
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
-  var __defProp26 = Object.defineProperty;
-  var __name25 = (target, value) => __defProp26(target, "name", { value, configurable: true });
+  var React19 = __toESM(require_react(), 1);
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime(), 1);
+  var __defProp21 = Object.defineProperty;
+  var __name20 = (target, value) => __defProp21(target, "name", { value, configurable: true });
   var SWITCH_NAME = "Switch";
   var [createSwitchContext, createSwitchScope] = createContextScope(SWITCH_NAME);
   var [SwitchProviderImpl, useSwitchContext] = createSwitchContext(SWITCH_NAME);
@@ -22971,9 +19034,9 @@
       onChange: onCheckedChange,
       caller: SWITCH_NAME
     });
-    const [control, setControl] = React34.useState(null);
-    const [bubbleInput, setBubbleInput] = React34.useState(null);
-    const [userClick, setUserClick] = React34.useState(null);
+    const [control, setControl] = React19.useState(null);
+    const [bubbleInput, setBubbleInput] = React19.useState(null);
+    const [userClick, setUserClick] = React19.useState(null);
     const isFormControl = control ? !!form || !!control.closest("form") : (
       // We set this to true by default so that events bubble to forms without JS (SSR)
       true
@@ -22995,12 +19058,12 @@
       bubbleInput,
       setBubbleInput
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SwitchProviderImpl, { scope: __scopeSwitch, ...context, children: isFunction3(internal_do_not_use_render) ? internal_do_not_use_render(context) : children });
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SwitchProviderImpl, { scope: __scopeSwitch, ...context, children: isFunction3(internal_do_not_use_render) ? internal_do_not_use_render(context) : children });
   }
-  __name25(SwitchProvider, "SwitchProvider");
-  var TRIGGER_NAME4 = "SwitchTrigger";
-  var SwitchTrigger = /* @__PURE__ */ React34.forwardRef(
-    /* @__PURE__ */ __name25(function SwitchTrigger2({ __scopeSwitch, onClick, ...switchProps }, forwardedRef) {
+  __name20(SwitchProvider, "SwitchProvider");
+  var TRIGGER_NAME3 = "SwitchTrigger";
+  var SwitchTrigger = /* @__PURE__ */ React19.forwardRef(
+    /* @__PURE__ */ __name20(function SwitchTrigger2({ __scopeSwitch, onClick, ...switchProps }, forwardedRef) {
       const {
         control,
         form,
@@ -23013,25 +19076,25 @@
         onUserClick,
         isFormControl,
         bubbleInput
-      } = useSwitchContext(TRIGGER_NAME4, __scopeSwitch);
+      } = useSwitchContext(TRIGGER_NAME3, __scopeSwitch);
       const composedRefs = useComposedRefs(forwardedRef, setControl);
-      const initialCheckedStateRef = React34.useRef(checked);
-      React34.useEffect(() => {
+      const initialCheckedStateRef = React19.useRef(checked);
+      React19.useEffect(() => {
         const associatedForm = form ? control?.ownerDocument.getElementById(form) : control?.form;
         if (associatedForm instanceof HTMLFormElement) {
-          const reset = /* @__PURE__ */ __name25(() => setChecked(initialCheckedStateRef.current), "reset");
+          const reset = /* @__PURE__ */ __name20(() => setChecked(initialCheckedStateRef.current), "reset");
           associatedForm.addEventListener("reset", reset);
           return () => associatedForm.removeEventListener("reset", reset);
         }
       }, [control, form, setChecked]);
-      return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
         Primitive.button,
         {
           type: "button",
           role: "switch",
           "aria-checked": checked,
           "aria-required": required,
-          "data-state": getState4(checked),
+          "data-state": getState3(checked),
           "data-disabled": disabled ? "" : void 0,
           disabled,
           value,
@@ -23051,9 +19114,9 @@
       );
     }, "SwitchTrigger")
   );
-  var Switch = /* @__PURE__ */ React34.forwardRef(
+  var Switch = /* @__PURE__ */ React19.forwardRef(
     // blank line to reduce diff noise
-    /* @__PURE__ */ __name25(function Switch2(props, forwardedRef) {
+    /* @__PURE__ */ __name20(function Switch2(props, forwardedRef) {
       const {
         __scopeSwitch,
         name,
@@ -23066,7 +19129,7 @@
         form,
         ...switchProps
       } = props;
-      return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
         SwitchProvider,
         {
           __scopeSwitch,
@@ -23078,8 +19141,8 @@
           name,
           form,
           value,
-          internal_do_not_use_render: ({ isFormControl }) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+          internal_do_not_use_render: ({ isFormControl }) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(import_jsx_runtime10.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
               SwitchTrigger,
               {
                 ...switchProps,
@@ -23087,7 +19150,7 @@
                 __scopeSwitch
               }
             ),
-            isFormControl && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+            isFormControl && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
               SwitchBubbleInput,
               {
                 __scopeSwitch
@@ -23099,14 +19162,14 @@
     }, "Switch")
   );
   var THUMB_NAME2 = "SwitchThumb";
-  var SwitchThumb = /* @__PURE__ */ React34.forwardRef(
-    /* @__PURE__ */ __name25(function SwitchThumb2(props, forwardedRef) {
+  var SwitchThumb = /* @__PURE__ */ React19.forwardRef(
+    /* @__PURE__ */ __name20(function SwitchThumb2(props, forwardedRef) {
       const { __scopeSwitch, ...thumbProps } = props;
       const context = useSwitchContext(THUMB_NAME2, __scopeSwitch);
-      return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
         Primitive.span,
         {
-          "data-state": getState4(context.checked),
+          "data-state": getState3(context.checked),
           "data-disabled": context.disabled ? "" : void 0,
           ...thumbProps,
           ref: forwardedRef
@@ -23115,9 +19178,9 @@
     }, "SwitchThumb")
   );
   var BUBBLE_INPUT_NAME2 = "SwitchBubbleInput";
-  var SwitchBubbleInput = /* @__PURE__ */ React34.forwardRef(
+  var SwitchBubbleInput = /* @__PURE__ */ React19.forwardRef(
     // blank line to reduce diff noise
-    /* @__PURE__ */ __name25(function SwitchBubbleInput2({ __scopeSwitch, onClick, ...props }, forwardedRef) {
+    /* @__PURE__ */ __name20(function SwitchBubbleInput2({ __scopeSwitch, onClick, ...props }, forwardedRef) {
       const {
         control,
         userClick,
@@ -23133,11 +19196,11 @@
       } = useSwitchContext(BUBBLE_INPUT_NAME2, __scopeSwitch);
       const composedRefs = useComposedRefs(forwardedRef, setBubbleInput);
       const controlSize = useSize(control);
-      const shouldStopClickPropagationRef = React34.useRef(false);
-      const prevCheckedRef = React34.useRef(checked);
-      const handledUserClickRef = React34.useRef(userClick);
-      const pendingUserClickRef = React34.useRef(null);
-      React34.useEffect(() => {
+      const shouldStopClickPropagationRef = React19.useRef(false);
+      const prevCheckedRef = React19.useRef(checked);
+      const handledUserClickRef = React19.useRef(userClick);
+      const pendingUserClickRef = React19.useRef(null);
+      React19.useEffect(() => {
         const input = bubbleInput;
         if (!input) return;
         const inputProto = window.HTMLInputElement.prototype;
@@ -23175,8 +19238,8 @@
           shouldStopClickPropagationRef.current = false;
         }
       }, [bubbleInput, checked, userClick]);
-      const defaultCheckedRef = React34.useRef(checked);
-      return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      const defaultCheckedRef = React19.useRef(checked);
+      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
         Primitive.input,
         {
           type: "checkbox",
@@ -23214,15 +19277,15 @@
   function isFunction3(value) {
     return typeof value === "function";
   }
-  __name25(isFunction3, "isFunction");
-  function getState4(checked) {
+  __name20(isFunction3, "isFunction");
+  function getState3(checked) {
     return checked ? "checked" : "unchecked";
   }
-  __name25(getState4, "getState");
+  __name20(getState3, "getState");
 
   // node_modules/.pnpm/@radix-ui+react-tabs@1.2.1__519fe3e24f3d946c91e5ee8267015a1e/node_modules/@radix-ui/react-tabs/dist/index.mjs
-  var dist_exports7 = {};
-  __export(dist_exports7, {
+  var dist_exports6 = {};
+  __export(dist_exports6, {
     Content: () => TabsContent,
     List: () => TabsList,
     Root: () => Tabs,
@@ -23233,10 +19296,10 @@
     Trigger: () => TabsTrigger,
     createTabsScope: () => createTabsScope
   });
-  var React35 = __toESM(require_react(), 1);
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
-  var __defProp27 = Object.defineProperty;
-  var __name26 = (target, value) => __defProp27(target, "name", { value, configurable: true });
+  var React20 = __toESM(require_react(), 1);
+  var import_jsx_runtime11 = __toESM(require_jsx_runtime(), 1);
+  var __defProp22 = Object.defineProperty;
+  var __name21 = (target, value) => __defProp22(target, "name", { value, configurable: true });
   var ActivationMode = {
     Automatic: "automatic",
     Manual: "manual"
@@ -23247,9 +19310,9 @@
   ]);
   var useRovingFocusGroupScope = createRovingFocusGroupScope();
   var [TabsProvider, useTabsContext] = createTabsContext(TABS_NAME);
-  var Tabs = /* @__PURE__ */ React35.forwardRef(
+  var Tabs = /* @__PURE__ */ React20.forwardRef(
     // blank line to reduce diff noise
-    /* @__PURE__ */ __name26(function Tabs2(props, forwardedRef) {
+    /* @__PURE__ */ __name21(function Tabs2(props, forwardedRef) {
       const {
         __scopeTabs,
         value: valueProp,
@@ -23267,7 +19330,7 @@
         defaultProp: defaultValue ?? "",
         caller: TABS_NAME
       });
-      return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         TabsProvider,
         {
           scope: __scopeTabs,
@@ -23277,7 +19340,7 @@
           orientation,
           dir: direction,
           activationMode,
-          children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+          children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
             Primitive.div,
             {
               dir: direction,
@@ -23291,13 +19354,13 @@
     }, "Tabs")
   );
   var TAB_LIST_NAME = "TabsList";
-  var TabsList = /* @__PURE__ */ React35.forwardRef(
+  var TabsList = /* @__PURE__ */ React20.forwardRef(
     // blank line to reduce diff noise
-    /* @__PURE__ */ __name26(function TabsList2(props, forwardedRef) {
+    /* @__PURE__ */ __name21(function TabsList2(props, forwardedRef) {
       const { __scopeTabs, loop = true, ...listProps } = props;
       const context = useTabsContext(TAB_LIST_NAME, __scopeTabs);
       const rovingFocusGroupScope = useRovingFocusGroupScope(__scopeTabs);
-      return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         RovingFocusGroup,
         {
           asChild: true,
@@ -23305,7 +19368,7 @@
           orientation: context.orientation,
           dir: context.dir,
           loop,
-          children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+          children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
             Primitive.div,
             {
               role: "tablist",
@@ -23318,23 +19381,23 @@
       );
     }, "TabsList")
   );
-  var TRIGGER_NAME5 = "TabsTrigger";
-  var TabsTrigger = /* @__PURE__ */ React35.forwardRef(
-    /* @__PURE__ */ __name26(function TabsTrigger2(props, forwardedRef) {
+  var TRIGGER_NAME4 = "TabsTrigger";
+  var TabsTrigger = /* @__PURE__ */ React20.forwardRef(
+    /* @__PURE__ */ __name21(function TabsTrigger2(props, forwardedRef) {
       const { __scopeTabs, value, disabled = false, ...triggerProps } = props;
-      const context = useTabsContext(TRIGGER_NAME5, __scopeTabs);
+      const context = useTabsContext(TRIGGER_NAME4, __scopeTabs);
       const rovingFocusGroupScope = useRovingFocusGroupScope(__scopeTabs);
       const triggerId = makeTriggerId(context.baseId, value);
       const contentId = makeContentId(context.baseId, value);
       const isSelected = value === context.value;
-      return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         RovingFocusGroupItem,
         {
           asChild: true,
           ...rovingFocusGroupScope,
           focusable: !disabled,
           active: isSelected,
-          children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+          children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
             Primitive.button,
             {
               type: "button",
@@ -23375,20 +19438,20 @@
       );
     }, "TabsTrigger")
   );
-  var CONTENT_NAME4 = "TabsContent";
-  var TabsContent = /* @__PURE__ */ React35.forwardRef(
-    /* @__PURE__ */ __name26(function TabsContent2(props, forwardedRef) {
+  var CONTENT_NAME3 = "TabsContent";
+  var TabsContent = /* @__PURE__ */ React20.forwardRef(
+    /* @__PURE__ */ __name21(function TabsContent2(props, forwardedRef) {
       const { __scopeTabs, value, forceMount, children, ...contentProps } = props;
-      const context = useTabsContext(CONTENT_NAME4, __scopeTabs);
+      const context = useTabsContext(CONTENT_NAME3, __scopeTabs);
       const triggerId = makeTriggerId(context.baseId, value);
       const contentId = makeContentId(context.baseId, value);
       const isSelected = value === context.value;
-      const isMountAnimationPreventedRef = React35.useRef(isSelected);
-      React35.useEffect(() => {
+      const isMountAnimationPreventedRef = React20.useRef(isSelected);
+      React20.useEffect(() => {
         const rAF = requestAnimationFrame(() => isMountAnimationPreventedRef.current = false);
         return () => cancelAnimationFrame(rAF);
       }, []);
-      return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Presence, { present: forceMount || isSelected, children: ({ present }) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Presence, { present: forceMount || isSelected, children: ({ present }) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         Primitive.div,
         {
           "data-state": isSelected ? "active" : "inactive",
@@ -23412,14 +19475,14 @@
   function makeTriggerId(baseId, value) {
     return `${baseId}-trigger-${value}`;
   }
-  __name26(makeTriggerId, "makeTriggerId");
+  __name21(makeTriggerId, "makeTriggerId");
   function makeContentId(baseId, value) {
     return `${baseId}-content-${value}`;
   }
-  __name26(makeContentId, "makeContentId");
+  __name21(makeContentId, "makeContentId");
 
   // src/components/ui/badge.tsx
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime(), 1);
   var badgeVariants = cva(
     "inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3",
     {
@@ -23445,7 +19508,7 @@
     ...props
   }) {
     const Comp = asChild ? dist_exports.Root : "span";
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
       Comp,
       {
         "data-slot": "badge",
@@ -23457,7 +19520,7 @@
   }
 
   // src/content/ui/components/HudHeader.tsx
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
   function HudHeader({
     version,
     isMinimized,
@@ -23467,41 +19530,41 @@
     isCheckingUpdate,
     onMouseDownDrag
   }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
       "div",
       {
         className: "flex items-center justify-between px-3.5 py-2.5 bg-slate-50 border-b border-slate-200/90 select-none cursor-move transition-colors",
         onMouseDown: onMouseDownDrag,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "flex items-center gap-2", onMouseDown: (e) => e.stopPropagation(), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center gap-2", onMouseDown: (e) => e.stopPropagation(), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
               "button",
               {
                 type: "button",
                 onClick: onHide,
                 className: "flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-500 hover:bg-red-600 border border-red-600/40 transition-transform active:scale-90 cursor-pointer shadow-xs",
                 title: "\u1EA8n b\u1EA3ng \u0111i\u1EC1u khi\u1EC3n (Alt+P)",
-                children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "text-[8px] font-bold text-red-950 leading-none select-none", children: "\u2715" })
+                children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "text-[8px] font-bold text-red-950 leading-none select-none", children: "\u2715" })
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
               "button",
               {
                 type: "button",
                 onClick: onToggleMinimize,
                 className: "flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-400 hover:bg-amber-500 border border-amber-500/40 transition-transform active:scale-90 cursor-pointer shadow-xs",
                 title: isMinimized ? "M\u1EDF r\u1ED9ng b\u1EA3ng \u0111i\u1EC1u khi\u1EC3n" : "Thu g\u1ECDn b\u1EA3ng \u0111i\u1EC1u khi\u1EC3n",
-                children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "text-[9px] font-bold text-amber-950 leading-none select-none", children: "\u2212" })
+                children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "text-[9px] font-bold text-amber-950 leading-none select-none", children: "\u2212" })
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
               "button",
               {
                 type: "button",
                 onClick: onCheckUpdate,
                 className: "flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-600 border border-emerald-600/40 transition-transform active:scale-90 cursor-pointer shadow-xs",
                 title: "Ki\u1EC3m tra b\u1EA3n c\u1EADp nh\u1EADt m\u1EDBi t\u1EEB GitHub",
-                children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+                children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
                   "span",
                   {
                     className: `text-[9px] font-bold text-emerald-950 leading-none select-none ${isCheckingUpdate ? "animate-spin inline-block" : ""}`,
@@ -23511,10 +19574,10 @@
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "flex items-center gap-1.5 font-bold text-xs tracking-tight", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "text-emerald-700", children: "\u{1F33E} NTG Auto" }),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "text-slate-400 font-normal", children: "by T\xFAn" }),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center gap-1.5 font-bold text-xs tracking-tight", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "text-emerald-700", children: "\u{1F33E} NTG Auto" }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "text-slate-400 font-normal", children: "by T\xFAn" }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
               Badge,
               {
                 variant: "outline",
@@ -23526,7 +19589,7 @@
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "flex items-center gap-1", onMouseDown: (e) => e.stopPropagation(), children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "flex items-center gap-1", onMouseDown: (e) => e.stopPropagation(), children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
             "span",
             {
               className: "text-[10px] text-slate-400 font-mono bg-slate-200/60 rounded px-1.5 py-0.5 cursor-pointer hover:bg-slate-200 transition-colors",
@@ -23584,7 +19647,7 @@
   }
 
   // src/content/ui/components/HudStats.tsx
-  var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
   function HudStats({ snap }) {
     const day = snap?.day ?? 1;
     const timeStr = typeof snap?.minutes === "number" ? formatClock(snap.minutes) : "--:--";
@@ -23601,37 +19664,37 @@
     } else if (snap?.sleeping) {
       extraNote = "\u{1F634} \u0110ang ng\u1EE7";
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "bg-slate-50 border-b border-slate-200/90 px-3 py-1.5 text-[11px] font-mono text-slate-700", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex flex-wrap items-center justify-between gap-1.5", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-1.5 text-slate-700 font-semibold", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { className: "text-amber-700", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "bg-slate-50 border-b border-slate-200/90 px-3 py-1.5 text-[11px] font-mono text-slate-700", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex flex-wrap items-center justify-between gap-1.5", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-1.5 text-slate-700 font-semibold", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { className: "text-amber-700", children: [
           "\u{1F4C5} Ng\xE0y ",
           day
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "text-slate-300", children: "\xB7" }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "text-emerald-700", children: timeStr }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "text-slate-300", children: "\xB7" }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "text-amber-800 font-bold", children: goldStr })
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-slate-300", children: "\xB7" }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-emerald-700", children: timeStr }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-slate-300", children: "\xB7" }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-amber-800 font-bold", children: goldStr })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-1", title: "\u0110\u1ED9 no", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "\u{1F956}" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "text-orange-700 font-semibold", children: fullness })
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-1", title: "\u0110\u1ED9 no", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: "\u{1F956}" }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-orange-700 font-semibold", children: fullness })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-1", title: "\u0110\u1ED9 kh\xE1t", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "\u{1F964}" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "text-sky-700 font-semibold", children: hydration })
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-1", title: "\u0110\u1ED9 kh\xE1t", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: "\u{1F964}" }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-sky-700 font-semibold", children: hydration })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-1", title: "N\u0103ng l\u01B0\u1EE3ng / Pin / Th\u1EC3 l\u1EF1c", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "\u26A1" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "text-emerald-700 font-semibold", children: energy })
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-1", title: "N\u0103ng l\u01B0\u1EE3ng / Pin / Th\u1EC3 l\u1EF1c", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: "\u26A1" }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-emerald-700 font-semibold", children: energy })
         ] }),
-        extraNote && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "rounded bg-amber-50 px-1.5 py-0.5 text-[10px] text-amber-800 border border-amber-200/80 font-medium", children: extraNote })
+        extraNote && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "rounded bg-amber-50 px-1.5 py-0.5 text-[10px] text-amber-800 border border-amber-200/80 font-medium", children: extraNote })
       ] })
     ] }) });
   }
 
   // src/components/ui/button.tsx
-  var import_jsx_runtime19 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
   var buttonVariants = cva(
     "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
     {
@@ -23669,7 +19732,7 @@
     ...props
   }) {
     const Comp = asChild ? dist_exports.Root : "button";
-    return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
       Comp,
       {
         "data-slot": "button",
@@ -23682,8 +19745,8 @@
   }
 
   // src/components/ui/slider.tsx
-  var React36 = __toESM(require_react(), 1);
-  var import_jsx_runtime20 = __toESM(require_jsx_runtime(), 1);
+  var React21 = __toESM(require_react(), 1);
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime(), 1);
   function Slider3({
     className,
     defaultValue,
@@ -23692,12 +19755,12 @@
     max = 100,
     ...props
   }) {
-    const _values = React36.useMemo(
+    const _values = React21.useMemo(
       () => Array.isArray(value) ? value : Array.isArray(defaultValue) ? defaultValue : [min, max],
       [value, defaultValue, min, max]
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
-      dist_exports5.Root,
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
+      dist_exports4.Root,
       {
         "data-slot": "slider",
         defaultValue,
@@ -23710,15 +19773,15 @@
         ),
         ...props,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
-            dist_exports5.Track,
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+            dist_exports4.Track,
             {
               "data-slot": "slider-track",
               className: cn(
                 "relative grow overflow-hidden rounded-full bg-muted data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5"
               ),
-              children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
-                dist_exports5.Range,
+              children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+                dist_exports4.Range,
                 {
                   "data-slot": "slider-range",
                   className: cn(
@@ -23728,8 +19791,8 @@
               )
             }
           ),
-          Array.from({ length: _values.length }, (_, index) => /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
-            dist_exports5.Thumb,
+          Array.from({ length: _values.length }, (_, index) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+            dist_exports4.Thumb,
             {
               "data-slot": "slider-thumb",
               className: "block size-4 shrink-0 rounded-full border border-primary bg-white shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"
@@ -23742,14 +19805,14 @@
   }
 
   // src/components/ui/switch.tsx
-  var import_jsx_runtime21 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
   function Switch3({
     className,
     size = "default",
     ...props
   }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-      dist_exports6.Root,
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+      dist_exports5.Root,
       {
         "data-slot": "switch",
         "data-size": size,
@@ -23758,8 +19821,8 @@
           className
         ),
         ...props,
-        children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-          dist_exports6.Thumb,
+        children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+          dist_exports5.Thumb,
           {
             "data-slot": "switch-thumb",
             className: cn(
@@ -23772,7 +19835,7 @@
   }
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/createLucideIcon.mjs
-  var import_react4 = __toESM(require_react(), 1);
+  var import_react3 = __toESM(require_react(), 1);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/utils/toKebabCase.mjs
   var toKebabCase = (string) => string?.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
@@ -23816,7 +19879,7 @@
   };
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/Icon.mjs
-  var import_react3 = __toESM(require_react(), 1);
+  var import_react2 = __toESM(require_react(), 1);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/utils/mergeClasses.mjs
   var mergeClasses = (...classes) => classes.filter((className, index, array) => {
@@ -23915,12 +19978,12 @@
   };
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/context.mjs
-  var import_react2 = __toESM(require_react(), 1);
-  var LucideContext = (0, import_react2.createContext)({});
-  var useLucideContext = () => (0, import_react2.useContext)(LucideContext);
+  var import_react = __toESM(require_react(), 1);
+  var LucideContext = (0, import_react.createContext)({});
+  var useLucideContext = () => (0, import_react.useContext)(LucideContext);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/Icon.mjs
-  var Icon = (0, import_react3.forwardRef)(
+  var Icon = (0, import_react2.forwardRef)(
     ({
       color,
       size,
@@ -23959,14 +20022,14 @@
         hasA11yProp: hasAccessibleProp,
         attributes: rest
       });
-      return (0, import_react3.createElement)(
+      return (0, import_react2.createElement)(
         name,
         {
           ref,
           ...svgAttributes
         },
         [
-          ...builtIconNode.map(([tag, attrs]) => (0, import_react3.createElement)(tag, attrs)),
+          ...builtIconNode.map(([tag, attrs]) => (0, import_react2.createElement)(tag, attrs)),
           ...Array.isArray(children) ? children : [children]
         ]
       );
@@ -23976,8 +20039,8 @@
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/createLucideIcon.mjs
   function createLucideIcon(iconDataOrName, iconNode = [], aliases = []) {
     const iconData = typeof iconDataOrName === "string" ? toLucideIconData(iconDataOrName, iconNode, aliases) : iconDataOrName;
-    const Component = (0, import_react4.forwardRef)(
-      ({ className, ...props }, ref) => (0, import_react4.createElement)(Icon, {
+    const Component = (0, import_react3.forwardRef)(
+      ({ className, ...props }, ref) => (0, import_react3.createElement)(Icon, {
         ref,
         icon: iconData,
         className,
@@ -24151,20 +20214,8 @@
   __iconData12.node;
   var Square = createLucideIcon(__iconData12);
 
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/x.mjs
-  var __iconData13 = {
-    name: "x",
-    size: 24,
-    node: [
-      ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
-      ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
-    ]
-  };
-  __iconData13.node;
-  var X = createLucideIcon(__iconData13);
-
   // src/content/ui/components/HudControls.tsx
-  var import_jsx_runtime22 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
   function HudControls({
     config: config2,
     activeTab,
@@ -24207,52 +20258,52 @@
         }
       }));
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "space-y-2 border-b border-slate-200/90 bg-slate-50/70 p-2.5 text-xs transition-colors", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "grid grid-cols-2 gap-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "space-y-2 border-b border-slate-200/90 bg-slate-50/70 p-2.5 text-xs transition-colors", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "grid grid-cols-2 gap-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
           Button,
           {
             variant: isRunningAll ? "destructive" : "default",
             size: "sm",
             className: "w-full justify-center font-bold text-[11px] rounded-xl h-8.5 shadow-xs active:scale-[0.98] bg-emerald-600 hover:bg-emerald-700 text-white",
             onClick: onToggleAll,
-            children: isRunningAll ? /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Square, { className: "h-3.5 w-3.5 fill-current mr-1.5" }),
+            children: isRunningAll ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Square, { className: "h-3.5 w-3.5 fill-current mr-1.5" }),
               "D\u1EEANG AUTO T\u1EA4T C\u1EA2"
-            ] }) : /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Play, { className: "h-3.5 w-3.5 fill-current mr-1.5" }),
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Play, { className: "h-3.5 w-3.5 fill-current mr-1.5" }),
               "\u25B6\uFE0F T\u1EA4T C\u1EA2 (Alt+A)"
             ] })
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
           Button,
           {
             variant: isRunningTab ? "destructive" : "outline",
             size: "sm",
             className: `w-full justify-center font-bold text-[11px] rounded-xl h-8.5 border shadow-xs active:scale-[0.98] ${isRunningTab ? "bg-red-600 hover:bg-red-700 text-white border-red-700" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"}`,
             onClick: onToggleTab,
-            children: isRunningTab ? /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Square, { className: "h-3.5 w-3.5 fill-current mr-1.5" }),
+            children: isRunningTab ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Square, { className: "h-3.5 w-3.5 fill-current mr-1.5" }),
               "D\u1EEANG TAB N\xC0Y"
-            ] }) : /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Play, { className: "h-3.5 w-3.5 fill-current mr-1.5 text-emerald-600" }),
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Play, { className: "h-3.5 w-3.5 fill-current mr-1.5 text-emerald-600" }),
               "\u{1F3AF} CH\u1EC8 ",
               AREA_META[activeTab]?.name?.toUpperCase() || "TAB N\xC0Y"
             ] })
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center justify-between gap-3 pt-1", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex-1 space-y-1", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center justify-between text-[11px] text-slate-600", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "T\u1ED1c \u0111\u1ED9 delay m\u1ED7i l\u1EC7nh:" }),
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "font-mono text-emerald-700 font-bold", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center justify-between gap-3 pt-1", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex-1 space-y-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center justify-between text-[11px] text-slate-600", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "T\u1ED1c \u0111\u1ED9 delay m\u1ED7i l\u1EC7nh:" }),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { className: "font-mono text-emerald-700 font-bold", children: [
               config2.taskDelayMs,
               " ms"
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
             Slider3,
             {
               value: [config2.taskDelayMs],
@@ -24264,7 +20315,7 @@
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
           Button,
           {
             variant: "outline",
@@ -24272,18 +20323,18 @@
             className: `border-slate-200 text-[10px] rounded-lg whitespace-nowrap self-end h-6 px-2 shadow-xs ${isOrderDrawerOpen ? "bg-emerald-50 text-emerald-800 border-emerald-300 font-semibold" : "bg-white text-slate-700 hover:bg-slate-100"}`,
             onClick: onToggleOrderDrawer,
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ListOrdered, { className: "h-3 w-3 mr-1" }),
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ListOrdered, { className: "h-3 w-3 mr-1" }),
               "Th\u1EE9 t\u1EF1 khu"
             ]
           }
         )
       ] }),
-      isOrderDrawerOpen && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "mt-1.5 rounded-xl border border-slate-200 bg-white p-2.5 space-y-2 shadow-xs", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center justify-between text-[10px] text-slate-600 font-medium border-b border-slate-100 pb-1.5", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "Th\u1EE9 t\u1EF1 ch\u1EA1y Auto c\xE1c khu:" }),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center gap-1", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "\u0110\u1ED5i khu sau" }),
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+      isOrderDrawerOpen && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "mt-1.5 rounded-xl border border-slate-200 bg-white p-2.5 space-y-2 shadow-xs", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center justify-between text-[10px] text-slate-600 font-medium border-b border-slate-100 pb-1.5", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Th\u1EE9 t\u1EF1 ch\u1EA1y Auto c\xE1c khu:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "\u0110\u1ED5i khu sau" }),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
               "input",
               {
                 type: "number",
@@ -24294,27 +20345,27 @@
                 className: "w-9 rounded-md bg-slate-50 px-1 py-0.5 text-center text-[10px] text-emerald-700 font-bold border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "con c\xE1" })
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "con c\xE1" })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "space-y-1", children: config2.areaOrder.map((areaId, idx) => {
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "space-y-1", children: config2.areaOrder.map((areaId, idx) => {
           const meta = AREA_META[areaId];
           const isEnabled = config2.areaEnabled[areaId] !== false;
-          return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
+          return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
             "div",
             {
               className: "flex items-center justify-between rounded-lg bg-slate-50 px-2.5 py-1.5 border border-slate-200/80 text-[11px]",
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center gap-2", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "font-mono text-[10px] text-slate-400 font-semibold", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-2", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { className: "font-mono text-[10px] text-slate-400 font-semibold", children: [
                     "#",
                     idx + 1
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: isEnabled ? "text-slate-800 font-medium" : "text-slate-400 line-through", children: meta?.name || areaId })
+                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: isEnabled ? "text-slate-800 font-medium" : "text-slate-400 line-through", children: meta?.name || areaId })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center gap-2", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center gap-0.5", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-2", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-0.5", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
                       Button,
                       {
                         variant: "ghost",
@@ -24322,10 +20373,10 @@
                         disabled: idx === 0,
                         className: "h-5 w-5 text-slate-500 hover:text-slate-900",
                         onClick: () => handleMoveArea(idx, "up"),
-                        children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ChevronUp, { className: "h-3 w-3" })
+                        children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ChevronUp, { className: "h-3 w-3" })
                       }
                     ),
-                    /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+                    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
                       Button,
                       {
                         variant: "ghost",
@@ -24333,11 +20384,11 @@
                         disabled: idx === config2.areaOrder.length - 1,
                         className: "h-5 w-5 text-slate-500 hover:text-slate-900",
                         onClick: () => handleMoveArea(idx, "down"),
-                        children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ChevronDown, { className: "h-3 w-3" })
+                        children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ChevronDown, { className: "h-3 w-3" })
                       }
                     )
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
                     Switch3,
                     {
                       size: "sm",
@@ -24356,7 +20407,7 @@
   }
 
   // src/content/ui/components/FarmTabContent.tsx
-  var import_jsx_runtime23 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime(), 1);
   function FarmTabContent({ config: config2, onUpdateConfig }) {
     const isFarmAreaEnabled = config2.areaEnabled.farm !== false;
     const handleToggleArea = (checked) => {
@@ -24409,10 +20460,10 @@
     const renderSubCardBody = (subId) => {
       switch (subId) {
         case "house":
-          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4AC} T\u1EAFt th\xF4ng b\xE1o Loa & \u0110i\u1EC7n tho\u1EA1i" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "space-y-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F4AC} T\u1EAFt th\xF4ng b\xE1o Loa & \u0110i\u1EC7n tho\u1EA1i" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoDismissInterrupts),
@@ -24420,9 +20471,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F373} T\u1EF1 n\u1EA5u m\xF3n \u0103n trong B\u1EBFp" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F373} T\u1EF1 n\u1EA5u m\xF3n \u0103n trong B\u1EBFp" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoCook),
@@ -24430,30 +20481,30 @@
                 }
               )
             ] }),
-            config2.autoCook && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "M\xF3n \u01B0u ti\xEAn:" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+            config2.autoCook && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-600", children: "M\xF3n \u01B0u ti\xEAn:" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(
                 "select",
                 {
                   value: config2.preferDish,
                   onChange: (e) => updateField("preferDish", e.target.value),
                   className: "rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs",
                   children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "auto", children: "\u2728 T\u1EF1 ch\u1ECDn m\xF3n \u0111\u1EE7 nguy\xEAn li\u1EC7u" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "comTam", children: "\u{1F35B} C\u01A1m t\u1EA5m \u1ED1p la (No l\xE2u)" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "eggBread", children: "\u{1F96A} B\xE1nh m\xEC \u1ED1p la (T\u1ED1c \u0111\u1ED9)" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "radishSoup", children: "\u{1F372} Canh c\u1EE7 c\u1EA3i" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "carrotJuice", children: "\u{1F9C3} N\u01B0\u1EDBc \xE9p c\xE0 r\u1ED1t" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "grilledCorn", children: "\u{1F33D} B\u1EAFp n\u01B0\u1EDBng m\u1EE1 h\xE0nh" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "boiledEgg", children: "\u{1F95A} Tr\u1EE9ng lu\u1ED9c" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "cornCake", children: "\u{1F96E} B\xE1nh b\u1EAFp n\u01B0\u1EDBng" })
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "auto", children: "\u2728 T\u1EF1 ch\u1ECDn m\xF3n \u0111\u1EE7 nguy\xEAn li\u1EC7u" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "comTam", children: "\u{1F35B} C\u01A1m t\u1EA5m \u1ED1p la (No l\xE2u)" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "eggBread", children: "\u{1F96A} B\xE1nh m\xEC \u1ED1p la (T\u1ED1c \u0111\u1ED9)" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "radishSoup", children: "\u{1F372} Canh c\u1EE7 c\u1EA3i" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "carrotJuice", children: "\u{1F9C3} N\u01B0\u1EDBc \xE9p c\xE0 r\u1ED1t" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "grilledCorn", children: "\u{1F33D} B\u1EAFp n\u01B0\u1EDBng m\u1EE1 h\xE0nh" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "boiledEgg", children: "\u{1F95A} Tr\u1EE9ng lu\u1ED9c" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "cornCake", children: "\u{1F96E} B\xE1nh b\u1EAFp n\u01B0\u1EDBng" })
                   ]
                 }
               )
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F372} T\u1EF1 \u0103n khi \u0110\xF3i" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F372} T\u1EF1 \u0103n khi \u0110\xF3i" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoRecoverHunger),
@@ -24461,10 +20512,10 @@
                 }
               )
             ] }),
-            config2.autoRecoverHunger && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "\u0102n khi \u0110\xF3i < (%):" }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            config2.autoRecoverHunger && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-600", children: "\u0102n khi \u0110\xF3i < (%):" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                   "input",
                   {
                     type: "number",
@@ -24477,44 +20528,44 @@
                   }
                 )
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "Ngu\u1ED3n \u0103n:" }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-600", children: "Ngu\u1ED3n \u0103n:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(
                   "select",
                   {
                     value: config2.foodSource,
                     onChange: (e) => updateField("foodSource", e.target.value),
                     className: "rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs",
                     children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "kitchen_first", children: "\u{1F372} \u01AFu ti\xEAn B\u1EBFp, thi\u1EBFu mua Ti\u1EC7m" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "kitchen_only", children: "\u{1F3E1} Ch\u1EC9 \u0103n m\xF3n B\u1EBFp / Kho" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "shop_only", children: "\u{1F956} Ch\u1EC9 mua Ti\u1EC7m b\xE1nh m\xEC" })
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "kitchen_first", children: "\u{1F372} \u01AFu ti\xEAn B\u1EBFp, thi\u1EBFu mua Ti\u1EC7m" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "kitchen_only", children: "\u{1F3E1} Ch\u1EC9 \u0103n m\xF3n B\u1EBFp / Kho" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "shop_only", children: "\u{1F956} Ch\u1EC9 mua Ti\u1EC7m b\xE1nh m\xEC" })
                     ]
                   }
                 )
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "M\xF3n mua \u1EDF Ti\u1EC7m:" }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-600", children: "M\xF3n mua \u1EDF Ti\u1EC7m:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(
                   "select",
                   {
                     value: config2.preferFoodShop,
                     onChange: (e) => updateField("preferFoodShop", e.target.value),
                     className: "rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs",
                     children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "banhMiThit", children: "\u{1F956} B\xE1nh m\xEC th\u1ECBt (15.000\u0111 \xB7 +50 no)" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "banhMiCha", children: "\u{1F41F} B\xE1nh m\xEC ch\u1EA3 c\xE1 (15.000\u0111 \xB7 +45 no)" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "banhMiTrung", children: "\u{1F373} B\xE1nh m\xEC tr\u1EE9ng (10.000\u0111 \xB7 +35 no)" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "banhBao", children: "\u{1F95F} B\xE1nh bao (8.000\u0111 \xB7 +25 no)" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "banhMiFull", children: "\u{1F924} B\xE1nh m\xEC full topping (25.000\u0111 \xB7 +80 no)" })
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "banhMiThit", children: "\u{1F956} B\xE1nh m\xEC th\u1ECBt (15.000\u0111 \xB7 +50 no)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "banhMiCha", children: "\u{1F41F} B\xE1nh m\xEC ch\u1EA3 c\xE1 (15.000\u0111 \xB7 +45 no)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "banhMiTrung", children: "\u{1F373} B\xE1nh m\xEC tr\u1EE9ng (10.000\u0111 \xB7 +35 no)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "banhBao", children: "\u{1F95F} B\xE1nh bao (8.000\u0111 \xB7 +25 no)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "banhMiFull", children: "\u{1F924} B\xE1nh m\xEC full topping (25.000\u0111 \xB7 +80 no)" })
                     ]
                   }
                 )
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F964} T\u1EF1 u\u1ED1ng khi Kh\xE1t" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F964} T\u1EF1 u\u1ED1ng khi Kh\xE1t" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoRecoverThirst),
@@ -24522,10 +20573,10 @@
                 }
               )
             ] }),
-            config2.autoRecoverThirst && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "U\u1ED1ng khi Kh\xE1t < (%):" }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            config2.autoRecoverThirst && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-600", children: "U\u1ED1ng khi Kh\xE1t < (%):" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                   "input",
                   {
                     type: "number",
@@ -24538,44 +20589,44 @@
                   }
                 )
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "Ngu\u1ED3n n\u01B0\u1EDBc:" }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-600", children: "Ngu\u1ED3n n\u01B0\u1EDBc:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(
                   "select",
                   {
                     value: config2.drinkSource,
                     onChange: (e) => updateField("drinkSource", e.target.value),
                     className: "rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs",
                     children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "kitchen_first", children: "\u{1F9C3} \u01AFu ti\xEAn n\u01B0\u1EDBc B\u1EBFp, thi\u1EBFu mua Ti\u1EC7m" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "shop_only", children: "\u{1F964} Ch\u1EC9 mua n\u01B0\u1EDBc t\u1EA1i Ti\u1EC7m gi\u1EA3i kh\xE1t" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "both", children: "\u2728 Linh ho\u1EA1t c\u1EA3 B\u1EBFp & Ti\u1EC7m" })
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "kitchen_first", children: "\u{1F9C3} \u01AFu ti\xEAn n\u01B0\u1EDBc B\u1EBFp, thi\u1EBFu mua Ti\u1EC7m" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "shop_only", children: "\u{1F964} Ch\u1EC9 mua n\u01B0\u1EDBc t\u1EA1i Ti\u1EC7m gi\u1EA3i kh\xE1t" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "both", children: "\u2728 Linh ho\u1EA1t c\u1EA3 B\u1EBFp & Ti\u1EC7m" })
                     ]
                   }
                 )
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "N\u01B0\u1EDBc \u1EDF Ti\u1EC7m:" }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-600", children: "N\u01B0\u1EDBc \u1EDF Ti\u1EC7m:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(
                   "select",
                   {
                     value: config2.preferDrinkShop,
                     onChange: (e) => updateField("preferDrinkShop", e.target.value),
                     className: "rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs",
                     children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "nuocMia", children: "\u{1F964} N\u01B0\u1EDBc m\xEDa (8.000\u0111 \xB7 +35 n\u01B0\u1EDBc)" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "traDao", children: "\u{1F351} Tr\xE0 \u0111\xE0o cam s\u1EA3 (15.000\u0111 \xB7 +50 n\u01B0\u1EDBc)" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "traSua", children: "\u{1F9CB} Tr\xE0 s\u1EEFa tr\xE2n ch\xE2u (18.000\u0111 \xB7 +40 n\u01B0\u1EDBc)" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "caPheSua", children: "\u2615 C\xE0 ph\xEA s\u1EEFa \u0111\xE1 (12.000\u0111 \xB7 +25 n\u01B0\u1EDBc)" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "traDa", children: "\u{1F9CA} Tr\xE0 \u0111\xE1 v\u1EC9a h\xE8 (3.000\u0111 \xB7 +20 n\u01B0\u1EDBc)" })
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "nuocMia", children: "\u{1F964} N\u01B0\u1EDBc m\xEDa (8.000\u0111 \xB7 +35 n\u01B0\u1EDBc)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "traDao", children: "\u{1F351} Tr\xE0 \u0111\xE0o cam s\u1EA3 (15.000\u0111 \xB7 +50 n\u01B0\u1EDBc)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "traSua", children: "\u{1F9CB} Tr\xE0 s\u1EEFa tr\xE2n ch\xE2u (18.000\u0111 \xB7 +40 n\u01B0\u1EDBc)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "caPheSua", children: "\u2615 C\xE0 ph\xEA s\u1EEFa \u0111\xE1 (12.000\u0111 \xB7 +25 n\u01B0\u1EDBc)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "traDa", children: "\u{1F9CA} Tr\xE0 \u0111\xE1 v\u1EC9a h\xE8 (3.000\u0111 \xB7 +20 n\u01B0\u1EDBc)" })
                     ]
                   }
                 )
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u2615 T\u1EF1 u\u1ED1ng C\xE0 ph\xEA s\xE1ng (+50% t\u1ED1c \u0111\u1ED9 ch\u1EA1y)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u2615 T\u1EF1 u\u1ED1ng C\xE0 ph\xEA s\xE1ng (+50% t\u1ED1c \u0111\u1ED9 ch\u1EA1y)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoMorningCoffee),
@@ -24583,9 +20634,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F50B} T\u1EF1 s\u1EA1c \u0111i\u1EC7n cho Xe m\xE1y \u0111i\u1EC7n EV" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F50B} T\u1EF1 s\u1EA1c \u0111i\u1EC7n cho Xe m\xE1y \u0111i\u1EC7n EV" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoChargeVehicle),
@@ -24593,9 +20644,9 @@
                 }
               )
             ] }),
-            config2.autoChargeVehicle && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "S\u1EA1c khi Pin < (%):" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            config2.autoChargeVehicle && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-600", children: "S\u1EA1c khi Pin < (%):" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 "input",
                 {
                   type: "number",
@@ -24608,9 +20659,9 @@
                 }
               )
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F486} Salon Ch\u1ECB Linh: G\u1ED9i \u0111\u1EA7u d\u01B0\u1EE1ng sinh (Buff th\u01B0 gi\xE3n)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F486} Salon Ch\u1ECB Linh: G\u1ED9i \u0111\u1EA7u d\u01B0\u1EE1ng sinh (Buff th\u01B0 gi\xE3n)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoSalonShampoo),
@@ -24618,9 +20669,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u2728 Salon Ch\u1ECB Linh: T\u1EAFm tr\u1EAFng n\xE2ng t\xF4ng khi \u0111en da" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u2728 Salon Ch\u1ECB Linh: T\u1EAFm tr\u1EAFng n\xE2ng t\xF4ng khi \u0111en da" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoSalonWhiten),
@@ -24628,9 +20679,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F6CF}\uFE0F T\u1EF1 \u0111i ng\u1EE7 qua ng\xE0y m\u1EDBi" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F6CF}\uFE0F T\u1EF1 \u0111i ng\u1EE7 qua ng\xE0y m\u1EDBi" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoSleep),
@@ -24638,10 +20689,10 @@
                 }
               )
             ] }),
-            config2.autoSleep && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "Gi\u1EDD \u0111i ng\u1EE7 bu\u1ED5i t\u1ED1i (h):" }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            config2.autoSleep && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-600", children: "Gi\u1EDD \u0111i ng\u1EE7 bu\u1ED5i t\u1ED1i (h):" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                   "input",
                   {
                     type: "number",
@@ -24654,9 +20705,9 @@
                   }
                 )
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-600", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F319} Ng\u1EE7 ngay khi h\u1EBFt c\xE2u \u0111\u01B0\u1EE3c bu\u1ED5i t\u1ED1i" }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-600", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F319} Ng\u1EE7 ngay khi h\u1EBFt c\xE2u \u0111\u01B0\u1EE3c bu\u1ED5i t\u1ED1i" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                   Switch3,
                   {
                     size: "sm",
@@ -24668,10 +20719,10 @@
             ] })
           ] });
         case "crops":
-          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F33E} T\u1EF1 thu ho\u1EA1ch n\xF4ng s\u1EA3n ch\xEDn" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "space-y-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F33E} T\u1EF1 thu ho\u1EA1ch n\xF4ng s\u1EA3n ch\xEDn" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoHarvest),
@@ -24679,9 +20730,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F41B} T\u1EF1 mua thu\u1ED1c & di\u1EC7t s\xE2u b\u1EC7nh" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F41B} T\u1EF1 mua thu\u1ED1c & di\u1EC7t s\xE2u b\u1EC7nh" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoPesticide),
@@ -24689,9 +20740,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4A7} T\u1EF1 t\u01B0\u1EDBi n\u01B0\u1EDBc gi\u1EEF \u1EA9m \u0111\u1EA5t" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F4A7} T\u1EF1 t\u01B0\u1EDBi n\u01B0\u1EDBc gi\u1EEF \u1EA9m \u0111\u1EA5t" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoWater),
@@ -24699,9 +20750,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F9EA} T\u1EF1 mua & b\xF3n ph\xE2n NPK" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F9EA} T\u1EF1 mua & b\xF3n ph\xE2n NPK" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoFertilize),
@@ -24709,9 +20760,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F331} T\u1EF1 mua & gieo h\u1EA1t gi\u1ED1ng m\u1EDBi" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F331} T\u1EF1 mua & gieo h\u1EA1t gi\u1ED1ng m\u1EDBi" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoPlant),
@@ -24719,27 +20770,27 @@
                 }
               )
             ] }),
-            config2.autoPlant && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "H\u1EA1t gi\u1ED1ng \u01B0u ti\xEAn:" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+            config2.autoPlant && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-600", children: "H\u1EA1t gi\u1ED1ng \u01B0u ti\xEAn:" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(
                 "select",
                 {
                   value: config2.preferSeed,
                   onChange: (e) => updateField("preferSeed", e.target.value),
                   className: "rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs",
                   children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "auto", children: "\u2728 T\u1EF1 ch\u1ECDn t\u1ED1i \u01B0u" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "rice", children: "\u{1F33E} L\xFAa (8 ng\xE0y)" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "corn", children: "\u{1F33D} B\u1EAFp (6 ng\xE0y)" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "carrot", children: "\u{1F955} C\xE0 r\u1ED1t (4 ng\xE0y)" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "radish", children: "\u{1F331} C\u1EE7 c\u1EA3i (2 ng\xE0y)" })
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "auto", children: "\u2728 T\u1EF1 ch\u1ECDn t\u1ED1i \u01B0u" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "rice", children: "\u{1F33E} L\xFAa (8 ng\xE0y)" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "corn", children: "\u{1F33D} B\u1EAFp (6 ng\xE0y)" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "carrot", children: "\u{1F955} C\xE0 r\u1ED1t (4 ng\xE0y)" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "radish", children: "\u{1F331} C\u1EE7 c\u1EA3i (2 ng\xE0y)" })
                   ]
                 }
               )
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u26CF\uFE0F T\u1EF1 mua th\xEAm \xF4 \u0111\u1EA5t ru\u1ED9ng khi m\u1EDF b\xE1n" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u26CF\uFE0F T\u1EF1 mua th\xEAm \xF4 \u0111\u1EA5t ru\u1ED9ng khi m\u1EDF b\xE1n" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoBuyPlots),
@@ -24749,10 +20800,10 @@
             ] })
           ] });
         case "pet":
-          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F356} T\u1EF1 mua \u0111\u1ED3 \u0103n & cho Th\xFA c\u01B0ng \u0103n" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "space-y-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F356} T\u1EF1 mua \u0111\u1ED3 \u0103n & cho Th\xFA c\u01B0ng \u0103n" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.petAutoFeed),
@@ -24760,9 +20811,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F496} T\u1EF1 vu\u1ED1t ve t\u0103ng vui v\u1EBB" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F496} T\u1EF1 vu\u1ED1t ve t\u0103ng vui v\u1EBB" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.petAutoCuddle),
@@ -24770,9 +20821,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F9FC} T\u1EF1 t\u1EAFm s\u1EA1ch cho Th\xFA c\u01B0ng" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F9FC} T\u1EF1 t\u1EAFm s\u1EA1ch cho Th\xFA c\u01B0ng" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.petAutoBath),
@@ -24780,9 +20831,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F3BE} T\u1EF1 t\u1EADp tr\xF2 hu\u1EA5n luy\u1EC7n (+XP)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F3BE} T\u1EF1 t\u1EADp tr\xF2 hu\u1EA5n luy\u1EC7n (+XP)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.petAutoTrick),
@@ -24792,11 +20843,11 @@
             ] })
           ] });
         case "barn":
-          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "text-[11px] font-bold text-emerald-400 border-b border-slate-200 pb-1", children: "\u{1F403} Chu\u1ED3ng Tr\xE2u \u1ED4i" }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F33E} T\u1EF1 cho Tr\xE2u \u0103n c\u1ECF / r\u01A1m" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "space-y-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "text-[11px] font-bold text-emerald-400 border-b border-slate-200 pb-1", children: "\u{1F403} Chu\u1ED3ng Tr\xE2u \u1ED4i" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F33E} T\u1EF1 cho Tr\xE2u \u0103n c\u1ECF / r\u01A1m" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.barnAutoFeedBuffalo),
@@ -24804,9 +20855,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F6BF} T\u1EF1 t\u1EAFm m\xE1t cho Tr\xE2u" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F6BF} T\u1EF1 t\u1EAFm m\xE1t cho Tr\xE2u" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.barnAutoBathBuffalo),
@@ -24814,9 +20865,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F91D} Cho h\xE0ng x\xF3m thu\xEA Tr\xE2u c\xE0y (+Ti\u1EC1n)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F91D} Cho h\xE0ng x\xF3m thu\xEA Tr\xE2u c\xE0y (+Ti\u1EC1n)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.barnAutoLendBuffalo),
@@ -24824,10 +20875,10 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "text-[11px] font-bold text-emerald-400 border-b border-slate-200 pb-1 pt-2", children: "\u{1F404} Chu\u1ED3ng B\xF2 S\u1EEFa" }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F33F} T\u1EF1 cho \u0111\xE0n B\xF2 s\u1EEFa \u0103n c\u1ECF" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "text-[11px] font-bold text-emerald-400 border-b border-slate-200 pb-1 pt-2", children: "\u{1F404} Chu\u1ED3ng B\xF2 S\u1EEFa" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F33F} T\u1EF1 cho \u0111\xE0n B\xF2 s\u1EEFa \u0103n c\u1ECF" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.barnAutoFeedCows),
@@ -24835,9 +20886,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F95B} T\u1EF1 v\u1EAFt s\u1EEFa & b\xE1n s\u1EEFa t\u01B0\u01A1i" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F95B} T\u1EF1 v\u1EAFt s\u1EEFa & b\xE1n s\u1EEFa t\u01B0\u01A1i" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.barnAutoSellMilk),
@@ -24845,9 +20896,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F48A} T\u1EF1 mua thu\u1ED1c & ch\u1EEFa b\u1EC7nh cho B\xF2" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F48A} T\u1EF1 mua thu\u1ED1c & ch\u1EEFa b\u1EC7nh cho B\xF2" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.barnAutoCureCows),
@@ -24855,9 +20906,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng ng\u01B0\u1EDDi ph\u1EE5 Chu\u1ED3ng" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng ng\u01B0\u1EDDi ph\u1EE5 Chu\u1ED3ng" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.barnAutoPayHelper),
@@ -24867,10 +20918,10 @@
             ] })
           ] });
         case "coop":
-          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F95A} T\u1EF1 nh\u1EB7t tr\u1EE9ng g\xE0 m\u1ED7i ng\xE0y" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "space-y-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F95A} T\u1EF1 nh\u1EB7t tr\u1EE9ng g\xE0 m\u1ED7i ng\xE0y" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.coopAutoCollectEggs),
@@ -24878,9 +20929,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F424} T\u1EF1 mua th\xEAm G\xE0 con khi chu\u1ED3ng tr\u1ED1ng" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F424} T\u1EF1 mua th\xEAm G\xE0 con khi chu\u1ED3ng tr\u1ED1ng" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.coopAutoBuyChick),
@@ -24888,9 +20939,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng ng\u01B0\u1EDDi ph\u1EE5 Chu\u1ED3ng g\xE0" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng ng\u01B0\u1EDDi ph\u1EE5 Chu\u1ED3ng g\xE0" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.coopAutoPayHelper),
@@ -24900,10 +20951,10 @@
             ] })
           ] });
         case "pond":
-          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F41F} T\u1EF1 k\xE9o l\u01B0\u1EDBi thu ho\u1EA1ch c\xE1 tr\u01B0\u1EDFng th\xE0nh" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "space-y-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F41F} T\u1EF1 k\xE9o l\u01B0\u1EDBi thu ho\u1EA1ch c\xE1 tr\u01B0\u1EDFng th\xE0nh" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.pondAutoNet),
@@ -24911,9 +20962,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F35E} T\u1EF1 r\u1EA3i c\xE1m cho c\xE1 \u0103n m\u1ED7i ng\xE0y" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F35E} T\u1EF1 r\u1EA3i c\xE1m cho c\xE1 \u0103n m\u1ED7i ng\xE0y" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.pondAutoFeed),
@@ -24921,9 +20972,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F41F} T\u1EF1 th\u1EA3 c\xE1 gi\u1ED1ng m\u1EDBi khi ao tr\u1ED1ng" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F41F} T\u1EF1 th\u1EA3 c\xE1 gi\u1ED1ng m\u1EDBi khi ao tr\u1ED1ng" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.pondAutoStock),
@@ -24931,25 +20982,25 @@
                 }
               )
             ] }),
-            config2.pondAutoStock && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "Lo\u1EA1i gi\u1ED1ng th\u1EA3:" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+            config2.pondAutoStock && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-600", children: "Lo\u1EA1i gi\u1ED1ng th\u1EA3:" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(
                 "select",
                 {
                   value: config2.preferPondFish,
                   onChange: (e) => updateField("preferPondFish", e.target.value),
                   className: "rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs",
                   children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "chep", children: "\u{1F41F} C\xE1 ch\xE9p (L\u1EDDi cao)" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "tre", children: "\u{1F41F} C\xE1 tr\xEA" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "ro", children: "\u{1F41F} C\xE1 r\xF4" })
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "chep", children: "\u{1F41F} C\xE1 ch\xE9p (L\u1EDDi cao)" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "tre", children: "\u{1F41F} C\xE1 tr\xEA" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "ro", children: "\u{1F41F} C\xE1 r\xF4" })
                   ]
                 }
               )
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng ng\u01B0\u1EDDi ph\u1EE5 Ao c\xE1" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng ng\u01B0\u1EDDi ph\u1EE5 Ao c\xE1" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.pondAutoPayHelper),
@@ -24959,10 +21010,10 @@
             ] })
           ] });
         case "market":
-          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4E6} T\u1EF1 giao \u0111\u01A1n h\xE0ng T\u1EA1p h\xF3a Ch\u1ECB Na" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "space-y-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F4E6} T\u1EF1 giao \u0111\u01A1n h\xE0ng T\u1EA1p h\xF3a Ch\u1ECB Na" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoDeliverOrder),
@@ -24970,9 +21021,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4CB} T\u1EF1 giao \u0111\u01A1n B\u1EA3ng tin l\xE0ng" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F4CB} T\u1EF1 giao \u0111\u01A1n B\u1EA3ng tin l\xE0ng" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoVillageBoard),
@@ -24980,9 +21031,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F525} B\xE1n N\xF4ng s\u1EA3n Trend (x2 gi\xE1, \u0111\xFAng quota)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F525} B\xE1n N\xF4ng s\u1EA3n Trend (x2 gi\xE1, \u0111\xFAng quota)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoSellTrend),
@@ -24990,9 +21041,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4DC} T\u1EF1 b\xE1n n\xF4ng s\u1EA3n ho\xE0n th\xE0nh Vi\u1EC7c S\u1ED5 tay" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F4DC} T\u1EF1 b\xE1n n\xF4ng s\u1EA3n ho\xE0n th\xE0nh Vi\u1EC7c S\u1ED5 tay" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoSellDailyTask),
@@ -25000,9 +21051,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F3EA} T\u1EF1 b\xE1n n\xF4ng s\u1EA3n d\u01B0 th\u1EEBa trong kho" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F3EA} T\u1EF1 b\xE1n n\xF4ng s\u1EA3n d\u01B0 th\u1EEBa trong kho" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoSellProduce),
@@ -25010,9 +21061,9 @@
                 }
               )
             ] }),
-            config2.autoSellProduce && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "T\u1ED1i thi\u1EC3u gi\u1EEF l\u1EA1i:" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            config2.autoSellProduce && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-600", children: "T\u1ED1i thi\u1EC3u gi\u1EEF l\u1EA1i:" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 "input",
                 {
                   type: "number",
@@ -25025,10 +21076,10 @@
                 }
               )
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "text-[11px] font-bold text-amber-400 border-b border-slate-200 pb-1 pt-2", children: "\u{1FA99} Ti\u1EC7m V\xE0ng C\xF4 Kim" }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1FA99} T\u1EF1 mua v\xE0ng \u0111\u1EA7u t\u01B0" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "text-[11px] font-bold text-amber-400 border-b border-slate-200 pb-1 pt-2", children: "\u{1FA99} Ti\u1EC7m V\xE0ng C\xF4 Kim" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1FA99} T\u1EF1 mua v\xE0ng \u0111\u1EA7u t\u01B0" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.goldAutoBuy),
@@ -25036,27 +21087,27 @@
                 }
               )
             ] }),
-            config2.goldAutoBuy && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "Lo\u1EA1i v\xE0ng \u01B0u ti\xEAn:" }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+            config2.goldAutoBuy && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-600", children: "Lo\u1EA1i v\xE0ng \u01B0u ti\xEAn:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(
                   "select",
                   {
                     value: config2.goldPreferType,
                     onChange: (e) => updateField("goldPreferType", e.target.value),
                     className: "rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs",
                     children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "mieng", children: "\u{1F7E8} V\xE0ng mi\u1EBFng 9999 (Ch\xEAnh th\u1EA5p)" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "nhan", children: "\u{1F48D} Nh\u1EABn tr\u01A1n 9999 (\u1ED4n \u0111\u1ECBnh)" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "k18", children: "\u{1F4FF} V\xE0ng 18K (Trang s\u1EE9c)" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "non", children: "\u{1FA99} V\xE0ng non 10K (L\u01B0\u1EDBt s\xF3ng)" })
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "mieng", children: "\u{1F7E8} V\xE0ng mi\u1EBFng 9999 (Ch\xEAnh th\u1EA5p)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "nhan", children: "\u{1F48D} Nh\u1EABn tr\u01A1n 9999 (\u1ED4n \u0111\u1ECBnh)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "k18", children: "\u{1F4FF} V\xE0ng 18K (Trang s\u1EE9c)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "non", children: "\u{1FA99} V\xE0ng non 10K (L\u01B0\u1EDBt s\xF3ng)" })
                     ]
                   }
                 )
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "Ti\u1EC1n m\u1EB7t t\u1ED1i thi\u1EC3u gi\u1EEF:" }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-600", children: "Ti\u1EC1n m\u1EB7t t\u1ED1i thi\u1EC3u gi\u1EEF:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                   "input",
                   {
                     type: "number",
@@ -25070,9 +21121,9 @@
                 )
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4C8} T\u1EF1 b\xE1n v\xE0ng khi c\xF3 l\xE3i" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F4C8} T\u1EF1 b\xE1n v\xE0ng khi c\xF3 l\xE3i" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.goldAutoSell),
@@ -25080,9 +21131,9 @@
                 }
               )
             ] }),
-            config2.goldAutoSell && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "Ch\u1ED1t l\u1EDDi khi l\xE3i >= (%):" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            config2.goldAutoSell && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-600", children: "Ch\u1ED1t l\u1EDDi khi l\xE3i >= (%):" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 "input",
                 {
                   type: "number",
@@ -25097,10 +21148,10 @@
             ] }) })
           ] });
         case "dibay":
-          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F381} T\u1EF1 nh\u1EADn th\u01B0\u1EDFng Vi\u1EC7c h\xF4m nay & S\u1ED5 tay" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "space-y-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F381} T\u1EF1 nh\u1EADn th\u01B0\u1EDFng Vi\u1EC7c h\xF4m nay & S\u1ED5 tay" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoClaimQuests),
@@ -25108,9 +21159,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4DC} T\u1EF1 l\xE0m chu\u1ED7i h\u01B0\u1EDBng d\u1EABn Ng\xE0y 1 & 2" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F4DC} T\u1EF1 l\xE0m chu\u1ED7i h\u01B0\u1EDBng d\u1EABn Ng\xE0y 1 & 2" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoFirstDayTasks),
@@ -25118,9 +21169,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4D4} T\u1EF1 thu th\u1EADp trang S\u1ED5 tay \xD4ng N\u0103m" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F4D4} T\u1EF1 thu th\u1EADp trang S\u1ED5 tay \xD4ng N\u0103m" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoNotebookPages),
@@ -25128,9 +21179,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1FA99} T\u1EF1 b\u1ECF ti\u1EC1n v\xE0o Heo \u0111\u1EA5t m\u1ED7i ng\xE0y" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1FA99} T\u1EF1 b\u1ECF ti\u1EC1n v\xE0o Heo \u0111\u1EA5t m\u1ED7i ng\xE0y" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoFeedPiggy),
@@ -25138,9 +21189,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F528} T\u1EF1 \u0111\u1EADp Heo \u0111\u1EA5t khi no (\u0111\u1EE7 7 ng\xE0y)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F528} T\u1EF1 \u0111\u1EADp Heo \u0111\u1EA5t khi no (\u0111\u1EE7 7 ng\xE0y)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoBreakPiggy),
@@ -25148,9 +21199,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F6D2} T\u1EF1 mua Heo \u0111\u1EA5t m\u1EDBi khi chu\u1ED3ng tr\u1ED1ng" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F6D2} T\u1EF1 mua Heo \u0111\u1EA5t m\u1EDBi khi chu\u1ED3ng tr\u1ED1ng" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoNewPiggy),
@@ -25158,9 +21209,9 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F3E6} T\u1EF1 g\u1EEDi S\u1ED5 ti\u1EBFt ki\u1EC7m D\xEC B\u1EA3y" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F3E6} T\u1EF1 g\u1EEDi S\u1ED5 ti\u1EBFt ki\u1EC7m D\xEC B\u1EA3y" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.autoSavings),
@@ -25168,9 +21219,9 @@
                 }
               )
             ] }),
-            config2.autoSavings && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-600", children: "Gi\u1EEF ti\u1EC1n m\u1EB7t t\u1ED1i thi\u1EC3u:" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            config2.autoSavings && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-600", children: "Gi\u1EEF ti\u1EC1n m\u1EB7t t\u1ED1i thi\u1EC3u:" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                 "input",
                 {
                   type: "number",
@@ -25188,33 +21239,33 @@
           return null;
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-emerald-50 border border-emerald-200/80 px-3.5 py-2 text-emerald-900 shadow-xs", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F33E} Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c N\xF4ng Tr\u1EA1i" }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Switch3, { checked: isFarmAreaEnabled, onCheckedChange: handleToggleArea })
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "space-y-2 text-xs", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-emerald-50 border border-emerald-200/80 px-3.5 py-2 text-emerald-900 shadow-xs", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F33E} Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c N\xF4ng Tr\u1EA1i" }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Switch3, { checked: isFarmAreaEnabled, onCheckedChange: handleToggleArea })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "space-y-2 pt-0.5", children: config2.farmSubOrder.map((subId, idx) => {
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "space-y-2 pt-0.5", children: config2.farmSubOrder.map((subId, idx) => {
         const meta = SUBAREA_META[subId];
         const isCollapsed = Boolean(config2.farmSubCollapsed[subId]);
         const isEnabled = config2.farmSubEnabled[subId] !== false;
-        return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+        return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(
           "div",
           {
             className: `rounded-xl border bg-white shadow-xs transition-all shadow-sm ${isEnabled ? "border-slate-200" : "border-slate-200/60 opacity-60"}`,
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(
                 "div",
                 {
                   className: "flex items-center justify-between px-3 py-2 cursor-pointer select-none hover:bg-slate-50 rounded-t-xl",
                   onClick: () => handleToggleCollapse(subId),
                   children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center gap-2", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400", children: isCollapsed ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChevronRight, { className: "h-3.5 w-3.5" }) : /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChevronDown, { className: "h-3.5 w-3.5" }) }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "font-semibold text-xs text-slate-800", children: meta?.name || subId })
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center gap-2", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-400", children: isCollapsed ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ChevronRight, { className: "h-3.5 w-3.5" }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ChevronDown, { className: "h-3.5 w-3.5" }) }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "font-semibold text-xs text-slate-800", children: meta?.name || subId })
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center gap-2", onClick: (e) => e.stopPropagation(), children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center gap-0.5", children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center gap-2", onClick: (e) => e.stopPropagation(), children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center gap-0.5", children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                           Button,
                           {
                             variant: "ghost",
@@ -25222,10 +21273,10 @@
                             disabled: idx === 0,
                             className: "h-5 w-5 text-slate-400 hover:text-slate-900",
                             onClick: () => handleMoveSub(idx, "up"),
-                            children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChevronUp, { className: "h-3 w-3" })
+                            children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ChevronUp, { className: "h-3 w-3" })
                           }
                         ),
-                        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                           Button,
                           {
                             variant: "ghost",
@@ -25233,11 +21284,11 @@
                             disabled: idx === config2.farmSubOrder.length - 1,
                             className: "h-5 w-5 text-slate-400 hover:text-slate-900",
                             onClick: () => handleMoveSub(idx, "down"),
-                            children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChevronDown, { className: "h-3 w-3" })
+                            children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ChevronDown, { className: "h-3 w-3" })
                           }
                         )
                       ] }),
-                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                         Switch3,
                         {
                           size: "sm",
@@ -25249,7 +21300,7 @@
                   ]
                 }
               ),
-              !isCollapsed && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "border-t border-slate-100 p-3 bg-slate-50/60 rounded-b-xl", children: renderSubCardBody(subId) })
+              !isCollapsed && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "border-t border-slate-100 p-3 bg-slate-50/60 rounded-b-xl", children: renderSubCardBody(subId) })
             ]
           },
           subId
@@ -25259,7 +21310,7 @@
   }
 
   // src/content/ui/components/WharfTabContent.tsx
-  var import_jsx_runtime24 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime20 = __toESM(require_jsx_runtime(), 1);
   function WharfTabContent({ config: config2, onUpdateConfig }) {
     const isWharfAreaEnabled = config2.areaEnabled.benDo !== false;
     const handleToggleArea = (checked) => {
@@ -25277,17 +21328,17 @@
         [key]: value
       }));
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "space-y-2.5 text-xs font-sans text-slate-800", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-blue-50 border border-blue-200/80 px-3.5 py-2 text-blue-900 shadow-xs", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F6F6} Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c B\u1EBFn \u0110\xF2" }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Switch3, { checked: isWharfAreaEnabled, onCheckedChange: handleToggleArea })
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "space-y-2.5 text-xs font-sans text-slate-800", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-blue-50 border border-blue-200/80 px-3.5 py-2 text-blue-900 shadow-xs", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F6F6} Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c B\u1EBFn \u0110\xF2" }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Switch3, { checked: isWharfAreaEnabled, onCheckedChange: handleToggleArea })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "rounded-xl border border-slate-200 bg-white p-3 space-y-2.5 shadow-xs", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "font-semibold text-xs text-slate-800 border-b border-slate-100 pb-1.5 flex items-center justify-between", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F3A3} V\u1ECB Tr\xED & Thao T\xE1c C\xE2u B\u1EBFn \u0110\xF2" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { className: "text-[11px] text-slate-500 italic", children: "\u2728 T\u1EF1 nh\u1EADn di\u1EC7n phao ch\xECm h\u1EB3n m\u1EDBi gi\u1EADt v\xE0 t\u1EF1 gh\xECm c\u1EA7n ng\u01B0\u1EE3c h\u01B0\u1EDBng c\xE1 ch\u1EA1y." }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F4CD} T\u1EF1 \u0111i b\u1ED9 ra v\u1ECB tr\xED ng\u1ED3i c\xE2u" }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "rounded-xl border border-slate-200 bg-white p-3 space-y-2.5 shadow-xs", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "font-semibold text-xs text-slate-800 border-b border-slate-100 pb-1.5 flex items-center justify-between", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { children: "\u{1F3A3} V\u1ECB Tr\xED & Thao T\xE1c C\xE2u B\u1EBFn \u0110\xF2" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { className: "text-[11px] text-slate-500 italic", children: "\u2728 T\u1EF1 nh\u1EADn di\u1EC7n phao ch\xECm h\u1EB3n m\u1EDBi gi\u1EADt v\xE0 t\u1EF1 gh\xECm c\u1EA7n ng\u01B0\u1EE3c h\u01B0\u1EDBng c\xE1 ch\u1EA1y." }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { children: "\u{1F4CD} T\u1EF1 \u0111i b\u1ED9 ra v\u1ECB tr\xED ng\u1ED3i c\xE2u" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
             Switch3,
             {
               checked: Boolean(config2.benAutoSpot),
@@ -25295,24 +21346,24 @@
             }
           )
         ] }),
-        config2.benAutoSpot && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-600", children: "V\u1ECB tr\xED ng\u1ED3i c\xE2u:" }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
+        config2.benAutoSpot && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "text-slate-600", children: "V\u1ECB tr\xED ng\u1ED3i c\xE2u:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
             "select",
             {
               value: config2.benSpot,
               onChange: (e) => updateField("benSpot", e.target.value),
               className: "rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500",
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "bank", children: "\u{1F33F} B\u1EDD s\xF4ng" }),
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "dock", children: "\u{1F309} C\u1EA7u t\xE0u ch\xEDnh" })
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "bank", children: "\u{1F33F} B\u1EDD s\xF4ng" }),
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "dock", children: "\u{1F309} C\u1EA7u t\xE0u ch\xEDnh" })
               ]
             }
           )
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u2B50 T\u1EF1 b\u1EA5m Gi\u1EEF l\u1EA1i c\xE1 L\u1EA1 / C\u1EA7u v\u1ED3ng / Th\u1EA7n tho\u1EA1i" }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { children: "\u2B50 T\u1EF1 b\u1EA5m Gi\u1EEF l\u1EA1i c\xE1 L\u1EA1 / C\u1EA7u v\u1ED3ng / Th\u1EA7n tho\u1EA1i" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
             Switch3,
             {
               checked: Boolean(config2.benAutoKeepRare),
@@ -25321,11 +21372,11 @@
           )
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "rounded-xl border border-slate-200 bg-white p-3 space-y-2.5 shadow-xs", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "font-semibold text-xs text-slate-800 border-b border-slate-100 pb-1.5", children: "\u{1FAB1} M\u1ED3i C\xE2u, B\xE1n C\xE1 & H\u1ED3i S\u1EE9c B\u1EBFn \u0110\xF2" }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1FAB1} T\u1EF1 \u0111i mua m\u1ED3i Ch\xFA \u0110\u1EF1c khi h\u1EBFt m\u1ED3i" }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "rounded-xl border border-slate-200 bg-white p-3 space-y-2.5 shadow-xs", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "font-semibold text-xs text-slate-800 border-b border-slate-100 pb-1.5", children: "\u{1FAB1} M\u1ED3i C\xE2u, B\xE1n C\xE1 & H\u1ED3i S\u1EE9c B\u1EBFn \u0110\xF2" }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { children: "\u{1FAB1} T\u1EF1 \u0111i mua m\u1ED3i Ch\xFA \u0110\u1EF1c khi h\u1EBFt m\u1ED3i" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
             Switch3,
             {
               checked: Boolean(config2.benAutoBuyBait),
@@ -25333,26 +21384,26 @@
             }
           )
         ] }),
-        config2.benAutoBuyBait && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-600", children: "Lo\u1EA1i m\u1ED3i \u01B0u ti\xEAn:" }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
+        config2.benAutoBuyBait && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "text-slate-600", children: "Lo\u1EA1i m\u1ED3i \u01B0u ti\xEAn:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
             "select",
             {
               value: config2.benPreferBait,
               onChange: (e) => updateField("benPreferBait", e.target.value),
               className: "rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500",
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "xinMoi", children: "\u{1F932} Xin 10 m\u1ED3i mi\u1EC5n ph\xED" }),
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "moi20", children: "\u{1FAB1} H\u1ED9p 20 m\u1ED3i (15 v\u1ECF s\xF2)" }),
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "moi60", children: "\u{1FAB1} Thau 60 m\u1ED3i (40 v\u1ECF s\xF2)" }),
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "moi150", children: "\u{1FAB1} Th\xF9ng 150 m\u1ED3i (90 v\u1ECF s\xF2)" })
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "xinMoi", children: "\u{1F932} Xin 10 m\u1ED3i mi\u1EC5n ph\xED" }),
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "moi20", children: "\u{1FAB1} H\u1ED9p 20 m\u1ED3i (15 v\u1ECF s\xF2)" }),
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "moi60", children: "\u{1FAB1} Thau 60 m\u1ED3i (40 v\u1ECF s\xF2)" }),
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "moi150", children: "\u{1FAB1} Th\xF9ng 150 m\u1ED3i (90 v\u1ECF s\xF2)" })
               ]
             }
           )
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F41F} T\u1EF1 \u0111i b\xE1n c\xE1 t\u1EA1i V\u1EF1a Anh T\u01B0" }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { children: "\u{1F41F} T\u1EF1 \u0111i b\xE1n c\xE1 t\u1EA1i V\u1EF1a Anh T\u01B0" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
             Switch3,
             {
               checked: Boolean(config2.benAutoSell),
@@ -25360,9 +21411,9 @@
             }
           )
         ] }),
-        config2.benAutoSell && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-600", children: "B\xE1n khi gi\u1ECF c\xE1 \u0111\u1EA1t (con):" }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+        config2.benAutoSell && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "text-slate-600", children: "B\xE1n khi gi\u1ECF c\xE1 \u0111\u1EA1t (con):" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
             "input",
             {
               type: "number",
@@ -25374,9 +21425,9 @@
             }
           )
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F371} T\u1EF1 \u0103n h\u1ED3i S\u1EE9c c\xE2u (\u26A1) khi \u0111u\u1ED1i s\u1EE9c" }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { children: "\u{1F371} T\u1EF1 \u0103n h\u1ED3i S\u1EE9c c\xE2u (\u26A1) khi \u0111u\u1ED1i s\u1EE9c" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
             Switch3,
             {
               checked: Boolean(config2.benAutoRecoverStamina),
@@ -25384,10 +21435,10 @@
             }
           )
         ] }),
-        config2.benAutoRecoverStamina && /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-600", children: "H\u1ED3i khi S\u1EE9c (\u26A1) d\u01B0\u1EDBi:" }),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+        config2.benAutoRecoverStamina && /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "text-slate-600", children: "H\u1ED3i khi S\u1EE9c (\u26A1) d\u01B0\u1EDBi:" }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
               "input",
               {
                 type: "number",
@@ -25400,28 +21451,28 @@
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-600", children: "M\xF3n \u0103n Qu\xE1n D\xEC T\xE1m:" }),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "text-slate-600", children: "M\xF3n \u0103n Qu\xE1n D\xEC T\xE1m:" }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
               "select",
               {
                 value: config2.benPreferFood,
                 onChange: (e) => updateField("benPreferFood", e.target.value),
                 className: "rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500",
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "banhMi", children: "\u{1F956} B\xE1nh m\xEC (+20\u26A1 \xB7 10\u{1F41A})" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "chaoCa", children: "\u{1F963} Ch\xE1o c\xE1 l\xF3c (+28\u26A1 \xB7 14\u{1F41A})" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "huTieu", children: "\u{1F35C} H\u1EE7 ti\u1EBFu (+40\u26A1 \xB7 20\u{1F41A})" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "comTam", children: "\u{1F35B} C\u01A1m t\u1EA5m (+60\u26A1 \xB7 28\u{1F41A})" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "lauMam", children: "\u{1F372} L\u1EA9u c\xE1 linh (+100\u26A1 \xB7 45\u{1F41A})" })
+                  /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "banhMi", children: "\u{1F956} B\xE1nh m\xEC (+20\u26A1 \xB7 10\u{1F41A})" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "chaoCa", children: "\u{1F963} Ch\xE1o c\xE1 l\xF3c (+28\u26A1 \xB7 14\u{1F41A})" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "huTieu", children: "\u{1F35C} H\u1EE7 ti\u1EBFu (+40\u26A1 \xB7 20\u{1F41A})" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "comTam", children: "\u{1F35B} C\u01A1m t\u1EA5m (+60\u26A1 \xB7 28\u{1F41A})" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "lauMam", children: "\u{1F372} L\u1EA9u c\xE1 linh (+100\u26A1 \xB7 45\u{1F41A})" })
                 ]
               }
             )
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F486} Ti\u1EC7m \xDAt M\u01B0\u1EDDi: G\u1ED9i \u0111\u1EA7u (+50\u26A1 \xB7 25\u{1F41A})" }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { children: "\u{1F486} Ti\u1EC7m \xDAt M\u01B0\u1EDDi: G\u1ED9i \u0111\u1EA7u (+50\u26A1 \xB7 25\u{1F41A})" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
             Switch3,
             {
               checked: Boolean(config2.benAutoGoiDau),
@@ -25429,9 +21480,9 @@
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F340} Xe tr\xE0 \u0111\xE1 Ch\u1ECB Th\u01A1m: U\u1ED1ng n\u01B0\u1EDBc May M\u1EAFn" }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { children: "\u{1F340} Xe tr\xE0 \u0111\xE1 Ch\u1ECB Th\u01A1m: U\u1ED1ng n\u01B0\u1EDBc May M\u1EAFn" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
             Switch3,
             {
               checked: Boolean(config2.benAutoLuckDrink),
@@ -25439,30 +21490,30 @@
             }
           )
         ] }),
-        config2.benAutoLuckDrink && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-600", children: "N\u01B0\u1EDBc u\u1ED1ng Ch\u1ECB Th\u01A1m:" }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
+        config2.benAutoLuckDrink && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "text-slate-600", children: "N\u01B0\u1EDBc u\u1ED1ng Ch\u1ECB Th\u01A1m:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
             "select",
             {
               value: config2.benPreferDrink,
               onChange: (e) => updateField("benPreferDrink", e.target.value),
               className: "rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500",
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "traDa", children: "\u{1F9CA} Tr\xE0 \u0111\xE1 (+8\u26A1 \xB7 3\u{1F41A})" }),
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "nuocMia", children: "\u{1F964} N\u01B0\u1EDBc m\xEDa (+1 May m\u1EAFn \xB7 15\u{1F41A})" }),
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "rauMa", children: "\u{1F96C} N\u01B0\u1EDBc rau m\xE1 (+1 May m\u1EAFn \xB7 30\u{1F41A})" }),
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "caPhe", children: "\u2615 C\xE0 ph\xEA \u0111en (+2 May m\u1EAFn \xB7 35\u{1F41A})" }),
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "duaTuoi", children: "\u{1F965} D\u1EEBa t\u01B0\u01A1i B\u1EBFn Tre (+3 May m\u1EAFn \xB7 80\u{1F41A})" })
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "traDa", children: "\u{1F9CA} Tr\xE0 \u0111\xE1 (+8\u26A1 \xB7 3\u{1F41A})" }),
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "nuocMia", children: "\u{1F964} N\u01B0\u1EDBc m\xEDa (+1 May m\u1EAFn \xB7 15\u{1F41A})" }),
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "rauMa", children: "\u{1F96C} N\u01B0\u1EDBc rau m\xE1 (+1 May m\u1EAFn \xB7 30\u{1F41A})" }),
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "caPhe", children: "\u2615 C\xE0 ph\xEA \u0111en (+2 May m\u1EAFn \xB7 35\u{1F41A})" }),
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: "duaTuoi", children: "\u{1F965} D\u1EEBa t\u01B0\u01A1i B\u1EBFn Tre (+3 May m\u1EAFn \xB7 80\u{1F41A})" })
               ]
             }
           )
         ] }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "rounded-xl border border-slate-200 bg-white p-3 space-y-2.5 shadow-xs", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "font-semibold text-xs text-slate-800 border-b border-slate-100 pb-1.5", children: "\u{1F3EE} Gi\u1EA3i Tr\xED & Ti\u1EC7n \xCDch B\u1EBFn \u0110\xF2" }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F3EE} L\u1ED3ng \u0111\xE8n C\xF4 B\u1EA3y: T\u1EF1 quay khi c\xF3 v\xE9" }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "rounded-xl border border-slate-200 bg-white p-3 space-y-2.5 shadow-xs", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "font-semibold text-xs text-slate-800 border-b border-slate-100 pb-1.5", children: "\u{1F3EE} Gi\u1EA3i Tr\xED & Ti\u1EC7n \xCDch B\u1EBFn \u0110\xF2" }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { children: "\u{1F3EE} L\u1ED3ng \u0111\xE8n C\xF4 B\u1EA3y: T\u1EF1 quay khi c\xF3 v\xE9" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
             Switch3,
             {
               checked: Boolean(config2.benAutoLantern),
@@ -25470,9 +21521,9 @@
             }
           )
         ] }),
-        config2.benAutoLantern && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-600 cursor-pointer", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F39F}\uFE0F T\u1EF1 mua th\xEAm v\xE9 quay (600\u{1F41A}/v\xE9)" }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+        config2.benAutoLantern && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { className: "flex items-center justify-between text-slate-600 cursor-pointer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { children: "\u{1F39F}\uFE0F T\u1EF1 mua th\xEAm v\xE9 quay (600\u{1F41A}/v\xE9)" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
             Switch3,
             {
               size: "sm",
@@ -25481,9 +21532,9 @@
             }
           )
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F39F}\uFE0F \u0110\u1EA1i l\xFD v\xE9 s\u1ED1 B\u1EBFn \u0110\xF2: T\u1EF1 \u0111\u1ED5i th\u01B0\u1EDFng" }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { children: "\u{1F39F}\uFE0F \u0110\u1EA1i l\xFD v\xE9 s\u1ED1 B\u1EBFn \u0110\xF2: T\u1EF1 \u0111\u1ED5i th\u01B0\u1EDFng" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
             Switch3,
             {
               checked: Boolean(config2.benAutoLotto),
@@ -25491,9 +21542,9 @@
             }
           )
         ] }),
-        config2.benAutoLotto && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-600 cursor-pointer", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F340} Mua 1 v\xE9 s\u1ED1 c\u1EA7u may m\u1ED7i ng\xE0y (10\u{1F41A})" }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+        config2.benAutoLotto && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { className: "flex items-center justify-between text-slate-600 cursor-pointer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { children: "\u{1F340} Mua 1 v\xE9 s\u1ED1 c\u1EA7u may m\u1ED7i ng\xE0y (10\u{1F41A})" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
             Switch3,
             {
               size: "sm",
@@ -25502,9 +21553,9 @@
             }
           )
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F3E7} C\xE2y ATM: \u0110\u1ED5i v\u1ECF s\xF2 ra ti\u1EC1n m\u1EB7t" }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { children: "\u{1F3E7} C\xE2y ATM: \u0110\u1ED5i v\u1ECF s\xF2 ra ti\u1EC1n m\u1EB7t" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
             Switch3,
             {
               checked: Boolean(config2.benAutoAtm),
@@ -25512,9 +21563,9 @@
             }
           )
         ] }),
-        config2.benAutoAtm && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-600", children: "\u0110\u1ED5i khi v\u1ECF s\xF2 >=:" }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+        config2.benAutoAtm && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "text-slate-600", children: "\u0110\u1ED5i khi v\u1ECF s\xF2 >=:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
             "input",
             {
               type: "number",
@@ -25532,7 +21583,7 @@
   }
 
   // src/content/ui/components/SeaTabContent.tsx
-  var import_jsx_runtime25 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime21 = __toESM(require_jsx_runtime(), 1);
   function SeaTabContent({ config: config2, onUpdateConfig }) {
     const isSeaAreaEnabled = config2.areaEnabled.sea !== false;
     const handleToggleArea = (checked) => {
@@ -25550,17 +21601,17 @@
         [key]: value
       }));
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "space-y-2.5 text-xs font-sans text-slate-800", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-cyan-50 border border-cyan-200/80 px-3.5 py-2 text-cyan-900 shadow-xs", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F3D6}\uFE0F Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c Bi\u1EC3n" }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Switch3, { checked: isSeaAreaEnabled, onCheckedChange: handleToggleArea })
+    return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "space-y-2.5 text-xs font-sans text-slate-800", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-cyan-50 border border-cyan-200/80 px-3.5 py-2 text-cyan-900 shadow-xs", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F3D6}\uFE0F Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c Bi\u1EC3n" }),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Switch3, { checked: isSeaAreaEnabled, onCheckedChange: handleToggleArea })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "rounded-xl border border-slate-200 bg-white p-3 space-y-2.5 shadow-xs", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "font-semibold text-xs text-slate-800 border-b border-slate-100 pb-1.5", children: "\u{1F30A} V\u1ECB Tr\xED & Thao T\xE1c C\xE2u \u1EDE Bi\u1EC3n" }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { className: "text-[11px] text-slate-500 italic", children: "\u2728 T\u1EF1 nh\u1EADn bi\u1EBFt c\xE1 c\u1EAFn c\xE2u \u0111\u1EC3 gi\u1EADt, t\u1EF1 gh\xECm c\u1EA7n theo h\u01B0\u1EDBng c\xE1 v\xE0 c\u1EA5t c\xE1 v\xE0o gi\u1ECF." }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: "\u{1F4CD} T\u1EF1 \u0111i b\u1ED9 ra v\u1ECB tr\xED ng\u1ED3i c\xE2u" }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "rounded-xl border border-slate-200 bg-white p-3 space-y-2.5 shadow-xs", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "font-semibold text-xs text-slate-800 border-b border-slate-100 pb-1.5", children: "\u{1F30A} V\u1ECB Tr\xED & Thao T\xE1c C\xE2u \u1EDE Bi\u1EC3n" }),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { className: "text-[11px] text-slate-500 italic", children: "\u2728 T\u1EF1 nh\u1EADn bi\u1EBFt c\xE1 c\u1EAFn c\xE2u \u0111\u1EC3 gi\u1EADt, t\u1EF1 gh\xECm c\u1EA7n theo h\u01B0\u1EDBng c\xE1 v\xE0 c\u1EA5t c\xE1 v\xE0o gi\u1ECF." }),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { children: "\u{1F4CD} T\u1EF1 \u0111i b\u1ED9 ra v\u1ECB tr\xED ng\u1ED3i c\xE2u" }),
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
             Switch3,
             {
               checked: Boolean(config2.seaAutoSpot),
@@ -25568,25 +21619,25 @@
             }
           )
         ] }),
-        config2.seaAutoSpot && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "text-slate-600", children: "V\u1ECB tr\xED c\xE2u \u1EDF Bi\u1EC3n:" }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
+        config2.seaAutoSpot && /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "text-slate-600", children: "V\u1ECB tr\xED c\xE2u \u1EDF Bi\u1EC3n:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(
             "select",
             {
               value: config2.seaSpot,
               onChange: (e) => updateField("seaSpot", e.target.value),
               className: "rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500",
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "pier", children: "\u{1F309} C\u1EA7u t\xE0u (\u0110a d\u1EA1ng c\xE1c lo\u1EA1i c\xE1)" }),
-                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "rocks", children: "\u{1FAA8} B\xE3i \u0111\xE1 (Nhi\u1EC1u c\xE1 hi\u1EBFm)" }),
-                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "beach", children: "\u{1F3D6}\uFE0F M\xE9p b\xE3i c\xE1t (C\xE1 ven b\u1EDD)" })
+                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("option", { value: "pier", children: "\u{1F309} C\u1EA7u t\xE0u (\u0110a d\u1EA1ng c\xE1c lo\u1EA1i c\xE1)" }),
+                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("option", { value: "rocks", children: "\u{1FAA8} B\xE3i \u0111\xE1 (Nhi\u1EC1u c\xE1 hi\u1EBFm)" }),
+                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("option", { value: "beach", children: "\u{1F3D6}\uFE0F M\xE9p b\xE3i c\xE1t (C\xE1 ven b\u1EDD)" })
               ]
             }
           )
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: "\u{1F4D6} T\u1EF1 nh\u1EADn th\u01B0\u1EDFng S\u1ED5 c\xE1 B\xE1ch khoa \xD4ng T\u01B0" }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { children: "\u{1F4D6} T\u1EF1 nh\u1EADn th\u01B0\u1EDFng S\u1ED5 c\xE1 B\xE1ch khoa \xD4ng T\u01B0" }),
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
             Switch3,
             {
               checked: Boolean(config2.seaAutoClaimDex),
@@ -25594,9 +21645,9 @@
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: "\u{1F359} T\u1EF1 \u0103n u\u1ED1ng h\u1ED3i ph\u1EE5c \u0110\xF3i Kh\xE1t khi c\xE2u Bi\u1EC3n" }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { children: "\u{1F359} T\u1EF1 \u0103n u\u1ED1ng h\u1ED3i ph\u1EE5c \u0110\xF3i Kh\xE1t khi c\xE2u Bi\u1EC3n" }),
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
             Switch3,
             {
               checked: Boolean(config2.seaAutoEat),
@@ -25605,11 +21656,11 @@
           )
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "rounded-xl border border-slate-200 bg-white p-3 space-y-2.5 shadow-xs", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "font-semibold text-xs text-slate-800 border-b border-slate-100 pb-1.5", children: "\u{1F6D6} Ch\xF2i \xD4ng T\u01B0 (Mua M\u1ED3i & B\xE1n C\xE1)" }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: "\u{1F990} T\u1EF1 mua m\u1ED3i c\xE2u khi h\u1EBFt m\u1ED3i" }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "rounded-xl border border-slate-200 bg-white p-3 space-y-2.5 shadow-xs", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "font-semibold text-xs text-slate-800 border-b border-slate-100 pb-1.5", children: "\u{1F6D6} Ch\xF2i \xD4ng T\u01B0 (Mua M\u1ED3i & B\xE1n C\xE1)" }),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { children: "\u{1F990} T\u1EF1 mua m\u1ED3i c\xE2u khi h\u1EBFt m\u1ED3i" }),
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
             Switch3,
             {
               checked: Boolean(config2.seaAutoBuyBait),
@@ -25617,25 +21668,25 @@
             }
           )
         ] }),
-        config2.seaAutoBuyBait && /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "text-slate-600", children: "Lo\u1EA1i m\u1ED3i \u01B0u ti\xEAn:" }),
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
+        config2.seaAutoBuyBait && /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "text-slate-600", children: "Lo\u1EA1i m\u1ED3i \u01B0u ti\xEAn:" }),
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(
               "select",
               {
                 value: config2.seaPreferBait,
                 onChange: (e) => updateField("seaPreferBait", e.target.value),
                 className: "rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500",
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "worm", children: "\u{1FAB1} M\u1ED3i Giun / Tr\xF9n (C\xE2u th\u01B0\u1EDDng)" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "shrimp", children: "\u{1F990} M\u1ED3i T\xF4m (C\xE2u c\xE1 hi\u1EBFm)" })
+                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("option", { value: "worm", children: "\u{1FAB1} M\u1ED3i Giun / Tr\xF9n (C\xE2u th\u01B0\u1EDDng)" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("option", { value: "shrimp", children: "\u{1F990} M\u1ED3i T\xF4m (C\xE2u c\xE1 hi\u1EBFm)" })
                 ]
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "text-slate-600", children: "S\u1ED1 g\xF3i mua m\u1ED7i l\u1EA7n:" }),
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "text-slate-600", children: "S\u1ED1 g\xF3i mua m\u1ED7i l\u1EA7n:" }),
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
               "input",
               {
                 type: "number",
@@ -25648,9 +21699,9 @@
             )
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: "\u{1F41F} T\u1EF1 b\xE1n h\u1EA3i s\u1EA3n trong gi\u1ECF cho \xD4ng T\u01B0" }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { children: "\u{1F41F} T\u1EF1 b\xE1n h\u1EA3i s\u1EA3n trong gi\u1ECF cho \xD4ng T\u01B0" }),
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
             Switch3,
             {
               checked: Boolean(config2.seaAutoSell),
@@ -25658,9 +21709,9 @@
             }
           )
         ] }),
-        config2.seaAutoSell && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "text-slate-600", children: "B\xE1n khi gi\u1ECF c\xF3 t\u1EEB (con):" }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+        config2.seaAutoSell && /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "text-slate-600", children: "B\xE1n khi gi\u1ECF c\xF3 t\u1EEB (con):" }),
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
             "input",
             {
               type: "number",
@@ -25677,7 +21728,7 @@
   }
 
   // src/content/ui/components/CityTabContent.tsx
-  var import_jsx_runtime26 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime22 = __toESM(require_jsx_runtime(), 1);
   function CityTabContent({ config: config2, onUpdateConfig }) {
     const isCityAreaEnabled = config2.areaEnabled.city !== false;
     const handleToggleArea = (checked) => {
@@ -25689,28 +21740,28 @@
         }
       }));
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "space-y-2.5 text-xs font-sans text-slate-800", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-purple-50 border border-purple-200/80 px-3.5 py-2 text-purple-900 shadow-xs", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F3D9}\uFE0F Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c Th\xE0nh Ph\u1ED1" }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Switch3, { checked: isCityAreaEnabled, onCheckedChange: handleToggleArea })
+    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "space-y-2.5 text-xs font-sans text-slate-800", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-purple-50 border border-purple-200/80 px-3.5 py-2 text-purple-900 shadow-xs", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F3D9}\uFE0F Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c Th\xE0nh Ph\u1ED1" }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Switch3, { checked: isCityAreaEnabled, onCheckedChange: handleToggleArea })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex flex-col items-center justify-center rounded-xl border border-slate-200 bg-white p-6 text-center space-y-2.5 shadow-xs", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "flex h-11 w-11 items-center justify-center rounded-2xl bg-purple-50 text-purple-600 border border-purple-200/80 shadow-xs", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Construction, { className: "h-6 w-6" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "font-bold text-xs text-slate-900", children: "Khu V\u1EF1c Th\xE0nh Ph\u1ED1 & H\u1ED9i Ch\u1EE3 X\xF3m Vui" }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { className: "text-[11px] text-slate-500 max-w-[270px] leading-relaxed", children: "T\xEDnh n\u0103ng t\u1EF1 \u0111\u1ED9ng cho Khu v\u1EF1c Th\xE0nh Ph\u1ED1 & H\u1ED9i Ch\u1EE3 (Xe lam, Mini-game C\xE2u V\u1ECBt) \u0111ang \u0111\u01B0\u1EE3c ph\xE1t tri\u1EC3n v\xE0 s\u1EBD s\u1EDBm ra m\u1EAFt \u1EDF b\u1EA3n c\u1EADp nh\u1EADt ti\u1EBFp theo!" })
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex flex-col items-center justify-center rounded-xl border border-slate-200 bg-white p-6 text-center space-y-2.5 shadow-xs", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "flex h-11 w-11 items-center justify-center rounded-2xl bg-purple-50 text-purple-600 border border-purple-200/80 shadow-xs", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Construction, { className: "h-6 w-6" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "font-bold text-xs text-slate-900", children: "Khu V\u1EF1c Th\xE0nh Ph\u1ED1 & H\u1ED9i Ch\u1EE3 X\xF3m Vui" }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { className: "text-[11px] text-slate-500 max-w-[270px] leading-relaxed", children: "T\xEDnh n\u0103ng t\u1EF1 \u0111\u1ED9ng cho Khu v\u1EF1c Th\xE0nh Ph\u1ED1 & H\u1ED9i Ch\u1EE3 (Xe lam, Mini-game C\xE2u V\u1ECBt) \u0111ang \u0111\u01B0\u1EE3c ph\xE1t tri\u1EC3n v\xE0 s\u1EBD s\u1EDBm ra m\u1EAFt \u1EDF b\u1EA3n c\u1EADp nh\u1EADt ti\u1EBFp theo!" })
       ] })
     ] });
   }
 
   // src/components/ui/tabs.tsx
-  var import_jsx_runtime27 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime23 = __toESM(require_jsx_runtime(), 1);
   function Tabs3({
     className,
     orientation = "horizontal",
     ...props
   }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
-      dist_exports7.Root,
+    return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+      dist_exports6.Root,
       {
         "data-slot": "tabs",
         "data-orientation": orientation,
@@ -25742,8 +21793,8 @@
     variant = "default",
     ...props
   }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
-      dist_exports7.List,
+    return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+      dist_exports6.List,
       {
         "data-slot": "tabs-list",
         "data-variant": variant,
@@ -25756,8 +21807,8 @@
     className,
     ...props
   }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
-      dist_exports7.Trigger,
+    return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+      dist_exports6.Trigger,
       {
         "data-slot": "tabs-trigger",
         className: cn(
@@ -25775,8 +21826,8 @@
     className,
     ...props
   }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
-      dist_exports7.Content,
+    return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+      dist_exports6.Content,
       {
         "data-slot": "tabs-content",
         className: cn("flex-1 outline-none", className),
@@ -25785,83 +21836,18 @@
     );
   }
 
-  // src/components/ui/dialog.tsx
-  var import_jsx_runtime28 = __toESM(require_jsx_runtime(), 1);
-  function Dialog2({
-    ...props
-  }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(dist_exports4.Root, { "data-slot": "dialog", ...props });
-  }
-  function DialogPortal2({
-    ...props
-  }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(dist_exports4.Portal, { "data-slot": "dialog-portal", ...props });
-  }
-  function DialogOverlay3({
-    className,
-    ...props
-  }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
-      dist_exports4.Overlay,
-      {
-        "data-slot": "dialog-overlay",
-        className: cn(
-          "fixed inset-0 z-50 bg-black/60 backdrop-blur-xs data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
-          className
-        ),
-        ...props
-      }
-    );
-  }
-  function DialogContent3({
-    className,
-    children,
-    showCloseButton = true,
-    container,
-    ...props
-  }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(DialogPortal2, { container, "data-slot": "dialog-portal", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(DialogOverlay3, {}),
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
-        dist_exports4.Content,
-        {
-          "data-slot": "dialog-content",
-          className: cn(
-            "fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border bg-background p-6 shadow-lg duration-200 outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:max-w-lg",
-            className
-          ),
-          ...props,
-          children: [
-            children,
-            showCloseButton && /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
-              dist_exports4.Close,
-              {
-                "data-slot": "dialog-close",
-                className: "absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-                children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(X, {}),
-                  /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { className: "sr-only", children: "Close" })
-                ]
-              }
-            )
-          ]
-        }
-      )
-    ] });
-  }
-
   // src/components/ui/accordion.tsx
-  var import_jsx_runtime29 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime24 = __toESM(require_jsx_runtime(), 1);
   function Accordion3({
     ...props
   }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(dist_exports2.Root, { "data-slot": "accordion", ...props });
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(dist_exports2.Root, { "data-slot": "accordion", ...props });
   }
   function AccordionItem3({
     className,
     ...props
   }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
       dist_exports2.Item,
       {
         "data-slot": "accordion-item",
@@ -25875,7 +21861,7 @@
     children,
     ...props
   }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(dist_exports2.Header, { className: "flex", children: /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(dist_exports2.Header, { className: "flex", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
       dist_exports2.Trigger,
       {
         "data-slot": "accordion-trigger",
@@ -25886,7 +21872,7 @@
         ...props,
         children: [
           children,
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(ChevronDown, { className: "pointer-events-none size-4 shrink-0 translate-y-0.5 text-muted-foreground transition-transform duration-200" })
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(ChevronDown, { className: "pointer-events-none size-4 shrink-0 translate-y-0.5 text-muted-foreground transition-transform duration-200" })
         ]
       }
     ) });
@@ -25896,38 +21882,38 @@
     children,
     ...props
   }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
       dist_exports2.Content,
       {
         "data-slot": "accordion-content",
         className: "overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down",
         ...props,
-        children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: cn("pt-0 pb-4", className), children })
+        children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: cn("pt-0 pb-4", className), children })
       }
     );
   }
 
   // src/components/ReleaseChangelogView.tsx
-  var import_jsx_runtime30 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime25 = __toESM(require_jsx_runtime(), 1);
   function ReleaseChangelogView({ updateInfo, onClose }) {
     const hasUpdate = updateInfo.hasUpdate;
     const older = updateInfo.olderReleases || [];
-    return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex flex-col space-y-3 font-sans text-slate-800", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-slate-50 p-3 border border-slate-200", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center gap-2.5", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex flex-col space-y-3 font-sans text-slate-800", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-slate-50 p-3 border border-slate-200", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center gap-2.5", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
             "div",
             {
               className: `flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${hasUpdate ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-blue-50 text-blue-600 border-blue-200"}`,
-              children: hasUpdate ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Sparkles, { className: "h-5 w-5" }) : /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(CircleCheck, { className: "h-5 w-5" })
+              children: hasUpdate ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Sparkles, { className: "h-5 w-5" }) : /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(CircleCheck, { className: "h-5 w-5" })
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "text-xs font-bold text-slate-900", children: hasUpdate ? "\u0110\xE3 C\xF3 Phi\xEAn B\u1EA3n M\u1EDBi!" : "B\u1EA3n \u0110ang D\xF9ng M\u1EDBi Nh\u1EA5t" }),
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "text-[11px] text-slate-500 font-mono", children: hasUpdate ? `v${updateInfo.currentVersion} \u2794 v${updateInfo.latestVersion}` : `Phi\xEAn b\u1EA3n hi\u1EC7n t\u1EA1i v${updateInfo.currentVersion}` })
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "text-xs font-bold text-slate-900", children: hasUpdate ? "\u0110\xE3 C\xF3 Phi\xEAn B\u1EA3n M\u1EDBi!" : "B\u1EA3n \u0110ang D\xF9ng M\u1EDBi Nh\u1EA5t" }),
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "text-[11px] text-slate-500 font-mono", children: hasUpdate ? `v${updateInfo.currentVersion} \u2794 v${updateInfo.latestVersion}` : `Phi\xEAn b\u1EA3n hi\u1EC7n t\u1EA1i v${updateInfo.currentVersion}` })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
           Badge,
           {
             variant: hasUpdate ? "default" : "secondary",
@@ -25936,16 +21922,16 @@
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "rounded-xl border border-emerald-200 bg-emerald-50/60 p-3 space-y-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between border-b border-emerald-200/60 pb-1.5", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "flex items-center gap-1.5", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("span", { className: "font-bold text-xs text-emerald-800", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "rounded-xl border border-emerald-200 bg-emerald-50/60 p-3 space-y-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between border-b border-emerald-200/60 pb-1.5", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "flex items-center gap-1.5", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("span", { className: "font-bold text-xs text-emerald-800", children: [
             "\u2728 ",
             updateInfo.releaseName || `Release v${updateInfo.latestVersion}`
           ] }) }),
-          updateInfo.publishedAt && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-[10px] text-slate-500", children: new Date(updateInfo.publishedAt).toLocaleDateString("vi-VN") })
+          updateInfo.publishedAt && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "text-[10px] text-slate-500", children: new Date(updateInfo.publishedAt).toLocaleDateString("vi-VN") })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "max-h-[140px] overflow-y-auto pr-1 text-[11px] text-slate-700 whitespace-pre-wrap leading-relaxed font-sans", children: updateInfo.releaseNotes || "Kh\xF4ng c\xF3 nh\u1EADt k\xFD chi ti\u1EBFt cho b\u1EA3n ph\xE1t h\xE0nh n\xE0y." }),
-        hasUpdate && updateInfo.downloadUrl && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "pt-1", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "max-h-[140px] overflow-y-auto pr-1 text-[11px] text-slate-700 whitespace-pre-wrap leading-relaxed font-sans", children: updateInfo.releaseNotes || "Kh\xF4ng c\xF3 nh\u1EADt k\xFD chi ti\u1EBFt cho b\u1EA3n ph\xE1t h\xE0nh n\xE0y." }),
+        hasUpdate && updateInfo.downloadUrl && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "pt-1", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
           Button,
           {
             variant: "default",
@@ -25957,31 +21943,31 @@
               }
             },
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Download, { className: "h-3.5 w-3.5 mr-1.5" }),
+              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Download, { className: "h-3.5 w-3.5 mr-1.5" }),
               "T\u1EA3i B\u1EA3n C\u1EADp Nh\u1EADt v",
               updateInfo.latestVersion
             ]
           }
         ) })
       ] }),
-      older.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center gap-1 text-[11px] font-semibold text-slate-600 px-1 pt-1", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(RotateCcwClock, { className: "h-3.5 w-3.5" }),
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "L\u1ECBch s\u1EED c\xE1c phi\xEAn b\u1EA3n tr\u01B0\u1EDBc:" })
+      older.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "space-y-1", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center gap-1 text-[11px] font-semibold text-slate-600 px-1 pt-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(RotateCcwClock, { className: "h-3.5 w-3.5" }),
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: "L\u1ECBch s\u1EED c\xE1c phi\xEAn b\u1EA3n tr\u01B0\u1EDBc:" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Accordion3, { type: "single", collapsible: true, className: "w-full space-y-1", children: older.map((rel, idx) => /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Accordion3, { type: "single", collapsible: true, className: "w-full space-y-1", children: older.map((rel, idx) => /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
           AccordionItem3,
           {
             value: rel.tag || String(idx),
             className: "rounded-lg border border-slate-200 bg-white px-2.5 py-0 text-xs shadow-xs",
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(AccordionTrigger3, { className: "py-2 hover:no-underline text-xs text-slate-800 font-medium", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center gap-2", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-mono text-emerald-700 font-bold border border-slate-200", children: rel.tag }),
-                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "truncate max-w-[200px]", children: rel.name || rel.tag })
+              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(AccordionTrigger3, { className: "py-2 hover:no-underline text-xs text-slate-800 font-medium", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-mono text-emerald-700 font-bold border border-slate-200", children: rel.tag }),
+                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "truncate max-w-[200px]", children: rel.name || rel.tag })
               ] }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(AccordionContent3, { className: "pb-2.5 pt-1 text-[11px] text-slate-600 whitespace-pre-wrap leading-relaxed border-t border-slate-100 mt-1", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { children: rel.body || "Kh\xF4ng c\xF3 ghi ch\xFA." }),
-                rel.htmlUrl && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "mt-2 pt-1 border-t border-slate-100", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
+              /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(AccordionContent3, { className: "pb-2.5 pt-1 text-[11px] text-slate-600 whitespace-pre-wrap leading-relaxed border-t border-slate-100 mt-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { children: rel.body || "Kh\xF4ng c\xF3 ghi ch\xFA." }),
+                rel.htmlUrl && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "mt-2 pt-1 border-t border-slate-100", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
                   "a",
                   {
                     href: rel.htmlUrl,
@@ -25989,7 +21975,7 @@
                     rel: "noreferrer",
                     className: "inline-flex items-center gap-1 text-[10px] text-emerald-700 hover:underline font-medium",
                     children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(ExternalLink, { className: "h-3 w-3" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ExternalLink, { className: "h-3 w-3" }),
                       "Xem tr\xEAn GitHub"
                     ]
                   }
@@ -26000,7 +21986,7 @@
           rel.tag || idx
         )) })
       ] }),
-      onClose && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "pt-1", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+      onClose && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "pt-1", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
         Button,
         {
           variant: "outline",
@@ -26100,37 +22086,37 @@
   }
 
   // src/content/ui/HudApp.tsx
-  var import_jsx_runtime31 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime26 = __toESM(require_jsx_runtime(), 1);
   function HudApp({
-    shadowRoot,
+    shadowRoot: _shadowRoot,
     initialConfig,
     onSaveConfig,
     onToggleAll,
     onToggleTab
   }) {
-    const [config2, setConfig] = (0, import_react5.useState)(initialConfig);
-    const [snap, setSnap] = (0, import_react5.useState)(null);
-    const [lastAction, setLastAction] = (0, import_react5.useState)("\u0110ang ch\u1EDD l\u1EC7nh...");
-    const [isMinimized, setIsMinimized] = (0, import_react5.useState)(false);
-    const [isOrderDrawerOpen, setIsOrderDrawerOpen] = (0, import_react5.useState)(false);
-    const [version, setVersion] = (0, import_react5.useState)("1.0.0");
-    const [isCheckingUpdate, setIsCheckingUpdate] = (0, import_react5.useState)(false);
-    const [updateInfo, setUpdateInfo] = (0, import_react5.useState)(null);
-    const [isUpdateModalOpen, setIsUpdateModalOpen] = (0, import_react5.useState)(false);
-    const [position, setPosition] = (0, import_react5.useState)(() => ({
+    const [config2, setConfig] = (0, import_react4.useState)(initialConfig);
+    const [snap, setSnap] = (0, import_react4.useState)(null);
+    const [lastAction, setLastAction] = (0, import_react4.useState)("\u0110ang ch\u1EDD l\u1EC7nh...");
+    const [isMinimized, setIsMinimized] = (0, import_react4.useState)(false);
+    const [isOrderDrawerOpen, setIsOrderDrawerOpen] = (0, import_react4.useState)(false);
+    const [version, setVersion] = (0, import_react4.useState)("1.0.0");
+    const [isCheckingUpdate, setIsCheckingUpdate] = (0, import_react4.useState)(false);
+    const [updateInfo, setUpdateInfo] = (0, import_react4.useState)(null);
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = (0, import_react4.useState)(false);
+    const [position, setPosition] = (0, import_react4.useState)(() => ({
       x: Math.max(10, window.innerWidth - 400),
       y: 70
     }));
-    const isDraggingRef = (0, import_react5.useRef)(false);
-    const dragOffsetRef = (0, import_react5.useRef)({ x: 0, y: 0 });
-    (0, import_react5.useEffect)(() => {
+    const isDraggingRef = (0, import_react4.useRef)(false);
+    const dragOffsetRef = (0, import_react4.useRef)({ x: 0, y: 0 });
+    (0, import_react4.useEffect)(() => {
       try {
         const v = chrome.runtime.getManifest().version;
         if (v) setVersion(v);
       } catch {
       }
     }, []);
-    (0, import_react5.useEffect)(() => {
+    (0, import_react4.useEffect)(() => {
       const handleSnapUpdate = (e) => {
         setSnap(e.detail);
       };
@@ -26149,7 +22135,7 @@
         window.removeEventListener("__NTG_CONFIG_UPDATE__", handleConfigExternalUpdate);
       };
     }, []);
-    const handleUpdateConfig = (0, import_react5.useCallback)(
+    const handleUpdateConfig = (0, import_react4.useCallback)(
       (updater) => {
         setConfig((prev) => {
           const next = updater(prev);
@@ -26205,7 +22191,7 @@
     if (!config2.panelVisible) {
       return null;
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(
       "div",
       {
         style: {
@@ -26214,7 +22200,7 @@
         },
         className: "fixed left-0 top-0 z-[2147483647] w-[385px] max-h-[calc(100vh-60px)] flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 shadow-2xl bg-white/98 text-slate-800 backdrop-blur-xl font-sans select-none ring-1 ring-black/5",
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
             HudHeader,
             {
               version,
@@ -26226,9 +22212,9 @@
               onMouseDownDrag: handleMouseDownDrag
             }
           ),
-          !isMinimized && /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "flex flex-col flex-1 min-h-0 overflow-hidden", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(HudStats, { snap }),
-            /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+          !isMinimized && /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex flex-col flex-1 min-h-0 overflow-hidden", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(HudStats, { snap }),
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
               HudControls,
               {
                 config: config2,
@@ -26240,16 +22226,16 @@
                 onToggleOrderDrawer: () => setIsOrderDrawerOpen(!isOrderDrawerOpen)
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "flex items-center gap-2 border-b border-slate-200/90 bg-emerald-50/80 px-3 py-1.5 text-[11px] font-mono text-emerald-800 shrink-0", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("span", { className: "relative flex h-2 w-2 shrink-0", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("span", { className: "absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" }),
-                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("span", { className: "relative inline-flex h-2 w-2 rounded-full bg-emerald-600" })
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex items-center gap-2 border-b border-slate-200/90 bg-emerald-50/80 px-3 py-1.5 text-[11px] font-mono text-emerald-800 shrink-0", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("span", { className: "relative flex h-2 w-2 shrink-0", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" }),
+                /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "relative inline-flex h-2 w-2 rounded-full bg-emerald-600" })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("span", { className: "truncate", children: lastAction })
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "truncate", children: lastAction })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(Tabs3, { value: config2.activeTab, onValueChange: handleTabChange, className: "w-full flex-1 flex flex-col min-h-0 p-2.5 overflow-hidden", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(TabsList3, { className: "grid w-full grid-cols-4 h-8 text-[11px] rounded-xl p-1 bg-slate-100 border border-slate-200/80 text-slate-600 shrink-0", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(Tabs3, { value: config2.activeTab, onValueChange: handleTabChange, className: "w-full flex-1 flex flex-col min-h-0 p-2.5 overflow-hidden", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(TabsList3, { className: "grid w-full grid-cols-4 h-8 text-[11px] rounded-xl p-1 bg-slate-100 border border-slate-200/80 text-slate-600 shrink-0", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
                   TabsTrigger3,
                   {
                     value: "farm",
@@ -26257,7 +22243,7 @@
                     children: "\u{1F33E} N\xF4ng tr\u1EA1i"
                   }
                 ),
-                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
                   TabsTrigger3,
                   {
                     value: "benDo",
@@ -26265,7 +22251,7 @@
                     children: "\u{1F6F6} B\u1EBFn \u0111\xF2"
                   }
                 ),
-                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
                   TabsTrigger3,
                   {
                     value: "sea",
@@ -26273,7 +22259,7 @@
                     children: "\u{1F3D6}\uFE0F Bi\u1EC3n"
                   }
                 ),
-                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
                   TabsTrigger3,
                   {
                     value: "city",
@@ -26282,28 +22268,21 @@
                   }
                 )
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "mt-2.5 flex-1 overflow-y-auto pr-1 min-h-0", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(TabsContent3, { value: "farm", className: "m-0", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(FarmTabContent, { config: config2, onUpdateConfig: handleUpdateConfig }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(TabsContent3, { value: "benDo", className: "m-0", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(WharfTabContent, { config: config2, onUpdateConfig: handleUpdateConfig }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(TabsContent3, { value: "sea", className: "m-0", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(SeaTabContent, { config: config2, onUpdateConfig: handleUpdateConfig }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(TabsContent3, { value: "city", className: "m-0", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(CityTabContent, { config: config2, onUpdateConfig: handleUpdateConfig }) })
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "mt-2.5 flex-1 overflow-y-auto pr-1 min-h-0", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(TabsContent3, { value: "farm", className: "m-0", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(FarmTabContent, { config: config2, onUpdateConfig: handleUpdateConfig }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(TabsContent3, { value: "benDo", className: "m-0", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(WharfTabContent, { config: config2, onUpdateConfig: handleUpdateConfig }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(TabsContent3, { value: "sea", className: "m-0", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(SeaTabContent, { config: config2, onUpdateConfig: handleUpdateConfig }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(TabsContent3, { value: "city", className: "m-0", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(CityTabContent, { config: config2, onUpdateConfig: handleUpdateConfig }) })
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Dialog2, { open: isUpdateModalOpen, onOpenChange: setIsUpdateModalOpen, children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
-            DialogContent3,
+          isUpdateModalOpen && /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 pointer-events-auto", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "relative w-full max-w-[360px] bg-white border border-slate-200 text-slate-900 p-4 rounded-2xl shadow-2xl animate-in fade-in-0 zoom-in-95 duration-150", children: updateInfo && /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
+            ReleaseChangelogView,
             {
-              container: shadowRoot,
-              className: "max-w-[360px] bg-white border border-slate-200 text-slate-900 p-4 rounded-2xl shadow-2xl",
-              children: updateInfo && /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
-                ReleaseChangelogView,
-                {
-                  updateInfo,
-                  onClose: () => setIsUpdateModalOpen(false)
-                }
-              )
+              updateInfo,
+              onClose: () => setIsUpdateModalOpen(false)
             }
-          ) })
+          ) }) })
         ]
       }
     );
@@ -26311,10 +22290,10 @@
 
   // src/styles/tailwind.compiled.css
   var tailwind_compiled_default = `/*! tailwindcss v4.3.3 | MIT License | https://tailwindcss.com */
-@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-scale-x:1;--tw-scale-y:1;--tw-scale-z:1;--tw-rotate-x:initial;--tw-rotate-y:initial;--tw-rotate-z:initial;--tw-skew-x:initial;--tw-skew-y:initial;--tw-pan-x:initial;--tw-pan-y:initial;--tw-pinch-zoom:initial;--tw-space-y-reverse:0;--tw-space-x-reverse:0;--tw-divide-x-reverse:0;--tw-border-style:solid;--tw-divide-y-reverse:0;--tw-leading:initial;--tw-font-weight:initial;--tw-tracking:initial;--tw-ordinal:initial;--tw-slashed-zero:initial;--tw-numeric-figure:initial;--tw-numeric-spacing:initial;--tw-numeric-fraction:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid;--tw-blur:initial;--tw-brightness:initial;--tw-contrast:initial;--tw-grayscale:initial;--tw-hue-rotate:initial;--tw-invert:initial;--tw-opacity:initial;--tw-saturate:initial;--tw-sepia:initial;--tw-drop-shadow:initial;--tw-drop-shadow-color:initial;--tw-drop-shadow-alpha:100%;--tw-drop-shadow-size:initial;--tw-backdrop-blur:initial;--tw-backdrop-brightness:initial;--tw-backdrop-contrast:initial;--tw-backdrop-grayscale:initial;--tw-backdrop-hue-rotate:initial;--tw-backdrop-invert:initial;--tw-backdrop-opacity:initial;--tw-backdrop-saturate:initial;--tw-backdrop-sepia:initial;--tw-duration:initial;--tw-ease:initial;--tw-content:""}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-red-50:oklch(97.1% .013 17.38);--color-red-200:oklch(88.5% .062 18.334);--color-red-300:oklch(80.8% .114 19.571);--color-red-400:oklch(70.4% .191 22.216);--color-red-500:oklch(63.7% .237 25.331);--color-red-600:oklch(57.7% .245 27.325);--color-red-700:oklch(50.5% .213 27.518);--color-red-900:oklch(39.6% .141 25.723);--color-red-950:oklch(25.8% .092 26.042);--color-orange-300:oklch(83.7% .128 66.29);--color-orange-700:oklch(55.3% .195 38.402);--color-amber-50:oklch(98.7% .022 95.277);--color-amber-200:oklch(92.4% .12 95.746);--color-amber-300:oklch(87.9% .169 91.605);--color-amber-400:oklch(82.8% .189 84.429);--color-amber-500:oklch(76.9% .188 70.08);--color-amber-600:oklch(66.6% .179 58.318);--color-amber-700:oklch(55.5% .163 48.998);--color-amber-800:oklch(47.3% .137 46.201);--color-amber-950:oklch(27.9% .077 45.635);--color-yellow-400:oklch(85.2% .199 91.936);--color-emerald-50:oklch(97.9% .021 166.113);--color-emerald-200:oklch(90.5% .093 164.15);--color-emerald-300:oklch(84.5% .143 164.978);--color-emerald-400:oklch(76.5% .177 163.223);--color-emerald-500:oklch(69.6% .17 162.48);--color-emerald-600:oklch(59.6% .145 163.225);--color-emerald-700:oklch(50.8% .118 165.612);--color-emerald-800:oklch(43.2% .095 166.913);--color-emerald-900:oklch(37.8% .077 168.94);--color-emerald-950:oklch(26.2% .051 172.552);--color-cyan-50:oklch(98.4% .019 200.873);--color-cyan-200:oklch(91.7% .08 205.041);--color-cyan-300:oklch(86.5% .127 207.078);--color-cyan-500:oklch(71.5% .143 215.221);--color-cyan-900:oklch(39.8% .07 227.392);--color-cyan-950:oklch(30.2% .056 229.695);--color-sky-700:oklch(50% .134 242.749);--color-blue-50:oklch(97% .014 254.604);--color-blue-200:oklch(88.2% .059 254.128);--color-blue-300:oklch(80.9% .105 251.813);--color-blue-400:oklch(70.7% .165 254.624);--color-blue-500:oklch(62.3% .214 259.815);--color-blue-600:oklch(54.6% .245 262.881);--color-blue-900:oklch(37.9% .146 265.522);--color-blue-950:oklch(28.2% .091 267.935);--color-indigo-500:oklch(58.5% .233 277.117);--color-purple-50:oklch(97.7% .014 308.299);--color-purple-200:oklch(90.2% .063 306.703);--color-purple-300:oklch(82.7% .119 306.383);--color-purple-400:oklch(71.4% .203 305.504);--color-purple-500:oklch(62.7% .265 303.9);--color-purple-600:oklch(55.8% .288 302.321);--color-purple-900:oklch(38.1% .176 304.987);--color-purple-950:oklch(29.1% .149 302.717);--color-slate-50:oklch(98.4% .003 247.858);--color-slate-100:oklch(96.8% .007 247.896);--color-slate-200:oklch(92.9% .013 255.508);--color-slate-300:oklch(86.9% .022 252.894);--color-slate-400:oklch(70.4% .04 256.788);--color-slate-500:oklch(55.4% .046 257.417);--color-slate-600:oklch(44.6% .043 257.281);--color-slate-700:oklch(37.2% .044 257.287);--color-slate-800:oklch(27.9% .041 260.031);--color-slate-900:oklch(20.8% .042 265.755);--color-slate-950:oklch(12.9% .042 264.695);--color-gray-100:oklch(96.7% .003 264.542);--color-gray-200:oklch(92.8% .006 264.531);--color-gray-600:oklch(44.6% .03 256.802);--color-gray-900:oklch(21% .034 264.665);--color-zinc-100:oklch(96.7% .001 286.375);--color-zinc-200:oklch(92% .004 286.32);--color-zinc-700:oklch(37% .013 285.805);--color-zinc-900:oklch(21% .006 285.885);--color-zinc-950:oklch(14.1% .005 285.823);--color-black:#000;--color-white:#fff;--spacing:.25rem;--container-lg:32rem;--container-4xl:56rem;--container-5xl:64rem;--container-7xl:80rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-base:1rem;--text-base--line-height:calc(1.5 / 1);--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--text-4xl:2.25rem;--text-4xl--line-height:calc(2.5 / 2.25);--text-5xl:3rem;--text-5xl--line-height:1;--text-6xl:3.75rem;--text-6xl--line-height:1;--text-7xl:4.5rem;--text-7xl--line-height:1;--font-weight-normal:400;--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--tracking-tighter:-.05em;--tracking-tight:-.025em;--tracking-wide:.025em;--tracking-wider:.05em;--leading-relaxed:1.625;--radius-xs:.125rem;--ease-in:cubic-bezier(.4, 0, 1, 1);--ease-out:cubic-bezier(0, 0, .2, 1);--ease-in-out:cubic-bezier(.4, 0, .2, 1);--animate-spin:spin 1s linear infinite;--animate-ping:ping 1s cubic-bezier(0, 0, .2, 1) infinite;--animate-pulse:pulse 2s cubic-bezier(.4, 0, .6, 1) infinite;--animate-bounce:bounce 1s infinite;--blur-xs:4px;--blur-md:12px;--blur-xl:24px;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono);--color-primary:var(--primary)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.\\@container\\/card{container:card/inline-size}.\\@container\\/card-header{container:card-header/inline-size}.\\@container{container-type:inline-size}.pointer-events-none{pointer-events:none}.collapse{visibility:collapse}.invisible{visibility:hidden}.visible{visibility:visible}.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.not-sr-only{clip-path:none;white-space:normal;width:auto;height:auto;margin:0;padding:0;position:static;overflow:visible}.absolute{position:absolute}.fixed{position:fixed}.relative{position:relative}.static{position:static}.sticky{position:sticky}.-inset-1{inset:calc(var(--spacing) * -1)}.inset-0{inset:0}.-top-0{top:0}.-top-0\\.5{top:calc(var(--spacing) * -.5)}.top-0{top:0}.top-3{top:calc(var(--spacing) * 3)}.top-4{top:calc(var(--spacing) * 4)}.top-\\[50\\%\\]{top:50%}.-right-0{right:0}.-right-0\\.5{right:calc(var(--spacing) * -.5)}.right-3{right:calc(var(--spacing) * 3)}.right-4{right:calc(var(--spacing) * 4)}.left-0{left:0}.left-\\[50\\%\\]{left:50%}.isolate{isolation:isolate}.isolation-auto{isolation:auto}.z-10{z-index:10}.z-50{z-index:50}.z-\\[60\\]{z-index:60}.z-\\[2147483647\\]{z-index:2147483647}.col-start-2{grid-column-start:2}.row-span-2{grid-row:span 2/span 2}.row-start-1{grid-row-start:1}.\\!container{width:100%!important}@media (min-width:40rem){.\\!container{max-width:40rem!important}}@media (min-width:48rem){.\\!container{max-width:48rem!important}}@media (min-width:64rem){.\\!container{max-width:64rem!important}}@media (min-width:80rem){.\\!container{max-width:80rem!important}}@media (min-width:96rem){.\\!container{max-width:96rem!important}}.container{width:100%}@media (min-width:40rem){.container{max-width:40rem}}@media (min-width:48rem){.container{max-width:48rem}}@media (min-width:64rem){.container{max-width:64rem}}@media (min-width:80rem){.container{max-width:80rem}}@media (min-width:96rem){.container{max-width:96rem}}.m-0{margin:0}.mx-auto{margin-inline:auto}.my-2{margin-block:calc(var(--spacing) * 2)}.mt-1{margin-top:var(--spacing)}.mt-1\\.5{margin-top:calc(var(--spacing) * 1.5)}.mt-2{margin-top:calc(var(--spacing) * 2)}.mt-2\\.5{margin-top:calc(var(--spacing) * 2.5)}.mr-0{margin-right:0}.mr-1{margin-right:var(--spacing)}.mr-1\\.5{margin-right:calc(var(--spacing) * 1.5)}.mb-1{margin-bottom:var(--spacing)}.ml-0{margin-left:0}.ml-0\\.5{margin-left:calc(var(--spacing) * .5)}.ml-2{margin-left:calc(var(--spacing) * 2)}.block{display:block}.contents{display:contents}.flex{display:flex}.flow-root{display:flow-root}.grid{display:grid}.hidden{display:none}.inline{display:inline}.inline-block{display:inline-block}.inline-flex{display:inline-flex}.inline-grid{display:inline-grid}.inline-table{display:inline-table}.list-item{display:list-item}.table{display:table}.table-caption{display:table-caption}.table-cell{display:table-cell}.table-column{display:table-column}.table-column-group{display:table-column-group}.table-footer-group{display:table-footer-group}.table-header-group{display:table-header-group}.table-row{display:table-row}.table-row-group{display:table-row-group}.size-4{width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.size-6{width:calc(var(--spacing) * 6);height:calc(var(--spacing) * 6)}.size-8{width:calc(var(--spacing) * 8);height:calc(var(--spacing) * 8)}.size-9{width:calc(var(--spacing) * 9);height:calc(var(--spacing) * 9)}.size-10{width:calc(var(--spacing) * 10);height:calc(var(--spacing) * 10)}.h-1{height:var(--spacing)}.h-2{height:calc(var(--spacing) * 2)}.h-2\\.5{height:calc(var(--spacing) * 2.5)}.h-3{height:calc(var(--spacing) * 3)}.h-3\\.5{height:calc(var(--spacing) * 3.5)}.h-4{height:calc(var(--spacing) * 4)}.h-4\\.5{height:calc(var(--spacing) * 4.5)}.h-5{height:calc(var(--spacing) * 5)}.h-6{height:calc(var(--spacing) * 6)}.h-7{height:calc(var(--spacing) * 7)}.h-8{height:calc(var(--spacing) * 8)}.h-8\\.5{height:calc(var(--spacing) * 8.5)}.h-9{height:calc(var(--spacing) * 9)}.h-10{height:calc(var(--spacing) * 10)}.h-11{height:calc(var(--spacing) * 11)}.h-20{height:calc(var(--spacing) * 20)}.h-\\[1-9\\]{height:1-9}.h-\\[100dvh\\]{height:100dvh}.h-\\[calc\\(100\\%-1px\\)\\]{height:calc(100% - 1px)}.h-full{height:100%}.h-screen{height:100vh}.max-h-\\[140px\\]{max-height:140px}.max-h-\\[380px\\]{max-height:380px}.max-h-\\[calc\\(100vh-60px\\)\\]{max-height:calc(100vh - 60px)}.min-h-0{min-height:0}.min-h-\\[100dvh\\]{min-height:100dvh}.w-2{width:calc(var(--spacing) * 2)}.w-2\\.5{width:calc(var(--spacing) * 2.5)}.w-3{width:calc(var(--spacing) * 3)}.w-3\\.5{width:calc(var(--spacing) * 3.5)}.w-4{width:calc(var(--spacing) * 4)}.w-4\\.5{width:calc(var(--spacing) * 4.5)}.w-5{width:calc(var(--spacing) * 5)}.w-6{width:calc(var(--spacing) * 6)}.w-7{width:calc(var(--spacing) * 7)}.w-8{width:calc(var(--spacing) * 8)}.w-8\\.5{width:calc(var(--spacing) * 8.5)}.w-9{width:calc(var(--spacing) * 9)}.w-10{width:calc(var(--spacing) * 10)}.w-11{width:calc(var(--spacing) * 11)}.w-14{width:calc(var(--spacing) * 14)}.w-16{width:calc(var(--spacing) * 16)}.w-20{width:calc(var(--spacing) * 20)}.w-\\[320px\\]{width:320px}.w-\\[360px\\]{width:360px}.w-\\[385px\\]{width:385px}.w-\\[calc\\(33\\%-1rem\\)\\]{width:calc(33% - 1rem)}.w-fit{width:fit-content}.w-full{width:100%}.max-w-4xl{max-width:var(--container-4xl)}.max-w-5xl{max-width:var(--container-5xl)}.max-w-7xl{max-width:var(--container-7xl)}.max-w-\\[65ch\\]{max-width:65ch}.max-w-\\[200px\\]{max-width:200px}.max-w-\\[270px\\]{max-width:270px}.max-w-\\[360px\\]{max-width:360px}.max-w-\\[1400px\\]{max-width:1400px}.max-w-\\[calc\\(100\\%-2rem\\)\\]{max-width:calc(100% - 2rem)}.max-w-lg{max-width:var(--container-lg)}.max-w-prose{max-width:65ch}.flex-1{flex:1}.shrink{flex-shrink:1}.shrink-0{flex-shrink:0}.grow{flex-grow:1}.border-collapse{border-collapse:collapse}.translate-x-\\[-50\\%\\]{--tw-translate-x:-50%;translate:var(--tw-translate-x) var(--tw-translate-y)}.-translate-y-\\[1px\\]{--tw-translate-y:calc(1px * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-y-0{--tw-translate-y:0px;translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-y-0\\.5{--tw-translate-y:calc(var(--spacing) * .5);translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-y-\\[-50\\%\\]{--tw-translate-y:-50%;translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-none{translate:none}.scale-3d{scale:var(--tw-scale-x) var(--tw-scale-y) var(--tw-scale-z)}.scale-\\[0\\.98\\]{scale:.98}.transform{transform:var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,)}.animate-bounce{animation:var(--animate-bounce)}.animate-ping{animation:var(--animate-ping)}.animate-pulse{animation:var(--animate-pulse)}.animate-spin{animation:var(--animate-spin)}.cursor-move{cursor:move}.cursor-pointer{cursor:pointer}.touch-pinch-zoom{--tw-pinch-zoom:pinch-zoom;touch-action:var(--tw-pan-x,) var(--tw-pan-y,) var(--tw-pinch-zoom,)}.touch-none{touch-action:none}.resize{resize:both}.auto-rows-min{grid-auto-rows:min-content}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.grid-cols-\\[auto_1fr\\]{grid-template-columns:auto 1fr}.grid-cols-\\[repeat\\(auto-fit\\,minmax\\(250px\\,1fr\\)\\)\\]{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}.grid-rows-2{grid-template-rows:repeat(2,minmax(0,1fr))}.grid-rows-\\[auto_auto\\]{grid-template-rows:auto auto}.flex-col{flex-direction:column}.flex-col-reverse{flex-direction:column-reverse}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.items-start{align-items:flex-start}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.justify-end{justify-content:flex-end}.gap-0{gap:0}.gap-0\\.5{gap:calc(var(--spacing) * .5)}.gap-1{gap:var(--spacing)}.gap-1\\.5{gap:calc(var(--spacing) * 1.5)}.gap-2{gap:calc(var(--spacing) * 2)}.gap-2\\.5{gap:calc(var(--spacing) * 2.5)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}.gap-6{gap:calc(var(--spacing) * 6)}:where(.space-y-1>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(var(--spacing) * var(--tw-space-y-reverse));margin-block-end:calc(var(--spacing) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-1\\.5>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 1.5) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 1.5) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-2>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-2\\.5>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 2.5) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 2.5) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-3>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-reverse>:not(:last-child)){--tw-space-y-reverse:1}:where(.space-x-reverse>:not(:last-child)){--tw-space-x-reverse:1}:where(.divide-x>:not(:last-child)){--tw-divide-x-reverse:0;border-inline-style:var(--tw-border-style);border-inline-start-width:calc(1px * var(--tw-divide-x-reverse));border-inline-end-width:calc(1px * calc(1 - var(--tw-divide-x-reverse)))}:where(.divide-y>:not(:last-child)){--tw-divide-y-reverse:0;border-bottom-style:var(--tw-border-style);border-top-style:var(--tw-border-style);border-top-width:calc(1px * var(--tw-divide-y-reverse));border-bottom-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)))}:where(.divide-y-reverse>:not(:last-child)){--tw-divide-y-reverse:1}.self-end{align-self:flex-end}.self-start{align-self:flex-start}.justify-self-end{justify-self:flex-end}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:calc(var(--radius) + 10px)}.rounded-full{border-radius:3.40282e38px}.rounded-lg{border-radius:var(--radius)}.rounded-md{border-radius:calc(var(--radius) - 2px)}.rounded-sm{border-radius:calc(var(--radius) - 4px)}.rounded-xl{border-radius:calc(var(--radius) + 6px)}.rounded-xs{border-radius:var(--radius-xs)}.rounded-s{border-start-start-radius:.25rem;border-end-start-radius:.25rem}.rounded-ss{border-start-start-radius:.25rem}.rounded-e{border-start-end-radius:.25rem;border-end-end-radius:.25rem}.rounded-se{border-start-end-radius:.25rem}.rounded-ee{border-end-end-radius:.25rem}.rounded-es{border-end-start-radius:.25rem}.rounded-t{border-top-left-radius:.25rem;border-top-right-radius:.25rem}.rounded-t-2xl{border-top-left-radius:calc(var(--radius) + 10px);border-top-right-radius:calc(var(--radius) + 10px)}.rounded-t-lg{border-top-left-radius:var(--radius);border-top-right-radius:var(--radius)}.rounded-t-xl{border-top-left-radius:calc(var(--radius) + 6px);border-top-right-radius:calc(var(--radius) + 6px)}.rounded-l{border-top-left-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-tl{border-top-left-radius:.25rem}.rounded-r{border-top-right-radius:.25rem;border-bottom-right-radius:.25rem}.rounded-tr{border-top-right-radius:.25rem}.rounded-b{border-bottom-right-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-b-lg{border-bottom-right-radius:var(--radius);border-bottom-left-radius:var(--radius)}.rounded-b-xl{border-bottom-right-radius:calc(var(--radius) + 6px);border-bottom-left-radius:calc(var(--radius) + 6px)}.rounded-br{border-bottom-right-radius:.25rem}.rounded-bl{border-bottom-left-radius:.25rem}.border{border-style:var(--tw-border-style);border-width:1px}.border-2{border-style:var(--tw-border-style);border-width:2px}.border-x{border-inline-style:var(--tw-border-style);border-inline-width:1px}.border-y{border-block-style:var(--tw-border-style);border-block-width:1px}.border-s{border-inline-start-style:var(--tw-border-style);border-inline-start-width:1px}.border-e{border-inline-end-style:var(--tw-border-style);border-inline-end-width:1px}.border-bs{border-block-start-style:var(--tw-border-style);border-block-start-width:1px}.border-be{border-block-end-style:var(--tw-border-style);border-block-end-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-l{border-left-style:var(--tw-border-style);border-left-width:1px}.border-l-2{border-left-style:var(--tw-border-style);border-left-width:2px}.border-amber-200{border-color:var(--color-amber-200)}.border-amber-200\\/80{border-color:#fee685cc}@supports (color:color-mix(in lab, red, red)){.border-amber-200\\/80{border-color:color-mix(in oklab, var(--color-amber-200) 80%, transparent)}}.border-amber-500{border-color:var(--color-amber-500)}.border-amber-500\\/40{border-color:#f99c0066}@supports (color:color-mix(in lab, red, red)){.border-amber-500\\/40{border-color:color-mix(in oklab, var(--color-amber-500) 40%, transparent)}}.border-blue-200{border-color:var(--color-blue-200)}.border-blue-200\\/80{border-color:#bedbffcc}@supports (color:color-mix(in lab, red, red)){.border-blue-200\\/80{border-color:color-mix(in oklab, var(--color-blue-200) 80%, transparent)}}.border-blue-500{border-color:var(--color-blue-500)}.border-border{border-color:var(--border)}.border-cyan-200{border-color:var(--color-cyan-200)}.border-cyan-200\\/80{border-color:#a2f4fdcc}@supports (color:color-mix(in lab, red, red)){.border-cyan-200\\/80{border-color:color-mix(in oklab, var(--color-cyan-200) 80%, transparent)}}.border-cyan-500{border-color:var(--color-cyan-500)}.border-emerald-200{border-color:var(--color-emerald-200)}.border-emerald-200\\/60{border-color:#a4f4cf99}@supports (color:color-mix(in lab, red, red)){.border-emerald-200\\/60{border-color:color-mix(in oklab, var(--color-emerald-200) 60%, transparent)}}.border-emerald-200\\/80{border-color:#a4f4cfcc}@supports (color:color-mix(in lab, red, red)){.border-emerald-200\\/80{border-color:color-mix(in oklab, var(--color-emerald-200) 80%, transparent)}}.border-emerald-300{border-color:var(--color-emerald-300)}.border-emerald-500{border-color:var(--color-emerald-500)}.border-emerald-600{border-color:var(--color-emerald-600)}.border-emerald-600\\/40{border-color:#00976766}@supports (color:color-mix(in lab, red, red)){.border-emerald-600\\/40{border-color:color-mix(in oklab, var(--color-emerald-600) 40%, transparent)}}.border-primary{border-color:var(--primary)}.border-purple-200{border-color:var(--color-purple-200)}.border-purple-200\\/80{border-color:#e9d5ffcc}@supports (color:color-mix(in lab, red, red)){.border-purple-200\\/80{border-color:color-mix(in oklab, var(--color-purple-200) 80%, transparent)}}.border-purple-500{border-color:var(--color-purple-500)}.border-red-200{border-color:var(--color-red-200)}.border-red-500{border-color:var(--color-red-500)}.border-red-600{border-color:var(--color-red-600)}.border-red-600\\/40{border-color:#e4001466}@supports (color:color-mix(in lab, red, red)){.border-red-600\\/40{border-color:color-mix(in oklab, var(--color-red-600) 40%, transparent)}}.border-red-700{border-color:var(--color-red-700)}.border-red-900{border-color:var(--color-red-900)}.border-slate-100{border-color:var(--color-slate-100)}.border-slate-200{border-color:var(--color-slate-200)}.border-slate-200\\/60{border-color:#e2e8f099}@supports (color:color-mix(in lab, red, red)){.border-slate-200\\/60{border-color:color-mix(in oklab, var(--color-slate-200) 60%, transparent)}}.border-slate-200\\/80{border-color:#e2e8f0cc}@supports (color:color-mix(in lab, red, red)){.border-slate-200\\/80{border-color:color-mix(in oklab, var(--color-slate-200) 80%, transparent)}}.border-slate-200\\/90{border-color:#e2e8f0e6}@supports (color:color-mix(in lab, red, red)){.border-slate-200\\/90{border-color:color-mix(in oklab, var(--color-slate-200) 90%, transparent)}}.border-slate-700{border-color:var(--color-slate-700)}.border-slate-800{border-color:var(--color-slate-800)}.border-slate-900{border-color:var(--color-slate-900)}.border-transparent{border-color:#0000}.border-white{border-color:var(--color-white)}.border-white\\/10{border-color:#ffffff1a}@supports (color:color-mix(in lab, red, red)){.border-white\\/10{border-color:color-mix(in oklab, var(--color-white) 10%, transparent)}}.border-zinc-200{border-color:var(--color-zinc-200)}.bg-amber-50{background-color:var(--color-amber-50)}.bg-amber-400{background-color:var(--color-amber-400)}.bg-amber-500{background-color:var(--color-amber-500)}.bg-amber-600{background-color:var(--color-amber-600)}.bg-background{background-color:var(--background)}.bg-black{background-color:var(--color-black)}.bg-black\\/10{background-color:#0000001a}@supports (color:color-mix(in lab, red, red)){.bg-black\\/10{background-color:color-mix(in oklab, var(--color-black) 10%, transparent)}}.bg-black\\/15{background-color:#00000026}@supports (color:color-mix(in lab, red, red)){.bg-black\\/15{background-color:color-mix(in oklab, var(--color-black) 15%, transparent)}}.bg-black\\/60{background-color:#0009}@supports (color:color-mix(in lab, red, red)){.bg-black\\/60{background-color:color-mix(in oklab, var(--color-black) 60%, transparent)}}.bg-blue-50{background-color:var(--color-blue-50)}.bg-blue-500{background-color:var(--color-blue-500)}.bg-blue-600{background-color:var(--color-blue-600)}.bg-blue-950{background-color:var(--color-blue-950)}.bg-border{background-color:var(--border)}.bg-card{background-color:var(--card)}.bg-cyan-50{background-color:var(--color-cyan-50)}.bg-cyan-950{background-color:var(--color-cyan-950)}.bg-destructive{background-color:var(--destructive)}.bg-emerald-50{background-color:var(--color-emerald-50)}.bg-emerald-50\\/60{background-color:#ecfdf599}@supports (color:color-mix(in lab, red, red)){.bg-emerald-50\\/60{background-color:color-mix(in oklab, var(--color-emerald-50) 60%, transparent)}}.bg-emerald-50\\/80{background-color:#ecfdf5cc}@supports (color:color-mix(in lab, red, red)){.bg-emerald-50\\/80{background-color:color-mix(in oklab, var(--color-emerald-50) 80%, transparent)}}.bg-emerald-400{background-color:var(--color-emerald-400)}.bg-emerald-500{background-color:var(--color-emerald-500)}.bg-emerald-600{background-color:var(--color-emerald-600)}.bg-emerald-700{background-color:var(--color-emerald-700)}.bg-emerald-950{background-color:var(--color-emerald-950)}.bg-gray-200{background-color:var(--color-gray-200)}.bg-muted{background-color:var(--muted)}.bg-primary{background-color:var(--primary)}.bg-purple-50{background-color:var(--color-purple-50)}.bg-purple-500{background-color:var(--color-purple-500)}.bg-purple-950{background-color:var(--color-purple-950)}.bg-red-50{background-color:var(--color-red-50)}.bg-red-500{background-color:var(--color-red-500)}.bg-red-600{background-color:var(--color-red-600)}.bg-red-950{background-color:var(--color-red-950)}.bg-secondary{background-color:var(--secondary)}.bg-slate-50{background-color:var(--color-slate-50)}.bg-slate-50\\/60{background-color:#f8fafc99}@supports (color:color-mix(in lab, red, red)){.bg-slate-50\\/60{background-color:color-mix(in oklab, var(--color-slate-50) 60%, transparent)}}.bg-slate-50\\/70{background-color:#f8fafcb3}@supports (color:color-mix(in lab, red, red)){.bg-slate-50\\/70{background-color:color-mix(in oklab, var(--color-slate-50) 70%, transparent)}}.bg-slate-50\\/90{background-color:#f8fafce6}@supports (color:color-mix(in lab, red, red)){.bg-slate-50\\/90{background-color:color-mix(in oklab, var(--color-slate-50) 90%, transparent)}}.bg-slate-100{background-color:var(--color-slate-100)}.bg-slate-200{background-color:var(--color-slate-200)}.bg-slate-200\\/60{background-color:#e2e8f099}@supports (color:color-mix(in lab, red, red)){.bg-slate-200\\/60{background-color:color-mix(in oklab, var(--color-slate-200) 60%, transparent)}}.bg-slate-300{background-color:var(--color-slate-300)}.bg-slate-500{background-color:var(--color-slate-500)}.bg-slate-700{background-color:var(--color-slate-700)}.bg-slate-800{background-color:var(--color-slate-800)}.bg-slate-900{background-color:var(--color-slate-900)}.bg-slate-950{background-color:var(--color-slate-950)}.bg-transparent{background-color:#0000}.bg-white{background-color:var(--color-white)}.bg-white\\/98{background-color:#fffffffa}@supports (color:color-mix(in lab, red, red)){.bg-white\\/98{background-color:color-mix(in oklab, var(--color-white) 98%, transparent)}}.bg-zinc-200{background-color:var(--color-zinc-200)}.bg-zinc-900{background-color:var(--color-zinc-900)}.bg-zinc-950{background-color:var(--color-zinc-950)}.bg-repeat{background-repeat:repeat}.mask-no-clip{-webkit-mask-clip:no-clip;mask-clip:no-clip}.mask-repeat{-webkit-mask-repeat:repeat;mask-repeat:repeat}.fill-current{fill:currentColor}.p-0{padding:0}.p-1{padding:var(--spacing)}.p-2{padding:calc(var(--spacing) * 2)}.p-2\\.5{padding:calc(var(--spacing) * 2.5)}.p-3{padding:calc(var(--spacing) * 3)}.p-3\\.5{padding:calc(var(--spacing) * 3.5)}.p-4{padding:calc(var(--spacing) * 4)}.p-6{padding:calc(var(--spacing) * 6)}.p-\\[3px\\]{padding:3px}.px-1{padding-inline:var(--spacing)}.px-1\\.5{padding-inline:calc(var(--spacing) * 1.5)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-2\\.5{padding-inline:calc(var(--spacing) * 2.5)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-3\\.5{padding-inline:calc(var(--spacing) * 3.5)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-6{padding-inline:calc(var(--spacing) * 6)}.py-0{padding-block:0}.py-0\\.5{padding-block:calc(var(--spacing) * .5)}.py-1{padding-block:var(--spacing)}.py-1\\.5{padding-block:calc(var(--spacing) * 1.5)}.py-2{padding-block:calc(var(--spacing) * 2)}.py-2\\.5{padding-block:calc(var(--spacing) * 2.5)}.py-4{padding-block:calc(var(--spacing) * 4)}.py-6{padding-block:calc(var(--spacing) * 6)}.py-8{padding-block:calc(var(--spacing) * 8)}.py-16{padding-block:calc(var(--spacing) * 16)}.py-24{padding-block:calc(var(--spacing) * 24)}.py-32{padding-block:calc(var(--spacing) * 32)}.py-48{padding-block:calc(var(--spacing) * 48)}.pt-0{padding-top:0}.pt-0\\.5{padding-top:calc(var(--spacing) * .5)}.pt-1{padding-top:var(--spacing)}.pt-2{padding-top:calc(var(--spacing) * 2)}.pt-3{padding-top:calc(var(--spacing) * 3)}.pt-24{padding-top:calc(var(--spacing) * 24)}.pr-1{padding-right:var(--spacing)}.pb-0{padding-bottom:0}.pb-1{padding-bottom:var(--spacing)}.pb-1\\.5{padding-bottom:calc(var(--spacing) * 1.5)}.pb-2{padding-bottom:calc(var(--spacing) * 2)}.pb-2\\.5{padding-bottom:calc(var(--spacing) * 2.5)}.pb-3{padding-bottom:calc(var(--spacing) * 3)}.pb-4{padding-bottom:calc(var(--spacing) * 4)}.pl-2{padding-left:calc(var(--spacing) * 2)}.pl-2\\.5{padding-left:calc(var(--spacing) * 2.5)}.text-center{text-align:center}.text-left{text-align:left}.font-mono{font-family:var(--font-mono)}.font-sans{font-family:var(--font-sans)}.text-4xl{font-size:var(--text-4xl);line-height:var(--tw-leading,var(--text-4xl--line-height))}.text-6xl{font-size:var(--text-6xl);line-height:var(--tw-leading,var(--text-6xl--line-height))}.text-base{font-size:var(--text-base);line-height:var(--tw-leading,var(--text-base--line-height))}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.text-xs{font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}.text-\\[8px\\]{font-size:8px}.text-\\[9px\\]{font-size:9px}.text-\\[10\\.5px\\]{font-size:10.5px}.text-\\[10px\\]{font-size:10px}.text-\\[11px\\]{font-size:11px}.leading-\\[1\\.1\\]{--tw-leading:1.1;line-height:1.1}.leading-\\[1\\],.leading-none{--tw-leading:1;line-height:1}.leading-relaxed{--tw-leading:var(--leading-relaxed);line-height:var(--leading-relaxed)}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.font-normal{--tw-font-weight:var(--font-weight-normal);font-weight:var(--font-weight-normal)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.tracking-\\[0\\.18em\\]{--tw-tracking:.18em;letter-spacing:.18em}.tracking-\\[0\\.22em\\]{--tw-tracking:.22em;letter-spacing:.22em}.tracking-tight{--tw-tracking:var(--tracking-tight);letter-spacing:var(--tracking-tight)}.tracking-tighter{--tw-tracking:var(--tracking-tighter);letter-spacing:var(--tracking-tighter)}.tracking-wide{--tw-tracking:var(--tracking-wide);letter-spacing:var(--tracking-wide)}.tracking-wider{--tw-tracking:var(--tracking-wider);letter-spacing:var(--tracking-wider)}.text-wrap{text-wrap:wrap}.text-clip{text-overflow:clip}.text-ellipsis{text-overflow:ellipsis}.whitespace-nowrap{white-space:nowrap}.whitespace-pre-wrap{white-space:pre-wrap}.text-amber-300{color:var(--color-amber-300)}.text-amber-400{color:var(--color-amber-400)}.text-amber-700{color:var(--color-amber-700)}.text-amber-800{color:var(--color-amber-800)}.text-amber-950{color:var(--color-amber-950)}.text-blue-300{color:var(--color-blue-300)}.text-blue-400{color:var(--color-blue-400)}.text-blue-600{color:var(--color-blue-600)}.text-blue-900{color:var(--color-blue-900)}.text-card-foreground{color:var(--card-foreground)}.text-cyan-300{color:var(--color-cyan-300)}.text-cyan-900{color:var(--color-cyan-900)}.text-destructive-foreground{color:var(--destructive-foreground)}.text-emerald-300{color:var(--color-emerald-300)}.text-emerald-400{color:var(--color-emerald-400)}.text-emerald-600{color:var(--color-emerald-600)}.text-emerald-700{color:var(--color-emerald-700)}.text-emerald-800{color:var(--color-emerald-800)}.text-emerald-900{color:var(--color-emerald-900)}.text-emerald-950{color:var(--color-emerald-950)}.text-foreground,.text-foreground\\/60{color:var(--foreground)}@supports (color:color-mix(in lab, red, red)){.text-foreground\\/60{color:color-mix(in oklab, var(--foreground) 60%, transparent)}}.text-gray-600{color:var(--color-gray-600)}.text-gray-900{color:var(--color-gray-900)}.text-indigo-500{color:var(--color-indigo-500)}.text-muted-foreground{color:var(--muted-foreground)}.text-orange-300{color:var(--color-orange-300)}.text-orange-700{color:var(--color-orange-700)}.text-primary{color:var(--primary)}.text-primary-foreground{color:var(--primary-foreground)}.text-purple-300{color:var(--color-purple-300)}.text-purple-400{color:var(--color-purple-400)}.text-purple-600{color:var(--color-purple-600)}.text-purple-900{color:var(--color-purple-900)}.text-red-300{color:var(--color-red-300)}.text-red-700{color:var(--color-red-700)}.text-red-950{color:var(--color-red-950)}.text-secondary-foreground{color:var(--secondary-foreground)}.text-sky-700{color:var(--color-sky-700)}.text-slate-100{color:var(--color-slate-100)}.text-slate-200{color:var(--color-slate-200)}.text-slate-300{color:var(--color-slate-300)}.text-slate-400{color:var(--color-slate-400)}.text-slate-500{color:var(--color-slate-500)}.text-slate-600{color:var(--color-slate-600)}.text-slate-700{color:var(--color-slate-700)}.text-slate-800{color:var(--color-slate-800)}.text-slate-900{color:var(--color-slate-900)}.text-white{color:var(--color-white)}.text-yellow-400{color:var(--color-yellow-400)}.text-zinc-900{color:var(--color-zinc-900)}.capitalize{text-transform:capitalize}.lowercase{text-transform:lowercase}.normal-case{text-transform:none}.uppercase{text-transform:uppercase}.italic{font-style:italic}.not-italic{font-style:normal}.diagonal-fractions{--tw-numeric-fraction:diagonal-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.lining-nums{--tw-numeric-figure:lining-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.oldstyle-nums{--tw-numeric-figure:oldstyle-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.ordinal{--tw-ordinal:ordinal;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.proportional-nums{--tw-numeric-spacing:proportional-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.slashed-zero{--tw-slashed-zero:slashed-zero;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.stacked-fractions{--tw-numeric-fraction:stacked-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.tabular-nums{--tw-numeric-spacing:tabular-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.normal-nums{font-variant-numeric:normal}.line-through{text-decoration-line:line-through}.no-underline{text-decoration-line:none}.overline{text-decoration-line:overline}.underline{text-decoration-line:underline}.underline-offset-4{text-underline-offset:4px}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.subpixel-antialiased{-webkit-font-smoothing:auto;-moz-osx-font-smoothing:auto}.opacity-0{opacity:0}.opacity-60{opacity:.6}.opacity-70{opacity:.7}.opacity-75{opacity:.75}.shadow{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px var(--tw-shadow-color,#00000040);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-\\[inset_0_1px_0_rgba\\(255\\,255\\,255\\,0\\.1\\)\\]{--tw-shadow:inset 0 1px 0 var(--tw-shadow-color,#ffffff1a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px var(--tw-shadow-color,#0000001a), 0 4px 6px -4px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px var(--tw-shadow-color,#0000001a), 0 2px 4px -2px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px var(--tw-shadow-color,#0000001a), 0 8px 10px -6px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-xs{--tw-shadow:0 1px 2px 0 var(--tw-shadow-color,#0000000d);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-0{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-1{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.inset-ring{--tw-inset-ring-shadow:inset 0 0 0 1px var(--tw-inset-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-emerald-950{--tw-shadow-color:oklch(26.2% .051 172.552)}@supports (color:color-mix(in lab, red, red)){.shadow-emerald-950{--tw-shadow-color:color-mix(in oklab, var(--color-emerald-950) var(--tw-shadow-alpha), transparent)}}.ring-black{--tw-ring-color:var(--color-black)}.ring-black\\/5{--tw-ring-color:#0000000d}@supports (color:color-mix(in lab, red, red)){.ring-black\\/5{--tw-ring-color:color-mix(in oklab, var(--color-black) 5%, transparent)}}.ring-ring,.ring-ring\\/50{--tw-ring-color:var(--ring)}@supports (color:color-mix(in lab, red, red)){.ring-ring\\/50{--tw-ring-color:color-mix(in oklab, var(--ring) 50%, transparent)}}.ring-offset-background{--tw-ring-offset-color:var(--background)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.blur{--tw-blur:blur(8px);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.drop-shadow{--tw-drop-shadow-size:drop-shadow(0 1px 2px var(--tw-drop-shadow-color,#0000001a)) drop-shadow(0 1px 1px var(--tw-drop-shadow-color,#0000000f));--tw-drop-shadow:drop-shadow(0 1px 2px #0000001a) drop-shadow(0 1px 1px #0000000f);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.grayscale{--tw-grayscale:grayscale(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.invert{--tw-invert:invert(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.sepia{--tw-sepia:sepia(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.filter{filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-blur-md{--tw-backdrop-blur:blur(var(--blur-md));-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-blur-xl{--tw-backdrop-blur:blur(var(--blur-xl));-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-blur-xs{--tw-backdrop-blur:blur(var(--blur-xs));-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-grayscale{--tw-backdrop-grayscale:grayscale(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-invert{--tw-backdrop-invert:invert(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-sepia{--tw-backdrop-sepia:sepia(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-filter{-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.transition{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,opacity,box-shadow,transform,translate,scale,rotate,filter,-webkit-backdrop-filter,backdrop-filter,display,content-visibility,overlay,pointer-events;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-\\[color\\,box-shadow\\]{transition-property:color,box-shadow;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-opacity{transition-property:opacity;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-transform{transition-property:transform,translate,scale,rotate;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.duration-150{--tw-duration:.15s;transition-duration:.15s}.duration-200{--tw-duration:.2s;transition-duration:.2s}.ease-in{--tw-ease:var(--ease-in);transition-timing-function:var(--ease-in)}.ease-in-out{--tw-ease:var(--ease-in-out);transition-timing-function:var(--ease-in-out)}.ease-out{--tw-ease:var(--ease-out);transition-timing-function:var(--ease-out)}.outline-none{--tw-outline-style:none;outline-style:none}.select-none{-webkit-user-select:none;user-select:none}.\\[file\\:line\\]{file:line}:where(.divide-x-reverse>:not(:last-child)){--tw-divide-x-reverse:1}.ring-inset{--tw-ring-inset:inset}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:h-9:is(:where(.group\\/tabs)[data-orientation=horizontal] *){height:calc(var(--spacing) * 9)}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:h-fit:is(:where(.group\\/tabs)[data-orientation=vertical] *){height:fit-content}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:w-full:is(:where(.group\\/tabs)[data-orientation=vertical] *){width:100%}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:flex-col:is(:where(.group\\/tabs)[data-orientation=vertical] *){flex-direction:column}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:justify-start:is(:where(.group\\/tabs)[data-orientation=vertical] *){justify-content:flex-start}.group-data-\\[size\\=default\\]\\/switch\\:size-4:is(:where(.group\\/switch)[data-size=default] *){width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.group-data-\\[size\\=sm\\]\\/switch\\:size-3:is(:where(.group\\/switch)[data-size=sm] *){width:calc(var(--spacing) * 3);height:calc(var(--spacing) * 3)}.group-data-\\[variant\\=line\\]\\/tabs-list\\:bg-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *){background-color:#0000}.after\\:absolute:after{content:var(--tw-content);position:absolute}.after\\:bg-foreground:after{content:var(--tw-content);background-color:var(--foreground)}.after\\:opacity-0:after{content:var(--tw-content);opacity:0}.after\\:transition-opacity:after{content:var(--tw-content);transition-property:opacity;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:after\\:inset-x-0:is(:where(.group\\/tabs)[data-orientation=horizontal] *):after{content:var(--tw-content);inset-inline:0}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:after\\:bottom-\\[-5px\\]:is(:where(.group\\/tabs)[data-orientation=horizontal] *):after{content:var(--tw-content);bottom:-5px}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:after\\:h-0\\.5:is(:where(.group\\/tabs)[data-orientation=horizontal] *):after{content:var(--tw-content);height:calc(var(--spacing) * .5)}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:after\\:inset-y-0:is(:where(.group\\/tabs)[data-orientation=vertical] *):after{content:var(--tw-content);inset-block:0}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:after\\:-right-1:is(:where(.group\\/tabs)[data-orientation=vertical] *):after{content:var(--tw-content);right:calc(var(--spacing) * -1)}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:after\\:w-0\\.5:is(:where(.group\\/tabs)[data-orientation=vertical] *):after{content:var(--tw-content);width:calc(var(--spacing) * .5)}.last\\:border-b-0:last-child{border-bottom-style:var(--tw-border-style);border-bottom-width:0}@media (hover:hover){.hover\\:scale-105:hover{--tw-scale-x:105%;--tw-scale-y:105%;--tw-scale-z:105%;scale:var(--tw-scale-x) var(--tw-scale-y)}.hover\\:bg-accent:hover{background-color:var(--accent)}.hover\\:bg-amber-500:hover{background-color:var(--color-amber-500)}.hover\\:bg-destructive\\/90:hover{background-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-destructive\\/90:hover{background-color:color-mix(in oklab, var(--destructive) 90%, transparent)}}.hover\\:bg-emerald-600:hover{background-color:var(--color-emerald-600)}.hover\\:bg-emerald-700:hover{background-color:var(--color-emerald-700)}.hover\\:bg-emerald-800:hover{background-color:var(--color-emerald-800)}.hover\\:bg-primary\\/90:hover{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-primary\\/90:hover{background-color:color-mix(in oklab, var(--primary) 90%, transparent)}}.hover\\:bg-red-600:hover{background-color:var(--color-red-600)}.hover\\:bg-red-700:hover{background-color:var(--color-red-700)}.hover\\:bg-secondary\\/80:hover{background-color:var(--secondary)}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-secondary\\/80:hover{background-color:color-mix(in oklab, var(--secondary) 80%, transparent)}}.hover\\:bg-slate-50:hover{background-color:var(--color-slate-50)}.hover\\:bg-slate-100:hover{background-color:var(--color-slate-100)}.hover\\:bg-slate-200:hover{background-color:var(--color-slate-200)}.hover\\:text-accent-foreground:hover{color:var(--accent-foreground)}.hover\\:text-foreground:hover{color:var(--foreground)}.hover\\:text-slate-900:hover{color:var(--color-slate-900)}.hover\\:no-underline:hover{text-decoration-line:none}.hover\\:underline:hover{text-decoration-line:underline}.hover\\:opacity-100:hover{opacity:1}.hover\\:ring-4:hover{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}}.focus\\:ring-1:focus{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus\\:ring-2:focus{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus\\:ring-emerald-500:focus{--tw-ring-color:var(--color-emerald-500)}.focus\\:ring-ring:focus{--tw-ring-color:var(--ring)}.focus\\:ring-offset-2:focus{--tw-ring-offset-width:2px;--tw-ring-offset-shadow:var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color)}.focus\\:outline-hidden:focus{--tw-outline-style:none;outline-style:none}@media (forced-colors:active){.focus\\:outline-hidden:focus{outline-offset:2px;outline:2px solid #0000}}.focus\\:outline-none:focus{--tw-outline-style:none;outline-style:none}.focus-visible\\:border-ring:focus-visible{border-color:var(--ring)}.focus-visible\\:ring-4:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus-visible\\:ring-\\[3px\\]:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus-visible\\:ring-destructive\\/20:focus-visible{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.focus-visible\\:ring-destructive\\/20:focus-visible{--tw-ring-color:color-mix(in oklab, var(--destructive) 20%, transparent)}}.focus-visible\\:ring-ring\\/50:focus-visible{--tw-ring-color:var(--ring)}@supports (color:color-mix(in lab, red, red)){.focus-visible\\:ring-ring\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--ring) 50%, transparent)}}.focus-visible\\:outline-hidden:focus-visible{--tw-outline-style:none;outline-style:none}@media (forced-colors:active){.focus-visible\\:outline-hidden:focus-visible{outline-offset:2px;outline:2px solid #0000}}.focus-visible\\:outline-1:focus-visible{outline-style:var(--tw-outline-style);outline-width:1px}.focus-visible\\:outline-ring:focus-visible{outline-color:var(--ring)}.active\\:scale-90:active{--tw-scale-x:90%;--tw-scale-y:90%;--tw-scale-z:90%;scale:var(--tw-scale-x) var(--tw-scale-y)}.active\\:scale-\\[0\\.98\\]:active{scale:.98}.disabled\\:pointer-events-none:disabled{pointer-events:none}.disabled\\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\\:opacity-50:disabled{opacity:.5}.has-data-\\[slot\\=card-action\\]\\:grid-cols-\\[1fr_auto\\]:has([data-slot=card-action]){grid-template-columns:1fr auto}.has-\\[\\>svg\\]\\:px-1\\.5:has(>svg){padding-inline:calc(var(--spacing) * 1.5)}.has-\\[\\>svg\\]\\:px-2\\.5:has(>svg){padding-inline:calc(var(--spacing) * 2.5)}.has-\\[\\>svg\\]\\:px-3:has(>svg){padding-inline:calc(var(--spacing) * 3)}.has-\\[\\>svg\\]\\:px-4:has(>svg){padding-inline:calc(var(--spacing) * 4)}.aria-invalid\\:border-destructive[aria-invalid=true]{border-color:var(--destructive)}.aria-invalid\\:ring-destructive\\/20[aria-invalid=true]{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.aria-invalid\\:ring-destructive\\/20[aria-invalid=true]{--tw-ring-color:color-mix(in oklab, var(--destructive) 20%, transparent)}}.data-\\[disabled\\]\\:opacity-50[data-disabled]{opacity:.5}.data-\\[orientation\\=horizontal\\]\\:h-1\\.5[data-orientation=horizontal]{height:calc(var(--spacing) * 1.5)}.data-\\[orientation\\=horizontal\\]\\:h-full[data-orientation=horizontal]{height:100%}.data-\\[orientation\\=horizontal\\]\\:h-px[data-orientation=horizontal]{height:1px}.data-\\[orientation\\=horizontal\\]\\:w-full[data-orientation=horizontal]{width:100%}.data-\\[orientation\\=horizontal\\]\\:flex-col[data-orientation=horizontal]{flex-direction:column}.data-\\[orientation\\=vertical\\]\\:h-full[data-orientation=vertical]{height:100%}.data-\\[orientation\\=vertical\\]\\:min-h-44[data-orientation=vertical]{min-height:calc(var(--spacing) * 44)}.data-\\[orientation\\=vertical\\]\\:w-1\\.5[data-orientation=vertical]{width:calc(var(--spacing) * 1.5)}.data-\\[orientation\\=vertical\\]\\:w-auto[data-orientation=vertical]{width:auto}.data-\\[orientation\\=vertical\\]\\:w-full[data-orientation=vertical]{width:100%}.data-\\[orientation\\=vertical\\]\\:w-px[data-orientation=vertical]{width:1px}.data-\\[orientation\\=vertical\\]\\:flex-col[data-orientation=vertical]{flex-direction:column}.data-\\[size\\=default\\]\\:h-\\[1\\.15rem\\][data-size=default]{height:1.15rem}.data-\\[size\\=default\\]\\:w-8[data-size=default]{width:calc(var(--spacing) * 8)}.data-\\[size\\=sm\\]\\:h-3\\.5[data-size=sm]{height:calc(var(--spacing) * 3.5)}.data-\\[size\\=sm\\]\\:w-6[data-size=sm]{width:calc(var(--spacing) * 6)}.data-\\[state\\=active\\]\\:bg-background[data-state=active]{background-color:var(--background)}.data-\\[state\\=active\\]\\:bg-white[data-state=active]{background-color:var(--color-white)}.data-\\[state\\=active\\]\\:text-emerald-700[data-state=active]{color:var(--color-emerald-700)}.data-\\[state\\=active\\]\\:text-foreground[data-state=active]{color:var(--foreground)}.data-\\[state\\=active\\]\\:shadow-xs[data-state=active]{--tw-shadow:0 1px 2px 0 var(--tw-shadow-color,#0000000d);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.group-data-\\[variant\\=default\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:shadow-sm:is(:where(.group\\/tabs-list)[data-variant=default] *)[data-state=active]{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:bg-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{background-color:#0000}.group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:shadow-none:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{--tw-shadow:0 0 #0000;box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:after\\:opacity-100:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]:after{content:var(--tw-content);opacity:1}.data-\\[state\\=checked\\]\\:translate-x-\\[calc\\(100\\%-2px\\)\\][data-state=checked]{--tw-translate-x:calc(100% - 2px);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=checked\\]\\:bg-primary[data-state=checked]{background-color:var(--primary)}.data-\\[state\\=open\\]\\:bg-accent[data-state=open]{background-color:var(--accent)}.data-\\[state\\=open\\]\\:text-muted-foreground[data-state=open]{color:var(--muted-foreground)}.data-\\[state\\=unchecked\\]\\:translate-x-0[data-state=unchecked]{--tw-translate-x:0px;translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=unchecked\\]\\:bg-input[data-state=unchecked]{background-color:var(--input)}.data-\\[variant\\=line\\]\\:rounded-none[data-variant=line]{border-radius:0}@media (min-width:40rem){.sm\\:max-w-lg{max-width:var(--container-lg)}.sm\\:flex-row{flex-direction:row}.sm\\:justify-end{justify-content:flex-end}.sm\\:text-left{text-align:left}}@media (min-width:48rem){.md\\:w-1\\/2{width:50%}.md\\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\\:text-5xl{font-size:var(--text-5xl);line-height:var(--tw-leading,var(--text-5xl--line-height))}.md\\:text-6xl{font-size:var(--text-6xl);line-height:var(--tw-leading,var(--text-6xl--line-height))}.md\\:text-7xl{font-size:var(--text-7xl);line-height:var(--tw-leading,var(--text-7xl--line-height))}}@media (min-width:64rem){.lg\\:w-1\\/3{width:33.3333%}.lg\\:text-6xl{font-size:var(--text-6xl);line-height:var(--tw-leading,var(--text-6xl--line-height))}}@media (prefers-color-scheme:dark){.dark\\:border-input{border-color:var(--input)}.dark\\:border-zinc-700{border-color:var(--color-zinc-700)}.dark\\:bg-destructive\\/60{background-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-destructive\\/60{background-color:color-mix(in oklab, var(--destructive) 60%, transparent)}}.dark\\:bg-input\\/30{background-color:var(--input)}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-input\\/30{background-color:color-mix(in oklab, var(--input) 30%, transparent)}}.dark\\:bg-zinc-900{background-color:var(--color-zinc-900)}.dark\\:bg-zinc-950{background-color:var(--color-zinc-950)}.dark\\:text-gray-100{color:var(--color-gray-100)}.dark\\:text-muted-foreground{color:var(--muted-foreground)}.dark\\:text-zinc-100{color:var(--color-zinc-100)}@media (hover:hover){.dark\\:hover\\:bg-accent\\/50:hover{background-color:var(--accent)}@supports (color:color-mix(in lab, red, red)){.dark\\:hover\\:bg-accent\\/50:hover{background-color:color-mix(in oklab, var(--accent) 50%, transparent)}}.dark\\:hover\\:bg-input\\/50:hover{background-color:var(--input)}@supports (color:color-mix(in lab, red, red)){.dark\\:hover\\:bg-input\\/50:hover{background-color:color-mix(in oklab, var(--input) 50%, transparent)}}.dark\\:hover\\:text-foreground:hover{color:var(--foreground)}}.dark\\:focus-visible\\:ring-destructive\\/40:focus-visible{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.dark\\:focus-visible\\:ring-destructive\\/40:focus-visible{--tw-ring-color:color-mix(in oklab, var(--destructive) 40%, transparent)}}.dark\\:aria-invalid\\:ring-destructive\\/40[aria-invalid=true]{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.dark\\:aria-invalid\\:ring-destructive\\/40[aria-invalid=true]{--tw-ring-color:color-mix(in oklab, var(--destructive) 40%, transparent)}}.dark\\:data-\\[state\\=active\\]\\:border-input[data-state=active]{border-color:var(--input)}.dark\\:data-\\[state\\=active\\]\\:bg-input\\/30[data-state=active]{background-color:var(--input)}@supports (color:color-mix(in lab, red, red)){.dark\\:data-\\[state\\=active\\]\\:bg-input\\/30[data-state=active]{background-color:color-mix(in oklab, var(--input) 30%, transparent)}}.dark\\:data-\\[state\\=active\\]\\:text-foreground[data-state=active]{color:var(--foreground)}.dark\\:group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:border-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{border-color:#0000}.dark\\:group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:bg-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{background-color:#0000}.dark\\:data-\\[state\\=checked\\]\\:bg-primary-foreground[data-state=checked]{background-color:var(--primary-foreground)}.dark\\:data-\\[state\\=unchecked\\]\\:bg-foreground[data-state=unchecked]{background-color:var(--foreground)}.dark\\:data-\\[state\\=unchecked\\]\\:bg-input\\/80[data-state=unchecked]{background-color:var(--input)}@supports (color:color-mix(in lab, red, red)){.dark\\:data-\\[state\\=unchecked\\]\\:bg-input\\/80[data-state=unchecked]{background-color:color-mix(in oklab, var(--input) 80%, transparent)}}}.\\[\\&_svg\\]\\:pointer-events-none svg{pointer-events:none}.\\[\\&_svg\\]\\:shrink-0 svg{flex-shrink:0}.\\[\\&_svg\\:not\\(\\[class\\*\\=\\'size-\\'\\]\\)\\]\\:size-3 svg:not([class*=size-]){width:calc(var(--spacing) * 3);height:calc(var(--spacing) * 3)}.\\[\\&_svg\\:not\\(\\[class\\*\\=\\'size-\\'\\]\\)\\]\\:size-4 svg:not([class*=size-]){width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.\\[\\.border-b\\]\\:pb-6.border-b{padding-bottom:calc(var(--spacing) * 6)}.\\[\\.border-t\\]\\:pt-6.border-t{padding-top:calc(var(--spacing) * 6)}.\\[\\&\\>svg\\]\\:pointer-events-none>svg{pointer-events:none}.\\[\\&\\>svg\\]\\:size-3>svg{width:calc(var(--spacing) * 3);height:calc(var(--spacing) * 3)}.\\[\\&\\[data-state\\=open\\]\\>svg\\]\\:rotate-180[data-state=open]>svg{rotate:180deg}@media (hover:hover){a.\\[a\\&\\]\\:hover\\:bg-accent:hover{background-color:var(--accent)}a.\\[a\\&\\]\\:hover\\:bg-destructive\\/90:hover{background-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){a.\\[a\\&\\]\\:hover\\:bg-destructive\\/90:hover{background-color:color-mix(in oklab, var(--destructive) 90%, transparent)}}a.\\[a\\&\\]\\:hover\\:bg-primary\\/90:hover{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){a.\\[a\\&\\]\\:hover\\:bg-primary\\/90:hover{background-color:color-mix(in oklab, var(--primary) 90%, transparent)}}a.\\[a\\&\\]\\:hover\\:bg-secondary\\/90:hover{background-color:var(--secondary)}@supports (color:color-mix(in lab, red, red)){a.\\[a\\&\\]\\:hover\\:bg-secondary\\/90:hover{background-color:color-mix(in oklab, var(--secondary) 90%, transparent)}}a.\\[a\\&\\]\\:hover\\:text-accent-foreground:hover{color:var(--accent-foreground)}a.\\[a\\&\\]\\:hover\\:underline:hover{text-decoration-line:underline}}}:root{--background:#fff;--foreground:#0f172a;--card:#fff;--card-foreground:#0f172a;--popover:#fff;--popover-foreground:#0f172a;--primary:#059669;--primary-foreground:#fff;--secondary:#f1f5f9;--secondary-foreground:#0f172a;--muted:#f1f5f9;--muted-foreground:#64748b;--accent:#e2e8f0;--accent-foreground:#0f172a;--destructive:#dc2626;--destructive-foreground:#fff;--border:#e2e8f0;--input:#cbd5e1;--ring:#059669;--radius:.875rem}::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:0 0}::-webkit-scrollbar-thumb{background:#64748b40;border-radius:9999px}::-webkit-scrollbar-thumb:hover{background:#64748b73}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-scale-x{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-y{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-z{syntax:"*";inherits:false;initial-value:1}@property --tw-rotate-x{syntax:"*";inherits:false}@property --tw-rotate-y{syntax:"*";inherits:false}@property --tw-rotate-z{syntax:"*";inherits:false}@property --tw-skew-x{syntax:"*";inherits:false}@property --tw-skew-y{syntax:"*";inherits:false}@property --tw-pan-x{syntax:"*";inherits:false}@property --tw-pan-y{syntax:"*";inherits:false}@property --tw-pinch-zoom{syntax:"*";inherits:false}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-space-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-divide-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-divide-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-tracking{syntax:"*";inherits:false}@property --tw-ordinal{syntax:"*";inherits:false}@property --tw-slashed-zero{syntax:"*";inherits:false}@property --tw-numeric-figure{syntax:"*";inherits:false}@property --tw-numeric-spacing{syntax:"*";inherits:false}@property --tw-numeric-fraction{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-blur{syntax:"*";inherits:false}@property --tw-brightness{syntax:"*";inherits:false}@property --tw-contrast{syntax:"*";inherits:false}@property --tw-grayscale{syntax:"*";inherits:false}@property --tw-hue-rotate{syntax:"*";inherits:false}@property --tw-invert{syntax:"*";inherits:false}@property --tw-opacity{syntax:"*";inherits:false}@property --tw-saturate{syntax:"*";inherits:false}@property --tw-sepia{syntax:"*";inherits:false}@property --tw-drop-shadow{syntax:"*";inherits:false}@property --tw-drop-shadow-color{syntax:"*";inherits:false}@property --tw-drop-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-drop-shadow-size{syntax:"*";inherits:false}@property --tw-backdrop-blur{syntax:"*";inherits:false}@property --tw-backdrop-brightness{syntax:"*";inherits:false}@property --tw-backdrop-contrast{syntax:"*";inherits:false}@property --tw-backdrop-grayscale{syntax:"*";inherits:false}@property --tw-backdrop-hue-rotate{syntax:"*";inherits:false}@property --tw-backdrop-invert{syntax:"*";inherits:false}@property --tw-backdrop-opacity{syntax:"*";inherits:false}@property --tw-backdrop-saturate{syntax:"*";inherits:false}@property --tw-backdrop-sepia{syntax:"*";inherits:false}@property --tw-duration{syntax:"*";inherits:false}@property --tw-ease{syntax:"*";inherits:false}@property --tw-content{syntax:"*";inherits:false;initial-value:""}@keyframes spin{to{transform:rotate(360deg)}}@keyframes ping{75%,to{opacity:0;transform:scale(2)}}@keyframes pulse{50%{opacity:.5}}@keyframes bounce{0%,to{animation-timing-function:cubic-bezier(.8,0,1,1);transform:translateY(-25%)}50%{animation-timing-function:cubic-bezier(0,0,.2,1);transform:none}}`;
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-scale-x:1;--tw-scale-y:1;--tw-scale-z:1;--tw-rotate-x:initial;--tw-rotate-y:initial;--tw-rotate-z:initial;--tw-skew-x:initial;--tw-skew-y:initial;--tw-pan-x:initial;--tw-pan-y:initial;--tw-pinch-zoom:initial;--tw-space-y-reverse:0;--tw-divide-y-reverse:0;--tw-border-style:solid;--tw-leading:initial;--tw-font-weight:initial;--tw-tracking:initial;--tw-ordinal:initial;--tw-slashed-zero:initial;--tw-numeric-figure:initial;--tw-numeric-spacing:initial;--tw-numeric-fraction:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid;--tw-blur:initial;--tw-brightness:initial;--tw-contrast:initial;--tw-grayscale:initial;--tw-hue-rotate:initial;--tw-invert:initial;--tw-opacity:initial;--tw-saturate:initial;--tw-sepia:initial;--tw-drop-shadow:initial;--tw-drop-shadow-color:initial;--tw-drop-shadow-alpha:100%;--tw-drop-shadow-size:initial;--tw-backdrop-blur:initial;--tw-backdrop-brightness:initial;--tw-backdrop-contrast:initial;--tw-backdrop-grayscale:initial;--tw-backdrop-hue-rotate:initial;--tw-backdrop-invert:initial;--tw-backdrop-opacity:initial;--tw-backdrop-saturate:initial;--tw-backdrop-sepia:initial;--tw-duration:initial;--tw-ease:initial;--tw-content:""}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-red-50:oklch(97.1% .013 17.38);--color-red-200:oklch(88.5% .062 18.334);--color-red-300:oklch(80.8% .114 19.571);--color-red-400:oklch(70.4% .191 22.216);--color-red-500:oklch(63.7% .237 25.331);--color-red-600:oklch(57.7% .245 27.325);--color-red-700:oklch(50.5% .213 27.518);--color-red-900:oklch(39.6% .141 25.723);--color-red-950:oklch(25.8% .092 26.042);--color-orange-300:oklch(83.7% .128 66.29);--color-orange-700:oklch(55.3% .195 38.402);--color-amber-50:oklch(98.7% .022 95.277);--color-amber-200:oklch(92.4% .12 95.746);--color-amber-300:oklch(87.9% .169 91.605);--color-amber-400:oklch(82.8% .189 84.429);--color-amber-500:oklch(76.9% .188 70.08);--color-amber-600:oklch(66.6% .179 58.318);--color-amber-700:oklch(55.5% .163 48.998);--color-amber-800:oklch(47.3% .137 46.201);--color-amber-950:oklch(27.9% .077 45.635);--color-yellow-400:oklch(85.2% .199 91.936);--color-emerald-50:oklch(97.9% .021 166.113);--color-emerald-200:oklch(90.5% .093 164.15);--color-emerald-300:oklch(84.5% .143 164.978);--color-emerald-400:oklch(76.5% .177 163.223);--color-emerald-500:oklch(69.6% .17 162.48);--color-emerald-600:oklch(59.6% .145 163.225);--color-emerald-700:oklch(50.8% .118 165.612);--color-emerald-800:oklch(43.2% .095 166.913);--color-emerald-900:oklch(37.8% .077 168.94);--color-emerald-950:oklch(26.2% .051 172.552);--color-cyan-50:oklch(98.4% .019 200.873);--color-cyan-200:oklch(91.7% .08 205.041);--color-cyan-300:oklch(86.5% .127 207.078);--color-cyan-500:oklch(71.5% .143 215.221);--color-cyan-900:oklch(39.8% .07 227.392);--color-cyan-950:oklch(30.2% .056 229.695);--color-sky-700:oklch(50% .134 242.749);--color-blue-50:oklch(97% .014 254.604);--color-blue-200:oklch(88.2% .059 254.128);--color-blue-300:oklch(80.9% .105 251.813);--color-blue-400:oklch(70.7% .165 254.624);--color-blue-500:oklch(62.3% .214 259.815);--color-blue-600:oklch(54.6% .245 262.881);--color-blue-900:oklch(37.9% .146 265.522);--color-blue-950:oklch(28.2% .091 267.935);--color-indigo-500:oklch(58.5% .233 277.117);--color-purple-50:oklch(97.7% .014 308.299);--color-purple-200:oklch(90.2% .063 306.703);--color-purple-300:oklch(82.7% .119 306.383);--color-purple-400:oklch(71.4% .203 305.504);--color-purple-500:oklch(62.7% .265 303.9);--color-purple-600:oklch(55.8% .288 302.321);--color-purple-900:oklch(38.1% .176 304.987);--color-purple-950:oklch(29.1% .149 302.717);--color-slate-50:oklch(98.4% .003 247.858);--color-slate-100:oklch(96.8% .007 247.896);--color-slate-200:oklch(92.9% .013 255.508);--color-slate-300:oklch(86.9% .022 252.894);--color-slate-400:oklch(70.4% .04 256.788);--color-slate-500:oklch(55.4% .046 257.417);--color-slate-600:oklch(44.6% .043 257.281);--color-slate-700:oklch(37.2% .044 257.287);--color-slate-800:oklch(27.9% .041 260.031);--color-slate-900:oklch(20.8% .042 265.755);--color-slate-950:oklch(12.9% .042 264.695);--color-gray-100:oklch(96.7% .003 264.542);--color-gray-200:oklch(92.8% .006 264.531);--color-gray-600:oklch(44.6% .03 256.802);--color-gray-900:oklch(21% .034 264.665);--color-zinc-100:oklch(96.7% .001 286.375);--color-zinc-200:oklch(92% .004 286.32);--color-zinc-700:oklch(37% .013 285.805);--color-zinc-900:oklch(21% .006 285.885);--color-zinc-950:oklch(14.1% .005 285.823);--color-black:#000;--color-white:#fff;--spacing:.25rem;--container-lg:32rem;--container-4xl:56rem;--container-5xl:64rem;--container-7xl:80rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-base:1rem;--text-base--line-height:calc(1.5 / 1);--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--text-4xl:2.25rem;--text-4xl--line-height:calc(2.5 / 2.25);--text-5xl:3rem;--text-5xl--line-height:1;--text-6xl:3.75rem;--text-6xl--line-height:1;--text-7xl:4.5rem;--text-7xl--line-height:1;--font-weight-normal:400;--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--tracking-tighter:-.05em;--tracking-tight:-.025em;--tracking-wide:.025em;--tracking-wider:.05em;--leading-relaxed:1.625;--radius-xs:.125rem;--ease-in:cubic-bezier(.4, 0, 1, 1);--ease-out:cubic-bezier(0, 0, .2, 1);--ease-in-out:cubic-bezier(.4, 0, .2, 1);--animate-spin:spin 1s linear infinite;--animate-ping:ping 1s cubic-bezier(0, 0, .2, 1) infinite;--animate-pulse:pulse 2s cubic-bezier(.4, 0, .6, 1) infinite;--animate-bounce:bounce 1s infinite;--blur-xs:4px;--blur-md:12px;--blur-xl:24px;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono);--color-primary:var(--primary)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.\\@container\\/card{container:card/inline-size}.\\@container\\/card-header{container:card-header/inline-size}.\\@container{container-type:inline-size}.pointer-events-auto{pointer-events:auto}.pointer-events-none{pointer-events:none}.collapse{visibility:collapse}.invisible{visibility:hidden}.visible{visibility:visible}.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.not-sr-only{clip-path:none;white-space:normal;width:auto;height:auto;margin:0;padding:0;position:static;overflow:visible}.absolute{position:absolute}.fixed{position:fixed}.relative{position:relative}.static{position:static}.sticky{position:sticky}.-inset-1{inset:calc(var(--spacing) * -1)}.inset-0{inset:0}.-top-0{top:0}.-top-0\\.5{top:calc(var(--spacing) * -.5)}.top-0{top:0}.top-3{top:calc(var(--spacing) * 3)}.top-4{top:calc(var(--spacing) * 4)}.top-\\[50\\%\\]{top:50%}.-right-0{right:0}.-right-0\\.5{right:calc(var(--spacing) * -.5)}.right-3{right:calc(var(--spacing) * 3)}.right-4{right:calc(var(--spacing) * 4)}.left-0{left:0}.left-\\[50\\%\\]{left:50%}.isolate{isolation:isolate}.isolation-auto{isolation:auto}.z-10{z-index:10}.z-50{z-index:50}.z-\\[60\\]{z-index:60}.z-\\[2147483647\\]{z-index:2147483647}.col-start-2{grid-column-start:2}.row-span-2{grid-row:span 2/span 2}.row-start-1{grid-row-start:1}.\\!container{width:100%!important}@media (min-width:40rem){.\\!container{max-width:40rem!important}}@media (min-width:48rem){.\\!container{max-width:48rem!important}}@media (min-width:64rem){.\\!container{max-width:64rem!important}}@media (min-width:80rem){.\\!container{max-width:80rem!important}}@media (min-width:96rem){.\\!container{max-width:96rem!important}}.container{width:100%}@media (min-width:40rem){.container{max-width:40rem}}@media (min-width:48rem){.container{max-width:48rem}}@media (min-width:64rem){.container{max-width:64rem}}@media (min-width:80rem){.container{max-width:80rem}}@media (min-width:96rem){.container{max-width:96rem}}.m-0{margin:0}.mx-auto{margin-inline:auto}.my-2{margin-block:calc(var(--spacing) * 2)}.mt-1{margin-top:var(--spacing)}.mt-1\\.5{margin-top:calc(var(--spacing) * 1.5)}.mt-2{margin-top:calc(var(--spacing) * 2)}.mt-2\\.5{margin-top:calc(var(--spacing) * 2.5)}.mr-0{margin-right:0}.mr-1{margin-right:var(--spacing)}.mr-1\\.5{margin-right:calc(var(--spacing) * 1.5)}.mb-1{margin-bottom:var(--spacing)}.ml-0{margin-left:0}.ml-0\\.5{margin-left:calc(var(--spacing) * .5)}.ml-2{margin-left:calc(var(--spacing) * 2)}.block{display:block}.contents{display:contents}.flex{display:flex}.flow-root{display:flow-root}.grid{display:grid}.hidden{display:none}.inline{display:inline}.inline-block{display:inline-block}.inline-flex{display:inline-flex}.inline-grid{display:inline-grid}.inline-table{display:inline-table}.list-item{display:list-item}.table{display:table}.table-caption{display:table-caption}.table-cell{display:table-cell}.table-column{display:table-column}.table-column-group{display:table-column-group}.table-footer-group{display:table-footer-group}.table-header-group{display:table-header-group}.table-row{display:table-row}.table-row-group{display:table-row-group}.size-4{width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.size-6{width:calc(var(--spacing) * 6);height:calc(var(--spacing) * 6)}.size-8{width:calc(var(--spacing) * 8);height:calc(var(--spacing) * 8)}.size-9{width:calc(var(--spacing) * 9);height:calc(var(--spacing) * 9)}.size-10{width:calc(var(--spacing) * 10);height:calc(var(--spacing) * 10)}.h-1{height:var(--spacing)}.h-2{height:calc(var(--spacing) * 2)}.h-3{height:calc(var(--spacing) * 3)}.h-3\\.5{height:calc(var(--spacing) * 3.5)}.h-4{height:calc(var(--spacing) * 4)}.h-5{height:calc(var(--spacing) * 5)}.h-6{height:calc(var(--spacing) * 6)}.h-7{height:calc(var(--spacing) * 7)}.h-8{height:calc(var(--spacing) * 8)}.h-8\\.5{height:calc(var(--spacing) * 8.5)}.h-9{height:calc(var(--spacing) * 9)}.h-10{height:calc(var(--spacing) * 10)}.h-11{height:calc(var(--spacing) * 11)}.h-20{height:calc(var(--spacing) * 20)}.h-\\[1-9\\]{height:1-9}.h-\\[100dvh\\]{height:100dvh}.h-\\[calc\\(100\\%-1px\\)\\]{height:calc(100% - 1px)}.h-full{height:100%}.h-screen{height:100vh}.max-h-\\[140px\\]{max-height:140px}.max-h-\\[calc\\(100vh-60px\\)\\]{max-height:calc(100vh - 60px)}.min-h-0{min-height:0}.min-h-\\[100dvh\\]{min-height:100dvh}.w-2{width:calc(var(--spacing) * 2)}.w-3{width:calc(var(--spacing) * 3)}.w-3\\.5{width:calc(var(--spacing) * 3.5)}.w-4{width:calc(var(--spacing) * 4)}.w-5{width:calc(var(--spacing) * 5)}.w-6{width:calc(var(--spacing) * 6)}.w-7{width:calc(var(--spacing) * 7)}.w-8{width:calc(var(--spacing) * 8)}.w-9{width:calc(var(--spacing) * 9)}.w-10{width:calc(var(--spacing) * 10)}.w-11{width:calc(var(--spacing) * 11)}.w-14{width:calc(var(--spacing) * 14)}.w-16{width:calc(var(--spacing) * 16)}.w-20{width:calc(var(--spacing) * 20)}.w-\\[320px\\]{width:320px}.w-\\[385px\\]{width:385px}.w-\\[calc\\(33\\%-1rem\\)\\]{width:calc(33% - 1rem)}.w-fit{width:fit-content}.w-full{width:100%}.max-w-4xl{max-width:var(--container-4xl)}.max-w-5xl{max-width:var(--container-5xl)}.max-w-7xl{max-width:var(--container-7xl)}.max-w-\\[65ch\\]{max-width:65ch}.max-w-\\[200px\\]{max-width:200px}.max-w-\\[270px\\]{max-width:270px}.max-w-\\[360px\\]{max-width:360px}.max-w-\\[1400px\\]{max-width:1400px}.max-w-\\[calc\\(100\\%-2rem\\)\\]{max-width:calc(100% - 2rem)}.max-w-lg{max-width:var(--container-lg)}.max-w-prose{max-width:65ch}.flex-1{flex:1}.shrink{flex-shrink:1}.shrink-0{flex-shrink:0}.grow{flex-grow:1}.border-collapse{border-collapse:collapse}.translate-x-\\[-50\\%\\]{--tw-translate-x:-50%;translate:var(--tw-translate-x) var(--tw-translate-y)}.-translate-y-\\[1px\\]{--tw-translate-y:calc(1px * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-y-0{--tw-translate-y:0px;translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-y-0\\.5{--tw-translate-y:calc(var(--spacing) * .5);translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-y-\\[-50\\%\\]{--tw-translate-y:-50%;translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-none{translate:none}.scale-3d{scale:var(--tw-scale-x) var(--tw-scale-y) var(--tw-scale-z)}.scale-\\[0\\.98\\]{scale:.98}.transform{transform:var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,)}.animate-bounce{animation:var(--animate-bounce)}.animate-ping{animation:var(--animate-ping)}.animate-pulse{animation:var(--animate-pulse)}.animate-spin{animation:var(--animate-spin)}.cursor-move{cursor:move}.cursor-pointer{cursor:pointer}.touch-pinch-zoom{--tw-pinch-zoom:pinch-zoom;touch-action:var(--tw-pan-x,) var(--tw-pan-y,) var(--tw-pinch-zoom,)}.touch-none{touch-action:none}.resize{resize:both}.auto-rows-min{grid-auto-rows:min-content}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.grid-cols-\\[auto_1fr\\]{grid-template-columns:auto 1fr}.grid-cols-\\[repeat\\(auto-fit\\,minmax\\(250px\\,1fr\\)\\)\\]{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}.grid-rows-2{grid-template-rows:repeat(2,minmax(0,1fr))}.grid-rows-\\[auto_auto\\]{grid-template-rows:auto auto}.flex-col{flex-direction:column}.flex-col-reverse{flex-direction:column-reverse}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.items-start{align-items:flex-start}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.justify-end{justify-content:flex-end}.gap-0{gap:0}.gap-0\\.5{gap:calc(var(--spacing) * .5)}.gap-1{gap:var(--spacing)}.gap-1\\.5{gap:calc(var(--spacing) * 1.5)}.gap-2{gap:calc(var(--spacing) * 2)}.gap-2\\.5{gap:calc(var(--spacing) * 2.5)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}.gap-6{gap:calc(var(--spacing) * 6)}:where(.space-y-1>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(var(--spacing) * var(--tw-space-y-reverse));margin-block-end:calc(var(--spacing) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-1\\.5>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 1.5) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 1.5) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-2>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-2\\.5>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 2.5) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 2.5) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-3>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)))}:where(.divide-y>:not(:last-child)){--tw-divide-y-reverse:0;border-bottom-style:var(--tw-border-style);border-top-style:var(--tw-border-style);border-top-width:calc(1px * var(--tw-divide-y-reverse));border-bottom-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)))}.self-end{align-self:flex-end}.self-start{align-self:flex-start}.justify-self-end{justify-self:flex-end}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:calc(var(--radius) + 10px)}.rounded-full{border-radius:3.40282e38px}.rounded-lg{border-radius:var(--radius)}.rounded-md{border-radius:calc(var(--radius) - 2px)}.rounded-sm{border-radius:calc(var(--radius) - 4px)}.rounded-xl{border-radius:calc(var(--radius) + 6px)}.rounded-xs{border-radius:var(--radius-xs)}.rounded-s{border-start-start-radius:.25rem;border-end-start-radius:.25rem}.rounded-ss{border-start-start-radius:.25rem}.rounded-e{border-start-end-radius:.25rem;border-end-end-radius:.25rem}.rounded-se{border-start-end-radius:.25rem}.rounded-ee{border-end-end-radius:.25rem}.rounded-es{border-end-start-radius:.25rem}.rounded-t{border-top-left-radius:.25rem;border-top-right-radius:.25rem}.rounded-t-2xl{border-top-left-radius:calc(var(--radius) + 10px);border-top-right-radius:calc(var(--radius) + 10px)}.rounded-t-lg{border-top-left-radius:var(--radius);border-top-right-radius:var(--radius)}.rounded-t-xl{border-top-left-radius:calc(var(--radius) + 6px);border-top-right-radius:calc(var(--radius) + 6px)}.rounded-l{border-top-left-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-tl{border-top-left-radius:.25rem}.rounded-r{border-top-right-radius:.25rem;border-bottom-right-radius:.25rem}.rounded-tr{border-top-right-radius:.25rem}.rounded-b{border-bottom-right-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-b-lg{border-bottom-right-radius:var(--radius);border-bottom-left-radius:var(--radius)}.rounded-b-xl{border-bottom-right-radius:calc(var(--radius) + 6px);border-bottom-left-radius:calc(var(--radius) + 6px)}.rounded-br{border-bottom-right-radius:.25rem}.rounded-bl{border-bottom-left-radius:.25rem}.border{border-style:var(--tw-border-style);border-width:1px}.border-2{border-style:var(--tw-border-style);border-width:2px}.border-x{border-inline-style:var(--tw-border-style);border-inline-width:1px}.border-y{border-block-style:var(--tw-border-style);border-block-width:1px}.border-s{border-inline-start-style:var(--tw-border-style);border-inline-start-width:1px}.border-e{border-inline-end-style:var(--tw-border-style);border-inline-end-width:1px}.border-bs{border-block-start-style:var(--tw-border-style);border-block-start-width:1px}.border-be{border-block-end-style:var(--tw-border-style);border-block-end-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-l{border-left-style:var(--tw-border-style);border-left-width:1px}.border-l-2{border-left-style:var(--tw-border-style);border-left-width:2px}.border-amber-200{border-color:var(--color-amber-200)}.border-amber-200\\/80{border-color:#fee685cc}@supports (color:color-mix(in lab, red, red)){.border-amber-200\\/80{border-color:color-mix(in oklab, var(--color-amber-200) 80%, transparent)}}.border-amber-500{border-color:var(--color-amber-500)}.border-amber-500\\/40{border-color:#f99c0066}@supports (color:color-mix(in lab, red, red)){.border-amber-500\\/40{border-color:color-mix(in oklab, var(--color-amber-500) 40%, transparent)}}.border-blue-200{border-color:var(--color-blue-200)}.border-blue-200\\/80{border-color:#bedbffcc}@supports (color:color-mix(in lab, red, red)){.border-blue-200\\/80{border-color:color-mix(in oklab, var(--color-blue-200) 80%, transparent)}}.border-blue-500{border-color:var(--color-blue-500)}.border-border{border-color:var(--border)}.border-cyan-200{border-color:var(--color-cyan-200)}.border-cyan-200\\/80{border-color:#a2f4fdcc}@supports (color:color-mix(in lab, red, red)){.border-cyan-200\\/80{border-color:color-mix(in oklab, var(--color-cyan-200) 80%, transparent)}}.border-cyan-500{border-color:var(--color-cyan-500)}.border-emerald-200{border-color:var(--color-emerald-200)}.border-emerald-200\\/60{border-color:#a4f4cf99}@supports (color:color-mix(in lab, red, red)){.border-emerald-200\\/60{border-color:color-mix(in oklab, var(--color-emerald-200) 60%, transparent)}}.border-emerald-200\\/80{border-color:#a4f4cfcc}@supports (color:color-mix(in lab, red, red)){.border-emerald-200\\/80{border-color:color-mix(in oklab, var(--color-emerald-200) 80%, transparent)}}.border-emerald-300{border-color:var(--color-emerald-300)}.border-emerald-500{border-color:var(--color-emerald-500)}.border-emerald-600{border-color:var(--color-emerald-600)}.border-emerald-600\\/40{border-color:#00976766}@supports (color:color-mix(in lab, red, red)){.border-emerald-600\\/40{border-color:color-mix(in oklab, var(--color-emerald-600) 40%, transparent)}}.border-primary{border-color:var(--primary)}.border-purple-200{border-color:var(--color-purple-200)}.border-purple-200\\/80{border-color:#e9d5ffcc}@supports (color:color-mix(in lab, red, red)){.border-purple-200\\/80{border-color:color-mix(in oklab, var(--color-purple-200) 80%, transparent)}}.border-purple-500{border-color:var(--color-purple-500)}.border-red-200{border-color:var(--color-red-200)}.border-red-500{border-color:var(--color-red-500)}.border-red-600{border-color:var(--color-red-600)}.border-red-600\\/40{border-color:#e4001466}@supports (color:color-mix(in lab, red, red)){.border-red-600\\/40{border-color:color-mix(in oklab, var(--color-red-600) 40%, transparent)}}.border-red-700{border-color:var(--color-red-700)}.border-red-900{border-color:var(--color-red-900)}.border-slate-100{border-color:var(--color-slate-100)}.border-slate-200{border-color:var(--color-slate-200)}.border-slate-200\\/60{border-color:#e2e8f099}@supports (color:color-mix(in lab, red, red)){.border-slate-200\\/60{border-color:color-mix(in oklab, var(--color-slate-200) 60%, transparent)}}.border-slate-200\\/80{border-color:#e2e8f0cc}@supports (color:color-mix(in lab, red, red)){.border-slate-200\\/80{border-color:color-mix(in oklab, var(--color-slate-200) 80%, transparent)}}.border-slate-200\\/90{border-color:#e2e8f0e6}@supports (color:color-mix(in lab, red, red)){.border-slate-200\\/90{border-color:color-mix(in oklab, var(--color-slate-200) 90%, transparent)}}.border-slate-700{border-color:var(--color-slate-700)}.border-slate-800{border-color:var(--color-slate-800)}.border-slate-900{border-color:var(--color-slate-900)}.border-transparent{border-color:#0000}.border-white{border-color:var(--color-white)}.border-white\\/10{border-color:#ffffff1a}@supports (color:color-mix(in lab, red, red)){.border-white\\/10{border-color:color-mix(in oklab, var(--color-white) 10%, transparent)}}.border-zinc-200{border-color:var(--color-zinc-200)}.bg-amber-50{background-color:var(--color-amber-50)}.bg-amber-400{background-color:var(--color-amber-400)}.bg-amber-500{background-color:var(--color-amber-500)}.bg-amber-600{background-color:var(--color-amber-600)}.bg-background{background-color:var(--background)}.bg-black{background-color:var(--color-black)}.bg-black\\/15{background-color:#00000026}@supports (color:color-mix(in lab, red, red)){.bg-black\\/15{background-color:color-mix(in oklab, var(--color-black) 15%, transparent)}}.bg-black\\/40{background-color:#0006}@supports (color:color-mix(in lab, red, red)){.bg-black\\/40{background-color:color-mix(in oklab, var(--color-black) 40%, transparent)}}.bg-black\\/50{background-color:#00000080}@supports (color:color-mix(in lab, red, red)){.bg-black\\/50{background-color:color-mix(in oklab, var(--color-black) 50%, transparent)}}.bg-blue-50{background-color:var(--color-blue-50)}.bg-blue-500{background-color:var(--color-blue-500)}.bg-blue-600{background-color:var(--color-blue-600)}.bg-blue-950{background-color:var(--color-blue-950)}.bg-border{background-color:var(--border)}.bg-card{background-color:var(--card)}.bg-cyan-50{background-color:var(--color-cyan-50)}.bg-cyan-950{background-color:var(--color-cyan-950)}.bg-destructive{background-color:var(--destructive)}.bg-emerald-50{background-color:var(--color-emerald-50)}.bg-emerald-50\\/60{background-color:#ecfdf599}@supports (color:color-mix(in lab, red, red)){.bg-emerald-50\\/60{background-color:color-mix(in oklab, var(--color-emerald-50) 60%, transparent)}}.bg-emerald-50\\/80{background-color:#ecfdf5cc}@supports (color:color-mix(in lab, red, red)){.bg-emerald-50\\/80{background-color:color-mix(in oklab, var(--color-emerald-50) 80%, transparent)}}.bg-emerald-400{background-color:var(--color-emerald-400)}.bg-emerald-500{background-color:var(--color-emerald-500)}.bg-emerald-600{background-color:var(--color-emerald-600)}.bg-emerald-700{background-color:var(--color-emerald-700)}.bg-emerald-950{background-color:var(--color-emerald-950)}.bg-gray-200{background-color:var(--color-gray-200)}.bg-muted{background-color:var(--muted)}.bg-primary{background-color:var(--primary)}.bg-purple-50{background-color:var(--color-purple-50)}.bg-purple-500{background-color:var(--color-purple-500)}.bg-purple-950{background-color:var(--color-purple-950)}.bg-red-50{background-color:var(--color-red-50)}.bg-red-500{background-color:var(--color-red-500)}.bg-red-600{background-color:var(--color-red-600)}.bg-red-950{background-color:var(--color-red-950)}.bg-secondary{background-color:var(--secondary)}.bg-slate-50{background-color:var(--color-slate-50)}.bg-slate-50\\/60{background-color:#f8fafc99}@supports (color:color-mix(in lab, red, red)){.bg-slate-50\\/60{background-color:color-mix(in oklab, var(--color-slate-50) 60%, transparent)}}.bg-slate-50\\/70{background-color:#f8fafcb3}@supports (color:color-mix(in lab, red, red)){.bg-slate-50\\/70{background-color:color-mix(in oklab, var(--color-slate-50) 70%, transparent)}}.bg-slate-100{background-color:var(--color-slate-100)}.bg-slate-200{background-color:var(--color-slate-200)}.bg-slate-200\\/60{background-color:#e2e8f099}@supports (color:color-mix(in lab, red, red)){.bg-slate-200\\/60{background-color:color-mix(in oklab, var(--color-slate-200) 60%, transparent)}}.bg-slate-300{background-color:var(--color-slate-300)}.bg-slate-500{background-color:var(--color-slate-500)}.bg-slate-700{background-color:var(--color-slate-700)}.bg-slate-800{background-color:var(--color-slate-800)}.bg-slate-900{background-color:var(--color-slate-900)}.bg-slate-950{background-color:var(--color-slate-950)}.bg-transparent{background-color:#0000}.bg-white{background-color:var(--color-white)}.bg-white\\/98{background-color:#fffffffa}@supports (color:color-mix(in lab, red, red)){.bg-white\\/98{background-color:color-mix(in oklab, var(--color-white) 98%, transparent)}}.bg-zinc-200{background-color:var(--color-zinc-200)}.bg-zinc-900{background-color:var(--color-zinc-900)}.bg-zinc-950{background-color:var(--color-zinc-950)}.bg-repeat{background-repeat:repeat}.mask-no-clip{-webkit-mask-clip:no-clip;mask-clip:no-clip}.mask-repeat{-webkit-mask-repeat:repeat;mask-repeat:repeat}.fill-current{fill:currentColor}.p-0{padding:0}.p-1{padding:var(--spacing)}.p-2{padding:calc(var(--spacing) * 2)}.p-2\\.5{padding:calc(var(--spacing) * 2.5)}.p-3{padding:calc(var(--spacing) * 3)}.p-3\\.5{padding:calc(var(--spacing) * 3.5)}.p-4{padding:calc(var(--spacing) * 4)}.p-6{padding:calc(var(--spacing) * 6)}.p-\\[3px\\]{padding:3px}.px-1{padding-inline:var(--spacing)}.px-1\\.5{padding-inline:calc(var(--spacing) * 1.5)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-2\\.5{padding-inline:calc(var(--spacing) * 2.5)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-3\\.5{padding-inline:calc(var(--spacing) * 3.5)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-6{padding-inline:calc(var(--spacing) * 6)}.py-0{padding-block:0}.py-0\\.5{padding-block:calc(var(--spacing) * .5)}.py-1{padding-block:var(--spacing)}.py-1\\.5{padding-block:calc(var(--spacing) * 1.5)}.py-2{padding-block:calc(var(--spacing) * 2)}.py-2\\.5{padding-block:calc(var(--spacing) * 2.5)}.py-4{padding-block:calc(var(--spacing) * 4)}.py-6{padding-block:calc(var(--spacing) * 6)}.py-8{padding-block:calc(var(--spacing) * 8)}.py-16{padding-block:calc(var(--spacing) * 16)}.py-24{padding-block:calc(var(--spacing) * 24)}.py-32{padding-block:calc(var(--spacing) * 32)}.py-48{padding-block:calc(var(--spacing) * 48)}.pt-0{padding-top:0}.pt-0\\.5{padding-top:calc(var(--spacing) * .5)}.pt-1{padding-top:var(--spacing)}.pt-2{padding-top:calc(var(--spacing) * 2)}.pt-3{padding-top:calc(var(--spacing) * 3)}.pt-24{padding-top:calc(var(--spacing) * 24)}.pr-1{padding-right:var(--spacing)}.pb-0{padding-bottom:0}.pb-1{padding-bottom:var(--spacing)}.pb-1\\.5{padding-bottom:calc(var(--spacing) * 1.5)}.pb-2{padding-bottom:calc(var(--spacing) * 2)}.pb-2\\.5{padding-bottom:calc(var(--spacing) * 2.5)}.pb-3{padding-bottom:calc(var(--spacing) * 3)}.pb-4{padding-bottom:calc(var(--spacing) * 4)}.pl-2{padding-left:calc(var(--spacing) * 2)}.pl-2\\.5{padding-left:calc(var(--spacing) * 2.5)}.text-center{text-align:center}.text-left{text-align:left}.font-mono{font-family:var(--font-mono)}.font-sans{font-family:var(--font-sans)}.text-4xl{font-size:var(--text-4xl);line-height:var(--tw-leading,var(--text-4xl--line-height))}.text-6xl{font-size:var(--text-6xl);line-height:var(--tw-leading,var(--text-6xl--line-height))}.text-base{font-size:var(--text-base);line-height:var(--tw-leading,var(--text-base--line-height))}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.text-xs{font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}.text-\\[8px\\]{font-size:8px}.text-\\[9px\\]{font-size:9px}.text-\\[10\\.5px\\]{font-size:10.5px}.text-\\[10px\\]{font-size:10px}.text-\\[11px\\]{font-size:11px}.leading-\\[1\\.1\\]{--tw-leading:1.1;line-height:1.1}.leading-\\[1\\],.leading-none{--tw-leading:1;line-height:1}.leading-relaxed{--tw-leading:var(--leading-relaxed);line-height:var(--leading-relaxed)}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.font-normal{--tw-font-weight:var(--font-weight-normal);font-weight:var(--font-weight-normal)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.tracking-\\[0\\.18em\\]{--tw-tracking:.18em;letter-spacing:.18em}.tracking-\\[0\\.22em\\]{--tw-tracking:.22em;letter-spacing:.22em}.tracking-tight{--tw-tracking:var(--tracking-tight);letter-spacing:var(--tracking-tight)}.tracking-tighter{--tw-tracking:var(--tracking-tighter);letter-spacing:var(--tracking-tighter)}.tracking-wide{--tw-tracking:var(--tracking-wide);letter-spacing:var(--tracking-wide)}.tracking-wider{--tw-tracking:var(--tracking-wider);letter-spacing:var(--tracking-wider)}.text-wrap{text-wrap:wrap}.text-clip{text-overflow:clip}.text-ellipsis{text-overflow:ellipsis}.whitespace-nowrap{white-space:nowrap}.whitespace-pre-wrap{white-space:pre-wrap}.text-amber-300{color:var(--color-amber-300)}.text-amber-400{color:var(--color-amber-400)}.text-amber-700{color:var(--color-amber-700)}.text-amber-800{color:var(--color-amber-800)}.text-amber-950{color:var(--color-amber-950)}.text-blue-300{color:var(--color-blue-300)}.text-blue-400{color:var(--color-blue-400)}.text-blue-600{color:var(--color-blue-600)}.text-blue-900{color:var(--color-blue-900)}.text-card-foreground{color:var(--card-foreground)}.text-cyan-300{color:var(--color-cyan-300)}.text-cyan-900{color:var(--color-cyan-900)}.text-destructive-foreground{color:var(--destructive-foreground)}.text-emerald-300{color:var(--color-emerald-300)}.text-emerald-400{color:var(--color-emerald-400)}.text-emerald-600{color:var(--color-emerald-600)}.text-emerald-700{color:var(--color-emerald-700)}.text-emerald-800{color:var(--color-emerald-800)}.text-emerald-900{color:var(--color-emerald-900)}.text-emerald-950{color:var(--color-emerald-950)}.text-foreground,.text-foreground\\/60{color:var(--foreground)}@supports (color:color-mix(in lab, red, red)){.text-foreground\\/60{color:color-mix(in oklab, var(--foreground) 60%, transparent)}}.text-gray-600{color:var(--color-gray-600)}.text-gray-900{color:var(--color-gray-900)}.text-indigo-500{color:var(--color-indigo-500)}.text-muted-foreground{color:var(--muted-foreground)}.text-orange-300{color:var(--color-orange-300)}.text-orange-700{color:var(--color-orange-700)}.text-primary{color:var(--primary)}.text-primary-foreground{color:var(--primary-foreground)}.text-purple-300{color:var(--color-purple-300)}.text-purple-400{color:var(--color-purple-400)}.text-purple-600{color:var(--color-purple-600)}.text-purple-900{color:var(--color-purple-900)}.text-red-300{color:var(--color-red-300)}.text-red-700{color:var(--color-red-700)}.text-red-950{color:var(--color-red-950)}.text-secondary-foreground{color:var(--secondary-foreground)}.text-sky-700{color:var(--color-sky-700)}.text-slate-100{color:var(--color-slate-100)}.text-slate-200{color:var(--color-slate-200)}.text-slate-300{color:var(--color-slate-300)}.text-slate-400{color:var(--color-slate-400)}.text-slate-500{color:var(--color-slate-500)}.text-slate-600{color:var(--color-slate-600)}.text-slate-700{color:var(--color-slate-700)}.text-slate-800{color:var(--color-slate-800)}.text-slate-900{color:var(--color-slate-900)}.text-white{color:var(--color-white)}.text-yellow-400{color:var(--color-yellow-400)}.text-zinc-900{color:var(--color-zinc-900)}.capitalize{text-transform:capitalize}.lowercase{text-transform:lowercase}.normal-case{text-transform:none}.uppercase{text-transform:uppercase}.italic{font-style:italic}.not-italic{font-style:normal}.diagonal-fractions{--tw-numeric-fraction:diagonal-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.lining-nums{--tw-numeric-figure:lining-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.oldstyle-nums{--tw-numeric-figure:oldstyle-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.ordinal{--tw-ordinal:ordinal;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.proportional-nums{--tw-numeric-spacing:proportional-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.slashed-zero{--tw-slashed-zero:slashed-zero;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.stacked-fractions{--tw-numeric-fraction:stacked-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.tabular-nums{--tw-numeric-spacing:tabular-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.normal-nums{font-variant-numeric:normal}.line-through{text-decoration-line:line-through}.no-underline{text-decoration-line:none}.overline{text-decoration-line:overline}.underline{text-decoration-line:underline}.underline-offset-4{text-underline-offset:4px}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.subpixel-antialiased{-webkit-font-smoothing:auto;-moz-osx-font-smoothing:auto}.opacity-0{opacity:0}.opacity-60{opacity:.6}.opacity-70{opacity:.7}.opacity-75{opacity:.75}.shadow{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px var(--tw-shadow-color,#00000040);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-\\[inset_0_1px_0_rgba\\(255\\,255\\,255\\,0\\.1\\)\\]{--tw-shadow:inset 0 1px 0 var(--tw-shadow-color,#ffffff1a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px var(--tw-shadow-color,#0000001a), 0 4px 6px -4px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px var(--tw-shadow-color,#0000001a), 0 2px 4px -2px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px var(--tw-shadow-color,#0000001a), 0 8px 10px -6px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-xs{--tw-shadow:0 1px 2px 0 var(--tw-shadow-color,#0000000d);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-0{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-1{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.inset-ring{--tw-inset-ring-shadow:inset 0 0 0 1px var(--tw-inset-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-emerald-950{--tw-shadow-color:oklch(26.2% .051 172.552)}@supports (color:color-mix(in lab, red, red)){.shadow-emerald-950{--tw-shadow-color:color-mix(in oklab, var(--color-emerald-950) var(--tw-shadow-alpha), transparent)}}.ring-black{--tw-ring-color:var(--color-black)}.ring-black\\/5{--tw-ring-color:#0000000d}@supports (color:color-mix(in lab, red, red)){.ring-black\\/5{--tw-ring-color:color-mix(in oklab, var(--color-black) 5%, transparent)}}.ring-ring,.ring-ring\\/50{--tw-ring-color:var(--ring)}@supports (color:color-mix(in lab, red, red)){.ring-ring\\/50{--tw-ring-color:color-mix(in oklab, var(--ring) 50%, transparent)}}.ring-offset-background{--tw-ring-offset-color:var(--background)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.blur{--tw-blur:blur(8px);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.drop-shadow{--tw-drop-shadow-size:drop-shadow(0 1px 2px var(--tw-drop-shadow-color,#0000001a)) drop-shadow(0 1px 1px var(--tw-drop-shadow-color,#0000000f));--tw-drop-shadow:drop-shadow(0 1px 2px #0000001a) drop-shadow(0 1px 1px #0000000f);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.grayscale{--tw-grayscale:grayscale(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.invert{--tw-invert:invert(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.sepia{--tw-sepia:sepia(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.filter{filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-blur-md{--tw-backdrop-blur:blur(var(--blur-md));-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-blur-xl{--tw-backdrop-blur:blur(var(--blur-xl));-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-blur-xs{--tw-backdrop-blur:blur(var(--blur-xs));-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-grayscale{--tw-backdrop-grayscale:grayscale(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-invert{--tw-backdrop-invert:invert(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-sepia{--tw-backdrop-sepia:sepia(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-filter{-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.transition{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,opacity,box-shadow,transform,translate,scale,rotate,filter,-webkit-backdrop-filter,backdrop-filter,display,content-visibility,overlay,pointer-events;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-\\[color\\,box-shadow\\]{transition-property:color,box-shadow;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-opacity{transition-property:opacity;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-transform{transition-property:transform,translate,scale,rotate;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.duration-150{--tw-duration:.15s;transition-duration:.15s}.duration-200{--tw-duration:.2s;transition-duration:.2s}.ease-in{--tw-ease:var(--ease-in);transition-timing-function:var(--ease-in)}.ease-in-out{--tw-ease:var(--ease-in-out);transition-timing-function:var(--ease-in-out)}.ease-out{--tw-ease:var(--ease-out);transition-timing-function:var(--ease-out)}.outline-none{--tw-outline-style:none;outline-style:none}.select-none{-webkit-user-select:none;user-select:none}.\\[file\\:line\\]{file:line}.ring-inset{--tw-ring-inset:inset}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:h-9:is(:where(.group\\/tabs)[data-orientation=horizontal] *){height:calc(var(--spacing) * 9)}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:h-fit:is(:where(.group\\/tabs)[data-orientation=vertical] *){height:fit-content}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:w-full:is(:where(.group\\/tabs)[data-orientation=vertical] *){width:100%}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:flex-col:is(:where(.group\\/tabs)[data-orientation=vertical] *){flex-direction:column}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:justify-start:is(:where(.group\\/tabs)[data-orientation=vertical] *){justify-content:flex-start}.group-data-\\[size\\=default\\]\\/switch\\:size-4:is(:where(.group\\/switch)[data-size=default] *){width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.group-data-\\[size\\=sm\\]\\/switch\\:size-3:is(:where(.group\\/switch)[data-size=sm] *){width:calc(var(--spacing) * 3);height:calc(var(--spacing) * 3)}.group-data-\\[variant\\=line\\]\\/tabs-list\\:bg-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *){background-color:#0000}.after\\:absolute:after{content:var(--tw-content);position:absolute}.after\\:bg-foreground:after{content:var(--tw-content);background-color:var(--foreground)}.after\\:opacity-0:after{content:var(--tw-content);opacity:0}.after\\:transition-opacity:after{content:var(--tw-content);transition-property:opacity;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:after\\:inset-x-0:is(:where(.group\\/tabs)[data-orientation=horizontal] *):after{content:var(--tw-content);inset-inline:0}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:after\\:bottom-\\[-5px\\]:is(:where(.group\\/tabs)[data-orientation=horizontal] *):after{content:var(--tw-content);bottom:-5px}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:after\\:h-0\\.5:is(:where(.group\\/tabs)[data-orientation=horizontal] *):after{content:var(--tw-content);height:calc(var(--spacing) * .5)}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:after\\:inset-y-0:is(:where(.group\\/tabs)[data-orientation=vertical] *):after{content:var(--tw-content);inset-block:0}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:after\\:-right-1:is(:where(.group\\/tabs)[data-orientation=vertical] *):after{content:var(--tw-content);right:calc(var(--spacing) * -1)}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:after\\:w-0\\.5:is(:where(.group\\/tabs)[data-orientation=vertical] *):after{content:var(--tw-content);width:calc(var(--spacing) * .5)}.last\\:border-b-0:last-child{border-bottom-style:var(--tw-border-style);border-bottom-width:0}@media (hover:hover){.hover\\:scale-105:hover{--tw-scale-x:105%;--tw-scale-y:105%;--tw-scale-z:105%;scale:var(--tw-scale-x) var(--tw-scale-y)}.hover\\:bg-accent:hover{background-color:var(--accent)}.hover\\:bg-amber-500:hover{background-color:var(--color-amber-500)}.hover\\:bg-destructive\\/90:hover{background-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-destructive\\/90:hover{background-color:color-mix(in oklab, var(--destructive) 90%, transparent)}}.hover\\:bg-emerald-600:hover{background-color:var(--color-emerald-600)}.hover\\:bg-emerald-700:hover{background-color:var(--color-emerald-700)}.hover\\:bg-emerald-800:hover{background-color:var(--color-emerald-800)}.hover\\:bg-primary\\/90:hover{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-primary\\/90:hover{background-color:color-mix(in oklab, var(--primary) 90%, transparent)}}.hover\\:bg-red-600:hover{background-color:var(--color-red-600)}.hover\\:bg-red-700:hover{background-color:var(--color-red-700)}.hover\\:bg-secondary\\/80:hover{background-color:var(--secondary)}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-secondary\\/80:hover{background-color:color-mix(in oklab, var(--secondary) 80%, transparent)}}.hover\\:bg-slate-50:hover{background-color:var(--color-slate-50)}.hover\\:bg-slate-100:hover{background-color:var(--color-slate-100)}.hover\\:bg-slate-200:hover{background-color:var(--color-slate-200)}.hover\\:text-accent-foreground:hover{color:var(--accent-foreground)}.hover\\:text-foreground:hover{color:var(--foreground)}.hover\\:text-slate-900:hover{color:var(--color-slate-900)}.hover\\:no-underline:hover{text-decoration-line:none}.hover\\:underline:hover{text-decoration-line:underline}.hover\\:opacity-100:hover{opacity:1}.hover\\:ring-4:hover{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}}.focus\\:ring-1:focus{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus\\:ring-2:focus{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus\\:ring-emerald-500:focus{--tw-ring-color:var(--color-emerald-500)}.focus\\:ring-ring:focus{--tw-ring-color:var(--ring)}.focus\\:ring-offset-2:focus{--tw-ring-offset-width:2px;--tw-ring-offset-shadow:var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color)}.focus\\:outline-hidden:focus{--tw-outline-style:none;outline-style:none}@media (forced-colors:active){.focus\\:outline-hidden:focus{outline-offset:2px;outline:2px solid #0000}}.focus\\:outline-none:focus{--tw-outline-style:none;outline-style:none}.focus-visible\\:border-ring:focus-visible{border-color:var(--ring)}.focus-visible\\:ring-4:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus-visible\\:ring-\\[3px\\]:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus-visible\\:ring-destructive\\/20:focus-visible{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.focus-visible\\:ring-destructive\\/20:focus-visible{--tw-ring-color:color-mix(in oklab, var(--destructive) 20%, transparent)}}.focus-visible\\:ring-ring\\/50:focus-visible{--tw-ring-color:var(--ring)}@supports (color:color-mix(in lab, red, red)){.focus-visible\\:ring-ring\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--ring) 50%, transparent)}}.focus-visible\\:outline-hidden:focus-visible{--tw-outline-style:none;outline-style:none}@media (forced-colors:active){.focus-visible\\:outline-hidden:focus-visible{outline-offset:2px;outline:2px solid #0000}}.focus-visible\\:outline-1:focus-visible{outline-style:var(--tw-outline-style);outline-width:1px}.focus-visible\\:outline-ring:focus-visible{outline-color:var(--ring)}.active\\:scale-90:active{--tw-scale-x:90%;--tw-scale-y:90%;--tw-scale-z:90%;scale:var(--tw-scale-x) var(--tw-scale-y)}.active\\:scale-\\[0\\.98\\]:active{scale:.98}.disabled\\:pointer-events-none:disabled{pointer-events:none}.disabled\\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\\:opacity-50:disabled{opacity:.5}.has-data-\\[slot\\=card-action\\]\\:grid-cols-\\[1fr_auto\\]:has([data-slot=card-action]){grid-template-columns:1fr auto}.has-\\[\\>svg\\]\\:px-1\\.5:has(>svg){padding-inline:calc(var(--spacing) * 1.5)}.has-\\[\\>svg\\]\\:px-2\\.5:has(>svg){padding-inline:calc(var(--spacing) * 2.5)}.has-\\[\\>svg\\]\\:px-3:has(>svg){padding-inline:calc(var(--spacing) * 3)}.has-\\[\\>svg\\]\\:px-4:has(>svg){padding-inline:calc(var(--spacing) * 4)}.aria-invalid\\:border-destructive[aria-invalid=true]{border-color:var(--destructive)}.aria-invalid\\:ring-destructive\\/20[aria-invalid=true]{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.aria-invalid\\:ring-destructive\\/20[aria-invalid=true]{--tw-ring-color:color-mix(in oklab, var(--destructive) 20%, transparent)}}.data-\\[disabled\\]\\:opacity-50[data-disabled]{opacity:.5}.data-\\[orientation\\=horizontal\\]\\:h-1\\.5[data-orientation=horizontal]{height:calc(var(--spacing) * 1.5)}.data-\\[orientation\\=horizontal\\]\\:h-full[data-orientation=horizontal]{height:100%}.data-\\[orientation\\=horizontal\\]\\:h-px[data-orientation=horizontal]{height:1px}.data-\\[orientation\\=horizontal\\]\\:w-full[data-orientation=horizontal]{width:100%}.data-\\[orientation\\=horizontal\\]\\:flex-col[data-orientation=horizontal]{flex-direction:column}.data-\\[orientation\\=vertical\\]\\:h-full[data-orientation=vertical]{height:100%}.data-\\[orientation\\=vertical\\]\\:min-h-44[data-orientation=vertical]{min-height:calc(var(--spacing) * 44)}.data-\\[orientation\\=vertical\\]\\:w-1\\.5[data-orientation=vertical]{width:calc(var(--spacing) * 1.5)}.data-\\[orientation\\=vertical\\]\\:w-auto[data-orientation=vertical]{width:auto}.data-\\[orientation\\=vertical\\]\\:w-full[data-orientation=vertical]{width:100%}.data-\\[orientation\\=vertical\\]\\:w-px[data-orientation=vertical]{width:1px}.data-\\[orientation\\=vertical\\]\\:flex-col[data-orientation=vertical]{flex-direction:column}.data-\\[size\\=default\\]\\:h-\\[1\\.15rem\\][data-size=default]{height:1.15rem}.data-\\[size\\=default\\]\\:w-8[data-size=default]{width:calc(var(--spacing) * 8)}.data-\\[size\\=sm\\]\\:h-3\\.5[data-size=sm]{height:calc(var(--spacing) * 3.5)}.data-\\[size\\=sm\\]\\:w-6[data-size=sm]{width:calc(var(--spacing) * 6)}.data-\\[state\\=active\\]\\:bg-background[data-state=active]{background-color:var(--background)}.data-\\[state\\=active\\]\\:bg-white[data-state=active]{background-color:var(--color-white)}.data-\\[state\\=active\\]\\:text-emerald-700[data-state=active]{color:var(--color-emerald-700)}.data-\\[state\\=active\\]\\:text-foreground[data-state=active]{color:var(--foreground)}.data-\\[state\\=active\\]\\:shadow-xs[data-state=active]{--tw-shadow:0 1px 2px 0 var(--tw-shadow-color,#0000000d);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.group-data-\\[variant\\=default\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:shadow-sm:is(:where(.group\\/tabs-list)[data-variant=default] *)[data-state=active]{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:bg-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{background-color:#0000}.group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:shadow-none:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{--tw-shadow:0 0 #0000;box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:after\\:opacity-100:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]:after{content:var(--tw-content);opacity:1}.data-\\[state\\=checked\\]\\:translate-x-\\[calc\\(100\\%-2px\\)\\][data-state=checked]{--tw-translate-x:calc(100% - 2px);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=checked\\]\\:bg-primary[data-state=checked]{background-color:var(--primary)}.data-\\[state\\=open\\]\\:bg-accent[data-state=open]{background-color:var(--accent)}.data-\\[state\\=open\\]\\:text-muted-foreground[data-state=open]{color:var(--muted-foreground)}.data-\\[state\\=unchecked\\]\\:translate-x-0[data-state=unchecked]{--tw-translate-x:0px;translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=unchecked\\]\\:bg-input[data-state=unchecked]{background-color:var(--input)}.data-\\[variant\\=line\\]\\:rounded-none[data-variant=line]{border-radius:0}@media (min-width:40rem){.sm\\:max-w-lg{max-width:var(--container-lg)}.sm\\:flex-row{flex-direction:row}.sm\\:justify-end{justify-content:flex-end}.sm\\:text-left{text-align:left}}@media (min-width:48rem){.md\\:w-1\\/2{width:50%}.md\\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\\:text-5xl{font-size:var(--text-5xl);line-height:var(--tw-leading,var(--text-5xl--line-height))}.md\\:text-6xl{font-size:var(--text-6xl);line-height:var(--tw-leading,var(--text-6xl--line-height))}.md\\:text-7xl{font-size:var(--text-7xl);line-height:var(--tw-leading,var(--text-7xl--line-height))}}@media (min-width:64rem){.lg\\:w-1\\/3{width:33.3333%}.lg\\:text-6xl{font-size:var(--text-6xl);line-height:var(--tw-leading,var(--text-6xl--line-height))}}@media (prefers-color-scheme:dark){.dark\\:border-input{border-color:var(--input)}.dark\\:border-zinc-700{border-color:var(--color-zinc-700)}.dark\\:bg-destructive\\/60{background-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-destructive\\/60{background-color:color-mix(in oklab, var(--destructive) 60%, transparent)}}.dark\\:bg-input\\/30{background-color:var(--input)}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-input\\/30{background-color:color-mix(in oklab, var(--input) 30%, transparent)}}.dark\\:bg-zinc-900{background-color:var(--color-zinc-900)}.dark\\:bg-zinc-950{background-color:var(--color-zinc-950)}.dark\\:text-gray-100{color:var(--color-gray-100)}.dark\\:text-muted-foreground{color:var(--muted-foreground)}.dark\\:text-zinc-100{color:var(--color-zinc-100)}@media (hover:hover){.dark\\:hover\\:bg-accent\\/50:hover{background-color:var(--accent)}@supports (color:color-mix(in lab, red, red)){.dark\\:hover\\:bg-accent\\/50:hover{background-color:color-mix(in oklab, var(--accent) 50%, transparent)}}.dark\\:hover\\:bg-input\\/50:hover{background-color:var(--input)}@supports (color:color-mix(in lab, red, red)){.dark\\:hover\\:bg-input\\/50:hover{background-color:color-mix(in oklab, var(--input) 50%, transparent)}}.dark\\:hover\\:text-foreground:hover{color:var(--foreground)}}.dark\\:focus-visible\\:ring-destructive\\/40:focus-visible{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.dark\\:focus-visible\\:ring-destructive\\/40:focus-visible{--tw-ring-color:color-mix(in oklab, var(--destructive) 40%, transparent)}}.dark\\:aria-invalid\\:ring-destructive\\/40[aria-invalid=true]{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.dark\\:aria-invalid\\:ring-destructive\\/40[aria-invalid=true]{--tw-ring-color:color-mix(in oklab, var(--destructive) 40%, transparent)}}.dark\\:data-\\[state\\=active\\]\\:border-input[data-state=active]{border-color:var(--input)}.dark\\:data-\\[state\\=active\\]\\:bg-input\\/30[data-state=active]{background-color:var(--input)}@supports (color:color-mix(in lab, red, red)){.dark\\:data-\\[state\\=active\\]\\:bg-input\\/30[data-state=active]{background-color:color-mix(in oklab, var(--input) 30%, transparent)}}.dark\\:data-\\[state\\=active\\]\\:text-foreground[data-state=active]{color:var(--foreground)}.dark\\:group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:border-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{border-color:#0000}.dark\\:group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:bg-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{background-color:#0000}.dark\\:data-\\[state\\=checked\\]\\:bg-primary-foreground[data-state=checked]{background-color:var(--primary-foreground)}.dark\\:data-\\[state\\=unchecked\\]\\:bg-foreground[data-state=unchecked]{background-color:var(--foreground)}.dark\\:data-\\[state\\=unchecked\\]\\:bg-input\\/80[data-state=unchecked]{background-color:var(--input)}@supports (color:color-mix(in lab, red, red)){.dark\\:data-\\[state\\=unchecked\\]\\:bg-input\\/80[data-state=unchecked]{background-color:color-mix(in oklab, var(--input) 80%, transparent)}}}.\\[\\&_svg\\]\\:pointer-events-none svg{pointer-events:none}.\\[\\&_svg\\]\\:shrink-0 svg{flex-shrink:0}.\\[\\&_svg\\:not\\(\\[class\\*\\=\\'size-\\'\\]\\)\\]\\:size-3 svg:not([class*=size-]){width:calc(var(--spacing) * 3);height:calc(var(--spacing) * 3)}.\\[\\&_svg\\:not\\(\\[class\\*\\=\\'size-\\'\\]\\)\\]\\:size-4 svg:not([class*=size-]){width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.\\[\\.border-b\\]\\:pb-6.border-b{padding-bottom:calc(var(--spacing) * 6)}.\\[\\.border-t\\]\\:pt-6.border-t{padding-top:calc(var(--spacing) * 6)}.\\[\\&\\>svg\\]\\:pointer-events-none>svg{pointer-events:none}.\\[\\&\\>svg\\]\\:size-3>svg{width:calc(var(--spacing) * 3);height:calc(var(--spacing) * 3)}.\\[\\&\\[data-state\\=open\\]\\>svg\\]\\:rotate-180[data-state=open]>svg{rotate:180deg}@media (hover:hover){a.\\[a\\&\\]\\:hover\\:bg-accent:hover{background-color:var(--accent)}a.\\[a\\&\\]\\:hover\\:bg-destructive\\/90:hover{background-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){a.\\[a\\&\\]\\:hover\\:bg-destructive\\/90:hover{background-color:color-mix(in oklab, var(--destructive) 90%, transparent)}}a.\\[a\\&\\]\\:hover\\:bg-primary\\/90:hover{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){a.\\[a\\&\\]\\:hover\\:bg-primary\\/90:hover{background-color:color-mix(in oklab, var(--primary) 90%, transparent)}}a.\\[a\\&\\]\\:hover\\:bg-secondary\\/90:hover{background-color:var(--secondary)}@supports (color:color-mix(in lab, red, red)){a.\\[a\\&\\]\\:hover\\:bg-secondary\\/90:hover{background-color:color-mix(in oklab, var(--secondary) 90%, transparent)}}a.\\[a\\&\\]\\:hover\\:text-accent-foreground:hover{color:var(--accent-foreground)}a.\\[a\\&\\]\\:hover\\:underline:hover{text-decoration-line:underline}}}:root,:host,#ntg-hud-root{--background:#fff;--foreground:#0f172a;--card:#fff;--card-foreground:#0f172a;--popover:#fff;--popover-foreground:#0f172a;--primary:#059669;--primary-foreground:#fff;--secondary:#f1f5f9;--secondary-foreground:#0f172a;--muted:#f1f5f9;--muted-foreground:#64748b;--accent:#e2e8f0;--accent-foreground:#0f172a;--destructive:#dc2626;--destructive-foreground:#fff;--border:#e2e8f0;--input:#cbd5e1;--ring:#059669;--radius:.875rem}::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:0 0}::-webkit-scrollbar-thumb{background:#64748b40;border-radius:9999px}::-webkit-scrollbar-thumb:hover{background:#64748b73}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-scale-x{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-y{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-z{syntax:"*";inherits:false;initial-value:1}@property --tw-rotate-x{syntax:"*";inherits:false}@property --tw-rotate-y{syntax:"*";inherits:false}@property --tw-rotate-z{syntax:"*";inherits:false}@property --tw-skew-x{syntax:"*";inherits:false}@property --tw-skew-y{syntax:"*";inherits:false}@property --tw-pan-x{syntax:"*";inherits:false}@property --tw-pan-y{syntax:"*";inherits:false}@property --tw-pinch-zoom{syntax:"*";inherits:false}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-divide-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-tracking{syntax:"*";inherits:false}@property --tw-ordinal{syntax:"*";inherits:false}@property --tw-slashed-zero{syntax:"*";inherits:false}@property --tw-numeric-figure{syntax:"*";inherits:false}@property --tw-numeric-spacing{syntax:"*";inherits:false}@property --tw-numeric-fraction{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-blur{syntax:"*";inherits:false}@property --tw-brightness{syntax:"*";inherits:false}@property --tw-contrast{syntax:"*";inherits:false}@property --tw-grayscale{syntax:"*";inherits:false}@property --tw-hue-rotate{syntax:"*";inherits:false}@property --tw-invert{syntax:"*";inherits:false}@property --tw-opacity{syntax:"*";inherits:false}@property --tw-saturate{syntax:"*";inherits:false}@property --tw-sepia{syntax:"*";inherits:false}@property --tw-drop-shadow{syntax:"*";inherits:false}@property --tw-drop-shadow-color{syntax:"*";inherits:false}@property --tw-drop-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-drop-shadow-size{syntax:"*";inherits:false}@property --tw-backdrop-blur{syntax:"*";inherits:false}@property --tw-backdrop-brightness{syntax:"*";inherits:false}@property --tw-backdrop-contrast{syntax:"*";inherits:false}@property --tw-backdrop-grayscale{syntax:"*";inherits:false}@property --tw-backdrop-hue-rotate{syntax:"*";inherits:false}@property --tw-backdrop-invert{syntax:"*";inherits:false}@property --tw-backdrop-opacity{syntax:"*";inherits:false}@property --tw-backdrop-saturate{syntax:"*";inherits:false}@property --tw-backdrop-sepia{syntax:"*";inherits:false}@property --tw-duration{syntax:"*";inherits:false}@property --tw-ease{syntax:"*";inherits:false}@property --tw-content{syntax:"*";inherits:false;initial-value:""}@keyframes spin{to{transform:rotate(360deg)}}@keyframes ping{75%,to{opacity:0;transform:scale(2)}}@keyframes pulse{50%{opacity:.5}}@keyframes bounce{0%,to{animation-timing-function:cubic-bezier(.8,0,1,1);transform:translateY(-25%)}50%{animation-timing-function:cubic-bezier(0,0,.2,1);transform:none}}`;
 
   // src/content/ui/hud-core.tsx
-  var import_jsx_runtime32 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime27 = __toESM(require_jsx_runtime(), 1);
   var config = structuredClone(DEFAULT_CONFIG);
   var hudRoot = null;
   var reactRoot = null;
@@ -26434,7 +22413,7 @@
     shadow.appendChild(mountPoint);
     reactRoot = (0, import_client.createRoot)(mountPoint);
     reactRoot.render(
-      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(import_react6.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(import_react5.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
         HudApp,
         {
           shadowRoot: shadow,
@@ -27121,7 +23100,6 @@ lucide-react/dist/esm/icons/play.mjs:
 lucide-react/dist/esm/icons/rotate-ccw-clock.mjs:
 lucide-react/dist/esm/icons/sparkles.mjs:
 lucide-react/dist/esm/icons/square.mjs:
-lucide-react/dist/esm/icons/x.mjs:
 lucide-react/dist/esm/lucide-react.mjs:
   (**
    * @license lucide-react v1.61.0 - ISC

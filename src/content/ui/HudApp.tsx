@@ -9,16 +9,12 @@ import { WharfTabContent } from './components/WharfTabContent';
 import { SeaTabContent } from './components/SeaTabContent';
 import { CityTabContent } from './components/CityTabContent';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import {
-  Dialog,
-  DialogContent,
-} from '@/components/ui/dialog';
 import { ReleaseChangelogView } from '@/components/ReleaseChangelogView';
 import { checkForUpdates } from '@/services/github-service';
 import { UpdateCheckResult } from '@/shared/types/github';
 
 interface HudAppProps {
-  shadowRoot: ShadowRoot;
+  shadowRoot?: ShadowRoot;
   initialConfig: AppConfig;
   onSaveConfig: (cfg: AppConfig) => void;
   onToggleAll: () => void;
@@ -26,7 +22,7 @@ interface HudAppProps {
 }
 
 export function HudApp({
-  shadowRoot,
+  shadowRoot: _shadowRoot,
   initialConfig,
   onSaveConfig,
   onToggleAll,
@@ -247,20 +243,19 @@ export function HudApp({
         </div>
       )}
 
-      {/* GitHub Update Dialog (Scoped inside shadowRoot with ReleaseChangelogView) */}
-      <Dialog open={isUpdateModalOpen} onOpenChange={setIsUpdateModalOpen}>
-        <DialogContent
-          container={shadowRoot as unknown as HTMLElement}
-          className="max-w-[360px] bg-white border border-slate-200 text-slate-900 p-4 rounded-2xl shadow-2xl"
-        >
-          {updateInfo && (
-            <ReleaseChangelogView
-              updateInfo={updateInfo}
-              onClose={() => setIsUpdateModalOpen(false)}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* GitHub Update Modal (Scoped inside shadowRoot with ReleaseChangelogView) */}
+      {isUpdateModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 pointer-events-auto">
+          <div className="relative w-full max-w-[360px] bg-white border border-slate-200 text-slate-900 p-4 rounded-2xl shadow-2xl animate-in fade-in-0 zoom-in-95 duration-150">
+            {updateInfo && (
+              <ReleaseChangelogView
+                updateInfo={updateInfo}
+                onClose={() => setIsUpdateModalOpen(false)}
+              />
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
