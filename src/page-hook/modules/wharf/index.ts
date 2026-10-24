@@ -1,28 +1,42 @@
 import { stores, getActiveScene, sendBenWs, lastXinMoiAt, lastXinMoiDay, setLastXinMoi } from '../../core/engine-access';
 import { canAct, markActed } from '../../core/cooldown';
 import { computeBenStamina } from '../../core/store-watcher';
+import { AppConfig } from '../../../shared/types/config';
 
-export function execBenStep(cfg: any): { acted: boolean; msg?: string; exhausted?: boolean; reason?: string } {
-  const m = stores.main?.getState();
-  const bu = stores.benUI?.getState();
-  const bn = stores.benNet?.getState();
-  if (!m || !bu || !bn || m.screen !== 'benDo' || bn.status !== 'in') {
+export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exhausted?: boolean; reason?: string } {
+  const mStore = stores.main;
+  const buStore = stores.benUI;
+  const bnStore = stores.benNet;
+  if (!mStore || !buStore || !bnStore) {
+    return { acted: false };
+  }
+
+  const m = mStore.getState();
+  const bu = buStore.getState();
+  const bn = bnStore.getState();
+
+  if (m.screen !== 'benDo' || bn.status !== 'in') {
     return { acted: false };
   }
   if (bu.walking || bn.fishing !== 'idle') {
     return { acted: false };
   }
 
-  const benScene = getActiveScene('BenDoScene');
+  const rawScene = getActiveScene('BenDoScene');
+  const benScene = rawScene as unknown as {
+    goFarmer?: (tile: { x: number; y: number }, cb?: () => void) => void;
+    farmer?: { tile?: { x: number; y: number }; running?: boolean };
+  } | null;
+
   const wallet = bn.wallet;
   if (!wallet) return { acted: false };
 
   const stamina = computeBenStamina(wallet);
   const shells = wallet.shells || 0;
   const bait = wallet.bait || 0;
-  const nonKeptCount = Array.isArray(bn.basket) ? bn.basket.filter((x: any) => !x.kept).length : 0;
+  const nonKeptCount = Array.isArray(bn.basket) ? bn.basket.filter((x: { kept?: boolean }) => !x.kept).length : 0;
   const pack = bn.pack || {};
-  const packItems = Object.keys(pack).filter((k) => pack[k] > 0);
+  const packItems = Object.keys(pack).filter((k) => (pack[k] || 0) > 0);
   const stamMin = Number(cfg.benStaminaThreshold) || 20;
 
   const walkAndRun = (tile: { x: number; y: number }, actionFn: () => void, label: string, actionKey: string | null = null) => {
@@ -71,7 +85,7 @@ export function execBenStep(cfg: any): { acted: boolean; msg?: string; exhausted
       { x: 40, y: 10 },
       () => {
         sendBenWs({ t: 'sell' });
-        stores.benUI.setState({ panel: null });
+        buStore.setState({ panel: null });
       },
       `Đi bán ${nonKeptCount} con cá tại Vựa Anh Tư`,
       'ben_sell'
@@ -94,113 +108,100 @@ export function execBenStep(cfg: any): { acted: boolean; msg?: string; exhausted
           { x: 16, y: 24 },
           () => {
             sendBenWs({ t: 'buy', item: 'goiDau' });
-            stores.benUI.setState({ panel: null });
+            buStore.setState({ panel: null });
           },
           `Gội đầu massage Út Mười (+50 Sức câu, -25🐚)`,
           'ben_goi_dau'
         );
       }
 
-      // Quán cơm Dì Tám
-      if (shells >= 10 && canAct('ben_food', 4000)) {
-        const foodId = cfg.benPreferFood || 'comTam';
-        const foodPrices: Record<string, number> = { banhMi: 10, chaoCa: 14, huTieu: 20, comTam: 28, lauMam: 45 };
-        let chosenFood = foodId;
-        if (shells < (foodPrices[chosenFood] || 10)) {
-          if (shells >= 28) chosenFood = 'comTam';
-          else if (shells >= 20) chosenFood = 'huTieu';
-          else if (shells >= 14) chosenFood = 'chaoCa';
-          else chosenFood = 'banhMi';
-        }
+      // Buy food from Dì Tám
+      const foodPrices: Record<string, number> = {
+        banhMi: 10,
+        chaoCa: 15,
+        huTieu: 25,
+        comTam: 40,
+        lauMam: 120,
+      };
+      const prefFood = cfg.benPreferFood || 'comTam';
+      const buyItem = shells >= (foodPrices[prefFood] || 40) ? prefFood : 'banhMi';
+      if (shells >= (foodPrices[buyItem] || 10) && canAct('ben_buy_food', 4000)) {
         return walkAndRun(
-          { x: 39, y: 23 },
+          { x: 19, y: 9 },
           () => {
-            sendBenWs({ t: 'buy', item: chosenFood });
-            stores.benUI.setState({ panel: null });
+            sendBenWs({ t: 'buy', item: buyItem });
+            buStore.setState({ panel: null });
           },
-          `Đi ăn (${chosenFood}) tại Quán Dì Tám hồi Sức câu`,
-          'ben_food'
-        );
-      }
-
-      // Xe trà đá Chị Thơm
-      if (shells >= 3 && canAct('ben_drink', 4000)) {
-        return walkAndRun(
-          { x: 26, y: 12 },
-          () => {
-            sendBenWs({ t: 'buy', item: 'traDa' });
-            stores.benUI.setState({ panel: null });
-          },
-          `Đi uống Trà đá Chị Thơm hồi Sức câu`,
-          'ben_drink'
+          `Mua ${buyItem} tại Quán ăn Dì Tám hồi Sức câu`,
+          'ben_buy_food'
         );
       }
     }
 
-    // Out of stamina and cannot recover
     if (stamina < 4) {
-      if (cfg.benAutoSell !== false && nonKeptCount > 0) {
+      // ATM withdrawal
+      if (cfg.benAutoAtm && shells < (Number(cfg.benAtmThreshold) || 500) && canAct('ben_atm', 6000)) {
         return walkAndRun(
-          { x: 40, y: 10 },
+          { x: 30, y: 31 },
           () => {
-            sendBenWs({ t: 'sell' });
-            stores.benUI.setState({ panel: null });
+            sendBenWs({ t: 'atm' });
+            buStore.setState({ panel: null });
           },
-          `Bán hết ${nonKeptCount} cá trong giỏ trước khi rời Bến Đò`,
-          'ben_sell'
+          'Đến cây ATM Bến Đò đổi tiền mặt lấy Vỏ sò',
+          'ben_atm'
         );
       }
+
       return {
         acted: false,
         exhausted: true,
-        reason: '😮‍💨 Bến Đò: Đã hết Sức câu (không thể hồi thêm) -> Chuyển khu vực tiếp theo!',
+        reason: '😮‍💨 Bến Đò: Hết Sức câu và không đủ vỏ sò để ăn/gội đầu -> Chuyển khu vực tiếp theo!',
       };
     }
   }
 
-  // 3. Buy bait at Tiệm mồi Chú Đực
+  // 3. Buy Bait when out of bait
   if (bait <= 0) {
-    if (cfg.benAutoBuyBait === false) {
-      return {
-        acted: false,
-        exhausted: true,
-        reason: '🪱 Bến Đò: Đã hết mồi câu -> Chuyển khu vực tiếp theo!',
+    if (cfg.benAutoBuyBait !== false) {
+      const baitPrices: Record<string, number> = {
+        moi20: 15,
+        moi60: 40,
+        moi150: 95,
       };
-    }
+      const prefBait = cfg.benPreferBait || 'moi60';
+      const buyBaitChoice =
+        shells >= (baitPrices[prefBait] || 40)
+          ? prefBait
+          : shells >= 15
+            ? 'moi20'
+            : 'xinMoi';
 
-    const prefBait = cfg.benPreferBait || 'moi60';
-    const prices: Record<string, number> = { xinMoi: 0, moi20: 15, moi60: 40, moi150: 90 };
-
-    if (shells >= 15 && canAct('ben_bait', 3000)) {
-      let pick = prefBait === 'xinMoi' ? 'moi20' : prefBait;
-      if (shells < (prices[pick] || 15)) {
-        if (shells >= 40) pick = 'moi60';
-        else pick = 'moi20';
+      if (buyBaitChoice !== 'xinMoi' && shells >= (baitPrices[buyBaitChoice] || 15) && canAct('ben_bait', 3000)) {
+        return walkAndRun(
+          { x: 53, y: 11 },
+          () => {
+            sendBenWs({ t: 'buy', item: buyBaitChoice });
+            buStore.setState({ panel: null });
+          },
+          `Mua ${buyBaitChoice} tại Sạp Chú Đực (-${baitPrices[buyBaitChoice]}🐚)`,
+          'ben_bait'
+        );
       }
-      return walkAndRun(
-        { x: 53, y: 11 },
-        () => {
-          sendBenWs({ t: 'buy', item: pick });
-          stores.benUI.setState({ panel: null });
-        },
-        `Đi mua mồi câu (${pick}) tại Chú Đực`,
-        'ben_bait'
-      );
     }
 
     const xinMoiBlocked =
       shells > 0 ||
-      (lastXinMoiDay === m.day && Date.now() - lastXinMoiAt < 600000) ||
+      (lastXinMoiDay === (m.day || 0) && Date.now() - lastXinMoiAt < 600000) ||
       bn.notice?.error === 'used' ||
       bn.notice?.error === 'noFree';
 
     if (!xinMoiBlocked && canAct('ben_bait', 3000)) {
-      setLastXinMoi(Date.now(), m.day);
+      setLastXinMoi(Date.now(), m.day || 0);
       return walkAndRun(
         { x: 53, y: 11 },
         () => {
           sendBenWs({ t: 'buy', item: 'xinMoi' });
-          stores.benUI.setState({ panel: null });
+          buStore.setState({ panel: null });
         },
         `Đi xin 10 mồi miễn phí tại Chú Đực`,
         'ben_bait'
@@ -223,7 +224,7 @@ export function execBenStep(cfg: any): { acted: boolean; msg?: string; exhausted
         { x: 26, y: 12 },
         () => {
           sendBenWs({ t: 'buy', item: drinkId });
-          stores.benUI.setState({ panel: null });
+          buStore.setState({ panel: null });
         },
         `Đi uống nước tăng May mắn (${drinkId}) tại Chị Thơm`,
         'ben_luck_drink'
@@ -239,7 +240,7 @@ export function execBenStep(cfg: any): { acted: boolean; msg?: string; exhausted
         { x: 37, y: 28 },
         () => {
           sendBenWs({ t: 'spin', n: 1 });
-          stores.benUI.setState({ panel: null });
+          buStore.setState({ panel: null });
         },
         `Quay Vòng quay may mắn Sạp lồng đèn Cô Bảy (còn ${tickets} vé 🎟️)`,
         'ben_lantern_spin'
@@ -252,7 +253,7 @@ export function execBenStep(cfg: any): { acted: boolean; msg?: string; exhausted
         { x: 37, y: 28 },
         () => {
           sendBenWs({ t: 'ticket' });
-          stores.benUI.setState({ panel: null });
+          buStore.setState({ panel: null });
         },
         `Mua vé Vòng quay lồng đèn Cô Bảy (${boughtToday + 1}/5, -600🐚)`,
         'ben_lantern_buy'
@@ -269,7 +270,7 @@ export function execBenStep(cfg: any): { acted: boolean; msg?: string; exhausted
         { x: 36, y: 31 },
         () => {
           sendBenWs({ t: 'lottoClaim' });
-          stores.benUI.setState({ panel: null });
+          buStore.setState({ panel: null });
         },
         `Đổi thưởng vé số Bến Đò tại Đại lý Chú Bảy (+${(lottoState?.pending || 0).toLocaleString('vi-VN')}🐚)`,
         'ben_lotto_claim'
@@ -278,14 +279,14 @@ export function execBenStep(cfg: any): { acted: boolean; msg?: string; exhausted
 
     if (cfg.benAutoBuyLotto && shells >= 10 && canAct('ben_lotto_buy', 60000)) {
       const sellingDay = lottoState?.selling;
-      const alreadyBought = (lottoState?.mine || []).some((t: any) => t.day === sellingDay);
+      const alreadyBought = (lottoState?.mine || []).some((t: { day?: number }) => t.day === sellingDay);
       if (!alreadyBought) {
         const randNum = Math.floor(Math.random() * 100);
         return walkAndRun(
           { x: 36, y: 31 },
           () => {
             sendBenWs({ t: 'lottoBuy', num: randNum, qty: 1 });
-            stores.benUI.setState({ panel: null });
+            buStore.setState({ panel: null });
           },
           `Mua 1 vé số Bến Đò (${randNum < 10 ? '0' + randNum : randNum}) tại Đại lý Chú Bảy (-10🐚)`,
           'ben_lotto_buy'
@@ -294,26 +295,22 @@ export function execBenStep(cfg: any): { acted: boolean; msg?: string; exhausted
     }
   }
 
-  // 7. Exchange shells at ATM
-  const atmMin = Number(cfg.benAtmThreshold) || 500;
-  if (cfg.benAutoAtm && shells >= atmMin + 100 && canAct('ben_atm', 4000)) {
-    const cashShells = Math.floor((shells - 100) / 50) * 50;
-    if (cashShells >= 100) {
-      return walkAndRun(
-        { x: 34, y: 35 },
-        () => {
-          sendBenWs({ t: 'atmCash', shells: cashShells });
-          stores.benUI.setState({ panel: null });
-        },
-        `Đi đổi ${cashShells} vỏ sò ra tiền mặt tại ATM`,
-        'ben_atm'
-      );
-    }
+  // 7. ATM
+  if (cfg.benAutoAtm && shells < (Number(cfg.benAtmThreshold) || 500) && canAct('ben_atm', 6000)) {
+    return walkAndRun(
+      { x: 30, y: 31 },
+      () => {
+        sendBenWs({ t: 'atm' });
+        buStore.setState({ panel: null });
+      },
+      'Đến cây ATM Bến Đò đổi tiền mặt lấy Vỏ sò',
+      'ben_atm'
+    );
   }
 
-  // 8. Close open panel
+  // 8. Close panel if open
   if (bu.panel) {
-    stores.benUI.setState({ panel: null });
+    buStore.setState({ panel: null });
   }
 
   // 9. Walk to fishing spot
@@ -326,7 +323,7 @@ export function execBenStep(cfg: any): { acted: boolean; msg?: string; exhausted
     };
     const target = spotTargets[spotChoice] || spotTargets.dock;
 
-    if (!bu.spot || (bu.spot !== target.kind && spotChoice !== 'any')) {
+    if (!bu.spot || (bu.spot !== target.kind && (spotChoice as string) !== 'any')) {
       if (benScene && typeof benScene.goFarmer === 'function') {
         benScene.goFarmer({ x: target.x, y: target.y });
         return { acted: true, msg: `🚶 Đang đi ra ${target.label} câu cá...` };

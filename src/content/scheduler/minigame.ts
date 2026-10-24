@@ -1,9 +1,10 @@
 import { isVisible, triggerPointerDownOnly } from './dom-helpers';
+import { GameSnapshot } from '../../shared/types/game-state';
 
 let lastPulledRunKey = '';
 let lastPullAt = 0;
 
-export function handleFightMinigame(snap: any, setStatus: (text: string) => void): boolean {
+export function handleFightMinigame(snap: GameSnapshot, setStatus: (text: string) => void): boolean {
   const fightBox = document.querySelector('.ben-fight');
   if (!fightBox || !isVisible(fightBox)) {
     lastPulledRunKey = '';
@@ -15,10 +16,14 @@ export function handleFightMinigame(snap: any, setStatus: (text: string) => void
   const fishRightEl = fightBox.querySelector('.ben-run-fish.right');
   const timerBar = fightBox.querySelector('.ben-run-timer > i') as HTMLElement | null;
 
+  const fishRun = (snap?.benNet?.fight as Record<string, unknown> | undefined)?.run as
+    | { dir?: 'left' | 'right'; n?: string | number }
+    | undefined;
+
   let runDir: 'left' | 'right' | null = null;
   if (fishLeftEl) runDir = 'left';
   else if (fishRightEl) runDir = 'right';
-  else if (snap?.benNet?.fight?.run?.dir) runDir = snap.benNet.fight.run.dir;
+  else if (fishRun?.dir) runDir = fishRun.dir;
 
   if (!runDir) {
     return true; // In fight modal, waiting for fish's next run
@@ -26,7 +31,7 @@ export function handleFightMinigame(snap: any, setStatus: (text: string) => void
 
   // Identify unique run number so we pull exactly once per run
   const runN =
-    snap?.benNet?.fight?.run?.n ||
+    fishRun?.n ||
     (timerBar ? timerBar.textContent || timerBar.style.animationDuration : '') ||
     'run';
   const runKey = `${runDir}:${runN}`;

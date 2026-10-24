@@ -1,3 +1,72 @@
+export interface VehicleState {
+  id?: string;
+  type?: string;
+  battery?: number;
+  [key: string]: unknown;
+}
+
+export interface InventoryItem {
+  id: string;
+  name?: string;
+  count?: number;
+  qty?: number;
+  type?: string;
+  [key: string]: unknown;
+}
+
+export interface PlotItem {
+  id: string | number;
+  cropId?: string;
+  stage?: number;
+  watered?: boolean;
+  fertilized?: boolean;
+  pest?: boolean;
+  harvestable?: boolean;
+  [key: string]: unknown;
+}
+
+export interface AnimalItem {
+  id: string | number;
+  type?: string;
+  name?: string;
+  hungry?: boolean;
+  dirty?: boolean;
+  sick?: boolean;
+  ready?: boolean;
+  [key: string]: unknown;
+}
+
+export interface SeaState {
+  phase?: 'idle' | 'cast' | 'bite' | 'hooked' | 'reel' | 'caught' | string;
+  spot?: string;
+  bite?: boolean;
+  pullDirection?: 'left' | 'right' | 'up' | 'down' | string;
+  tension?: number;
+  [key: string]: unknown;
+}
+
+export interface BenNetWallet {
+  shells?: number;
+  bait?: number;
+  stamina?: number;
+  liveStamina?: number;
+  [key: string]: unknown;
+}
+
+export interface BenNetState {
+  status?: string;
+  fishing?: 'idle' | 'cast' | 'bite' | 'fight' | 'landing' | string;
+  wallet?: BenNetWallet | null;
+  [key: string]: unknown;
+}
+
+export interface BenUIState {
+  inSeat?: boolean;
+  hasBite?: boolean;
+  fightActive?: boolean;
+  [key: string]: unknown;
+}
+
 export interface GameSnapshot {
   ok: boolean;
   hasPhaser?: boolean;
@@ -10,20 +79,30 @@ export interface GameSnapshot {
   hydration?: number;
   energy?: number;
   battery?: number;
-  vehicle?: any;
+  vehicle?: VehicleState | boolean | null;
   onFoot?: boolean;
   indoors?: boolean;
   sleeping?: boolean;
-  panel?: any;
+  panel?: unknown;
   cropsCount?: number;
-  inventory?: any[];
+  inventory?: InventoryItem[];
   warehouse?: Record<string, number>;
-  plots?: any[];
-  animals?: any[];
-  sea?: any;
-  benUI?: any;
-  benNet?: any;
-  benWallet?: any;
+  plots?: PlotItem[] | Record<string, unknown>;
+  animals?: AnimalItem[];
+  sea?: SeaState | null;
+  benUI?: BenUIState | null;
+  benNet?: BenNetState | null;
+  benWallet?: BenNetWallet | null;
   benNonKeptCount?: number;
-  [key: string]: any;
+  fishing?: {
+    seaOpen?: boolean;
+    bait?: {
+      worm?: number;
+      shrimp?: number;
+      [key: string]: number | undefined;
+    };
+    basket?: unknown[];
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
 }

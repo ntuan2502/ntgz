@@ -1,7 +1,45 @@
 import { stores } from './engine-access';
 
-export function dismissInterruptsIfNeeded(cfg?: any): { acted: boolean; msg: string } | null {
-  const m = stores.main?.getState();
+interface InterruptState {
+  phone?: unknown;
+  closePhone?: () => void;
+  announcement?: unknown;
+  answerAnnouncement?: (ans: boolean) => void;
+  tip?: unknown;
+  answerTip?: (ans: boolean) => void;
+  call?: {
+    stage?: string;
+    from?: string;
+    topic?: string;
+    [key: string]: unknown;
+  };
+  acceptCall?: () => void;
+  hangUpGrandma?: (msg: string) => void;
+  openSea?: () => void;
+  endCall?: (msg: string) => void;
+  uncleBa?: { met?: boolean };
+  answerSau?: (ans: boolean) => void;
+  panel?: string | null;
+  finishChapterOne?: () => void;
+  finishChapter?: () => void;
+  setPanel?: (p: string | null) => void;
+  pond?: { news?: unknown };
+  ackPondNews?: () => void;
+  buffalo?: { news?: unknown };
+  ackBuffaloNews?: () => void;
+  dairy?: { news?: unknown };
+  ackDairyNews?: () => void;
+  henNews?: unknown;
+  ackHenNews?: () => void;
+  pets?: { news?: unknown };
+  ackPetNews?: () => void;
+  missedOrder?: unknown;
+  ackMissedOrder?: () => void;
+  [key: string]: unknown;
+}
+
+export function dismissInterruptsIfNeeded(cfg?: { autoDismissInterrupts?: boolean }): { acted: boolean; msg: string } | null {
+  const m = stores.main?.getState() as InterruptState | undefined;
   if (!m) return null;
 
   if (cfg && cfg.autoDismissInterrupts === false) return null;
@@ -22,8 +60,8 @@ export function dismissInterruptsIfNeeded(cfg?: any): { acted: boolean; msg: str
     if (m.call.stage === 'ringing') {
       m.acceptCall?.();
     }
-    const stAfter = stores.main.getState();
-    if (stAfter.call) {
+    const stAfter = stores.main?.getState() as InterruptState | undefined;
+    if (stAfter?.call) {
       if (stAfter.call.from === 'noi') {
         stAfter.hangUpGrandma?.('bye');
         return { acted: true, msg: '👵 Đã nghe điện thoại Bà Nội & nhận quà' };

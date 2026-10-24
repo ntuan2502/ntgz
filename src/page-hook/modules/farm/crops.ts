@@ -1,32 +1,42 @@
-import { stores, getActiveScene } from '../../core/engine-access';
+import { getMainStore, getMainState, getActiveScene } from '../../core/engine-access';
+import { AppConfig } from '../../../shared/types/config';
 
-export function handleCropsSubArea(cfg: any): { acted: boolean; msg?: string } {
-  const st = stores.main?.getState();
-  if (!st) return { acted: false };
+export function handleCropsSubArea(cfg: AppConfig): { acted: boolean; msg?: string } {
+  const mainStore = getMainStore();
+  if (!mainStore) return { acted: false };
+  const st = mainStore.getState();
 
-  const mainScene = getActiveScene('MainScene');
+  const mainScene = getActiveScene('MainScene') as unknown as {
+    doWork?: (args: { plot: string; tool: string }) => void;
+    plots?: { playEffect?: (res: unknown, plot: string) => void };
+  } | null;
+
   const plotKeys = Object.keys(st.plots || {});
   const cropNames: Record<string, string> = { radish: 'Củ cải', carrot: 'Cà rốt', corn: 'Bắp ngô', rice: 'Lúa thơm' };
 
   const applyOnPlot = (key: string, tool: string): boolean => {
-    const s0 = stores.main.getState();
+    const s0 = getMainState();
     s0.setActiveTool?.(tool);
     const prevPlotRef = s0.plots?.[key];
 
     if (mainScene && typeof mainScene.doWork === 'function') {
       try {
         mainScene.doWork({ plot: key, tool });
-      } catch (_) {}
-      if (stores.main.getState().plots?.[key] !== prevPlotRef) {
+      } catch {
+        // ignore
+      }
+      if (getMainState().plots?.[key] !== prevPlotRef) {
         return true;
       }
     }
 
-    const res = stores.main.getState().applyTool?.(key, tool);
+    const res = getMainState().applyTool?.(key, tool);
     if (res && mainScene?.plots?.playEffect) {
       try {
         mainScene.plots.playEffect(res, key);
-      } catch (_) {}
+      } catch {
+        // ignore
+      }
     }
     return Boolean(res);
   };
@@ -35,7 +45,7 @@ export function handleCropsSubArea(cfg: any): { acted: boolean; msg?: string } {
   if (cfg.autoHarvest !== false) {
     for (const key of plotKeys) {
       if (st.previewTool?.(key, 'basket')) {
-        const cropId = st.plots[key]?.crop?.id;
+        const cropId = st.plots?.[key]?.crop?.id || '';
         if (applyOnPlot(key, 'basket')) {
           return { acted: true, msg: `🧺 Thu hoạch ${cropNames[cropId] || 'nông sản'} ô (${key})` };
         }
@@ -43,167 +53,123 @@ export function handleCropsSubArea(cfg: any): { acted: boolean; msg?: string } {
     }
   }
 
-  // Step B: Spray pesticide on 1 pest-infested plot
+  // Step B: Pesticide (Kill pests)
   if (cfg.autoPesticide !== false) {
     for (const key of plotKeys) {
-      const p = st.plots[key];
-      if (p && p.crop && p.crop.pests) {
-        if ((st.items?.pesticide || 0) <= 0 && st.gold >= 8000) {
-          st.buyItems?.({ fertilizer: 0, pesticide: 1, mysteryBag: 0 });
-        }
-        if ((stores.main.getState().items?.pesticide || 0) > 0 && applyOnPlot(key, 'pesticide')) {
-          return { acted: true, msg: `🐛 Đã xịt thuốc trừ sâu ô (${key})` };
+      if (st.previewTool?.(key, 'pesticide')) {
+        if (applyOnPlot(key, 'pesticide')) {
+          return { acted: true, msg: `🐛 Xịt thuốc diệt sâu bọ ô (${key})` };
         }
       }
     }
   }
 
-  // Step C: Plant seed on 1 empty plot
+  // Step C: Auto-Planting (Buy seeds first if warehouse empty)
   if (cfg.autoPlant !== false) {
-    const hasEmptyPlot = plotKeys.some((k) => st.plots[k] && !st.plots[k].crop);
-    if (hasEmptyPlot) {
-      if ((st.items?.mysteryBag || 0) > 0) {
-        const opened = st.consumeItem?.('mysteryBag');
-        if (opened) {
-          return { acted: true, msg: `🎁 Đã mở Túi hạt bí ẩn nhận thêm hạt giống` };
+    const emptyPlots = plotKeys.filter((k) => !st.plots?.[k]?.crop);
+    if (emptyPlots.length > 0) {
+      const preferred = cfg.preferSeed || 'auto';
+      let seedToPlant: string;
+      const seedList = ['radish', 'carrot', 'corn', 'rice'];
+
+      if (preferred === 'auto') {
+        const curM = getMainState();
+        const curGold = curM.gold || 0;
+        if (curGold < 1500) seedToPlant = 'radish';
+        else if (curGold < 5000) seedToPlant = 'carrot';
+        else if (curGold < 15000) seedToPlant = 'corn';
+        else seedToPlant = 'rice';
+      } else {
+        seedToPlant = preferred;
+      }
+
+      if (seedToPlant) {
+        const seedStock = st.seeds?.[seedToPlant] || 0;
+        if (seedStock < emptyPlots.length) {
+          const needed = emptyPlots.length - seedStock;
+          const buyCount = Math.min(needed, 10);
+          const seedPrices: Record<string, number> = { radish: 50, carrot: 120, corn: 280, rice: 600 };
+          const cost = (seedPrices[seedToPlant] || 100) * buyCount;
+
+          if ((getMainState().gold || 0) >= cost) {
+            if (getMainState().buySeed?.(seedToPlant, buyCount) === 'ok') {
+              return {
+                acted: true,
+                msg: `🌱 Đã mua ${buyCount} hạt giống ${cropNames[seedToPlant] || seedToPlant}`,
+              };
+            }
+          }
         }
       }
 
-      const ensureSeed = (cropId: string): string | null => {
-        if (!cropId) return null;
-        const cur = stores.main.getState();
-        if ((cur.seeds?.[cropId] || 0) > 0) return cropId;
-        const payload: Record<string, number> = { radish: 0, carrot: 0, corn: 0, rice: 0 };
-        if (!(cropId in payload)) return null;
-        payload[cropId] = 1;
-        if (cur.buySeeds?.(payload) === true && (stores.main.getState().seeds?.[cropId] || 0) > 0) {
-          return cropId;
-        }
-        return null;
-      };
-
-      const countGrowingCrop = (cropId: string): number => {
-        const cur = stores.main.getState();
-        let count = 0;
-        for (const k of Object.keys(cur.plots || {})) {
-          if (cur.plots[k]?.crop?.id === cropId) count++;
-        }
-        return count;
-      };
-
-      const chooseSeed = (): string | null => {
-        const cur = stores.main.getState();
-        const pref = cfg.preferSeed || 'auto';
-
-        if (pref !== 'auto') {
-          const gotPref = ensureSeed(pref);
-          if (gotPref) return gotPref;
-        }
-
-        // Smart auto-selection
-        if (cur.order && cur.order.crop) {
-          const c = cur.order.crop;
-          const projected = (cur.produce?.[c] || 0) + countGrowingCrop(c) * 4;
-          if (projected < cur.order.qty) {
-            const got = ensureSeed(c);
-            if (got) return got;
+      const freshM = getMainState();
+      let plantChoice: string | null = null;
+      if (seedToPlant && (freshM.seeds?.[seedToPlant] || 0) > 0) {
+        plantChoice = seedToPlant;
+      } else {
+        for (const sName of seedList) {
+          if ((freshM.seeds?.[sName] || 0) > 0) {
+            plantChoice = sName;
+            break;
           }
         }
+      }
 
-        if (Array.isArray(cur.daily?.tasks)) {
-          for (const task of cur.daily.tasks) {
-            if (!task.claimed && task.kind === 'harvest' && task.crop) {
-              const harvestedNow = (cur.stats?.harvested?.[task.crop] || 0) - (task.base || 0);
-              if (harvestedNow + countGrowingCrop(task.crop) * 4 < task.need) {
-                const got = ensureSeed(task.crop);
-                if (got) return got;
-              }
-            }
-          }
-        }
-
-        if (Array.isArray(cur.village?.requests)) {
-          for (const req of cur.village.requests) {
-            if (!req.done && req.goods && req.goods !== 'egg') {
-              const projected = (cur.produce?.[req.goods] || 0) + countGrowingCrop(req.goods) * 4;
-              if (projected < req.qty) {
-                const got = ensureSeed(req.goods);
-                if (got) return got;
-              }
-            }
-          }
-        }
-
-        if (cur.day <= 2 && !cur.firstDay?.cooked && (cur.produce?.radish || 0) + countGrowingCrop('radish') * 4 < 3) {
-          const got = ensureSeed('radish');
-          if (got) return got;
-        }
-
-        const order = ['rice', 'corn', 'carrot', 'radish'];
-        for (const c of order) {
-          if ((cur.seeds?.[c] || 0) > 0) return c;
-        }
-        for (const c of order) {
-          const got = ensureSeed(c);
-          if (got) return got;
-        }
-        return null;
-      };
-
-      for (const key of plotKeys) {
-        const p = stores.main.getState().plots[key];
-        if (p && !p.crop) {
-          const seed = chooseSeed();
-          if (seed && applyOnPlot(key, `seed:${seed}`)) {
-            return { acted: true, msg: `🌱 Đã gieo hạt ${cropNames[seed] || seed} ô (${key})` };
-          }
-          break;
+      if (plantChoice) {
+        const targetPlot = emptyPlots[0];
+        if (applyOnPlot(targetPlot, `seed:${plantChoice}`)) {
+          return {
+            acted: true,
+            msg: `🌱 Gieo hạt giống ${cropNames[plantChoice] || plantChoice} ô (${targetPlot})`,
+          };
         }
       }
     }
   }
 
-  // Step D: Water 1 dry plot
+  // Step D: Water all unwatered plots
   if (cfg.autoWater !== false) {
-    const curSt = stores.main.getState();
     for (const key of plotKeys) {
-      if (curSt.previewTool?.(key, 'wateringCan')) {
-        if (applyOnPlot(key, 'wateringCan')) {
-          return { acted: true, msg: `💧 Đã tưới nước ô (${key})` };
+      if (st.previewTool?.(key, 'can')) {
+        if (applyOnPlot(key, 'can')) {
+          return { acted: true, msg: `💧 Tưới nước giữ ẩm đất ô (${key})` };
         }
       }
     }
   }
 
-  // Step E: Fertilize 1 unfertilized growing plot
-  if (cfg.autoFertilize) {
-    const curSt = stores.main.getState();
+  // Step E: Fertilize plots
+  if (cfg.autoFertilize !== false) {
     for (const key of plotKeys) {
-      const p = curSt.plots[key];
-      if (p && p.crop && !p.crop.fertilized && curSt.previewTool?.(key, 'fertilizer')) {
-        if ((curSt.items?.fertilizer || 0) <= 0 && curSt.gold >= 15000) {
-          curSt.buyItems?.({ fertilizer: 1, pesticide: 0, mysteryBag: 0 });
-        }
-        if ((stores.main.getState().items?.fertilizer || 0) > 0 && applyOnPlot(key, 'fertilizer')) {
-          return { acted: true, msg: `✨ Đã bón phân NPK ô (${key})` };
+      if (st.previewTool?.(key, 'fertilizer')) {
+        if (applyOnPlot(key, 'fertilizer')) {
+          return { acted: true, msg: `✨ Bón phân NPK tăng trưởng ô (${key})` };
         }
       }
     }
   }
 
-  // Step F: Pay crop helper (Tèo) if unpaid > 0
-  const curSt2 = stores.main.getState();
-  if (curSt2.helpers?.crops?.hired && (curSt2.helpers.crops.unpaid || 0) > 0) {
-    if (curSt2.payHelper?.('crops') === true) {
-      return { acted: true, msg: `💸 Đã trả lương nợ cho Tèo phụ ruộng` };
-    }
-  }
+  // Step F: Buy more farm plots if player has enough gold
+  if (cfg.autoBuyPlots !== false) {
+    const curGold = getMainState().gold || 0;
+    const currentCount = plotKeys.length;
+    const plotCosts = [
+      0, 0, 0, 0,
+      1000, 2000, 3500, 5000,
+      8000, 12000, 18000, 25000,
+      35000, 50000, 70000, 100000,
+      140000, 190000, 250000, 320000,
+      400000, 500000, 620000, 760000,
+      920000, 1100000, 1300000, 1550000,
+      1850000, 2200000, 2600000, 3100000,
+    ];
+    const nextCost = plotCosts[currentCount] || 0;
 
-  // Step G: Buy new land plot if offered
-  const curSt3 = stores.main.getState();
-  if (cfg.autoBuyPlots !== false && curSt3.plotOffer && curSt3.gold >= (curSt3.plotOffer.price || 0)) {
-    if (curSt3.buyPlot?.() === true) {
-      return { acted: true, msg: `🌱 Đã mua thêm ô đất ruộng mới (+1 ô)` };
+    if (currentCount < 32 && nextCost > 0 && curGold >= nextCost + 15000) {
+      const res = getMainState().buyPlot?.();
+      if (res === 'ok' || res === 'bought') {
+        return { acted: true, msg: `🚜 Đã mua thêm ô đất ruộng #${currentCount + 1} (-${nextCost.toLocaleString('vi-VN')}đ)` };
+      }
     }
   }
 

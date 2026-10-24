@@ -4,14 +4,26 @@ import { dismissInterruptsIfNeeded } from './core/interrupts';
 import { execFarmSubAreaStep } from './modules/farm';
 import { execSeaStep } from './modules/sea';
 import { execBenStep } from './modules/wharf';
+import { AppConfig, FarmSubAreaId } from '../shared/types/config';
+
+interface GameActionPayload {
+  target?: string;
+  indoors?: boolean;
+  subAreaId?: FarmSubAreaId;
+  config?: AppConfig;
+  [key: string]: unknown;
+}
 
 (() => {
-  if ((window as any).__ntg_page_hook_v100) return;
-  (window as any).__ntg_page_hook_v100 = true;
+  const win = window as unknown as Record<string, unknown>;
+  if (win.__ntg_page_hook_v100) return;
+  win.__ntg_page_hook_v100 = true;
 
-  function execAction(action: string, payload: any = {}): any {
+  function execAction(action: string, payload: GameActionPayload = {}): Record<string, unknown> {
     if (!stores.main) discoverStores();
-    const m = stores.main?.getState();
+    const mainStore = stores.main;
+    if (!mainStore) return { ok: false, error: 'NO_MAIN_STORE' };
+    const m = mainStore.getState();
     if (!m) return { ok: false, error: 'NO_MAIN_STORE' };
 
     try {
@@ -19,24 +31,24 @@ import { execBenStep } from './modules/wharf';
         case 'NAVIGATE': {
           const target = payload.target;
           dismissInterruptsIfNeeded({ autoDismissInterrupts: true });
-          const cur = stores.main.getState();
+          const cur = mainStore.getState();
 
           if (target === 'playing') {
             if (cur.screen !== 'playing') {
               cur.showWorldMap?.();
-              stores.main.getState().enterFarm?.();
-              stores.main.setState({ screen: 'playing', panel: null, shop: null, vendor: null });
+              mainStore.getState().enterFarm?.();
+              mainStore.setState({ screen: 'playing', panel: null, shop: null, vendor: null });
             }
-            if (payload.indoors === false && stores.main.getState().indoors) {
-              stores.main.getState().leaveHouse?.();
+            if (payload.indoors === false && mainStore.getState().indoors) {
+              mainStore.getState().leaveHouse?.();
             }
           } else if (target === 'sea') {
             if (cur.screen !== 'sea') {
               if (cur.indoors) cur.leaveHouse?.();
-              if (!cur.fishing?.seaOpen && cur.day >= 2) {
+              if (!cur.fishing?.seaOpen && (cur.day || 0) >= 2) {
                 cur.openSea?.();
               }
-              const res = stores.main.getState().goToSea?.();
+              const res = mainStore.getState().goToSea?.();
               if (res !== 'ok') {
                 return { ok: false, reason: res || 'CANNOT_GO_SEA' };
               }
@@ -44,42 +56,43 @@ import { execBenStep } from './modules/wharf';
           } else if (target === 'benDo' || target === 'ben') {
             if (cur.screen !== 'benDo') {
               if (cur.indoors) cur.leaveHouse?.();
-              stores.main.setState({ screen: 'benDo', panel: null, shop: null, vendor: null, indoors: false });
+              mainStore.setState({ screen: 'benDo', panel: null, shop: null, vendor: null, indoors: false });
             }
           }
-          return { ok: true, screen: stores.main.getState().screen };
+          return { ok: true, screen: mainStore.getState().screen };
         }
 
         case 'FARM_SUBAREA_STEP': {
-          const res = execFarmSubAreaStep(payload.subAreaId, payload.config || {});
+          if (!payload.subAreaId || !payload.config) return { ok: false, error: 'INVALID_PAYLOAD' };
+          const res = execFarmSubAreaStep(payload.subAreaId, payload.config);
           return { ok: true, ...res };
         }
 
         case 'SEA_STEP': {
-          const res = execSeaStep(payload.config || {});
+          if (!payload.config) return { ok: false, error: 'NO_CONFIG' };
+          const res = execSeaStep(payload.config);
           return { ok: true, ...res };
         }
 
         case 'BEN_STEP': {
-          const res = execBenStep(payload.config || {});
+          if (!payload.config) return { ok: false, error: 'NO_CONFIG' };
+          const res = execBenStep(payload.config);
           return { ok: true, ...res };
         }
 
         case 'SLEEP_NOW': {
-          // 1. Sell any remaining fish in Sea basket before going home to sleep
-          if ((stores.main.getState().fishing?.basket?.length || 0) > 0) {
-            stores.main.getState().sellBasket?.();
+          const mainState = mainStore.getState();
+          if ((mainState.fishing?.basket?.length || 0) > 0) {
+            mainState.sellBasket?.();
           }
 
-          // 2. Dismiss any blocking modals/calls
           dismissInterruptsIfNeeded({ autoDismissInterrupts: true });
 
-          // 3. Navigate back to Farm ('playing') & enter house
-          if (stores.main.getState().screen !== 'playing') {
-            stores.main.getState().showWorldMap?.();
-            stores.main.getState().enterFarm?.();
+          if (mainStore.getState().screen !== 'playing') {
+            mainStore.getState().showWorldMap?.();
+            mainStore.getState().enterFarm?.();
           }
-          stores.main.setState({
+          mainStore.setState({
             screen: 'playing',
             panel: null,
             shop: null,
@@ -92,41 +105,47 @@ import { execBenStep } from './modules/wharf';
             call: null,
           });
 
-          const st = stores.main.getState();
+          const st = mainStore.getState();
           if (!st.indoors) {
             st.enterHouse?.();
           }
 
-          const prevDay = stores.main.getState().day;
-          if (stores.main.getState().minutes >= 1140) {
-            stores.main.getState().goToSleep?.();
-            stores.main.getState().sleepThrough?.();
+          const prevDay = mainStore.getState().day || 0;
+          if ((mainStore.getState().minutes || 0) >= 1140) {
+            mainStore.getState().goToSleep?.();
+            mainStore.getState().sleepThrough?.();
           }
-          if (stores.main.getState().day === prevDay) {
-            stores.main.getState().nextMorning?.();
+          if (mainStore.getState().day === prevDay) {
+            mainStore.getState().nextMorning?.();
           }
-          stores.main.getState().stopSleeping?.();
+          mainStore.getState().stopSleeping?.();
 
-          const afterDay = stores.main.getState().day;
+          const afterDay = mainStore.getState().day || 0;
           return { ok: afterDay > prevDay, day: afterDay };
         }
 
         default:
           return { ok: false, error: 'UNKNOWN_ACTION' };
       }
-    } catch (err: any) {
-      return { ok: false, error: String(err?.message || err) };
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      return { ok: false, error: errorMsg };
     }
   }
 
-  window.addEventListener('message', (e) => {
+  window.addEventListener('message', (e: MessageEvent) => {
     if (e.source !== window || !e.data || e.data.source !== 'ntg-content') return;
-    const { id, type, action, payload } = e.data;
+    const { id, type, action, payload } = e.data as {
+      id: number;
+      type: string;
+      action?: string;
+      payload?: GameActionPayload;
+    };
 
     if (type === 'GET_GAME_STATE') {
       const snap = getSnapshot();
       window.postMessage({ source: 'ntg-page', id, type: 'GAME_STATE_RESULT', data: snap }, '*');
-    } else if (type === 'EXEC_GAME_ACTION') {
+    } else if (type === 'EXEC_GAME_ACTION' && action) {
       const res = execAction(action, payload);
       window.postMessage({ source: 'ntg-page', id, type: 'GAME_ACTION_RESULT', data: res }, '*');
     }

@@ -1,4 +1,5 @@
 import { AppConfig } from '../../shared/types/config';
+import { GameSnapshot } from '../../shared/types/game-state';
 import { execGameAction } from '../bridge/content-bridge';
 import { isVisible, triggerPointerDownAndClick, triggerPointerDownOnly, sleep } from './dom-helpers';
 import { handleFightMinigame } from './minigame';
@@ -8,7 +9,7 @@ let lastHookAt = 0;
 let lastCastAt = 0;
 
 export async function stepBenDoFishing(
-  snap: any,
+  snap: GameSnapshot,
   config: AppConfig,
   setStatus: (text: string) => void,
   onCatchIncrement: () => void
@@ -112,7 +113,8 @@ export async function stepBenDoFishing(
     }
 
     if (prep && prep.exhausted) {
-      setStatus(prep.reason || '🛶 Bến Đò: Đã hết Sức câu / mồi -> Chuyển sang khu vực tiếp theo!');
+      const reasonMsg = typeof prep.reason === 'string' ? prep.reason : '🛶 Bến Đò: Đã hết Sức câu / mồi -> Chuyển sang khu vực tiếp theo!';
+      setStatus(reasonMsg);
       return { finishedArea: true, exhausted: true };
     }
 

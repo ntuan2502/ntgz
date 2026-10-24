@@ -7,7 +7,16 @@ export interface ContentToPageMessage {
   id: number;
   type: RequestType;
   action?: string | null;
-  payload?: Record<string, any>;
+  payload?: Record<string, unknown>;
+}
+
+export interface GameActionResult<T = unknown> {
+  ok: boolean;
+  acted?: boolean;
+  msg?: string;
+  error?: string;
+  data?: T;
+  [key: string]: unknown;
 }
 
 export interface PageToContentMessage {
@@ -15,11 +24,4 @@ export interface PageToContentMessage {
   id: number;
   type: 'GAME_STATE_RESULT' | 'GAME_ACTION_RESULT';
   data: GameActionResult | GameSnapshot;
-}
-
-export interface GameActionResult {
-  ok: boolean;
-  error?: string;
-  data?: any;
-  [key: string]: any;
 }

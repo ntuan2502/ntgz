@@ -30,7 +30,12 @@ export function getActiveTrend(day: number) {
   return t.start <= day ? t : null;
 }
 
-export function getTrendQuota(goods: string, day: number, plotCount: number, trendLog: any): number {
+export function getTrendQuota(
+  goods: string,
+  day: number,
+  plotCount: number,
+  trendLog: { soldDay?: number; sold?: number } | null | undefined
+): number {
   const t = getActiveTrend(day);
   if (!t || t.goods !== goods) return 0;
   const maxQuota = 4 + Math.floor(plotCount / 4);
@@ -38,7 +43,9 @@ export function getTrendQuota(goods: string, day: number, plotCount: number, tre
   return Math.max(0, maxQuota - sold);
 }
 
-export function computeBenStamina(wallet: any): number {
+export function computeBenStamina(
+  wallet: { stamina?: number; staminaNext?: number; at?: number } | null | undefined
+): number {
   if (!wallet) return 0;
   if (!wallet.staminaNext || typeof wallet.at !== 'number') return wallet.stamina ?? 0;
   const elapsed = performance.now() - wallet.at;
@@ -67,7 +74,7 @@ export function getSnapshot(): GameSnapshot {
     : null;
 
   const benNonKeptCount = Array.isArray(bn?.basket)
-    ? bn.basket.filter((x: any) => !x.kept).length
+    ? bn.basket.filter((x: { kept?: boolean }) => !x.kept).length
     : 0;
 
   return {
@@ -118,9 +125,10 @@ export function getSnapshot(): GameSnapshot {
     salonOpen: m.salonOpen,
     trendLog: m.trendLog,
     trend: (() => {
-      const tr = getActiveTrend(m.day);
+      const day = m.day || 0;
+      const tr = getActiveTrend(day);
       if (!tr) return null;
-      const quota = getTrendQuota(tr.goods, m.day, Object.keys(m.plots || {}).length, m.trendLog);
+      const quota = getTrendQuota(tr.goods, day, Object.keys(m.plots || {}).length, m.trendLog);
       return { goods: tr.goods, start: tr.start, end: tr.end, quota };
     })(),
     sea: s

@@ -10,7 +10,8 @@
     "scripting"
   ],
   "host_permissions": [
-    "<all_urls>"
+    "https://nongtraigenz.online/*",
+    "https://api.github.com/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -21,15 +22,15 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": ["https://nongtraigenz.online/play*"],
       "js": ["content.js"],
       "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["page-hook.js"],
-      "matches": ["<all_urls>"]
+      "resources": ["page-hook.js", "tailwind.css"],
+      "matches": ["https://nongtraigenz.online/*"]
     }
   ],
   "commands": {

@@ -6,7 +6,9 @@ import { handlePetSubArea, handleBarnSubArea, handleCoopSubArea, handlePondSubAr
 import { handleMarketSubArea } from './market';
 import { handleDiBaySubArea } from './tasks';
 
-export function execFarmSubAreaStep(subAreaId: string, cfg: any): { acted: boolean; msg?: string } {
+import { AppConfig, FarmSubAreaId } from '../../../shared/types/config';
+
+export function execFarmSubAreaStep(subAreaId: FarmSubAreaId, cfg: AppConfig): { acted: boolean; msg?: string } {
   const m = stores.main?.getState();
   if (!m) return { acted: false };
 

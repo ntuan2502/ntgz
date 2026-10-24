@@ -1,4 +1,5 @@
 import { AppConfig } from '../../shared/types/config';
+import { GameSnapshot } from '../../shared/types/game-state';
 import { SUBAREA_META } from '../../shared/constants/default-config';
 import { execGameAction, getGameState } from '../bridge/content-bridge';
 import { sleep } from './dom-helpers';
@@ -7,10 +8,10 @@ export let lastFarmDoneDay = -1;
 export let lastFarmRunAt = 0;
 
 export async function runFarmSubAreas(
-  snap: any,
+  snap: GameSnapshot,
   config: AppConfig,
   setStatus: (text: string) => void,
-  updateHeaderStats: (snap: any) => void
+  updateHeaderStats: (snap: GameSnapshot) => void
 ): Promise<boolean> {
   const delayMs = Math.max(150, Number(config.taskDelayMs) || 650);
 
@@ -58,7 +59,7 @@ export async function runFarmSubAreas(
     }
   }
 
-  lastFarmDoneDay = snap.day;
+  lastFarmDoneDay = snap.day ?? 0;
   lastFarmRunAt = Date.now();
   return anyActed;
 }

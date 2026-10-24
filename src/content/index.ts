@@ -17,6 +17,9 @@ import {
 } from './scheduler/master-loop';
 
 function init(): void {
+  if (!window.location.href.includes('nongtraigenz.online/play')) {
+    return;
+  }
   injectPageHook();
   initBridgeListener();
   createHud();

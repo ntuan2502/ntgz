@@ -1,15 +1,16 @@
-import { stores } from '../../core/engine-access';
+import { getMainState, setMainState } from '../../core/engine-access';
+import { AppConfig } from '../../../shared/types/config';
 
-export function handleDiBaySubArea(cfg: any): { acted: boolean; msg?: string } {
-  const m = stores.main?.getState();
+export function handleDiBaySubArea(cfg: AppConfig): { acted: boolean; msg?: string } {
+  const m = getMainState();
   if (!m) return { acted: false };
 
   // Safeguard: Ensure Dì Bảy savings counter is open if piggy exists or day >= 14
-  const stP0 = stores.main.getState();
+  const stP0 = getMainState();
   if (stP0.savings && (stP0.savings.newsDay || 0) <= 0) {
-    if ((stP0.savings.pig?.amount || 0) > 0 || stP0.day >= 14) {
-      stores.main.setState((e: any) => ({
-        savings: { ...e.savings, newsDay: Math.max(1, e.day) },
+    if ((stP0.savings.pig?.amount || 0) > 0 || (stP0.day || 0) >= 14) {
+      setMainState((e) => ({
+        savings: { ...(e.savings || {}), newsDay: Math.max(1, e.day || 1) },
       }));
     }
   }
@@ -24,7 +25,7 @@ export function handleDiBaySubArea(cfg: any): { acted: boolean; msg?: string } {
     }
 
     // Sprout tray (Day 1)
-    const stF = stores.main.getState();
+    const stF = getMainState();
     if (stF.firstDay?.incense && !stF.firstDay?.sproutHarvested) {
       if (!stF.firstDay.sprout) {
         if (stF.plantSprouts?.() === 'ok') {
@@ -36,29 +37,30 @@ export function handleDiBaySubArea(cfg: any): { acted: boolean; msg?: string } {
     }
 
     // Clear 5 garden debris items
-    const stF2 = stores.main.getState();
+    const stF2 = getMainState();
     if ((stF2.firstDay?.cleared?.length || 0) < 5) {
+      const clearedList = stF2.firstDay?.cleared || [];
       for (let i = 0; i < 5; i++) {
-        if (!stF2.firstDay.cleared.includes(i)) {
+        if (!clearedList.includes(i)) {
           const cleared = stF2.clearDebris?.(i);
           if (cleared) {
-            return { acted: true, msg: `🧹 Đã dọn cỏ/cành khô ngoài vườn (${stF2.firstDay.cleared.length + 1}/5)` };
+            return { acted: true, msg: `🧹 Đã dọn cỏ/cành khô ngoài vườn (${clearedList.length + 1}/5)` };
           }
         }
       }
     }
 
     // Day 1 eat task & Day 2 drink task
-    const stF3 = stores.main.getState();
-    if (stF3.day === 1 && !(stF3.ledger || []).some((e: any) => e.kind === 'food') && stF3.gold >= 8000) {
+    const stF3 = getMainState();
+    if (stF3.day === 1 && !(stF3.ledger || []).some((e: { kind?: string }) => e.kind === 'food') && (stF3.gold || 0) >= 8000) {
       if (stF3.buyFood?.('banhBao') === 'ok') {
         return { acted: true, msg: `🥟 Đã mua Bánh bao ăn sáng (Việc Ngày 1)` };
       }
     }
     if (
       stF3.day === 2 &&
-      !(stF3.ledger || []).some((e: any) => e.kind === 'food' && (e.label === 'Trà đá' || e.label === 'Nước mía')) &&
-      stF3.gold >= 3000
+      !(stF3.ledger || []).some((e: { kind?: string; label?: string }) => e.kind === 'food' && (e.label === 'Trà đá' || e.label === 'Nước mía')) &&
+      (stF3.gold || 0) >= 3000
     ) {
       if (stF3.buyFood?.('traDa') === 'ok') {
         return { acted: true, msg: `🧊 Đã uống Trà đá (Việc Ngày 2)` };
@@ -68,112 +70,95 @@ export function handleDiBaySubArea(cfg: any): { acted: boolean; msg?: string } {
 
   // 8b. Ông Năm's Notebook pages & rice seed soaking
   if (cfg.autoNotebookPages !== false) {
-    const stN = stores.main.getState();
+    const stN = getMainState();
     if (stN.notebook?.found) {
-      for (const pg of [1, 4, 5]) {
-        if (stN.claimPage?.(pg) === true) {
-          return { acted: true, msg: `📔 Đã thu thập trang Sổ tay Ông Năm #${pg}` };
+      if (!stN.notebook.read) {
+        stN.readNotebook?.();
+      }
+      for (const p of stN.notebook.pages || []) {
+        if (p.found && !p.read) {
+          stN.claimNotebookPage?.(p.id);
         }
       }
-      if (stN.startSoak?.() === true) {
-        return { acted: true, msg: `🌾 Đã ngâm ủ giống Lúa thơm của Ông Năm` };
+    }
+    const curN = getMainState();
+    if (curN.notebook?.pages?.some((p) => p.id === 'soak' && p.found)) {
+      if (!curN.notebook.soakDone && !curN.notebook.soakEnd && (curN.gold || 0) >= 1000) {
+        if (curN.startSoak?.() === 'ok') {
+          return { acted: true, msg: `🌾 Đã ngâm giống lúa thơm theo sổ Ông Năm` };
+        }
       }
-    }
-  }
-
-  // 8c. Claim Daily Tasks & Chapter Goals
-  if (cfg.autoClaimQuests !== false) {
-    const stD = stores.main.getState();
-    const taskCount = stD.daily?.tasks?.length || 0;
-    for (let i = 0; i < taskCount; i++) {
-      const reward = stores.main.getState().claimDaily?.(i);
-      if (reward) {
-        return { acted: true, msg: `🎁 Đã nhận thưởng Việc hôm nay #${i + 1} trong Sổ tay` };
-      }
-    }
-
-    const goalReward = stores.main.getState().claimGoal?.();
-    if (goalReward) {
-      return { acted: true, msg: `🏆 Đã nhận thưởng Mục tiêu Sổ tay!` };
-    }
-  }
-
-  // 8d. Piggy Bank: Break piggy when full (7-day streak)
-  if (cfg.autoBreakPiggy !== false && cfg.autoPiggy !== false) {
-    const stBrk = stores.main.getState();
-    const pig = stBrk.savings?.pig;
-    if (pig && pig.amount > 0) {
-      const streak = pig.lastDay >= stBrk.day - 1 ? pig.streak || 0 : 0;
-      if (streak >= 7) {
-        const brk = stBrk.breakPiggy?.();
-        if (brk) {
-          const totalGot = (brk.coins || 0) + (brk.bonus || 0);
-          return {
-            acted: true,
-            msg: `🔨 Đã đập Heo đất đủ 7 ngày (+${totalGot.toLocaleString('vi-VN')}đ)!`,
-          };
+      const curN2 = getMainState();
+      if (curN2.notebook?.seedReady && !curN2.notebook.seedClaimed) {
+        if (curN2.claimSoakSeed?.() === 'ok') {
+          return { acted: true, msg: `🌾 Đã nhận giống lúa thơm ngâm ủ thành công` };
         }
       }
     }
   }
 
-  // 8e. Piggy Bank: Buy new piggy if none active
-  if (cfg.autoNewPiggy !== false && cfg.autoPiggy !== false) {
-    const stP2 = stores.main.getState();
-    const pig2 = stP2.savings?.pig;
-    if (!pig2 || pig2.amount === 0) {
-      const tiers = [500000, 200000, 100000, 50000, 10000];
-      let chosenTier = 0;
-      for (const t of tiers) {
-        if (stP2.gold >= t * 3) {
-          chosenTier = t;
-          break;
-        }
-      }
-      if (!chosenTier && stP2.gold >= 15000) chosenTier = 10000;
+  // 8c. Piggy Bank (Heo đất tiết kiệm)
+  const stPig = getMainState();
+  const pig = stPig.savings?.pig;
 
-      if (chosenTier > 0 && stP2.newPiggy?.(chosenTier) === true) {
-        stores.main.getState().feedPiggy?.();
-        return {
-          acted: true,
-          msg: `🐷 Đã mua & bỏ ống Heo đất mới (${chosenTier.toLocaleString('vi-VN')}đ/ngày)`,
-        };
-      }
+  // Feed piggy daily (if not fed today & not broken)
+  if (cfg.autoFeedPiggy !== false && pig && !pig.broken && pig.fedDay !== stPig.day && (stPig.gold || 0) >= 50000) {
+    const res = stPig.feedPiggy?.();
+    if (res === 'ok' || res === 'broke') {
+      return { acted: true, msg: `🐷 Đã bỏ ống heo tiết kiệm (Nuôi heo ${pig.streak || 1} ngày)` };
     }
   }
 
-  // 8f. Piggy Bank: Feed active piggy today
-  if (cfg.autoFeedPiggy !== false && cfg.autoPiggy !== false) {
-    const stP3 = stores.main.getState();
-    const pig3 = stP3.savings?.pig;
-    if (pig3 && pig3.amount > 0 && pig3.lastDay !== stP3.day && stP3.gold >= pig3.amount) {
-      if (stP3.feedPiggy?.() === 'ok') {
-        return {
-          acted: true,
-          msg: `🪙 Đã bỏ ống Heo đất hôm nay (${pig3.amount.toLocaleString('vi-VN')}đ)`,
-        };
-      }
+  // Break piggy if streak >= 7 days
+  const stPig2 = getMainState();
+  const pig2 = stPig2.savings?.pig;
+  if (cfg.autoBreakPiggy !== false && pig2 && !pig2.broken && (pig2.streak || 0) >= 7) {
+    if (stPig2.breakPiggy?.() === true) {
+      return {
+        acted: true,
+        msg: `🔨 Đã đập heo đất tiết kiệm đủ 7 ngày streak (+${(pig2.amount || 0).toLocaleString('vi-VN')}đ)`,
+      };
     }
   }
 
-  // 8g. Savings Deposit at Dì Bảy
-  const stS = stores.main.getState();
+  // Buy new piggy if broken or haven't got one
+  const stPig3 = getMainState();
+  const pig3 = stPig3.savings?.pig;
   if (
-    cfg.autoSavings &&
-    (stS.savings?.newsDay || 0) > 0 &&
-    !stS.savings?.loan &&
-    (stS.savings?.books?.length || 0) < 10
+    cfg.autoNewPiggy !== false &&
+    (!pig3 || pig3.broken) &&
+    (stPig3.gold || 0) >= 100000 &&
+    (stPig3.savings?.newsDay || 0) > 0
   ) {
-    const minGold = Number(cfg.savingsKeepGold) || 200000;
-    if (stS.gold > minGold + 50000) {
-      const matured = stS.savings.matured || 0;
-      const cap = matured >= 10 ? 20000000 : matured >= 5 ? 12000000 : matured >= 2 ? 8000000 : 5000000;
-      const depAmount = Math.min(cap, Math.floor((stS.gold - minGold) / 10000) * 10000);
-      if (depAmount >= 50000 && stS.deposit?.(depAmount, 7) === 'ok') {
+    if (stPig3.buyPiggy?.() === true) {
+      return { acted: true, msg: `🐷 Đã mua heo đất mới tại Quầy Dì Bảy` };
+    }
+  }
+
+  // 8d. Passbook Savings (Sổ tiết kiệm Dì Bảy)
+  if (cfg.autoSavings) {
+    const stSav = getMainState();
+    const keepLimit = Number(cfg.savingsKeepGold) || 200000;
+    const surplusCash = (stSav.gold || 0) - keepLimit;
+    if (surplusCash >= 100000 && !stSav.savings?.balance) {
+      const depositAmt = Math.floor(surplusCash / 50000) * 50000;
+      if (depositAmt >= 100000 && stSav.depositSavings?.(depositAmt) === true) {
         return {
           acted: true,
-          msg: `🏦 Đã gửi sổ tiết kiệm Dì Bảy ${depAmount.toLocaleString('vi-VN')}đ (7 ngày)`,
+          msg: `🏦 Đã gửi tiết kiệm ${depositAmt.toLocaleString('vi-VN')}đ tại Quầy Dì Bảy`,
         };
+      }
+    }
+  }
+
+  // 8e. Claim Quests & Handbook Achievements
+  if (cfg.autoClaimQuests !== false) {
+    const stQ = getMainState();
+    for (const t of stQ.daily?.tasks || []) {
+      if (!t.claimed && (stQ.stats?.earned || 0) - (t.base || 0) >= (t.need || 0)) {
+        if (t.id !== undefined && stQ.claimDailyTask?.(t.id) === true) {
+          return { acted: true, msg: `🎉 Đã nhận thưởng Việc hôm nay tại Sổ tay` };
+        }
       }
     }
   }

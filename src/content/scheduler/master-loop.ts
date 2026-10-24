@@ -1,4 +1,3 @@
-import { AreaId } from '../../shared/types/config';
 import { AREA_META } from '../../shared/constants/default-config';
 import { getGameState, execGameAction } from '../bridge/content-bridge';
 import { sleep, formatClock } from './dom-helpers';

@@ -1,12 +1,13 @@
-import { stores } from '../../core/engine-access';
+import { getMainState } from '../../core/engine-access';
+import { AppConfig } from '../../../shared/types/config';
 
-export function handlePetSubArea(cfg: any): { acted: boolean; msg?: string } {
-  const m = stores.main?.getState();
+export function handlePetSubArea(cfg: AppConfig): { acted: boolean; msg?: string } {
+  const m = getMainState();
   if (!m) return { acted: false };
 
   if (m.pets?.pet?.away) {
     m.pickUpPet?.();
-    if (!stores.main.getState().pets?.pet?.away) {
+    if (!getMainState().pets?.pet?.away) {
       return { acted: true, msg: `🐾 Đã đón thú cưng về nhà` };
     }
     return { acted: false };
@@ -44,8 +45,8 @@ export function handlePetSubArea(cfg: any): { acted: boolean; msg?: string } {
 
     // Buy pet food and feed
     for (const sf of shopBuyList) {
-      if (stores.main.getState().buyPetFood?.(sf, 1) === 'ok') {
-        const res = stores.main.getState().feedPet?.(sf);
+      if (getMainState().buyPetFood?.(sf, 1) === 'ok') {
+        const res = getMainState().feedPet?.(sf);
         if (res === 'ok' || res === 'fav') {
           return { acted: true, msg: `🦴 Đã mua đồ ăn & cho thú cưng (${pet.name || 'Bé'}) ăn` };
         }
@@ -54,7 +55,7 @@ export function handlePetSubArea(cfg: any): { acted: boolean; msg?: string } {
   }
 
   // 3b. Cuddle Pet
-  const curM = stores.main.getState();
+  const curM = getMainState();
   const curPet = curM.pets?.pet;
   if (cfg.petAutoCuddle !== false && curPet) {
     const cuddlesToday = curPet.cuddleDay === curM.day ? curPet.cuddles || 0 : 0;
@@ -64,58 +65,52 @@ export function handlePetSubArea(cfg: any): { acted: boolean; msg?: string } {
   }
 
   // 3c. Bath Pet
-  const curM2 = stores.main.getState();
-  if (cfg.petAutoBath !== false && curM2.bathPet?.() === 'ok') {
-    return { acted: true, msg: `🛁 Đã tắm thơm tho cho thú cưng` };
+  const curM2 = getMainState();
+  const curPet2 = curM2.pets?.pet;
+  if (cfg.petAutoBath !== false && curPet2 && curPet2.bathedDay !== curM2.day) {
+    if (curM2.bathPet?.() === 'ok') {
+      return { acted: true, msg: `🛁 Đã tắm rửa sạch sẽ cho thú cưng` };
+    }
   }
 
-  // 3d. Train Tricks
-  const curM3 = stores.main.getState();
+  // 3d. Teach Tricks (+XP)
+  const curM3 = getMainState();
   const curPet3 = curM3.pets?.pet;
-  if (cfg.petAutoTrick !== false && curPet3) {
-    if (curPet3.playDay !== curM3.day && curM3.pets?.gear?.includes('ball')) {
-      if (curM3.doTrick?.('fetch') === 'ok') {
-        return { acted: true, msg: `🎾 Chơi ném bóng cùng thú cưng (+8 tim)` };
-      }
-    }
-    if (curPet3.trickDay !== curM3.day) {
-      const tricks = ['dance', 'roll', 'paw', 'sit', 'come'];
-      for (const tr of tricks) {
-        if (curM3.doTrick?.(tr) === 'ok') {
-          return { acted: true, msg: `🎾 Tập trò "${tr}" cùng thú cưng` };
-        }
-      }
+  if (cfg.petAutoTrick !== false && curPet3 && curPet3.trickDay !== curM3.day) {
+    const res = curM3.trickPet?.();
+    if (res === 'ok' || res === 'max') {
+      return { acted: true, msg: `🎾 Đã huấn luyện trò vui cho thú cưng (+XP)` };
     }
   }
 
   return { acted: false };
 }
 
-export function handleBarnSubArea(cfg: any): { acted: boolean; msg?: string } {
-  const m = stores.main?.getState();
+export function handleBarnSubArea(cfg: AppConfig): { acted: boolean; msg?: string } {
+  const m = getMainState();
   if (!m) return { acted: false };
 
   // 4a. Buffalo: Feed
-  if (cfg.barnAutoFeedBuffalo !== false && cfg.barnAutoBuffalo !== false && m.buffalo?.home) {
+  if (cfg.barnAutoFeedBuffalo !== false && m.buffalo?.home) {
     if (m.buffalo.fedDay !== m.day && m.buffalo.lentDay !== m.day) {
-      if (m.feedBuffalo?.() === 'ok') {
+      if (m.feedBuffalo?.('grass') === 'ok') {
         return { acted: true, msg: `🐃 Đã cho Trâu ăn rơm` };
       }
     }
   }
 
   // 4b. Buffalo: Bath
-  const stB = stores.main.getState();
-  if (cfg.barnAutoBathBuffalo !== false && cfg.barnAutoBuffalo !== false && stB.buffalo?.home) {
-    if (stB.buffalo.bathDay !== stB.day && stB.buffalo.lentDay !== stB.day) {
+  const stB = getMainState();
+  if (cfg.barnAutoBathBuffalo !== false && stB.buffalo?.home) {
+    if (stB.buffalo.mudDay !== stB.day && stB.buffalo.lentDay !== stB.day) {
       if (stB.bathBuffalo?.() === 'ok') {
         return { acted: true, msg: `🚿 Đã tắm mát cho Trâu` };
       }
     }
   }
 
-  // 4c. Buffalo: Lend
-  const stB2 = stores.main.getState();
+  // 4c. Buffalo: Lend to farmers
+  const stB2 = getMainState();
   if (
     cfg.barnAutoLendBuffalo !== false &&
     stB2.buffalo?.home &&
@@ -128,11 +123,11 @@ export function handleBarnSubArea(cfg: any): { acted: boolean; msg?: string } {
   }
 
   // 4d. Dairy Cows - Feed
-  const stC = stores.main.getState();
+  const stC = getMainState();
   if (
     cfg.barnAutoFeedCows !== false &&
     Array.isArray(stC.dairy?.cows) &&
-    stC.dairy.cows.some((c: any) => c.fedDay !== stC.day)
+    stC.dairy.cows.some((c: { fedDay?: number }) => c.fedDay !== stC.day)
   ) {
     if (stC.feedCows?.() === 'ok') {
       return { acted: true, msg: `🐄 Đã cho đàn Bò sữa ăn cỏ` };
@@ -140,14 +135,14 @@ export function handleBarnSubArea(cfg: any): { acted: boolean; msg?: string } {
   }
 
   // 4e. Dairy Cows - Cure sick cows
-  const stC2 = stores.main.getState();
+  const stC2 = getMainState();
   if (cfg.barnAutoCureCows !== false && Array.isArray(stC2.dairy?.cows)) {
     for (const cow of stC2.dairy.cows) {
-      if (cow.sickDay > 0) {
-        if ((stC2.dairy.medicine || 0) <= 0 && stC2.gold >= 80000) {
+      if ((cow.sickDay || 0) > 0) {
+        if ((stC2.dairy?.medicine || 0) <= 0 && (stC2.gold || 0) >= 80000) {
           stC2.buyMedicine?.();
         }
-        if (stores.main.getState().cureCow?.(cow.id) === 'ok') {
+        if (getMainState().cureCow?.(cow.id) === 'ok') {
           return { acted: true, msg: `💊 Đã tiêm thuốc chữa bệnh cho Bò ${cow.name || '#' + cow.id}` };
         }
       }
@@ -155,7 +150,7 @@ export function handleBarnSubArea(cfg: any): { acted: boolean; msg?: string } {
   }
 
   // 4f. Dairy Cows - Sell Milk
-  const stC3 = stores.main.getState();
+  const stC3 = getMainState();
   if (cfg.barnAutoSellMilk !== false && (stC3.dairy?.milk || 0) > 0) {
     const res = stC3.sellMilk?.();
     if (res && res.liters > 0) {
@@ -167,14 +162,14 @@ export function handleBarnSubArea(cfg: any): { acted: boolean; msg?: string } {
   }
 
   // 4g. Pay Barn Helpers
-  const stC4 = stores.main.getState();
+  const stC4 = getMainState();
   if (cfg.barnAutoPayHelper !== false) {
     if (stC4.helpers?.buffalo?.hired && (stC4.helpers.buffalo.unpaid || 0) > 0) {
       if (stC4.payHelper?.('buffalo') === true) {
         return { acted: true, msg: `💸 Đã trả lương anh Tâm chăn trâu` };
       }
     }
-    const stC5 = stores.main.getState();
+    const stC5 = getMainState();
     if (stC5.helpers?.dairy?.hired && (stC5.helpers.dairy.unpaid || 0) > 0) {
       if (stC5.payHelper?.('dairy') === true) {
         return { acted: true, msg: `💸 Đã trả lương chị Mận chăm bò` };
@@ -185,8 +180,8 @@ export function handleBarnSubArea(cfg: any): { acted: boolean; msg?: string } {
   return { acted: false };
 }
 
-export function handleCoopSubArea(cfg: any): { acted: boolean; msg?: string } {
-  const m = stores.main?.getState();
+export function handleCoopSubArea(cfg: AppConfig): { acted: boolean; msg?: string } {
+  const m = getMainState();
   if (!m || !m.unlockedZones?.includes('poultry')) return { acted: false };
 
   // Collect Eggs
@@ -198,9 +193,9 @@ export function handleCoopSubArea(cfg: any): { acted: boolean; msg?: string } {
   }
 
   // Buy Chick when coop has space
-  const stG = stores.main.getState();
+  const stG = getMainState();
   const maxHens = [4, 6, 9, 12][stG.coopLevel || 0] || 4;
-  if (cfg.coopAutoBuyChick && !stG.flu && (stG.hens?.length || 0) < maxHens && stG.gold >= 60000) {
+  if (cfg.coopAutoBuyChick && !stG.flu && (stG.hens?.length || 0) < maxHens && (stG.gold || 0) >= 60000) {
     if (stG.buyChick?.() === 'ok') {
       return {
         acted: true,
@@ -210,7 +205,7 @@ export function handleCoopSubArea(cfg: any): { acted: boolean; msg?: string } {
   }
 
   // Pay Poultry Helper
-  const stG2 = stores.main.getState();
+  const stG2 = getMainState();
   if (cfg.coopAutoPayHelper !== false && stG2.helpers?.poultry?.hired && (stG2.helpers.poultry.unpaid || 0) > 0) {
     if (stG2.payHelper?.('poultry') === true) {
       return { acted: true, msg: `💸 Đã trả lương chú Ba chăm gà` };
@@ -220,8 +215,8 @@ export function handleCoopSubArea(cfg: any): { acted: boolean; msg?: string } {
   return { acted: false };
 }
 
-export function handlePondSubArea(cfg: any): { acted: boolean; msg?: string } {
-  const m = stores.main?.getState();
+export function handlePondSubArea(cfg: AppConfig): { acted: boolean; msg?: string } {
+  const m = getMainState();
   if (!m || !m.pond?.ready) return { acted: false };
 
   if (m.notebook?.found && !m.pond.noteRead) {
@@ -229,13 +224,12 @@ export function handlePondSubArea(cfg: any): { acted: boolean; msg?: string } {
   }
 
   const matureDays: Record<string, number> = { ro: 3, tre: 5, chep: 7 };
-  const fishNames: Record<string, string> = { chep: 'Cá chép', tre: 'Cá trê', ro: 'Cá rô' };
 
   // Net mature fish
   if (
     cfg.pondAutoNet !== false &&
     Array.isArray(m.pond.fish) &&
-    m.pond.fish.some((f: any) => (f.days || 0) >= (matureDays[f.id] || 7))
+    m.pond.fish.some((f: { id?: string; days?: number }) => (f.days || 0) >= (matureDays[f.id || ''] || 7))
   ) {
     const res = m.netFish?.();
     if (res && res.n > 0) {
@@ -247,27 +241,34 @@ export function handlePondSubArea(cfg: any): { acted: boolean; msg?: string } {
   }
 
   // Stock fish
-  const stP = stores.main.getState();
-  if (cfg.pondAutoStock !== false && Array.isArray(stP.pond?.fish) && stP.pond.fish.length < 12) {
+  const stP = getMainState();
+  if (cfg.pondAutoStock !== false && Array.isArray(stP.pond?.fish) && stP.pond.fish.length < 10) {
     const fishType = cfg.preferPondFish || 'chep';
-    if (stP.stockFish?.(fishType) === 'ok') {
-      return {
-        acted: true,
-        msg: `🐟 Đã thả giống ${fishNames[fishType] || fishType} xuống ao (${stP.pond.fish.length + 1}/12)`,
-      };
+    const fryPrices: Record<string, number> = { ro: 1500, tre: 3500, chep: 7000 };
+    const cost = fryPrices[fishType] || 7000;
+    if ((stP.gold || 0) >= cost + 10000) {
+      if (stP.stockPond?.(fishType) === 'ok') {
+        return { acted: true, msg: `🐟 Đã thả cá giống (${fishType}) vào ao` };
+      }
+      if (stP.buyFry?.(fishType) === 'ok') {
+        return { acted: true, msg: `🐟 Đã mua & thả cá giống (${fishType}) vào ao` };
+      }
     }
   }
 
-  // Feed fish
-  const stP2 = stores.main.getState();
-  if (
-    cfg.pondAutoFeed !== false &&
-    (stP2.pond?.fish?.length || 0) > 0 &&
-    stP2.pond.fedDay !== stP2.day &&
-    stP2.pond.bebi !== 'helper'
-  ) {
-    if (stP2.feedFish?.() === 'ok') {
-      return { acted: true, msg: `🍞 Đã rải cám cho đàn cá trong ao ăn` };
+  // Feed pond fish
+  const stP2 = getMainState();
+  if (cfg.pondAutoFeed !== false && stP2.pond?.fedDay !== stP2.day) {
+    if (stP2.feedPond?.() === 'ok') {
+      return { acted: true, msg: `🌾 Đã rải cám cho cá ao ăn no` };
+    }
+  }
+
+  // Pay helper
+  const stP3 = getMainState();
+  if (cfg.pondAutoPayHelper !== false && stP3.helpers?.pond?.hired && (stP3.helpers.pond.unpaid || 0) > 0) {
+    if (stP3.payHelper?.('pond') === true) {
+      return { acted: true, msg: `💸 Đã trả lương người làm chăm ao cá` };
     }
   }
 

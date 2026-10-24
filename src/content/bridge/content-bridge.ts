@@ -2,7 +2,7 @@ import { RequestType, GameActionResult } from '../../shared/types/protocol';
 import { GameSnapshot } from '../../shared/types/game-state';
 
 let reqSeq = 0;
-const pendingReqs = new Map<number, (res: any) => void>();
+const pendingReqs = new Map<number, (res: unknown) => void>();
 
 export function injectPageHook(): void {
   try {
@@ -27,21 +27,25 @@ export function initBridgeListener(): void {
   });
 }
 
-export function callPageHook<T = any>(type: RequestType, action: string | null = null, payload: any = {}): Promise<T> {
+export function callPageHook<T = unknown>(
+  type: RequestType,
+  action: string | null = null,
+  payload: Record<string, unknown> = {}
+): Promise<T> {
   return new Promise((resolve) => {
     const id = ++reqSeq;
     const timer = setTimeout(() => {
       pendingReqs.delete(id);
-      resolve({ ok: false, error: 'TIMEOUT' } as any);
+      resolve({ ok: false, error: 'TIMEOUT' } as T);
     }, 2500);
     pendingReqs.set(id, (res) => {
       clearTimeout(timer);
-      resolve(res);
+      resolve(res as T);
     });
     window.postMessage({ source: 'ntg-content', id, type, action, payload }, '*');
   });
 }
 
 export const getGameState = (): Promise<GameSnapshot> => callPageHook<GameSnapshot>('GET_GAME_STATE');
-export const execGameAction = (action: string, payload: any = {}): Promise<GameActionResult> =>
+export const execGameAction = (action: string, payload: Record<string, unknown> = {}): Promise<GameActionResult> =>
   callPageHook<GameActionResult>('EXEC_GAME_ACTION', action, payload);

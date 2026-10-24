@@ -1,4 +1,5 @@
 import { AppConfig } from '../../shared/types/config';
+import { GameSnapshot } from '../../shared/types/game-state';
 import { execGameAction, getGameState } from '../bridge/content-bridge';
 import { isVisible, triggerPointerDownAndClick, triggerPointerDownOnly, sleep } from './dom-helpers';
 import { handleFightMinigame } from './minigame';
@@ -8,7 +9,7 @@ let lastHookAt = 0;
 let lastCastAt = 0;
 
 export async function stepSeaFishing(
-  snap: any,
+  snap: GameSnapshot,
   config: AppConfig,
   setStatus: (text: string) => void,
   onCatchIncrement: () => void
@@ -20,7 +21,7 @@ export async function stepSeaFishing(
       setStatus('🔒 Chưa mở khóa đường ra Biển');
       return { finishedArea: true, exhausted: true };
     }
-    if (snap.minutes >= 1305) {
+    if ((snap.minutes || 0) >= 1305) {
       setStatus('🌙 Đã khuya, không thể ra Biển');
       return { finishedArea: true, lateNight: true };
     }
@@ -109,7 +110,7 @@ export async function stepSeaFishing(
       return { finishedArea: false };
     }
 
-    if (snap.minutes >= 1320) {
+    if ((snap.minutes || 0) >= 1320) {
       setStatus('🌙 Biển đã khuya, kết thúc câu ở Biển -> Quay về nhà!');
       return { finishedArea: true, lateNight: true };
     }

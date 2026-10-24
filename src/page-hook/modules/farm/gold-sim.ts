@@ -47,15 +47,28 @@ function _goldRng(seed: number) {
 
 const _goldNorm = (rng: () => number) => Math.sqrt(-2 * Math.log(1 - rng())) * Math.cos(2 * Math.PI * rng());
 const _goldStep = (day: number, min: number) => (day - 1) * 2 + (min >= 720 ? 1 : 0);
-const _goldCache = new Map<number, any>();
 
-function _goldSim(seed: number, step: number) {
+interface GoldCacheEntry {
+  index: number[];
+  wave: string[];
+  own: Record<string, number[]>;
+  r: () => number;
+  waveLeft: number;
+  drift: number;
+  kind: string;
+  x: number;
+  bump: number;
+}
+
+const _goldCache = new Map<number, GoldCacheEntry>();
+
+function _goldSim(seed: number, step: number): GoldCacheEntry {
   let n = _goldCache.get(seed);
   if (!n) {
     n = {
       index: [] as number[],
       wave: [] as string[],
-      own: { mieng: [] as number[], nhan: [] as number[], k18: [] as number[], non: [] as number[] },
+      own: { mieng: [], nhan: [], k18: [], non: [] },
       r: _goldRng(seed),
       waveLeft: 0,
       drift: 0,
@@ -69,20 +82,21 @@ function _goldSim(seed: number, step: number) {
     const e = n.index.length;
     if (n.waveLeft <= 0) {
       let total = n.r() * GOLD_WAVES.reduce((a, b) => a + b.weight, 0);
-      let w = GOLD_WAVES.find((x) => (total -= x.weight) < 0) || GOLD_WAVES[0];
+      const w = GOLD_WAVES.find((x) => (total -= x.weight) < 0) || GOLD_WAVES[0];
       n.kind = w.kind;
       n.drift = w.drift;
       n.waveLeft = w.len[0] + Math.floor(n.r() * (w.len[1] - w.len[0] + 1));
     }
     n.waveLeft--;
-    let t = Math.floor(e / 2) + 1;
-    let r = ((t - 1) % 120) + 1;
+    const t = Math.floor(e / 2) + 1;
+    const r = ((t - 1) % 120) + 1;
     n.bump = e % 2 === 0 && r === 10 && t > 120 ? _G_B : n.bump * _G_X;
     n.x += n.drift + _G_A * _goldNorm(n.r) - _G_V * (n.x - _G_Y * e);
     n.index.push(n.x + n.bump);
     n.wave.push(n.kind);
-    for (let g of GOLD_DATA) {
-      (n.own as any)[g.id].push(g.noise * _goldNorm(n.r));
+    for (const g of GOLD_DATA) {
+      if (!n.own[g.id]) n.own[g.id] = [];
+      n.own[g.id].push(g.noise * _goldNorm(n.r));
     }
   }
   return n;

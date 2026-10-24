@@ -8,6 +8,7 @@
     "skipLibCheck": true,
     "isolatedModules": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
     "types": ["chrome"],
     "paths": {
       "@/*": ["./src/*"]
