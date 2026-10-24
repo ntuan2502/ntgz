@@ -146,9 +146,9 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
               <span className="text-slate-600">Hồi khi Sức (⚡) dưới:</span>
               <input
                 type="number"
-                min={5}
+                min={1}
                 max={80}
-                step={5}
+                step={1}
                 value={config.benStaminaThreshold}
                 onChange={(e) => updateField('benStaminaThreshold', Number(e.target.value))}
                 className="w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"

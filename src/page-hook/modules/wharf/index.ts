@@ -37,7 +37,7 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
   const nonKeptCount = Array.isArray(bn.basket) ? bn.basket.filter((x: { kept?: boolean }) => !x.kept).length : 0;
   const pack = bn.pack || {};
   const packItems = Object.keys(pack).filter((k) => (pack[k] || 0) > 0);
-  const stamMin = Number(cfg.benStaminaThreshold) || 20;
+  const stamMin = Number(cfg.benStaminaThreshold ?? 4);
 
   const walkAndRun = (tile: { x: number; y: number }, actionFn: () => void, label: string, actionKey: string | null = null) => {
     if (actionKey && !canAct(actionKey)) {

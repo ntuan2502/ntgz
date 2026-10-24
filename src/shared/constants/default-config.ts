@@ -153,7 +153,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   benAutoKeepRare: true,
   benAutoGoiDau: false,
   benAutoRecoverStamina: true,
-  benStaminaThreshold: 20,
+  benStaminaThreshold: 4,
   benPreferFood: 'lauMam',
   benAutoLuckDrink: true,
   benPreferDrink: 'duaTuoi',

@@ -1446,7 +1446,7 @@
     const nonKeptCount = Array.isArray(bn.basket) ? bn.basket.filter((x) => !x.kept).length : 0;
     const pack = bn.pack || {};
     const packItems = Object.keys(pack).filter((k) => (pack[k] || 0) > 0);
-    const stamMin = Number(cfg.benStaminaThreshold) || 20;
+    const stamMin = Number(cfg.benStaminaThreshold ?? 4);
     const walkAndRun = (tile, actionFn, label, actionKey = null) => {
       if (actionKey && !canAct(actionKey)) {
         return { acted: false };
