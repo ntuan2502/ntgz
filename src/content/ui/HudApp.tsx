@@ -4,10 +4,12 @@ import { GameSnapshot } from '@/shared/types/game-state';
 import { HudHeader } from './components/HudHeader';
 import { HudStats } from './components/HudStats';
 import { HudControls } from './components/HudControls';
+import { HudTerminal } from './components/HudTerminal';
 import { FarmTabContent } from './components/FarmTabContent';
 import { WharfTabContent } from './components/WharfTabContent';
 import { SeaTabContent } from './components/SeaTabContent';
 import { CityTabContent } from './components/CityTabContent';
+import { HudLogEntry, getSessionLogs, clearSessionLogs } from './hud-core';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ReleaseChangelogView } from '@/components/ReleaseChangelogView';
 import { checkForUpdates } from '@/services/github-service';
@@ -31,6 +33,7 @@ export function HudApp({
   const [config, setConfig] = useState<AppConfig>(initialConfig);
   const [snap, setSnap] = useState<GameSnapshot | null>(null);
   const [lastAction, setLastAction] = useState<string>('Đang chờ lệnh...');
+  const [logs, setLogs] = useState<HudLogEntry[]>(() => getSessionLogs());
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
   const [isOrderDrawerOpen, setIsOrderDrawerOpen] = useState<boolean>(false);
   const [version, setVersion] = useState<string>('1.0.0');
@@ -76,6 +79,9 @@ export function HudApp({
     const handleActionUpdate = (e: CustomEvent<string>) => {
       setLastAction(e.detail);
     };
+    const handleLogsUpdate = (e: CustomEvent<HudLogEntry[]>) => {
+      setLogs(e.detail);
+    };
     const handleConfigExternalUpdate = (e: CustomEvent<AppConfig>) => {
       setConfig(e.detail);
       if (typeof e.detail?.hudWidth === 'number' && typeof e.detail?.hudHeight === 'number') {
@@ -88,11 +94,13 @@ export function HudApp({
 
     window.addEventListener('__NTG_SNAP_UPDATE__' as unknown as keyof WindowEventMap, handleSnapUpdate as EventListener);
     window.addEventListener('__NTG_ACTION_UPDATE__' as unknown as keyof WindowEventMap, handleActionUpdate as EventListener);
+    window.addEventListener('__NTG_LOGS_UPDATE__' as unknown as keyof WindowEventMap, handleLogsUpdate as EventListener);
     window.addEventListener('__NTG_CONFIG_UPDATE__' as unknown as keyof WindowEventMap, handleConfigExternalUpdate as EventListener);
 
     return () => {
       window.removeEventListener('__NTG_SNAP_UPDATE__' as unknown as keyof WindowEventMap, handleSnapUpdate as EventListener);
       window.removeEventListener('__NTG_ACTION_UPDATE__' as unknown as keyof WindowEventMap, handleActionUpdate as EventListener);
+      window.removeEventListener('__NTG_LOGS_UPDATE__' as unknown as keyof WindowEventMap, handleLogsUpdate as EventListener);
       window.removeEventListener('__NTG_CONFIG_UPDATE__' as unknown as keyof WindowEventMap, handleConfigExternalUpdate as EventListener);
     };
   }, []);
@@ -275,14 +283,12 @@ export function HudApp({
             onToggleOrderDrawer={() => setIsOrderDrawerOpen(!isOrderDrawerOpen)}
           />
 
-          {/* Current Action Status Text */}
-          <div className="flex items-center gap-2 border-b border-slate-200/90 bg-emerald-50/80 px-3 py-1.5 text-[11px] font-mono text-emerald-800 shrink-0">
-            <span className="relative flex h-2 w-2 shrink-0">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-600" />
-            </span>
-            <span className="truncate">{lastAction}</span>
-          </div>
+          {/* Current Action Status Bar & Session Log Terminal */}
+          <HudTerminal
+            lastAction={lastAction}
+            logs={logs}
+            onClearLogs={clearSessionLogs}
+          />
 
           {/* Navigation Tabs */}
           <Tabs value={config.activeTab} onValueChange={handleTabChange} className="w-full flex-1 flex flex-col min-h-0 p-2.5 overflow-hidden">
@@ -313,7 +319,7 @@ export function HudApp({
               </TabsTrigger>
             </TabsList>
 
-            <div className="mt-2.5 flex-1 overflow-y-auto pr-1 min-h-0">
+            <div className="mt-2.5 flex-1 overflow-y-auto overflow-x-hidden pr-1 min-h-0">
               <TabsContent value="farm" className="m-0">
                 <FarmTabContent config={config} onUpdateConfig={handleUpdateConfig} />
               </TabsContent>

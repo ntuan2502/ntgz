@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppConfig } from '@/shared/types/config';
 import { Switch } from '@/components/ui/switch';
+import { HudSelect } from './HudSelect';
 
 interface SeaTabContentProps {
   config: AppConfig;
@@ -54,18 +55,18 @@ export function SeaTabContent({ config, onUpdateConfig }: SeaTabContentProps) {
           />
         </label>
         {config.seaAutoSpot && (
-          <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
-            <div className="flex items-center justify-between gap-2">
+          <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
+            <div className="flex items-center justify-between gap-2 min-w-0">
               <span className="text-slate-600 shrink-0">Vị trí câu ở Biển:</span>
-              <select
+              <HudSelect
                 value={config.seaSpot}
-                onChange={(e) => updateField('seaSpot', e.target.value as AppConfig['seaSpot'])}
-                className="max-w-[235px] truncate rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
-              >
-                <option value="beach">🏖️ Mép bãi cát (Nhiều cá nhỏ, hay vớt trúng rác)</option>
-                <option value="pier">🌉 Cầu tàu (Nước sâu vừa, cá gì cũng có)</option>
-                <option value="rocks">🪨 Bãi đá (Cá hiếm hay rình ở đây)</option>
-              </select>
+                onValueChange={(val) => updateField('seaSpot', val as AppConfig['seaSpot'])}
+                options={[
+                  { value: 'beach', label: '🏖️ Mép bãi cát (Nhiều cá nhỏ, hay vớt trúng rác)' },
+                  { value: 'pier', label: '🌉 Cầu tàu (Nước sâu vừa, cá gì cũng có)' },
+                  { value: 'rocks', label: '🪨 Bãi đá (Cá hiếm hay rình ở đây)' },
+                ]}
+              />
             </div>
           </div>
         )}
@@ -101,17 +102,17 @@ export function SeaTabContent({ config, onUpdateConfig }: SeaTabContentProps) {
           />
         </label>
         {config.seaAutoBuyBait && (
-          <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
-            <div className="flex items-center justify-between gap-2">
+          <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
+            <div className="flex items-center justify-between gap-2 min-w-0">
               <span className="text-slate-600 shrink-0">Loại mồi ưu tiên:</span>
-              <select
+              <HudSelect
                 value={config.seaPreferBait}
-                onChange={(e) => updateField('seaPreferBait', e.target.value as AppConfig['seaPreferBait'])}
-                className="max-w-[235px] truncate rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
-              >
-                <option value="worm">🪱 Mồi trùn (10 mồi/gói · 2.000đ · Cá nào cũng ăn)</option>
-                <option value="shrimp">🦐 Mồi tôm (5 mồi/gói · 10.000đ · Ít rác, nhiều cá hiếm)</option>
-              </select>
+                onValueChange={(val) => updateField('seaPreferBait', val as AppConfig['seaPreferBait'])}
+                options={[
+                  { value: 'worm', label: '🪱 Mồi trùn (10 mồi/gói · 2.000đ · Cá nào cũng ăn)' },
+                  { value: 'shrimp', label: '🦐 Mồi tôm (5 mồi/gói · 10.000đ · Ít rác, nhiều cá hiếm)' },
+                ]}
+              />
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-600">Số gói mua mỗi lần:</span>

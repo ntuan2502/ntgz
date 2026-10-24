@@ -6,12 +6,21 @@ import { DEFAULT_CONFIG } from '../../shared/constants/default-config';
 import { HudApp } from './HudApp';
 import tailwindStyles from '../../styles/tailwind.compiled.css';
 
+export interface HudLogEntry {
+  id: number;
+  time: string;
+  gameTime?: string;
+  text: string;
+}
+
 let config: AppConfig = structuredClone(DEFAULT_CONFIG);
 let hudRoot: ShadowRoot | null = null;
 let reactRoot: Root | null = null;
 let lastActionText = 'Đang chờ lệnh...';
 let lastGameSnap: GameSnapshot | null = null;
 let lockedTabArea: AreaId | null = null;
+let logSeq = 0;
+let sessionLogs: HudLogEntry[] = [];
 
 let onToggleAllHandler: (() => void) | null = null;
 let onToggleTabHandler: (() => void) | null = null;
@@ -53,11 +62,51 @@ export function setLastGameSnap(snap: GameSnapshot | null): void {
   lastGameSnap = snap;
 }
 
+function formatRealClock(date: Date): string {
+  const hh = String(date.getHours()).padStart(2, '0');
+  const mm = String(date.getMinutes()).padStart(2, '0');
+  const ss = String(date.getSeconds()).padStart(2, '0');
+  return `${hh}:${mm}:${ss}`;
+}
+
+function formatGameClock(snap: GameSnapshot | null): string | undefined {
+  if (!snap || typeof snap.day !== 'number') return undefined;
+  const mins = typeof snap.minutes === 'number' ? snap.minutes : 0;
+  const hh = String(Math.floor(mins / 60) % 24).padStart(2, '0');
+  const mm = String(mins % 60).padStart(2, '0');
+  return `N${snap.day} ${hh}:${mm}`;
+}
+
+export function getSessionLogs(): HudLogEntry[] {
+  return sessionLogs;
+}
+
+export function clearSessionLogs(): void {
+  sessionLogs = [];
+  window.dispatchEvent(
+    new CustomEvent<HudLogEntry[]>('__NTG_LOGS_UPDATE__', { detail: sessionLogs })
+  );
+}
+
 export function setStatus(text: string): void {
   lastActionText = text;
   window.dispatchEvent(
     new CustomEvent<string>('__NTG_ACTION_UPDATE__', { detail: text })
   );
+
+  const lastEntry = sessionLogs[sessionLogs.length - 1];
+  if (!lastEntry || lastEntry.text !== text) {
+    const nextEntry: HudLogEntry = {
+      id: ++logSeq,
+      time: formatRealClock(new Date()),
+      gameTime: formatGameClock(lastGameSnap),
+      text,
+    };
+    sessionLogs = [...sessionLogs.slice(-299), nextEntry];
+    window.dispatchEvent(
+      new CustomEvent<HudLogEntry[]>('__NTG_LOGS_UPDATE__', { detail: sessionLogs })
+    );
+  }
 }
 
 export function updateHeaderStats(snap: GameSnapshot): void {
@@ -142,18 +191,23 @@ export function loadConfig(): Promise<AppConfig> {
 }
 
 /**
- * Chromium ignores `@property` rules declared inside a ShadowRoot, so Tailwind v4's
- * `--tw-*` custom properties (translate, border-style, shadow, ring...) would stay
- * undefined in the HUD. Registering them at document level makes them apply globally.
+ * Chromium ignores `@property` rules declared inside a ShadowRoot, and Radix UI Portals
+ * (such as shadcn `SelectContent`) mount into `document.body`. Injecting the compiled
+ * Tailwind stylesheet (with `@layer base` stripped so host page elements are untouched)
+ * at document level enables `@property` in the Shadow DOM and styles Radix Portals.
  */
 function registerTailwindProperties(css: string): void {
   const STYLE_ID = 'ntg-tw-properties';
   if (document.getElementById(STYLE_ID)) return;
-  const rules = css.match(/@property\s+[^{]+\{[^}]*\}/g);
-  if (!rules) return;
+  const baseIdx = css.indexOf('@layer base{');
+  const compIdx = css.indexOf('@layer components;');
+  const safeDocCss =
+    baseIdx !== -1 && compIdx > baseIdx
+      ? css.slice(0, baseIdx) + css.slice(compIdx)
+      : css;
   const style = document.createElement('style');
   style.id = STYLE_ID;
-  style.textContent = rules.join('\n');
+  style.textContent = safeDocCss;
   (document.head || document.documentElement).appendChild(style);
 }
 

@@ -4,6 +4,7 @@ import { SUBAREA_META } from '@/shared/constants/default-config';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronRight, ChevronUp } from 'lucide-react';
+import { HudSelect } from './HudSelect';
 
 interface FarmTabContentProps {
   config: AppConfig;
@@ -86,23 +87,23 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               />
             </label>
             {config.autoCook && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
-                <div className="flex items-center justify-between gap-2">
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
+                <div className="flex items-center justify-between gap-2 min-w-0">
                   <span className="text-slate-600 shrink-0">Món ưu tiên:</span>
-                  <select
+                  <HudSelect
                     value={config.preferDish}
-                    onChange={(e) => updateField('preferDish', e.target.value)}
-                    className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
-                  >
-                    <option value="auto">✨ Tự chọn món đủ nguyên liệu</option>
-                    <option value="radishSoup">🍲 Canh củ cải (+20 no, +30 đã khát · 3 củ cải)</option>
-                    <option value="boiledEgg">🥚 Trứng luộc (+25 no · 2 trứng)</option>
-                    <option value="grilledCorn">🌽 Bắp nướng mỡ hành (+30 no · 2 ngô)</option>
-                    <option value="carrotJuice">🧃 Nước ép cà rốt (+40 đã khát, 💧 Không khát · 3 cà rốt)</option>
-                    <option value="eggBread">🥪 Bánh mì ốp la (+40 no, 💨 Đi nhanh · 2 trứng, 1 cà rốt)</option>
-                    <option value="comTam">🍛 Cơm tấm ốp la (+60 no, +20 đã khát, 🍚 Không đói · 2 trứng, 2 củ cải, 2 cà rốt)</option>
-                    <option value="cornCake">🥮 Bánh bắp nướng (+50 no, 🌾 Được mùa · 4 ngô, 2 trứng)</option>
-                  </select>
+                    onValueChange={(val) => updateField('preferDish', val)}
+                    options={[
+                      { value: 'auto', label: '✨ Tự chọn món đủ nguyên liệu' },
+                      { value: 'radishSoup', label: '🍲 Canh củ cải (+20 no, +30 đã khát · 3 củ cải)' },
+                      { value: 'boiledEgg', label: '🥚 Trứng luộc (+25 no · 2 trứng)' },
+                      { value: 'grilledCorn', label: '🌽 Bắp nướng mỡ hành (+30 no · 2 ngô)' },
+                      { value: 'carrotJuice', label: '🧃 Nước ép cà rốt (+40 đã khát, 💧 Không khát · 3 cà rốt)' },
+                      { value: 'eggBread', label: '🥪 Bánh mì ốp la (+40 no, 💨 Đi nhanh · 2 trứng, 1 cà rốt)' },
+                      { value: 'comTam', label: '🍛 Cơm tấm ốp la (+60 no, +20 đã khát, 🍚 Không đói · 2 trứng, 2 củ cải, 2 cà rốt)' },
+                      { value: 'cornCake', label: '🥮 Bánh bắp nướng (+50 no, 🌾 Được mùa · 4 ngô, 2 trứng)' },
+                    ]}
+                  />
                 </div>
               </div>
             )}
@@ -115,7 +116,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               />
             </label>
             {config.autoRecoverHunger && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-600">Ăn khi Đói &lt; (%):</span>
                   <input
@@ -128,50 +129,50 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                     className="w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
                   />
                 </div>
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center justify-between gap-2 min-w-0">
                   <span className="text-slate-600 shrink-0">Nguồn ăn:</span>
-                  <select
+                  <HudSelect
                     value={config.foodSource}
-                    onChange={(e) => updateField('foodSource', e.target.value as AppConfig['foodSource'])}
-                    className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
-                  >
-                    <option value="kitchen_first">🍲 Ưu tiên Bếp, thiếu mua Tiệm</option>
-                    <option value="kitchen_only">🏡 Chỉ món ăn Bếp, Kho</option>
-                    <option value="shop_only">🥖 Chỉ mua Tiệm</option>
-                  </select>
+                    onValueChange={(val) => updateField('foodSource', val as AppConfig['foodSource'])}
+                    options={[
+                      { value: 'kitchen_first', label: '🍲 Ưu tiên Bếp, thiếu mua Tiệm' },
+                      { value: 'kitchen_only', label: '🏡 Chỉ món ăn Bếp, Kho' },
+                      { value: 'shop_only', label: '🥖 Chỉ mua Tiệm' },
+                    ]}
+                  />
                 </div>
                 {config.foodSource !== 'shop_only' && (
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center justify-between gap-2 min-w-0">
                     <span className="text-slate-600 shrink-0">Món ăn ở Bếp:</span>
-                    <select
+                    <HudSelect
                       value={config.preferFoodKitchen || 'auto'}
-                      onChange={(e) => updateField('preferFoodKitchen', e.target.value)}
-                      className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
-                    >
-                      <option value="auto">✨ Tự chọn món có sẵn trong Bếp</option>
-                      <option value="radishSoup">🍲 Canh củ cải (+20 no, +30 đã khát)</option>
-                      <option value="boiledEgg">🥚 Trứng luộc (+25 no)</option>
-                      <option value="grilledCorn">🌽 Bắp nướng mỡ hành (+30 no)</option>
-                      <option value="eggBread">🥪 Bánh mì ốp la (+40 no, 💨 Đi nhanh)</option>
-                      <option value="comTam">🍛 Cơm tấm ốp la (+60 no, +20 đã khát, 🍚 Không đói)</option>
-                      <option value="cornCake">🥮 Bánh bắp nướng (+50 no, 🌾 Được mùa)</option>
-                    </select>
+                      onValueChange={(val) => updateField('preferFoodKitchen', val)}
+                      options={[
+                        { value: 'auto', label: '✨ Tự chọn món có sẵn trong Bếp' },
+                        { value: 'radishSoup', label: '🍲 Canh củ cải (+20 no, +30 đã khát)' },
+                        { value: 'boiledEgg', label: '🥚 Trứng luộc (+25 no)' },
+                        { value: 'grilledCorn', label: '🌽 Bắp nướng mỡ hành (+30 no)' },
+                        { value: 'eggBread', label: '🥪 Bánh mì ốp la (+40 no, 💨 Đi nhanh)' },
+                        { value: 'comTam', label: '🍛 Cơm tấm ốp la (+60 no, +20 đã khát, 🍚 Không đói)' },
+                        { value: 'cornCake', label: '🥮 Bánh bắp nướng (+50 no, 🌾 Được mùa)' },
+                      ]}
+                    />
                   </div>
                 )}
                 {config.foodSource !== 'kitchen_only' && (
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center justify-between gap-2 min-w-0">
                     <span className="text-slate-600 shrink-0">Món mua ở Tiệm:</span>
-                    <select
+                    <HudSelect
                       value={config.preferFoodShop}
-                      onChange={(e) => updateField('preferFoodShop', e.target.value)}
-                      className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
-                    >
-                      <option value="banhBao">🥟 Bánh bao (+25 no · 8.000đ)</option>
-                      <option value="banhMiTrung">🍳 Bánh mì trứng (+35 no · 10.000đ)</option>
-                      <option value="banhMiThit">🥖 Bánh mì thịt (+50 no · 15.000đ)</option>
-                      <option value="banhMiCha">🐟 Bánh mì chả cá (+45 no, +5 nước · 15.000đ)</option>
-                      <option value="banhMiFull">🤤 Bánh mì full topping (+80 no · 25.000đ)</option>
-                    </select>
+                      onValueChange={(val) => updateField('preferFoodShop', val)}
+                      options={[
+                        { value: 'banhBao', label: '🥟 Bánh bao (+25 no · 8.000đ)' },
+                        { value: 'banhMiTrung', label: '🍳 Bánh mì trứng (+35 no · 10.000đ)' },
+                        { value: 'banhMiThit', label: '🥖 Bánh mì thịt (+50 no · 15.000đ)' },
+                        { value: 'banhMiCha', label: '🐟 Bánh mì chả cá (+45 no, +5 nước · 15.000đ)' },
+                        { value: 'banhMiFull', label: '🤤 Bánh mì full topping (+80 no · 25.000đ)' },
+                      ]}
+                    />
                   </div>
                 )}
               </div>
@@ -185,7 +186,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               />
             </label>
             {config.autoRecoverThirst && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-600">Uống khi Khát &lt; (%):</span>
                   <input
@@ -198,47 +199,47 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                     className="w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono"
                   />
                 </div>
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center justify-between gap-2 min-w-0">
                   <span className="text-slate-600 shrink-0">Nguồn nước:</span>
-                  <select
+                  <HudSelect
                     value={config.drinkSource}
-                    onChange={(e) => updateField('drinkSource', e.target.value as AppConfig['drinkSource'])}
-                    className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
-                  >
-                    <option value="kitchen_first">🧃 Ưu tiên Bếp, thiếu mua Tiệm</option>
-                    <option value="kitchen_only">🏡 Chỉ món nước Bếp, Kho</option>
-                    <option value="shop_only">🥤 Chỉ mua Tiệm</option>
-                  </select>
+                    onValueChange={(val) => updateField('drinkSource', val as AppConfig['drinkSource'])}
+                    options={[
+                      { value: 'kitchen_first', label: '🧃 Ưu tiên Bếp, thiếu mua Tiệm' },
+                      { value: 'kitchen_only', label: '🏡 Chỉ món nước Bếp, Kho' },
+                      { value: 'shop_only', label: '🥤 Chỉ mua Tiệm' },
+                    ]}
+                  />
                 </div>
                 {config.drinkSource !== 'shop_only' && (
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center justify-between gap-2 min-w-0">
                     <span className="text-slate-600 shrink-0">Nước ở Bếp:</span>
-                    <select
+                    <HudSelect
                       value={config.preferDrinkKitchen || 'auto'}
-                      onChange={(e) => updateField('preferDrinkKitchen', e.target.value)}
-                      className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
-                    >
-                      <option value="auto">✨ Tự chọn nước có sẵn trong Bếp</option>
-                      <option value="radishSoup">🍲 Canh củ cải (+30 đã khát, +20 no)</option>
-                      <option value="carrotJuice">🧃 Nước ép cà rốt (+40 đã khát, 💧 Không khát)</option>
-                      <option value="comTam">🍛 Cơm tấm ốp la (+20 đã khát, +60 no, 🍚 Không đói)</option>
-                    </select>
+                      onValueChange={(val) => updateField('preferDrinkKitchen', val)}
+                      options={[
+                        { value: 'auto', label: '✨ Tự chọn nước có sẵn trong Bếp' },
+                        { value: 'radishSoup', label: '🍲 Canh củ cải (+30 đã khát, +20 no)' },
+                        { value: 'carrotJuice', label: '🧃 Nước ép cà rốt (+40 đã khát, 💧 Không khát)' },
+                        { value: 'comTam', label: '🍛 Cơm tấm ốp la (+20 đã khát, +60 no, 🍚 Không đói)' },
+                      ]}
+                    />
                   </div>
                 )}
                 {config.drinkSource !== 'kitchen_only' && (
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center justify-between gap-2 min-w-0">
                     <span className="text-slate-600 shrink-0">Nước ở Tiệm:</span>
-                    <select
+                    <HudSelect
                       value={config.preferDrinkShop}
-                      onChange={(e) => updateField('preferDrinkShop', e.target.value)}
-                      className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
-                    >
-                      <option value="traDa">🧊 Trà đá (+20 nước · 3.000đ)</option>
-                      <option value="nuocMia">🥤 Nước mía (+35 nước · 8.000đ)</option>
-                      <option value="caPheSua">☕ Cà phê sữa đá (+25 nước, ⚡ Đi nhanh x1.5 · 12.000đ)</option>
-                      <option value="traDao">🍑 Trà đào cam sả (+50 nước · 15.000đ)</option>
-                      <option value="traSua">🧋 Trà sữa trân châu (+40 nước, +12 no · 18.000đ)</option>
-                    </select>
+                      onValueChange={(val) => updateField('preferDrinkShop', val)}
+                      options={[
+                        { value: 'traDa', label: '🧊 Trà đá (+20 nước · 3.000đ)' },
+                        { value: 'nuocMia', label: '🥤 Nước mía (+35 nước · 8.000đ)' },
+                        { value: 'caPheSua', label: '☕ Cà phê sữa đá (+25 nước, ⚡ Đi nhanh x1.5 · 12.000đ)' },
+                        { value: 'traDao', label: '🍑 Trà đào cam sả (+50 nước · 15.000đ)' },
+                        { value: 'traSua', label: '🧋 Trà sữa trân châu (+40 nước, +12 no · 18.000đ)' },
+                      ]}
+                    />
                   </div>
                 )}
               </div>
@@ -369,20 +370,20 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               />
             </label>
             {config.autoPlant && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]">
-                <div className="flex items-center justify-between gap-2">
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px] min-w-0 overflow-hidden">
+                <div className="flex items-center justify-between gap-2 min-w-0">
                   <span className="text-slate-600 shrink-0">Hạt giống ưu tiên:</span>
-                  <select
+                  <HudSelect
                     value={config.preferSeed}
-                    onChange={(e) => updateField('preferSeed', e.target.value)}
-                    className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
-                  >
-                    <option value="auto">✨ Tự chọn tối ưu</option>
-                    <option value="radish">🌱 Củ cải (2 ngày · Hạt 20.000đ · Bán 12.000đ)</option>
-                    <option value="carrot">🥕 Cà rốt (4 ngày · Hạt 40.000đ · Bán 28.000đ)</option>
-                    <option value="corn">🌽 Ngô (6 ngày · Hạt 60.000đ · Bán 50.000đ)</option>
-                    <option value="rice">🌾 Lúa thơm (8 ngày · Hạt 120.000đ · Bán 90.000đ)</option>
-                  </select>
+                    onValueChange={(val) => updateField('preferSeed', val)}
+                    options={[
+                      { value: 'auto', label: '✨ Tự chọn tối ưu' },
+                      { value: 'radish', label: '🌱 Củ cải (2 ngày · Hạt 20.000đ · Bán 12.000đ)' },
+                      { value: 'carrot', label: '🥕 Cà rốt (4 ngày · Hạt 40.000đ · Bán 28.000đ)' },
+                      { value: 'corn', label: '🌽 Ngô (6 ngày · Hạt 60.000đ · Bán 50.000đ)' },
+                      { value: 'rice', label: '🌾 Lúa thơm (8 ngày · Hạt 120.000đ · Bán 90.000đ)' },
+                    ]}
+                  />
                 </div>
               </div>
             )}
@@ -545,18 +546,18 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               />
             </label>
             {config.pondAutoStock && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]">
-                <div className="flex items-center justify-between gap-2">
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px] min-w-0 overflow-hidden">
+                <div className="flex items-center justify-between gap-2 min-w-0">
                   <span className="text-slate-600 shrink-0">Loại giống thả:</span>
-                  <select
+                  <HudSelect
                     value={config.preferPondFish}
-                    onChange={(e) => updateField('preferPondFish', e.target.value)}
-                    className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
-                  >
-                    <option value="ro">🐟 Cá rô đồng (3 ngày · Giống 8.000đ · Bán 26.000đ)</option>
-                    <option value="tre">🐟 Cá trê (5 ngày · Giống 15.000đ · Bán 50.000đ)</option>
-                    <option value="chep">🐟 Cá chép (7 ngày · Giống 25.000đ · Bán 90.000đ)</option>
-                  </select>
+                    onValueChange={(val) => updateField('preferPondFish', val)}
+                    options={[
+                      { value: 'ro', label: '🐟 Cá rô đồng (3 ngày · Giống 8.000đ · Bán 26.000đ)' },
+                      { value: 'tre', label: '🐟 Cá trê (5 ngày · Giống 15.000đ · Bán 50.000đ)' },
+                      { value: 'chep', label: '🐟 Cá chép (7 ngày · Giống 25.000đ · Bán 90.000đ)' },
+                    ]}
+                  />
                 </div>
               </div>
             )}
@@ -636,19 +637,19 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               />
             </label>
             {config.goldAutoBuy && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
-                <div className="flex items-center justify-between gap-2">
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
+                <div className="flex items-center justify-between gap-2 min-w-0">
                   <span className="text-slate-600 shrink-0">Loại vàng ưu tiên:</span>
-                  <select
+                  <HudSelect
                     value={config.goldPreferType}
-                    onChange={(e) => updateField('goldPreferType', e.target.value)}
-                    className="max-w-[235px] truncate rounded-md bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs"
-                  >
-                    <option value="mieng">🟨 Vàng miếng 9999 (~8,2tr · Chênh 1,6% · Hợp giữ lâu)</option>
-                    <option value="nhan">💍 Nhẫn trơn 9999 (~7,6tr · Chênh 1,2% · Ổn định nhất)</option>
-                    <option value="k18">📿 Vàng 18K (~5,6tr · Chênh 9% · Trang sức)</option>
-                    <option value="non">🪙 Vàng non 10K (~3,1tr · Chênh 5% · Lướt sóng)</option>
-                  </select>
+                    onValueChange={(val) => updateField('goldPreferType', val)}
+                    options={[
+                      { value: 'mieng', label: '🟨 Vàng miếng 9999 (~8,2tr · Chênh 1,6% · Hợp giữ lâu)' },
+                      { value: 'nhan', label: '💍 Nhẫn trơn 9999 (~7,6tr · Chênh 1,2% · Ổn định nhất)' },
+                      { value: 'k18', label: '📿 Vàng 18K (~5,6tr · Chênh 9% · Trang sức)' },
+                      { value: 'non', label: '🪙 Vàng non 10K (~3,1tr · Chênh 5% · Lướt sóng)' },
+                    ]}
+                  />
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-slate-600">Tiền mặt tối thiểu giữ:</span>

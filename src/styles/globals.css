@@ -133,6 +133,30 @@
   --radius-2xl: calc(var(--radius) + 10px);
 }
 
+/* Ensure shadcn SelectTrigger truncates long selected values with '...' */
+[data-slot="select-trigger"] > [data-slot="select-value"] {
+  display: block !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  min-width: 0 !important;
+  flex: 1 1 0% !important;
+  text-align: left;
+}
+
+/* Ensure Radix Portals (e.g. SelectContent) in document.body stay above HUD */
+[data-radix-popper-content-wrapper] {
+  z-index: 2147483647 !important;
+}
+[data-slot="select-content"],
+[data-slot="select-content"] * {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: var(--border);
+  font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+}
+
 /* Custom Thin macOS Scrollbars */
 ::-webkit-scrollbar {
   width: 5px;

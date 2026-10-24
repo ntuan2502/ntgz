@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppConfig } from '@/shared/types/config';
 import { Switch } from '@/components/ui/switch';
+import { HudSelect } from './HudSelect';
 
 interface WharfTabContentProps {
   config: AppConfig;
@@ -54,17 +55,17 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
           />
         </label>
         {config.benAutoSpot && (
-          <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
-            <div className="flex items-center justify-between gap-2">
+          <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
+            <div className="flex items-center justify-between gap-2 min-w-0">
               <span className="text-slate-600 shrink-0">Vị trí ngồi câu:</span>
-              <select
+              <HudSelect
                 value={config.benSpot}
-                onChange={(e) => updateField('benSpot', e.target.value as AppConfig['benSpot'])}
-                className="max-w-[235px] truncate rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
-              >
-                <option value="bank">🌾 Bờ sông</option>
-                <option value="dock">🌉 Cầu tre</option>
-              </select>
+                onValueChange={(val) => updateField('benSpot', val as AppConfig['benSpot'])}
+                options={[
+                  { value: 'bank', label: '🌾 Bờ sông' },
+                  { value: 'dock', label: '🌉 Cầu tre' },
+                ]}
+              />
             </div>
           </div>
         )}
@@ -92,19 +93,19 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
           />
         </label>
         {config.benAutoBuyBait && (
-          <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
-            <div className="flex items-center justify-between gap-2">
+          <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
+            <div className="flex items-center justify-between gap-2 min-w-0">
               <span className="text-slate-600 shrink-0">Loại mồi ưu tiên:</span>
-              <select
+              <HudSelect
                 value={config.benPreferBait}
-                onChange={(e) => updateField('benPreferBait', e.target.value as AppConfig['benPreferBait'])}
-                className="max-w-[235px] truncate rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
-              >
-                <option value="xinMoi">🤲 Xin chú ít mồi (+10 mồi · Miễn phí)</option>
-                <option value="moi20">🪱 Hộp mồi trùn (+20 mồi · 15 vỏ sò)</option>
-                <option value="moi60">🪱 Thau mồi trùn (+60 mồi · 40 vỏ sò)</option>
-                <option value="moi150">🪱 Thùng mồi cám (+150 mồi · 90 vỏ sò)</option>
-              </select>
+                onValueChange={(val) => updateField('benPreferBait', val as AppConfig['benPreferBait'])}
+                options={[
+                  { value: 'xinMoi', label: '🤲 Xin chú ít mồi (+10 mồi · Miễn phí)' },
+                  { value: 'moi20', label: '🪱 Hộp mồi trùn (+20 mồi · 15 vỏ sò)' },
+                  { value: 'moi60', label: '🪱 Thau mồi trùn (+60 mồi · 40 vỏ sò)' },
+                  { value: 'moi150', label: '🪱 Thùng mồi cám (+150 mồi · 90 vỏ sò)' },
+                ]}
+              />
             </div>
           </div>
         )}
@@ -141,7 +142,7 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
           />
         </label>
         {config.benAutoRecoverStamina && (
-          <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
+          <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
             <div className="flex items-center justify-between">
               <span className="text-slate-600">Hồi khi Sức (⚡) dưới:</span>
               <input
@@ -154,19 +155,19 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
                 className="w-14 rounded-md bg-slate-50 px-1 py-0.5 text-center text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
               />
             </div>
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center justify-between gap-2 min-w-0">
               <span className="text-slate-600 shrink-0">Món ăn Quán Dì Tám:</span>
-              <select
+              <HudSelect
                 value={config.benPreferFood}
-                onChange={(e) => updateField('benPreferFood', e.target.value)}
-                className="max-w-[235px] truncate rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
-              >
-                <option value="banhMi">🥖 Bánh mì thịt (+20 Sức · 10 vỏ sò)</option>
-                <option value="chaoCa">🥣 Cháo cá lóc (+28 Sức · 14 vỏ sò)</option>
-                <option value="huTieu">🍜 Hủ tiếu nam vang (+40 Sức · 20 vỏ sò)</option>
-                <option value="comTam">🍛 Cơm tấm sườn bì (+60 Sức · 28 vỏ sò)</option>
-                <option value="lauMam">🍲 Lẩu cá linh bông điên điển (+100 Sức · 45 vỏ sò)</option>
-              </select>
+                onValueChange={(val) => updateField('benPreferFood', val)}
+                options={[
+                  { value: 'banhMi', label: '🥖 Bánh mì thịt (+20 Sức · 10 vỏ sò)' },
+                  { value: 'chaoCa', label: '🥣 Cháo cá lóc (+28 Sức · 14 vỏ sò)' },
+                  { value: 'huTieu', label: '🍜 Hủ tiếu nam vang (+40 Sức · 20 vỏ sò)' },
+                  { value: 'comTam', label: '🍛 Cơm tấm sườn bì (+60 Sức · 28 vỏ sò)' },
+                  { value: 'lauMam', label: '🍲 Lẩu cá linh bông điên điển (+100 Sức · 45 vỏ sò)' },
+                ]}
+              />
             </div>
           </div>
         )}
@@ -187,20 +188,20 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
           />
         </label>
         {config.benAutoLuckDrink && (
-          <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
-            <div className="flex items-center justify-between gap-2">
+          <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
+            <div className="flex items-center justify-between gap-2 min-w-0">
               <span className="text-slate-600 shrink-0">Nước uống Chị Thơm:</span>
-              <select
+              <HudSelect
                 value={config.benPreferDrink}
-                onChange={(e) => updateField('benPreferDrink', e.target.value)}
-                className="max-w-[235px] truncate rounded-lg bg-slate-50 px-2 py-1 text-slate-800 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
-              >
-                <option value="traDa">🧊 Trà đá (+8 Sức · 3 vỏ sò)</option>
-                <option value="nuocMia">🥤 Nước mía tắc (+5 Sức, May +1 · 15 vỏ sò)</option>
-                <option value="rauMa">🍵 Rau má đậu xanh (+5 Sức, May +1 · 30 vỏ sò)</option>
-                <option value="caPhe">☕ Cà phê sữa đá (+10 Sức, May +2 · 35 vỏ sò)</option>
-                <option value="duaTuoi">🥥 Dừa xiêm tươi (+15 Sức, May +3 · 80 vỏ sò)</option>
-              </select>
+                onValueChange={(val) => updateField('benPreferDrink', val)}
+                options={[
+                  { value: 'traDa', label: '🧊 Trà đá (+8 Sức · 3 vỏ sò)' },
+                  { value: 'nuocMia', label: '🥤 Nước mía tắc (+5 Sức, May +1 · 15 vỏ sò)' },
+                  { value: 'rauMa', label: '🍵 Rau má đậu xanh (+5 Sức, May +1 · 30 vỏ sò)' },
+                  { value: 'caPhe', label: '☕ Cà phê sữa đá (+10 Sức, May +2 · 35 vỏ sò)' },
+                  { value: 'duaTuoi', label: '🥥 Dừa xiêm tươi (+15 Sức, May +3 · 80 vỏ sò)' },
+                ]}
+              />
             </div>
           </div>
         )}
