@@ -71,6 +71,18 @@ export function HudApp({
     }
   }, []);
 
+  // Close update modal on Escape key press
+  useEffect(() => {
+    if (!isUpdateModalOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsUpdateModalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isUpdateModalOpen]);
+
   // Expose global bridge update listeners
   useEffect(() => {
     const handleSnapUpdate = (e: CustomEvent<GameSnapshot>) => {
@@ -380,8 +392,16 @@ export function HudApp({
 
       {/* GitHub Update Modal (Scoped inside shadowRoot with ReleaseChangelogView) */}
       {isUpdateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 pointer-events-auto">
-          <div className="relative w-full max-w-[360px] bg-white border border-slate-200 text-slate-900 p-4 rounded-2xl shadow-2xl animate-in fade-in-0 zoom-in-95 duration-150">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-3 sm:p-4 pointer-events-auto select-auto"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsUpdateModalOpen(false);
+          }}
+        >
+          <div
+            className="relative w-full max-w-[440px] max-h-[85vh] flex flex-col bg-white border border-slate-200 text-slate-900 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in-0 zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
             {updateInfo && (
               <ReleaseChangelogView
                 updateInfo={updateInfo}

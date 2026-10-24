@@ -160,12 +160,12 @@ export function PopupApp() {
 
       {/* View Mode: Changelog View */}
       {viewMode === 'changelog' && updateInfo ? (
-        <div className="p-3 space-y-2.5">
-          <div className="flex items-center justify-between">
+        <div className="flex flex-col h-[520px] max-h-[520px] overflow-hidden">
+          <div className="flex items-center justify-between px-3.5 py-2 bg-slate-50 border-b border-slate-200 shrink-0">
             <Button
               variant="ghost"
               size="sm"
-              className="text-xs text-slate-600 hover:text-slate-900 hover:bg-slate-100 h-7 px-2"
+              className="text-xs text-slate-600 hover:text-slate-900 hover:bg-slate-100 h-7 px-2 -ml-1"
               onClick={() => setViewMode('main')}
             >
               <ArrowLeft className="h-3.5 w-3.5 mr-1" />
@@ -176,10 +176,13 @@ export function PopupApp() {
             </Badge>
           </div>
 
-          <ReleaseChangelogView
-            updateInfo={updateInfo}
-            onClose={() => setViewMode('main')}
-          />
+          <div className="flex-1 min-h-0 overflow-hidden">
+            <ReleaseChangelogView
+              updateInfo={updateInfo}
+              showHeader={false}
+              onClose={() => setViewMode('main')}
+            />
+          </div>
         </div>
       ) : (
         /* View Mode: Main Dashboard */

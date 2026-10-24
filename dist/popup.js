@@ -18146,8 +18146,29 @@
   __iconData6.node;
   var Eye = createLucideIcon(__iconData6);
 
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/play.mjs
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/file-text.mjs
   var __iconData7 = {
+    name: "file-text",
+    size: 24,
+    node: [
+      [
+        "path",
+        {
+          d: "M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z",
+          key: "1oefj6"
+        }
+      ],
+      ["path", { d: "M14 2v5a1 1 0 0 0 1 1h5", key: "wfsgrz" }],
+      ["path", { d: "M10 9H8", key: "b1mrlr" }],
+      ["path", { d: "M16 13H8", key: "t4e002" }],
+      ["path", { d: "M16 17H8", key: "z1uh3a" }]
+    ]
+  };
+  __iconData7.node;
+  var FileText = createLucideIcon(__iconData7);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/play.mjs
+  var __iconData8 = {
     name: "play",
     size: 24,
     node: [
@@ -18160,11 +18181,11 @@
       ]
     ]
   };
-  __iconData7.node;
-  var Play = createLucideIcon(__iconData7);
+  __iconData8.node;
+  var Play = createLucideIcon(__iconData8);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
-  var __iconData8 = {
+  var __iconData9 = {
     name: "refresh-cw",
     size: 24,
     node: [
@@ -18174,11 +18195,11 @@
       ["path", { d: "M8 16H3v5", key: "1cv678" }]
     ]
   };
-  __iconData8.node;
-  var RefreshCw = createLucideIcon(__iconData8);
+  __iconData9.node;
+  var RefreshCw = createLucideIcon(__iconData9);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/rotate-ccw-clock.mjs
-  var __iconData9 = {
+  var __iconData10 = {
     name: "rotate-ccw-clock",
     size: 24,
     node: [
@@ -18188,11 +18209,11 @@
     ],
     aliases: ["history"]
   };
-  __iconData9.node;
-  var RotateCcwClock = createLucideIcon(__iconData9);
+  __iconData10.node;
+  var RotateCcwClock = createLucideIcon(__iconData10);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/sparkles.mjs
-  var __iconData10 = {
+  var __iconData11 = {
     name: "sparkles",
     size: 24,
     node: [
@@ -18209,17 +18230,29 @@
     ],
     aliases: ["stars"]
   };
-  __iconData10.node;
-  var Sparkles = createLucideIcon(__iconData10);
+  __iconData11.node;
+  var Sparkles = createLucideIcon(__iconData11);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/square.mjs
-  var __iconData11 = {
+  var __iconData12 = {
     name: "square",
     size: 24,
     node: [["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]]
   };
-  __iconData11.node;
-  var Square = createLucideIcon(__iconData11);
+  __iconData12.node;
+  var Square = createLucideIcon(__iconData12);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/x.mjs
+  var __iconData13 = {
+    name: "x",
+    size: 24,
+    node: [
+      ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
+      ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
+    ]
+  };
+  __iconData13.node;
+  var X = createLucideIcon(__iconData13);
 
   // src/components/ui/accordion.tsx
   var import_jsx_runtime12 = __toESM(require_jsx_runtime(), 1);
@@ -18280,107 +18313,180 @@
 
   // src/components/ReleaseChangelogView.tsx
   var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
-  function ReleaseChangelogView({ updateInfo, onClose }) {
+  function ReleaseChangelogView({
+    updateInfo,
+    onClose,
+    showHeader = true
+  }) {
     const hasUpdate = updateInfo.hasUpdate;
     const older = updateInfo.olderReleases || [];
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex flex-col space-y-3 font-sans text-slate-800", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-slate-50 p-3 border border-slate-200", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center gap-2.5", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
-            "div",
-            {
-              className: `flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${hasUpdate ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-blue-50 text-blue-600 border-blue-200"}`,
-              children: hasUpdate ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Sparkles, { className: "h-5 w-5" }) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(CircleCheck, { className: "h-5 w-5" })
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "text-xs font-bold text-slate-900", children: hasUpdate ? "\u0110\xE3 C\xF3 Phi\xEAn B\u1EA3n M\u1EDBi!" : "B\u1EA3n \u0110ang D\xF9ng M\u1EDBi Nh\u1EA5t" }),
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "text-[11px] text-slate-500 font-mono", children: hasUpdate ? `v${updateInfo.currentVersion} \u2794 v${updateInfo.latestVersion}` : `Phi\xEAn b\u1EA3n hi\u1EC7n t\u1EA1i v${updateInfo.currentVersion}` })
-          ] })
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex flex-col h-full max-h-full font-sans text-slate-800 bg-white overflow-hidden", children: [
+      showHeader && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-white shrink-0 select-none", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(FileText, { className: "h-4 w-4" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "font-bold text-xs text-slate-900 tracking-tight", children: "Nh\u1EADt K\xFD Phi\xEAn B\u1EA3n (Changelog)" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
-          Badge,
+        onClose && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+          "button",
           {
-            variant: hasUpdate ? "default" : "secondary",
-            className: `text-[10px] uppercase font-bold ${hasUpdate ? "bg-emerald-600 text-white" : "bg-slate-200 text-slate-700"}`,
-            children: hasUpdate ? "UPDATE" : "LATEST"
+            type: "button",
+            onClick: onClose,
+            className: "flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors",
+            title: "\u0110\xF3ng (Esc)",
+            children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(X, { className: "h-4 w-4" })
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "rounded-xl border border-emerald-200 bg-emerald-50/60 p-3 space-y-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center justify-between border-b border-emerald-200/60 pb-1.5", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "flex items-center gap-1.5", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { className: "font-bold text-xs text-emerald-800", children: [
-            "\u2728 ",
-            updateInfo.releaseName || `Release v${updateInfo.latestVersion}`
-          ] }) }),
-          updateInfo.publishedAt && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "text-[10px] text-slate-500", children: new Date(updateInfo.publishedAt).toLocaleDateString("vi-VN") })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "max-h-[140px] overflow-y-auto pr-1 text-[11px] text-slate-700 whitespace-pre-wrap leading-relaxed font-sans", children: updateInfo.releaseNotes || "Kh\xF4ng c\xF3 nh\u1EADt k\xFD chi ti\u1EBFt cho b\u1EA3n ph\xE1t h\xE0nh n\xE0y." }),
-        hasUpdate && updateInfo.downloadUrl && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "pt-1", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
-          Button,
-          {
-            variant: "default",
-            size: "sm",
-            className: "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs h-8 shadow-xs",
-            onClick: () => {
-              if (updateInfo.downloadUrl) {
-                window.open(updateInfo.downloadUrl, "_blank");
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-3", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-slate-50 p-2.5 border border-slate-200 select-none", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center gap-2.5", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+              "div",
+              {
+                className: `flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${hasUpdate ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-blue-50 text-blue-600 border-blue-200"}`,
+                children: hasUpdate ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Sparkles, { className: "h-4 w-4" }) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(CircleCheck, { className: "h-4 w-4" })
               }
-            },
-            children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Download, { className: "h-3.5 w-3.5 mr-1.5" }),
-              "T\u1EA3i B\u1EA3n C\u1EADp Nh\u1EADt v",
-              updateInfo.latestVersion
-            ]
-          }
-        ) })
-      ] }),
-      older.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "space-y-1", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center gap-1 text-[11px] font-semibold text-slate-600 px-1 pt-1", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(RotateCcwClock, { className: "h-3.5 w-3.5" }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: "L\u1ECBch s\u1EED c\xE1c phi\xEAn b\u1EA3n tr\u01B0\u1EDBc:" })
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "text-xs font-bold text-slate-900", children: hasUpdate ? "\u0110\xE3 C\xF3 Phi\xEAn B\u1EA3n M\u1EDBi!" : "B\u1EA3n \u0110ang D\xF9ng M\u1EDBi Nh\u1EA5t" }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "text-[10px] text-slate-500 font-mono", children: hasUpdate ? `v${updateInfo.currentVersion} \u2794 v${updateInfo.latestVersion}` : `Phi\xEAn b\u1EA3n hi\u1EC7n t\u1EA1i v${updateInfo.currentVersion}` })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+            Badge,
+            {
+              variant: hasUpdate ? "default" : "secondary",
+              className: `text-[9px] uppercase font-bold px-1.5 py-0.5 ${hasUpdate ? "bg-emerald-600 text-white" : "bg-slate-200 text-slate-700"}`,
+              children: hasUpdate ? "UPDATE" : "LATEST"
+            }
+          )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Accordion3, { type: "single", collapsible: true, className: "w-full space-y-1", children: older.map((rel, idx) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
-          AccordionItem3,
-          {
-            value: rel.tag || String(idx),
-            className: "rounded-lg border border-slate-200 bg-white px-2.5 py-0 text-xs shadow-xs",
-            children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(AccordionTrigger3, { className: "py-2 hover:no-underline text-xs text-slate-800 font-medium", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center gap-2", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-mono text-emerald-700 font-bold border border-slate-200", children: rel.tag }),
-                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "truncate max-w-[200px]", children: rel.name || rel.tag })
-              ] }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(AccordionContent3, { className: "pb-2.5 pt-1 text-[11px] text-slate-600 whitespace-pre-wrap leading-relaxed border-t border-slate-100 mt-1", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { children: rel.body || "Kh\xF4ng c\xF3 ghi ch\xFA." }),
-                rel.htmlUrl && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "mt-2 pt-1 border-t border-slate-100", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
-                  "a",
-                  {
-                    href: rel.htmlUrl,
-                    target: "_blank",
-                    rel: "noreferrer",
-                    className: "inline-flex items-center gap-1 text-[10px] text-emerald-700 hover:underline font-medium",
-                    children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ExternalLink, { className: "h-3 w-3" }),
-                      "Xem tr\xEAn GitHub"
-                    ]
-                  }
-                ) })
-              ] })
-            ]
-          },
-          rel.tag || idx
-        )) })
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "rounded-xl border border-emerald-200 bg-emerald-50/50 p-3 space-y-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center justify-between border-b border-emerald-200/60 pb-1.5", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "flex items-center gap-1.5", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { className: "font-bold text-xs text-emerald-800", children: [
+              "\u2728 ",
+              updateInfo.releaseName || `Release v${updateInfo.latestVersion}`
+            ] }) }),
+            updateInfo.publishedAt && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "text-[10px] text-slate-500 font-mono", children: new Date(updateInfo.publishedAt).toLocaleDateString("vi-VN") })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+            "div",
+            {
+              tabIndex: 0,
+              className: "max-h-[200px] overflow-y-auto pr-1.5 text-[11px] text-slate-700 whitespace-pre-wrap leading-relaxed font-sans rounded-lg bg-white/80 p-2.5 border border-emerald-100 shadow-2xs select-text focus:outline-none",
+              children: updateInfo.releaseNotes || "Kh\xF4ng c\xF3 nh\u1EADt k\xFD chi ti\u1EBFt cho b\u1EA3n ph\xE1t h\xE0nh n\xE0y."
+            }
+          ),
+          hasUpdate && updateInfo.downloadUrl && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "pt-1", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
+            Button,
+            {
+              variant: "default",
+              size: "sm",
+              className: "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs h-8 shadow-xs",
+              onClick: () => {
+                if (updateInfo.downloadUrl) {
+                  window.open(updateInfo.downloadUrl, "_blank");
+                }
+              },
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Download, { className: "h-3.5 w-3.5 mr-1.5" }),
+                "T\u1EA3i B\u1EA3n C\u1EADp Nh\u1EADt v",
+                updateInfo.latestVersion
+              ]
+            }
+          ) })
+        ] }),
+        older.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "space-y-1 pt-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center gap-1 text-[11px] font-semibold text-slate-600 px-1 select-none", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(RotateCcwClock, { className: "h-3.5 w-3.5 text-slate-500" }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: "L\u1ECBch s\u1EED c\xE1c phi\xEAn b\u1EA3n tr\u01B0\u1EDBc:" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Accordion3, { type: "single", collapsible: true, className: "w-full space-y-1", children: older.map((rel, idx) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
+            AccordionItem3,
+            {
+              value: rel.tag || String(idx),
+              className: "rounded-lg border border-slate-200 bg-white px-2.5 py-0 text-xs shadow-xs",
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(AccordionTrigger3, { className: "py-2 hover:no-underline text-xs text-slate-800 font-medium", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center gap-2", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-mono text-emerald-700 font-bold border border-slate-200", children: rel.tag }),
+                  /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "truncate max-w-[200px]", children: rel.name || rel.tag })
+                ] }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(AccordionContent3, { className: "pb-2.5 pt-1 border-t border-slate-100 mt-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+                    "div",
+                    {
+                      tabIndex: 0,
+                      className: "max-h-[180px] overflow-y-auto pr-1.5 text-[11px] text-slate-600 whitespace-pre-wrap leading-relaxed select-text focus:outline-none",
+                      children: rel.body || "Kh\xF4ng c\xF3 ghi ch\xFA."
+                    }
+                  ),
+                  rel.htmlUrl && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
+                      "a",
+                      {
+                        href: rel.htmlUrl,
+                        target: "_blank",
+                        rel: "noreferrer",
+                        className: "inline-flex items-center gap-1 text-[10px] text-emerald-700 hover:underline font-medium",
+                        children: [
+                          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ExternalLink, { className: "h-3 w-3" }),
+                          "Xem chi ti\u1EBFt tr\xEAn GitHub"
+                        ]
+                      }
+                    ),
+                    rel.downloadUrl && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
+                      "a",
+                      {
+                        href: rel.downloadUrl,
+                        target: "_blank",
+                        rel: "noreferrer",
+                        className: "inline-flex items-center gap-1 text-[10px] text-slate-500 hover:text-emerald-700 hover:underline",
+                        children: [
+                          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Download, { className: "h-3 w-3" }),
+                          "T\u1EA3i zip"
+                        ]
+                      }
+                    )
+                  ] })
+                ] })
+              ]
+            },
+            rel.tag || idx
+          )) })
+        ] })
       ] }),
-      onClose && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "pt-1", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
-        Button,
-        {
-          variant: "outline",
-          size: "sm",
-          className: "w-full border-slate-200 text-slate-700 hover:bg-slate-100 text-xs shadow-xs",
-          onClick: onClose,
-          children: "\u0110\xF3ng"
-        }
-      ) })
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "px-4 py-2.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-2 shrink-0 select-none", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "text-[10px] text-slate-400 font-mono", children: hasUpdate ? `C\xF3 b\u1EA3n m\u1EDBi v${updateInfo.latestVersion}` : `v${updateInfo.currentVersion} m\u1EDBi nh\u1EA5t` }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex items-center gap-2", children: [
+          hasUpdate && updateInfo.downloadUrl && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
+            Button,
+            {
+              variant: "default",
+              size: "sm",
+              className: "bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs h-7 px-3 shadow-xs",
+              onClick: () => {
+                if (updateInfo.downloadUrl) {
+                  window.open(updateInfo.downloadUrl, "_blank");
+                }
+              },
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Download, { className: "h-3 w-3 mr-1" }),
+                "T\u1EA3i C\u1EADp Nh\u1EADt"
+              ]
+            }
+          ),
+          onClose && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+            Button,
+            {
+              variant: "outline",
+              size: "sm",
+              className: "border-slate-200 text-slate-700 hover:bg-slate-100 text-xs h-7 px-3 shadow-xs",
+              onClick: onClose,
+              children: "\u0110\xF3ng"
+            }
+          )
+        ] })
+      ] })
     ] });
   }
 
@@ -18600,14 +18706,14 @@
           }
         )
       ] }),
-      viewMode === "changelog" && updateInfo ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "p-3 space-y-2.5", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between", children: [
+      viewMode === "changelog" && updateInfo ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex flex-col h-[520px] max-h-[520px] overflow-hidden", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between px-3.5 py-2 bg-slate-50 border-b border-slate-200 shrink-0", children: [
           /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
             Button,
             {
               variant: "ghost",
               size: "sm",
-              className: "text-xs text-slate-600 hover:text-slate-900 hover:bg-slate-100 h-7 px-2",
+              className: "text-xs text-slate-600 hover:text-slate-900 hover:bg-slate-100 h-7 px-2 -ml-1",
               onClick: () => setViewMode("main"),
               children: [
                 /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ArrowLeft, { className: "h-3.5 w-3.5 mr-1" }),
@@ -18620,13 +18726,14 @@
             version
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "flex-1 min-h-0 overflow-hidden", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
           ReleaseChangelogView,
           {
             updateInfo,
+            showHeader: false,
             onClose: () => setViewMode("main")
           }
-        )
+        ) })
       ] }) : (
         /* View Mode: Main Dashboard */
         /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "p-3.5 space-y-3", children: [
@@ -18817,11 +18924,13 @@ lucide-react/dist/esm/icons/circle-check.mjs:
 lucide-react/dist/esm/icons/download.mjs:
 lucide-react/dist/esm/icons/external-link.mjs:
 lucide-react/dist/esm/icons/eye.mjs:
+lucide-react/dist/esm/icons/file-text.mjs:
 lucide-react/dist/esm/icons/play.mjs:
 lucide-react/dist/esm/icons/refresh-cw.mjs:
 lucide-react/dist/esm/icons/rotate-ccw-clock.mjs:
 lucide-react/dist/esm/icons/sparkles.mjs:
 lucide-react/dist/esm/icons/square.mjs:
+lucide-react/dist/esm/icons/x.mjs:
 lucide-react/dist/esm/lucide-react.mjs:
   (**
    * @license lucide-react v1.61.0 - ISC
