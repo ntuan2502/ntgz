@@ -219,7 +219,7 @@ export function createHud(): void {
   const host = document.createElement('div');
   host.id = 'ntg-auto-hud-host';
   host.style.cssText =
-    'position:fixed;top:0;left:0;width:0;height:0;z-index:2147483647;pointer-events:none;';
+    'position:fixed;top:0;left:0;width:0;height:0;z-index:2147483600;pointer-events:none;';
   document.documentElement.appendChild(host);
 
   const shadow = host.attachShadow({ mode: 'open' });

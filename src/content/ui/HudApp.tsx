@@ -253,7 +253,7 @@ export function HudApp({
         height: isMinimized ? 'auto' : `${Math.min(size.height, window.innerHeight - 20)}px`,
         pointerEvents: 'auto',
       }}
-      className="fixed left-0 top-0 z-[2147483647] flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 shadow-2xl bg-white/98 text-slate-800 backdrop-blur-xl font-sans select-none ring-1 ring-black/5"
+      className="fixed left-0 top-0 z-[2147483600] flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 shadow-2xl bg-white/98 text-slate-800 backdrop-blur-xl font-sans select-none ring-1 ring-black/5"
     >
       {/* macOS Styled Header with Traffic Light Buttons */}
       <HudHeader
