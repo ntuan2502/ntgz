@@ -28135,6 +28135,85 @@
   var lastModalClickAt = 0;
   var lastHookAt = 0;
   var lastCastAt = 0;
+  var lastWheelActionAt = 0;
+  function handleBenLanternWheel(wheelEl, snap, config2, setStatus2, delayMs) {
+    const now = performance.now();
+    if (now - lastWheelActionAt < Math.max(350, delayMs * 0.7)) {
+      return true;
+    }
+    const resultCard = wheelEl.querySelector(".ben-wheel-card.result");
+    if (resultCard) {
+      const tierText = resultCard.querySelector(".ben-wheel-tier")?.textContent?.trim() || "V\u1ECF s\xF2 an \u1EE7i";
+      const wonItemName = resultCard.querySelector("b")?.textContent?.trim() || "";
+      const shellsText = resultCard.querySelector(".ben-wheel-shells")?.textContent?.trim() || "";
+      const confirmBtn = resultCard.querySelector("button.btn-green");
+      const confirmLabel = confirmBtn?.textContent?.trim() || "Nh\u1EADn";
+      const resultLog = wonItemName ? `\u{1F3EE} V\xF2ng quay C\xF4 B\u1EA3y: \u{1F389} TR\xDANG "${wonItemName}" (${tierText})${shellsText ? ` \xB7 ${shellsText}` : ""} -> \u0110\xE3 nh\u1EA5n "${confirmLabel}"!` : `\u{1F3EE} V\xF2ng quay C\xF4 B\u1EA3y: Quay \u0111\u01B0\u1EE3c ${shellsText || tierText} (${tierText}) -> \u0110\xE3 nh\u1EA5n "${confirmLabel}"!`;
+      setStatus2(resultLog);
+      if (confirmBtn && !confirmBtn.disabled) {
+        triggerPointerDownAndClick(confirmBtn);
+      }
+      lastWheelActionAt = now;
+      return true;
+    }
+    const pickCard = wheelEl.querySelector(".ben-wheel-card:not(.result)");
+    if (pickCard) {
+      const confirmPickBtn = pickCard.querySelector(".ben-wheel-row button.btn-green");
+      if (confirmPickBtn && !confirmPickBtn.disabled) {
+        triggerPointerDownAndClick(confirmPickBtn);
+        setStatus2('\u{1F3EE} V\xF2ng quay C\xF4 B\u1EA3y: \u0110\xE3 ch\u1ECDn \u0111\u1EE7 m\xF3n mu\u1ED1n s\u0103n -> Nh\u1EA5n "L\xEAn v\xF2ng"!');
+        lastWheelActionAt = now;
+        return true;
+      }
+      const unpickedBtn = pickCard.querySelector(".ben-wheel-pick:not(.on)");
+      if (unpickedBtn) {
+        const itemName = unpickedBtn.querySelector("span")?.textContent?.trim() || "v\u1EADt ph\u1EA9m";
+        triggerPointerDownAndClick(unpickedBtn);
+        setStatus2(`\u{1F3EE} V\xF2ng quay C\xF4 B\u1EA3y: \u0110ang ch\u1ECDn m\xF3n "${itemName}" l\xEAn v\xF2ng quay...`);
+        lastWheelActionAt = now;
+        return true;
+      }
+    }
+    const btns = Array.from(wheelEl.querySelectorAll(".ben-wheel-btns button"));
+    const spinOneBtn = btns.find((b) => (b.textContent || "").includes("Quay 1"));
+    const buyTicketBtn = btns.find((b) => (b.textContent || "").includes("Mua v\xE9"));
+    const closeBtn = wheelEl.querySelector(".ben-panel-head button.btn-brown");
+    if (!config2.benAutoLantern) {
+      if (closeBtn && !closeBtn.disabled) {
+        triggerPointerDownAndClick(closeBtn);
+        lastWheelActionAt = now;
+      }
+      return true;
+    }
+    if (!spinOneBtn || spinOneBtn.disabled) {
+      setStatus2("\u{1F3EE} V\xF2ng quay l\u1ED3ng \u0111\xE8n C\xF4 B\u1EA3y \u0111ang quay... ch\u1EDD k\u1EBFt qu\u1EA3!");
+      return true;
+    }
+    const chipText = wheelEl.querySelector(".ben-wheel-top .ben-chip")?.textContent || "";
+    const ticketMatch = chipText.match(/🎟️\s*(\d+)/);
+    const liveTickets = ticketMatch ? Number(ticketMatch[1]) : snap.benNet?.wallet?.tickets ?? 0;
+    if (liveTickets > 0) {
+      triggerPointerDownAndClick(spinOneBtn);
+      setStatus2(`\u{1F3EE} V\xF2ng quay C\xF4 B\u1EA3y: Nh\u1EA5n quay 1 v\xE9 (c\xF2n ${liveTickets} v\xE9 \u{1F39F}\uFE0F)...`);
+      lastWheelActionAt = now;
+      return true;
+    }
+    const boughtMatch = (buyTicketBtn?.textContent || "").match(/\((\d+)\/5\)/);
+    const boughtCount = boughtMatch ? Number(boughtMatch[1]) : snap.benNet?.wheel?.bought ?? 0;
+    const shells = snap.benNet?.wallet?.shells ?? 0;
+    if (config2.benBuyLanternTicket && boughtCount < 5 && shells >= 600 && buyTicketBtn && !buyTicketBtn.disabled) {
+      triggerPointerDownAndClick(buyTicketBtn);
+      setStatus2(`\u{1F39F}\uFE0F \u0110\xE3 mua th\xEAm 1 v\xE9 V\xF2ng quay l\u1ED3ng \u0111\xE8n C\xF4 B\u1EA3y (${boughtCount + 1}/5 \xB7 -600 v\u1ECF s\xF2 \u{1F41A})`);
+      lastWheelActionAt = now;
+      return true;
+    }
+    if (closeBtn && !closeBtn.disabled) {
+      triggerPointerDownAndClick(closeBtn);
+      setStatus2("\u{1F3EE} \u0110\xE3 quay h\u1EBFt v\xE9 l\u1ED3ng \u0111\xE8n C\xF4 B\u1EA3y -> \u0110\xF3ng b\u1EA3ng quay l\u1EA1i c\xE2u c\xE1!");
+      lastWheelActionAt = now;
+    }
+    return true;
+  }
   function formatBenCatchSummary(card, kept) {
     const fishName = card.querySelector("h3")?.textContent?.trim() || "C\xE1";
     const rarityText = card.querySelector("h3")?.nextElementSibling?.textContent?.trim() || "Th\u01B0\u1EDDng";
@@ -28204,6 +28283,11 @@
     if (giftBtn && isVisible(giftBtn) && now - lastModalClickAt > 500) {
       triggerPointerDownAndClick(giftBtn);
       lastModalClickAt = now;
+      return { finishedArea: false };
+    }
+    const wheelEl = document.querySelector(".ben-wheel");
+    if (wheelEl && isVisible(wheelEl)) {
+      handleBenLanternWheel(wheelEl, snap, config2, setStatus2, delayMs);
       return { finishedArea: false };
     }
     const benBobberBite = document.querySelector("span.ben-bobber.bite");

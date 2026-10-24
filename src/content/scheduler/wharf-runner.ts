@@ -7,6 +7,113 @@ import { handleFightMinigame } from './minigame';
 let lastModalClickAt = 0;
 let lastHookAt = 0;
 let lastCastAt = 0;
+let lastWheelActionAt = 0;
+
+function handleBenLanternWheel(
+  wheelEl: HTMLElement,
+  snap: GameSnapshot,
+  config: AppConfig,
+  setStatus: (text: string) => void,
+  delayMs: number
+): boolean {
+  const now = performance.now();
+  if (now - lastWheelActionAt < Math.max(350, delayMs * 0.7)) {
+    return true;
+  }
+
+  // A. Spin Result Modal (.ben-wheel-card.result) -> Log what was won & click confirm ("Nhận" / "Chọn món mới")
+  const resultCard = wheelEl.querySelector('.ben-wheel-card.result') as HTMLElement | null;
+  if (resultCard) {
+    const tierText = resultCard.querySelector('.ben-wheel-tier')?.textContent?.trim() || 'Vỏ sò an ủi';
+    const wonItemName = resultCard.querySelector('b')?.textContent?.trim() || '';
+    const shellsText = resultCard.querySelector('.ben-wheel-shells')?.textContent?.trim() || '';
+    const confirmBtn = resultCard.querySelector('button.btn-green') as HTMLButtonElement | null;
+    const confirmLabel = confirmBtn?.textContent?.trim() || 'Nhận';
+
+    const resultLog = wonItemName
+      ? `🏮 Vòng quay Cô Bảy: 🎉 TRÚNG "${wonItemName}" (${tierText})${shellsText ? ` · ${shellsText}` : ''} -> Đã nhấn "${confirmLabel}"!`
+      : `🏮 Vòng quay Cô Bảy: Quay được ${shellsText || tierText} (${tierText}) -> Đã nhấn "${confirmLabel}"!`;
+
+    setStatus(resultLog);
+    if (confirmBtn && !confirmBtn.disabled) {
+      triggerPointerDownAndClick(confirmBtn);
+    }
+    lastWheelActionAt = now;
+    return true;
+  }
+
+  // B. Pick 3 Items Modal (.ben-wheel-card:not(.result)) -> Auto pick items & click "Lên vòng"
+  const pickCard = wheelEl.querySelector('.ben-wheel-card:not(.result)') as HTMLElement | null;
+  if (pickCard) {
+    const confirmPickBtn = pickCard.querySelector('.ben-wheel-row button.btn-green') as HTMLButtonElement | null;
+    if (confirmPickBtn && !confirmPickBtn.disabled) {
+      triggerPointerDownAndClick(confirmPickBtn);
+      setStatus('🏮 Vòng quay Cô Bảy: Đã chọn đủ món muốn săn -> Nhấn "Lên vòng"!');
+      lastWheelActionAt = now;
+      return true;
+    }
+
+    const unpickedBtn = pickCard.querySelector('.ben-wheel-pick:not(.on)') as HTMLButtonElement | null;
+    if (unpickedBtn) {
+      const itemName = unpickedBtn.querySelector('span')?.textContent?.trim() || 'vật phẩm';
+      triggerPointerDownAndClick(unpickedBtn);
+      setStatus(`🏮 Vòng quay Cô Bảy: Đang chọn món "${itemName}" lên vòng quay...`);
+      lastWheelActionAt = now;
+      return true;
+    }
+  }
+
+  // C. Main Wheel Panel Controls
+  const btns = Array.from(wheelEl.querySelectorAll('.ben-wheel-btns button')) as HTMLButtonElement[];
+  const spinOneBtn = btns.find((b) => (b.textContent || '').includes('Quay 1'));
+  const buyTicketBtn = btns.find((b) => (b.textContent || '').includes('Mua vé'));
+  const closeBtn = wheelEl.querySelector('.ben-panel-head button.btn-brown') as HTMLButtonElement | null;
+
+  if (!config.benAutoLantern) {
+    if (closeBtn && !closeBtn.disabled) {
+      triggerPointerDownAndClick(closeBtn);
+      lastWheelActionAt = now;
+    }
+    return true;
+  }
+
+  // If spinOneBtn is disabled, the wheel is currently spinning (3.1s animation) or loading wheel data
+  if (!spinOneBtn || spinOneBtn.disabled) {
+    setStatus('🏮 Vòng quay lồng đèn Cô Bảy đang quay... chờ kết quả!');
+    return true;
+  }
+
+  // Read live ticket & shell counts from the wheel header chip ("🎟️ X · 🐚 Y") or snapshot fallback
+  const chipText = wheelEl.querySelector('.ben-wheel-top .ben-chip')?.textContent || '';
+  const ticketMatch = chipText.match(/🎟️\s*(\d+)/);
+  const liveTickets = ticketMatch ? Number(ticketMatch[1]) : (snap.benNet?.wallet?.tickets ?? 0);
+
+  if (liveTickets > 0) {
+    triggerPointerDownAndClick(spinOneBtn);
+    setStatus(`🏮 Vòng quay Cô Bảy: Nhấn quay 1 vé (còn ${liveTickets} vé 🎟️)...`);
+    lastWheelActionAt = now;
+    return true;
+  }
+
+  const boughtMatch = (buyTicketBtn?.textContent || '').match(/\((\d+)\/5\)/);
+  const boughtCount = boughtMatch ? Number(boughtMatch[1]) : (snap.benNet?.wheel?.bought ?? 0);
+  const shells = snap.benNet?.wallet?.shells ?? 0;
+
+  if (config.benBuyLanternTicket && boughtCount < 5 && shells >= 600 && buyTicketBtn && !buyTicketBtn.disabled) {
+    triggerPointerDownAndClick(buyTicketBtn);
+    setStatus(`🎟️ Đã mua thêm 1 vé Vòng quay lồng đèn Cô Bảy (${boughtCount + 1}/5 · -600 vỏ sò 🐚)`);
+    lastWheelActionAt = now;
+    return true;
+  }
+
+  // All tickets have been spun and confirmed -> Close wheel modal
+  if (closeBtn && !closeBtn.disabled) {
+    triggerPointerDownAndClick(closeBtn);
+    setStatus('🏮 Đã quay hết vé lồng đèn Cô Bảy -> Đóng bảng quay lại câu cá!');
+    lastWheelActionAt = now;
+  }
+  return true;
+}
 
 function formatBenCatchSummary(card: HTMLElement, kept: boolean): string {
   const fishName = card.querySelector('h3')?.textContent?.trim() || 'Cá';
@@ -108,6 +215,13 @@ export async function stepBenDoFishing(
   if (giftBtn && isVisible(giftBtn) && now - lastModalClickAt > 500) {
     triggerPointerDownAndClick(giftBtn);
     lastModalClickAt = now;
+    return { finishedArea: false };
+  }
+
+  // 3b. Handle Lantern Wheel Modal (.ben-wheel) interactively: spin -> log result -> click confirm -> spin next
+  const wheelEl = document.querySelector('.ben-wheel') as HTMLElement | null;
+  if (wheelEl && isVisible(wheelEl)) {
+    handleBenLanternWheel(wheelEl, snap, config, setStatus, delayMs);
     return { finishedArea: false };
   }
 

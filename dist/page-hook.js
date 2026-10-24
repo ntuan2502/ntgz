@@ -304,7 +304,8 @@
         totalBasket: Array.isArray(bn.basket) ? bn.basket.length : 0,
         pack: bn.pack || {},
         landed: bn.landed,
-        notice: bn.notice
+        notice: bn.notice,
+        wheel: bn.wheel
       } : null
     };
   }
@@ -1599,13 +1600,14 @@
     const packItems = Object.keys(pack).filter((k) => (pack[k] || 0) > 0);
     const stamMin = Number(cfg.benStaminaThreshold ?? 4);
     const runWithOptionalPanel = (actionFn, label, panelState, holdMs = 1500) => {
-      if (cfg.showFullActions && panelState) {
+      const forceOpen = panelState?.panel === "lantern";
+      if ((cfg.showFullActions || forceOpen) && panelState) {
         buStore.setState(panelState);
         keepBenPanelUntil = Date.now() + holdMs;
         keepBenPanelMsg = label;
         setTimeout(() => {
           actionFn();
-        }, 300);
+        }, 250);
       } else {
         actionFn();
         buStore.setState({ panel: null });
@@ -1805,7 +1807,9 @@
     }
     if (cfg.benAutoLantern !== false) {
       const tickets = wallet.tickets || 0;
-      if (tickets > 0 && canAct("ben_lantern_spin", cfg.showFullActions ? 5e3 : 4e3)) {
+      const boughtToday = bn.wheel?.bought || 0;
+      const canBuyTicket = Boolean(cfg.benBuyLanternTicket && boughtToday < 5 && shells >= 600);
+      if ((tickets > 0 || canBuyTicket) && bu.panel !== "lantern" && canAct("ben_lantern_open", 2500)) {
         return walkAndRun(
           { x: 37, y: 28 },
           () => {
@@ -1817,25 +1821,12 @@
             if (needPicks > 0 && curPicks.length < needPicks) {
               sendBenWs({ t: "pick", items: unownedWheel.slice(0, needPicks) });
             }
-            sendBenWs({ t: "spin", n: 1 });
+            buStore.setState({ panel: "lantern" });
           },
-          `\u{1F3EE} Quay V\xF2ng quay l\u1ED3ng \u0111\xE8n C\xF4 B\u1EA3y (c\xF2n ${tickets} v\xE9 \u{1F39F}\uFE0F)`,
-          "ben_lantern_spin",
+          tickets > 0 ? `\u{1F3EE} M\u1EDF V\xF2ng quay l\u1ED3ng \u0111\xE8n C\xF4 B\u1EA3y (hi\u1EC7n c\xF3 ${tickets} v\xE9 \u{1F39F}\uFE0F)` : `\u{1F3EE} Gh\xE9 S\u1EA1p l\u1ED3ng \u0111\xE8n C\xF4 B\u1EA3y mua v\xE9 quay (${boughtToday}/5, -600\u{1F41A})`,
+          "ben_lantern_open",
           { panel: "lantern" },
-          4e3
-        );
-      }
-      const boughtToday = bn.wheel?.bought || 0;
-      if (cfg.benBuyLanternTicket && boughtToday < 5 && shells >= 600 && canAct("ben_lantern_buy", 4e3)) {
-        return walkAndRun(
-          { x: 37, y: 28 },
-          () => {
-            sendBenWs({ t: "ticket" });
-          },
-          `\u{1F39F}\uFE0F Mua v\xE9 V\xF2ng quay l\u1ED3ng \u0111\xE8n C\xF4 B\u1EA3y (${boughtToday + 1}/5, -600\u{1F41A})`,
-          "ben_lantern_buy",
-          { panel: "lantern" },
-          1500
+          5e3
         );
       }
     }
@@ -1888,7 +1879,8 @@
         );
       }
     }
-    if (bu.panel && (!cfg.showFullActions || Date.now() >= keepBenPanelUntil)) {
+    const lanternActive = bu.panel === "lantern" && cfg.benAutoLantern !== false && ((wallet.tickets || 0) > 0 || Boolean(cfg.benBuyLanternTicket && (bn.wheel?.bought || 0) < 5 && shells >= 600));
+    if (bu.panel && !lanternActive && (!cfg.showFullActions || Date.now() >= keepBenPanelUntil)) {
       buStore.setState({ panel: null });
     }
     if (cfg.benAutoSpot !== false) {

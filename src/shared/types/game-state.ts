@@ -50,6 +50,7 @@ export interface BenNetWallet {
   bait?: number;
   stamina?: number;
   liveStamina?: number;
+  tickets?: number;
   [key: string]: unknown;
 }
 
@@ -57,6 +58,11 @@ export interface BenNetState {
   status?: string;
   fishing?: 'idle' | 'cast' | 'bite' | 'fight' | 'landing' | string;
   wallet?: BenNetWallet | null;
+  wheel?: {
+    bought?: number;
+    picks?: string[];
+    [key: string]: unknown;
+  };
   [key: string]: unknown;
 }
 

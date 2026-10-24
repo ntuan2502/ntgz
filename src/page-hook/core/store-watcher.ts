@@ -157,6 +157,7 @@ export function getSnapshot(): GameSnapshot {
           pack: bn.pack || {},
           landed: bn.landed,
           notice: bn.notice,
+          wheel: bn.wheel,
         }
       : null,
   };

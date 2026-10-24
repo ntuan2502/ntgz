@@ -114,13 +114,14 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
     panelState?: Record<string, unknown>,
     holdMs = 1500
   ) => {
-    if (cfg.showFullActions && panelState) {
+    const forceOpen = panelState?.panel === 'lantern';
+    if ((cfg.showFullActions || forceOpen) && panelState) {
       buStore.setState(panelState);
       keepBenPanelUntil = Date.now() + holdMs;
       keepBenPanelMsg = label;
       setTimeout(() => {
         actionFn();
-      }, 300);
+      }, 250);
     } else {
       actionFn();
       buStore.setState({ panel: null });
@@ -382,7 +383,10 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
   // 5. Sạp lồng đèn Cô Bảy
   if (cfg.benAutoLantern !== false) {
     const tickets = wallet.tickets || 0;
-    if (tickets > 0 && canAct('ben_lantern_spin', cfg.showFullActions ? 5000 : 4000)) {
+    const boughtToday = bn.wheel?.bought || 0;
+    const canBuyTicket = Boolean(cfg.benBuyLanternTicket && boughtToday < 5 && shells >= 600);
+
+    if ((tickets > 0 || canBuyTicket) && bu.panel !== 'lantern' && canAct('ben_lantern_open', 2500)) {
       return walkAndRun(
         { x: 37, y: 28 },
         () => {
@@ -394,26 +398,14 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
           if (needPicks > 0 && curPicks.length < needPicks) {
             sendBenWs({ t: 'pick', items: unownedWheel.slice(0, needPicks) });
           }
-          sendBenWs({ t: 'spin', n: 1 });
+          buStore.setState({ panel: 'lantern' });
         },
-        `🏮 Quay Vòng quay lồng đèn Cô Bảy (còn ${tickets} vé 🎟️)`,
-        'ben_lantern_spin',
+        tickets > 0
+          ? `🏮 Mở Vòng quay lồng đèn Cô Bảy (hiện có ${tickets} vé 🎟️)`
+          : `🏮 Ghé Sạp lồng đèn Cô Bảy mua vé quay (${boughtToday}/5, -600🐚)`,
+        'ben_lantern_open',
         { panel: 'lantern' },
-        4000
-      );
-    }
-
-    const boughtToday = bn.wheel?.bought || 0;
-    if (cfg.benBuyLanternTicket && boughtToday < 5 && shells >= 600 && canAct('ben_lantern_buy', 4000)) {
-      return walkAndRun(
-        { x: 37, y: 28 },
-        () => {
-          sendBenWs({ t: 'ticket' });
-        },
-        `🎟️ Mua vé Vòng quay lồng đèn Cô Bảy (${boughtToday + 1}/5, -600🐚)`,
-        'ben_lantern_buy',
-        { panel: 'lantern' },
-        1500
+        5000
       );
     }
   }
@@ -472,8 +464,12 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
     }
   }
 
-  // 8. Close panel if open (once hold duration expires)
-  if (bu.panel && (!cfg.showFullActions || Date.now() >= keepBenPanelUntil)) {
+  // 8. Close panel if open (once hold duration expires, unless actively spinning lantern wheel)
+  const lanternActive =
+    bu.panel === 'lantern' &&
+    cfg.benAutoLantern !== false &&
+    ((wallet.tickets || 0) > 0 || Boolean(cfg.benBuyLanternTicket && (bn.wheel?.bought || 0) < 5 && shells >= 600));
+  if (bu.panel && !lanternActive && (!cfg.showFullActions || Date.now() >= keepBenPanelUntil)) {
     buStore.setState({ panel: null });
   }
 
