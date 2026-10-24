@@ -23,21 +23,21 @@ export function CityTabContent({ config, onUpdateConfig }: CityTabContentProps) 
 
   return (
     <div className="space-y-2 text-xs">
-      <div className="flex items-center justify-between rounded-md bg-purple-950/40 border border-purple-500/30 px-3 py-2 text-purple-300">
+      <div className="flex items-center justify-between rounded-xl bg-purple-950/40 light:bg-purple-50 border border-purple-500/30 px-3 py-2 text-purple-300 light:text-purple-900 shadow-sm">
         <span className="font-semibold text-xs flex items-center gap-1.5">
           🏙️ Cho phép chạy Khu vực Thành Phố
         </span>
         <Switch checked={isCityAreaEnabled} onCheckedChange={handleToggleArea} />
       </div>
 
-      <div className="flex flex-col items-center justify-center rounded-lg border border-slate-800 bg-slate-900/60 p-6 text-center space-y-2">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">
-          <Construction className="h-5 w-5" />
+      <div className="flex flex-col items-center justify-center rounded-xl border border-slate-800 dark:border-slate-800 light:border-slate-200 bg-slate-900/60 dark:bg-slate-900/60 light:bg-white p-6 text-center space-y-2.5 shadow-sm">
+        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-purple-500/10 text-purple-400 border border-purple-500/20 shadow-sm">
+          <Construction className="h-6 w-6" />
         </div>
-        <div className="font-semibold text-xs text-slate-200">
+        <div className="font-bold text-xs text-slate-100 light:text-slate-900">
           Khu Vực Thành Phố &amp; Hội Chợ Xóm Vui
         </div>
-        <p className="text-[11px] text-slate-400 max-w-[260px] leading-relaxed">
+        <p className="text-[11px] text-slate-400 light:text-slate-600 max-w-[270px] leading-relaxed">
           Tính năng tự động cho Khu vực Thành Phố &amp; Hội Chợ (Xe lam, Mini-game Câu Vịt) đang được phát triển và sẽ sớm ra mắt ở bản cập nhật tiếp theo!
         </p>
       </div>

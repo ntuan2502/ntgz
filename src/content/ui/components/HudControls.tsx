@@ -64,24 +64,24 @@ export function HudControls({
   };
 
   return (
-    <div className="space-y-2 border-b border-slate-800/80 bg-slate-900/60 p-2 text-xs">
+    <div className="space-y-2 border-b border-slate-800/80 dark:border-slate-800/80 light:border-slate-200 bg-slate-900/60 dark:bg-slate-900/60 light:bg-slate-100/60 p-2.5 text-xs transition-colors">
       {/* Auto Action Buttons */}
-      <div className="grid grid-cols-2 gap-1.5">
+      <div className="grid grid-cols-2 gap-2">
         <Button
           variant={isRunningAll ? 'destructive' : 'default'}
           size="sm"
-          className="w-full justify-center font-bold text-[11px] shadow-sm"
+          className="w-full justify-center font-bold text-[11px] rounded-xl h-8.5 shadow-md shadow-emerald-950/20 active:scale-[0.98]"
           onClick={onToggleAll}
         >
           {isRunningAll ? (
             <>
-              <Square className="h-3 w-3 fill-current mr-1" />
+              <Square className="h-3.5 w-3.5 fill-current mr-1.5" />
               DỪNG AUTO TẤT CẢ
             </>
           ) : (
             <>
-              <Play className="h-3 w-3 fill-current mr-1" />
-              ▶️ AUTO TẤT CẢ (Alt+A)
+              <Play className="h-3.5 w-3.5 fill-current mr-1.5" />
+              ▶️ TẤT CẢ (Alt+A)
             </>
           )}
         </Button>
@@ -89,34 +89,34 @@ export function HudControls({
         <Button
           variant={isRunningTab ? 'destructive' : 'secondary'}
           size="sm"
-          className="w-full justify-center font-bold text-[11px] border border-slate-700/60 shadow-sm"
+          className="w-full justify-center font-bold text-[11px] rounded-xl h-8.5 border border-slate-700/60 light:border-slate-300 shadow-md active:scale-[0.98]"
           onClick={onToggleTab}
         >
           {isRunningTab ? (
             <>
-              <Square className="h-3 w-3 fill-current mr-1" />
-              DỪNG AUTO TAB
+              <Square className="h-3.5 w-3.5 fill-current mr-1.5" />
+              DỪNG TAB NÀY
             </>
           ) : (
             <>
-              <Play className="h-3 w-3 fill-current mr-1" />
-              🎯 CHỈ AUTO {AREA_META[activeTab]?.name?.toUpperCase() || 'TAB NÀY'}
+              <Play className="h-3.5 w-3.5 fill-current mr-1.5" />
+              🎯 CHỈ {AREA_META[activeTab]?.name?.toUpperCase() || 'TAB NÀY'}
             </>
           )}
         </Button>
       </div>
 
       {/* Sliders and Drawer Toggle */}
-      <div className="flex items-center justify-between gap-2 pt-0.5">
+      <div className="flex items-center justify-between gap-3 pt-1">
         <div className="flex-1 space-y-1">
-          <div className="flex items-center justify-between text-[11px] text-slate-400">
+          <div className="flex items-center justify-between text-[11px] text-slate-400 light:text-slate-600">
             <span>Tốc độ delay mỗi lệnh:</span>
-            <span className="font-mono text-emerald-400 font-semibold">{config.taskDelayMs} ms</span>
+            <span className="font-mono text-emerald-400 font-bold">{config.taskDelayMs} ms</span>
           </div>
           <Slider
             value={[config.taskDelayMs]}
-            min={400}
-            max={4000}
+            min={300}
+            max={3500}
             step={100}
             onValueChange={handleDelayChange}
             className="w-full"
@@ -126,8 +126,10 @@ export function HudControls({
         <Button
           variant="outline"
           size="xs"
-          className={`border-slate-700 text-[10px] whitespace-nowrap self-end ${
-            isOrderDrawerOpen ? 'bg-slate-800 text-emerald-400 border-emerald-500/40' : 'bg-slate-900'
+          className={`border-slate-700 light:border-slate-300 text-[10px] rounded-lg whitespace-nowrap self-end h-6 px-2 ${
+            isOrderDrawerOpen
+              ? 'bg-slate-800 text-emerald-400 border-emerald-500/50'
+              : 'bg-slate-900/80 light:bg-white text-slate-300 light:text-slate-700'
           }`}
           onClick={onToggleOrderDrawer}
         >
@@ -138,9 +140,9 @@ export function HudControls({
 
       {/* Area Order Collapsible Drawer */}
       {isOrderDrawerOpen && (
-        <div className="mt-1 rounded-md border border-slate-800 bg-slate-950/80 p-2 space-y-1.5">
-          <div className="flex items-center justify-between text-[10px] text-slate-400 font-medium border-b border-slate-800/80 pb-1">
-            <span>Thứ tự thực hiện Auto:</span>
+        <div className="mt-1.5 rounded-xl border border-slate-800 light:border-slate-300 bg-slate-950/80 light:bg-white p-2.5 space-y-2">
+          <div className="flex items-center justify-between text-[10px] text-slate-400 light:text-slate-600 font-medium border-b border-slate-800 light:border-slate-200 pb-1.5">
+            <span>Thứ tự chạy Auto các khu:</span>
             <div className="flex items-center gap-1">
               <span>Đổi khu sau</span>
               <input
@@ -149,7 +151,7 @@ export function HudControls({
                 max={50}
                 value={config.fishingSwitchCount}
                 onChange={handleFishingSwitchChange}
-                className="w-8 rounded bg-slate-900 px-1 py-0.5 text-center text-[10px] text-emerald-400 border border-slate-700 font-mono"
+                className="w-9 rounded-md bg-slate-900 light:bg-slate-100 px-1 py-0.5 text-center text-[10px] text-emerald-400 font-bold border border-slate-700 light:border-slate-300 font-mono"
               />
               <span>con cá</span>
             </div>
@@ -162,20 +164,20 @@ export function HudControls({
               return (
                 <div
                   key={areaId}
-                  className="flex items-center justify-between rounded bg-slate-900/90 px-2 py-1 border border-slate-800/60 text-[11px]"
+                  className="flex items-center justify-between rounded-lg bg-slate-900/90 light:bg-slate-50 px-2.5 py-1.5 border border-slate-800/80 light:border-slate-200 text-[11px]"
                 >
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-mono text-[10px] text-slate-500">#{idx + 1}</span>
-                    <span className={isEnabled ? 'text-slate-200' : 'text-slate-500 line-through'}>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-[10px] text-slate-500 font-semibold">#{idx + 1}</span>
+                    <span className={isEnabled ? 'text-slate-200 light:text-slate-800 font-medium' : 'text-slate-500 line-through'}>
                       {meta?.name || areaId}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     <div className="flex items-center gap-0.5">
                       <Button
                         variant="ghost"
-                        size="iconSm"
+                        size="icon-xs"
                         disabled={idx === 0}
                         className="h-5 w-5 text-slate-400 hover:text-white"
                         onClick={() => handleMoveArea(idx, 'up')}
@@ -184,7 +186,7 @@ export function HudControls({
                       </Button>
                       <Button
                         variant="ghost"
-                        size="iconSm"
+                        size="icon-xs"
                         disabled={idx === config.areaOrder.length - 1}
                         className="h-5 w-5 text-slate-400 hover:text-white"
                         onClick={() => handleMoveArea(idx, 'down')}
@@ -194,6 +196,7 @@ export function HudControls({
                     </div>
 
                     <Switch
+                      size="sm"
                       checked={isEnabled}
                       onCheckedChange={(checked) => handleToggleAreaEnabled(areaId, checked)}
                     />

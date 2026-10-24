@@ -70,7 +70,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
       case 'house':
         return (
           <div className="space-y-2 text-xs">
-            <label className="flex items-center justify-between text-slate-300">
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
               <span>💬 Tắt thông báo Loa &amp; Điện thoại</span>
               <Switch
                 checked={Boolean(config.autoDismissInterrupts)}
@@ -78,7 +78,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               />
             </label>
 
-            <label className="flex items-center justify-between text-slate-300">
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
               <span>🍳 Tự nấu món ăn trong Bếp</span>
               <Switch
                 checked={Boolean(config.autoCook)}
@@ -86,13 +86,13 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               />
             </label>
             {config.autoCook && (
-              <div className="ml-2 pl-2 border-l border-slate-700/60 space-y-1.5 text-[11px]">
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Món ưu tiên:</span>
+                  <span className="text-slate-400 light:text-slate-600">Món ưu tiên:</span>
                   <select
                     value={config.preferDish}
                     onChange={(e) => updateField('preferDish', e.target.value)}
-                    className="rounded bg-slate-800 px-2 py-0.5 text-slate-200 border border-slate-700 text-xs"
+                    className="rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs"
                   >
                     <option value="auto">✨ Tự chọn món đủ nguyên liệu</option>
                     <option value="comTam">🍛 Cơm tấm ốp la (No lâu)</option>
@@ -107,7 +107,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               </div>
             )}
 
-            <label className="flex items-center justify-between text-slate-300">
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
               <span>🍲 Tự ăn khi Đói</span>
               <Switch
                 checked={Boolean(config.autoRecoverHunger)}
@@ -115,9 +115,9 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               />
             </label>
             {config.autoRecoverHunger && (
-              <div className="ml-2 pl-2 border-l border-slate-700/60 space-y-1.5 text-[11px]">
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Ăn khi Đói &lt; (%):</span>
+                  <span className="text-slate-400 light:text-slate-600">Ăn khi Đói &lt; (%):</span>
                   <input
                     type="number"
                     min={10}
@@ -125,25 +125,39 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                     step={5}
                     value={config.hungerThreshold}
                     onChange={(e) => updateField('hungerThreshold', Number(e.target.value))}
-                    className="w-14 rounded bg-slate-800 px-1 py-0.5 text-center text-slate-200 border border-slate-700"
+                    className="w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
                   />
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Nguồn ăn:</span>
+                  <span className="text-slate-400 light:text-slate-600">Nguồn ăn:</span>
                   <select
                     value={config.foodSource}
                     onChange={(e) => updateField('foodSource', e.target.value as AppConfig['foodSource'])}
-                    className="rounded bg-slate-800 px-2 py-0.5 text-slate-200 border border-slate-700 text-xs"
+                    className="rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs"
                   >
                     <option value="kitchen_first">🍲 Ưu tiên Bếp, thiếu mua Tiệm</option>
                     <option value="kitchen_only">🏡 Chỉ ăn món Bếp / Kho</option>
                     <option value="shop_only">🥖 Chỉ mua Tiệm bánh mì</option>
                   </select>
                 </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400 light:text-slate-600">Món mua ở Tiệm:</span>
+                  <select
+                    value={config.preferFoodShop}
+                    onChange={(e) => updateField('preferFoodShop', e.target.value)}
+                    className="rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs"
+                  >
+                    <option value="banhMiThit">🥖 Bánh mì thịt (15.000đ · +50 no)</option>
+                    <option value="banhMiCha">🐟 Bánh mì chả cá (15.000đ · +45 no)</option>
+                    <option value="banhMiTrung">🍳 Bánh mì trứng (10.000đ · +35 no)</option>
+                    <option value="banhBao">🥟 Bánh bao (8.000đ · +25 no)</option>
+                    <option value="banhMiFull">🤤 Bánh mì full topping (25.000đ · +80 no)</option>
+                  </select>
+                </div>
               </div>
             )}
 
-            <label className="flex items-center justify-between text-slate-300">
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
               <span>🥤 Tự uống khi Khát</span>
               <Switch
                 checked={Boolean(config.autoRecoverThirst)}
@@ -151,9 +165,9 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               />
             </label>
             {config.autoRecoverThirst && (
-              <div className="ml-2 pl-2 border-l border-slate-700/60 space-y-1.5 text-[11px]">
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Uống khi Khát &lt; (%):</span>
+                  <span className="text-slate-400 light:text-slate-600">Uống khi Khát &lt; (%):</span>
                   <input
                     type="number"
                     min={10}
@@ -161,13 +175,39 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                     step={5}
                     value={config.thirstThreshold}
                     onChange={(e) => updateField('thirstThreshold', Number(e.target.value))}
-                    className="w-14 rounded bg-slate-800 px-1 py-0.5 text-center text-slate-200 border border-slate-700"
+                    className="w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
                   />
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400 light:text-slate-600">Nguồn nước:</span>
+                  <select
+                    value={config.drinkSource}
+                    onChange={(e) => updateField('drinkSource', e.target.value as AppConfig['drinkSource'])}
+                    className="rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs"
+                  >
+                    <option value="kitchen_first">🧃 Ưu tiên nước Bếp, thiếu mua Tiệm</option>
+                    <option value="shop_only">🥤 Chỉ mua nước tại Tiệm giải khát</option>
+                    <option value="both">✨ Linh hoạt cả Bếp &amp; Tiệm</option>
+                  </select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400 light:text-slate-600">Nước ở Tiệm:</span>
+                  <select
+                    value={config.preferDrinkShop}
+                    onChange={(e) => updateField('preferDrinkShop', e.target.value)}
+                    className="rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs"
+                  >
+                    <option value="nuocMia">🥤 Nước mía (8.000đ · +35 nước)</option>
+                    <option value="traDao">🍑 Trà đào cam sả (15.000đ · +50 nước)</option>
+                    <option value="traSua">🧋 Trà sữa trân châu (18.000đ · +40 nước)</option>
+                    <option value="caPheSua">☕ Cà phê sữa đá (12.000đ · +25 nước)</option>
+                    <option value="traDa">🧊 Trà đá vỉa hè (3.000đ · +20 nước)</option>
+                  </select>
                 </div>
               </div>
             )}
 
-            <label className="flex items-center justify-between text-slate-300">
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
               <span>☕ Tự uống Cà phê sáng (+50% tốc độ chạy)</span>
               <Switch
                 checked={Boolean(config.autoMorningCoffee)}
@@ -175,87 +215,143 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               />
             </label>
 
-            <label className="flex items-center justify-between text-slate-300">
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
               <span>🔋 Tự sạc điện cho Xe máy điện EV</span>
               <Switch
                 checked={Boolean(config.autoChargeVehicle)}
                 onCheckedChange={(c) => updateField('autoChargeVehicle', c)}
               />
             </label>
+            {config.autoChargeVehicle && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1 text-[11px]">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400 light:text-slate-600">Sạc khi Pin &lt; (%):</span>
+                  <input
+                    type="number"
+                    min={10}
+                    max={90}
+                    step={5}
+                    value={config.batteryThreshold}
+                    onChange={(e) => updateField('batteryThreshold', Number(e.target.value))}
+                    className="w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                  />
+                </div>
+              </div>
+            )}
 
-            <label className="flex items-center justify-between text-slate-300">
-              <span>😴 Tự về nhà ngủ khi hết ngày (&gt; 22:00)</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>💆 Salon Chị Linh: Gội đầu dưỡng sinh (Buff thư giãn)</span>
+              <Switch
+                checked={Boolean(config.autoSalonShampoo)}
+                onCheckedChange={(c) => updateField('autoSalonShampoo', c)}
+              />
+            </label>
+
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>✨ Salon Chị Linh: Tắm trắng nâng tông khi đen da</span>
+              <Switch
+                checked={Boolean(config.autoSalonWhiten)}
+                onCheckedChange={(c) => updateField('autoSalonWhiten', c)}
+              />
+            </label>
+
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🛏️ Tự đi ngủ qua ngày mới</span>
               <Switch
                 checked={Boolean(config.autoSleep)}
                 onCheckedChange={(c) => updateField('autoSleep', c)}
               />
             </label>
+            {config.autoSleep && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400 light:text-slate-600">Giờ đi ngủ buổi tối (h):</span>
+                  <input
+                    type="number"
+                    min={18}
+                    max={23}
+                    step={1}
+                    value={config.sleepHour}
+                    onChange={(e) => updateField('sleepHour', Number(e.target.value))}
+                    className="w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                  />
+                </div>
+                <label className="flex items-center justify-between text-slate-400 light:text-slate-600">
+                  <span>🌙 Ngủ ngay khi hết câu được buổi tối</span>
+                  <Switch
+                    size="sm"
+                    checked={Boolean(config.sleepOnFishingLimit)}
+                    onCheckedChange={(c) => updateField('sleepOnFishingLimit', c)}
+                  />
+                </label>
+              </div>
+            )}
           </div>
         );
 
       case 'crops':
         return (
           <div className="space-y-2 text-xs">
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🌾 Tự thu hoạch cây chín</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🌾 Tự thu hoạch nông sản chín</span>
               <Switch
                 checked={Boolean(config.autoHarvest)}
                 onCheckedChange={(c) => updateField('autoHarvest', c)}
               />
             </label>
 
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🌱 Tự gieo hạt giống vào đất trống</span>
-              <Switch
-                checked={Boolean(config.autoPlant)}
-                onCheckedChange={(c) => updateField('autoPlant', c)}
-              />
-            </label>
-            {config.autoPlant && (
-              <div className="ml-2 pl-2 border-l border-slate-700/60 space-y-1 text-[11px]">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Loại hạt gieo:</span>
-                  <select
-                    value={config.preferSeed}
-                    onChange={(e) => updateField('preferSeed', e.target.value)}
-                    className="rounded bg-slate-800 px-2 py-0.5 text-slate-200 border border-slate-700 text-xs"
-                  >
-                    <option value="auto">✨ Tự chọn hạt trong túi</option>
-                    <option value="radish">🌱 Củ cải trắng (Nhanh nhất)</option>
-                    <option value="carrot">🥕 Cà rốt (Kinh tế cao)</option>
-                    <option value="corn">🌽 Bắp ngô</option>
-                    <option value="rice">🌾 Lúa gạo</option>
-                  </select>
-                </div>
-              </div>
-            )}
-
-            <label className="flex items-center justify-between text-slate-300">
-              <span>💧 Tự tưới nước khi đất khô</span>
-              <Switch
-                checked={Boolean(config.autoWater)}
-                onCheckedChange={(c) => updateField('autoWater', c)}
-              />
-            </label>
-
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🐛 Tự bắt sâu khi cây bị sâu</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🐛 Tự mua thuốc &amp; diệt sâu bệnh</span>
               <Switch
                 checked={Boolean(config.autoPesticide)}
                 onCheckedChange={(c) => updateField('autoPesticide', c)}
               />
             </label>
 
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🧪 Tự bón phân kích thích lớn</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>💧 Tự tưới nước giữ ẩm đất</span>
+              <Switch
+                checked={Boolean(config.autoWater)}
+                onCheckedChange={(c) => updateField('autoWater', c)}
+              />
+            </label>
+
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🧪 Tự mua &amp; bón phân NPK</span>
               <Switch
                 checked={Boolean(config.autoFertilize)}
                 onCheckedChange={(c) => updateField('autoFertilize', c)}
               />
             </label>
 
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🏡 Tự mở rộng đất trồng mới</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🌱 Tự mua &amp; gieo hạt giống mới</span>
+              <Switch
+                checked={Boolean(config.autoPlant)}
+                onCheckedChange={(c) => updateField('autoPlant', c)}
+              />
+            </label>
+            {config.autoPlant && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1 text-[11px]">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400 light:text-slate-600">Hạt giống ưu tiên:</span>
+                  <select
+                    value={config.preferSeed}
+                    onChange={(e) => updateField('preferSeed', e.target.value)}
+                    className="rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs"
+                  >
+                    <option value="auto">✨ Tự chọn tối ưu</option>
+                    <option value="rice">🌾 Lúa (8 ngày)</option>
+                    <option value="corn">🌽 Bắp (6 ngày)</option>
+                    <option value="carrot">🥕 Cà rốt (4 ngày)</option>
+                    <option value="radish">🌱 Củ cải (2 ngày)</option>
+                  </select>
+                </div>
+              </div>
+            )}
+
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>⛏️ Tự mua thêm ô đất ruộng khi mở bán</span>
               <Switch
                 checked={Boolean(config.autoBuyPlots)}
                 onCheckedChange={(c) => updateField('autoBuyPlots', c)}
@@ -267,29 +363,29 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
       case 'pet':
         return (
           <div className="space-y-2 text-xs">
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🦴 Cho Gấu ăn xương gặm</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🍖 Tự mua đồ ăn &amp; cho Thú cưng ăn</span>
               <Switch
                 checked={Boolean(config.petAutoFeed)}
                 onCheckedChange={(c) => updateField('petAutoFeed', c)}
               />
             </label>
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🚿 Tắm rửa cho Gấu</span>
-              <Switch
-                checked={Boolean(config.petAutoBath)}
-                onCheckedChange={(c) => updateField('petAutoBath', c)}
-              />
-            </label>
-            <label className="flex items-center justify-between text-slate-300">
-              <span>💖 Cưng nựng Gấu</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>💖 Tự vuốt ve tăng vui vẻ</span>
               <Switch
                 checked={Boolean(config.petAutoCuddle)}
                 onCheckedChange={(c) => updateField('petAutoCuddle', c)}
               />
             </label>
-            <label className="flex items-center justify-between text-slate-300">
-              <span>💃 Tập xiếc / Nhảy múa</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🧼 Tự tắm sạch cho Thú cưng</span>
+              <Switch
+                checked={Boolean(config.petAutoBath)}
+                onCheckedChange={(c) => updateField('petAutoBath', c)}
+              />
+            </label>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🎾 Tự tập trò huấn luyện (+XP)</span>
               <Switch
                 checked={Boolean(config.petAutoTrick)}
                 onCheckedChange={(c) => updateField('petAutoTrick', c)}
@@ -301,53 +397,60 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
       case 'barn':
         return (
           <div className="space-y-2 text-xs">
-            <div className="text-[11px] font-semibold text-emerald-400 border-b border-slate-800 pb-0.5">
+            <div className="text-[11px] font-bold text-emerald-400 border-b border-slate-800 light:border-slate-200 pb-1">
               🐃 Chuồng Trâu Ổi
             </div>
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🌾 Cho Trâu ăn rơm</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🌾 Tự cho Trâu ăn cỏ / rơm</span>
               <Switch
                 checked={Boolean(config.barnAutoFeedBuffalo)}
                 onCheckedChange={(c) => updateField('barnAutoFeedBuffalo', c)}
               />
             </label>
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🚿 Tắm bùn cho Trâu</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🚿 Tự tắm mát cho Trâu</span>
               <Switch
                 checked={Boolean(config.barnAutoBathBuffalo)}
                 onCheckedChange={(c) => updateField('barnAutoBathBuffalo', c)}
               />
             </label>
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🚜 Cho Anh Tâm mượn trâu đi kéo</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🤝 Cho hàng xóm thuê Trâu cày (+Tiền)</span>
               <Switch
                 checked={Boolean(config.barnAutoLendBuffalo)}
                 onCheckedChange={(c) => updateField('barnAutoLendBuffalo', c)}
               />
             </label>
 
-            <div className="text-[11px] font-semibold text-emerald-400 border-b border-slate-800 pb-0.5 pt-2">
+            <div className="text-[11px] font-bold text-emerald-400 border-b border-slate-800 light:border-slate-200 pb-1 pt-2">
               🐄 Chuồng Bò Sữa
             </div>
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🌿 Cho Bò sữa ăn cỏ tươi</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🌿 Tự cho đàn Bò sữa ăn cỏ</span>
               <Switch
                 checked={Boolean(config.barnAutoFeedCows)}
                 onCheckedChange={(c) => updateField('barnAutoFeedCows', c)}
               />
             </label>
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🥛 Vắt sữa &amp; Bán sữa tươi</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🥛 Tự vắt sữa &amp; bán sữa tươi</span>
               <Switch
                 checked={Boolean(config.barnAutoSellMilk)}
                 onCheckedChange={(c) => updateField('barnAutoSellMilk', c)}
               />
             </label>
-            <label className="flex items-center justify-between text-slate-300">
-              <span>💊 Chữa bệnh cho Bò khi ốm</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>💊 Tự mua thuốc &amp; chữa bệnh cho Bò</span>
               <Switch
                 checked={Boolean(config.barnAutoCureCows)}
                 onCheckedChange={(c) => updateField('barnAutoCureCows', c)}
+              />
+            </label>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>💸 Tự trả lương người phụ Chuồng</span>
+              <Switch
+                checked={Boolean(config.barnAutoPayHelper)}
+                onCheckedChange={(c) => updateField('barnAutoPayHelper', c)}
               />
             </label>
           </div>
@@ -356,18 +459,25 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
       case 'coop':
         return (
           <div className="space-y-2 text-xs">
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🥚 Nhặt trứng gà trong ổ</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🥚 Tự nhặt trứng gà mỗi ngày</span>
               <Switch
                 checked={Boolean(config.coopAutoCollectEggs)}
                 onCheckedChange={(c) => updateField('coopAutoCollectEggs', c)}
               />
             </label>
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🐥 Tự mua thêm gà con khi chuồng trống</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🐤 Tự mua thêm Gà con khi chuồng trống</span>
               <Switch
                 checked={Boolean(config.coopAutoBuyChick)}
                 onCheckedChange={(c) => updateField('coopAutoBuyChick', c)}
+              />
+            </label>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>💸 Tự trả lương người phụ Chuồng gà</span>
+              <Switch
+                checked={Boolean(config.coopAutoPayHelper)}
+                onCheckedChange={(c) => updateField('coopAutoPayHelper', c)}
               />
             </label>
           </div>
@@ -376,25 +486,48 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
       case 'pond':
         return (
           <div className="space-y-2 text-xs">
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🍞 Rải cám nuôi cá</span>
-              <Switch
-                checked={Boolean(config.pondAutoFeed)}
-                onCheckedChange={(c) => updateField('pondAutoFeed', c)}
-              />
-            </label>
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🕸️ Kéo lưới bắt cá lớn</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🐟 Tự kéo lưới thu hoạch cá trưởng thành</span>
               <Switch
                 checked={Boolean(config.pondAutoNet)}
                 onCheckedChange={(c) => updateField('pondAutoNet', c)}
               />
             </label>
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🐟 Mua thả cá giống mới khi ao trống</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🍞 Tự rải cám cho cá ăn mỗi ngày</span>
+              <Switch
+                checked={Boolean(config.pondAutoFeed)}
+                onCheckedChange={(c) => updateField('pondAutoFeed', c)}
+              />
+            </label>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🐟 Tự thả cá giống mới khi ao trống</span>
               <Switch
                 checked={Boolean(config.pondAutoStock)}
                 onCheckedChange={(c) => updateField('pondAutoStock', c)}
+              />
+            </label>
+            {config.pondAutoStock && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1 text-[11px]">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400 light:text-slate-600">Loại giống thả:</span>
+                  <select
+                    value={config.preferPondFish}
+                    onChange={(e) => updateField('preferPondFish', e.target.value)}
+                    className="rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs"
+                  >
+                    <option value="chep">🐟 Cá chép (Lời cao)</option>
+                    <option value="tre">🐟 Cá trê</option>
+                    <option value="ro">🐟 Cá rô</option>
+                  </select>
+                </div>
+              </div>
+            )}
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>💸 Tự trả lương người phụ Ao cá</span>
+              <Switch
+                checked={Boolean(config.pondAutoPayHelper)}
+                onCheckedChange={(c) => updateField('pondAutoPayHelper', c)}
               />
             </label>
           </div>
@@ -403,68 +536,192 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
       case 'market':
         return (
           <div className="space-y-2 text-xs">
-            <label className="flex items-center justify-between text-slate-300">
-              <span>📦 Giao đơn hàng Chị Na (Tạp hoá)</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>📦 Tự giao đơn hàng Tạp hóa Chị Na</span>
               <Switch
                 checked={Boolean(config.autoDeliverOrder)}
                 onCheckedChange={(c) => updateField('autoDeliverOrder', c)}
               />
             </label>
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🏘️ Giao việc Bảng tin Làng</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>📋 Tự giao đơn Bảng tin làng</span>
               <Switch
                 checked={Boolean(config.autoVillageBoard)}
                 onCheckedChange={(c) => updateField('autoVillageBoard', c)}
               />
             </label>
-            <label className="flex items-center justify-between text-slate-300">
-              <span>📈 Bán nông sản chạy theo Trend Giá</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🔥 Bán Nông sản Trend (x2 giá, đúng quota)</span>
               <Switch
                 checked={Boolean(config.autoSellTrend)}
                 onCheckedChange={(c) => updateField('autoSellTrend', c)}
               />
             </label>
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🌾 Bán nông sản dư trong kho</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>📜 Tự bán nông sản hoàn thành Việc Sổ tay</span>
+              <Switch
+                checked={Boolean(config.autoSellDailyTask)}
+                onCheckedChange={(c) => updateField('autoSellDailyTask', c)}
+              />
+            </label>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🏪 Tự bán nông sản dư thừa trong kho</span>
               <Switch
                 checked={Boolean(config.autoSellProduce)}
                 onCheckedChange={(c) => updateField('autoSellProduce', c)}
               />
             </label>
+            {config.autoSellProduce && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400 light:text-slate-600">Tối thiểu giữ lại:</span>
+                  <input
+                    type="number"
+                    min={5}
+                    max={200}
+                    step={5}
+                    value={config.surplusKeepQty}
+                    onChange={(e) => updateField('surplusKeepQty', Number(e.target.value))}
+                    className="w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="text-[11px] font-bold text-amber-400 border-b border-slate-800 light:border-slate-200 pb-1 pt-2">
+              🪙 Tiệm Vàng Cô Kim
+            </div>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🪙 Tự mua vàng đầu tư</span>
+              <Switch
+                checked={Boolean(config.goldAutoBuy)}
+                onCheckedChange={(c) => updateField('goldAutoBuy', c)}
+              />
+            </label>
+            {config.goldAutoBuy && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400 light:text-slate-600">Loại vàng ưu tiên:</span>
+                  <select
+                    value={config.goldPreferType}
+                    onChange={(e) => updateField('goldPreferType', e.target.value)}
+                    className="rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs"
+                  >
+                    <option value="mieng">🟨 Vàng miếng 9999 (Chênh thấp)</option>
+                    <option value="nhan">💍 Nhẫn trơn 9999 (Ổn định)</option>
+                    <option value="k18">📿 Vàng 18K (Trang sức)</option>
+                    <option value="non">🪙 Vàng non 10K (Lướt sóng)</option>
+                  </select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400 light:text-slate-600">Tiền mặt tối thiểu giữ:</span>
+                  <input
+                    type="number"
+                    min={100000}
+                    max={10000000}
+                    step={100000}
+                    value={config.goldKeepCash}
+                    onChange={(e) => updateField('goldKeepCash', Number(e.target.value))}
+                    className="w-20 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                  />
+                </div>
+              </div>
+            )}
+
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>📈 Tự bán vàng khi có lãi</span>
+              <Switch
+                checked={Boolean(config.goldAutoSell)}
+                onCheckedChange={(c) => updateField('goldAutoSell', c)}
+              />
+            </label>
+            {config.goldAutoSell && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1 text-[11px]">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400 light:text-slate-600">Chốt lời khi lãi &gt;= (%):</span>
+                  <input
+                    type="number"
+                    min={3}
+                    max={50}
+                    step={1}
+                    value={config.goldProfitPercent}
+                    onChange={(e) => updateField('goldProfitPercent', Number(e.target.value))}
+                    className="w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         );
 
       case 'dibay':
         return (
           <div className="space-y-2 text-xs">
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🐷 Bỏ heo tiết kiệm Dì Bảy</span>
-              <Switch
-                checked={Boolean(config.autoFeedPiggy)}
-                onCheckedChange={(c) => updateField('autoFeedPiggy', c)}
-              />
-            </label>
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🔨 Tự đập heo khi đầy</span>
-              <Switch
-                checked={Boolean(config.autoBreakPiggy)}
-                onCheckedChange={(c) => updateField('autoBreakPiggy', c)}
-              />
-            </label>
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🏦 Tự gửi sổ tiết kiệm khi dư tiền</span>
-              <Switch
-                checked={Boolean(config.autoSavings)}
-                onCheckedChange={(c) => updateField('autoSavings', c)}
-              />
-            </label>
-            <label className="flex items-center justify-between text-slate-300">
-              <span>🎉 Nhận thưởng Sổ tay &amp; Nhiệm vụ ngày</span>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🎁 Tự nhận thưởng Việc hôm nay &amp; Sổ tay</span>
               <Switch
                 checked={Boolean(config.autoClaimQuests)}
                 onCheckedChange={(c) => updateField('autoClaimQuests', c)}
               />
             </label>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>📜 Tự làm chuỗi hướng dẫn Ngày 1 &amp; 2</span>
+              <Switch
+                checked={Boolean(config.autoFirstDayTasks)}
+                onCheckedChange={(c) => updateField('autoFirstDayTasks', c)}
+              />
+            </label>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>📔 Tự thu thập trang Sổ tay Ông Năm</span>
+              <Switch
+                checked={Boolean(config.autoNotebookPages)}
+                onCheckedChange={(c) => updateField('autoNotebookPages', c)}
+              />
+            </label>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🪙 Tự bỏ tiền vào Heo đất mỗi ngày</span>
+              <Switch
+                checked={Boolean(config.autoFeedPiggy)}
+                onCheckedChange={(c) => updateField('autoFeedPiggy', c)}
+              />
+            </label>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🔨 Tự đập Heo đất khi no (đủ 7 ngày)</span>
+              <Switch
+                checked={Boolean(config.autoBreakPiggy)}
+                onCheckedChange={(c) => updateField('autoBreakPiggy', c)}
+              />
+            </label>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🛒 Tự mua Heo đất mới khi chuồng trống</span>
+              <Switch
+                checked={Boolean(config.autoNewPiggy)}
+                onCheckedChange={(c) => updateField('autoNewPiggy', c)}
+              />
+            </label>
+            <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+              <span>🏦 Tự gửi Sổ tiết kiệm Dì Bảy</span>
+              <Switch
+                checked={Boolean(config.autoSavings)}
+                onCheckedChange={(c) => updateField('autoSavings', c)}
+              />
+            </label>
+            {config.autoSavings && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1 text-[11px]">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400 light:text-slate-600">Giữ tiền mặt tối thiểu:</span>
+                  <input
+                    type="number"
+                    min={50000}
+                    max={5000000}
+                    step={50000}
+                    value={config.savingsKeepGold}
+                    onChange={(e) => updateField('savingsKeepGold', Number(e.target.value))}
+                    className="w-20 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         );
 
@@ -476,7 +733,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
   return (
     <div className="space-y-2 text-xs">
       {/* Farm Banner Toggle */}
-      <div className="flex items-center justify-between rounded-md bg-emerald-950/40 border border-emerald-500/30 px-3 py-2 text-emerald-300">
+      <div className="flex items-center justify-between rounded-xl bg-emerald-950/40 light:bg-emerald-50 border border-emerald-500/30 px-3 py-2 text-emerald-300 light:text-emerald-900 shadow-sm">
         <span className="font-semibold text-xs flex items-center gap-1.5">
           🌾 Cho phép chạy Khu vực Nông Trại
         </span>
@@ -484,7 +741,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
       </div>
 
       {/* Sub-areas list */}
-      <div className="space-y-1.5 pt-0.5">
+      <div className="space-y-2 pt-0.5">
         {config.farmSubOrder.map((subId, idx) => {
           const meta = SUBAREA_META[subId];
           const isCollapsed = Boolean(config.farmSubCollapsed[subId]);
@@ -493,29 +750,31 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
           return (
             <div
               key={subId}
-              className={`rounded-lg border bg-slate-900/80 transition-colors ${
-                isEnabled ? 'border-slate-800' : 'border-slate-800/40 opacity-60'
+              className={`rounded-xl border bg-slate-900/80 dark:bg-slate-900/80 light:bg-white transition-all shadow-sm ${
+                isEnabled
+                  ? 'border-slate-800 light:border-slate-200'
+                  : 'border-slate-800/40 light:border-slate-200/50 opacity-60'
               }`}
             >
               {/* Header */}
               <div
-                className="flex items-center justify-between px-2.5 py-1.5 cursor-pointer select-none hover:bg-slate-800/40 rounded-t-lg"
+                className="flex items-center justify-between px-3 py-2 cursor-pointer select-none hover:bg-slate-800/40 light:hover:bg-slate-100 rounded-t-xl"
                 onClick={() => handleToggleCollapse(subId)}
               >
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-2">
                   <span className="text-slate-400">
                     {isCollapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
                   </span>
-                  <span className="font-semibold text-xs text-slate-200">
+                  <span className="font-semibold text-xs text-slate-200 light:text-slate-800">
                     {meta?.name || subId}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center gap-0.5">
                     <Button
                       variant="ghost"
-                      size="iconSm"
+                      size="icon-xs"
                       disabled={idx === 0}
                       className="h-5 w-5 text-slate-400 hover:text-white"
                       onClick={() => handleMoveSub(idx, 'up')}
@@ -524,7 +783,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                     </Button>
                     <Button
                       variant="ghost"
-                      size="iconSm"
+                      size="icon-xs"
                       disabled={idx === config.farmSubOrder.length - 1}
                       className="h-5 w-5 text-slate-400 hover:text-white"
                       onClick={() => handleMoveSub(idx, 'down')}
@@ -534,6 +793,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                   </div>
 
                   <Switch
+                    size="sm"
                     checked={isEnabled}
                     onCheckedChange={(checked) => handleToggleSubEnabled(subId, checked)}
                   />
@@ -542,7 +802,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
 
               {/* Body */}
               {!isCollapsed && (
-                <div className="border-t border-slate-800/60 p-2.5 bg-slate-950/40 rounded-b-lg">
+                <div className="border-t border-slate-800/60 light:border-slate-200 p-3 bg-slate-950/40 light:bg-slate-50/50 rounded-b-xl">
                   {renderSubCardBody(subId)}
                 </div>
               )}

@@ -19,6 +19,15 @@ export interface GitHubRelease {
   assets: GitHubReleaseAsset[];
 }
 
+export interface OlderReleaseInfo {
+  tag: string;
+  name: string;
+  body: string;
+  publishedAt: string;
+  htmlUrl: string;
+  downloadUrl?: string;
+}
+
 export interface UpdateCheckResult {
   hasUpdate: boolean;
   currentVersion: string;
@@ -28,4 +37,5 @@ export interface UpdateCheckResult {
   releaseUrl: string;
   downloadUrl?: string;
   publishedAt: string;
+  olderReleases?: OlderReleaseInfo[];
 }

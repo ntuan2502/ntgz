@@ -13,6 +13,10 @@
       throw mod = 0, e;
     }
   };
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
   var __copyProps = (to, from, except, desc) => {
     if (from && typeof from === "object" || typeof from === "function") {
       for (let key of __getOwnPropNames(from))
@@ -783,7 +787,7 @@
   var require_react_dom_production = __commonJS({
     "node_modules/.pnpm/react-dom@19.3.1_react@19.3.1/node_modules/react-dom/cjs/react-dom.production.js"(exports) {
       "use strict";
-      var React42 = require_react();
+      var React39 = require_react();
       function formatProdErrorMessage(code) {
         var url = "https://react.dev/errors/" + code;
         if (1 < arguments.length) {
@@ -825,7 +829,7 @@
           implementation
         };
       }
-      var ReactSharedInternals = React42.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      var ReactSharedInternals = React39.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       function getCrossOriginStringAs(as, input) {
         if ("font" === as) return "";
         if ("string" === typeof input)
@@ -967,7 +971,7 @@
     "node_modules/.pnpm/react-dom@19.3.1_react@19.3.1/node_modules/react-dom/cjs/react-dom-client.production.js"(exports) {
       "use strict";
       var Scheduler = require_scheduler();
-      var React42 = require_react();
+      var React39 = require_react();
       var ReactDOM3 = require_react_dom();
       function formatProdErrorMessage(code) {
         var url = "https://react.dev/errors/" + code;
@@ -1258,7 +1262,7 @@
         return null;
       }
       var isArrayImpl = Array.isArray;
-      var ReactSharedInternals = React42.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      var ReactSharedInternals = React39.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       var ReactDOMSharedInternals = ReactDOM3.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       var sharedNotPendingObject = {
         pending: false,
@@ -14407,7 +14411,7 @@
           0 === i && attemptExplicitHydrationTarget(target);
         }
       };
-      var isomorphicReactPackageVersion$jscomp$inline_2043 = React42.version;
+      var isomorphicReactPackageVersion$jscomp$inline_2043 = React39.version;
       if ("19.3.1" !== isomorphicReactPackageVersion$jscomp$inline_2043)
         throw Error(
           formatProdErrorMessage(
@@ -18105,35 +18109,19 @@
     return twMerge(clsx(inputs));
   }
 
-  // src/components/ui/badge.tsx
-  var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
-  var badgeVariants = cva(
-    "inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold transition-colors focus:outline-none focus:ring-1 focus:ring-ring select-none",
-    {
-      variants: {
-        variant: {
-          default: "border-transparent bg-primary text-primary-foreground",
-          secondary: "border-transparent bg-secondary text-secondary-foreground",
-          destructive: "border-transparent bg-destructive text-destructive-foreground",
-          outline: "text-foreground border-border",
-          success: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400",
-          warning: "border-amber-500/30 bg-amber-500/10 text-amber-400",
-          info: "border-blue-500/30 bg-blue-500/10 text-blue-400"
-        }
-      },
-      defaultVariants: {
-        variant: "default"
-      }
-    }
-  );
-  function Badge({ className, variant, ...props }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: cn(badgeVariants({ variant }), className), ...props });
-  }
-
-  // src/components/ui/button.tsx
+  // node_modules/.pnpm/@radix-ui+react-primitive@2_8110221bfe749bbb617b2ef4d8402995/node_modules/@radix-ui/react-primitive/dist/index.mjs
   var React3 = __toESM(require_react(), 1);
+  var ReactDOM = __toESM(require_react_dom(), 1);
 
   // node_modules/.pnpm/@radix-ui+react-slot@1.5.0_@types+react@19.3.0_react@19.3.1/node_modules/@radix-ui/react-slot/dist/index.mjs
+  var dist_exports = {};
+  __export(dist_exports, {
+    Root: () => Slot,
+    Slot: () => Slot,
+    Slottable: () => Slottable,
+    createSlot: () => createSlot,
+    createSlottable: () => createSlottable
+  });
   var React2 = __toESM(require_react(), 1);
 
   // node_modules/.pnpm/@radix-ui+react-compose-ref_b3d765b39c685001f44067d66c248108/node_modules/@radix-ui/react-compose-refs/dist/index.mjs
@@ -18244,6 +18232,7 @@
     return Slottable2;
   }
   __name2(createSlottable, "createSlottable");
+  var Slottable = /* @__PURE__ */ createSlottable("Slottable");
   var getSlottableElementFromSlottable = /* @__PURE__ */ __name2((slottable, child) => {
     if ("child" in slottable.props) {
       if (!React2.isValidElement(child)) return null;
@@ -18332,1035 +18321,10 @@
   }, "createSlottableError");
   var use = React2[" use ".trim().toString()];
 
-  // src/components/ui/button.tsx
-  var import_jsx_runtime2 = __toESM(require_jsx_runtime(), 1);
-  var buttonVariants = cva(
-    "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 select-none cursor-pointer",
-    {
-      variants: {
-        variant: {
-          default: "bg-primary text-primary-foreground shadow hover:bg-emerald-600 active:scale-[0.98]",
-          destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-red-600 active:scale-[0.98]",
-          outline: "border border-border bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground active:scale-[0.98]",
-          secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-slate-700 active:scale-[0.98]",
-          ghost: "hover:bg-accent hover:text-accent-foreground",
-          link: "text-primary underline-offset-4 hover:underline",
-          emerald: "bg-emerald-600 text-white hover:bg-emerald-500 shadow-sm active:scale-[0.98]",
-          amber: "bg-amber-600 text-white hover:bg-amber-500 shadow-sm active:scale-[0.98]",
-          blue: "bg-blue-600 text-white hover:bg-blue-500 shadow-sm active:scale-[0.98]"
-        },
-        size: {
-          default: "h-8 px-3 py-1.5",
-          xs: "h-6 rounded px-2 text-[11px]",
-          sm: "h-7 rounded px-2.5 text-xs",
-          lg: "h-9 rounded-md px-4 text-sm",
-          icon: "h-7 w-7 p-0",
-          iconSm: "h-6 w-6 p-0"
-        }
-      },
-      defaultVariants: {
-        variant: "default",
-        size: "default"
-      }
-    }
-  );
-  var Button = React3.forwardRef(
-    ({ className, variant, size, asChild = false, ...props }, ref) => {
-      const Comp = asChild ? Slot : "button";
-      return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-        Comp,
-        {
-          className: cn(buttonVariants({ variant, size, className })),
-          ref,
-          ...props
-        }
-      );
-    }
-  );
-  Button.displayName = "Button";
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/createLucideIcon.mjs
-  var import_react3 = __toESM(require_react(), 1);
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/utils/toKebabCase.mjs
-  var toKebabCase = (string) => string?.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/utils/toLucideIconData.mjs
-  function toLucideIconData(iconName, iconNode, aliases = []) {
-    if (iconNode == null) {
-      throw new Error("[lucide]: iconNode is required when icon name is used");
-    }
-    return {
-      name: toKebabCase(iconName),
-      size: 24,
-      node: iconNode,
-      ...aliases.length > 0 ? { aliases } : {}
-    };
-  }
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/utils/toCamelCase.mjs
-  var toCamelCase = (string) => {
-    let out = "";
-    let upperNext = false;
-    for (const ch of string) {
-      if (ch === "-" || ch === "_" || ch <= " ") {
-        upperNext = out.length > 0;
-        continue;
-      }
-      if (out.length === 0) {
-        out += ch.toLowerCase();
-      } else {
-        out += upperNext ? ch.toUpperCase() : ch;
-      }
-      upperNext = false;
-    }
-    return out;
-  };
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/utils/toPascalCase.mjs
-  var toPascalCase = (string) => {
-    const camelCase = toCamelCase(string);
-    return camelCase.charAt(0).toUpperCase() + camelCase.slice(1);
-  };
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/Icon.mjs
-  var import_react2 = __toESM(require_react(), 1);
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/utils/mergeClasses.mjs
-  var mergeClasses = (...classes) => classes.filter((className, index, array) => {
-    return Boolean(className) && className.trim() !== "" && array.indexOf(className) === index;
-  }).join(" ").trim();
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/build/defaultAttributes.mjs
-  var defaultAttributes = {
-    xmlns: "http://www.w3.org/2000/svg",
-    width: 24,
-    height: 24,
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke: "currentColor",
-    "stroke-width": 2,
-    "stroke-linecap": "round",
-    "stroke-linejoin": "round"
-  };
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/build/buildLucideIconNode.mjs
-  function isDefined(value) {
-    return value !== null && value !== void 0;
-  }
-  function buildLucideIconNode(icon, params = {}) {
-    const attributeNames = params.attributeNames ?? {};
-    const getAttributeName = (attributeName) => attributeNames[attributeName] ?? attributeName;
-    const viewBoxWidth = icon.size ?? icon.width ?? defaultAttributes["width"];
-    const viewBoxHeight = icon.size ?? icon.height ?? defaultAttributes["height"];
-    const aliasClassNames = icon.aliases?.filter((alias) => typeof alias === "string" && alias.trim() !== "").map((alias) => `lucide-${alias}`) ?? [];
-    const iconClassNames = [...icon.name ? [`lucide-${icon.name}`] : [], ...aliasClassNames];
-    const classNamesFromClassName = params.className?.split(" ").filter(Boolean) ?? [];
-    const className = params.includeDefaultClasses === false ? mergeClasses(...classNamesFromClassName) : mergeClasses("lucide", ...iconClassNames, ...classNamesFromClassName);
-    const calculatedStrokeWidth = params.absoluteStrokeWidth ? Number(params.strokeWidth ?? defaultAttributes["stroke-width"]) * Number(icon.size ?? icon.width ?? defaultAttributes["width"]) / Number(params.size ?? params.width ?? defaultAttributes["width"]) : params.strokeWidth ?? defaultAttributes["stroke-width"];
-    const attributes = {
-      ...Object.entries(defaultAttributes).reduce((attrs, [attrName, value]) => {
-        attrs[getAttributeName(attrName)] = value;
-        return attrs;
-      }, {}),
-      ..."color" in params && params.color && {
-        [getAttributeName("stroke")]: params.color
-      },
-      ..."size" in params && isDefined(params.size) && {
-        [getAttributeName("width")]: params.size,
-        [getAttributeName("height")]: params.size
-      },
-      ..."width" in params && isDefined(params.width) && {
-        [getAttributeName("width")]: params.width
-      },
-      ..."height" in params && isDefined(params.height) && {
-        [getAttributeName("height")]: params.height
-      },
-      [getAttributeName("stroke-width")]: calculatedStrokeWidth,
-      ...className && {
-        [getAttributeName("class")]: className
-      },
-      [getAttributeName("viewBox")]: `0 0 ${viewBoxWidth} ${viewBoxHeight}`,
-      ...params.hasA11yProp === false ? {
-        [getAttributeName("aria-hidden")]: "true"
-      } : {},
-      ..."attributes" in params && params.attributes
-    };
-    return [
-      "svg",
-      attributes,
-      icon.node.map((child) => {
-        const [name, attrs, children] = child;
-        const nextAttrs = params.nonScalingStroke ? { [getAttributeName("vector-effect")]: "non-scaling-stroke", ...attrs } : attrs;
-        return children ? [name, nextAttrs, children] : [name, nextAttrs];
-      })
-    ];
-  }
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/build/buildLucideIconForReact.mjs
-  function buildLucideIconForReact(icon, params = {}) {
-    return buildLucideIconNode(icon, {
-      ...params,
-      attributeNames: {
-        ...params.attributeNames,
-        class: "className",
-        "stroke-width": "strokeWidth",
-        "stroke-linecap": "strokeLinecap",
-        "stroke-linejoin": "strokeLinejoin",
-        "vector-effect": "vectorEffect"
-      }
-    });
-  }
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/utils/hasA11yProp.mjs
-  var hasA11yProp = (props) => {
-    for (const prop in props) {
-      if (prop.startsWith("aria-") || prop === "role" || prop === "title") {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/context.mjs
-  var import_react = __toESM(require_react(), 1);
-  var LucideContext = (0, import_react.createContext)({});
-  var useLucideContext = () => (0, import_react.useContext)(LucideContext);
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/Icon.mjs
-  var Icon = (0, import_react2.forwardRef)(
-    ({
-      color,
-      size,
-      width,
-      height,
-      strokeWidth,
-      absoluteStrokeWidth,
-      nonScalingStroke,
-      className = "",
-      children,
-      iconNode = [],
-      icon = {
-        node: iconNode,
-        aliases: [],
-        size: 24
-      },
-      ...rest
-    }, ref) => {
-      const {
-        size: contextSize = 24,
-        strokeWidth: contextStrokeWidth = 2,
-        absoluteStrokeWidth: contextAbsoluteStrokeWidth = false,
-        nonScalingStroke: contextNonScalingStroke = false,
-        color: contextColor = "currentColor",
-        className: contextClass = ""
-      } = useLucideContext() ?? {};
-      const hasAccessibleProp = Boolean(children) || hasA11yProp(rest);
-      const [name, svgAttributes, builtIconNode = []] = buildLucideIconForReact(icon, {
-        color: color ?? contextColor,
-        width: width ?? size ?? contextSize,
-        height: height ?? size ?? contextSize,
-        strokeWidth: strokeWidth ?? contextStrokeWidth,
-        absoluteStrokeWidth: absoluteStrokeWidth ?? contextAbsoluteStrokeWidth,
-        nonScalingStroke: nonScalingStroke ?? contextNonScalingStroke,
-        className: mergeClasses(contextClass, className),
-        hasA11yProp: hasAccessibleProp,
-        attributes: rest
-      });
-      return (0, import_react2.createElement)(
-        name,
-        {
-          ref,
-          ...svgAttributes
-        },
-        [
-          ...builtIconNode.map(([tag, attrs]) => (0, import_react2.createElement)(tag, attrs)),
-          ...Array.isArray(children) ? children : [children]
-        ]
-      );
-    }
-  );
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/createLucideIcon.mjs
-  function createLucideIcon(iconDataOrName, iconNode = [], aliases = []) {
-    const iconData = typeof iconDataOrName === "string" ? toLucideIconData(iconDataOrName, iconNode, aliases) : iconDataOrName;
-    const Component = (0, import_react3.forwardRef)(
-      ({ className, ...props }, ref) => (0, import_react3.createElement)(Icon, {
-        ref,
-        icon: iconData,
-        className,
-        ...props
-      })
-    );
-    if (iconData.name) {
-      Component.displayName = toPascalCase(iconData.name);
-    }
-    return Component;
-  }
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/chevron-down.mjs
-  var __iconData = {
-    name: "chevron-down",
-    size: 24,
-    node: [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]]
-  };
-  __iconData.node;
-  var ChevronDown = createLucideIcon(__iconData);
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/chevron-right.mjs
-  var __iconData2 = {
-    name: "chevron-right",
-    size: 24,
-    node: [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]]
-  };
-  __iconData2.node;
-  var ChevronRight = createLucideIcon(__iconData2);
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/chevron-up.mjs
-  var __iconData3 = {
-    name: "chevron-up",
-    size: 24,
-    node: [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]]
-  };
-  __iconData3.node;
-  var ChevronUp = createLucideIcon(__iconData3);
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/circle-check.mjs
-  var __iconData4 = {
-    name: "circle-check",
-    size: 24,
-    node: [
-      ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-      ["path", { d: "m16 9-5.5 5.5L8 12", key: "xofnsj" }]
-    ],
-    aliases: ["check-circle-2"]
-  };
-  __iconData4.node;
-  var CircleCheck = createLucideIcon(__iconData4);
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/construction.mjs
-  var __iconData5 = {
-    name: "construction",
-    size: 24,
-    node: [
-      ["rect", { x: "2", y: "6", width: "20", height: "8", rx: "1", key: "1estib" }],
-      ["path", { d: "M17 14v7", key: "7m2elx" }],
-      ["path", { d: "M7 14v7", key: "1cm7wv" }],
-      ["path", { d: "M17 3v3", key: "1v4jwn" }],
-      ["path", { d: "M7 3v3", key: "7o6guu" }],
-      ["path", { d: "M10 14 2.3 6.3", key: "1023jk" }],
-      ["path", { d: "m14 6 7.7 7.7", key: "1s8pl2" }],
-      ["path", { d: "m8 6 8 8", key: "hl96qh" }]
-    ]
-  };
-  __iconData5.node;
-  var Construction = createLucideIcon(__iconData5);
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/download.mjs
-  var __iconData6 = {
-    name: "download",
-    size: 24,
-    node: [
-      ["path", { d: "M12 15V3", key: "m9g1x1" }],
-      ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }],
-      ["path", { d: "m7 10 5 5 5-5", key: "brsn70" }]
-    ]
-  };
-  __iconData6.node;
-  var Download = createLucideIcon(__iconData6);
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/list-ordered.mjs
-  var __iconData7 = {
-    name: "list-ordered",
-    size: 24,
-    node: [
-      ["path", { d: "M11 5h10", key: "1cz7ny" }],
-      ["path", { d: "M11 12h10", key: "1438ji" }],
-      ["path", { d: "M11 19h10", key: "11t30w" }],
-      ["path", { d: "M4 4h1v5", key: "10yrso" }],
-      ["path", { d: "M4 9h2", key: "r1h2o0" }],
-      ["path", { d: "M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02", key: "xtkcd5" }]
-    ]
-  };
-  __iconData7.node;
-  var ListOrdered = createLucideIcon(__iconData7);
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/minus.mjs
-  var __iconData8 = {
-    name: "minus",
-    size: 24,
-    node: [["path", { d: "M5 12h14", key: "1ays0h" }]]
-  };
-  __iconData8.node;
-  var Minus = createLucideIcon(__iconData8);
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/play.mjs
-  var __iconData9 = {
-    name: "play",
-    size: 24,
-    node: [
-      [
-        "path",
-        {
-          d: "M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z",
-          key: "10ikf1"
-        }
-      ]
-    ]
-  };
-  __iconData9.node;
-  var Play = createLucideIcon(__iconData9);
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
-  var __iconData10 = {
-    name: "refresh-cw",
-    size: 24,
-    node: [
-      ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
-      ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
-      ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
-      ["path", { d: "M8 16H3v5", key: "1cv678" }]
-    ]
-  };
-  __iconData10.node;
-  var RefreshCw = createLucideIcon(__iconData10);
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/sparkles.mjs
-  var __iconData11 = {
-    name: "sparkles",
-    size: 24,
-    node: [
-      [
-        "path",
-        {
-          d: "M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z",
-          key: "1s2grr"
-        }
-      ],
-      ["path", { d: "M20 2v4", key: "1rf3ol" }],
-      ["path", { d: "M22 4h-4", key: "gwowj6" }],
-      ["circle", { cx: "4", cy: "20", r: "2", key: "6kqj1y" }]
-    ],
-    aliases: ["stars"]
-  };
-  __iconData11.node;
-  var Sparkles = createLucideIcon(__iconData11);
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/square.mjs
-  var __iconData12 = {
-    name: "square",
-    size: 24,
-    node: [["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]]
-  };
-  __iconData12.node;
-  var Square = createLucideIcon(__iconData12);
-
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/x.mjs
-  var __iconData13 = {
-    name: "x",
-    size: 24,
-    node: [
-      ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
-      ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
-    ]
-  };
-  __iconData13.node;
-  var X = createLucideIcon(__iconData13);
-
-  // src/content/ui/components/HudHeader.tsx
-  var import_jsx_runtime3 = __toESM(require_jsx_runtime(), 1);
-  function HudHeader({
-    version,
-    config: config2,
-    activeTab,
-    isMinimized,
-    onToggleMinimize,
-    onHide,
-    onToggleAll,
-    onToggleTab,
-    onCheckUpdate,
-    isCheckingUpdate,
-    onMouseDownDrag
-  }) {
-    const isRunningAll = config2.running && config2.runMode === "all";
-    const isRunningTab = config2.running && config2.runMode === "tab";
-    const tabName = AREA_META[activeTab]?.name || "Tab n\xE0y";
-    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
-      "div",
-      {
-        className: "flex items-center justify-between bg-slate-950/95 px-3 py-2 border-b border-slate-800 text-slate-100 select-none cursor-move",
-        onMouseDown: onMouseDownDrag,
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex items-center gap-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex items-center gap-1.5 font-bold text-xs tracking-tight", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "text-emerald-400", children: "\u{1F33E} NTG Auto" }),
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "text-slate-400 font-normal", children: "by T\xFAn" })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(Badge, { variant: "outline", className: "border-slate-700 bg-slate-900/80 px-1 py-0 text-[10px] font-mono text-slate-400", children: [
-              "v",
-              version
-            ] })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex items-center gap-1", onMouseDown: (e) => e.stopPropagation(), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
-              Button,
-              {
-                variant: isRunningAll ? "destructive" : "default",
-                size: "xs",
-                className: "text-[10px] font-semibold h-5 px-1.5 shadow-xs",
-                onClick: onToggleAll,
-                title: "Ch\u1EA1y t\u1EF1 \u0111\u1ED9ng t\u1EA5t c\u1EA3 khu v\u1EF1c theo th\u1EE9 t\u1EF1 (Alt+A)",
-                children: [
-                  isRunningAll ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Square, { className: "h-2.5 w-2.5 fill-current mr-0.5" }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Play, { className: "h-2.5 w-2.5 fill-current mr-0.5" }),
-                  isRunningAll ? "D\u1EEBng" : "T\u1EA5t c\u1EA3"
-                ]
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
-              Button,
-              {
-                variant: isRunningTab ? "destructive" : "secondary",
-                size: "xs",
-                className: "text-[10px] font-semibold h-5 px-1.5 border border-slate-700/60 shadow-xs",
-                onClick: onToggleTab,
-                title: `Ch\u1EA1y t\u1EF1 \u0111\u1ED9ng ri\xEAng ${tabName}`,
-                children: [
-                  isRunningTab ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Square, { className: "h-2.5 w-2.5 fill-current mr-0.5" }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Sparkles, { className: "h-2.5 w-2.5 text-amber-400 mr-0.5" }),
-                  isRunningTab ? "D\u1EEBng Tab" : tabName.replace(/^[^\s]+\s/, "")
-                ]
-              }
-            )
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex items-center gap-0.5 text-slate-400", onMouseDown: (e) => e.stopPropagation(), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-              Button,
-              {
-                variant: "ghost",
-                size: "iconSm",
-                className: "h-6 w-6 text-slate-400 hover:text-slate-100 hover:bg-slate-800",
-                title: "Ki\u1EC3m tra c\u1EADp nh\u1EADt m\u1EDBi",
-                onClick: onCheckUpdate,
-                children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(RefreshCw, { className: `h-3 w-3 ${isCheckingUpdate ? "animate-spin text-emerald-400" : ""}` })
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-              Button,
-              {
-                variant: "ghost",
-                size: "iconSm",
-                className: "h-6 w-6 text-slate-400 hover:text-slate-100 hover:bg-slate-800",
-                title: isMinimized ? "M\u1EDF r\u1ED9ng" : "Thu g\u1ECDn",
-                onClick: onToggleMinimize,
-                children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Minus, { className: "h-3.5 w-3.5" })
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-              Button,
-              {
-                variant: "ghost",
-                size: "iconSm",
-                className: "h-6 w-6 text-slate-400 hover:text-red-400 hover:bg-slate-800",
-                title: "\u1EA8n b\u1EA3ng \u0111i\u1EC1u khi\u1EC3n (Alt+P)",
-                onClick: onHide,
-                children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(X, { className: "h-3.5 w-3.5" })
-              }
-            )
-          ] })
-        ]
-      }
-    );
-  }
-
-  // src/content/scheduler/dom-helpers.ts
-  var sleep = (ms) => new Promise((r2) => setTimeout(r2, ms));
-  function isVisible(el) {
-    if (!el) return false;
-    const s = window.getComputedStyle(el);
-    if (s.display === "none" || s.visibility === "hidden" || Number(s.opacity) === 0) return false;
-    const r2 = el.getBoundingClientRect();
-    return r2.width > 0 && r2.height > 0;
-  }
-  function triggerPointerDownAndClick(el) {
-    if (!el) return false;
-    const rect = el.getBoundingClientRect();
-    const cx2 = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const opts = { bubbles: true, cancelable: true, clientX: cx2, clientY: cy, button: 0, buttons: 1 };
-    el.dispatchEvent(new PointerEvent("pointerdown", opts));
-    el.dispatchEvent(new MouseEvent("mousedown", opts));
-    el.dispatchEvent(new PointerEvent("pointerup", opts));
-    el.dispatchEvent(new MouseEvent("mouseup", opts));
-    el.click();
-    return true;
-  }
-  function triggerPointerDownOnly(el) {
-    if (!el) return false;
-    const rect = el.getBoundingClientRect();
-    const cx2 = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const opts = { bubbles: true, cancelable: true, clientX: cx2, clientY: cy, button: 0, buttons: 1 };
-    el.dispatchEvent(new PointerEvent("pointerdown", opts));
-    el.dispatchEvent(new PointerEvent("pointerup", opts));
-    return true;
-  }
-  function formatClock(minutes) {
-    if (typeof minutes !== "number") return "--:--";
-    const h = Math.floor(minutes / 60) % 24;
-    const m = Math.floor(minutes % 60);
-    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-  }
-  function formatGold(n) {
-    if (typeof n !== "number") return "--";
-    return n.toLocaleString("vi-VN") + "\u0111";
-  }
-
-  // src/content/ui/components/HudStats.tsx
-  var import_jsx_runtime4 = __toESM(require_jsx_runtime(), 1);
-  function HudStats({ snap }) {
-    const day = snap?.day ?? 1;
-    const timeStr = typeof snap?.minutes === "number" ? formatClock(snap.minutes) : "--:--";
-    const goldStr = typeof snap?.gold === "number" ? formatGold(snap.gold) : "--";
-    const fullness = typeof snap?.fullness === "number" ? `${Math.round(snap.fullness)}%` : "--";
-    const hydration = typeof snap?.hydration === "number" ? `${Math.round(snap.hydration)}%` : "--";
-    const energy = typeof snap?.energy === "number" ? `${Math.round(snap.energy)}%` : "--";
-    let extraNote = "";
-    if (snap?.screen === "sea") {
-      extraNote = snap.sea?.bite ? "\u{1F3A3} C\xE1 c\u1EAFn c\xE2u!" : snap.sea?.phase ? `\u{1F30A} Bi\u1EC3n: ${snap.sea.phase}` : "\u{1F30A} Bi\u1EC3n";
-    } else if (snap?.screen === "benDo") {
-      const stam = snap.benWallet?.liveStamina ?? snap.benWallet?.stamina;
-      extraNote = typeof stam === "number" ? `\u{1F6F6} S\u1EE9c: ${stam}` : "\u{1F6F6} B\u1EBFn \u0111\xF2";
-    } else if (snap?.sleeping) {
-      extraNote = "\u{1F634} \u0110ang ng\u1EE7";
-    }
-    return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "bg-slate-900/90 border-b border-slate-800/80 px-2.5 py-1.5 text-[11px] font-mono text-slate-300", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex flex-wrap items-center justify-between gap-1.5", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex items-center gap-1 text-slate-300", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("span", { className: "text-amber-400 font-semibold", children: [
-          "\u{1F4C5} Ng\xE0y ",
-          day
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "text-slate-500", children: "\xB7" }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "text-emerald-400 font-semibold", children: timeStr }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "text-slate-500", children: "\xB7" }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "text-yellow-400 font-bold", children: goldStr })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex items-center gap-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex items-center gap-1", title: "\u0110\u1ED9 no", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "\u{1F956}" }),
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "text-orange-300 font-medium", children: fullness })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex items-center gap-1", title: "\u0110\u1ED9 kh\xE1t", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "\u{1F964}" }),
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "text-cyan-300 font-medium", children: hydration })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex items-center gap-1", title: "N\u0103ng l\u01B0\u1EE3ng / Pin / Th\u1EC3 l\u1EF1c", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "\u26A1" }),
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "text-emerald-300 font-medium", children: energy })
-        ] }),
-        extraNote && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "rounded bg-slate-800 px-1 py-0.5 text-[10px] text-amber-300 border border-slate-700", children: extraNote })
-      ] })
-    ] }) });
-  }
-
-  // src/components/ui/slider.tsx
-  var React13 = __toESM(require_react(), 1);
-
-  // node_modules/.pnpm/@radix-ui+react-slider@1.6._765b153b67a05696a8c1e7a0683224be/node_modules/@radix-ui/react-slider/dist/index.mjs
-  var React12 = __toESM(require_react(), 1);
-
-  // node_modules/.pnpm/@radix-ui+number@1.1.3/node_modules/@radix-ui/number/dist/index.mjs
+  // node_modules/.pnpm/@radix-ui+react-primitive@2_8110221bfe749bbb617b2ef4d8402995/node_modules/@radix-ui/react-primitive/dist/index.mjs
+  var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
   var __defProp4 = Object.defineProperty;
   var __name3 = (target, value) => __defProp4(target, "name", { value, configurable: true });
-  function clamp(value, [min, max]) {
-    return Math.min(max, Math.max(min, value));
-  }
-  __name3(clamp, "clamp");
-
-  // node_modules/.pnpm/@radix-ui+primitive@1.2.0/node_modules/@radix-ui/primitive/dist/index.mjs
-  var __defProp5 = Object.defineProperty;
-  var __name4 = (target, value) => __defProp5(target, "name", { value, configurable: true });
-  var canUseDOM = !!(typeof window !== "undefined" && window.document && window.document.createElement);
-  function composeEventHandlers(originalEventHandler, ourEventHandler, { checkForDefaultPrevented = true } = {}) {
-    return /* @__PURE__ */ __name4(function handleEvent(event) {
-      originalEventHandler?.(event);
-      if (checkForDefaultPrevented === false || !event || !event.defaultPrevented) {
-        return ourEventHandler?.(event);
-      }
-    }, "handleEvent");
-  }
-  __name4(composeEventHandlers, "composeEventHandlers");
-  function getOwnerWindow(element) {
-    if (!canUseDOM) {
-      throw new Error("Cannot access window outside of the DOM");
-    }
-    return element?.ownerDocument?.defaultView ?? window;
-  }
-  __name4(getOwnerWindow, "getOwnerWindow");
-  function getOwnerDocument(element) {
-    if (!canUseDOM) {
-      throw new Error("Cannot access document outside of the DOM");
-    }
-    return element?.ownerDocument ?? document;
-  }
-  __name4(getOwnerDocument, "getOwnerDocument");
-  function getActiveElement(node, activeDescendant = false) {
-    const { activeElement } = getOwnerDocument(node);
-    if (!activeElement?.nodeName) {
-      return null;
-    }
-    if (isFrame(activeElement) && activeElement.contentDocument) {
-      return getActiveElement(activeElement.contentDocument.body, activeDescendant);
-    }
-    if (activeDescendant) {
-      const id = activeElement.getAttribute("aria-activedescendant");
-      if (id) {
-        const element = getOwnerDocument(activeElement).getElementById(id);
-        if (element) {
-          return element;
-        }
-      }
-    }
-    return activeElement;
-  }
-  __name4(getActiveElement, "getActiveElement");
-  function isFrame(element) {
-    return element.tagName === "IFRAME";
-  }
-  __name4(isFrame, "isFrame");
-
-  // node_modules/.pnpm/@radix-ui+react-context@1.3_f5e7faa335a2377b2de19422090f7bda/node_modules/@radix-ui/react-context/dist/index.mjs
-  var React4 = __toESM(require_react(), 1);
-  var import_jsx_runtime5 = __toESM(require_jsx_runtime(), 1);
-  var __defProp6 = Object.defineProperty;
-  var __name5 = (target, value) => __defProp6(target, "name", { value, configurable: true });
-  // @__NO_SIDE_EFFECTS__
-  function createContext22(rootComponentName, defaultContext) {
-    const Context = React4.createContext(defaultContext);
-    Context.displayName = rootComponentName + "Context";
-    const Provider = /* @__PURE__ */ __name5((props) => {
-      const { children, ...context } = props;
-      const value = React4.useMemo(() => context, Object.values(context));
-      return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Context.Provider, { value, children });
-    }, "Provider");
-    Provider.displayName = rootComponentName + "Provider";
-    function useContext22(consumerName, options2 = {}) {
-      const { optional = false } = options2;
-      const context = React4.useContext(Context);
-      if (context) return context;
-      if (defaultContext !== void 0) return defaultContext;
-      if (optional) return void 0;
-      throw new Error(`\`${consumerName}\` must be used within \`${rootComponentName}\``);
-    }
-    __name5(useContext22, "useContext");
-    return [Provider, useContext22];
-  }
-  __name5(createContext22, "createContext");
-  // @__NO_SIDE_EFFECTS__
-  function createContextScope(scopeName, createContextScopeDeps = []) {
-    let defaultContexts = [];
-    function createContext32(rootComponentName, defaultContext) {
-      const BaseContext = React4.createContext(defaultContext);
-      BaseContext.displayName = rootComponentName + "Context";
-      const index = defaultContexts.length;
-      defaultContexts = [...defaultContexts, defaultContext];
-      const Provider = /* @__PURE__ */ __name5((props) => {
-        const { scope, children, ...context } = props;
-        const Context = scope?.[scopeName]?.[index] || BaseContext;
-        const value = React4.useMemo(() => context, Object.values(context));
-        return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Context.Provider, { value, children });
-      }, "Provider");
-      Provider.displayName = rootComponentName + "Provider";
-      function useContext22(consumerName, scope, options2 = {}) {
-        const { optional = false } = options2;
-        const Context = scope?.[scopeName]?.[index] || BaseContext;
-        const context = React4.useContext(Context);
-        if (context) return context;
-        if (defaultContext !== void 0) return defaultContext;
-        if (optional) return void 0;
-        throw new Error(`\`${consumerName}\` must be used within \`${rootComponentName}\``);
-      }
-      __name5(useContext22, "useContext");
-      return [Provider, useContext22];
-    }
-    __name5(createContext32, "createContext");
-    const createScope = /* @__PURE__ */ __name5(() => {
-      const scopeContexts = defaultContexts.map((defaultContext) => {
-        return React4.createContext(defaultContext);
-      });
-      return /* @__PURE__ */ __name5(function useScope(scope) {
-        const contexts = scope?.[scopeName] || scopeContexts;
-        return React4.useMemo(
-          () => ({ [`__scope${scopeName}`]: { ...scope, [scopeName]: contexts } }),
-          [scope, contexts]
-        );
-      }, "useScope");
-    }, "createScope");
-    createScope.scopeName = scopeName;
-    return [createContext32, composeContextScopes(createScope, ...createContextScopeDeps)];
-  }
-  __name5(createContextScope, "createContextScope");
-  function composeContextScopes(...scopes) {
-    const baseScope = scopes[0];
-    if (scopes.length === 1) return baseScope;
-    const createScope = /* @__PURE__ */ __name5(() => {
-      const scopeHooks = scopes.map((createScope2) => ({
-        useScope: createScope2(),
-        scopeName: createScope2.scopeName
-      }));
-      return /* @__PURE__ */ __name5(function useComposedScopes(overrideScopes) {
-        const nextScopes = scopeHooks.reduce((nextScopes2, { useScope, scopeName }) => {
-          const scopeProps = useScope(overrideScopes);
-          const currentScope = scopeProps[`__scope${scopeName}`];
-          return { ...nextScopes2, ...currentScope };
-        }, {});
-        return React4.useMemo(() => ({ [`__scope${baseScope.scopeName}`]: nextScopes }), [nextScopes]);
-      }, "useComposedScopes");
-    }, "createScope");
-    createScope.scopeName = baseScope.scopeName;
-    return createScope;
-  }
-  __name5(composeContextScopes, "composeContextScopes");
-
-  // node_modules/.pnpm/@radix-ui+react-use-control_d278618b86c81b0639a590dbb168baee/node_modules/@radix-ui/react-use-controllable-state/dist/index.mjs
-  var React7 = __toESM(require_react(), 1);
-
-  // node_modules/.pnpm/@radix-ui+primitive@1.2.0/node_modules/@radix-ui/primitive/dist/internal/is-development.false.mjs
-  var IS_DEVELOPMENT = false;
-
-  // node_modules/.pnpm/@radix-ui+react-use-layout-_d3987928d2181a5100d43510a878393c/node_modules/@radix-ui/react-use-layout-effect/dist/index.mjs
-  var React5 = __toESM(require_react(), 1);
-  var useLayoutEffect2 = globalThis?.document ? React5.useLayoutEffect : () => {
-  };
-
-  // node_modules/.pnpm/@radix-ui+react-use-control_d278618b86c81b0639a590dbb168baee/node_modules/@radix-ui/react-use-controllable-state/dist/index.mjs
-  var React22 = __toESM(require_react(), 1);
-
-  // node_modules/.pnpm/@radix-ui+react-use-effect-_9cf9bb6c5dfb7539079d7befafe3de75/node_modules/@radix-ui/react-use-effect-event/dist/index.mjs
-  var React6 = __toESM(require_react(), 1);
-  var __defProp7 = Object.defineProperty;
-  var __name6 = (target, value) => __defProp7(target, "name", { value, configurable: true });
-  var useReactEffectEvent = React6[" useEffectEvent ".trim().toString()];
-  var useReactInsertionEffect = React6[" useInsertionEffect ".trim().toString()];
-  function useEffectEvent(callback) {
-    if (typeof useReactEffectEvent === "function") {
-      return useReactEffectEvent(callback);
-    }
-    const ref = React6.useRef(() => {
-      throw new Error("Cannot call an event handler while rendering.");
-    });
-    if (typeof useReactInsertionEffect === "function") {
-      useReactInsertionEffect(() => {
-        ref.current = callback;
-      });
-    } else {
-      useLayoutEffect2(() => {
-        ref.current = callback;
-      });
-    }
-    return React6.useMemo(() => ((...args) => ref.current?.(...args)), []);
-  }
-  __name6(useEffectEvent, "useEffectEvent");
-
-  // node_modules/.pnpm/@radix-ui+react-use-control_d278618b86c81b0639a590dbb168baee/node_modules/@radix-ui/react-use-controllable-state/dist/index.mjs
-  var __defProp8 = Object.defineProperty;
-  var __name7 = (target, value) => __defProp8(target, "name", { value, configurable: true });
-  var useInsertionEffect = React7[" useInsertionEffect ".trim().toString()] || useLayoutEffect2;
-  function useControllableState({
-    prop,
-    defaultProp,
-    onChange = /* @__PURE__ */ __name7(() => {
-    }, "onChange"),
-    caller
-  }) {
-    const [uncontrolledProp, setUncontrolledProp, onChangeRef] = useUncontrolledState({
-      defaultProp,
-      onChange
-    });
-    const isControlled = prop !== void 0;
-    const value = isControlled ? prop : uncontrolledProp;
-    if (IS_DEVELOPMENT) {
-      const isControlledRef = React7.useRef(prop !== void 0);
-      React7.useEffect(() => {
-        const wasControlled = isControlledRef.current;
-        if (wasControlled !== isControlled) {
-          const from = wasControlled ? "controlled" : "uncontrolled";
-          const to = isControlled ? "controlled" : "uncontrolled";
-          console.warn(
-            `${caller} is changing from ${from} to ${to}. Components should not switch from controlled to uncontrolled (or vice versa). Decide between using a controlled or uncontrolled value for the lifetime of the component.`
-          );
-        }
-        isControlledRef.current = isControlled;
-      }, [isControlled, caller]);
-    }
-    const setValue = React7.useCallback(
-      (nextValue) => {
-        if (isControlled) {
-          const value2 = isFunction(nextValue) ? nextValue(prop) : nextValue;
-          if (value2 !== prop) {
-            onChangeRef.current?.(value2);
-          }
-        } else {
-          setUncontrolledProp(nextValue);
-        }
-      },
-      [isControlled, prop, setUncontrolledProp, onChangeRef]
-    );
-    return [value, setValue];
-  }
-  __name7(useControllableState, "useControllableState");
-  function useUncontrolledState({
-    defaultProp,
-    onChange
-  }) {
-    const [value, setValue] = React7.useState(defaultProp);
-    const prevValueRef = React7.useRef(value);
-    const onChangeRef = React7.useRef(onChange);
-    useInsertionEffect(() => {
-      onChangeRef.current = onChange;
-    }, [onChange]);
-    React7.useEffect(() => {
-      if (prevValueRef.current !== value) {
-        onChangeRef.current?.(value);
-        prevValueRef.current = value;
-      }
-    }, [value, prevValueRef]);
-    return [value, setValue, onChangeRef];
-  }
-  __name7(useUncontrolledState, "useUncontrolledState");
-  function isFunction(value) {
-    return typeof value === "function";
-  }
-  __name7(isFunction, "isFunction");
-  var SYNC_STATE = /* @__PURE__ */ Symbol("RADIX:SYNC_STATE");
-  function useControllableStateReducer(reducer, userArgs, initialArg, init2) {
-    const { prop: controlledState, defaultProp, onChange: onChangeProp, caller } = userArgs;
-    const isControlled = controlledState !== void 0;
-    const onChange = useEffectEvent(onChangeProp);
-    if (IS_DEVELOPMENT) {
-      const isControlledRef = React22.useRef(controlledState !== void 0);
-      React22.useEffect(() => {
-        const wasControlled = isControlledRef.current;
-        if (wasControlled !== isControlled) {
-          const from = wasControlled ? "controlled" : "uncontrolled";
-          const to = isControlled ? "controlled" : "uncontrolled";
-          console.warn(
-            `${caller} is changing from ${from} to ${to}. Components should not switch from controlled to uncontrolled (or vice versa). Decide between using a controlled or uncontrolled value for the lifetime of the component.`
-          );
-        }
-        isControlledRef.current = isControlled;
-      }, [isControlled, caller]);
-    }
-    const args = [{ ...initialArg, state: defaultProp }];
-    if (init2) {
-      args.push(init2);
-    }
-    const [internalState, dispatch] = React22.useReducer(
-      (state2, action) => {
-        if (action.type === SYNC_STATE) {
-          return { ...state2, state: action.state };
-        }
-        const next = reducer(state2, action);
-        if (isControlled && !Object.is(next.state, state2.state)) {
-          onChange(next.state);
-        }
-        return next;
-      },
-      ...args
-    );
-    const uncontrolledState = internalState.state;
-    const prevValueRef = React22.useRef(uncontrolledState);
-    React22.useEffect(() => {
-      if (prevValueRef.current !== uncontrolledState) {
-        prevValueRef.current = uncontrolledState;
-        if (!isControlled) {
-          onChange(uncontrolledState);
-        }
-      }
-    }, [uncontrolledState, prevValueRef, isControlled]);
-    const state = React22.useMemo(() => {
-      const isControlled2 = controlledState !== void 0;
-      if (isControlled2) {
-        return { ...internalState, state: controlledState };
-      }
-      return internalState;
-    }, [internalState, controlledState]);
-    React22.useEffect(() => {
-      if (isControlled && !Object.is(controlledState, internalState.state)) {
-        dispatch({ type: SYNC_STATE, state: controlledState });
-      }
-    }, [controlledState, internalState.state, isControlled]);
-    return [state, dispatch];
-  }
-  __name7(useControllableStateReducer, "useControllableStateReducer");
-
-  // node_modules/.pnpm/@radix-ui+react-direction@1_527de58341a1b41b1117c799ae82b79a/node_modules/@radix-ui/react-direction/dist/index.mjs
-  var React8 = __toESM(require_react(), 1);
-  var import_jsx_runtime6 = __toESM(require_jsx_runtime(), 1);
-  var __defProp9 = Object.defineProperty;
-  var __name8 = (target, value) => __defProp9(target, "name", { value, configurable: true });
-  var Direction = {
-    LTR: "ltr",
-    RTL: "rtl"
-  };
-  var DirectionContext = React8.createContext(void 0);
-  function useDirection(localDir) {
-    const globalDir = React8.useContext(DirectionContext);
-    return localDir || globalDir || Direction.LTR;
-  }
-  __name8(useDirection, "useDirection");
-
-  // node_modules/.pnpm/@radix-ui+react-use-size@1._2b848c55b0857f8c7546508027700b89/node_modules/@radix-ui/react-use-size/dist/index.mjs
-  var React9 = __toESM(require_react(), 1);
-  var __defProp10 = Object.defineProperty;
-  var __name9 = (target, value) => __defProp10(target, "name", { value, configurable: true });
-  function useSize(element) {
-    const [size, setSize] = React9.useState(void 0);
-    useLayoutEffect2(() => {
-      if (element) {
-        setSize({ width: element.offsetWidth, height: element.offsetHeight });
-        let rAF = 0;
-        const resizeObserver = new ResizeObserver((entries) => {
-          if (!Array.isArray(entries)) {
-            return;
-          }
-          if (!entries.length) {
-            return;
-          }
-          const entry = entries[0];
-          window.cancelAnimationFrame(rAF);
-          rAF = window.requestAnimationFrame(() => {
-            let width;
-            let height;
-            if ("borderBoxSize" in entry) {
-              const borderSizeEntry = entry["borderBoxSize"];
-              const borderSize = Array.isArray(borderSizeEntry) ? borderSizeEntry[0] : borderSizeEntry;
-              width = borderSize["inlineSize"];
-              height = borderSize["blockSize"];
-            } else {
-              width = element.offsetWidth;
-              height = element.offsetHeight;
-            }
-            setSize({ width, height });
-          });
-        });
-        resizeObserver.observe(element, { box: "border-box" });
-        return () => {
-          window.cancelAnimationFrame(rAF);
-          resizeObserver.unobserve(element);
-        };
-      } else {
-        setSize(void 0);
-      }
-    }, [element]);
-    return size;
-  }
-  __name9(useSize, "useSize");
-
-  // node_modules/.pnpm/@radix-ui+react-primitive@2_8110221bfe749bbb617b2ef4d8402995/node_modules/@radix-ui/react-primitive/dist/index.mjs
-  var React10 = __toESM(require_react(), 1);
-  var ReactDOM = __toESM(require_react_dom(), 1);
-  var import_jsx_runtime7 = __toESM(require_jsx_runtime(), 1);
-  var __defProp11 = Object.defineProperty;
-  var __name10 = (target, value) => __defProp11(target, "name", { value, configurable: true });
   var NODES = [
     "a",
     "button",
@@ -19382,13 +18346,13 @@
   ];
   var Primitive = NODES.reduce((primitive, node) => {
     const Slot3 = createSlot(`Primitive.${node}`);
-    const Node2 = React10.forwardRef((props, forwardedRef) => {
+    const Node2 = React3.forwardRef((props, forwardedRef) => {
       const { asChild, ...primitiveProps } = props;
       const Comp = asChild ? Slot3 : node;
       if (typeof window !== "undefined") {
         window[/* @__PURE__ */ Symbol.for("radix-ui")] = true;
       }
-      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Comp, { ...primitiveProps, ref: forwardedRef });
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Comp, { ...primitiveProps, ref: forwardedRef });
     });
     Node2.displayName = `Primitive.${node}`;
     return { ...primitive, [node]: Node2 };
@@ -19396,61 +18360,178 @@
   function dispatchDiscreteCustomEvent(target, event) {
     if (target) ReactDOM.flushSync(() => target.dispatchEvent(event));
   }
-  __name10(dispatchDiscreteCustomEvent, "dispatchDiscreteCustomEvent");
+  __name3(dispatchDiscreteCustomEvent, "dispatchDiscreteCustomEvent");
+
+  // node_modules/.pnpm/@radix-ui+react-accordion@1_5c7d962b3fe73107d038e39b4f324168/node_modules/@radix-ui/react-accordion/dist/index.mjs
+  var dist_exports2 = {};
+  __export(dist_exports2, {
+    Accordion: () => Accordion,
+    AccordionContent: () => AccordionContent,
+    AccordionHeader: () => AccordionHeader,
+    AccordionItem: () => AccordionItem,
+    AccordionTrigger: () => AccordionTrigger,
+    Content: () => AccordionContent,
+    Header: () => AccordionHeader,
+    Item: () => AccordionItem,
+    Root: () => Accordion,
+    Trigger: () => AccordionTrigger,
+    createAccordionScope: () => createAccordionScope
+  });
+  var React13 = __toESM(require_react(), 1);
+
+  // node_modules/.pnpm/@radix-ui+react-context@1.3_f5e7faa335a2377b2de19422090f7bda/node_modules/@radix-ui/react-context/dist/index.mjs
+  var React4 = __toESM(require_react(), 1);
+  var import_jsx_runtime2 = __toESM(require_jsx_runtime(), 1);
+  var __defProp5 = Object.defineProperty;
+  var __name4 = (target, value) => __defProp5(target, "name", { value, configurable: true });
+  // @__NO_SIDE_EFFECTS__
+  function createContext2(rootComponentName, defaultContext) {
+    const Context = React4.createContext(defaultContext);
+    Context.displayName = rootComponentName + "Context";
+    const Provider = /* @__PURE__ */ __name4((props) => {
+      const { children, ...context } = props;
+      const value = React4.useMemo(() => context, Object.values(context));
+      return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Context.Provider, { value, children });
+    }, "Provider");
+    Provider.displayName = rootComponentName + "Provider";
+    function useContext22(consumerName, options2 = {}) {
+      const { optional = false } = options2;
+      const context = React4.useContext(Context);
+      if (context) return context;
+      if (defaultContext !== void 0) return defaultContext;
+      if (optional) return void 0;
+      throw new Error(`\`${consumerName}\` must be used within \`${rootComponentName}\``);
+    }
+    __name4(useContext22, "useContext");
+    return [Provider, useContext22];
+  }
+  __name4(createContext2, "createContext");
+  // @__NO_SIDE_EFFECTS__
+  function createContextScope(scopeName, createContextScopeDeps = []) {
+    let defaultContexts = [];
+    function createContext32(rootComponentName, defaultContext) {
+      const BaseContext = React4.createContext(defaultContext);
+      BaseContext.displayName = rootComponentName + "Context";
+      const index = defaultContexts.length;
+      defaultContexts = [...defaultContexts, defaultContext];
+      const Provider = /* @__PURE__ */ __name4((props) => {
+        const { scope, children, ...context } = props;
+        const Context = scope?.[scopeName]?.[index] || BaseContext;
+        const value = React4.useMemo(() => context, Object.values(context));
+        return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Context.Provider, { value, children });
+      }, "Provider");
+      Provider.displayName = rootComponentName + "Provider";
+      function useContext22(consumerName, scope, options2 = {}) {
+        const { optional = false } = options2;
+        const Context = scope?.[scopeName]?.[index] || BaseContext;
+        const context = React4.useContext(Context);
+        if (context) return context;
+        if (defaultContext !== void 0) return defaultContext;
+        if (optional) return void 0;
+        throw new Error(`\`${consumerName}\` must be used within \`${rootComponentName}\``);
+      }
+      __name4(useContext22, "useContext");
+      return [Provider, useContext22];
+    }
+    __name4(createContext32, "createContext");
+    const createScope = /* @__PURE__ */ __name4(() => {
+      const scopeContexts = defaultContexts.map((defaultContext) => {
+        return React4.createContext(defaultContext);
+      });
+      return /* @__PURE__ */ __name4(function useScope(scope) {
+        const contexts = scope?.[scopeName] || scopeContexts;
+        return React4.useMemo(
+          () => ({ [`__scope${scopeName}`]: { ...scope, [scopeName]: contexts } }),
+          [scope, contexts]
+        );
+      }, "useScope");
+    }, "createScope");
+    createScope.scopeName = scopeName;
+    return [createContext32, composeContextScopes(createScope, ...createContextScopeDeps)];
+  }
+  __name4(createContextScope, "createContextScope");
+  function composeContextScopes(...scopes) {
+    const baseScope = scopes[0];
+    if (scopes.length === 1) return baseScope;
+    const createScope = /* @__PURE__ */ __name4(() => {
+      const scopeHooks = scopes.map((createScope2) => ({
+        useScope: createScope2(),
+        scopeName: createScope2.scopeName
+      }));
+      return /* @__PURE__ */ __name4(function useComposedScopes(overrideScopes) {
+        const nextScopes = scopeHooks.reduce((nextScopes2, { useScope, scopeName }) => {
+          const scopeProps = useScope(overrideScopes);
+          const currentScope = scopeProps[`__scope${scopeName}`];
+          return { ...nextScopes2, ...currentScope };
+        }, {});
+        return React4.useMemo(() => ({ [`__scope${baseScope.scopeName}`]: nextScopes }), [nextScopes]);
+      }, "useComposedScopes");
+    }, "createScope");
+    createScope.scopeName = baseScope.scopeName;
+    return createScope;
+  }
+  __name4(composeContextScopes, "composeContextScopes");
 
   // node_modules/.pnpm/@radix-ui+react-collection@_6acb2d8ed0d1a5e2d86fa68fa86b38fc/node_modules/@radix-ui/react-collection/dist/index.mjs
-  var React11 = __toESM(require_react(), 1);
-  var import_jsx_runtime8 = __toESM(require_jsx_runtime(), 1);
-  var React23 = __toESM(require_react(), 1);
-  var import_jsx_runtime9 = __toESM(require_jsx_runtime(), 1);
-  var __defProp12 = Object.defineProperty;
-  var __name11 = (target, value) => __defProp12(target, "name", { value, configurable: true });
+  var React6 = __toESM(require_react(), 1);
+  var import_jsx_runtime3 = __toESM(require_jsx_runtime(), 1);
+  var React22 = __toESM(require_react(), 1);
+
+  // node_modules/.pnpm/@radix-ui+react-use-layout-_d3987928d2181a5100d43510a878393c/node_modules/@radix-ui/react-use-layout-effect/dist/index.mjs
+  var React5 = __toESM(require_react(), 1);
+  var useLayoutEffect2 = globalThis?.document ? React5.useLayoutEffect : () => {
+  };
+
+  // node_modules/.pnpm/@radix-ui+react-collection@_6acb2d8ed0d1a5e2d86fa68fa86b38fc/node_modules/@radix-ui/react-collection/dist/index.mjs
+  var import_jsx_runtime4 = __toESM(require_jsx_runtime(), 1);
+  var __defProp6 = Object.defineProperty;
+  var __name5 = (target, value) => __defProp6(target, "name", { value, configurable: true });
   // @__NO_SIDE_EFFECTS__
   function createCollection(name) {
     const PROVIDER_NAME = name + "CollectionProvider";
-    const [createCollectionContext, createCollectionScope3] = createContextScope(PROVIDER_NAME);
+    const [createCollectionContext, createCollectionScope4] = createContextScope(PROVIDER_NAME);
     const [CollectionProviderImpl, useCollectionContext] = createCollectionContext(
       PROVIDER_NAME,
       { collectionRef: { current: null }, itemMap: /* @__PURE__ */ new Map() }
     );
-    const CollectionProvider = /* @__PURE__ */ __name11((props) => {
+    const CollectionProvider = /* @__PURE__ */ __name5((props) => {
       const { scope, children } = props;
-      const ref = React11.useRef(null);
-      const itemMap = React11.useRef(/* @__PURE__ */ new Map()).current;
-      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(CollectionProviderImpl, { scope, itemMap, collectionRef: ref, children });
+      const ref = React6.useRef(null);
+      const itemMap = React6.useRef(/* @__PURE__ */ new Map()).current;
+      return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(CollectionProviderImpl, { scope, itemMap, collectionRef: ref, children });
     }, "CollectionProvider");
     CollectionProvider.displayName = PROVIDER_NAME;
     const COLLECTION_SLOT_NAME = name + "CollectionSlot";
     const CollectionSlotImpl = createSlot(COLLECTION_SLOT_NAME);
-    const CollectionSlot = React11.forwardRef(
+    const CollectionSlot = React6.forwardRef(
       (props, forwardedRef) => {
         const { scope, children } = props;
         const context = useCollectionContext(COLLECTION_SLOT_NAME, scope);
         const composedRefs = useComposedRefs(forwardedRef, context.collectionRef);
-        return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(CollectionSlotImpl, { ref: composedRefs, children });
+        return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(CollectionSlotImpl, { ref: composedRefs, children });
       }
     );
     CollectionSlot.displayName = COLLECTION_SLOT_NAME;
     const ITEM_SLOT_NAME = name + "CollectionItemSlot";
     const ITEM_DATA_ATTR = "data-radix-collection-item";
     const CollectionItemSlotImpl = createSlot(ITEM_SLOT_NAME);
-    const CollectionItemSlot = React11.forwardRef(
+    const CollectionItemSlot = React6.forwardRef(
       (props, forwardedRef) => {
         const { scope, children, ...itemData } = props;
-        const ref = React11.useRef(null);
+        const ref = React6.useRef(null);
         const composedRefs = useComposedRefs(forwardedRef, ref);
         const context = useCollectionContext(ITEM_SLOT_NAME, scope);
-        React11.useEffect(() => {
+        React6.useEffect(() => {
           context.itemMap.set(ref, { ref, ...itemData });
           return () => void context.itemMap.delete(ref);
         });
-        return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(CollectionItemSlotImpl, { ...{ [ITEM_DATA_ATTR]: "" }, ref: composedRefs, children });
+        return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(CollectionItemSlotImpl, { ...{ [ITEM_DATA_ATTR]: "" }, ref: composedRefs, children });
       }
     );
     CollectionItemSlot.displayName = ITEM_SLOT_NAME;
     function useCollection3(scope) {
       const context = useCollectionContext(name + "CollectionConsumer", scope);
-      const getItems = React11.useCallback(() => {
+      const getItems = React6.useCallback(() => {
         const collectionNode = context.collectionRef.current;
         if (!collectionNode) return [];
         const orderedNodes = Array.from(collectionNode.querySelectorAll(`[${ITEM_DATA_ATTR}]`));
@@ -19462,18 +18543,18 @@
       }, [context.collectionRef, context.itemMap]);
       return getItems;
     }
-    __name11(useCollection3, "useCollection");
+    __name5(useCollection3, "useCollection");
     return [
       { Provider: CollectionProvider, Slot: CollectionSlot, ItemSlot: CollectionItemSlot },
       useCollection3,
-      createCollectionScope3
+      createCollectionScope4
     ];
   }
-  __name11(createCollection, "createCollection");
+  __name5(createCollection, "createCollection");
   var __instanciated = /* @__PURE__ */ new WeakMap();
   var OrderedDict = class _OrderedDict extends Map {
     static {
-      __name11(this, "OrderedDict");
+      __name5(this, "OrderedDict");
     }
     #keys;
     constructor(entries) {
@@ -19779,54 +18860,54 @@
     const actualIndex = toSafeIndex(array, index);
     return actualIndex === -1 ? void 0 : array[actualIndex];
   }
-  __name11(at, "at");
+  __name5(at, "at");
   function toSafeIndex(array, index) {
     const length = array.length;
     const relativeIndex = toSafeInteger(index);
     const actualIndex = relativeIndex >= 0 ? relativeIndex : length + relativeIndex;
     return actualIndex < 0 || actualIndex >= length ? -1 : actualIndex;
   }
-  __name11(toSafeIndex, "toSafeIndex");
+  __name5(toSafeIndex, "toSafeIndex");
   function toSafeInteger(number) {
     return number !== number || number === 0 ? 0 : Math.trunc(number);
   }
-  __name11(toSafeInteger, "toSafeInteger");
+  __name5(toSafeInteger, "toSafeInteger");
   // @__NO_SIDE_EFFECTS__
   function createCollection2(name) {
     const PROVIDER_NAME = name + "CollectionProvider";
-    const [createCollectionContext, createCollectionScope3] = createContextScope(PROVIDER_NAME);
+    const [createCollectionContext, createCollectionScope4] = createContextScope(PROVIDER_NAME);
     const [CollectionStableContextProvider, useStableCollectionContext] = createCollectionContext(PROVIDER_NAME);
     CollectionStableContextProvider.displayName = name + "CollectionStableContextProvider";
     const [CollectionStatefulContextProvider, useStatefulCollectionContext] = createCollectionContext(PROVIDER_NAME);
     CollectionStatefulContextProvider.displayName = name + "CollectionStatefulContextProvider";
-    const CollectionProvider = /* @__PURE__ */ __name11(({ state, ...props }) => {
-      return state ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(CollectionProviderImpl, { ...props, state }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(CollectionInit, { ...props });
+    const CollectionProvider = /* @__PURE__ */ __name5(({ state, ...props }) => {
+      return state ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(CollectionProviderImpl, { ...props, state }) : /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(CollectionInit, { ...props });
     }, "CollectionProvider");
     CollectionProvider.displayName = PROVIDER_NAME;
-    const CollectionInit = /* @__PURE__ */ __name11((props) => {
+    const CollectionInit = /* @__PURE__ */ __name5((props) => {
       const state = useInitCollection();
-      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(CollectionProviderImpl, { ...props, state });
+      return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(CollectionProviderImpl, { ...props, state });
     }, "CollectionInit");
     CollectionInit.displayName = name + "CollectionInit";
-    const CollectionProviderImpl = /* @__PURE__ */ __name11((props) => {
+    const CollectionProviderImpl = /* @__PURE__ */ __name5((props) => {
       const { scope, children, state } = props;
-      const ref = React23.useRef(null);
-      const [collectionElement, setCollectionElement] = React23.useState(
+      const ref = React22.useRef(null);
+      const [collectionElement, setCollectionElement] = React22.useState(
         null
       );
       const composeRefs2 = useComposedRefs(ref, setCollectionElement);
       const [collection, setCollection] = state;
-      const registryRef = React23.useRef(
+      const registryRef = React22.useRef(
         new OrderedDict()
       );
-      const getCollection = React23.useCallback(() => {
+      const getCollection = React22.useCallback(() => {
         const registry = registryRef.current;
         if (!isInDocumentOrder(registry)) {
           registry.sort(sortByDocumentPosition);
         }
         return registry;
       }, []);
-      React23.useEffect(() => {
+      React22.useEffect(() => {
         if (!collectionElement) {
           return;
         }
@@ -19845,7 +18926,7 @@
           observer.disconnect();
         };
       }, [collectionElement, setCollection]);
-      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
         CollectionStableContextProvider,
         {
           scope,
@@ -19854,7 +18935,7 @@
           getCollection,
           setCollection,
           registryRef,
-          children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+          children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
             CollectionStatefulContextProvider,
             {
               scope,
@@ -19869,30 +18950,30 @@
     CollectionProviderImpl.displayName = name + "CollectionProviderImpl";
     const COLLECTION_SLOT_NAME = name + "CollectionSlot";
     const CollectionSlotImpl = createSlot(COLLECTION_SLOT_NAME);
-    const CollectionSlot = React23.forwardRef(
+    const CollectionSlot = React22.forwardRef(
       (props, forwardedRef) => {
         const { scope, children } = props;
         const context = useStableCollectionContext(COLLECTION_SLOT_NAME, scope);
         const composedRefs = useComposedRefs(forwardedRef, context.collectionElementRef);
-        return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(CollectionSlotImpl, { ref: composedRefs, children });
+        return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(CollectionSlotImpl, { ref: composedRefs, children });
       }
     );
     CollectionSlot.displayName = COLLECTION_SLOT_NAME;
     const ITEM_SLOT_NAME = name + "CollectionItemSlot";
     const ITEM_DATA_ATTR = "data-radix-collection-item";
     const CollectionItemSlotImpl = createSlot(ITEM_SLOT_NAME);
-    const CollectionItemSlot = React23.forwardRef(
+    const CollectionItemSlot = React22.forwardRef(
       (props, forwardedRef) => {
         const { scope, children, ...itemData } = props;
-        const ref = React23.useRef(null);
+        const ref = React22.useRef(null);
         const context = useStableCollectionContext(ITEM_SLOT_NAME, scope);
         const { setCollection, registryRef } = context;
-        const itemDataRef = React23.useRef(itemData);
+        const itemDataRef = React22.useRef(itemData);
         if (!shallowEqual(itemDataRef.current, itemData)) {
           itemDataRef.current = itemData;
         }
         const memoizedItemData = itemDataRef.current;
-        const registerElement = React23.useCallback(
+        const registerElement = React22.useCallback(
           (node) => {
             const registry = registryRef.current;
             if (node) {
@@ -19914,8 +18995,8 @@
             registry.set(node, { ...memoizedItemData, element: node });
           }
         }, [memoizedItemData, registryRef]);
-        const registeredRef = React23.useRef(null);
-        React23.useEffect(() => {
+        const registeredRef = React22.useRef(null);
+        React22.useEffect(() => {
           const element = ref.current;
           const registered = registeredRef.current;
           if ((registered?.element ?? null) === element && (!element || registered?.itemData === memoizedItemData)) {
@@ -19933,7 +19014,7 @@
             return next.sort(sortByDocumentPosition);
           });
         });
-        React23.useEffect(() => {
+        React22.useEffect(() => {
           return () => {
             const registered = registeredRef.current;
             registeredRef.current = null;
@@ -19950,28 +19031,28 @@
             });
           };
         }, [setCollection]);
-        return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(CollectionItemSlotImpl, { ...{ [ITEM_DATA_ATTR]: "" }, ref: composedRefs, children });
+        return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(CollectionItemSlotImpl, { ...{ [ITEM_DATA_ATTR]: "" }, ref: composedRefs, children });
       }
     );
     CollectionItemSlot.displayName = ITEM_SLOT_NAME;
     function useInitCollection() {
-      return React23.useState(new OrderedDict());
+      return React22.useState(new OrderedDict());
     }
-    __name11(useInitCollection, "useInitCollection");
+    __name5(useInitCollection, "useInitCollection");
     function useCollection3(scope) {
       const { collection } = useStatefulCollectionContext(name + "CollectionConsumer", scope);
       return collection;
     }
-    __name11(useCollection3, "useCollection");
-    function useGetCollection(scope) {
+    __name5(useCollection3, "useCollection");
+    function useGetCollection2(scope) {
       const { getCollection } = useStableCollectionContext(name + "CollectionConsumer", scope);
       return getCollection;
     }
-    __name11(useGetCollection, "useGetCollection");
+    __name5(useGetCollection2, "useGetCollection");
     const functions = {
-      createCollectionScope: createCollectionScope3,
+      createCollectionScope: createCollectionScope4,
       useCollection: useCollection3,
-      useGetCollection,
+      useGetCollection: useGetCollection2,
       useInitCollection
     };
     return [
@@ -19979,7 +19060,7 @@
       functions
     ];
   }
-  __name11(createCollection2, "createCollection");
+  __name5(createCollection2, "createCollection");
   function shallowEqual(a, b) {
     if (a === b) return true;
     if (typeof a !== "object" || typeof b !== "object") return false;
@@ -19993,11 +19074,11 @@
     }
     return true;
   }
-  __name11(shallowEqual, "shallowEqual");
+  __name5(shallowEqual, "shallowEqual");
   function isElementPreceding(a, b) {
     return !!(b.compareDocumentPosition(a) & Node.DOCUMENT_POSITION_PRECEDING);
   }
-  __name11(isElementPreceding, "isElementPreceding");
+  __name5(isElementPreceding, "isElementPreceding");
   function isInDocumentOrder(dict) {
     let previous;
     for (const element of dict.keys()) {
@@ -20011,11 +19092,11 @@
     }
     return true;
   }
-  __name11(isInDocumentOrder, "isInDocumentOrder");
+  __name5(isInDocumentOrder, "isInDocumentOrder");
   function sortByDocumentPosition(a, b) {
     return !a[1].element || !b[1].element ? 0 : isElementPreceding(a[1].element, b[1].element) ? -1 : 1;
   }
-  __name11(sortByDocumentPosition, "sortByDocumentPosition");
+  __name5(sortByDocumentPosition, "sortByDocumentPosition");
   function getChildListObserver(callback) {
     const observer = new MutationObserver((mutationsList) => {
       for (const mutation of mutationsList) {
@@ -20027,2480 +19108,256 @@
     });
     return observer;
   }
-  __name11(getChildListObserver, "getChildListObserver");
+  __name5(getChildListObserver, "getChildListObserver");
 
-  // node_modules/.pnpm/@radix-ui+react-slider@1.6._765b153b67a05696a8c1e7a0683224be/node_modules/@radix-ui/react-slider/dist/index.mjs
-  var import_jsx_runtime10 = __toESM(require_jsx_runtime(), 1);
-  var __defProp13 = Object.defineProperty;
-  var __name12 = (target, value) => __defProp13(target, "name", { value, configurable: true });
-  var Orientation = {
-    Vertical: "vertical",
-    Horizontal: "horizontal"
-  };
-  var Direction2 = {
-    LTR: "ltr",
-    RTL: "rtl"
-  };
-  var PAGE_KEYS = ["PageUp", "PageDown"];
-  var ARROW_KEYS = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
-  var BACK_KEYS = {
-    "from-left": ["Home", "PageDown", "ArrowDown", "ArrowLeft"],
-    "from-right": ["Home", "PageDown", "ArrowDown", "ArrowRight"],
-    "from-bottom": ["Home", "PageDown", "ArrowDown", "ArrowLeft"],
-    "from-top": ["Home", "PageDown", "ArrowUp", "ArrowLeft"]
-  };
-  var SLIDER_NAME = "Slider";
-  var [Collection, useCollection, createCollectionScope] = createCollection(SLIDER_NAME);
-  var [createSliderContext, createSliderScope] = createContextScope(SLIDER_NAME, [
-    createCollectionScope
-  ]);
-  var [SliderProvider, useSliderContext] = createSliderContext(SLIDER_NAME);
-  var Slider = /* @__PURE__ */ React12.forwardRef(
-    // blank line to reduce diff noise
-    /* @__PURE__ */ __name12(function Slider2(props, forwardedRef) {
-      const {
-        name,
-        min = 0,
-        max = 100,
-        step = 1,
-        orientation = Orientation.Horizontal,
-        disabled = false,
-        minStepsBetweenThumbs = 0,
-        preserveThumbOrder = false,
-        defaultValue = [min],
-        value,
-        onValueChange = /* @__PURE__ */ __name12(() => {
-        }, "onValueChange"),
-        onValueCommit = /* @__PURE__ */ __name12(() => {
-        }, "onValueCommit"),
-        inverted = false,
-        form,
-        ...sliderProps
-      } = props;
-      const thumbRefs = React12.useRef(/* @__PURE__ */ new Set());
-      const valueIndexToChangeRef = React12.useRef(0);
-      const isKeyboardInteractionRef = React12.useRef(false);
-      const [userRequestedValues, setUserRequestedValues] = React12.useState(null);
-      const isHorizontal = orientation === Orientation.Horizontal;
-      const SliderOrientation = isHorizontal ? SliderHorizontal : SliderVertical;
-      const [control, setControl] = React12.useState(null);
-      const composedRefs = useComposedRefs(forwardedRef, setControl);
-      const [values = [], setValues] = useControllableState({
-        prop: value,
-        defaultProp: defaultValue,
-        onChange: /* @__PURE__ */ __name12((value2) => {
-          const thumbs = [...thumbRefs.current];
-          thumbs[valueIndexToChangeRef.current]?.focus({
-            preventScroll: true,
-            focusVisible: isKeyboardInteractionRef.current
-          });
-          isKeyboardInteractionRef.current = false;
-          onValueChange(value2);
-        }, "onChange")
-      });
-      const valuesBeforeSlideStartRef = React12.useRef(values);
-      const initialValuesRef = React12.useRef(values);
-      React12.useEffect(() => {
-        const associatedForm = form ? control?.ownerDocument.getElementById(form) : control?.closest("form");
-        if (associatedForm instanceof HTMLFormElement) {
-          const reset = /* @__PURE__ */ __name12(() => setValues(initialValuesRef.current), "reset");
-          associatedForm.addEventListener("reset", reset);
-          return () => associatedForm.removeEventListener("reset", reset);
-        }
-      }, [control, form, setValues]);
-      function handleSlideStart(value2) {
-        const closestIndex = getClosestValueIndex(values, value2);
-        updateValues(value2, closestIndex);
+  // node_modules/.pnpm/@radix-ui+primitive@1.2.0/node_modules/@radix-ui/primitive/dist/index.mjs
+  var __defProp7 = Object.defineProperty;
+  var __name6 = (target, value) => __defProp7(target, "name", { value, configurable: true });
+  var canUseDOM = !!(typeof window !== "undefined" && window.document && window.document.createElement);
+  function composeEventHandlers(originalEventHandler, ourEventHandler, { checkForDefaultPrevented = true } = {}) {
+    return /* @__PURE__ */ __name6(function handleEvent(event) {
+      originalEventHandler?.(event);
+      if (checkForDefaultPrevented === false || !event || !event.defaultPrevented) {
+        return ourEventHandler?.(event);
       }
-      __name12(handleSlideStart, "handleSlideStart");
-      function handleSlideMove(value2) {
-        updateValues(value2, valueIndexToChangeRef.current);
-      }
-      __name12(handleSlideMove, "handleSlideMove");
-      function handleSlideEnd() {
-        const hasChanged = String(values) !== String(valuesBeforeSlideStartRef.current);
-        if (hasChanged) onValueCommit(values);
-      }
-      __name12(handleSlideEnd, "handleSlideEnd");
-      function updateValues(value2, atIndex, { commit } = { commit: false }) {
-        const decimalCount = getDecimalCount(step);
-        const snapToStep = roundValue(Math.round((value2 - min) / step) * step + min, decimalCount);
-        const nextValue = clamp(snapToStep, [min, max]);
-        const minStepsDistance = minStepsBetweenThumbs * step;
-        function getNextValues(prevValues) {
-          const constrainedValue = preserveThumbOrder ? clamp(nextValue, [
-            prevValues[atIndex - 1] === void 0 ? min : prevValues[atIndex - 1] + minStepsDistance,
-            prevValues[atIndex + 1] === void 0 ? max : prevValues[atIndex + 1] - minStepsDistance
-          ]) : nextValue;
-          const nextValues = getNextSortedValues(prevValues, constrainedValue, atIndex);
-          if (!hasMinStepsBetweenValues(nextValues, minStepsDistance)) {
-            return null;
-          }
-          return {
-            nextValues,
-            changedIndex: preserveThumbOrder ? atIndex : nextValues.indexOf(constrainedValue),
-            hasChanged: String(nextValues) !== String(prevValues)
-          };
-        }
-        __name12(getNextValues, "getNextValues");
-        const requested = getNextValues(values);
-        if (requested?.hasChanged) {
-          setUserRequestedValues(requested.nextValues);
-        }
-        setValues((prevValues = []) => {
-          const next = getNextValues(prevValues);
-          if (!next) {
-            return prevValues;
-          }
-          valueIndexToChangeRef.current = next.changedIndex;
-          if (next.hasChanged && commit) {
-            onValueCommit(next.nextValues);
-          }
-          return next.hasChanged ? next.nextValues : prevValues;
-        });
-      }
-      __name12(updateValues, "updateValues");
-      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-        SliderProvider,
-        {
-          scope: props.__scopeSlider,
-          name,
-          disabled,
-          min,
-          max,
-          valueIndexToChangeRef,
-          thumbs: thumbRefs.current,
-          values,
-          orientation,
-          form,
-          userRequestedValues,
-          children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Collection.Provider, { scope: props.__scopeSlider, children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Collection.Slot, { scope: props.__scopeSlider, children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-            SliderOrientation,
-            {
-              "aria-disabled": disabled,
-              "data-disabled": disabled ? "" : void 0,
-              ...sliderProps,
-              ref: composedRefs,
-              onPointerDown: composeEventHandlers(sliderProps.onPointerDown, () => {
-                if (!disabled) {
-                  valuesBeforeSlideStartRef.current = values;
-                  isKeyboardInteractionRef.current = false;
-                }
-              }),
-              min,
-              max,
-              inverted,
-              onSlideStart: disabled ? void 0 : handleSlideStart,
-              onSlideMove: disabled ? void 0 : handleSlideMove,
-              onSlideEnd: disabled ? void 0 : handleSlideEnd,
-              onHomeKeyDown: () => {
-                if (!disabled) {
-                  isKeyboardInteractionRef.current = true;
-                  updateValues(min, 0, { commit: true });
-                }
-              },
-              onEndKeyDown: () => {
-                if (!disabled) {
-                  isKeyboardInteractionRef.current = true;
-                  updateValues(max, values.length - 1, { commit: true });
-                }
-              },
-              onStepKeyDown: ({ event, direction: stepDirection }) => {
-                if (!disabled) {
-                  isKeyboardInteractionRef.current = true;
-                  const isPageKey = PAGE_KEYS.includes(event.key);
-                  const isSkipKey = isPageKey || event.shiftKey && ARROW_KEYS.includes(event.key);
-                  const multiplier = isSkipKey ? 10 : 1;
-                  const atIndex = valueIndexToChangeRef.current;
-                  const value2 = values[atIndex];
-                  const nextValue = getNextStepValue(value2, {
-                    min,
-                    step,
-                    direction: stepDirection,
-                    multiplier
-                  });
-                  updateValues(nextValue, atIndex, { commit: true });
-                }
-              }
-            }
-          ) }) })
-        }
-      );
-    }, "Slider")
-  );
-  var [SliderOrientationProvider, useSliderOrientationContext] = createSliderContext(SLIDER_NAME, {
-    startEdge: "left",
-    endEdge: "right",
-    size: "width",
-    direction: 1
-  });
-  var SliderHorizontal = /* @__PURE__ */ React12.forwardRef(
-    // blank line to reduce diff noise
-    /* @__PURE__ */ __name12(function SliderHorizontal2(props, forwardedRef) {
-      const {
-        min,
-        max,
-        dir,
-        inverted,
-        onSlideStart,
-        onSlideMove,
-        onSlideEnd,
-        onStepKeyDown,
-        ...sliderProps
-      } = props;
-      const [slider, setSlider] = React12.useState(null);
-      const composedRefs = useComposedRefs(forwardedRef, setSlider);
-      const rectRef = React12.useRef(void 0);
-      const direction = useDirection(dir);
-      const isDirectionLTR = direction === Direction2.LTR;
-      const isSlidingFromLeft = isDirectionLTR && !inverted || !isDirectionLTR && inverted;
-      function getValueFromPointer(pointerPosition) {
-        const rect = rectRef.current || slider.getBoundingClientRect();
-        const input = [0, rect.width];
-        const output = isSlidingFromLeft ? [min, max] : [max, min];
-        const value = linearScale(input, output);
-        rectRef.current = rect;
-        return value(pointerPosition - rect.left);
-      }
-      __name12(getValueFromPointer, "getValueFromPointer");
-      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-        SliderOrientationProvider,
-        {
-          scope: props.__scopeSlider,
-          startEdge: isSlidingFromLeft ? "left" : "right",
-          endEdge: isSlidingFromLeft ? "right" : "left",
-          direction: isSlidingFromLeft ? 1 : -1,
-          size: "width",
-          children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-            SliderImpl,
-            {
-              dir: direction,
-              "data-orientation": "horizontal",
-              ...sliderProps,
-              ref: composedRefs,
-              style: {
-                ...sliderProps.style,
-                "--radix-slider-thumb-transform": "translateX(-50%)"
-              },
-              onSlideStart: (event) => {
-                const value = getValueFromPointer(event.clientX);
-                onSlideStart?.(value);
-              },
-              onSlideMove: (event) => {
-                const value = getValueFromPointer(event.clientX);
-                onSlideMove?.(value);
-              },
-              onSlideEnd: () => {
-                rectRef.current = void 0;
-                onSlideEnd?.();
-              },
-              onStepKeyDown: (event) => {
-                const slideDirection = isSlidingFromLeft ? "from-left" : "from-right";
-                const isBackKey = BACK_KEYS[slideDirection].includes(event.key);
-                onStepKeyDown?.({ event, direction: isBackKey ? -1 : 1 });
-              }
-            }
-          )
-        }
-      );
-    }, "SliderHorizontal")
-  );
-  var SliderVertical = /* @__PURE__ */ React12.forwardRef(
-    /* @__PURE__ */ __name12(function SliderVertical2(props, forwardedRef) {
-      const {
-        min,
-        max,
-        inverted,
-        onSlideStart,
-        onSlideMove,
-        onSlideEnd,
-        onStepKeyDown,
-        ...sliderProps
-      } = props;
-      const sliderRef = React12.useRef(null);
-      const ref = useComposedRefs(forwardedRef, sliderRef);
-      const rectRef = React12.useRef(void 0);
-      const isSlidingFromBottom = !inverted;
-      function getValueFromPointer(pointerPosition) {
-        const rect = rectRef.current || sliderRef.current.getBoundingClientRect();
-        const input = [0, rect.height];
-        const output = isSlidingFromBottom ? [max, min] : [min, max];
-        const value = linearScale(input, output);
-        rectRef.current = rect;
-        return value(pointerPosition - rect.top);
-      }
-      __name12(getValueFromPointer, "getValueFromPointer");
-      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-        SliderOrientationProvider,
-        {
-          scope: props.__scopeSlider,
-          startEdge: isSlidingFromBottom ? "bottom" : "top",
-          endEdge: isSlidingFromBottom ? "top" : "bottom",
-          size: "height",
-          direction: isSlidingFromBottom ? 1 : -1,
-          children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-            SliderImpl,
-            {
-              "data-orientation": "vertical",
-              ...sliderProps,
-              ref,
-              style: {
-                ...sliderProps.style,
-                "--radix-slider-thumb-transform": "translateY(50%)"
-              },
-              onSlideStart: (event) => {
-                const value = getValueFromPointer(event.clientY);
-                onSlideStart?.(value);
-              },
-              onSlideMove: (event) => {
-                const value = getValueFromPointer(event.clientY);
-                onSlideMove?.(value);
-              },
-              onSlideEnd: () => {
-                rectRef.current = void 0;
-                onSlideEnd?.();
-              },
-              onStepKeyDown: (event) => {
-                const slideDirection = isSlidingFromBottom ? "from-bottom" : "from-top";
-                const isBackKey = BACK_KEYS[slideDirection].includes(event.key);
-                onStepKeyDown?.({ event, direction: isBackKey ? -1 : 1 });
-              }
-            }
-          )
-        }
-      );
-    }, "SliderVertical")
-  );
-  var SliderImpl = /* @__PURE__ */ React12.forwardRef(
-    /* @__PURE__ */ __name12(function SliderImpl2(props, forwardedRef) {
-      const {
-        __scopeSlider,
-        onSlideStart,
-        onSlideMove,
-        onSlideEnd,
-        onHomeKeyDown,
-        onEndKeyDown,
-        onStepKeyDown,
-        ...sliderProps
-      } = props;
-      const context = useSliderContext(SLIDER_NAME, __scopeSlider);
-      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-        Primitive.span,
-        {
-          ...sliderProps,
-          ref: forwardedRef,
-          onKeyDown: composeEventHandlers(props.onKeyDown, (event) => {
-            if (event.key === "Home") {
-              onHomeKeyDown(event);
-              event.preventDefault();
-            } else if (event.key === "End") {
-              onEndKeyDown(event);
-              event.preventDefault();
-            } else if (PAGE_KEYS.concat(ARROW_KEYS).includes(event.key)) {
-              onStepKeyDown(event);
-              event.preventDefault();
-            }
-          }),
-          onPointerDown: composeEventHandlers(props.onPointerDown, (event) => {
-            const target = event.target;
-            target.setPointerCapture(event.pointerId);
-            event.preventDefault();
-            if (context.thumbs.has(target)) {
-              target.focus({ preventScroll: true, focusVisible: false });
-            } else {
-              onSlideStart(event);
-            }
-          }),
-          onPointerMove: composeEventHandlers(props.onPointerMove, (event) => {
-            const target = event.target;
-            if (target.hasPointerCapture(event.pointerId)) onSlideMove(event);
-          }),
-          onPointerUp: composeEventHandlers(props.onPointerUp, (event) => {
-            const target = event.target;
-            if (target.hasPointerCapture(event.pointerId)) {
-              target.releasePointerCapture(event.pointerId);
-              onSlideEnd(event);
-            }
-          })
-        }
-      );
-    }, "SliderImpl")
-  );
-  var TRACK_NAME = "SliderTrack";
-  var SliderTrack = /* @__PURE__ */ React12.forwardRef(
-    /* @__PURE__ */ __name12(function SliderTrack2(props, forwardedRef) {
-      const { __scopeSlider, ...trackProps } = props;
-      const context = useSliderContext(TRACK_NAME, __scopeSlider);
-      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-        Primitive.span,
-        {
-          "data-disabled": context.disabled ? "" : void 0,
-          "data-orientation": context.orientation,
-          ...trackProps,
-          ref: forwardedRef
-        }
-      );
-    }, "SliderTrack")
-  );
-  var RANGE_NAME = "SliderRange";
-  var SliderRange = /* @__PURE__ */ React12.forwardRef(
-    /* @__PURE__ */ __name12(function SliderRange2(props, forwardedRef) {
-      const { __scopeSlider, ...rangeProps } = props;
-      const context = useSliderContext(RANGE_NAME, __scopeSlider);
-      const orientation = useSliderOrientationContext(RANGE_NAME, __scopeSlider);
-      const ref = React12.useRef(null);
-      const composedRefs = useComposedRefs(forwardedRef, ref);
-      const valuesCount = context.values.length;
-      const percentages = context.values.map(
-        (value) => convertValueToPercentage(value, context.min, context.max)
-      );
-      const offsetStart = valuesCount > 1 ? Math.min(...percentages) : 0;
-      const offsetEnd = 100 - Math.max(...percentages);
-      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-        Primitive.span,
-        {
-          "data-orientation": context.orientation,
-          "data-disabled": context.disabled ? "" : void 0,
-          ...rangeProps,
-          ref: composedRefs,
-          style: {
-            ...props.style,
-            [orientation.startEdge]: offsetStart + "%",
-            [orientation.endEdge]: offsetEnd + "%"
-          }
-        }
-      );
-    }, "SliderRange")
-  );
-  var THUMB_NAME = "SliderThumb";
-  var [SliderThumbContextProvider, useSliderThumbContext] = createSliderContext(THUMB_NAME);
-  var THUMB_PROVIDER_NAME = "SliderThumbProvider";
-  function SliderThumbProvider(props) {
-    const {
-      __scopeSlider,
-      name,
-      children,
-      // @ts-expect-error internal render prop
-      internal_do_not_use_render
-    } = props;
-    const context = useSliderContext(THUMB_PROVIDER_NAME, __scopeSlider);
-    const getItems = useCollection(__scopeSlider);
-    const [thumb, setThumb] = React12.useState(null);
-    const index = React12.useMemo(
-      () => thumb ? getItems().findIndex((item) => item.ref.current === thumb) : -1,
-      [getItems, thumb]
-    );
-    const size = useSize(thumb);
-    const isFormControl = thumb ? !!context.form || !!thumb.closest("form") : true;
-    const value = context.values[index];
-    const resolvedName = name ?? (context.name ? context.name + (context.values.length > 1 ? "[]" : "") : void 0);
-    const percent = value === void 0 ? 0 : convertValueToPercentage(value, context.min, context.max);
-    React12.useEffect(() => {
-      if (thumb) {
-        context.thumbs.add(thumb);
-        return () => {
-          context.thumbs.delete(thumb);
-        };
-      }
-    }, [thumb, context.thumbs]);
-    const thumbContext = {
-      value,
-      name: resolvedName,
-      form: context.form,
-      isFormControl,
-      index,
-      thumb,
-      onThumbChange: setThumb,
-      percent,
-      size
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SliderThumbContextProvider, { scope: __scopeSlider, ...thumbContext, children: isFunction2(internal_do_not_use_render) ? internal_do_not_use_render(thumbContext) : children });
+    }, "handleEvent");
   }
-  __name12(SliderThumbProvider, "SliderThumbProvider");
-  var THUMB_TRIGGER_NAME = "SliderThumbTrigger";
-  var SliderThumbTrigger = /* @__PURE__ */ React12.forwardRef(
-    // blank line to reduce diff noise
-    /* @__PURE__ */ __name12(function SliderThumbTrigger2(props, forwardedRef) {
-      const { __scopeSlider, ...thumbProps } = props;
-      const context = useSliderContext(THUMB_TRIGGER_NAME, __scopeSlider);
-      const orientation = useSliderOrientationContext(THUMB_TRIGGER_NAME, __scopeSlider);
-      const { index, value, percent, size, onThumbChange } = useSliderThumbContext(
-        THUMB_TRIGGER_NAME,
-        __scopeSlider
-      );
-      const composedRefs = useComposedRefs(forwardedRef, onThumbChange);
-      const label = getLabel(index, context.values.length);
-      const orientationSize = size?.[orientation.size];
-      const thumbInBoundsOffset = orientationSize ? getThumbInBoundsOffset(orientationSize, percent, orientation.direction) : 0;
-      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-        "span",
-        {
-          style: {
-            transform: "var(--radix-slider-thumb-transform)",
-            position: "absolute",
-            [orientation.startEdge]: `calc(${percent}% + ${thumbInBoundsOffset}px)`
-          },
-          children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Collection.ItemSlot, { scope: __scopeSlider, children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-            Primitive.span,
-            {
-              role: "slider",
-              "aria-label": props["aria-label"] || label,
-              "aria-valuemin": context.min,
-              "aria-valuenow": value,
-              "aria-valuemax": context.max,
-              "aria-orientation": context.orientation,
-              "data-orientation": context.orientation,
-              "data-disabled": context.disabled ? "" : void 0,
-              tabIndex: context.disabled ? void 0 : 0,
-              ...thumbProps,
-              ref: composedRefs,
-              style: value === void 0 ? { display: "none" } : props.style,
-              onFocus: composeEventHandlers(props.onFocus, () => {
-                context.valueIndexToChangeRef.current = index;
-              })
-            }
-          ) })
+  __name6(composeEventHandlers, "composeEventHandlers");
+  function getOwnerWindow(element) {
+    if (!canUseDOM) {
+      throw new Error("Cannot access window outside of the DOM");
+    }
+    return element?.ownerDocument?.defaultView ?? window;
+  }
+  __name6(getOwnerWindow, "getOwnerWindow");
+  function getOwnerDocument(element) {
+    if (!canUseDOM) {
+      throw new Error("Cannot access document outside of the DOM");
+    }
+    return element?.ownerDocument ?? document;
+  }
+  __name6(getOwnerDocument, "getOwnerDocument");
+  function getActiveElement(node, activeDescendant = false) {
+    const { activeElement } = getOwnerDocument(node);
+    if (!activeElement?.nodeName) {
+      return null;
+    }
+    if (isFrame(activeElement) && activeElement.contentDocument) {
+      return getActiveElement(activeElement.contentDocument.body, activeDescendant);
+    }
+    if (activeDescendant) {
+      const id = activeElement.getAttribute("aria-activedescendant");
+      if (id) {
+        const element = getOwnerDocument(activeElement).getElementById(id);
+        if (element) {
+          return element;
         }
-      );
-    }, "SliderThumbTrigger")
-  );
-  var SliderThumb = /* @__PURE__ */ React12.forwardRef(
-    /* @__PURE__ */ __name12(function SliderThumb2(props, forwardedRef) {
-      const { __scopeSlider, name, ...thumbProps } = props;
-      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-        SliderThumbProvider,
-        {
-          __scopeSlider,
-          name,
-          internal_do_not_use_render: ({ index, isFormControl }) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(import_jsx_runtime10.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-              SliderThumbTrigger,
-              {
-                ...thumbProps,
-                ref: forwardedRef,
-                __scopeSlider
-              }
-            ),
-            isFormControl ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-              SliderBubbleInput,
-              {
-                __scopeSlider
-              },
-              index
-            ) : null
-          ] })
+      }
+    }
+    return activeElement;
+  }
+  __name6(getActiveElement, "getActiveElement");
+  function isFrame(element) {
+    return element.tagName === "IFRAME";
+  }
+  __name6(isFrame, "isFrame");
+
+  // node_modules/.pnpm/@radix-ui+react-use-control_d278618b86c81b0639a590dbb168baee/node_modules/@radix-ui/react-use-controllable-state/dist/index.mjs
+  var React8 = __toESM(require_react(), 1);
+
+  // node_modules/.pnpm/@radix-ui+primitive@1.2.0/node_modules/@radix-ui/primitive/dist/internal/is-development.false.mjs
+  var IS_DEVELOPMENT = false;
+
+  // node_modules/.pnpm/@radix-ui+react-use-control_d278618b86c81b0639a590dbb168baee/node_modules/@radix-ui/react-use-controllable-state/dist/index.mjs
+  var React23 = __toESM(require_react(), 1);
+
+  // node_modules/.pnpm/@radix-ui+react-use-effect-_9cf9bb6c5dfb7539079d7befafe3de75/node_modules/@radix-ui/react-use-effect-event/dist/index.mjs
+  var React7 = __toESM(require_react(), 1);
+  var __defProp8 = Object.defineProperty;
+  var __name7 = (target, value) => __defProp8(target, "name", { value, configurable: true });
+  var useReactEffectEvent = React7[" useEffectEvent ".trim().toString()];
+  var useReactInsertionEffect = React7[" useInsertionEffect ".trim().toString()];
+  function useEffectEvent(callback) {
+    if (typeof useReactEffectEvent === "function") {
+      return useReactEffectEvent(callback);
+    }
+    const ref = React7.useRef(() => {
+      throw new Error("Cannot call an event handler while rendering.");
+    });
+    if (typeof useReactInsertionEffect === "function") {
+      useReactInsertionEffect(() => {
+        ref.current = callback;
+      });
+    } else {
+      useLayoutEffect2(() => {
+        ref.current = callback;
+      });
+    }
+    return React7.useMemo(() => ((...args) => ref.current?.(...args)), []);
+  }
+  __name7(useEffectEvent, "useEffectEvent");
+
+  // node_modules/.pnpm/@radix-ui+react-use-control_d278618b86c81b0639a590dbb168baee/node_modules/@radix-ui/react-use-controllable-state/dist/index.mjs
+  var __defProp9 = Object.defineProperty;
+  var __name8 = (target, value) => __defProp9(target, "name", { value, configurable: true });
+  var useInsertionEffect = React8[" useInsertionEffect ".trim().toString()] || useLayoutEffect2;
+  function useControllableState({
+    prop,
+    defaultProp,
+    onChange = /* @__PURE__ */ __name8(() => {
+    }, "onChange"),
+    caller
+  }) {
+    const [uncontrolledProp, setUncontrolledProp, onChangeRef] = useUncontrolledState({
+      defaultProp,
+      onChange
+    });
+    const isControlled = prop !== void 0;
+    const value = isControlled ? prop : uncontrolledProp;
+    if (IS_DEVELOPMENT) {
+      const isControlledRef = React8.useRef(prop !== void 0);
+      React8.useEffect(() => {
+        const wasControlled = isControlledRef.current;
+        if (wasControlled !== isControlled) {
+          const from = wasControlled ? "controlled" : "uncontrolled";
+          const to = isControlled ? "controlled" : "uncontrolled";
+          console.warn(
+            `${caller} is changing from ${from} to ${to}. Components should not switch from controlled to uncontrolled (or vice versa). Decide between using a controlled or uncontrolled value for the lifetime of the component.`
+          );
         }
-      );
-    }, "SliderThumb")
-  );
-  var BUBBLE_INPUT_NAME = "SliderBubbleInput";
-  var SliderBubbleInput = /* @__PURE__ */ React12.forwardRef(
-    // blank line to reduce diff noise
-    /* @__PURE__ */ __name12(function SliderBubbleInput2({ __scopeSlider, onInput, ...props }, forwardedRef) {
-      const { index, value, name, form } = useSliderThumbContext(BUBBLE_INPUT_NAME, __scopeSlider);
-      const { userRequestedValues } = useSliderContext(BUBBLE_INPUT_NAME, __scopeSlider);
-      const ref = React12.useRef(null);
-      const composedRefs = useComposedRefs(ref, forwardedRef);
-      const shouldStopInputPropagationRef = React12.useRef(false);
-      const prevValueRef = React12.useRef(value);
-      const handledUserRequestedValuesRef = React12.useRef(userRequestedValues);
-      const prevUserRequestedValuesRef = React12.useRef(userRequestedValues);
-      React12.useEffect(() => {
-        const input = ref.current;
-        if (!input) {
-          return;
+        isControlledRef.current = isControlled;
+      }, [isControlled, caller]);
+    }
+    const setValue = React8.useCallback(
+      (nextValue) => {
+        if (isControlled) {
+          const value2 = isFunction(nextValue) ? nextValue(prop) : nextValue;
+          if (value2 !== prop) {
+            onChangeRef.current?.(value2);
+          }
+        } else {
+          setUncontrolledProp(nextValue);
         }
-        const inputProto = window.HTMLInputElement.prototype;
-        const descriptor = Object.getOwnPropertyDescriptor(inputProto, "value");
-        const setValue = descriptor.set;
-        const prevValue = prevValueRef.current;
-        const valueChanged = prevValue !== value;
+      },
+      [isControlled, prop, setUncontrolledProp, onChangeRef]
+    );
+    return [value, setValue];
+  }
+  __name8(useControllableState, "useControllableState");
+  function useUncontrolledState({
+    defaultProp,
+    onChange
+  }) {
+    const [value, setValue] = React8.useState(defaultProp);
+    const prevValueRef = React8.useRef(value);
+    const onChangeRef = React8.useRef(onChange);
+    useInsertionEffect(() => {
+      onChangeRef.current = onChange;
+    }, [onChange]);
+    React8.useEffect(() => {
+      if (prevValueRef.current !== value) {
+        onChangeRef.current?.(value);
         prevValueRef.current = value;
-        const isUserRequestFromThisRender = userRequestedValues !== prevUserRequestedValuesRef.current;
-        prevUserRequestedValuesRef.current = userRequestedValues;
-        if (valueChanged && setValue) {
-          const hasUnhandledUserRequest = userRequestedValues !== handledUserRequestedValuesRef.current;
-          handledUserRequestedValuesRef.current = userRequestedValues;
-          const requestedValue = userRequestedValues?.[index];
-          const isUserInteraction = hasUnhandledUserRequest && (isUserRequestFromThisRender && requestedValue !== prevValue || requestedValue === value);
-          shouldStopInputPropagationRef.current = !isUserInteraction;
-          const event = new Event("input", { bubbles: true });
-          setValue.call(input, value);
-          input.dispatchEvent(event);
-          shouldStopInputPropagationRef.current = false;
-        }
-      }, [index, value, userRequestedValues]);
-      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-        Primitive.input,
-        {
-          style: { display: "none" },
-          name,
-          form,
-          ...props,
-          ref: composedRefs,
-          defaultValue: value,
-          onInput: composeEventHandlers(onInput, (event) => {
-            if (shouldStopInputPropagationRef.current) {
-              event.stopPropagation();
-            }
-          })
-        }
-      );
-    }, "SliderBubbleInput")
-  );
-  function getNextSortedValues(prevValues = [], nextValue, atIndex) {
-    const nextValues = [...prevValues];
-    nextValues[atIndex] = nextValue;
-    return nextValues.sort((a, b) => a - b);
+      }
+    }, [value, prevValueRef]);
+    return [value, setValue, onChangeRef];
   }
-  __name12(getNextSortedValues, "getNextSortedValues");
-  function convertValueToPercentage(value, min, max) {
-    const maxSteps = max - min;
-    const percentPerStep = 100 / maxSteps;
-    const percentage = percentPerStep * (value - min);
-    return clamp(percentage, [0, 100]);
-  }
-  __name12(convertValueToPercentage, "convertValueToPercentage");
-  function getLabel(index, totalValues) {
-    if (totalValues > 2) {
-      return `Value ${index + 1} of ${totalValues}`;
-    } else if (totalValues === 2) {
-      return ["Minimum", "Maximum"][index];
-    } else {
-      return void 0;
-    }
-  }
-  __name12(getLabel, "getLabel");
-  function getClosestValueIndex(values, nextValue) {
-    if (values.length === 1) return 0;
-    const distances = values.map((value) => Math.abs(value - nextValue));
-    const closestDistance = Math.min(...distances);
-    return distances.indexOf(closestDistance);
-  }
-  __name12(getClosestValueIndex, "getClosestValueIndex");
-  function getThumbInBoundsOffset(width, left, direction) {
-    const halfWidth = width / 2;
-    const halfPercent = 50;
-    const offset = linearScale([0, halfPercent], [0, halfWidth]);
-    return (halfWidth - offset(left) * direction) * direction;
-  }
-  __name12(getThumbInBoundsOffset, "getThumbInBoundsOffset");
-  function getStepsBetweenValues(values) {
-    return values.slice(0, -1).map((value, index) => values[index + 1] - value);
-  }
-  __name12(getStepsBetweenValues, "getStepsBetweenValues");
-  function hasMinStepsBetweenValues(values, minStepsBetweenValues) {
-    if (minStepsBetweenValues > 0) {
-      const stepsBetweenValues = getStepsBetweenValues(values);
-      const actualMinStepsBetweenValues = Math.min(...stepsBetweenValues);
-      return actualMinStepsBetweenValues >= minStepsBetweenValues;
-    }
-    return true;
-  }
-  __name12(hasMinStepsBetweenValues, "hasMinStepsBetweenValues");
-  function linearScale(input, output) {
-    return (value) => {
-      if (input[0] === input[1] || output[0] === output[1]) return output[0];
-      const ratio = (output[1] - output[0]) / (input[1] - input[0]);
-      return output[0] + ratio * (value - input[0]);
-    };
-  }
-  __name12(linearScale, "linearScale");
-  function getDecimalCount(value) {
-    if (!Number.isFinite(value)) return 0;
-    const str = value.toString();
-    if (str.includes("e")) {
-      const [coefficient, exponent] = str.split("e");
-      const decimalPart2 = coefficient.split(".")[1] || "";
-      const exponentNum = Number(exponent);
-      return Math.max(0, decimalPart2.length - exponentNum);
-    }
-    const decimalPart = str.split(".")[1];
-    return decimalPart ? decimalPart.length : 0;
-  }
-  __name12(getDecimalCount, "getDecimalCount");
-  function roundValue(value, decimalCount) {
-    const rounder = Math.pow(10, decimalCount);
-    return Math.round(value * rounder) / rounder;
-  }
-  __name12(roundValue, "roundValue");
-  function getNextStepValue(value, {
-    min,
-    step,
-    direction,
-    multiplier
-  }) {
-    const decimalCount = getDecimalCount(step);
-    const stepsFromMin = (value - min) / step;
-    const nearestSteps = Math.round(stepsFromMin);
-    const isAligned = roundValue(nearestSteps * step + min, decimalCount) === roundValue(value, decimalCount);
-    let nextSteps;
-    if (isAligned) {
-      nextSteps = nearestSteps + multiplier * direction;
-    } else if (direction > 0) {
-      nextSteps = Math.ceil(stepsFromMin);
-    } else {
-      nextSteps = Math.floor(stepsFromMin);
-    }
-    return roundValue(nextSteps * step + min, decimalCount);
-  }
-  __name12(getNextStepValue, "getNextStepValue");
-  function isFunction2(value) {
+  __name8(useUncontrolledState, "useUncontrolledState");
+  function isFunction(value) {
     return typeof value === "function";
   }
-  __name12(isFunction2, "isFunction");
-
-  // src/components/ui/slider.tsx
-  var import_jsx_runtime11 = __toESM(require_jsx_runtime(), 1);
-  var Slider3 = React13.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
-    Slider,
-    {
-      ref,
-      className: cn(
-        "relative flex w-full touch-none select-none items-center",
-        className
-      ),
-      ...props,
-      children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SliderTrack, { className: "relative h-1.5 w-full grow overflow-hidden rounded-full bg-slate-700", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SliderRange, { className: "absolute h-full bg-primary" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SliderThumb, { className: "block h-3.5 w-3.5 rounded-full border border-primary/50 bg-white shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 cursor-pointer" })
-      ]
-    }
-  ));
-  Slider3.displayName = Slider.displayName;
-
-  // src/components/ui/switch.tsx
-  var React15 = __toESM(require_react(), 1);
-
-  // node_modules/.pnpm/@radix-ui+react-switch@1.4._dbc6bc0388ff9f62e93d3b1b7c97be50/node_modules/@radix-ui/react-switch/dist/index.mjs
-  var React14 = __toESM(require_react(), 1);
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime(), 1);
-  var __defProp14 = Object.defineProperty;
-  var __name13 = (target, value) => __defProp14(target, "name", { value, configurable: true });
-  var SWITCH_NAME = "Switch";
-  var [createSwitchContext, createSwitchScope] = createContextScope(SWITCH_NAME);
-  var [SwitchProviderImpl, useSwitchContext] = createSwitchContext(SWITCH_NAME);
-  function SwitchProvider(props) {
-    const {
-      __scopeSwitch,
-      checked: checkedProp,
-      children,
-      defaultChecked,
-      disabled,
-      form,
-      name,
-      onCheckedChange,
-      required,
-      value = "on",
-      // @ts-expect-error
-      internal_do_not_use_render
-    } = props;
-    const [checked, setChecked] = useControllableState({
-      prop: checkedProp,
-      defaultProp: defaultChecked ?? false,
-      onChange: onCheckedChange,
-      caller: SWITCH_NAME
-    });
-    const [control, setControl] = React14.useState(null);
-    const [bubbleInput, setBubbleInput] = React14.useState(null);
-    const [userClick, setUserClick] = React14.useState(null);
-    const isFormControl = control ? !!form || !!control.closest("form") : (
-      // We set this to true by default so that events bubble to forms without JS (SSR)
-      true
-    );
-    const context = {
-      checked,
-      setChecked,
-      disabled,
-      control,
-      setControl,
-      name,
-      form,
-      value,
-      userClick,
-      onUserClick: setUserClick,
-      required,
-      defaultChecked,
-      isFormControl,
-      bubbleInput,
-      setBubbleInput
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SwitchProviderImpl, { scope: __scopeSwitch, ...context, children: isFunction3(internal_do_not_use_render) ? internal_do_not_use_render(context) : children });
-  }
-  __name13(SwitchProvider, "SwitchProvider");
-  var TRIGGER_NAME = "SwitchTrigger";
-  var SwitchTrigger = /* @__PURE__ */ React14.forwardRef(
-    /* @__PURE__ */ __name13(function SwitchTrigger2({ __scopeSwitch, onClick, ...switchProps }, forwardedRef) {
-      const {
-        control,
-        form,
-        value,
-        disabled,
-        checked,
-        required,
-        setControl,
-        setChecked,
-        onUserClick,
-        isFormControl,
-        bubbleInput
-      } = useSwitchContext(TRIGGER_NAME, __scopeSwitch);
-      const composedRefs = useComposedRefs(forwardedRef, setControl);
-      const initialCheckedStateRef = React14.useRef(checked);
-      React14.useEffect(() => {
-        const associatedForm = form ? control?.ownerDocument.getElementById(form) : control?.form;
-        if (associatedForm instanceof HTMLFormElement) {
-          const reset = /* @__PURE__ */ __name13(() => setChecked(initialCheckedStateRef.current), "reset");
-          associatedForm.addEventListener("reset", reset);
-          return () => associatedForm.removeEventListener("reset", reset);
-        }
-      }, [control, form, setChecked]);
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-        Primitive.button,
-        {
-          type: "button",
-          role: "switch",
-          "aria-checked": checked,
-          "aria-required": required,
-          "data-state": getState(checked),
-          "data-disabled": disabled ? "" : void 0,
-          disabled,
-          value,
-          ...switchProps,
-          ref: composedRefs,
-          onClick: composeEventHandlers(onClick, (event) => {
-            const hasConsumerStoppedPropagation = event.isPropagationStopped();
-            onUserClick({ requestedChecked: !checked, hasConsumerStoppedPropagation });
-            setChecked((prevChecked) => !prevChecked);
-            if (bubbleInput && isFormControl) {
-              if (!hasConsumerStoppedPropagation) {
-                event.stopPropagation();
-              }
-            }
-          })
-        }
-      );
-    }, "SwitchTrigger")
-  );
-  var Switch = /* @__PURE__ */ React14.forwardRef(
-    // blank line to reduce diff noise
-    /* @__PURE__ */ __name13(function Switch2(props, forwardedRef) {
-      const {
-        __scopeSwitch,
-        name,
-        checked,
-        defaultChecked,
-        required,
-        disabled,
-        value,
-        onCheckedChange,
-        form,
-        ...switchProps
-      } = props;
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-        SwitchProvider,
-        {
-          __scopeSwitch,
-          checked,
-          defaultChecked,
-          disabled,
-          required,
-          onCheckedChange,
-          name,
-          form,
-          value,
-          internal_do_not_use_render: ({ isFormControl }) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-              SwitchTrigger,
-              {
-                ...switchProps,
-                ref: forwardedRef,
-                __scopeSwitch
-              }
-            ),
-            isFormControl && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-              SwitchBubbleInput,
-              {
-                __scopeSwitch
-              }
-            )
-          ] })
-        }
-      );
-    }, "Switch")
-  );
-  var THUMB_NAME2 = "SwitchThumb";
-  var SwitchThumb = /* @__PURE__ */ React14.forwardRef(
-    /* @__PURE__ */ __name13(function SwitchThumb2(props, forwardedRef) {
-      const { __scopeSwitch, ...thumbProps } = props;
-      const context = useSwitchContext(THUMB_NAME2, __scopeSwitch);
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-        Primitive.span,
-        {
-          "data-state": getState(context.checked),
-          "data-disabled": context.disabled ? "" : void 0,
-          ...thumbProps,
-          ref: forwardedRef
-        }
-      );
-    }, "SwitchThumb")
-  );
-  var BUBBLE_INPUT_NAME2 = "SwitchBubbleInput";
-  var SwitchBubbleInput = /* @__PURE__ */ React14.forwardRef(
-    // blank line to reduce diff noise
-    /* @__PURE__ */ __name13(function SwitchBubbleInput2({ __scopeSwitch, onClick, ...props }, forwardedRef) {
-      const {
-        control,
-        userClick,
-        checked,
-        defaultChecked,
-        required,
-        disabled,
-        name,
-        value,
-        form,
-        bubbleInput,
-        setBubbleInput
-      } = useSwitchContext(BUBBLE_INPUT_NAME2, __scopeSwitch);
-      const composedRefs = useComposedRefs(forwardedRef, setBubbleInput);
-      const controlSize = useSize(control);
-      const shouldStopClickPropagationRef = React14.useRef(false);
-      const prevCheckedRef = React14.useRef(checked);
-      const handledUserClickRef = React14.useRef(userClick);
-      const pendingUserClickRef = React14.useRef(null);
-      React14.useEffect(() => {
-        const input = bubbleInput;
-        if (!input) return;
-        const inputProto = window.HTMLInputElement.prototype;
-        const descriptor = Object.getOwnPropertyDescriptor(
-          inputProto,
-          "checked"
-        );
-        const setChecked = descriptor.set;
-        if (!setChecked) {
-          return;
-        }
-        const checkedChanged = prevCheckedRef.current !== checked;
-        prevCheckedRef.current = checked;
-        const isNewUserClick = userClick !== null && userClick !== handledUserClickRef.current;
-        handledUserClickRef.current = userClick;
-        if (isNewUserClick) {
-          pendingUserClickRef.current = checkedChanged ? null : userClick;
-          if (checkedChanged) {
-            setChecked.call(input, checked);
-          }
-          input.dispatchEvent(
-            new Event("click", { bubbles: !userClick.hasConsumerStoppedPropagation })
+  __name8(isFunction, "isFunction");
+  var SYNC_STATE = /* @__PURE__ */ Symbol("RADIX:SYNC_STATE");
+  function useControllableStateReducer(reducer, userArgs, initialArg, init2) {
+    const { prop: controlledState, defaultProp, onChange: onChangeProp, caller } = userArgs;
+    const isControlled = controlledState !== void 0;
+    const onChange = useEffectEvent(onChangeProp);
+    if (IS_DEVELOPMENT) {
+      const isControlledRef = React23.useRef(controlledState !== void 0);
+      React23.useEffect(() => {
+        const wasControlled = isControlledRef.current;
+        if (wasControlled !== isControlled) {
+          const from = wasControlled ? "controlled" : "uncontrolled";
+          const to = isControlled ? "controlled" : "uncontrolled";
+          console.warn(
+            `${caller} is changing from ${from} to ${to}. Components should not switch from controlled to uncontrolled (or vice versa). Decide between using a controlled or uncontrolled value for the lifetime of the component.`
           );
-        } else if (checkedChanged) {
-          const pendingUserClick = pendingUserClickRef.current;
-          pendingUserClickRef.current = null;
-          const isPendingUserChange = pendingUserClick?.requestedChecked === checked;
-          shouldStopClickPropagationRef.current = true;
-          setChecked.call(input, checked);
-          input.dispatchEvent(
-            new Event("click", {
-              bubbles: !(isPendingUserChange && pendingUserClick.hasConsumerStoppedPropagation)
-            })
-          );
-          shouldStopClickPropagationRef.current = false;
         }
-      }, [bubbleInput, checked, userClick]);
-      const defaultCheckedRef = React14.useRef(checked);
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-        Primitive.input,
-        {
-          type: "checkbox",
-          "aria-hidden": true,
-          defaultChecked: defaultChecked ?? defaultCheckedRef.current,
-          required,
-          disabled,
-          name,
-          value,
-          form,
-          ...props,
-          tabIndex: -1,
-          ref: composedRefs,
-          onClick: composeEventHandlers(onClick, (event) => {
-            if (shouldStopClickPropagationRef.current) {
-              event.stopPropagation();
-            }
-          }),
-          style: {
-            ...props.style,
-            ...controlSize,
-            position: "absolute",
-            pointerEvents: "none",
-            opacity: 0,
-            margin: 0,
-            // We transform because the input is absolutely positioned but we have
-            // rendered it **after** the button. This pulls it back to sit on top
-            // of the button.
-            transform: "translateX(-100%)"
-          }
-        }
-      );
-    }, "SwitchBubbleInput")
-  );
-  function isFunction3(value) {
-    return typeof value === "function";
-  }
-  __name13(isFunction3, "isFunction");
-  function getState(checked) {
-    return checked ? "checked" : "unchecked";
-  }
-  __name13(getState, "getState");
-
-  // src/components/ui/switch.tsx
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
-  var Switch3 = React15.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
-    Switch,
-    {
-      className: cn(
-        "peer inline-flex h-4 w-7 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-slate-700",
-        className
-      ),
-      ...props,
-      ref,
-      children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
-        SwitchThumb,
-        {
-          className: cn(
-            "pointer-events-none block h-3 w-3 rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
-          )
-        }
-      )
+        isControlledRef.current = isControlled;
+      }, [isControlled, caller]);
     }
-  ));
-  Switch3.displayName = Switch.displayName;
-
-  // src/content/ui/components/HudControls.tsx
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
-  function HudControls({
-    config: config2,
-    activeTab,
-    onUpdateConfig,
-    onToggleAll,
-    onToggleTab,
-    isOrderDrawerOpen,
-    onToggleOrderDrawer
-  }) {
-    const isRunningAll = config2.running && config2.runMode === "all";
-    const isRunningTab = config2.running && config2.runMode === "tab";
-    const handleDelayChange = (vals) => {
-      const val = vals[0] ?? 1200;
-      onUpdateConfig((prev) => ({ ...prev, taskDelayMs: val }));
-    };
-    const handleFishingSwitchChange = (e) => {
-      const val = Math.max(1, Math.min(100, Number(e.target.value) || 10));
-      onUpdateConfig((prev) => ({ ...prev, fishingSwitchCount: val }));
-    };
-    const handleMoveArea = (index, direction) => {
-      onUpdateConfig((prev) => {
-        const order = [...prev.areaOrder];
-        const targetIndex = direction === "up" ? index - 1 : index + 1;
-        if (targetIndex < 0 || targetIndex >= order.length) return prev;
-        const temp = order[index];
-        const targetItem = order[targetIndex];
-        if (temp && targetItem) {
-          order[index] = targetItem;
-          order[targetIndex] = temp;
-        }
-        return { ...prev, areaOrder: order };
-      });
-    };
-    const handleToggleAreaEnabled = (id, checked) => {
-      onUpdateConfig((prev) => ({
-        ...prev,
-        areaEnabled: {
-          ...prev.areaEnabled,
-          [id]: checked
-        }
-      }));
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "space-y-2 border-b border-slate-800/80 bg-slate-900/60 p-2 text-xs", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "grid grid-cols-2 gap-1.5", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-          Button,
-          {
-            variant: isRunningAll ? "destructive" : "default",
-            size: "sm",
-            className: "w-full justify-center font-bold text-[11px] shadow-sm",
-            onClick: onToggleAll,
-            children: isRunningAll ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Square, { className: "h-3 w-3 fill-current mr-1" }),
-              "D\u1EEANG AUTO T\u1EA4T C\u1EA2"
-            ] }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Play, { className: "h-3 w-3 fill-current mr-1" }),
-              "\u25B6\uFE0F AUTO T\u1EA4T C\u1EA2 (Alt+A)"
-            ] })
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-          Button,
-          {
-            variant: isRunningTab ? "destructive" : "secondary",
-            size: "sm",
-            className: "w-full justify-center font-bold text-[11px] border border-slate-700/60 shadow-sm",
-            onClick: onToggleTab,
-            children: isRunningTab ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Square, { className: "h-3 w-3 fill-current mr-1" }),
-              "D\u1EEANG AUTO TAB"
-            ] }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Play, { className: "h-3 w-3 fill-current mr-1" }),
-              "\u{1F3AF} CH\u1EC8 AUTO ",
-              AREA_META[activeTab]?.name?.toUpperCase() || "TAB N\xC0Y"
-            ] })
-          }
-        )
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between gap-2 pt-0.5", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex-1 space-y-1", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between text-[11px] text-slate-400", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: "T\u1ED1c \u0111\u1ED9 delay m\u1ED7i l\u1EC7nh:" }),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { className: "font-mono text-emerald-400 font-semibold", children: [
-              config2.taskDelayMs,
-              " ms"
-            ] })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-            Slider3,
-            {
-              value: [config2.taskDelayMs],
-              min: 400,
-              max: 4e3,
-              step: 100,
-              onValueChange: handleDelayChange,
-              className: "w-full"
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
-          Button,
-          {
-            variant: "outline",
-            size: "xs",
-            className: `border-slate-700 text-[10px] whitespace-nowrap self-end ${isOrderDrawerOpen ? "bg-slate-800 text-emerald-400 border-emerald-500/40" : "bg-slate-900"}`,
-            onClick: onToggleOrderDrawer,
-            children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ListOrdered, { className: "h-3 w-3 mr-1" }),
-              "Th\u1EE9 t\u1EF1 khu"
-            ]
-          }
-        )
-      ] }),
-      isOrderDrawerOpen && /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "mt-1 rounded-md border border-slate-800 bg-slate-950/80 p-2 space-y-1.5", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between text-[10px] text-slate-400 font-medium border-b border-slate-800/80 pb-1", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: "Th\u1EE9 t\u1EF1 th\u1EF1c hi\u1EC7n Auto:" }),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-1", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: "\u0110\u1ED5i khu sau" }),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-              "input",
-              {
-                type: "number",
-                min: 1,
-                max: 50,
-                value: config2.fishingSwitchCount,
-                onChange: handleFishingSwitchChange,
-                className: "w-8 rounded bg-slate-900 px-1 py-0.5 text-center text-[10px] text-emerald-400 border border-slate-700 font-mono"
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: "con c\xE1" })
-          ] })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "space-y-1", children: config2.areaOrder.map((areaId, idx) => {
-          const meta = AREA_META[areaId];
-          const isEnabled = config2.areaEnabled[areaId] !== false;
-          return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
-            "div",
-            {
-              className: "flex items-center justify-between rounded bg-slate-900/90 px-2 py-1 border border-slate-800/60 text-[11px]",
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-1.5", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { className: "font-mono text-[10px] text-slate-500", children: [
-                    "#",
-                    idx + 1
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: isEnabled ? "text-slate-200" : "text-slate-500 line-through", children: meta?.name || areaId })
-                ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-1.5", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-0.5", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-                      Button,
-                      {
-                        variant: "ghost",
-                        size: "iconSm",
-                        disabled: idx === 0,
-                        className: "h-5 w-5 text-slate-400 hover:text-white",
-                        onClick: () => handleMoveArea(idx, "up"),
-                        children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ChevronUp, { className: "h-3 w-3" })
-                      }
-                    ),
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-                      Button,
-                      {
-                        variant: "ghost",
-                        size: "iconSm",
-                        disabled: idx === config2.areaOrder.length - 1,
-                        className: "h-5 w-5 text-slate-400 hover:text-white",
-                        onClick: () => handleMoveArea(idx, "down"),
-                        children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ChevronDown, { className: "h-3 w-3" })
-                      }
-                    )
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-                    Switch3,
-                    {
-                      checked: isEnabled,
-                      onCheckedChange: (checked) => handleToggleAreaEnabled(areaId, checked)
-                    }
-                  )
-                ] })
-              ]
-            },
-            areaId
-          );
-        }) })
-      ] })
-    ] });
-  }
-
-  // src/content/ui/components/FarmTabContent.tsx
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
-  function FarmTabContent({ config: config2, onUpdateConfig }) {
-    const isFarmAreaEnabled = config2.areaEnabled.farm !== false;
-    const handleToggleArea = (checked) => {
-      onUpdateConfig((prev) => ({
-        ...prev,
-        areaEnabled: {
-          ...prev.areaEnabled,
-          farm: checked
-        }
-      }));
-    };
-    const handleToggleSubEnabled = (subId, checked) => {
-      onUpdateConfig((prev) => ({
-        ...prev,
-        farmSubEnabled: {
-          ...prev.farmSubEnabled,
-          [subId]: checked
-        }
-      }));
-    };
-    const handleToggleCollapse = (subId) => {
-      onUpdateConfig((prev) => ({
-        ...prev,
-        farmSubCollapsed: {
-          ...prev.farmSubCollapsed,
-          [subId]: !prev.farmSubCollapsed[subId]
-        }
-      }));
-    };
-    const handleMoveSub = (index, direction) => {
-      onUpdateConfig((prev) => {
-        const order = [...prev.farmSubOrder];
-        const targetIndex = direction === "up" ? index - 1 : index + 1;
-        if (targetIndex < 0 || targetIndex >= order.length) return prev;
-        const temp = order[index];
-        const targetItem = order[targetIndex];
-        if (temp && targetItem) {
-          order[index] = targetItem;
-          order[targetIndex] = temp;
-        }
-        return { ...prev, farmSubOrder: order };
-      });
-    };
-    const updateField = (key, value) => {
-      onUpdateConfig((prev) => ({
-        ...prev,
-        [key]: value
-      }));
-    };
-    const renderSubCardBody = (subId) => {
-      switch (subId) {
-        case "house":
-          return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F4AC} T\u1EAFt th\xF4ng b\xE1o Loa & \u0110i\u1EC7n tho\u1EA1i" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoDismissInterrupts),
-                  onCheckedChange: (c) => updateField("autoDismissInterrupts", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F373} T\u1EF1 n\u1EA5u m\xF3n \u0103n trong B\u1EBFp" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoCook),
-                  onCheckedChange: (c) => updateField("autoCook", c)
-                }
-              )
-            ] }),
-            config2.autoCook && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "ml-2 pl-2 border-l border-slate-700/60 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-slate-400", children: "M\xF3n \u01B0u ti\xEAn:" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
-                "select",
-                {
-                  value: config2.preferDish,
-                  onChange: (e) => updateField("preferDish", e.target.value),
-                  className: "rounded bg-slate-800 px-2 py-0.5 text-slate-200 border border-slate-700 text-xs",
-                  children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "auto", children: "\u2728 T\u1EF1 ch\u1ECDn m\xF3n \u0111\u1EE7 nguy\xEAn li\u1EC7u" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "comTam", children: "\u{1F35B} C\u01A1m t\u1EA5m \u1ED1p la (No l\xE2u)" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "eggBread", children: "\u{1F96A} B\xE1nh m\xEC \u1ED1p la (T\u1ED1c \u0111\u1ED9)" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "radishSoup", children: "\u{1F372} Canh c\u1EE7 c\u1EA3i" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "carrotJuice", children: "\u{1F9C3} N\u01B0\u1EDBc \xE9p c\xE0 r\u1ED1t" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "grilledCorn", children: "\u{1F33D} B\u1EAFp n\u01B0\u1EDBng m\u1EE1 h\xE0nh" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "boiledEgg", children: "\u{1F95A} Tr\u1EE9ng lu\u1ED9c" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "cornCake", children: "\u{1F96E} B\xE1nh b\u1EAFp n\u01B0\u1EDBng" })
-                  ]
-                }
-              )
-            ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F372} T\u1EF1 \u0103n khi \u0110\xF3i" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoRecoverHunger),
-                  onCheckedChange: (c) => updateField("autoRecoverHunger", c)
-                }
-              )
-            ] }),
-            config2.autoRecoverHunger && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "ml-2 pl-2 border-l border-slate-700/60 space-y-1.5 text-[11px]", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-slate-400", children: "\u0102n khi \u0110\xF3i < (%):" }),
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                  "input",
-                  {
-                    type: "number",
-                    min: 10,
-                    max: 90,
-                    step: 5,
-                    value: config2.hungerThreshold,
-                    onChange: (e) => updateField("hungerThreshold", Number(e.target.value)),
-                    className: "w-14 rounded bg-slate-800 px-1 py-0.5 text-center text-slate-200 border border-slate-700"
-                  }
-                )
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-slate-400", children: "Ngu\u1ED3n \u0103n:" }),
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
-                  "select",
-                  {
-                    value: config2.foodSource,
-                    onChange: (e) => updateField("foodSource", e.target.value),
-                    className: "rounded bg-slate-800 px-2 py-0.5 text-slate-200 border border-slate-700 text-xs",
-                    children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "kitchen_first", children: "\u{1F372} \u01AFu ti\xEAn B\u1EBFp, thi\u1EBFu mua Ti\u1EC7m" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "kitchen_only", children: "\u{1F3E1} Ch\u1EC9 \u0103n m\xF3n B\u1EBFp / Kho" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "shop_only", children: "\u{1F956} Ch\u1EC9 mua Ti\u1EC7m b\xE1nh m\xEC" })
-                    ]
-                  }
-                )
-              ] })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F964} T\u1EF1 u\u1ED1ng khi Kh\xE1t" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoRecoverThirst),
-                  onCheckedChange: (c) => updateField("autoRecoverThirst", c)
-                }
-              )
-            ] }),
-            config2.autoRecoverThirst && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "ml-2 pl-2 border-l border-slate-700/60 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-slate-400", children: "U\u1ED1ng khi Kh\xE1t < (%):" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                "input",
-                {
-                  type: "number",
-                  min: 10,
-                  max: 90,
-                  step: 5,
-                  value: config2.thirstThreshold,
-                  onChange: (e) => updateField("thirstThreshold", Number(e.target.value)),
-                  className: "w-14 rounded bg-slate-800 px-1 py-0.5 text-center text-slate-200 border border-slate-700"
-                }
-              )
-            ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u2615 T\u1EF1 u\u1ED1ng C\xE0 ph\xEA s\xE1ng (+50% t\u1ED1c \u0111\u1ED9 ch\u1EA1y)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoMorningCoffee),
-                  onCheckedChange: (c) => updateField("autoMorningCoffee", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F50B} T\u1EF1 s\u1EA1c \u0111i\u1EC7n cho Xe m\xE1y \u0111i\u1EC7n EV" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoChargeVehicle),
-                  onCheckedChange: (c) => updateField("autoChargeVehicle", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F634} T\u1EF1 v\u1EC1 nh\xE0 ng\u1EE7 khi h\u1EBFt ng\xE0y (> 22:00)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoSleep),
-                  onCheckedChange: (c) => updateField("autoSleep", c)
-                }
-              )
-            ] })
-          ] });
-        case "crops":
-          return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F33E} T\u1EF1 thu ho\u1EA1ch c\xE2y ch\xEDn" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoHarvest),
-                  onCheckedChange: (c) => updateField("autoHarvest", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F331} T\u1EF1 gieo h\u1EA1t gi\u1ED1ng v\xE0o \u0111\u1EA5t tr\u1ED1ng" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoPlant),
-                  onCheckedChange: (c) => updateField("autoPlant", c)
-                }
-              )
-            ] }),
-            config2.autoPlant && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "ml-2 pl-2 border-l border-slate-700/60 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-slate-400", children: "Lo\u1EA1i h\u1EA1t gieo:" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
-                "select",
-                {
-                  value: config2.preferSeed,
-                  onChange: (e) => updateField("preferSeed", e.target.value),
-                  className: "rounded bg-slate-800 px-2 py-0.5 text-slate-200 border border-slate-700 text-xs",
-                  children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "auto", children: "\u2728 T\u1EF1 ch\u1ECDn h\u1EA1t trong t\xFAi" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "radish", children: "\u{1F331} C\u1EE7 c\u1EA3i tr\u1EAFng (Nhanh nh\u1EA5t)" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "carrot", children: "\u{1F955} C\xE0 r\u1ED1t (Kinh t\u1EBF cao)" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "corn", children: "\u{1F33D} B\u1EAFp ng\xF4" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "rice", children: "\u{1F33E} L\xFAa g\u1EA1o" })
-                  ]
-                }
-              )
-            ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F4A7} T\u1EF1 t\u01B0\u1EDBi n\u01B0\u1EDBc khi \u0111\u1EA5t kh\xF4" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoWater),
-                  onCheckedChange: (c) => updateField("autoWater", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F41B} T\u1EF1 b\u1EAFt s\xE2u khi c\xE2y b\u1ECB s\xE2u" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoPesticide),
-                  onCheckedChange: (c) => updateField("autoPesticide", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F9EA} T\u1EF1 b\xF3n ph\xE2n k\xEDch th\xEDch l\u1EDBn" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoFertilize),
-                  onCheckedChange: (c) => updateField("autoFertilize", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F3E1} T\u1EF1 m\u1EDF r\u1ED9ng \u0111\u1EA5t tr\u1ED3ng m\u1EDBi" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoBuyPlots),
-                  onCheckedChange: (c) => updateField("autoBuyPlots", c)
-                }
-              )
-            ] })
-          ] });
-        case "pet":
-          return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F9B4} Cho G\u1EA5u \u0103n x\u01B0\u01A1ng g\u1EB7m" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.petAutoFeed),
-                  onCheckedChange: (c) => updateField("petAutoFeed", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F6BF} T\u1EAFm r\u1EEDa cho G\u1EA5u" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.petAutoBath),
-                  onCheckedChange: (c) => updateField("petAutoBath", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F496} C\u01B0ng n\u1EF1ng G\u1EA5u" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.petAutoCuddle),
-                  onCheckedChange: (c) => updateField("petAutoCuddle", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F483} T\u1EADp xi\u1EBFc / Nh\u1EA3y m\xFAa" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.petAutoTrick),
-                  onCheckedChange: (c) => updateField("petAutoTrick", c)
-                }
-              )
-            ] })
-          ] });
-        case "barn":
-          return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "text-[11px] font-semibold text-emerald-400 border-b border-slate-800 pb-0.5", children: "\u{1F403} Chu\u1ED3ng Tr\xE2u \u1ED4i" }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F33E} Cho Tr\xE2u \u0103n r\u01A1m" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.barnAutoFeedBuffalo),
-                  onCheckedChange: (c) => updateField("barnAutoFeedBuffalo", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F6BF} T\u1EAFm b\xF9n cho Tr\xE2u" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.barnAutoBathBuffalo),
-                  onCheckedChange: (c) => updateField("barnAutoBathBuffalo", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F69C} Cho Anh T\xE2m m\u01B0\u1EE3n tr\xE2u \u0111i k\xE9o" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.barnAutoLendBuffalo),
-                  onCheckedChange: (c) => updateField("barnAutoLendBuffalo", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "text-[11px] font-semibold text-emerald-400 border-b border-slate-800 pb-0.5 pt-2", children: "\u{1F404} Chu\u1ED3ng B\xF2 S\u1EEFa" }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F33F} Cho B\xF2 s\u1EEFa \u0103n c\u1ECF t\u01B0\u01A1i" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.barnAutoFeedCows),
-                  onCheckedChange: (c) => updateField("barnAutoFeedCows", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F95B} V\u1EAFt s\u1EEFa & B\xE1n s\u1EEFa t\u01B0\u01A1i" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.barnAutoSellMilk),
-                  onCheckedChange: (c) => updateField("barnAutoSellMilk", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F48A} Ch\u1EEFa b\u1EC7nh cho B\xF2 khi \u1ED1m" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.barnAutoCureCows),
-                  onCheckedChange: (c) => updateField("barnAutoCureCows", c)
-                }
-              )
-            ] })
-          ] });
-        case "coop":
-          return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F95A} Nh\u1EB7t tr\u1EE9ng g\xE0 trong \u1ED5" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.coopAutoCollectEggs),
-                  onCheckedChange: (c) => updateField("coopAutoCollectEggs", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F425} T\u1EF1 mua th\xEAm g\xE0 con khi chu\u1ED3ng tr\u1ED1ng" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.coopAutoBuyChick),
-                  onCheckedChange: (c) => updateField("coopAutoBuyChick", c)
-                }
-              )
-            ] })
-          ] });
-        case "pond":
-          return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F35E} R\u1EA3i c\xE1m nu\xF4i c\xE1" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.pondAutoFeed),
-                  onCheckedChange: (c) => updateField("pondAutoFeed", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F578}\uFE0F K\xE9o l\u01B0\u1EDBi b\u1EAFt c\xE1 l\u1EDBn" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.pondAutoNet),
-                  onCheckedChange: (c) => updateField("pondAutoNet", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F41F} Mua th\u1EA3 c\xE1 gi\u1ED1ng m\u1EDBi khi ao tr\u1ED1ng" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.pondAutoStock),
-                  onCheckedChange: (c) => updateField("pondAutoStock", c)
-                }
-              )
-            ] })
-          ] });
-        case "market":
-          return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F4E6} Giao \u0111\u01A1n h\xE0ng Ch\u1ECB Na (T\u1EA1p ho\xE1)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoDeliverOrder),
-                  onCheckedChange: (c) => updateField("autoDeliverOrder", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F3D8}\uFE0F Giao vi\u1EC7c B\u1EA3ng tin L\xE0ng" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoVillageBoard),
-                  onCheckedChange: (c) => updateField("autoVillageBoard", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F4C8} B\xE1n n\xF4ng s\u1EA3n ch\u1EA1y theo Trend Gi\xE1" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoSellTrend),
-                  onCheckedChange: (c) => updateField("autoSellTrend", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F33E} B\xE1n n\xF4ng s\u1EA3n d\u01B0 trong kho" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoSellProduce),
-                  onCheckedChange: (c) => updateField("autoSellProduce", c)
-                }
-              )
-            ] })
-          ] });
-        case "dibay":
-          return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F437} B\u1ECF heo ti\u1EBFt ki\u1EC7m D\xEC B\u1EA3y" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoFeedPiggy),
-                  onCheckedChange: (c) => updateField("autoFeedPiggy", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F528} T\u1EF1 \u0111\u1EADp heo khi \u0111\u1EA7y" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoBreakPiggy),
-                  onCheckedChange: (c) => updateField("autoBreakPiggy", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F3E6} T\u1EF1 g\u1EEDi s\u1ED5 ti\u1EBFt ki\u1EC7m khi d\u01B0 ti\u1EC1n" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoSavings),
-                  onCheckedChange: (c) => updateField("autoSavings", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "\u{1F389} Nh\u1EADn th\u01B0\u1EDFng S\u1ED5 tay & Nhi\u1EC7m v\u1EE5 ng\xE0y" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoClaimQuests),
-                  onCheckedChange: (c) => updateField("autoClaimQuests", c)
-                }
-              )
-            ] })
-          ] });
-        default:
-          return null;
-      }
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "space-y-2 text-xs", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between rounded-md bg-emerald-950/40 border border-emerald-500/30 px-3 py-2 text-emerald-300", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F33E} Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c N\xF4ng Tr\u1EA1i" }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Switch3, { checked: isFarmAreaEnabled, onCheckedChange: handleToggleArea })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "space-y-1.5 pt-0.5", children: config2.farmSubOrder.map((subId, idx) => {
-        const meta = SUBAREA_META[subId];
-        const isCollapsed = Boolean(config2.farmSubCollapsed[subId]);
-        const isEnabled = config2.farmSubEnabled[subId] !== false;
-        return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
-          "div",
-          {
-            className: `rounded-lg border bg-slate-900/80 transition-colors ${isEnabled ? "border-slate-800" : "border-slate-800/40 opacity-60"}`,
-            children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
-                "div",
-                {
-                  className: "flex items-center justify-between px-2.5 py-1.5 cursor-pointer select-none hover:bg-slate-800/40 rounded-t-lg",
-                  onClick: () => handleToggleCollapse(subId),
-                  children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center gap-1.5", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-slate-400", children: isCollapsed ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ChevronRight, { className: "h-3.5 w-3.5" }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ChevronDown, { className: "h-3.5 w-3.5" }) }),
-                      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "font-semibold text-xs text-slate-200", children: meta?.name || subId })
-                    ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center gap-1", onClick: (e) => e.stopPropagation(), children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center gap-0.5", children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                          Button,
-                          {
-                            variant: "ghost",
-                            size: "iconSm",
-                            disabled: idx === 0,
-                            className: "h-5 w-5 text-slate-400 hover:text-white",
-                            onClick: () => handleMoveSub(idx, "up"),
-                            children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ChevronUp, { className: "h-3 w-3" })
-                          }
-                        ),
-                        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                          Button,
-                          {
-                            variant: "ghost",
-                            size: "iconSm",
-                            disabled: idx === config2.farmSubOrder.length - 1,
-                            className: "h-5 w-5 text-slate-400 hover:text-white",
-                            onClick: () => handleMoveSub(idx, "down"),
-                            children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ChevronDown, { className: "h-3 w-3" })
-                          }
-                        )
-                      ] }),
-                      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                        Switch3,
-                        {
-                          checked: isEnabled,
-                          onCheckedChange: (checked) => handleToggleSubEnabled(subId, checked)
-                        }
-                      )
-                    ] })
-                  ]
-                }
-              ),
-              !isCollapsed && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "border-t border-slate-800/60 p-2.5 bg-slate-950/40 rounded-b-lg", children: renderSubCardBody(subId) })
-            ]
-          },
-          subId
-        );
-      }) })
-    ] });
-  }
-
-  // src/content/ui/components/WharfTabContent.tsx
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime(), 1);
-  function WharfTabContent({ config: config2, onUpdateConfig }) {
-    const isWharfAreaEnabled = config2.areaEnabled.benDo !== false;
-    const handleToggleArea = (checked) => {
-      onUpdateConfig((prev) => ({
-        ...prev,
-        areaEnabled: {
-          ...prev.areaEnabled,
-          benDo: checked
-        }
-      }));
-    };
-    const updateField = (key, value) => {
-      onUpdateConfig((prev) => ({
-        ...prev,
-        [key]: value
-      }));
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "space-y-2 text-xs", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex items-center justify-between rounded-md bg-blue-950/40 border border-blue-500/30 px-3 py-2 text-blue-300", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F6F6} Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c B\u1EBFn \u0110\xF2" }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Switch3, { checked: isWharfAreaEnabled, onCheckedChange: handleToggleArea })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "rounded-lg border border-slate-800 bg-slate-900/80 p-2.5 space-y-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "font-semibold text-xs text-slate-200 border-b border-slate-800 pb-1 flex items-center justify-between", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: "\u{1F3A3} V\u1ECB Tr\xED & Thao T\xE1c C\xE2u B\u1EBFn \u0110\xF2" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { className: "text-[11px] text-slate-400 italic", children: "\u2728 T\u1EF1 nh\u1EADn di\u1EC7n phao ch\xECm h\u1EB3n m\u1EDBi gi\u1EADt v\xE0 t\u1EF1 gh\xECm c\u1EA7n ng\u01B0\u1EE3c h\u01B0\u1EDBng c\xE1 ch\u1EA1y." }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: "\u{1F4CD} T\u1EF1 \u0111i b\u1ED9 ra v\u1ECB tr\xED ng\u1ED3i c\xE2u" }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
-            Switch3,
-            {
-              checked: Boolean(config2.benAutoSpot),
-              onCheckedChange: (c) => updateField("benAutoSpot", c)
-            }
-          )
-        ] }),
-        config2.benAutoSpot && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "ml-2 pl-2 border-l border-slate-700/60 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "text-slate-400", children: "V\u1ECB tr\xED ng\u1ED3i c\xE2u:" }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
-            "select",
-            {
-              value: config2.benSpot,
-              onChange: (e) => updateField("benSpot", e.target.value),
-              className: "rounded bg-slate-800 px-2 py-0.5 text-slate-200 border border-slate-700 text-xs",
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("option", { value: "dock", children: "\u{1F309} C\u1EA7u t\xE0u ch\xEDnh" }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("option", { value: "bamboo", children: "\u{1F38B} C\u1EA7u tre" }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("option", { value: "bank", children: "\u{1F33F} B\u1EDD s\xF4ng" })
-              ]
-            }
-          )
-        ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: "\u2B50 T\u1EF1 b\u1EA5m Gi\u1EEF l\u1EA1i c\xE1 L\u1EA1 / C\u1EA7u v\u1ED3ng / Th\u1EA7n tho\u1EA1i" }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
-            Switch3,
-            {
-              checked: Boolean(config2.benAutoKeepRare),
-              onCheckedChange: (c) => updateField("benAutoKeepRare", c)
-            }
-          )
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "rounded-lg border border-slate-800 bg-slate-900/80 p-2.5 space-y-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "font-semibold text-xs text-slate-200 border-b border-slate-800 pb-1", children: "\u{1FAB1} M\u1ED3i C\xE2u, B\xE1n C\xE1 & H\u1ED3i S\u1EE9c B\u1EBFn \u0110\xF2" }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: "\u{1FAB1} T\u1EF1 \u0111i mua m\u1ED3i Ch\xFA \u0110\u1EF1c khi h\u1EBFt m\u1ED3i" }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
-            Switch3,
-            {
-              checked: Boolean(config2.benAutoBuyBait),
-              onCheckedChange: (c) => updateField("benAutoBuyBait", c)
-            }
-          )
-        ] }),
-        config2.benAutoBuyBait && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "ml-2 pl-2 border-l border-slate-700/60 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "text-slate-400", children: "Lo\u1EA1i m\u1ED3i \u01B0u ti\xEAn:" }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
-            "select",
-            {
-              value: config2.benPreferBait,
-              onChange: (e) => updateField("benPreferBait", e.target.value),
-              className: "rounded bg-slate-800 px-2 py-0.5 text-slate-200 border border-slate-700 text-xs",
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("option", { value: "moi60", children: "\u{1FAB1} Thau 60 m\u1ED3i (40 v\u1ECF s\xF2)" }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("option", { value: "moi150", children: "\u{1FAB1} Th\xF9ng 150 m\u1ED3i (90 v\u1ECF s\xF2)" }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("option", { value: "moi20", children: "\u{1FAB1} H\u1ED9p 20 m\u1ED3i (15 v\u1ECF s\xF2)" }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("option", { value: "xinMoi", children: "\u{1F932} Xin 10 m\u1ED3i mi\u1EC5n ph\xED" })
-              ]
-            }
-          )
-        ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: "\u{1F41F} T\u1EF1 \u0111i b\xE1n c\xE1 t\u1EA1i V\u1EF1a Anh T\u01B0" }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
-            Switch3,
-            {
-              checked: Boolean(config2.benAutoSell),
-              onCheckedChange: (c) => updateField("benAutoSell", c)
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: "\u{1F487} T\u1EF1 g\u1ED9i \u0111\u1EA7u th\u01B0 gi\xE3n t\u1EA1i Ti\u1EC7m B\u1EBFn \u0111\xF2" }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
-            Switch3,
-            {
-              checked: Boolean(config2.benAutoGoiDau),
-              onCheckedChange: (c) => updateField("benAutoGoiDau", c)
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: "\u{1F964} T\u1EF1 h\u1ED3i ph\u1EE5c th\u1EC3 l\u1EF1c b\u1EB1ng \u0111\u1ED3 \u0103n qu\xE1n" }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
-            Switch3,
-            {
-              checked: Boolean(config2.benAutoRecoverStamina),
-              onCheckedChange: (c) => updateField("benAutoRecoverStamina", c)
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: "\u{1F340} T\u1EF1 mua n\u01B0\u1EDBc may m\u1EAFn (+May m\u1EAFn c\xE2u c\xE1)" }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
-            Switch3,
-            {
-              checked: Boolean(config2.benAutoLuckDrink),
-              onCheckedChange: (c) => updateField("benAutoLuckDrink", c)
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: "\u{1F3EE} Th\u1EA3 \u0111\xE8n hoa \u0111\u0103ng c\u1EA7u may" }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
-            Switch3,
-            {
-              checked: Boolean(config2.benAutoLantern),
-              onCheckedChange: (c) => updateField("benAutoLantern", c)
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: "\u{1F39F}\uFE0F Mua v\xE9 s\u1ED1 c\xE0o B\u1EBFn \u0111\xF2" }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
-            Switch3,
-            {
-              checked: Boolean(config2.benAutoLotto),
-              onCheckedChange: (c) => updateField("benAutoLotto", c)
-            }
-          )
-        ] })
-      ] })
-    ] });
-  }
-
-  // src/content/ui/components/SeaTabContent.tsx
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
-  function SeaTabContent({ config: config2, onUpdateConfig }) {
-    const isSeaAreaEnabled = config2.areaEnabled.sea !== false;
-    const handleToggleArea = (checked) => {
-      onUpdateConfig((prev) => ({
-        ...prev,
-        areaEnabled: {
-          ...prev.areaEnabled,
-          sea: checked
-        }
-      }));
-    };
-    const updateField = (key, value) => {
-      onUpdateConfig((prev) => ({
-        ...prev,
-        [key]: value
-      }));
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "space-y-2 text-xs", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "flex items-center justify-between rounded-md bg-cyan-950/40 border border-cyan-500/30 px-3 py-2 text-cyan-300", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F3D6}\uFE0F Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c Bi\u1EC3n" }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Switch3, { checked: isSeaAreaEnabled, onCheckedChange: handleToggleArea })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "rounded-lg border border-slate-800 bg-slate-900/80 p-2.5 space-y-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "font-semibold text-xs text-slate-200 border-b border-slate-800 pb-1", children: "\u{1F30A} V\u1ECB Tr\xED & Thao T\xE1c C\xE2u \u1EDE Bi\u1EC3n" }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "text-[11px] text-slate-400 italic", children: "\u2728 T\u1EF1 nh\u1EADn bi\u1EBFt c\xE1 c\u1EAFn c\xE2u \u0111\u1EC3 gi\u1EADt, t\u1EF1 gh\xECm c\u1EA7n theo h\u01B0\u1EDBng c\xE1 v\xE0 c\u1EA5t c\xE1 v\xE0o gi\u1ECF." }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: "\u{1F4CD} T\u1EF1 \u0111i b\u1ED9 ra v\u1ECB tr\xED ng\u1ED3i c\xE2u" }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
-            Switch3,
-            {
-              checked: Boolean(config2.seaAutoSpot),
-              onCheckedChange: (c) => updateField("seaAutoSpot", c)
-            }
-          )
-        ] }),
-        config2.seaAutoSpot && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "ml-2 pl-2 border-l border-slate-700/60 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "text-slate-400", children: "V\u1ECB tr\xED c\xE2u \u1EDF Bi\u1EC3n:" }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
-            "select",
-            {
-              value: config2.seaSpot,
-              onChange: (e) => updateField("seaSpot", e.target.value),
-              className: "rounded bg-slate-800 px-2 py-0.5 text-slate-200 border border-slate-700 text-xs",
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("option", { value: "pier", children: "\u{1F309} C\u1EA7u t\xE0u" }),
-                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("option", { value: "rocks", children: "\u{1FAA8} B\xE3i \u0111\xE1" }),
-                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("option", { value: "beach", children: "\u{1F3D6}\uFE0F M\xE9p b\xE3i c\xE1t" })
-              ]
-            }
-          )
-        ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: "\u{1F4D6} T\u1EF1 nh\u1EADn th\u01B0\u1EDFng S\u1ED5 c\xE1 B\xE1ch khoa \xD4ng T\u01B0" }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
-            Switch3,
-            {
-              checked: Boolean(config2.seaAutoClaimDex),
-              onCheckedChange: (c) => updateField("seaAutoClaimDex", c)
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: "\u{1F359} T\u1EF1 \u0103n u\u1ED1ng h\u1ED3i ph\u1EE5c \u0110\xF3i Kh\xE1t khi c\xE2u Bi\u1EC3n" }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
-            Switch3,
-            {
-              checked: Boolean(config2.seaAutoEat),
-              onCheckedChange: (c) => updateField("seaAutoEat", c)
-            }
-          )
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "rounded-lg border border-slate-800 bg-slate-900/80 p-2.5 space-y-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "font-semibold text-xs text-slate-200 border-b border-slate-800 pb-1", children: "\u{1F6D6} Ch\xF2i \xD4ng T\u01B0 (Mua M\u1ED3i & B\xE1n C\xE1)" }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: "\u{1F990} T\u1EF1 mua m\u1ED3i c\xE2u khi h\u1EBFt m\u1ED3i" }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
-            Switch3,
-            {
-              checked: Boolean(config2.seaAutoBuyBait),
-              onCheckedChange: (c) => updateField("seaAutoBuyBait", c)
-            }
-          )
-        ] }),
-        config2.seaAutoBuyBait && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "ml-2 pl-2 border-l border-slate-700/60 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "text-slate-400", children: "Lo\u1EA1i m\u1ED3i \u01B0u ti\xEAn:" }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
-            "select",
-            {
-              value: config2.seaPreferBait,
-              onChange: (e) => updateField("seaPreferBait", e.target.value),
-              className: "rounded bg-slate-800 px-2 py-0.5 text-slate-200 border border-slate-700 text-xs",
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("option", { value: "worm", children: "\u{1FAB1} M\u1ED3i Giun / Tr\xF9n (C\xE2u th\u01B0\u1EDDng)" }),
-                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("option", { value: "shrimp", children: "\u{1F990} M\u1ED3i T\xE9p bi\u1EC3n" })
-              ]
-            }
-          )
-        ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { className: "flex items-center justify-between text-slate-300", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: "\u{1F4B0} T\u1EF1 b\xE1n h\u1EBFt c\xE1 trong gi\u1ECF cho \xD4ng T\u01B0 (2 b\u01B0\u1EDBc)" }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
-            Switch3,
-            {
-              checked: Boolean(config2.seaAutoSell),
-              onCheckedChange: (c) => updateField("seaAutoSell", c)
-            }
-          )
-        ] })
-      ] })
-    ] });
-  }
-
-  // src/content/ui/components/CityTabContent.tsx
-  var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
-  function CityTabContent({ config: config2, onUpdateConfig }) {
-    const isCityAreaEnabled = config2.areaEnabled.city !== false;
-    const handleToggleArea = (checked) => {
-      onUpdateConfig((prev) => ({
-        ...prev,
-        areaEnabled: {
-          ...prev.areaEnabled,
-          city: checked
-        }
-      }));
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "space-y-2 text-xs", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center justify-between rounded-md bg-purple-950/40 border border-purple-500/30 px-3 py-2 text-purple-300", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F3D9}\uFE0F Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c Th\xE0nh Ph\u1ED1" }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Switch3, { checked: isCityAreaEnabled, onCheckedChange: handleToggleArea })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex flex-col items-center justify-center rounded-lg border border-slate-800 bg-slate-900/60 p-6 text-center space-y-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "flex h-10 w-10 items-center justify-center rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Construction, { className: "h-5 w-5" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "font-semibold text-xs text-slate-200", children: "Khu V\u1EF1c Th\xE0nh Ph\u1ED1 & H\u1ED9i Ch\u1EE3 X\xF3m Vui" }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "text-[11px] text-slate-400 max-w-[260px] leading-relaxed", children: "T\xEDnh n\u0103ng t\u1EF1 \u0111\u1ED9ng cho Khu v\u1EF1c Th\xE0nh Ph\u1ED1 & H\u1ED9i Ch\u1EE3 (Xe lam, Mini-game C\xE2u V\u1ECBt) \u0111ang \u0111\u01B0\u1EE3c ph\xE1t tri\u1EC3n v\xE0 s\u1EBD s\u1EDBm ra m\u1EAFt \u1EDF b\u1EA3n c\u1EADp nh\u1EADt ti\u1EBFp theo!" })
-      ] })
-    ] });
-  }
-
-  // src/components/ui/tabs.tsx
-  var React26 = __toESM(require_react(), 1);
-
-  // node_modules/.pnpm/@radix-ui+react-tabs@1.2.1__519fe3e24f3d946c91e5ee8267015a1e/node_modules/@radix-ui/react-tabs/dist/index.mjs
-  var React21 = __toESM(require_react(), 1);
-
-  // node_modules/.pnpm/@radix-ui+react-roving-focu_bed290ae4c554285fceef8952991064b/node_modules/@radix-ui/react-roving-focus/dist/index.mjs
-  var React19 = __toESM(require_react(), 1);
-
-  // node_modules/.pnpm/@radix-ui+react-id@1.1.4_@types+react@19.3.0_react@19.3.1/node_modules/@radix-ui/react-id/dist/index.mjs
-  var React16 = __toESM(require_react(), 1);
-  var __defProp15 = Object.defineProperty;
-  var __name14 = (target, value) => __defProp15(target, "name", { value, configurable: true });
-  var useReactId = React16[" useId ".trim().toString()] || (() => void 0);
-  var count = 0;
-  function useId(deterministicId) {
-    const [id, setId] = React16.useState(useReactId());
-    useLayoutEffect2(() => {
-      if (!deterministicId) setId((reactId) => reactId ?? String(count++));
-    }, [deterministicId]);
-    return deterministicId || (id ? `radix-${id}` : "");
-  }
-  __name14(useId, "useId");
-
-  // node_modules/.pnpm/@radix-ui+react-use-callbac_69a3fb791ef61c6e6ef64d5483eb0094/node_modules/@radix-ui/react-use-callback-ref/dist/index.mjs
-  var React17 = __toESM(require_react(), 1);
-  var __defProp16 = Object.defineProperty;
-  var __name15 = (target, value) => __defProp16(target, "name", { value, configurable: true });
-  var useReactInsertionEffect2 = React17[" useInsertionEffect ".trim().toString()];
-  function useCallbackRef(callback) {
-    const callbackRef = React17.useRef(callback);
-    if (typeof useReactInsertionEffect2 === "function") {
-      useReactInsertionEffect2(() => {
-        callbackRef.current = callback;
-      });
-    } else {
-      useLayoutEffect2(() => {
-        callbackRef.current = callback;
-      });
+    const args = [{ ...initialArg, state: defaultProp }];
+    if (init2) {
+      args.push(init2);
     }
-    return React17.useMemo(() => ((...args) => callbackRef.current?.(...args)), []);
-  }
-  __name15(useCallbackRef, "useCallbackRef");
-
-  // node_modules/.pnpm/@radix-ui+react-use-is-hydr_d5f02d66173c49c68cbede894417d34b/node_modules/@radix-ui/react-use-is-hydrated/dist/index.mjs
-  var React24 = __toESM(require_react(), 1);
-  var React18 = __toESM(require_react(), 1);
-  var __defProp17 = Object.defineProperty;
-  var __name16 = (target, value) => __defProp17(target, "name", { value, configurable: true });
-  var _isHydrated = false;
-  function useIsHydrated() {
-    const [isHydrated, setIsHydrated] = React18.useState(_isHydrated);
-    React18.useEffect(() => {
-      if (!_isHydrated) {
-        _isHydrated = true;
-        setIsHydrated(true);
-      }
-    }, []);
-    return isHydrated;
-  }
-  __name16(useIsHydrated, "useIsHydrated");
-  var useReactSyncExternalStore = React24[" useSyncExternalStore ".trim().toString()];
-  function subscribe() {
-    return () => {
-    };
-  }
-  __name16(subscribe, "subscribe");
-  function useIsHydratedModern() {
-    return useReactSyncExternalStore(
-      subscribe,
-      () => true,
-      () => false
+    const [internalState, dispatch] = React23.useReducer(
+      (state2, action) => {
+        if (action.type === SYNC_STATE) {
+          return { ...state2, state: action.state };
+        }
+        const next = reducer(state2, action);
+        if (isControlled && !Object.is(next.state, state2.state)) {
+          onChange(next.state);
+        }
+        return next;
+      },
+      ...args
     );
+    const uncontrolledState = internalState.state;
+    const prevValueRef = React23.useRef(uncontrolledState);
+    React23.useEffect(() => {
+      if (prevValueRef.current !== uncontrolledState) {
+        prevValueRef.current = uncontrolledState;
+        if (!isControlled) {
+          onChange(uncontrolledState);
+        }
+      }
+    }, [uncontrolledState, prevValueRef, isControlled]);
+    const state = React23.useMemo(() => {
+      const isControlled2 = controlledState !== void 0;
+      if (isControlled2) {
+        return { ...internalState, state: controlledState };
+      }
+      return internalState;
+    }, [internalState, controlledState]);
+    React23.useEffect(() => {
+      if (isControlled && !Object.is(controlledState, internalState.state)) {
+        dispatch({ type: SYNC_STATE, state: controlledState });
+      }
+    }, [controlledState, internalState.state, isControlled]);
+    return [state, dispatch];
   }
-  __name16(useIsHydratedModern, "useIsHydratedModern");
-  var useIsHydrated2 = typeof useReactSyncExternalStore === "function" ? useIsHydratedModern : useIsHydrated;
+  __name8(useControllableStateReducer, "useControllableStateReducer");
 
-  // node_modules/.pnpm/@radix-ui+react-roving-focu_bed290ae4c554285fceef8952991064b/node_modules/@radix-ui/react-roving-focus/dist/index.mjs
-  var import_jsx_runtime19 = __toESM(require_jsx_runtime(), 1);
-  var __defProp18 = Object.defineProperty;
-  var __name17 = (target, value) => __defProp18(target, "name", { value, configurable: true });
-  var ENTRY_FOCUS = "rovingFocusGroup.onEntryFocus";
-  var EVENT_OPTIONS = { bubbles: false, cancelable: true };
-  var GROUP_NAME = "RovingFocusGroup";
-  var [Collection2, useCollection2, createCollectionScope2] = createCollection(GROUP_NAME);
-  var [createRovingFocusGroupContext, createRovingFocusGroupScope] = createContextScope(
-    GROUP_NAME,
-    [createCollectionScope2]
-  );
-  var Orientation2 = {
-    Vertical: "vertical",
-    Horizontal: "horizontal"
-  };
-  var Direction3 = {
-    LTR: "ltr",
-    RTL: "rtl"
-  };
-  var [RovingFocusProvider, useRovingFocusContext] = createRovingFocusGroupContext(GROUP_NAME);
-  var RovingFocusGroup = /* @__PURE__ */ React19.forwardRef(
-    // blank line to reduce diff noise
-    /* @__PURE__ */ __name17(function RovingFocusGroup2(props, forwardedRef) {
-      return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Collection2.Provider, { scope: props.__scopeRovingFocusGroup, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Collection2.Slot, { scope: props.__scopeRovingFocusGroup, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RovingFocusGroupImpl, { ...props, ref: forwardedRef }) }) });
-    }, "RovingFocusGroup")
-  );
-  var RovingFocusGroupImpl = /* @__PURE__ */ React19.forwardRef(/* @__PURE__ */ __name17(function RovingFocusGroupImpl2(props, forwardedRef) {
-    const {
-      __scopeRovingFocusGroup,
-      orientation,
-      loop = false,
-      dir,
-      currentTabStopId: currentTabStopIdProp,
-      defaultCurrentTabStopId,
-      onCurrentTabStopIdChange,
-      onEntryFocus,
-      preventScrollOnEntryFocus = false,
-      ...groupProps
-    } = props;
-    const ref = React19.useRef(null);
-    const composedRefs = useComposedRefs(forwardedRef, ref);
-    const direction = useDirection(dir);
-    const [currentTabStopId, setCurrentTabStopId] = useControllableState({
-      prop: currentTabStopIdProp,
-      defaultProp: defaultCurrentTabStopId ?? null,
-      onChange: onCurrentTabStopIdChange,
-      caller: GROUP_NAME
-    });
-    const [isTabbingBackOut, setIsTabbingBackOut] = React19.useState(false);
-    const handleEntryFocus = useCallbackRef(onEntryFocus);
-    const getItems = useCollection2(__scopeRovingFocusGroup);
-    const isClickFocusRef = React19.useRef(false);
-    const [focusableItemsCount, setFocusableItemsCount] = React19.useState(0);
-    React19.useEffect(() => {
-      const node = ref.current;
-      if (node) {
-        node.addEventListener(ENTRY_FOCUS, handleEntryFocus);
-        return () => node.removeEventListener(ENTRY_FOCUS, handleEntryFocus);
-      }
-    }, [handleEntryFocus]);
-    return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
-      RovingFocusProvider,
-      {
-        scope: __scopeRovingFocusGroup,
-        orientation,
-        dir: direction,
-        loop,
-        currentTabStopId,
-        onItemFocus: React19.useCallback(
-          (tabStopId) => setCurrentTabStopId(tabStopId),
-          [setCurrentTabStopId]
-        ),
-        onItemShiftTab: React19.useCallback(() => setIsTabbingBackOut(true), []),
-        onFocusableItemAdd: React19.useCallback(
-          () => setFocusableItemsCount((prevCount) => prevCount + 1),
-          []
-        ),
-        onFocusableItemRemove: React19.useCallback(
-          () => setFocusableItemsCount((prevCount) => prevCount - 1),
-          []
-        ),
-        children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
-          Primitive.div,
-          {
-            tabIndex: isTabbingBackOut || focusableItemsCount === 0 ? -1 : 0,
-            "data-orientation": orientation,
-            ...groupProps,
-            ref: composedRefs,
-            style: { outline: "none", ...props.style },
-            onMouseDown: composeEventHandlers(props.onMouseDown, () => {
-              isClickFocusRef.current = true;
-            }),
-            onFocus: composeEventHandlers(props.onFocus, (event) => {
-              const isKeyboardFocus = !isClickFocusRef.current;
-              if (event.target === event.currentTarget && isKeyboardFocus && !isTabbingBackOut) {
-                const entryFocusEvent = new CustomEvent(ENTRY_FOCUS, EVENT_OPTIONS);
-                event.currentTarget.dispatchEvent(entryFocusEvent);
-                if (!entryFocusEvent.defaultPrevented) {
-                  const items = getItems().filter((item) => item.focusable);
-                  const activeItem = items.find((item) => item.active);
-                  const currentItem = items.find((item) => item.id === currentTabStopId);
-                  const candidateItems = [activeItem, currentItem, ...items].filter(
-                    Boolean
-                  );
-                  const candidateNodes = candidateItems.map((item) => item.ref.current);
-                  focusFirst(candidateNodes, preventScrollOnEntryFocus);
-                }
-              }
-              isClickFocusRef.current = false;
-            }),
-            onBlur: composeEventHandlers(props.onBlur, () => setIsTabbingBackOut(false))
-          }
-        )
-      }
-    );
-  }, "RovingFocusGroupImpl"));
-  var ITEM_NAME = "RovingFocusGroupItem";
-  var RovingFocusGroupItem = /* @__PURE__ */ React19.forwardRef(
-    // blank line to reduce diff noise
-    /* @__PURE__ */ __name17(function RovingFocusGroupItem2(props, forwardedRef) {
-      const {
-        __scopeRovingFocusGroup,
-        focusable = true,
-        active = false,
-        tabStopId,
-        children,
-        ...itemProps
-      } = props;
-      const autoId = useId();
-      const id = tabStopId || autoId;
-      const context = useRovingFocusContext(ITEM_NAME, __scopeRovingFocusGroup);
-      const isCurrentTabStop = context.currentTabStopId === id;
-      const getItems = useCollection2(__scopeRovingFocusGroup);
-      const { onFocusableItemAdd, onFocusableItemRemove, currentTabStopId } = context;
-      const isHydrated = useIsHydrated2();
-      useLayoutEffect2(() => {
-        if (!isHydrated || !focusable) {
-          return;
-        }
-        onFocusableItemAdd();
-        return () => onFocusableItemRemove();
-      }, [isHydrated, focusable, onFocusableItemAdd, onFocusableItemRemove]);
-      React19.useEffect(() => {
-        if (isHydrated || !focusable) {
-          return;
-        }
-        onFocusableItemAdd();
-        return () => onFocusableItemRemove();
-      }, [isHydrated, focusable, onFocusableItemAdd, onFocusableItemRemove]);
-      return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
-        Collection2.ItemSlot,
-        {
-          scope: __scopeRovingFocusGroup,
-          id,
-          focusable,
-          active,
-          children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
-            Primitive.span,
-            {
-              tabIndex: isCurrentTabStop ? 0 : -1,
-              "data-orientation": context.orientation,
-              ...itemProps,
-              ref: forwardedRef,
-              onMouseDown: composeEventHandlers(props.onMouseDown, (event) => {
-                if (!focusable) event.preventDefault();
-                else context.onItemFocus(id);
-              }),
-              onFocus: composeEventHandlers(props.onFocus, () => context.onItemFocus(id)),
-              onKeyDown: composeEventHandlers(props.onKeyDown, (event) => {
-                if (event.key === "Tab" && event.shiftKey) {
-                  context.onItemShiftTab();
-                  return;
-                }
-                if (event.target !== event.currentTarget) return;
-                const focusIntent = getFocusIntent(event, context.orientation, context.dir);
-                if (focusIntent !== void 0) {
-                  if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
-                  event.preventDefault();
-                  const items = getItems().filter((item) => item.focusable);
-                  let candidateNodes = items.map((item) => item.ref.current);
-                  if (focusIntent === "last") candidateNodes.reverse();
-                  else if (focusIntent === "prev" || focusIntent === "next") {
-                    if (focusIntent === "prev") candidateNodes.reverse();
-                    const currentIndex = candidateNodes.indexOf(event.currentTarget);
-                    candidateNodes = context.loop ? wrapArray(candidateNodes, currentIndex + 1) : candidateNodes.slice(currentIndex + 1);
-                  }
-                  setTimeout(() => focusFirst(candidateNodes));
-                }
-              }),
-              children: typeof children === "function" ? children({ isCurrentTabStop, hasTabStop: currentTabStopId != null }) : children
-            }
-          )
-        }
-      );
-    }, "RovingFocusGroupItem")
-  );
-  var MAP_KEY_TO_FOCUS_INTENT = {
-    ArrowLeft: "prev",
-    ArrowUp: "prev",
-    ArrowRight: "next",
-    ArrowDown: "next",
-    PageUp: "first",
-    Home: "first",
-    PageDown: "last",
-    End: "last"
-  };
-  function getDirectionAwareKey(key, dir) {
-    if (dir !== Direction3.RTL) return key;
-    return key === "ArrowLeft" ? "ArrowRight" : key === "ArrowRight" ? "ArrowLeft" : key;
-  }
-  __name17(getDirectionAwareKey, "getDirectionAwareKey");
-  function getFocusIntent(event, orientation, dir) {
-    const key = getDirectionAwareKey(event.key, dir);
-    if (orientation === Orientation2.Vertical && ["ArrowLeft", "ArrowRight"].includes(key)) {
-      return void 0;
-    }
-    if (orientation === Orientation2.Horizontal && ["ArrowUp", "ArrowDown"].includes(key)) {
-      return void 0;
-    }
-    return MAP_KEY_TO_FOCUS_INTENT[key];
-  }
-  __name17(getFocusIntent, "getFocusIntent");
-  function focusFirst(candidates, preventScroll = false) {
-    const PREVIOUSLY_FOCUSED_ELEMENT = document.activeElement;
-    for (const candidate of candidates) {
-      if (candidate === PREVIOUSLY_FOCUSED_ELEMENT) return;
-      candidate.focus({ preventScroll });
-      if (document.activeElement !== PREVIOUSLY_FOCUSED_ELEMENT) return;
-    }
-  }
-  __name17(focusFirst, "focusFirst");
-  function wrapArray(array, startIndex) {
-    return array.map((_, index) => array[(startIndex + index) % array.length]);
-  }
-  __name17(wrapArray, "wrapArray");
+  // node_modules/.pnpm/@radix-ui+react-collapsible_f8634540a4e1e40b51592c3777d0d653/node_modules/@radix-ui/react-collapsible/dist/index.mjs
+  var React11 = __toESM(require_react(), 1);
 
   // node_modules/.pnpm/@radix-ui+react-presence@1._f62c16392ef5c0f7dddc17b4112d7eab/node_modules/@radix-ui/react-presence/dist/index.mjs
-  var React25 = __toESM(require_react(), 1);
-  var React20 = __toESM(require_react(), 1);
-  var __defProp19 = Object.defineProperty;
-  var __name18 = (target, value) => __defProp19(target, "name", { value, configurable: true });
+  var React24 = __toESM(require_react(), 1);
+  var React9 = __toESM(require_react(), 1);
+  var __defProp10 = Object.defineProperty;
+  var __name9 = (target, value) => __defProp10(target, "name", { value, configurable: true });
   function useStateMachine(initialState, machine) {
-    return React20.useReducer((state, event) => {
+    return React9.useReducer((state, event) => {
       const nextState = machine[state][event];
       return nextState ?? state;
     }, initialState);
   }
-  __name18(useStateMachine, "useStateMachine");
-  var Presence = /* @__PURE__ */ __name18((props) => {
+  __name9(useStateMachine, "useStateMachine");
+  var Presence = /* @__PURE__ */ __name9((props) => {
     const { present, children } = props;
     const presence = usePresence(present);
-    const child = typeof children === "function" ? children({ present: presence.isPresent }) : React25.Children.only(children);
+    const child = typeof children === "function" ? children({ present: presence.isPresent }) : React24.Children.only(children);
     const ref = useStableComposedRefs(presence.ref, getElementRef2(child));
     const forceMount = typeof children === "function";
-    return forceMount || presence.isPresent ? React25.cloneElement(child, { ref }) : null;
+    return forceMount || presence.isPresent ? React24.cloneElement(child, { ref }) : null;
   }, "Presence");
   function usePresence(present) {
-    const [node, setNode] = React25.useState();
-    const stylesRef = React25.useRef(null);
-    const prevPresentRef = React25.useRef(present);
-    const prevAnimationNameRef = React25.useRef("none");
-    const mountAnimationNameRef = React25.useRef(void 0);
+    const [node, setNode] = React24.useState();
+    const stylesRef = React24.useRef(null);
+    const prevPresentRef = React24.useRef(present);
+    const prevAnimationNameRef = React24.useRef("none");
+    const mountAnimationNameRef = React24.useRef(void 0);
     const initialState = present ? "mounted" : "unmounted";
     const [state, send] = useStateMachine(initialState, {
       mounted: {
@@ -22515,7 +19372,7 @@
         MOUNT: "mounted"
       }
     });
-    React25.useEffect(() => {
+    React24.useEffect(() => {
       if (state === "mounted") {
         prevAnimationNameRef.current = mountAnimationNameRef.current ?? getAnimationName(stylesRef.current);
         mountAnimationNameRef.current = void 0;
@@ -22550,7 +19407,7 @@
       if (node) {
         let timeoutId;
         const ownerWindow = node.ownerDocument.defaultView ?? window;
-        const handleAnimationEnd = /* @__PURE__ */ __name18((event) => {
+        const handleAnimationEnd = /* @__PURE__ */ __name9((event) => {
           const currentAnimationName = getAnimationName(stylesRef.current);
           const isCurrentAnimation = currentAnimationName.includes(CSS.escape(event.animationName));
           if (event.target === node && isCurrentAnimation) {
@@ -22566,7 +19423,7 @@
             }
           }
         }, "handleAnimationEnd");
-        const handleAnimationStart = /* @__PURE__ */ __name18((event) => {
+        const handleAnimationStart = /* @__PURE__ */ __name9((event) => {
           if (event.target === node) {
             prevAnimationNameRef.current = getAnimationName(stylesRef.current);
           }
@@ -22586,7 +19443,7 @@
     }, [node, send]);
     return {
       isPresent: ["mounted", "unmountSuspended"].includes(state),
-      ref: React25.useCallback((node2) => {
+      ref: React24.useCallback((node2) => {
         if (node2) {
           const styles = getComputedStyle(node2);
           stylesRef.current = styles;
@@ -22598,7 +19455,7 @@
       }, [])
     };
   }
-  __name18(usePresence, "usePresence");
+  __name9(usePresence, "usePresence");
   function setRef2(ref, value) {
     if (typeof ref === "function") {
       return ref(value);
@@ -22606,11 +19463,11 @@
       ref.current = value;
     }
   }
-  __name18(setRef2, "setRef");
+  __name9(setRef2, "setRef");
   function useStableComposedRefs(...refs) {
-    const refsRef = React25.useRef(refs);
+    const refsRef = React24.useRef(refs);
     refsRef.current = refs;
-    return React25.useCallback((node) => {
+    return React24.useCallback((node) => {
       const currentRefs = refsRef.current;
       let hasCleanup = false;
       const cleanups = currentRefs.map((ref) => {
@@ -22634,11 +19491,11 @@
       }
     }, []);
   }
-  __name18(useStableComposedRefs, "useStableComposedRefs");
+  __name9(useStableComposedRefs, "useStableComposedRefs");
   function getAnimationName(styles) {
     return styles?.animationName || "none";
   }
-  __name18(getAnimationName, "getAnimationName");
+  __name9(getAnimationName, "getAnimationName");
   function getElementRef2(element) {
     let getter = Object.getOwnPropertyDescriptor(element.props, "ref")?.get;
     let mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning;
@@ -22652,249 +19509,544 @@
     }
     return element.props.ref || element.ref;
   }
-  __name18(getElementRef2, "getElementRef");
+  __name9(getElementRef2, "getElementRef");
 
-  // node_modules/.pnpm/@radix-ui+react-tabs@1.2.1__519fe3e24f3d946c91e5ee8267015a1e/node_modules/@radix-ui/react-tabs/dist/index.mjs
-  var import_jsx_runtime20 = __toESM(require_jsx_runtime(), 1);
-  var __defProp20 = Object.defineProperty;
-  var __name19 = (target, value) => __defProp20(target, "name", { value, configurable: true });
-  var ActivationMode = {
-    Automatic: "automatic",
-    Manual: "manual"
-  };
-  var TABS_NAME = "Tabs";
-  var [createTabsContext, createTabsScope] = createContextScope(TABS_NAME, [
-    createRovingFocusGroupScope
-  ]);
-  var useRovingFocusGroupScope = createRovingFocusGroupScope();
-  var [TabsProvider, useTabsContext] = createTabsContext(TABS_NAME);
-  var Tabs = /* @__PURE__ */ React21.forwardRef(
-    // blank line to reduce diff noise
-    /* @__PURE__ */ __name19(function Tabs2(props, forwardedRef) {
+  // node_modules/.pnpm/@radix-ui+react-id@1.1.4_@types+react@19.3.0_react@19.3.1/node_modules/@radix-ui/react-id/dist/index.mjs
+  var React10 = __toESM(require_react(), 1);
+  var __defProp11 = Object.defineProperty;
+  var __name10 = (target, value) => __defProp11(target, "name", { value, configurable: true });
+  var useReactId = React10[" useId ".trim().toString()] || (() => void 0);
+  var count = 0;
+  function useId(deterministicId) {
+    const [id, setId] = React10.useState(useReactId());
+    useLayoutEffect2(() => {
+      if (!deterministicId) setId((reactId) => reactId ?? String(count++));
+    }, [deterministicId]);
+    return deterministicId || (id ? `radix-${id}` : "");
+  }
+  __name10(useId, "useId");
+
+  // node_modules/.pnpm/@radix-ui+react-collapsible_f8634540a4e1e40b51592c3777d0d653/node_modules/@radix-ui/react-collapsible/dist/index.mjs
+  var import_jsx_runtime5 = __toESM(require_jsx_runtime(), 1);
+  var __defProp12 = Object.defineProperty;
+  var __name11 = (target, value) => __defProp12(target, "name", { value, configurable: true });
+  var COLLAPSIBLE_NAME = "Collapsible";
+  var [createCollapsibleContext, createCollapsibleScope] = createContextScope(COLLAPSIBLE_NAME);
+  var [CollapsibleProvider, useCollapsibleContext] = createCollapsibleContext(COLLAPSIBLE_NAME);
+  var Collapsible = /* @__PURE__ */ React11.forwardRef(
+    /* @__PURE__ */ __name11(function Collapsible2(props, forwardedRef) {
       const {
-        __scopeTabs,
-        value: valueProp,
-        onValueChange,
-        defaultValue,
-        orientation = "horizontal",
-        dir,
-        activationMode = ActivationMode.Automatic,
-        ...tabsProps
+        __scopeCollapsible,
+        open: openProp,
+        defaultOpen,
+        disabled,
+        onOpenChange,
+        ...collapsibleProps
       } = props;
-      const direction = useDirection(dir);
+      const [open, setOpen] = useControllableState({
+        prop: openProp,
+        defaultProp: defaultOpen ?? false,
+        onChange: onOpenChange,
+        caller: COLLAPSIBLE_NAME
+      });
+      return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+        CollapsibleProvider,
+        {
+          scope: __scopeCollapsible,
+          disabled,
+          contentId: useId(),
+          open,
+          onOpenToggle: React11.useCallback(() => setOpen((prevOpen) => !prevOpen), [setOpen]),
+          children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+            Primitive.div,
+            {
+              "data-state": getState(open),
+              "data-disabled": disabled ? "" : void 0,
+              ...collapsibleProps,
+              ref: forwardedRef
+            }
+          )
+        }
+      );
+    }, "Collapsible")
+  );
+  var TRIGGER_NAME = "CollapsibleTrigger";
+  var CollapsibleTrigger = /* @__PURE__ */ React11.forwardRef(
+    // blank line to reduce diff noise
+    /* @__PURE__ */ __name11(function CollapsibleTrigger2(props, forwardedRef) {
+      const { __scopeCollapsible, ...triggerProps } = props;
+      const context = useCollapsibleContext(TRIGGER_NAME, __scopeCollapsible);
+      return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+        Primitive.button,
+        {
+          type: "button",
+          "aria-controls": context.open ? context.contentId : void 0,
+          "aria-expanded": context.open || false,
+          "data-state": getState(context.open),
+          "data-disabled": context.disabled ? "" : void 0,
+          disabled: context.disabled,
+          ...triggerProps,
+          ref: forwardedRef,
+          onClick: composeEventHandlers(props.onClick, context.onOpenToggle)
+        }
+      );
+    }, "CollapsibleTrigger")
+  );
+  var CONTENT_NAME = "CollapsibleContent";
+  var CollapsibleContent = /* @__PURE__ */ React11.forwardRef(
+    // blank line to reduce diff noise
+    /* @__PURE__ */ __name11(function CollapsibleContent2(props, forwardedRef) {
+      const { forceMount, ...contentProps } = props;
+      const context = useCollapsibleContext(CONTENT_NAME, props.__scopeCollapsible);
+      return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Presence, { present: forceMount || context.open, children: ({ present }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(CollapsibleContentImpl, { ...contentProps, ref: forwardedRef, present }) });
+    }, "CollapsibleContent")
+  );
+  var CollapsibleContentImpl = /* @__PURE__ */ React11.forwardRef(/* @__PURE__ */ __name11(function CollapsibleContentImpl2(props, forwardedRef) {
+    const { __scopeCollapsible, present, children, ...contentProps } = props;
+    const context = useCollapsibleContext(CONTENT_NAME, __scopeCollapsible);
+    const [isPresent, setIsPresent] = React11.useState(present);
+    const ref = React11.useRef(null);
+    const composedRefs = useComposedRefs(forwardedRef, ref);
+    const heightRef = React11.useRef(0);
+    const height = heightRef.current;
+    const widthRef = React11.useRef(0);
+    const width = widthRef.current;
+    const isOpen = context.open || isPresent;
+    const isMountAnimationPreventedRef = React11.useRef(isOpen);
+    const originalStylesRef = React11.useRef(void 0);
+    React11.useEffect(() => {
+      const rAF = requestAnimationFrame(() => isMountAnimationPreventedRef.current = false);
+      return () => cancelAnimationFrame(rAF);
+    }, []);
+    useLayoutEffect2(() => {
+      const node = ref.current;
+      if (node) {
+        originalStylesRef.current = originalStylesRef.current || {
+          transitionDuration: node.style.transitionDuration,
+          animationName: node.style.animationName
+        };
+        node.style.transitionDuration = "0s";
+        node.style.animationName = "none";
+        const rect = node.getBoundingClientRect();
+        heightRef.current = rect.height;
+        widthRef.current = rect.width;
+        if (!isMountAnimationPreventedRef.current) {
+          node.style.transitionDuration = originalStylesRef.current.transitionDuration;
+          node.style.animationName = originalStylesRef.current.animationName;
+        }
+        setIsPresent(present);
+      }
+    }, [context.open, present]);
+    return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+      Primitive.div,
+      {
+        "data-state": getState(context.open),
+        "data-disabled": context.disabled ? "" : void 0,
+        id: context.contentId,
+        hidden: !isOpen,
+        ...contentProps,
+        ref: composedRefs,
+        style: {
+          [`--radix-collapsible-content-height`]: height ? `${height}px` : void 0,
+          [`--radix-collapsible-content-width`]: width ? `${width}px` : void 0,
+          ...props.style
+        },
+        children: isOpen && children
+      }
+    );
+  }, "CollapsibleContentImpl"));
+  function getState(open) {
+    return open ? "open" : "closed";
+  }
+  __name11(getState, "getState");
+
+  // node_modules/.pnpm/@radix-ui+react-direction@1_527de58341a1b41b1117c799ae82b79a/node_modules/@radix-ui/react-direction/dist/index.mjs
+  var React12 = __toESM(require_react(), 1);
+  var import_jsx_runtime6 = __toESM(require_jsx_runtime(), 1);
+  var __defProp13 = Object.defineProperty;
+  var __name12 = (target, value) => __defProp13(target, "name", { value, configurable: true });
+  var Direction = {
+    LTR: "ltr",
+    RTL: "rtl"
+  };
+  var DirectionContext = React12.createContext(void 0);
+  function useDirection(localDir) {
+    const globalDir = React12.useContext(DirectionContext);
+    return localDir || globalDir || Direction.LTR;
+  }
+  __name12(useDirection, "useDirection");
+
+  // node_modules/.pnpm/@radix-ui+react-accordion@1_5c7d962b3fe73107d038e39b4f324168/node_modules/@radix-ui/react-accordion/dist/index.mjs
+  var import_jsx_runtime7 = __toESM(require_jsx_runtime(), 1);
+  var __defProp14 = Object.defineProperty;
+  var __name13 = (target, value) => __defProp14(target, "name", { value, configurable: true });
+  var AccordionType = {
+    Single: "single",
+    Multiple: "multiple"
+  };
+  var Orientation = {
+    Vertical: "vertical",
+    Horizontal: "horizontal"
+  };
+  var Direction2 = {
+    LTR: "ltr",
+    RTL: "rtl"
+  };
+  var ACCORDION_NAME = "Accordion";
+  var ACCORDION_KEYS = ["Home", "End", "ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"];
+  var [Collection, { useGetCollection, createCollectionScope }] = createCollection2(ACCORDION_NAME);
+  var [createAccordionContext, createAccordionScope] = createContextScope(ACCORDION_NAME, [
+    createCollectionScope,
+    createCollapsibleScope
+  ]);
+  var useCollapsibleScope = createCollapsibleScope();
+  var Accordion = /* @__PURE__ */ React13.forwardRef(
+    // blank line to reduce diff noise
+    /* @__PURE__ */ __name13(function Accordion2(props, forwardedRef) {
+      const { type, ...accordionProps } = props;
+      const singleProps = accordionProps;
+      const multipleProps = accordionProps;
+      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Collection.Provider, { scope: props.__scopeAccordion, children: type === AccordionType.Multiple ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(AccordionImplMultiple, { ...multipleProps, ref: forwardedRef }) : /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(AccordionImplSingle, { ...singleProps, ref: forwardedRef }) });
+    }, "Accordion")
+  );
+  var [AccordionValueProvider, useAccordionValueContext] = createAccordionContext(ACCORDION_NAME);
+  var [AccordionCollapsibleProvider, useAccordionCollapsibleContext] = createAccordionContext(
+    ACCORDION_NAME,
+    { collapsible: false }
+  );
+  var AccordionImplSingle = /* @__PURE__ */ React13.forwardRef(
+    // blank line to reduce diff noise
+    /* @__PURE__ */ __name13(function AccordionImplSingle2(props, forwardedRef) {
+      const {
+        value: valueProp,
+        defaultValue,
+        onValueChange = /* @__PURE__ */ __name13(() => {
+        }, "onValueChange"),
+        collapsible = false,
+        ...accordionSingleProps
+      } = props;
       const [value, setValue] = useControllableState({
         prop: valueProp,
-        onChange: onValueChange,
         defaultProp: defaultValue ?? "",
-        caller: TABS_NAME
+        onChange: onValueChange,
+        caller: ACCORDION_NAME
       });
-      return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
-        TabsProvider,
+      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+        AccordionValueProvider,
         {
-          scope: __scopeTabs,
-          baseId: useId(),
-          value,
-          onValueChange: setValue,
+          scope: props.__scopeAccordion,
+          value: React13.useMemo(() => value ? [value] : [], [value]),
+          onItemOpen: setValue,
+          onItemClose: React13.useCallback(() => collapsible && setValue(""), [collapsible, setValue]),
+          children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(AccordionCollapsibleProvider, { scope: props.__scopeAccordion, collapsible, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(AccordionImpl, { ...accordionSingleProps, ref: forwardedRef }) })
+        }
+      );
+    }, "AccordionImplSingle")
+  );
+  var AccordionImplMultiple = /* @__PURE__ */ React13.forwardRef(/* @__PURE__ */ __name13(function AccordionImplMultiple2(props, forwardedRef) {
+    const {
+      value: valueProp,
+      defaultValue,
+      onValueChange = /* @__PURE__ */ __name13(() => {
+      }, "onValueChange"),
+      ...accordionMultipleProps
+    } = props;
+    const [value, setValue] = useControllableState({
+      prop: valueProp,
+      defaultProp: defaultValue ?? [],
+      onChange: onValueChange,
+      caller: ACCORDION_NAME
+    });
+    const handleItemOpen = React13.useCallback(
+      (itemValue) => setValue((prevValue = []) => [...prevValue, itemValue]),
+      [setValue]
+    );
+    const handleItemClose = React13.useCallback(
+      (itemValue) => setValue((prevValue = []) => prevValue.filter((value2) => value2 !== itemValue)),
+      [setValue]
+    );
+    return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+      AccordionValueProvider,
+      {
+        scope: props.__scopeAccordion,
+        value,
+        onItemOpen: handleItemOpen,
+        onItemClose: handleItemClose,
+        children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(AccordionCollapsibleProvider, { scope: props.__scopeAccordion, collapsible: true, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(AccordionImpl, { ...accordionMultipleProps, ref: forwardedRef }) })
+      }
+    );
+  }, "AccordionImplMultiple"));
+  var [AccordionImplProvider, useAccordionContext] = createAccordionContext(ACCORDION_NAME);
+  var AccordionImpl = /* @__PURE__ */ React13.forwardRef(
+    /* @__PURE__ */ __name13(function AccordionImpl2(props, forwardedRef) {
+      const {
+        __scopeAccordion,
+        disabled,
+        dir,
+        orientation = Orientation.Vertical,
+        ...accordionProps
+      } = props;
+      const accordionRef = React13.useRef(null);
+      const composedRefs = useComposedRefs(accordionRef, forwardedRef);
+      const getCollection = useGetCollection(__scopeAccordion);
+      const direction = useDirection(dir);
+      const isDirectionLTR = direction === Direction2.LTR;
+      const handleKeyDown = composeEventHandlers(props.onKeyDown, (event) => {
+        if (!ACCORDION_KEYS.includes(event.key)) {
+          return;
+        }
+        const collection = getCollection();
+        const target = event.target;
+        const triggerCollection = collection.filter(([, item]) => !item.element.disabled);
+        const triggerIndex = triggerCollection.findIndex(([, item]) => item.element === target);
+        const triggerCount = triggerCollection.size;
+        if (triggerIndex === -1) {
+          return;
+        }
+        event.preventDefault();
+        let nextIndex = triggerIndex;
+        const homeIndex = 0;
+        const endIndex = triggerCount - 1;
+        const moveNext = /* @__PURE__ */ __name13(() => {
+          nextIndex = triggerIndex + 1;
+          if (nextIndex > endIndex) {
+            nextIndex = homeIndex;
+          }
+        }, "moveNext");
+        const movePrev = /* @__PURE__ */ __name13(() => {
+          nextIndex = triggerIndex - 1;
+          if (nextIndex < homeIndex) {
+            nextIndex = endIndex;
+          }
+        }, "movePrev");
+        switch (event.key) {
+          case "Home":
+            nextIndex = homeIndex;
+            break;
+          case "End":
+            nextIndex = endIndex;
+            break;
+          case "ArrowRight":
+            if (orientation === Orientation.Horizontal) {
+              if (isDirectionLTR) {
+                moveNext();
+              } else {
+                movePrev();
+              }
+            }
+            break;
+          case "ArrowDown":
+            if (orientation === Orientation.Vertical) {
+              moveNext();
+            }
+            break;
+          case "ArrowLeft":
+            if (orientation === Orientation.Horizontal) {
+              if (isDirectionLTR) {
+                movePrev();
+              } else {
+                moveNext();
+              }
+            }
+            break;
+          case "ArrowUp":
+            if (orientation === Orientation.Vertical) {
+              movePrev();
+            }
+            break;
+        }
+        const clampedIndex = nextIndex % triggerCount;
+        triggerCollection.at(clampedIndex)?.element.focus();
+      });
+      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+        AccordionImplProvider,
+        {
+          scope: __scopeAccordion,
+          disabled,
+          direction: dir,
           orientation,
-          dir: direction,
-          activationMode,
-          children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+          children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Collection.Slot, { scope: __scopeAccordion, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
             Primitive.div,
             {
-              dir: direction,
+              ...accordionProps,
               "data-orientation": orientation,
-              ...tabsProps,
-              ref: forwardedRef
+              ref: composedRefs,
+              onKeyDown: disabled ? void 0 : handleKeyDown
             }
-          )
+          ) })
         }
       );
-    }, "Tabs")
+    }, "AccordionImpl")
   );
-  var TAB_LIST_NAME = "TabsList";
-  var TabsList = /* @__PURE__ */ React21.forwardRef(
-    // blank line to reduce diff noise
-    /* @__PURE__ */ __name19(function TabsList2(props, forwardedRef) {
-      const { __scopeTabs, loop = true, ...listProps } = props;
-      const context = useTabsContext(TAB_LIST_NAME, __scopeTabs);
-      const rovingFocusGroupScope = useRovingFocusGroupScope(__scopeTabs);
-      return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
-        RovingFocusGroup,
+  var ITEM_NAME = "AccordionItem";
+  var [AccordionItemProvider, useAccordionItemContext] = createAccordionContext(ITEM_NAME);
+  var AccordionItem = /* @__PURE__ */ React13.forwardRef(
+    /* @__PURE__ */ __name13(function AccordionItem2(props, forwardedRef) {
+      const { __scopeAccordion, value, ...accordionItemProps } = props;
+      const accordionContext = useAccordionContext(ITEM_NAME, __scopeAccordion);
+      const valueContext = useAccordionValueContext(ITEM_NAME, __scopeAccordion);
+      const collapsibleScope = useCollapsibleScope(__scopeAccordion);
+      const triggerId = useId();
+      const open = value && valueContext.value.includes(value) || false;
+      const disabled = accordionContext.disabled || props.disabled;
+      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+        AccordionItemProvider,
         {
-          asChild: true,
-          ...rovingFocusGroupScope,
-          orientation: context.orientation,
-          dir: context.dir,
-          loop,
-          children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
-            Primitive.div,
+          scope: __scopeAccordion,
+          open,
+          disabled,
+          triggerId,
+          children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+            Collapsible,
             {
-              role: "tablist",
-              "aria-orientation": context.orientation,
-              ...listProps,
-              ref: forwardedRef
-            }
-          )
-        }
-      );
-    }, "TabsList")
-  );
-  var TRIGGER_NAME2 = "TabsTrigger";
-  var TabsTrigger = /* @__PURE__ */ React21.forwardRef(
-    /* @__PURE__ */ __name19(function TabsTrigger2(props, forwardedRef) {
-      const { __scopeTabs, value, disabled = false, ...triggerProps } = props;
-      const context = useTabsContext(TRIGGER_NAME2, __scopeTabs);
-      const rovingFocusGroupScope = useRovingFocusGroupScope(__scopeTabs);
-      const triggerId = makeTriggerId(context.baseId, value);
-      const contentId = makeContentId(context.baseId, value);
-      const isSelected = value === context.value;
-      return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
-        RovingFocusGroupItem,
-        {
-          asChild: true,
-          ...rovingFocusGroupScope,
-          focusable: !disabled,
-          active: isSelected,
-          children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
-            Primitive.button,
-            {
-              type: "button",
-              role: "tab",
-              "aria-selected": isSelected,
-              "aria-controls": contentId,
-              "data-state": isSelected ? "active" : "inactive",
-              "data-disabled": disabled ? "" : void 0,
-              disabled,
-              id: triggerId,
-              ...triggerProps,
+              "data-orientation": accordionContext.orientation,
+              "data-state": getState2(open),
+              ...collapsibleScope,
+              ...accordionItemProps,
               ref: forwardedRef,
-              onMouseDown: composeEventHandlers(props.onMouseDown, (event) => {
-                if (!disabled && event.button === 0 && event.ctrlKey === false) {
-                  event.currentTarget.focus();
-                  context.onValueChange(value);
+              disabled,
+              open,
+              onOpenChange: (open2) => {
+                if (open2) {
+                  valueContext.onItemOpen(value);
                 } else {
-                  event.preventDefault();
+                  valueContext.onItemClose(value);
                 }
-              }),
-              onKeyDown: composeEventHandlers(props.onKeyDown, (event) => {
-                if (disabled || event.target !== event.currentTarget) {
-                  return;
-                }
-                if ([" ", "Enter"].includes(event.key)) {
-                  context.onValueChange(value);
-                }
-              }),
-              onFocus: composeEventHandlers(props.onFocus, () => {
-                const isAutomaticActivation = context.activationMode !== ActivationMode.Manual;
-                if (!isSelected && !disabled && isAutomaticActivation) {
-                  context.onValueChange(value);
-                }
-              })
+              }
             }
           )
         }
       );
-    }, "TabsTrigger")
+    }, "AccordionItem")
   );
-  var CONTENT_NAME = "TabsContent";
-  var TabsContent = /* @__PURE__ */ React21.forwardRef(
-    /* @__PURE__ */ __name19(function TabsContent2(props, forwardedRef) {
-      const { __scopeTabs, value, forceMount, children, ...contentProps } = props;
-      const context = useTabsContext(CONTENT_NAME, __scopeTabs);
-      const triggerId = makeTriggerId(context.baseId, value);
-      const contentId = makeContentId(context.baseId, value);
-      const isSelected = value === context.value;
-      const isMountAnimationPreventedRef = React21.useRef(isSelected);
-      React21.useEffect(() => {
-        const rAF = requestAnimationFrame(() => isMountAnimationPreventedRef.current = false);
-        return () => cancelAnimationFrame(rAF);
-      }, []);
-      return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Presence, { present: forceMount || isSelected, children: ({ present }) => /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
-        Primitive.div,
+  var HEADER_NAME = "AccordionHeader";
+  var AccordionHeader = /* @__PURE__ */ React13.forwardRef(
+    // blank line to reduce diff noise
+    /* @__PURE__ */ __name13(function AccordionHeader2(props, forwardedRef) {
+      const { __scopeAccordion, ...headerProps } = props;
+      const accordionContext = useAccordionContext(ACCORDION_NAME, __scopeAccordion);
+      const itemContext = useAccordionItemContext(HEADER_NAME, __scopeAccordion);
+      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+        Primitive.h3,
         {
-          "data-state": isSelected ? "active" : "inactive",
-          "data-orientation": context.orientation,
-          role: "tabpanel",
-          "aria-labelledby": triggerId,
-          hidden: !present,
-          id: contentId,
-          tabIndex: 0,
+          "data-orientation": accordionContext.orientation,
+          "data-state": getState2(itemContext.open),
+          "data-disabled": itemContext.disabled ? "" : void 0,
+          ...headerProps,
+          ref: forwardedRef
+        }
+      );
+    }, "AccordionHeader")
+  );
+  var TRIGGER_NAME2 = "AccordionTrigger";
+  var AccordionTrigger = /* @__PURE__ */ React13.forwardRef(
+    // blank line to reduce diff noise
+    /* @__PURE__ */ __name13(function AccordionTrigger2(props, forwardedRef) {
+      const { __scopeAccordion, ...triggerProps } = props;
+      const accordionContext = useAccordionContext(ACCORDION_NAME, __scopeAccordion);
+      const itemContext = useAccordionItemContext(TRIGGER_NAME2, __scopeAccordion);
+      const collapsibleContext = useAccordionCollapsibleContext(TRIGGER_NAME2, __scopeAccordion);
+      const collapsibleScope = useCollapsibleScope(__scopeAccordion);
+      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Collection.ItemSlot, { scope: __scopeAccordion, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+        CollapsibleTrigger,
+        {
+          "aria-disabled": itemContext.open && !collapsibleContext.collapsible || void 0,
+          "data-orientation": accordionContext.orientation,
+          id: itemContext.triggerId,
+          ...collapsibleScope,
+          ...triggerProps,
+          ref: forwardedRef
+        }
+      ) });
+    }, "AccordionTrigger")
+  );
+  var CONTENT_NAME2 = "AccordionContent";
+  var AccordionContent = /* @__PURE__ */ React13.forwardRef(
+    // blank line to reduce diff noise
+    /* @__PURE__ */ __name13(function AccordionContent2(props, forwardedRef) {
+      const { __scopeAccordion, ...contentProps } = props;
+      const accordionContext = useAccordionContext(ACCORDION_NAME, __scopeAccordion);
+      const itemContext = useAccordionItemContext(CONTENT_NAME2, __scopeAccordion);
+      const collapsibleScope = useCollapsibleScope(__scopeAccordion);
+      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+        CollapsibleContent,
+        {
+          role: "region",
+          "aria-labelledby": itemContext.triggerId,
+          "data-orientation": accordionContext.orientation,
+          ...collapsibleScope,
           ...contentProps,
           ref: forwardedRef,
           style: {
-            ...props.style,
-            animationDuration: isMountAnimationPreventedRef.current ? "0s" : void 0
-          },
-          children: present && children
+            "--radix-accordion-content-height": "var(--radix-collapsible-content-height)",
+            "--radix-accordion-content-width": "var(--radix-collapsible-content-width)",
+            ...props.style
+          }
         }
-      ) });
-    }, "TabsContent")
+      );
+    }, "AccordionContent")
   );
-  function makeTriggerId(baseId, value) {
-    return `${baseId}-trigger-${value}`;
+  function getState2(open) {
+    return open ? "open" : "closed";
   }
-  __name19(makeTriggerId, "makeTriggerId");
-  function makeContentId(baseId, value) {
-    return `${baseId}-content-${value}`;
-  }
-  __name19(makeContentId, "makeContentId");
-
-  // src/components/ui/tabs.tsx
-  var import_jsx_runtime21 = __toESM(require_jsx_runtime(), 1);
-  var Tabs3 = Tabs;
-  var TabsList3 = React26.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-    TabsList,
-    {
-      ref,
-      className: cn(
-        "inline-flex h-8 items-center justify-center rounded-lg bg-slate-900/60 p-0.5 text-muted-foreground border border-border/50",
-        className
-      ),
-      ...props
-    }
-  ));
-  TabsList3.displayName = TabsList.displayName;
-  var TabsTrigger3 = React26.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-    TabsTrigger,
-    {
-      ref,
-      className: cn(
-        "inline-flex items-center justify-center whitespace-nowrap rounded-md px-2.5 py-1 text-xs font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm cursor-pointer",
-        className
-      ),
-      ...props
-    }
-  ));
-  TabsTrigger3.displayName = TabsTrigger.displayName;
-  var TabsContent3 = React26.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-    TabsContent,
-    {
-      ref,
-      className: cn(
-        "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
-        className
-      ),
-      ...props
-    }
-  ));
-  TabsContent3.displayName = TabsContent.displayName;
-
-  // src/components/ui/dialog.tsx
-  var React39 = __toESM(require_react(), 1);
+  __name13(getState2, "getState");
 
   // node_modules/.pnpm/@radix-ui+react-dialog@1.3._4dc34b117641e6b0d7103bbf4056ed99/node_modules/@radix-ui/react-dialog/dist/index.mjs
-  var React38 = __toESM(require_react(), 1);
+  var dist_exports4 = {};
+  __export(dist_exports4, {
+    Close: () => DialogClose,
+    Content: () => DialogContent,
+    Description: () => DialogDescription,
+    Dialog: () => Dialog,
+    DialogClose: () => DialogClose,
+    DialogContent: () => DialogContent,
+    DialogDescription: () => DialogDescription,
+    DialogOverlay: () => DialogOverlay,
+    DialogPortal: () => DialogPortal,
+    DialogTitle: () => DialogTitle,
+    DialogTrigger: () => DialogTrigger,
+    Overlay: () => DialogOverlay,
+    Portal: () => DialogPortal,
+    Root: () => Dialog,
+    Title: () => DialogTitle,
+    Trigger: () => DialogTrigger,
+    WarningProvider: () => WarningProvider,
+    createDialogScope: () => createDialogScope
+  });
+  var React29 = __toESM(require_react(), 1);
 
   // node_modules/.pnpm/@radix-ui+react-dismissable_aa9a2defeade16af3bdfd2945af978c3/node_modules/@radix-ui/react-dismissable-layer/dist/index.mjs
-  var React27 = __toESM(require_react(), 1);
-  var import_jsx_runtime22 = __toESM(require_jsx_runtime(), 1);
-  var __defProp21 = Object.defineProperty;
-  var __name20 = (target, value) => __defProp21(target, "name", { value, configurable: true });
+  var React15 = __toESM(require_react(), 1);
+
+  // node_modules/.pnpm/@radix-ui+react-use-callbac_69a3fb791ef61c6e6ef64d5483eb0094/node_modules/@radix-ui/react-use-callback-ref/dist/index.mjs
+  var React14 = __toESM(require_react(), 1);
+  var __defProp15 = Object.defineProperty;
+  var __name14 = (target, value) => __defProp15(target, "name", { value, configurable: true });
+  var useReactInsertionEffect2 = React14[" useInsertionEffect ".trim().toString()];
+  function useCallbackRef(callback) {
+    const callbackRef = React14.useRef(callback);
+    if (typeof useReactInsertionEffect2 === "function") {
+      useReactInsertionEffect2(() => {
+        callbackRef.current = callback;
+      });
+    } else {
+      useLayoutEffect2(() => {
+        callbackRef.current = callback;
+      });
+    }
+    return React14.useMemo(() => ((...args) => callbackRef.current?.(...args)), []);
+  }
+  __name14(useCallbackRef, "useCallbackRef");
+
+  // node_modules/.pnpm/@radix-ui+react-dismissable_aa9a2defeade16af3bdfd2945af978c3/node_modules/@radix-ui/react-dismissable-layer/dist/index.mjs
+  var import_jsx_runtime8 = __toESM(require_jsx_runtime(), 1);
+  var __defProp16 = Object.defineProperty;
+  var __name15 = (target, value) => __defProp16(target, "name", { value, configurable: true });
   var CONTEXT_UPDATE = "dismissableLayer.update";
   var POINTER_DOWN_OUTSIDE = "dismissableLayer.pointerDownOutside";
   var FOCUS_OUTSIDE = "dismissableLayer.focusOutside";
   var originalBodyPointerEvents;
-  var DismissableLayerContext = React27.createContext({
+  var DismissableLayerContext = React15.createContext({
     layers: /* @__PURE__ */ new Set(),
     layersWithOutsidePointerEventsDisabled: /* @__PURE__ */ new Set(),
     branches: /* @__PURE__ */ new Set(),
@@ -22905,9 +20057,9 @@
     // See https://github.com/radix-ui/primitives/issues/3346
     dismissableSurfaces: /* @__PURE__ */ new Set()
   });
-  var DismissableLayer = /* @__PURE__ */ React27.forwardRef(
+  var DismissableLayer = /* @__PURE__ */ React15.forwardRef(
     // blank line to reduce diff noise
-    /* @__PURE__ */ __name20(function DismissableLayer2(props, forwardedRef) {
+    /* @__PURE__ */ __name15(function DismissableLayer2(props, forwardedRef) {
       const {
         disableOutsidePointerEvents = false,
         deferPointerDownOutside = false,
@@ -22918,10 +20070,10 @@
         onDismiss,
         ...layerProps
       } = props;
-      const context = React27.useContext(DismissableLayerContext);
-      const [node, setNode] = React27.useState(null);
+      const context = React15.useContext(DismissableLayerContext);
+      const [node, setNode] = React15.useState(null);
       const ownerDocument = node?.ownerDocument ?? globalThis?.document;
-      const [, force] = React27.useState({});
+      const [, force] = React15.useState({});
       const composedRefs = useComposedRefs(forwardedRef, setNode);
       const layers = Array.from(context.layers);
       const [highestLayerWithOutsidePointerEventsDisabled] = [
@@ -22931,7 +20083,7 @@
       const index = node ? layers.indexOf(node) : -1;
       const isBodyPointerEventsDisabled = context.layersWithOutsidePointerEventsDisabled.size > 0;
       const isPointerEventsEnabled = index >= highestLayerWithOutsidePointerEventsDisabledIndex;
-      const isDeferredPointerDownOutsideRef = React27.useRef(false);
+      const isDeferredPointerDownOutsideRef = React15.useRef(false);
       const pointerDownOutside = usePointerDownOutside(
         (event) => {
           onPointerDownOutside?.(event);
@@ -22943,7 +20095,7 @@
           deferPointerDownOutside,
           isDeferredPointerDownOutsideRef,
           dismissableSurfaces: context.dismissableSurfaces,
-          shouldHandlePointerDownOutside: React27.useCallback(
+          shouldHandlePointerDownOutside: React15.useCallback(
             (target) => {
               if (!(target instanceof Node)) {
                 return false;
@@ -22979,14 +20131,14 @@
           onDismiss();
         }
       });
-      React27.useEffect(() => {
+      React15.useEffect(() => {
         if (!isHighestLayer) {
           return;
         }
         ownerDocument.addEventListener("keydown", handleKeyDown, { capture: true });
         return () => ownerDocument.removeEventListener("keydown", handleKeyDown, { capture: true });
       }, [ownerDocument, isHighestLayer, handleKeyDown]);
-      React27.useEffect(() => {
+      React15.useEffect(() => {
         if (!node) return;
         if (disableOutsidePointerEvents) {
           if (context.layersWithOutsidePointerEventsDisabled.size === 0) {
@@ -23006,7 +20158,7 @@
           }
         };
       }, [node, ownerDocument, disableOutsidePointerEvents, context]);
-      React27.useEffect(() => {
+      React15.useEffect(() => {
         return () => {
           if (!node) return;
           context.layers.delete(node);
@@ -23014,12 +20166,12 @@
           dispatchUpdate();
         };
       }, [node, context]);
-      React27.useEffect(() => {
-        const handleUpdate = /* @__PURE__ */ __name20(() => force({}), "handleUpdate");
+      React15.useEffect(() => {
+        const handleUpdate = /* @__PURE__ */ __name15(() => force({}), "handleUpdate");
         document.addEventListener(CONTEXT_UPDATE, handleUpdate);
         return () => document.removeEventListener(CONTEXT_UPDATE, handleUpdate);
       }, []);
-      return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
         Primitive.div,
         {
           ...layerProps,
@@ -23039,9 +20191,9 @@
     }, "DismissableLayer")
   );
   function useDismissableLayerSurface() {
-    const context = React27.useContext(DismissableLayerContext);
-    const [node, setNode] = React27.useState(null);
-    React27.useEffect(() => {
+    const context = React15.useContext(DismissableLayerContext);
+    const [node, setNode] = React15.useState(null);
+    React15.useEffect(() => {
       if (!node) {
         return;
       }
@@ -23052,8 +20204,8 @@
     }, [node, context.dismissableSurfaces]);
     return setNode;
   }
-  __name20(useDismissableLayerSurface, "useDismissableLayerSurface");
-  var IS_TRUE = /* @__PURE__ */ __name20(() => true, "IS_TRUE");
+  __name15(useDismissableLayerSurface, "useDismissableLayerSurface");
+  var IS_TRUE = /* @__PURE__ */ __name15(() => true, "IS_TRUE");
   function usePointerDownOutside(onPointerDownOutside, args) {
     const {
       ownerDocument = globalThis?.document,
@@ -23063,22 +20215,22 @@
       shouldHandlePointerDownOutside = IS_TRUE
     } = args;
     const handlePointerDownOutside = useCallbackRef(onPointerDownOutside);
-    const isPointerInsideReactTreeRef = React27.useRef(false);
-    const isPointerDownOutsideRef = React27.useRef(false);
-    const interceptedOutsideInteractionEventsRef = React27.useRef(/* @__PURE__ */ new Map());
-    const handleClickRef = React27.useRef(() => {
+    const isPointerInsideReactTreeRef = React15.useRef(false);
+    const isPointerDownOutsideRef = React15.useRef(false);
+    const interceptedOutsideInteractionEventsRef = React15.useRef(/* @__PURE__ */ new Map());
+    const handleClickRef = React15.useRef(() => {
     });
-    React27.useEffect(() => {
+    React15.useEffect(() => {
       function resetOutsideInteraction() {
         isPointerDownOutsideRef.current = false;
         isDeferredPointerDownOutsideRef.current = false;
         interceptedOutsideInteractionEventsRef.current.clear();
       }
-      __name20(resetOutsideInteraction, "resetOutsideInteraction");
+      __name15(resetOutsideInteraction, "resetOutsideInteraction");
       function isOutsideInteractionIntercepted() {
         return Array.from(interceptedOutsideInteractionEventsRef.current.values()).some(Boolean);
       }
-      __name20(isOutsideInteractionIntercepted, "isOutsideInteractionIntercepted");
+      __name15(isOutsideInteractionIntercepted, "isOutsideInteractionIntercepted");
       function handleInteractionCapture(event) {
         if (!isPointerDownOutsideRef.current) {
           return;
@@ -23096,14 +20248,14 @@
           }, 0);
         }
       }
-      __name20(handleInteractionCapture, "handleInteractionCapture");
+      __name15(handleInteractionCapture, "handleInteractionCapture");
       function handleInteractionBubble(event) {
         if (isPointerDownOutsideRef.current) {
           interceptedOutsideInteractionEventsRef.current.set(event.type, false);
         }
       }
-      __name20(handleInteractionBubble, "handleInteractionBubble");
-      const handlePointerDown = /* @__PURE__ */ __name20((event) => {
+      __name15(handleInteractionBubble, "handleInteractionBubble");
+      const handlePointerDown = /* @__PURE__ */ __name15((event) => {
         if (event.target && !isPointerInsideReactTreeRef.current) {
           let handleAndDispatchPointerDownOutsideEvent2 = function() {
             ownerDocument.removeEventListener("click", handleClickRef.current);
@@ -23119,7 +20271,7 @@
             }
           };
           var handleAndDispatchPointerDownOutsideEvent = handleAndDispatchPointerDownOutsideEvent2;
-          __name20(handleAndDispatchPointerDownOutsideEvent2, "handleAndDispatchPointerDownOutsideEvent");
+          __name15(handleAndDispatchPointerDownOutsideEvent2, "handleAndDispatchPointerDownOutsideEvent");
           if (!shouldHandlePointerDownOutside(event.target)) {
             ownerDocument.removeEventListener("click", handleClickRef.current);
             resetOutsideInteraction();
@@ -23177,15 +20329,15 @@
     ]);
     return {
       // ensures we check React component tree (not just DOM tree)
-      onPointerDownCapture: /* @__PURE__ */ __name20(() => isPointerInsideReactTreeRef.current = true, "onPointerDownCapture")
+      onPointerDownCapture: /* @__PURE__ */ __name15(() => isPointerInsideReactTreeRef.current = true, "onPointerDownCapture")
     };
   }
-  __name20(usePointerDownOutside, "usePointerDownOutside");
+  __name15(usePointerDownOutside, "usePointerDownOutside");
   function useFocusOutside(onFocusOutside, ownerDocument = globalThis?.document) {
     const handleFocusOutside = useCallbackRef(onFocusOutside);
-    const isFocusInsideReactTreeRef = React27.useRef(false);
-    React27.useEffect(() => {
-      const handleFocus = /* @__PURE__ */ __name20((event) => {
+    const isFocusInsideReactTreeRef = React15.useRef(false);
+    React15.useEffect(() => {
+      const handleFocus = /* @__PURE__ */ __name15((event) => {
         if (event.target && !isFocusInsideReactTreeRef.current) {
           const eventDetail = { originalEvent: event };
           handleAndDispatchCustomEvent(FOCUS_OUTSIDE, handleFocusOutside, eventDetail, {
@@ -23197,16 +20349,16 @@
       return () => ownerDocument.removeEventListener("focusin", handleFocus);
     }, [ownerDocument, handleFocusOutside]);
     return {
-      onFocusCapture: /* @__PURE__ */ __name20(() => isFocusInsideReactTreeRef.current = true, "onFocusCapture"),
-      onBlurCapture: /* @__PURE__ */ __name20(() => isFocusInsideReactTreeRef.current = false, "onBlurCapture")
+      onFocusCapture: /* @__PURE__ */ __name15(() => isFocusInsideReactTreeRef.current = true, "onFocusCapture"),
+      onBlurCapture: /* @__PURE__ */ __name15(() => isFocusInsideReactTreeRef.current = false, "onBlurCapture")
     };
   }
-  __name20(useFocusOutside, "useFocusOutside");
+  __name15(useFocusOutside, "useFocusOutside");
   function dispatchUpdate() {
     const event = new CustomEvent(CONTEXT_UPDATE);
     document.dispatchEvent(event);
   }
-  __name20(dispatchUpdate, "dispatchUpdate");
+  __name15(dispatchUpdate, "dispatchUpdate");
   function handleAndDispatchCustomEvent(name, handler, detail, { discrete }) {
     const target = detail.originalEvent.target;
     const event = new CustomEvent(name, { bubbles: false, cancelable: true, detail });
@@ -23217,18 +20369,18 @@
       target.dispatchEvent(event);
     }
   }
-  __name20(handleAndDispatchCustomEvent, "handleAndDispatchCustomEvent");
+  __name15(handleAndDispatchCustomEvent, "handleAndDispatchCustomEvent");
 
   // node_modules/.pnpm/@radix-ui+react-focus-scope_6d7db95e6b4b16578fd42789685673fa/node_modules/@radix-ui/react-focus-scope/dist/index.mjs
-  var React28 = __toESM(require_react(), 1);
-  var import_jsx_runtime23 = __toESM(require_jsx_runtime(), 1);
-  var __defProp22 = Object.defineProperty;
-  var __name21 = (target, value) => __defProp22(target, "name", { value, configurable: true });
+  var React16 = __toESM(require_react(), 1);
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime(), 1);
+  var __defProp17 = Object.defineProperty;
+  var __name16 = (target, value) => __defProp17(target, "name", { value, configurable: true });
   var AUTOFOCUS_ON_MOUNT = "focusScope.autoFocusOnMount";
   var AUTOFOCUS_ON_UNMOUNT = "focusScope.autoFocusOnUnmount";
-  var EVENT_OPTIONS2 = { bubbles: false, cancelable: true };
-  var FocusScope = /* @__PURE__ */ React28.forwardRef(
-    /* @__PURE__ */ __name21(function FocusScope2(props, forwardedRef) {
+  var EVENT_OPTIONS = { bubbles: false, cancelable: true };
+  var FocusScope = /* @__PURE__ */ React16.forwardRef(
+    /* @__PURE__ */ __name16(function FocusScope2(props, forwardedRef) {
       const {
         loop = false,
         trapped = false,
@@ -23237,16 +20389,16 @@
         onUnmountAutoFocus: onUnmountAutoFocusProp,
         ...scopeProps
       } = props;
-      const [container, setContainer] = React28.useState(null);
+      const [container, setContainer] = React16.useState(null);
       const onMountAutoFocus = useCallbackRef(onMountAutoFocusProp);
       const onUnmountAutoFocus = useCallbackRef(onUnmountAutoFocusProp);
-      const lastFocusedElementRef = React28.useRef(null);
+      const lastFocusedElementRef = React16.useRef(null);
       const composedRefs = useComposedRefs(forwardedRef, setContainer);
-      const branchesRef = React28.useRef(branches);
-      React28.useEffect(() => {
+      const branchesRef = React16.useRef(branches);
+      React16.useEffect(() => {
         branchesRef.current = branches;
       });
-      const isTargetInScope = React28.useCallback(
+      const isTargetInScope = React16.useCallback(
         (target) => {
           if (!target) return false;
           if (container?.contains(target)) return true;
@@ -23254,7 +20406,7 @@
         },
         [container]
       );
-      const focusScope = React28.useRef({
+      const focusScope = React16.useRef({
         paused: false,
         pause() {
           this.paused = true;
@@ -23263,7 +20415,7 @@
           this.paused = false;
         }
       }).current;
-      React28.useEffect(() => {
+      React16.useEffect(() => {
         if (trapped) {
           let handleFocusIn2 = function(event) {
             if (focusScope.paused || !container) return;
@@ -23288,9 +20440,9 @@
             }
           };
           var handleFocusIn = handleFocusIn2, handleFocusOut = handleFocusOut2, handleMutations = handleMutations2;
-          __name21(handleFocusIn2, "handleFocusIn");
-          __name21(handleFocusOut2, "handleFocusOut");
-          __name21(handleMutations2, "handleMutations");
+          __name16(handleFocusIn2, "handleFocusIn");
+          __name16(handleFocusOut2, "handleFocusOut");
+          __name16(handleMutations2, "handleMutations");
           document.addEventListener("focusin", handleFocusIn2);
           document.addEventListener("focusout", handleFocusOut2);
           const mutationObserver = new MutationObserver(handleMutations2);
@@ -23302,17 +20454,17 @@
           };
         }
       }, [trapped, container, focusScope.paused, isTargetInScope]);
-      React28.useEffect(() => {
+      React16.useEffect(() => {
         if (container) {
           focusScopesStack.add(focusScope);
           const previouslyFocusedElement = document.activeElement;
           const hasFocusedCandidate = container.contains(previouslyFocusedElement);
           if (!hasFocusedCandidate) {
-            const mountEvent = new CustomEvent(AUTOFOCUS_ON_MOUNT, EVENT_OPTIONS2);
+            const mountEvent = new CustomEvent(AUTOFOCUS_ON_MOUNT, EVENT_OPTIONS);
             container.addEventListener(AUTOFOCUS_ON_MOUNT, onMountAutoFocus);
             container.dispatchEvent(mountEvent);
             if (!mountEvent.defaultPrevented) {
-              focusFirst2(removeLinks(getTabbableCandidates(container)), { select: true });
+              focusFirst(removeLinks(getTabbableCandidates(container)), { select: true });
               if (document.activeElement === previouslyFocusedElement) {
                 focus(container);
               }
@@ -23323,7 +20475,7 @@
             const ownerDocument = container.ownerDocument;
             const UnmountEvent = CustomEvent;
             setTimeout(() => {
-              const unmountEvent = new UnmountEvent(AUTOFOCUS_ON_UNMOUNT, EVENT_OPTIONS2);
+              const unmountEvent = new UnmountEvent(AUTOFOCUS_ON_UNMOUNT, EVENT_OPTIONS);
               container.addEventListener(AUTOFOCUS_ON_UNMOUNT, onUnmountAutoFocus);
               container.dispatchEvent(unmountEvent);
               if (!unmountEvent.defaultPrevented) {
@@ -23335,7 +20487,7 @@
           };
         }
       }, [container, onMountAutoFocus, onUnmountAutoFocus, focusScope]);
-      const handleKeyDown = React28.useCallback(
+      const handleKeyDown = React16.useCallback(
         (event) => {
           if (!loop && !trapped) return;
           if (focusScope.paused) return;
@@ -23360,58 +20512,58 @@
         },
         [loop, trapped, focusScope.paused]
       );
-      return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Primitive.div, { tabIndex: -1, ...scopeProps, ref: composedRefs, onKeyDown: handleKeyDown });
+      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Primitive.div, { tabIndex: -1, ...scopeProps, ref: composedRefs, onKeyDown: handleKeyDown });
     }, "FocusScope")
   );
-  var FocusScopeBranchContext = React28.createContext(null);
+  var FocusScopeBranchContext = React16.createContext(null);
   function FocusScopeBranchProvider({ registry, children }) {
     if (!registry) {
       return children;
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FocusScopeBranchContext.Provider, { value: registry, children });
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(FocusScopeBranchContext.Provider, { value: registry, children });
   }
-  __name21(FocusScopeBranchProvider, "FocusScopeBranchProvider");
+  __name16(FocusScopeBranchProvider, "FocusScopeBranchProvider");
   function useFocusScopeBranchRegistry() {
-    const [nodes, setNodes] = React28.useState([]);
-    const registry = React28.useMemo(
+    const [nodes, setNodes] = React16.useState([]);
+    const registry = React16.useMemo(
       () => ({
-        add: /* @__PURE__ */ __name21((node) => setNodes((prev) => prev.includes(node) ? prev : [...prev, node]), "add"),
-        remove: /* @__PURE__ */ __name21((node) => setNodes((prev) => prev.filter((current) => current !== node)), "remove")
+        add: /* @__PURE__ */ __name16((node) => setNodes((prev) => prev.includes(node) ? prev : [...prev, node]), "add"),
+        remove: /* @__PURE__ */ __name16((node) => setNodes((prev) => prev.filter((current) => current !== node)), "remove")
       }),
       []
     );
     return { nodes, registry };
   }
-  __name21(useFocusScopeBranchRegistry, "useFocusScopeBranchRegistry");
+  __name16(useFocusScopeBranchRegistry, "useFocusScopeBranchRegistry");
   function useFocusScopeBranch(node) {
-    const registry = React28.useContext(FocusScopeBranchContext);
-    React28.useEffect(() => {
+    const registry = React16.useContext(FocusScopeBranchContext);
+    React16.useEffect(() => {
       if (!node || !registry) return;
       registry.add(node);
       return () => registry.remove(node);
     }, [node, registry]);
   }
-  __name21(useFocusScopeBranch, "useFocusScopeBranch");
-  function focusFirst2(candidates, { select = false } = {}) {
+  __name16(useFocusScopeBranch, "useFocusScopeBranch");
+  function focusFirst(candidates, { select = false } = {}) {
     const previouslyFocusedElement = document.activeElement;
     for (const candidate of candidates) {
       focus(candidate, { select });
       if (document.activeElement !== previouslyFocusedElement) return;
     }
   }
-  __name21(focusFirst2, "focusFirst");
+  __name16(focusFirst, "focusFirst");
   function getTabbableEdges(container) {
     const candidates = getTabbableCandidates(container);
     const first = findVisible(candidates, container);
     const last = findVisible(candidates.reverse(), container);
     return [first, last];
   }
-  __name21(getTabbableEdges, "getTabbableEdges");
+  __name16(getTabbableEdges, "getTabbableEdges");
   function getTabbableCandidates(container) {
     const nodes = [];
     const document2 = container.ownerDocument;
     const walker = document2.createTreeWalker(container, NodeFilter.SHOW_ELEMENT, {
-      acceptNode: /* @__PURE__ */ __name21((node) => {
+      acceptNode: /* @__PURE__ */ __name16((node) => {
         const isHiddenInput = node.tagName === "INPUT" && node.type === "hidden";
         if (node.disabled || node.hidden || isHiddenInput) {
           return NodeFilter.FILTER_SKIP;
@@ -23424,7 +20576,7 @@
     }
     return nodes;
   }
-  __name21(getTabbableCandidates, "getTabbableCandidates");
+  __name16(getTabbableCandidates, "getTabbableCandidates");
   function findVisible(elements, container) {
     const canUseCheckVisibility = typeof container.checkVisibility === "function" && container.checkVisibility({ checkVisibilityCSS: true });
     for (const element of elements) {
@@ -23434,7 +20586,7 @@
       }
     }
   }
-  __name21(findVisible, "findVisible");
+  __name16(findVisible, "findVisible");
   function isHidden(node, { upTo }) {
     if (getComputedStyle(node).visibility === "hidden") return true;
     while (node) {
@@ -23444,11 +20596,11 @@
     }
     return false;
   }
-  __name21(isHidden, "isHidden");
+  __name16(isHidden, "isHidden");
   function isSelectableInput(element) {
     return element.tagName === "INPUT" && typeof element.select === "function";
   }
-  __name21(isSelectableInput, "isSelectableInput");
+  __name16(isSelectableInput, "isSelectableInput");
   function focus(element, { select = false } = {}) {
     if (element && element.focus) {
       const ownerDocument = element.ownerDocument ?? document;
@@ -23458,7 +20610,7 @@
         element.select();
     }
   }
-  __name21(focus, "focus");
+  __name16(focus, "focus");
   var focusScopesStack = createFocusScopesStack();
   function createFocusScopesStack() {
     let stack = [];
@@ -23477,7 +20629,7 @@
       }
     };
   }
-  __name21(createFocusScopesStack, "createFocusScopesStack");
+  __name16(createFocusScopesStack, "createFocusScopesStack");
   function arrayRemove(array, item) {
     const updatedArray = [...array];
     const index = updatedArray.indexOf(item);
@@ -23486,41 +20638,41 @@
     }
     return updatedArray;
   }
-  __name21(arrayRemove, "arrayRemove");
+  __name16(arrayRemove, "arrayRemove");
   function removeLinks(items) {
     return items.filter((item) => item.tagName !== "A");
   }
-  __name21(removeLinks, "removeLinks");
+  __name16(removeLinks, "removeLinks");
 
   // node_modules/.pnpm/@radix-ui+react-portal@1.2._058d94c3625e9af8e54f0154a66c0818/node_modules/@radix-ui/react-portal/dist/index.mjs
-  var React29 = __toESM(require_react(), 1);
+  var React17 = __toESM(require_react(), 1);
   var ReactDOM2 = __toESM(require_react_dom(), 1);
-  var import_jsx_runtime24 = __toESM(require_jsx_runtime(), 1);
-  var __defProp23 = Object.defineProperty;
-  var __name22 = (target, value) => __defProp23(target, "name", { value, configurable: true });
-  var Portal = /* @__PURE__ */ React29.forwardRef(
-    /* @__PURE__ */ __name22(function Portal2(props, forwardedRef) {
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime(), 1);
+  var __defProp18 = Object.defineProperty;
+  var __name17 = (target, value) => __defProp18(target, "name", { value, configurable: true });
+  var Portal = /* @__PURE__ */ React17.forwardRef(
+    /* @__PURE__ */ __name17(function Portal2(props, forwardedRef) {
       const { container: containerProp, ...portalProps } = props;
-      const [mounted, setMounted] = React29.useState(false);
+      const [mounted, setMounted] = React17.useState(false);
       useLayoutEffect2(() => setMounted(true), []);
       const container = containerProp || mounted && globalThis?.document?.body;
-      return container ? ReactDOM2.createPortal(/* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Primitive.div, { ...portalProps, ref: forwardedRef }), container) : null;
+      return container ? ReactDOM2.createPortal(/* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Primitive.div, { ...portalProps, ref: forwardedRef }), container) : null;
     }, "Portal")
   );
 
   // node_modules/.pnpm/@radix-ui+react-focus-guard_c0670c59f51feaa6adb45a3bc8fcd0e3/node_modules/@radix-ui/react-focus-guards/dist/index.mjs
-  var React30 = __toESM(require_react(), 1);
-  var __defProp24 = Object.defineProperty;
-  var __name23 = (target, value) => __defProp24(target, "name", { value, configurable: true });
+  var React18 = __toESM(require_react(), 1);
+  var __defProp19 = Object.defineProperty;
+  var __name18 = (target, value) => __defProp19(target, "name", { value, configurable: true });
   var count2 = 0;
   var guards = null;
   function FocusGuards(props) {
     useFocusGuards();
     return props.children;
   }
-  __name23(FocusGuards, "FocusGuards");
+  __name18(FocusGuards, "FocusGuards");
   function useFocusGuards() {
-    React30.useEffect(() => {
+    React18.useEffect(() => {
       if (!guards) {
         guards = { start: createFocusGuard(), end: createFocusGuard() };
       }
@@ -23542,7 +20694,7 @@
       };
     }, []);
   }
-  __name23(useFocusGuards, "useFocusGuards");
+  __name18(useFocusGuards, "useFocusGuards");
   function createFocusGuard() {
     const element = document.createElement("span");
     element.setAttribute("data-radix-focus-guard", "");
@@ -23553,7 +20705,7 @@
     element.style.pointerEvents = "none";
     return element;
   }
-  __name23(createFocusGuard, "createFocusGuard");
+  __name18(createFocusGuard, "createFocusGuard");
 
   // node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.es6.mjs
   var __assign = function() {
@@ -23588,10 +20740,10 @@
   }
 
   // node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.3.0_react@19.3.1/node_modules/react-remove-scroll/dist/es2015/Combination.js
-  var React37 = __toESM(require_react());
+  var React28 = __toESM(require_react());
 
   // node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.3.0_react@19.3.1/node_modules/react-remove-scroll/dist/es2015/UI.js
-  var React33 = __toESM(require_react());
+  var React21 = __toESM(require_react());
 
   // node_modules/.pnpm/react-remove-scroll-bar@2.3_4bc8444c555b29ac9388a23b7e4da306/node_modules/react-remove-scroll-bar/dist/es2015/constants.js
   var zeroRightClassName = "right-scroll-bar-position";
@@ -23610,9 +20762,9 @@
   }
 
   // node_modules/.pnpm/use-callback-ref@1.3.3_@types+react@19.3.0_react@19.3.1/node_modules/use-callback-ref/dist/es2015/useRef.js
-  var import_react4 = __toESM(require_react());
+  var import_react = __toESM(require_react());
   function useCallbackRef2(initialValue, callback) {
-    var ref = (0, import_react4.useState)(function() {
+    var ref = (0, import_react.useState)(function() {
       return {
         // value
         value: initialValue,
@@ -23638,8 +20790,8 @@
   }
 
   // node_modules/.pnpm/use-callback-ref@1.3.3_@types+react@19.3.0_react@19.3.1/node_modules/use-callback-ref/dist/es2015/useMergeRef.js
-  var React31 = __toESM(require_react());
-  var useIsomorphicLayoutEffect = typeof window !== "undefined" ? React31.useLayoutEffect : React31.useEffect;
+  var React19 = __toESM(require_react());
+  var useIsomorphicLayoutEffect = typeof window !== "undefined" ? React19.useLayoutEffect : React19.useEffect;
   var currentValues = /* @__PURE__ */ new WeakMap();
   function useMergeRefs(refs, defaultValue) {
     var callbackRef = useCallbackRef2(defaultValue || null, function(newValue) {
@@ -23756,7 +20908,7 @@
   }
 
   // node_modules/.pnpm/use-sidecar@1.1.3_@types+react@19.3.0_react@19.3.1/node_modules/use-sidecar/dist/es2015/exports.js
-  var React32 = __toESM(require_react());
+  var React20 = __toESM(require_react());
   var SideCar = function(_a) {
     var sideCar = _a.sideCar, rest = __rest(_a, ["sideCar"]);
     if (!sideCar) {
@@ -23766,7 +20918,7 @@
     if (!Target) {
       throw new Error("Sidecar medium not found");
     }
-    return React32.createElement(Target, __assign({}, rest));
+    return React20.createElement(Target, __assign({}, rest));
   };
   SideCar.isSideCarExport = true;
   function exportSidecar(medium, exported) {
@@ -23781,9 +20933,9 @@
   var nothing = function() {
     return;
   };
-  var RemoveScroll = React33.forwardRef(function(props, parentRef) {
-    var ref = React33.useRef(null);
-    var _a = React33.useState({
+  var RemoveScroll = React21.forwardRef(function(props, parentRef) {
+    var ref = React21.useRef(null);
+    var _a = React21.useState({
       onScrollCapture: nothing,
       onWheelCapture: nothing,
       onTouchMoveCapture: nothing
@@ -23792,11 +20944,11 @@
     var SideCar2 = sideCar;
     var containerRef = useMergeRefs([ref, parentRef]);
     var containerProps = __assign(__assign({}, rest), callbacks);
-    return React33.createElement(
-      React33.Fragment,
+    return React21.createElement(
+      React21.Fragment,
       null,
-      enabled && React33.createElement(SideCar2, { sideCar: effectCar, removeScrollBar, shards, noRelative, noIsolation, inert, setCallbacks, allowPinchZoom: !!allowPinchZoom, lockRef: ref, gapMode }),
-      forwardProps ? React33.cloneElement(React33.Children.only(children), __assign(__assign({}, containerProps), { ref: containerRef })) : React33.createElement(Container, __assign({}, containerProps, { className, ref: containerRef }), children)
+      enabled && React21.createElement(SideCar2, { sideCar: effectCar, removeScrollBar, shards, noRelative, noIsolation, inert, setCallbacks, allowPinchZoom: !!allowPinchZoom, lockRef: ref, gapMode }),
+      forwardProps ? React21.cloneElement(React21.Children.only(children), __assign(__assign({}, containerProps), { ref: containerRef })) : React21.createElement(Container, __assign({}, containerProps, { className, ref: containerRef }), children)
     );
   });
   RemoveScroll.defaultProps = {
@@ -23810,13 +20962,13 @@
   };
 
   // node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.3.0_react@19.3.1/node_modules/react-remove-scroll/dist/es2015/SideEffect.js
-  var React36 = __toESM(require_react());
+  var React27 = __toESM(require_react());
 
   // node_modules/.pnpm/react-remove-scroll-bar@2.3_4bc8444c555b29ac9388a23b7e4da306/node_modules/react-remove-scroll-bar/dist/es2015/component.js
-  var React35 = __toESM(require_react());
+  var React26 = __toESM(require_react());
 
   // node_modules/.pnpm/react-style-singleton@2.2.3_@types+react@19.3.0_react@19.3.1/node_modules/react-style-singleton/dist/es2015/hook.js
-  var React34 = __toESM(require_react());
+  var React25 = __toESM(require_react());
 
   // node_modules/.pnpm/get-nonce@1.0.1/node_modules/get-nonce/dist/es2015/index.js
   var currentNonce;
@@ -23880,7 +21032,7 @@
   var styleHookSingleton = function() {
     var sheet = stylesheetSingleton();
     return function(styles, isDynamic) {
-      React34.useEffect(function() {
+      React25.useEffect(function() {
         sheet.add(styles);
         return function() {
           sheet.remove();
@@ -23954,7 +21106,7 @@
     return isFinite(counter) ? counter : 0;
   };
   var useLockAttribute = function() {
-    React35.useEffect(function() {
+    React26.useEffect(function() {
       document.body.setAttribute(lockAttribute, (getCurrentUseCounter() + 1).toString());
       return function() {
         var newCounter = getCurrentUseCounter() - 1;
@@ -23969,10 +21121,10 @@
   var RemoveScrollBar = function(_a) {
     var noRelative = _a.noRelative, noImportant = _a.noImportant, _b = _a.gapMode, gapMode = _b === void 0 ? "margin" : _b;
     useLockAttribute();
-    var gap = React35.useMemo(function() {
+    var gap = React26.useMemo(function() {
       return getGapWidth(gapMode);
     }, [gapMode]);
-    return React35.createElement(Style, { styles: getStyles(gap, !noRelative, gapMode, !noImportant ? "!important" : "") });
+    return React26.createElement(Style, { styles: getStyles(gap, !noRelative, gapMode, !noImportant ? "!important" : "") });
   };
 
   // node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.3.0_react@19.3.1/node_modules/react-remove-scroll/dist/es2015/aggresiveCapture.js
@@ -24113,16 +21265,16 @@
   var idCounter = 0;
   var lockStack = [];
   function RemoveScrollSideCar(props) {
-    var shouldPreventQueue = React36.useRef([]);
-    var touchStartRef = React36.useRef([0, 0]);
-    var activeAxis = React36.useRef();
-    var id = React36.useState(idCounter++)[0];
-    var Style2 = React36.useState(styleSingleton)[0];
-    var lastProps = React36.useRef(props);
-    React36.useEffect(function() {
+    var shouldPreventQueue = React27.useRef([]);
+    var touchStartRef = React27.useRef([0, 0]);
+    var activeAxis = React27.useRef();
+    var id = React27.useState(idCounter++)[0];
+    var Style2 = React27.useState(styleSingleton)[0];
+    var lastProps = React27.useRef(props);
+    React27.useEffect(function() {
       lastProps.current = props;
     }, [props]);
-    React36.useEffect(function() {
+    React27.useEffect(function() {
       if (props.inert) {
         document.body.classList.add("block-interactivity-".concat(id));
         var allow_1 = __spreadArray([props.lockRef.current], (props.shards || []).map(extractRef), true).filter(Boolean);
@@ -24138,7 +21290,7 @@
       }
       return;
     }, [props.inert, props.lockRef.current, props.shards]);
-    var shouldCancelEvent = React36.useCallback(function(event, parent) {
+    var shouldCancelEvent = React27.useCallback(function(event, parent) {
       if ("touches" in event && event.touches.length === 2 || event.type === "wheel" && event.ctrlKey) {
         return !lastProps.current.allowPinchZoom;
       }
@@ -24180,7 +21332,7 @@
       var cancelingAxis = activeAxis.current || currentAxis;
       return handleScroll(cancelingAxis, parent, event, cancelingAxis === "h" ? deltaX : deltaY, true);
     }, []);
-    var shouldPrevent = React36.useCallback(function(_event) {
+    var shouldPrevent = React27.useCallback(function(_event) {
       var event = _event;
       if (!lockStack.length || lockStack[lockStack.length - 1] !== Style2) {
         return;
@@ -24207,7 +21359,7 @@
         }
       }
     }, []);
-    var shouldCancel = React36.useCallback(function(name, delta, target, should) {
+    var shouldCancel = React27.useCallback(function(name, delta, target, should) {
       var event = { name, delta, target, should, shadowParent: getOutermostShadowParent(target) };
       shouldPreventQueue.current.push(event);
       setTimeout(function() {
@@ -24216,17 +21368,17 @@
         });
       }, 1);
     }, []);
-    var scrollTouchStart = React36.useCallback(function(event) {
+    var scrollTouchStart = React27.useCallback(function(event) {
       touchStartRef.current = getTouchXY(event);
       activeAxis.current = void 0;
     }, []);
-    var scrollWheel = React36.useCallback(function(event) {
+    var scrollWheel = React27.useCallback(function(event) {
       shouldCancel(event.type, getDeltaXY(event), event.target, shouldCancelEvent(event, props.lockRef.current));
     }, []);
-    var scrollTouchMove = React36.useCallback(function(event) {
+    var scrollTouchMove = React27.useCallback(function(event) {
       shouldCancel(event.type, getTouchXY(event), event.target, shouldCancelEvent(event, props.lockRef.current));
     }, []);
-    React36.useEffect(function() {
+    React27.useEffect(function() {
       lockStack.push(Style2);
       props.setCallbacks({
         onScrollCapture: scrollWheel,
@@ -24246,11 +21398,11 @@
       };
     }, []);
     var removeScrollBar = props.removeScrollBar, inert = props.inert;
-    return React36.createElement(
-      React36.Fragment,
+    return React27.createElement(
+      React27.Fragment,
       null,
-      inert ? React36.createElement(Style2, { styles: generateStyle(id) }) : null,
-      removeScrollBar ? React36.createElement(RemoveScrollBar, { noRelative: props.noRelative, gapMode: props.gapMode }) : null
+      inert ? React27.createElement(Style2, { styles: generateStyle(id) }) : null,
+      removeScrollBar ? React27.createElement(RemoveScrollBar, { noRelative: props.noRelative, gapMode: props.gapMode }) : null
     );
   }
   function getOutermostShadowParent(node) {
@@ -24269,8 +21421,8 @@
   var sidecar_default = exportSidecar(effectCar, RemoveScrollSideCar);
 
   // node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.3.0_react@19.3.1/node_modules/react-remove-scroll/dist/es2015/Combination.js
-  var ReactRemoveScroll = React37.forwardRef(function(props, ref) {
-    return React37.createElement(RemoveScroll, __assign({}, props, { ref, sideCar: sidecar_default }));
+  var ReactRemoveScroll = React28.forwardRef(function(props, ref) {
+    return React28.createElement(RemoveScroll, __assign({}, props, { ref, sideCar: sidecar_default }));
   });
   ReactRemoveScroll.classNames = RemoveScroll.classNames;
   var Combination_default = ReactRemoveScroll;
@@ -24397,13 +21549,13 @@
   };
 
   // node_modules/.pnpm/@radix-ui+react-dialog@1.3._4dc34b117641e6b0d7103bbf4056ed99/node_modules/@radix-ui/react-dialog/dist/index.mjs
-  var import_jsx_runtime25 = __toESM(require_jsx_runtime(), 1);
-  var __defProp25 = Object.defineProperty;
-  var __name24 = (target, value) => __defProp25(target, "name", { value, configurable: true });
+  var import_jsx_runtime11 = __toESM(require_jsx_runtime(), 1);
+  var __defProp20 = Object.defineProperty;
+  var __name19 = (target, value) => __defProp20(target, "name", { value, configurable: true });
   var DIALOG_NAME = "Dialog";
   var [createDialogContext, createDialogScope] = createContextScope(DIALOG_NAME);
   var [DialogProvider, useDialogContext] = createDialogContext(DIALOG_NAME);
-  var Dialog = /* @__PURE__ */ __name24((props) => {
+  var Dialog = /* @__PURE__ */ __name19((props) => {
     const {
       __scopeDialog,
       children,
@@ -24412,8 +21564,8 @@
       onOpenChange,
       modal = true
     } = props;
-    const triggerRef = React38.useRef(null);
-    const contentRef = React38.useRef(null);
+    const triggerRef = React29.useRef(null);
+    const contentRef = React29.useRef(null);
     const { nodes: branchNodes, registry: branchRegistry } = useFocusScopeBranchRegistry();
     const [open, setOpen] = useControllableState({
       prop: openProp,
@@ -24421,9 +21573,9 @@
       onChange: onOpenChange,
       caller: DIALOG_NAME
     });
-    const [titleCount, setTitleCount] = React38.useState(0);
-    const [descriptionCount, setDescriptionCount] = React38.useState(0);
-    return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+    const [titleCount, setTitleCount] = React29.useState(0);
+    const [descriptionCount, setDescriptionCount] = React29.useState(0);
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
       DialogProvider,
       {
         scope: __scopeDialog,
@@ -24438,7 +21590,7 @@
         setDescriptionCount,
         open,
         onOpenChange: setOpen,
-        onOpenToggle: React38.useCallback(() => setOpen((prevOpen) => !prevOpen), [setOpen]),
+        onOpenToggle: React29.useCallback(() => setOpen((prevOpen) => !prevOpen), [setOpen]),
         modal,
         branchNodes,
         branchRegistry,
@@ -24446,28 +21598,49 @@
       }
     );
   }, "Dialog");
+  var TRIGGER_NAME3 = "DialogTrigger";
+  var DialogTrigger = /* @__PURE__ */ React29.forwardRef(
+    /* @__PURE__ */ __name19(function DialogTrigger2(props, forwardedRef) {
+      const { __scopeDialog, ...triggerProps } = props;
+      const context = useDialogContext(TRIGGER_NAME3, __scopeDialog);
+      const composedTriggerRef = useComposedRefs(forwardedRef, context.triggerRef);
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+        Primitive.button,
+        {
+          type: "button",
+          "aria-haspopup": "dialog",
+          "aria-expanded": context.open,
+          "aria-controls": context.open ? context.contentId : void 0,
+          "data-state": getState3(context.open),
+          ...triggerProps,
+          ref: composedTriggerRef,
+          onClick: composeEventHandlers(props.onClick, context.onOpenToggle)
+        }
+      );
+    }, "DialogTrigger")
+  );
   var PORTAL_NAME = "DialogPortal";
   var [PortalProvider, usePortalContext] = createDialogContext(PORTAL_NAME, {
     forceMount: void 0
   });
-  var DialogPortal = /* @__PURE__ */ __name24((props) => {
+  var DialogPortal = /* @__PURE__ */ __name19((props) => {
     const { __scopeDialog, forceMount, children, container } = props;
     const context = useDialogContext(PORTAL_NAME, __scopeDialog);
-    return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(PortalProvider, { scope: __scopeDialog, forceMount, children: React38.Children.map(children, (child) => /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Presence, { present: forceMount || context.open, children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Portal, { asChild: true, container, children: child }) })) });
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(PortalProvider, { scope: __scopeDialog, forceMount, children: React29.Children.map(children, (child) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Presence, { present: forceMount || context.open, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Portal, { asChild: true, container, children: child }) })) });
   }, "DialogPortal");
   var OVERLAY_NAME = "DialogOverlay";
-  var DialogOverlay = /* @__PURE__ */ React38.forwardRef(
-    /* @__PURE__ */ __name24(function DialogOverlay2(props, forwardedRef) {
+  var DialogOverlay = /* @__PURE__ */ React29.forwardRef(
+    /* @__PURE__ */ __name19(function DialogOverlay2(props, forwardedRef) {
       const portalContext = usePortalContext(OVERLAY_NAME, props.__scopeDialog);
       const { forceMount = portalContext.forceMount, ...overlayProps } = props;
       const context = useDialogContext(OVERLAY_NAME, props.__scopeDialog);
-      return context.modal ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Presence, { present: forceMount || context.open, children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(DialogOverlayImpl, { ...overlayProps, ref: forwardedRef }) }) : null;
+      return context.modal ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Presence, { present: forceMount || context.open, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(DialogOverlayImpl, { ...overlayProps, ref: forwardedRef }) }) : null;
     }, "DialogOverlay")
   );
   var Slot2 = createSlot("DialogOverlay.RemoveScroll");
-  var DialogOverlayImpl = /* @__PURE__ */ React38.forwardRef(
+  var DialogOverlayImpl = /* @__PURE__ */ React29.forwardRef(
     // blank line to reduce diff noise
-    /* @__PURE__ */ __name24(function DialogOverlayImpl2(props, forwardedRef) {
+    /* @__PURE__ */ __name19(function DialogOverlayImpl2(props, forwardedRef) {
       const { __scopeDialog, ...overlayProps } = props;
       const context = useDialogContext(OVERLAY_NAME, __scopeDialog);
       const registerDismissableSurface = useDismissableLayerSurface();
@@ -24477,19 +21650,19 @@
         // `RemoveScroll` (eg. when `Overlay` and `Content` are siblings). Nested
         // layers are registered as branches and added as shards so they remain
         // scrollable too. See https://github.com/radix-ui/primitives/issues/3423
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
           Combination_default,
           {
             as: Slot2,
             allowPinchZoom: true,
-            shards: React38.useMemo(
+            shards: React29.useMemo(
               () => [context.contentRef, ...context.branchNodes.map((node) => ({ current: node }))],
               [context.contentRef, context.branchNodes]
             ),
-            children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+            children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
               Primitive.div,
               {
-                "data-state": getState2(context.open),
+                "data-state": getState3(context.open),
                 ...overlayProps,
                 ref: composedRefs,
                 style: { pointerEvents: "auto", ...overlayProps.style }
@@ -24500,26 +21673,26 @@
       );
     }, "DialogOverlayImpl")
   );
-  var CONTENT_NAME2 = "DialogContent";
-  var DialogContent = /* @__PURE__ */ React38.forwardRef(
-    /* @__PURE__ */ __name24(function DialogContent2(props, forwardedRef) {
-      const portalContext = usePortalContext(CONTENT_NAME2, props.__scopeDialog);
+  var CONTENT_NAME3 = "DialogContent";
+  var DialogContent = /* @__PURE__ */ React29.forwardRef(
+    /* @__PURE__ */ __name19(function DialogContent2(props, forwardedRef) {
+      const portalContext = usePortalContext(CONTENT_NAME3, props.__scopeDialog);
       const { forceMount = portalContext.forceMount, ...contentProps } = props;
-      const context = useDialogContext(CONTENT_NAME2, props.__scopeDialog);
-      return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Presence, { present: forceMount || context.open, children: context.modal ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(DialogContentModal, { ...contentProps, ref: forwardedRef }) : /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(DialogContentNonModal, { ...contentProps, ref: forwardedRef }) });
+      const context = useDialogContext(CONTENT_NAME3, props.__scopeDialog);
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Presence, { present: forceMount || context.open, children: context.modal ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(DialogContentModal, { ...contentProps, ref: forwardedRef }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(DialogContentNonModal, { ...contentProps, ref: forwardedRef }) });
     }, "DialogContent")
   );
-  var DialogContentModal = /* @__PURE__ */ React38.forwardRef(
+  var DialogContentModal = /* @__PURE__ */ React29.forwardRef(
     // blank line to reduce diff noise
-    /* @__PURE__ */ __name24(function DialogContentModal2(props, forwardedRef) {
-      const context = useDialogContext(CONTENT_NAME2, props.__scopeDialog);
-      const contentRef = React38.useRef(null);
+    /* @__PURE__ */ __name19(function DialogContentModal2(props, forwardedRef) {
+      const context = useDialogContext(CONTENT_NAME3, props.__scopeDialog);
+      const contentRef = React29.useRef(null);
       const composedRefs = useComposedRefs(forwardedRef, context.contentRef, contentRef);
-      React38.useEffect(() => {
+      React29.useEffect(() => {
         const content = contentRef.current;
         if (content) return hideOthers(content);
       }, []);
-      return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         DialogContentImpl,
         {
           ...props,
@@ -24544,13 +21717,13 @@
       );
     }, "DialogContentModal")
   );
-  var DialogContentNonModal = /* @__PURE__ */ React38.forwardRef(
+  var DialogContentNonModal = /* @__PURE__ */ React29.forwardRef(
     // blank line to reduce diff noise
-    /* @__PURE__ */ __name24(function DialogContentNonModal2(props, forwardedRef) {
-      const context = useDialogContext(CONTENT_NAME2, props.__scopeDialog);
-      const hasInteractedOutsideRef = React38.useRef(false);
-      const hasPointerDownOutsideRef = React38.useRef(false);
-      return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+    /* @__PURE__ */ __name19(function DialogContentNonModal2(props, forwardedRef) {
+      const context = useDialogContext(CONTENT_NAME3, props.__scopeDialog);
+      const hasInteractedOutsideRef = React29.useRef(false);
+      const hasPointerDownOutsideRef = React29.useRef(false);
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         DialogContentImpl,
         {
           ...props,
@@ -24585,9 +21758,9 @@
       );
     }, "DialogContentNonModal")
   );
-  var DialogContentImpl = /* @__PURE__ */ React38.forwardRef(
+  var DialogContentImpl = /* @__PURE__ */ React29.forwardRef(
     // blank line to reduce diff noise
-    /* @__PURE__ */ __name24(function DialogContentImpl2(props, forwardedRef) {
+    /* @__PURE__ */ __name19(function DialogContentImpl2(props, forwardedRef) {
       const {
         __scopeDialog,
         trapFocus,
@@ -24597,9 +21770,9 @@
         children,
         ...contentProps
       } = props;
-      const context = useDialogContext(CONTENT_NAME2, __scopeDialog);
+      const context = useDialogContext(CONTENT_NAME3, __scopeDialog);
       useFocusGuards();
-      return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(FocusScopeBranchProvider, { registry: context.branchRegistry, children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FocusScopeBranchProvider, { registry: context.branchRegistry, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         FocusScope,
         {
           asChild: true,
@@ -24608,14 +21781,14 @@
           branches: context.branchNodes,
           onMountAutoFocus: onOpenAutoFocus,
           onUnmountAutoFocus: onCloseAutoFocus,
-          children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+          children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
             DismissableLayer,
             {
               role: "dialog",
               id: context.contentId,
               "aria-labelledby": context.titlePresent ? context.titleId : void 0,
               "aria-describedby": context.descriptionPresent ? concatAriaDescribedby2(ariaDescribedby, context.descriptionId) : ariaDescribedby,
-              "data-state": getState2(context.open),
+              "data-state": getState3(context.open),
               ...contentProps,
               ref: forwardedRef,
               deferPointerDownOutside: true,
@@ -24627,8 +21800,8 @@
       ) });
     }, "DialogContentImpl")
   );
-  var DialogTitle = /* @__PURE__ */ React38.forwardRef(
-    /* @__PURE__ */ __name24(function DialogTitle2(props, forwardedRef) {
+  var DialogTitle = /* @__PURE__ */ React29.forwardRef(
+    /* @__PURE__ */ __name19(function DialogTitle2(props, forwardedRef) {
       const { __scopeDialog, ...titleProps } = props;
       const context = useDialogContext("DialogTitle", __scopeDialog);
       const { setTitleCount } = context;
@@ -24636,12 +21809,12 @@
         setTitleCount((count3) => count3 + 1);
         return () => setTitleCount((count3) => count3 - 1);
       }, [setTitleCount]);
-      return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Primitive.h2, { id: context.titleId, ...titleProps, ref: forwardedRef });
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Primitive.h2, { id: context.titleId, ...titleProps, ref: forwardedRef });
     }, "DialogTitle")
   );
-  var DialogDescription = /* @__PURE__ */ React38.forwardRef(
+  var DialogDescription = /* @__PURE__ */ React29.forwardRef(
     // blank line to reduce diff noise
-    /* @__PURE__ */ __name24(function DialogDescription2(props, forwardedRef) {
+    /* @__PURE__ */ __name19(function DialogDescription2(props, forwardedRef) {
       const { __scopeDialog, ...descriptionProps } = props;
       const context = useDialogContext("DialogDescription", __scopeDialog);
       const { setDescriptionCount } = context;
@@ -24649,15 +21822,15 @@
         setDescriptionCount((count3) => count3 + 1);
         return () => setDescriptionCount((count3) => count3 - 1);
       }, [setDescriptionCount]);
-      return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Primitive.p, { id: context.descriptionId, ...descriptionProps, ref: forwardedRef });
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Primitive.p, { id: context.descriptionId, ...descriptionProps, ref: forwardedRef });
     }, "DialogDescription")
   );
   var CLOSE_NAME = "DialogClose";
-  var DialogClose = /* @__PURE__ */ React38.forwardRef(
-    /* @__PURE__ */ __name24(function DialogClose2(props, forwardedRef) {
+  var DialogClose = /* @__PURE__ */ React29.forwardRef(
+    /* @__PURE__ */ __name19(function DialogClose2(props, forwardedRef) {
       const { __scopeDialog, ...closeProps } = props;
       const context = useDialogContext(CLOSE_NAME, __scopeDialog);
-      return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         Primitive.button,
         {
           type: "button",
@@ -24668,6 +21841,9 @@
       );
     }, "DialogClose")
   );
+  var WarningProvider = /* @__PURE__ */ __name19((props) => {
+    return props.children;
+  }, "WarningProvider");
   function concatAriaDescribedby2(...values) {
     const ids = /* @__PURE__ */ new Set();
     for (const value of values) {
@@ -24678,99 +21854,4230 @@
     }
     return ids.size > 0 ? Array.from(ids).join(" ") : void 0;
   }
-  __name24(concatAriaDescribedby2, "concatAriaDescribedby");
-  function getState2(open) {
+  __name19(concatAriaDescribedby2, "concatAriaDescribedby");
+  function getState3(open) {
     return open ? "open" : "closed";
   }
-  __name24(getState2, "getState");
+  __name19(getState3, "getState");
+
+  // node_modules/.pnpm/@radix-ui+react-use-size@1._2b848c55b0857f8c7546508027700b89/node_modules/@radix-ui/react-use-size/dist/index.mjs
+  var React30 = __toESM(require_react(), 1);
+  var __defProp21 = Object.defineProperty;
+  var __name20 = (target, value) => __defProp21(target, "name", { value, configurable: true });
+  function useSize(element) {
+    const [size, setSize] = React30.useState(void 0);
+    useLayoutEffect2(() => {
+      if (element) {
+        setSize({ width: element.offsetWidth, height: element.offsetHeight });
+        let rAF = 0;
+        const resizeObserver = new ResizeObserver((entries) => {
+          if (!Array.isArray(entries)) {
+            return;
+          }
+          if (!entries.length) {
+            return;
+          }
+          const entry = entries[0];
+          window.cancelAnimationFrame(rAF);
+          rAF = window.requestAnimationFrame(() => {
+            let width;
+            let height;
+            if ("borderBoxSize" in entry) {
+              const borderSizeEntry = entry["borderBoxSize"];
+              const borderSize = Array.isArray(borderSizeEntry) ? borderSizeEntry[0] : borderSizeEntry;
+              width = borderSize["inlineSize"];
+              height = borderSize["blockSize"];
+            } else {
+              width = element.offsetWidth;
+              height = element.offsetHeight;
+            }
+            setSize({ width, height });
+          });
+        });
+        resizeObserver.observe(element, { box: "border-box" });
+        return () => {
+          window.cancelAnimationFrame(rAF);
+          resizeObserver.unobserve(element);
+        };
+      } else {
+        setSize(void 0);
+      }
+    }, [element]);
+    return size;
+  }
+  __name20(useSize, "useSize");
+
+  // node_modules/.pnpm/@radix-ui+react-roving-focu_bed290ae4c554285fceef8952991064b/node_modules/@radix-ui/react-roving-focus/dist/index.mjs
+  var React32 = __toESM(require_react(), 1);
+
+  // node_modules/.pnpm/@radix-ui+react-use-is-hydr_d5f02d66173c49c68cbede894417d34b/node_modules/@radix-ui/react-use-is-hydrated/dist/index.mjs
+  var React210 = __toESM(require_react(), 1);
+  var React31 = __toESM(require_react(), 1);
+  var __defProp22 = Object.defineProperty;
+  var __name21 = (target, value) => __defProp22(target, "name", { value, configurable: true });
+  var _isHydrated = false;
+  function useIsHydrated() {
+    const [isHydrated, setIsHydrated] = React31.useState(_isHydrated);
+    React31.useEffect(() => {
+      if (!_isHydrated) {
+        _isHydrated = true;
+        setIsHydrated(true);
+      }
+    }, []);
+    return isHydrated;
+  }
+  __name21(useIsHydrated, "useIsHydrated");
+  var useReactSyncExternalStore = React210[" useSyncExternalStore ".trim().toString()];
+  function subscribe() {
+    return () => {
+    };
+  }
+  __name21(subscribe, "subscribe");
+  function useIsHydratedModern() {
+    return useReactSyncExternalStore(
+      subscribe,
+      () => true,
+      () => false
+    );
+  }
+  __name21(useIsHydratedModern, "useIsHydratedModern");
+  var useIsHydrated2 = typeof useReactSyncExternalStore === "function" ? useIsHydratedModern : useIsHydrated;
+
+  // node_modules/.pnpm/@radix-ui+react-roving-focu_bed290ae4c554285fceef8952991064b/node_modules/@radix-ui/react-roving-focus/dist/index.mjs
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime(), 1);
+  var __defProp23 = Object.defineProperty;
+  var __name22 = (target, value) => __defProp23(target, "name", { value, configurable: true });
+  var ENTRY_FOCUS = "rovingFocusGroup.onEntryFocus";
+  var EVENT_OPTIONS2 = { bubbles: false, cancelable: true };
+  var GROUP_NAME = "RovingFocusGroup";
+  var [Collection2, useCollection, createCollectionScope2] = createCollection(GROUP_NAME);
+  var [createRovingFocusGroupContext, createRovingFocusGroupScope] = createContextScope(
+    GROUP_NAME,
+    [createCollectionScope2]
+  );
+  var Orientation2 = {
+    Vertical: "vertical",
+    Horizontal: "horizontal"
+  };
+  var Direction3 = {
+    LTR: "ltr",
+    RTL: "rtl"
+  };
+  var [RovingFocusProvider, useRovingFocusContext] = createRovingFocusGroupContext(GROUP_NAME);
+  var RovingFocusGroup = /* @__PURE__ */ React32.forwardRef(
+    // blank line to reduce diff noise
+    /* @__PURE__ */ __name22(function RovingFocusGroup2(props, forwardedRef) {
+      return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Collection2.Provider, { scope: props.__scopeRovingFocusGroup, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Collection2.Slot, { scope: props.__scopeRovingFocusGroup, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(RovingFocusGroupImpl, { ...props, ref: forwardedRef }) }) });
+    }, "RovingFocusGroup")
+  );
+  var RovingFocusGroupImpl = /* @__PURE__ */ React32.forwardRef(/* @__PURE__ */ __name22(function RovingFocusGroupImpl2(props, forwardedRef) {
+    const {
+      __scopeRovingFocusGroup,
+      orientation,
+      loop = false,
+      dir,
+      currentTabStopId: currentTabStopIdProp,
+      defaultCurrentTabStopId,
+      onCurrentTabStopIdChange,
+      onEntryFocus,
+      preventScrollOnEntryFocus = false,
+      ...groupProps
+    } = props;
+    const ref = React32.useRef(null);
+    const composedRefs = useComposedRefs(forwardedRef, ref);
+    const direction = useDirection(dir);
+    const [currentTabStopId, setCurrentTabStopId] = useControllableState({
+      prop: currentTabStopIdProp,
+      defaultProp: defaultCurrentTabStopId ?? null,
+      onChange: onCurrentTabStopIdChange,
+      caller: GROUP_NAME
+    });
+    const [isTabbingBackOut, setIsTabbingBackOut] = React32.useState(false);
+    const handleEntryFocus = useCallbackRef(onEntryFocus);
+    const getItems = useCollection(__scopeRovingFocusGroup);
+    const isClickFocusRef = React32.useRef(false);
+    const [focusableItemsCount, setFocusableItemsCount] = React32.useState(0);
+    React32.useEffect(() => {
+      const node = ref.current;
+      if (node) {
+        node.addEventListener(ENTRY_FOCUS, handleEntryFocus);
+        return () => node.removeEventListener(ENTRY_FOCUS, handleEntryFocus);
+      }
+    }, [handleEntryFocus]);
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+      RovingFocusProvider,
+      {
+        scope: __scopeRovingFocusGroup,
+        orientation,
+        dir: direction,
+        loop,
+        currentTabStopId,
+        onItemFocus: React32.useCallback(
+          (tabStopId) => setCurrentTabStopId(tabStopId),
+          [setCurrentTabStopId]
+        ),
+        onItemShiftTab: React32.useCallback(() => setIsTabbingBackOut(true), []),
+        onFocusableItemAdd: React32.useCallback(
+          () => setFocusableItemsCount((prevCount) => prevCount + 1),
+          []
+        ),
+        onFocusableItemRemove: React32.useCallback(
+          () => setFocusableItemsCount((prevCount) => prevCount - 1),
+          []
+        ),
+        children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+          Primitive.div,
+          {
+            tabIndex: isTabbingBackOut || focusableItemsCount === 0 ? -1 : 0,
+            "data-orientation": orientation,
+            ...groupProps,
+            ref: composedRefs,
+            style: { outline: "none", ...props.style },
+            onMouseDown: composeEventHandlers(props.onMouseDown, () => {
+              isClickFocusRef.current = true;
+            }),
+            onFocus: composeEventHandlers(props.onFocus, (event) => {
+              const isKeyboardFocus = !isClickFocusRef.current;
+              if (event.target === event.currentTarget && isKeyboardFocus && !isTabbingBackOut) {
+                const entryFocusEvent = new CustomEvent(ENTRY_FOCUS, EVENT_OPTIONS2);
+                event.currentTarget.dispatchEvent(entryFocusEvent);
+                if (!entryFocusEvent.defaultPrevented) {
+                  const items = getItems().filter((item) => item.focusable);
+                  const activeItem = items.find((item) => item.active);
+                  const currentItem = items.find((item) => item.id === currentTabStopId);
+                  const candidateItems = [activeItem, currentItem, ...items].filter(
+                    Boolean
+                  );
+                  const candidateNodes = candidateItems.map((item) => item.ref.current);
+                  focusFirst2(candidateNodes, preventScrollOnEntryFocus);
+                }
+              }
+              isClickFocusRef.current = false;
+            }),
+            onBlur: composeEventHandlers(props.onBlur, () => setIsTabbingBackOut(false))
+          }
+        )
+      }
+    );
+  }, "RovingFocusGroupImpl"));
+  var ITEM_NAME2 = "RovingFocusGroupItem";
+  var RovingFocusGroupItem = /* @__PURE__ */ React32.forwardRef(
+    // blank line to reduce diff noise
+    /* @__PURE__ */ __name22(function RovingFocusGroupItem2(props, forwardedRef) {
+      const {
+        __scopeRovingFocusGroup,
+        focusable = true,
+        active = false,
+        tabStopId,
+        children,
+        ...itemProps
+      } = props;
+      const autoId = useId();
+      const id = tabStopId || autoId;
+      const context = useRovingFocusContext(ITEM_NAME2, __scopeRovingFocusGroup);
+      const isCurrentTabStop = context.currentTabStopId === id;
+      const getItems = useCollection(__scopeRovingFocusGroup);
+      const { onFocusableItemAdd, onFocusableItemRemove, currentTabStopId } = context;
+      const isHydrated = useIsHydrated2();
+      useLayoutEffect2(() => {
+        if (!isHydrated || !focusable) {
+          return;
+        }
+        onFocusableItemAdd();
+        return () => onFocusableItemRemove();
+      }, [isHydrated, focusable, onFocusableItemAdd, onFocusableItemRemove]);
+      React32.useEffect(() => {
+        if (isHydrated || !focusable) {
+          return;
+        }
+        onFocusableItemAdd();
+        return () => onFocusableItemRemove();
+      }, [isHydrated, focusable, onFocusableItemAdd, onFocusableItemRemove]);
+      return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+        Collection2.ItemSlot,
+        {
+          scope: __scopeRovingFocusGroup,
+          id,
+          focusable,
+          active,
+          children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+            Primitive.span,
+            {
+              tabIndex: isCurrentTabStop ? 0 : -1,
+              "data-orientation": context.orientation,
+              ...itemProps,
+              ref: forwardedRef,
+              onMouseDown: composeEventHandlers(props.onMouseDown, (event) => {
+                if (!focusable) event.preventDefault();
+                else context.onItemFocus(id);
+              }),
+              onFocus: composeEventHandlers(props.onFocus, () => context.onItemFocus(id)),
+              onKeyDown: composeEventHandlers(props.onKeyDown, (event) => {
+                if (event.key === "Tab" && event.shiftKey) {
+                  context.onItemShiftTab();
+                  return;
+                }
+                if (event.target !== event.currentTarget) return;
+                const focusIntent = getFocusIntent(event, context.orientation, context.dir);
+                if (focusIntent !== void 0) {
+                  if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
+                  event.preventDefault();
+                  const items = getItems().filter((item) => item.focusable);
+                  let candidateNodes = items.map((item) => item.ref.current);
+                  if (focusIntent === "last") candidateNodes.reverse();
+                  else if (focusIntent === "prev" || focusIntent === "next") {
+                    if (focusIntent === "prev") candidateNodes.reverse();
+                    const currentIndex = candidateNodes.indexOf(event.currentTarget);
+                    candidateNodes = context.loop ? wrapArray(candidateNodes, currentIndex + 1) : candidateNodes.slice(currentIndex + 1);
+                  }
+                  setTimeout(() => focusFirst2(candidateNodes));
+                }
+              }),
+              children: typeof children === "function" ? children({ isCurrentTabStop, hasTabStop: currentTabStopId != null }) : children
+            }
+          )
+        }
+      );
+    }, "RovingFocusGroupItem")
+  );
+  var MAP_KEY_TO_FOCUS_INTENT = {
+    ArrowLeft: "prev",
+    ArrowUp: "prev",
+    ArrowRight: "next",
+    ArrowDown: "next",
+    PageUp: "first",
+    Home: "first",
+    PageDown: "last",
+    End: "last"
+  };
+  function getDirectionAwareKey(key, dir) {
+    if (dir !== Direction3.RTL) return key;
+    return key === "ArrowLeft" ? "ArrowRight" : key === "ArrowRight" ? "ArrowLeft" : key;
+  }
+  __name22(getDirectionAwareKey, "getDirectionAwareKey");
+  function getFocusIntent(event, orientation, dir) {
+    const key = getDirectionAwareKey(event.key, dir);
+    if (orientation === Orientation2.Vertical && ["ArrowLeft", "ArrowRight"].includes(key)) {
+      return void 0;
+    }
+    if (orientation === Orientation2.Horizontal && ["ArrowUp", "ArrowDown"].includes(key)) {
+      return void 0;
+    }
+    return MAP_KEY_TO_FOCUS_INTENT[key];
+  }
+  __name22(getFocusIntent, "getFocusIntent");
+  function focusFirst2(candidates, preventScroll = false) {
+    const PREVIOUSLY_FOCUSED_ELEMENT = document.activeElement;
+    for (const candidate of candidates) {
+      if (candidate === PREVIOUSLY_FOCUSED_ELEMENT) return;
+      candidate.focus({ preventScroll });
+      if (document.activeElement !== PREVIOUSLY_FOCUSED_ELEMENT) return;
+    }
+  }
+  __name22(focusFirst2, "focusFirst");
+  function wrapArray(array, startIndex) {
+    return array.map((_, index) => array[(startIndex + index) % array.length]);
+  }
+  __name22(wrapArray, "wrapArray");
+
+  // node_modules/.pnpm/@radix-ui+number@1.1.3/node_modules/@radix-ui/number/dist/index.mjs
+  var __defProp24 = Object.defineProperty;
+  var __name23 = (target, value) => __defProp24(target, "name", { value, configurable: true });
+  function clamp(value, [min, max]) {
+    return Math.min(max, Math.max(min, value));
+  }
+  __name23(clamp, "clamp");
+
+  // node_modules/.pnpm/@radix-ui+react-slider@1.6._765b153b67a05696a8c1e7a0683224be/node_modules/@radix-ui/react-slider/dist/index.mjs
+  var dist_exports5 = {};
+  __export(dist_exports5, {
+    Range: () => SliderRange,
+    Root: () => Slider,
+    Slider: () => Slider,
+    SliderRange: () => SliderRange,
+    SliderThumb: () => SliderThumb,
+    SliderTrack: () => SliderTrack,
+    Thumb: () => SliderThumb,
+    Track: () => SliderTrack,
+    createSliderScope: () => createSliderScope,
+    unstable_BubbleInput: () => SliderBubbleInput,
+    unstable_SliderBubbleInput: () => SliderBubbleInput,
+    unstable_SliderThumbProvider: () => SliderThumbProvider,
+    unstable_SliderThumbTrigger: () => SliderThumbTrigger,
+    unstable_ThumbProvider: () => SliderThumbProvider,
+    unstable_ThumbTrigger: () => SliderThumbTrigger
+  });
+  var React33 = __toESM(require_react(), 1);
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
+  var __defProp25 = Object.defineProperty;
+  var __name24 = (target, value) => __defProp25(target, "name", { value, configurable: true });
+  var Orientation3 = {
+    Vertical: "vertical",
+    Horizontal: "horizontal"
+  };
+  var Direction4 = {
+    LTR: "ltr",
+    RTL: "rtl"
+  };
+  var PAGE_KEYS = ["PageUp", "PageDown"];
+  var ARROW_KEYS = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
+  var BACK_KEYS = {
+    "from-left": ["Home", "PageDown", "ArrowDown", "ArrowLeft"],
+    "from-right": ["Home", "PageDown", "ArrowDown", "ArrowRight"],
+    "from-bottom": ["Home", "PageDown", "ArrowDown", "ArrowLeft"],
+    "from-top": ["Home", "PageDown", "ArrowUp", "ArrowLeft"]
+  };
+  var SLIDER_NAME = "Slider";
+  var [Collection3, useCollection2, createCollectionScope3] = createCollection(SLIDER_NAME);
+  var [createSliderContext, createSliderScope] = createContextScope(SLIDER_NAME, [
+    createCollectionScope3
+  ]);
+  var [SliderProvider, useSliderContext] = createSliderContext(SLIDER_NAME);
+  var Slider = /* @__PURE__ */ React33.forwardRef(
+    // blank line to reduce diff noise
+    /* @__PURE__ */ __name24(function Slider2(props, forwardedRef) {
+      const {
+        name,
+        min = 0,
+        max = 100,
+        step = 1,
+        orientation = Orientation3.Horizontal,
+        disabled = false,
+        minStepsBetweenThumbs = 0,
+        preserveThumbOrder = false,
+        defaultValue = [min],
+        value,
+        onValueChange = /* @__PURE__ */ __name24(() => {
+        }, "onValueChange"),
+        onValueCommit = /* @__PURE__ */ __name24(() => {
+        }, "onValueCommit"),
+        inverted = false,
+        form,
+        ...sliderProps
+      } = props;
+      const thumbRefs = React33.useRef(/* @__PURE__ */ new Set());
+      const valueIndexToChangeRef = React33.useRef(0);
+      const isKeyboardInteractionRef = React33.useRef(false);
+      const [userRequestedValues, setUserRequestedValues] = React33.useState(null);
+      const isHorizontal = orientation === Orientation3.Horizontal;
+      const SliderOrientation = isHorizontal ? SliderHorizontal : SliderVertical;
+      const [control, setControl] = React33.useState(null);
+      const composedRefs = useComposedRefs(forwardedRef, setControl);
+      const [values = [], setValues] = useControllableState({
+        prop: value,
+        defaultProp: defaultValue,
+        onChange: /* @__PURE__ */ __name24((value2) => {
+          const thumbs = [...thumbRefs.current];
+          thumbs[valueIndexToChangeRef.current]?.focus({
+            preventScroll: true,
+            focusVisible: isKeyboardInteractionRef.current
+          });
+          isKeyboardInteractionRef.current = false;
+          onValueChange(value2);
+        }, "onChange")
+      });
+      const valuesBeforeSlideStartRef = React33.useRef(values);
+      const initialValuesRef = React33.useRef(values);
+      React33.useEffect(() => {
+        const associatedForm = form ? control?.ownerDocument.getElementById(form) : control?.closest("form");
+        if (associatedForm instanceof HTMLFormElement) {
+          const reset = /* @__PURE__ */ __name24(() => setValues(initialValuesRef.current), "reset");
+          associatedForm.addEventListener("reset", reset);
+          return () => associatedForm.removeEventListener("reset", reset);
+        }
+      }, [control, form, setValues]);
+      function handleSlideStart(value2) {
+        const closestIndex = getClosestValueIndex(values, value2);
+        updateValues(value2, closestIndex);
+      }
+      __name24(handleSlideStart, "handleSlideStart");
+      function handleSlideMove(value2) {
+        updateValues(value2, valueIndexToChangeRef.current);
+      }
+      __name24(handleSlideMove, "handleSlideMove");
+      function handleSlideEnd() {
+        const hasChanged = String(values) !== String(valuesBeforeSlideStartRef.current);
+        if (hasChanged) onValueCommit(values);
+      }
+      __name24(handleSlideEnd, "handleSlideEnd");
+      function updateValues(value2, atIndex, { commit } = { commit: false }) {
+        const decimalCount = getDecimalCount(step);
+        const snapToStep = roundValue(Math.round((value2 - min) / step) * step + min, decimalCount);
+        const nextValue = clamp(snapToStep, [min, max]);
+        const minStepsDistance = minStepsBetweenThumbs * step;
+        function getNextValues(prevValues) {
+          const constrainedValue = preserveThumbOrder ? clamp(nextValue, [
+            prevValues[atIndex - 1] === void 0 ? min : prevValues[atIndex - 1] + minStepsDistance,
+            prevValues[atIndex + 1] === void 0 ? max : prevValues[atIndex + 1] - minStepsDistance
+          ]) : nextValue;
+          const nextValues = getNextSortedValues(prevValues, constrainedValue, atIndex);
+          if (!hasMinStepsBetweenValues(nextValues, minStepsDistance)) {
+            return null;
+          }
+          return {
+            nextValues,
+            changedIndex: preserveThumbOrder ? atIndex : nextValues.indexOf(constrainedValue),
+            hasChanged: String(nextValues) !== String(prevValues)
+          };
+        }
+        __name24(getNextValues, "getNextValues");
+        const requested = getNextValues(values);
+        if (requested?.hasChanged) {
+          setUserRequestedValues(requested.nextValues);
+        }
+        setValues((prevValues = []) => {
+          const next = getNextValues(prevValues);
+          if (!next) {
+            return prevValues;
+          }
+          valueIndexToChangeRef.current = next.changedIndex;
+          if (next.hasChanged && commit) {
+            onValueCommit(next.nextValues);
+          }
+          return next.hasChanged ? next.nextValues : prevValues;
+        });
+      }
+      __name24(updateValues, "updateValues");
+      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        SliderProvider,
+        {
+          scope: props.__scopeSlider,
+          name,
+          disabled,
+          min,
+          max,
+          valueIndexToChangeRef,
+          thumbs: thumbRefs.current,
+          values,
+          orientation,
+          form,
+          userRequestedValues,
+          children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Collection3.Provider, { scope: props.__scopeSlider, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Collection3.Slot, { scope: props.__scopeSlider, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+            SliderOrientation,
+            {
+              "aria-disabled": disabled,
+              "data-disabled": disabled ? "" : void 0,
+              ...sliderProps,
+              ref: composedRefs,
+              onPointerDown: composeEventHandlers(sliderProps.onPointerDown, () => {
+                if (!disabled) {
+                  valuesBeforeSlideStartRef.current = values;
+                  isKeyboardInteractionRef.current = false;
+                }
+              }),
+              min,
+              max,
+              inverted,
+              onSlideStart: disabled ? void 0 : handleSlideStart,
+              onSlideMove: disabled ? void 0 : handleSlideMove,
+              onSlideEnd: disabled ? void 0 : handleSlideEnd,
+              onHomeKeyDown: () => {
+                if (!disabled) {
+                  isKeyboardInteractionRef.current = true;
+                  updateValues(min, 0, { commit: true });
+                }
+              },
+              onEndKeyDown: () => {
+                if (!disabled) {
+                  isKeyboardInteractionRef.current = true;
+                  updateValues(max, values.length - 1, { commit: true });
+                }
+              },
+              onStepKeyDown: ({ event, direction: stepDirection }) => {
+                if (!disabled) {
+                  isKeyboardInteractionRef.current = true;
+                  const isPageKey = PAGE_KEYS.includes(event.key);
+                  const isSkipKey = isPageKey || event.shiftKey && ARROW_KEYS.includes(event.key);
+                  const multiplier = isSkipKey ? 10 : 1;
+                  const atIndex = valueIndexToChangeRef.current;
+                  const value2 = values[atIndex];
+                  const nextValue = getNextStepValue(value2, {
+                    min,
+                    step,
+                    direction: stepDirection,
+                    multiplier
+                  });
+                  updateValues(nextValue, atIndex, { commit: true });
+                }
+              }
+            }
+          ) }) })
+        }
+      );
+    }, "Slider")
+  );
+  var [SliderOrientationProvider, useSliderOrientationContext] = createSliderContext(SLIDER_NAME, {
+    startEdge: "left",
+    endEdge: "right",
+    size: "width",
+    direction: 1
+  });
+  var SliderHorizontal = /* @__PURE__ */ React33.forwardRef(
+    // blank line to reduce diff noise
+    /* @__PURE__ */ __name24(function SliderHorizontal2(props, forwardedRef) {
+      const {
+        min,
+        max,
+        dir,
+        inverted,
+        onSlideStart,
+        onSlideMove,
+        onSlideEnd,
+        onStepKeyDown,
+        ...sliderProps
+      } = props;
+      const [slider, setSlider] = React33.useState(null);
+      const composedRefs = useComposedRefs(forwardedRef, setSlider);
+      const rectRef = React33.useRef(void 0);
+      const direction = useDirection(dir);
+      const isDirectionLTR = direction === Direction4.LTR;
+      const isSlidingFromLeft = isDirectionLTR && !inverted || !isDirectionLTR && inverted;
+      function getValueFromPointer(pointerPosition) {
+        const rect = rectRef.current || slider.getBoundingClientRect();
+        const input = [0, rect.width];
+        const output = isSlidingFromLeft ? [min, max] : [max, min];
+        const value = linearScale(input, output);
+        rectRef.current = rect;
+        return value(pointerPosition - rect.left);
+      }
+      __name24(getValueFromPointer, "getValueFromPointer");
+      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        SliderOrientationProvider,
+        {
+          scope: props.__scopeSlider,
+          startEdge: isSlidingFromLeft ? "left" : "right",
+          endEdge: isSlidingFromLeft ? "right" : "left",
+          direction: isSlidingFromLeft ? 1 : -1,
+          size: "width",
+          children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+            SliderImpl,
+            {
+              dir: direction,
+              "data-orientation": "horizontal",
+              ...sliderProps,
+              ref: composedRefs,
+              style: {
+                ...sliderProps.style,
+                "--radix-slider-thumb-transform": "translateX(-50%)"
+              },
+              onSlideStart: (event) => {
+                const value = getValueFromPointer(event.clientX);
+                onSlideStart?.(value);
+              },
+              onSlideMove: (event) => {
+                const value = getValueFromPointer(event.clientX);
+                onSlideMove?.(value);
+              },
+              onSlideEnd: () => {
+                rectRef.current = void 0;
+                onSlideEnd?.();
+              },
+              onStepKeyDown: (event) => {
+                const slideDirection = isSlidingFromLeft ? "from-left" : "from-right";
+                const isBackKey = BACK_KEYS[slideDirection].includes(event.key);
+                onStepKeyDown?.({ event, direction: isBackKey ? -1 : 1 });
+              }
+            }
+          )
+        }
+      );
+    }, "SliderHorizontal")
+  );
+  var SliderVertical = /* @__PURE__ */ React33.forwardRef(
+    /* @__PURE__ */ __name24(function SliderVertical2(props, forwardedRef) {
+      const {
+        min,
+        max,
+        inverted,
+        onSlideStart,
+        onSlideMove,
+        onSlideEnd,
+        onStepKeyDown,
+        ...sliderProps
+      } = props;
+      const sliderRef = React33.useRef(null);
+      const ref = useComposedRefs(forwardedRef, sliderRef);
+      const rectRef = React33.useRef(void 0);
+      const isSlidingFromBottom = !inverted;
+      function getValueFromPointer(pointerPosition) {
+        const rect = rectRef.current || sliderRef.current.getBoundingClientRect();
+        const input = [0, rect.height];
+        const output = isSlidingFromBottom ? [max, min] : [min, max];
+        const value = linearScale(input, output);
+        rectRef.current = rect;
+        return value(pointerPosition - rect.top);
+      }
+      __name24(getValueFromPointer, "getValueFromPointer");
+      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        SliderOrientationProvider,
+        {
+          scope: props.__scopeSlider,
+          startEdge: isSlidingFromBottom ? "bottom" : "top",
+          endEdge: isSlidingFromBottom ? "top" : "bottom",
+          size: "height",
+          direction: isSlidingFromBottom ? 1 : -1,
+          children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+            SliderImpl,
+            {
+              "data-orientation": "vertical",
+              ...sliderProps,
+              ref,
+              style: {
+                ...sliderProps.style,
+                "--radix-slider-thumb-transform": "translateY(50%)"
+              },
+              onSlideStart: (event) => {
+                const value = getValueFromPointer(event.clientY);
+                onSlideStart?.(value);
+              },
+              onSlideMove: (event) => {
+                const value = getValueFromPointer(event.clientY);
+                onSlideMove?.(value);
+              },
+              onSlideEnd: () => {
+                rectRef.current = void 0;
+                onSlideEnd?.();
+              },
+              onStepKeyDown: (event) => {
+                const slideDirection = isSlidingFromBottom ? "from-bottom" : "from-top";
+                const isBackKey = BACK_KEYS[slideDirection].includes(event.key);
+                onStepKeyDown?.({ event, direction: isBackKey ? -1 : 1 });
+              }
+            }
+          )
+        }
+      );
+    }, "SliderVertical")
+  );
+  var SliderImpl = /* @__PURE__ */ React33.forwardRef(
+    /* @__PURE__ */ __name24(function SliderImpl2(props, forwardedRef) {
+      const {
+        __scopeSlider,
+        onSlideStart,
+        onSlideMove,
+        onSlideEnd,
+        onHomeKeyDown,
+        onEndKeyDown,
+        onStepKeyDown,
+        ...sliderProps
+      } = props;
+      const context = useSliderContext(SLIDER_NAME, __scopeSlider);
+      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        Primitive.span,
+        {
+          ...sliderProps,
+          ref: forwardedRef,
+          onKeyDown: composeEventHandlers(props.onKeyDown, (event) => {
+            if (event.key === "Home") {
+              onHomeKeyDown(event);
+              event.preventDefault();
+            } else if (event.key === "End") {
+              onEndKeyDown(event);
+              event.preventDefault();
+            } else if (PAGE_KEYS.concat(ARROW_KEYS).includes(event.key)) {
+              onStepKeyDown(event);
+              event.preventDefault();
+            }
+          }),
+          onPointerDown: composeEventHandlers(props.onPointerDown, (event) => {
+            const target = event.target;
+            target.setPointerCapture(event.pointerId);
+            event.preventDefault();
+            if (context.thumbs.has(target)) {
+              target.focus({ preventScroll: true, focusVisible: false });
+            } else {
+              onSlideStart(event);
+            }
+          }),
+          onPointerMove: composeEventHandlers(props.onPointerMove, (event) => {
+            const target = event.target;
+            if (target.hasPointerCapture(event.pointerId)) onSlideMove(event);
+          }),
+          onPointerUp: composeEventHandlers(props.onPointerUp, (event) => {
+            const target = event.target;
+            if (target.hasPointerCapture(event.pointerId)) {
+              target.releasePointerCapture(event.pointerId);
+              onSlideEnd(event);
+            }
+          })
+        }
+      );
+    }, "SliderImpl")
+  );
+  var TRACK_NAME = "SliderTrack";
+  var SliderTrack = /* @__PURE__ */ React33.forwardRef(
+    /* @__PURE__ */ __name24(function SliderTrack2(props, forwardedRef) {
+      const { __scopeSlider, ...trackProps } = props;
+      const context = useSliderContext(TRACK_NAME, __scopeSlider);
+      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        Primitive.span,
+        {
+          "data-disabled": context.disabled ? "" : void 0,
+          "data-orientation": context.orientation,
+          ...trackProps,
+          ref: forwardedRef
+        }
+      );
+    }, "SliderTrack")
+  );
+  var RANGE_NAME = "SliderRange";
+  var SliderRange = /* @__PURE__ */ React33.forwardRef(
+    /* @__PURE__ */ __name24(function SliderRange2(props, forwardedRef) {
+      const { __scopeSlider, ...rangeProps } = props;
+      const context = useSliderContext(RANGE_NAME, __scopeSlider);
+      const orientation = useSliderOrientationContext(RANGE_NAME, __scopeSlider);
+      const ref = React33.useRef(null);
+      const composedRefs = useComposedRefs(forwardedRef, ref);
+      const valuesCount = context.values.length;
+      const percentages = context.values.map(
+        (value) => convertValueToPercentage(value, context.min, context.max)
+      );
+      const offsetStart = valuesCount > 1 ? Math.min(...percentages) : 0;
+      const offsetEnd = 100 - Math.max(...percentages);
+      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        Primitive.span,
+        {
+          "data-orientation": context.orientation,
+          "data-disabled": context.disabled ? "" : void 0,
+          ...rangeProps,
+          ref: composedRefs,
+          style: {
+            ...props.style,
+            [orientation.startEdge]: offsetStart + "%",
+            [orientation.endEdge]: offsetEnd + "%"
+          }
+        }
+      );
+    }, "SliderRange")
+  );
+  var THUMB_NAME = "SliderThumb";
+  var [SliderThumbContextProvider, useSliderThumbContext] = createSliderContext(THUMB_NAME);
+  var THUMB_PROVIDER_NAME = "SliderThumbProvider";
+  function SliderThumbProvider(props) {
+    const {
+      __scopeSlider,
+      name,
+      children,
+      // @ts-expect-error internal render prop
+      internal_do_not_use_render
+    } = props;
+    const context = useSliderContext(THUMB_PROVIDER_NAME, __scopeSlider);
+    const getItems = useCollection2(__scopeSlider);
+    const [thumb, setThumb] = React33.useState(null);
+    const index = React33.useMemo(
+      () => thumb ? getItems().findIndex((item) => item.ref.current === thumb) : -1,
+      [getItems, thumb]
+    );
+    const size = useSize(thumb);
+    const isFormControl = thumb ? !!context.form || !!thumb.closest("form") : true;
+    const value = context.values[index];
+    const resolvedName = name ?? (context.name ? context.name + (context.values.length > 1 ? "[]" : "") : void 0);
+    const percent = value === void 0 ? 0 : convertValueToPercentage(value, context.min, context.max);
+    React33.useEffect(() => {
+      if (thumb) {
+        context.thumbs.add(thumb);
+        return () => {
+          context.thumbs.delete(thumb);
+        };
+      }
+    }, [thumb, context.thumbs]);
+    const thumbContext = {
+      value,
+      name: resolvedName,
+      form: context.form,
+      isFormControl,
+      index,
+      thumb,
+      onThumbChange: setThumb,
+      percent,
+      size
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SliderThumbContextProvider, { scope: __scopeSlider, ...thumbContext, children: isFunction2(internal_do_not_use_render) ? internal_do_not_use_render(thumbContext) : children });
+  }
+  __name24(SliderThumbProvider, "SliderThumbProvider");
+  var THUMB_TRIGGER_NAME = "SliderThumbTrigger";
+  var SliderThumbTrigger = /* @__PURE__ */ React33.forwardRef(
+    // blank line to reduce diff noise
+    /* @__PURE__ */ __name24(function SliderThumbTrigger2(props, forwardedRef) {
+      const { __scopeSlider, ...thumbProps } = props;
+      const context = useSliderContext(THUMB_TRIGGER_NAME, __scopeSlider);
+      const orientation = useSliderOrientationContext(THUMB_TRIGGER_NAME, __scopeSlider);
+      const { index, value, percent, size, onThumbChange } = useSliderThumbContext(
+        THUMB_TRIGGER_NAME,
+        __scopeSlider
+      );
+      const composedRefs = useComposedRefs(forwardedRef, onThumbChange);
+      const label = getLabel(index, context.values.length);
+      const orientationSize = size?.[orientation.size];
+      const thumbInBoundsOffset = orientationSize ? getThumbInBoundsOffset(orientationSize, percent, orientation.direction) : 0;
+      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        "span",
+        {
+          style: {
+            transform: "var(--radix-slider-thumb-transform)",
+            position: "absolute",
+            [orientation.startEdge]: `calc(${percent}% + ${thumbInBoundsOffset}px)`
+          },
+          children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Collection3.ItemSlot, { scope: __scopeSlider, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+            Primitive.span,
+            {
+              role: "slider",
+              "aria-label": props["aria-label"] || label,
+              "aria-valuemin": context.min,
+              "aria-valuenow": value,
+              "aria-valuemax": context.max,
+              "aria-orientation": context.orientation,
+              "data-orientation": context.orientation,
+              "data-disabled": context.disabled ? "" : void 0,
+              tabIndex: context.disabled ? void 0 : 0,
+              ...thumbProps,
+              ref: composedRefs,
+              style: value === void 0 ? { display: "none" } : props.style,
+              onFocus: composeEventHandlers(props.onFocus, () => {
+                context.valueIndexToChangeRef.current = index;
+              })
+            }
+          ) })
+        }
+      );
+    }, "SliderThumbTrigger")
+  );
+  var SliderThumb = /* @__PURE__ */ React33.forwardRef(
+    /* @__PURE__ */ __name24(function SliderThumb2(props, forwardedRef) {
+      const { __scopeSlider, name, ...thumbProps } = props;
+      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        SliderThumbProvider,
+        {
+          __scopeSlider,
+          name,
+          internal_do_not_use_render: ({ index, isFormControl }) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_jsx_runtime13.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+              SliderThumbTrigger,
+              {
+                ...thumbProps,
+                ref: forwardedRef,
+                __scopeSlider
+              }
+            ),
+            isFormControl ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+              SliderBubbleInput,
+              {
+                __scopeSlider
+              },
+              index
+            ) : null
+          ] })
+        }
+      );
+    }, "SliderThumb")
+  );
+  var BUBBLE_INPUT_NAME = "SliderBubbleInput";
+  var SliderBubbleInput = /* @__PURE__ */ React33.forwardRef(
+    // blank line to reduce diff noise
+    /* @__PURE__ */ __name24(function SliderBubbleInput2({ __scopeSlider, onInput, ...props }, forwardedRef) {
+      const { index, value, name, form } = useSliderThumbContext(BUBBLE_INPUT_NAME, __scopeSlider);
+      const { userRequestedValues } = useSliderContext(BUBBLE_INPUT_NAME, __scopeSlider);
+      const ref = React33.useRef(null);
+      const composedRefs = useComposedRefs(ref, forwardedRef);
+      const shouldStopInputPropagationRef = React33.useRef(false);
+      const prevValueRef = React33.useRef(value);
+      const handledUserRequestedValuesRef = React33.useRef(userRequestedValues);
+      const prevUserRequestedValuesRef = React33.useRef(userRequestedValues);
+      React33.useEffect(() => {
+        const input = ref.current;
+        if (!input) {
+          return;
+        }
+        const inputProto = window.HTMLInputElement.prototype;
+        const descriptor = Object.getOwnPropertyDescriptor(inputProto, "value");
+        const setValue = descriptor.set;
+        const prevValue = prevValueRef.current;
+        const valueChanged = prevValue !== value;
+        prevValueRef.current = value;
+        const isUserRequestFromThisRender = userRequestedValues !== prevUserRequestedValuesRef.current;
+        prevUserRequestedValuesRef.current = userRequestedValues;
+        if (valueChanged && setValue) {
+          const hasUnhandledUserRequest = userRequestedValues !== handledUserRequestedValuesRef.current;
+          handledUserRequestedValuesRef.current = userRequestedValues;
+          const requestedValue = userRequestedValues?.[index];
+          const isUserInteraction = hasUnhandledUserRequest && (isUserRequestFromThisRender && requestedValue !== prevValue || requestedValue === value);
+          shouldStopInputPropagationRef.current = !isUserInteraction;
+          const event = new Event("input", { bubbles: true });
+          setValue.call(input, value);
+          input.dispatchEvent(event);
+          shouldStopInputPropagationRef.current = false;
+        }
+      }, [index, value, userRequestedValues]);
+      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        Primitive.input,
+        {
+          style: { display: "none" },
+          name,
+          form,
+          ...props,
+          ref: composedRefs,
+          defaultValue: value,
+          onInput: composeEventHandlers(onInput, (event) => {
+            if (shouldStopInputPropagationRef.current) {
+              event.stopPropagation();
+            }
+          })
+        }
+      );
+    }, "SliderBubbleInput")
+  );
+  function getNextSortedValues(prevValues = [], nextValue, atIndex) {
+    const nextValues = [...prevValues];
+    nextValues[atIndex] = nextValue;
+    return nextValues.sort((a, b) => a - b);
+  }
+  __name24(getNextSortedValues, "getNextSortedValues");
+  function convertValueToPercentage(value, min, max) {
+    const maxSteps = max - min;
+    const percentPerStep = 100 / maxSteps;
+    const percentage = percentPerStep * (value - min);
+    return clamp(percentage, [0, 100]);
+  }
+  __name24(convertValueToPercentage, "convertValueToPercentage");
+  function getLabel(index, totalValues) {
+    if (totalValues > 2) {
+      return `Value ${index + 1} of ${totalValues}`;
+    } else if (totalValues === 2) {
+      return ["Minimum", "Maximum"][index];
+    } else {
+      return void 0;
+    }
+  }
+  __name24(getLabel, "getLabel");
+  function getClosestValueIndex(values, nextValue) {
+    if (values.length === 1) return 0;
+    const distances = values.map((value) => Math.abs(value - nextValue));
+    const closestDistance = Math.min(...distances);
+    return distances.indexOf(closestDistance);
+  }
+  __name24(getClosestValueIndex, "getClosestValueIndex");
+  function getThumbInBoundsOffset(width, left, direction) {
+    const halfWidth = width / 2;
+    const halfPercent = 50;
+    const offset = linearScale([0, halfPercent], [0, halfWidth]);
+    return (halfWidth - offset(left) * direction) * direction;
+  }
+  __name24(getThumbInBoundsOffset, "getThumbInBoundsOffset");
+  function getStepsBetweenValues(values) {
+    return values.slice(0, -1).map((value, index) => values[index + 1] - value);
+  }
+  __name24(getStepsBetweenValues, "getStepsBetweenValues");
+  function hasMinStepsBetweenValues(values, minStepsBetweenValues) {
+    if (minStepsBetweenValues > 0) {
+      const stepsBetweenValues = getStepsBetweenValues(values);
+      const actualMinStepsBetweenValues = Math.min(...stepsBetweenValues);
+      return actualMinStepsBetweenValues >= minStepsBetweenValues;
+    }
+    return true;
+  }
+  __name24(hasMinStepsBetweenValues, "hasMinStepsBetweenValues");
+  function linearScale(input, output) {
+    return (value) => {
+      if (input[0] === input[1] || output[0] === output[1]) return output[0];
+      const ratio = (output[1] - output[0]) / (input[1] - input[0]);
+      return output[0] + ratio * (value - input[0]);
+    };
+  }
+  __name24(linearScale, "linearScale");
+  function getDecimalCount(value) {
+    if (!Number.isFinite(value)) return 0;
+    const str = value.toString();
+    if (str.includes("e")) {
+      const [coefficient, exponent] = str.split("e");
+      const decimalPart2 = coefficient.split(".")[1] || "";
+      const exponentNum = Number(exponent);
+      return Math.max(0, decimalPart2.length - exponentNum);
+    }
+    const decimalPart = str.split(".")[1];
+    return decimalPart ? decimalPart.length : 0;
+  }
+  __name24(getDecimalCount, "getDecimalCount");
+  function roundValue(value, decimalCount) {
+    const rounder = Math.pow(10, decimalCount);
+    return Math.round(value * rounder) / rounder;
+  }
+  __name24(roundValue, "roundValue");
+  function getNextStepValue(value, {
+    min,
+    step,
+    direction,
+    multiplier
+  }) {
+    const decimalCount = getDecimalCount(step);
+    const stepsFromMin = (value - min) / step;
+    const nearestSteps = Math.round(stepsFromMin);
+    const isAligned = roundValue(nearestSteps * step + min, decimalCount) === roundValue(value, decimalCount);
+    let nextSteps;
+    if (isAligned) {
+      nextSteps = nearestSteps + multiplier * direction;
+    } else if (direction > 0) {
+      nextSteps = Math.ceil(stepsFromMin);
+    } else {
+      nextSteps = Math.floor(stepsFromMin);
+    }
+    return roundValue(nextSteps * step + min, decimalCount);
+  }
+  __name24(getNextStepValue, "getNextStepValue");
+  function isFunction2(value) {
+    return typeof value === "function";
+  }
+  __name24(isFunction2, "isFunction");
+
+  // node_modules/.pnpm/@radix-ui+react-switch@1.4._dbc6bc0388ff9f62e93d3b1b7c97be50/node_modules/@radix-ui/react-switch/dist/index.mjs
+  var dist_exports6 = {};
+  __export(dist_exports6, {
+    Root: () => Switch,
+    Switch: () => Switch,
+    SwitchThumb: () => SwitchThumb,
+    Thumb: () => SwitchThumb,
+    createSwitchScope: () => createSwitchScope,
+    unstable_BubbleInput: () => SwitchBubbleInput,
+    unstable_Provider: () => SwitchProvider,
+    unstable_SwitchBubbleInput: () => SwitchBubbleInput,
+    unstable_SwitchProvider: () => SwitchProvider,
+    unstable_SwitchTrigger: () => SwitchTrigger,
+    unstable_Trigger: () => SwitchTrigger
+  });
+  var React34 = __toESM(require_react(), 1);
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
+  var __defProp26 = Object.defineProperty;
+  var __name25 = (target, value) => __defProp26(target, "name", { value, configurable: true });
+  var SWITCH_NAME = "Switch";
+  var [createSwitchContext, createSwitchScope] = createContextScope(SWITCH_NAME);
+  var [SwitchProviderImpl, useSwitchContext] = createSwitchContext(SWITCH_NAME);
+  function SwitchProvider(props) {
+    const {
+      __scopeSwitch,
+      checked: checkedProp,
+      children,
+      defaultChecked,
+      disabled,
+      form,
+      name,
+      onCheckedChange,
+      required,
+      value = "on",
+      // @ts-expect-error
+      internal_do_not_use_render
+    } = props;
+    const [checked, setChecked] = useControllableState({
+      prop: checkedProp,
+      defaultProp: defaultChecked ?? false,
+      onChange: onCheckedChange,
+      caller: SWITCH_NAME
+    });
+    const [control, setControl] = React34.useState(null);
+    const [bubbleInput, setBubbleInput] = React34.useState(null);
+    const [userClick, setUserClick] = React34.useState(null);
+    const isFormControl = control ? !!form || !!control.closest("form") : (
+      // We set this to true by default so that events bubble to forms without JS (SSR)
+      true
+    );
+    const context = {
+      checked,
+      setChecked,
+      disabled,
+      control,
+      setControl,
+      name,
+      form,
+      value,
+      userClick,
+      onUserClick: setUserClick,
+      required,
+      defaultChecked,
+      isFormControl,
+      bubbleInput,
+      setBubbleInput
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SwitchProviderImpl, { scope: __scopeSwitch, ...context, children: isFunction3(internal_do_not_use_render) ? internal_do_not_use_render(context) : children });
+  }
+  __name25(SwitchProvider, "SwitchProvider");
+  var TRIGGER_NAME4 = "SwitchTrigger";
+  var SwitchTrigger = /* @__PURE__ */ React34.forwardRef(
+    /* @__PURE__ */ __name25(function SwitchTrigger2({ __scopeSwitch, onClick, ...switchProps }, forwardedRef) {
+      const {
+        control,
+        form,
+        value,
+        disabled,
+        checked,
+        required,
+        setControl,
+        setChecked,
+        onUserClick,
+        isFormControl,
+        bubbleInput
+      } = useSwitchContext(TRIGGER_NAME4, __scopeSwitch);
+      const composedRefs = useComposedRefs(forwardedRef, setControl);
+      const initialCheckedStateRef = React34.useRef(checked);
+      React34.useEffect(() => {
+        const associatedForm = form ? control?.ownerDocument.getElementById(form) : control?.form;
+        if (associatedForm instanceof HTMLFormElement) {
+          const reset = /* @__PURE__ */ __name25(() => setChecked(initialCheckedStateRef.current), "reset");
+          associatedForm.addEventListener("reset", reset);
+          return () => associatedForm.removeEventListener("reset", reset);
+        }
+      }, [control, form, setChecked]);
+      return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+        Primitive.button,
+        {
+          type: "button",
+          role: "switch",
+          "aria-checked": checked,
+          "aria-required": required,
+          "data-state": getState4(checked),
+          "data-disabled": disabled ? "" : void 0,
+          disabled,
+          value,
+          ...switchProps,
+          ref: composedRefs,
+          onClick: composeEventHandlers(onClick, (event) => {
+            const hasConsumerStoppedPropagation = event.isPropagationStopped();
+            onUserClick({ requestedChecked: !checked, hasConsumerStoppedPropagation });
+            setChecked((prevChecked) => !prevChecked);
+            if (bubbleInput && isFormControl) {
+              if (!hasConsumerStoppedPropagation) {
+                event.stopPropagation();
+              }
+            }
+          })
+        }
+      );
+    }, "SwitchTrigger")
+  );
+  var Switch = /* @__PURE__ */ React34.forwardRef(
+    // blank line to reduce diff noise
+    /* @__PURE__ */ __name25(function Switch2(props, forwardedRef) {
+      const {
+        __scopeSwitch,
+        name,
+        checked,
+        defaultChecked,
+        required,
+        disabled,
+        value,
+        onCheckedChange,
+        form,
+        ...switchProps
+      } = props;
+      return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+        SwitchProvider,
+        {
+          __scopeSwitch,
+          checked,
+          defaultChecked,
+          disabled,
+          required,
+          onCheckedChange,
+          name,
+          form,
+          value,
+          internal_do_not_use_render: ({ isFormControl }) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+              SwitchTrigger,
+              {
+                ...switchProps,
+                ref: forwardedRef,
+                __scopeSwitch
+              }
+            ),
+            isFormControl && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+              SwitchBubbleInput,
+              {
+                __scopeSwitch
+              }
+            )
+          ] })
+        }
+      );
+    }, "Switch")
+  );
+  var THUMB_NAME2 = "SwitchThumb";
+  var SwitchThumb = /* @__PURE__ */ React34.forwardRef(
+    /* @__PURE__ */ __name25(function SwitchThumb2(props, forwardedRef) {
+      const { __scopeSwitch, ...thumbProps } = props;
+      const context = useSwitchContext(THUMB_NAME2, __scopeSwitch);
+      return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+        Primitive.span,
+        {
+          "data-state": getState4(context.checked),
+          "data-disabled": context.disabled ? "" : void 0,
+          ...thumbProps,
+          ref: forwardedRef
+        }
+      );
+    }, "SwitchThumb")
+  );
+  var BUBBLE_INPUT_NAME2 = "SwitchBubbleInput";
+  var SwitchBubbleInput = /* @__PURE__ */ React34.forwardRef(
+    // blank line to reduce diff noise
+    /* @__PURE__ */ __name25(function SwitchBubbleInput2({ __scopeSwitch, onClick, ...props }, forwardedRef) {
+      const {
+        control,
+        userClick,
+        checked,
+        defaultChecked,
+        required,
+        disabled,
+        name,
+        value,
+        form,
+        bubbleInput,
+        setBubbleInput
+      } = useSwitchContext(BUBBLE_INPUT_NAME2, __scopeSwitch);
+      const composedRefs = useComposedRefs(forwardedRef, setBubbleInput);
+      const controlSize = useSize(control);
+      const shouldStopClickPropagationRef = React34.useRef(false);
+      const prevCheckedRef = React34.useRef(checked);
+      const handledUserClickRef = React34.useRef(userClick);
+      const pendingUserClickRef = React34.useRef(null);
+      React34.useEffect(() => {
+        const input = bubbleInput;
+        if (!input) return;
+        const inputProto = window.HTMLInputElement.prototype;
+        const descriptor = Object.getOwnPropertyDescriptor(
+          inputProto,
+          "checked"
+        );
+        const setChecked = descriptor.set;
+        if (!setChecked) {
+          return;
+        }
+        const checkedChanged = prevCheckedRef.current !== checked;
+        prevCheckedRef.current = checked;
+        const isNewUserClick = userClick !== null && userClick !== handledUserClickRef.current;
+        handledUserClickRef.current = userClick;
+        if (isNewUserClick) {
+          pendingUserClickRef.current = checkedChanged ? null : userClick;
+          if (checkedChanged) {
+            setChecked.call(input, checked);
+          }
+          input.dispatchEvent(
+            new Event("click", { bubbles: !userClick.hasConsumerStoppedPropagation })
+          );
+        } else if (checkedChanged) {
+          const pendingUserClick = pendingUserClickRef.current;
+          pendingUserClickRef.current = null;
+          const isPendingUserChange = pendingUserClick?.requestedChecked === checked;
+          shouldStopClickPropagationRef.current = true;
+          setChecked.call(input, checked);
+          input.dispatchEvent(
+            new Event("click", {
+              bubbles: !(isPendingUserChange && pendingUserClick.hasConsumerStoppedPropagation)
+            })
+          );
+          shouldStopClickPropagationRef.current = false;
+        }
+      }, [bubbleInput, checked, userClick]);
+      const defaultCheckedRef = React34.useRef(checked);
+      return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+        Primitive.input,
+        {
+          type: "checkbox",
+          "aria-hidden": true,
+          defaultChecked: defaultChecked ?? defaultCheckedRef.current,
+          required,
+          disabled,
+          name,
+          value,
+          form,
+          ...props,
+          tabIndex: -1,
+          ref: composedRefs,
+          onClick: composeEventHandlers(onClick, (event) => {
+            if (shouldStopClickPropagationRef.current) {
+              event.stopPropagation();
+            }
+          }),
+          style: {
+            ...props.style,
+            ...controlSize,
+            position: "absolute",
+            pointerEvents: "none",
+            opacity: 0,
+            margin: 0,
+            // We transform because the input is absolutely positioned but we have
+            // rendered it **after** the button. This pulls it back to sit on top
+            // of the button.
+            transform: "translateX(-100%)"
+          }
+        }
+      );
+    }, "SwitchBubbleInput")
+  );
+  function isFunction3(value) {
+    return typeof value === "function";
+  }
+  __name25(isFunction3, "isFunction");
+  function getState4(checked) {
+    return checked ? "checked" : "unchecked";
+  }
+  __name25(getState4, "getState");
+
+  // node_modules/.pnpm/@radix-ui+react-tabs@1.2.1__519fe3e24f3d946c91e5ee8267015a1e/node_modules/@radix-ui/react-tabs/dist/index.mjs
+  var dist_exports7 = {};
+  __export(dist_exports7, {
+    Content: () => TabsContent,
+    List: () => TabsList,
+    Root: () => Tabs,
+    Tabs: () => Tabs,
+    TabsContent: () => TabsContent,
+    TabsList: () => TabsList,
+    TabsTrigger: () => TabsTrigger,
+    Trigger: () => TabsTrigger,
+    createTabsScope: () => createTabsScope
+  });
+  var React35 = __toESM(require_react(), 1);
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
+  var __defProp27 = Object.defineProperty;
+  var __name26 = (target, value) => __defProp27(target, "name", { value, configurable: true });
+  var ActivationMode = {
+    Automatic: "automatic",
+    Manual: "manual"
+  };
+  var TABS_NAME = "Tabs";
+  var [createTabsContext, createTabsScope] = createContextScope(TABS_NAME, [
+    createRovingFocusGroupScope
+  ]);
+  var useRovingFocusGroupScope = createRovingFocusGroupScope();
+  var [TabsProvider, useTabsContext] = createTabsContext(TABS_NAME);
+  var Tabs = /* @__PURE__ */ React35.forwardRef(
+    // blank line to reduce diff noise
+    /* @__PURE__ */ __name26(function Tabs2(props, forwardedRef) {
+      const {
+        __scopeTabs,
+        value: valueProp,
+        onValueChange,
+        defaultValue,
+        orientation = "horizontal",
+        dir,
+        activationMode = ActivationMode.Automatic,
+        ...tabsProps
+      } = props;
+      const direction = useDirection(dir);
+      const [value, setValue] = useControllableState({
+        prop: valueProp,
+        onChange: onValueChange,
+        defaultProp: defaultValue ?? "",
+        caller: TABS_NAME
+      });
+      return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+        TabsProvider,
+        {
+          scope: __scopeTabs,
+          baseId: useId(),
+          value,
+          onValueChange: setValue,
+          orientation,
+          dir: direction,
+          activationMode,
+          children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+            Primitive.div,
+            {
+              dir: direction,
+              "data-orientation": orientation,
+              ...tabsProps,
+              ref: forwardedRef
+            }
+          )
+        }
+      );
+    }, "Tabs")
+  );
+  var TAB_LIST_NAME = "TabsList";
+  var TabsList = /* @__PURE__ */ React35.forwardRef(
+    // blank line to reduce diff noise
+    /* @__PURE__ */ __name26(function TabsList2(props, forwardedRef) {
+      const { __scopeTabs, loop = true, ...listProps } = props;
+      const context = useTabsContext(TAB_LIST_NAME, __scopeTabs);
+      const rovingFocusGroupScope = useRovingFocusGroupScope(__scopeTabs);
+      return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+        RovingFocusGroup,
+        {
+          asChild: true,
+          ...rovingFocusGroupScope,
+          orientation: context.orientation,
+          dir: context.dir,
+          loop,
+          children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+            Primitive.div,
+            {
+              role: "tablist",
+              "aria-orientation": context.orientation,
+              ...listProps,
+              ref: forwardedRef
+            }
+          )
+        }
+      );
+    }, "TabsList")
+  );
+  var TRIGGER_NAME5 = "TabsTrigger";
+  var TabsTrigger = /* @__PURE__ */ React35.forwardRef(
+    /* @__PURE__ */ __name26(function TabsTrigger2(props, forwardedRef) {
+      const { __scopeTabs, value, disabled = false, ...triggerProps } = props;
+      const context = useTabsContext(TRIGGER_NAME5, __scopeTabs);
+      const rovingFocusGroupScope = useRovingFocusGroupScope(__scopeTabs);
+      const triggerId = makeTriggerId(context.baseId, value);
+      const contentId = makeContentId(context.baseId, value);
+      const isSelected = value === context.value;
+      return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+        RovingFocusGroupItem,
+        {
+          asChild: true,
+          ...rovingFocusGroupScope,
+          focusable: !disabled,
+          active: isSelected,
+          children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+            Primitive.button,
+            {
+              type: "button",
+              role: "tab",
+              "aria-selected": isSelected,
+              "aria-controls": contentId,
+              "data-state": isSelected ? "active" : "inactive",
+              "data-disabled": disabled ? "" : void 0,
+              disabled,
+              id: triggerId,
+              ...triggerProps,
+              ref: forwardedRef,
+              onMouseDown: composeEventHandlers(props.onMouseDown, (event) => {
+                if (!disabled && event.button === 0 && event.ctrlKey === false) {
+                  event.currentTarget.focus();
+                  context.onValueChange(value);
+                } else {
+                  event.preventDefault();
+                }
+              }),
+              onKeyDown: composeEventHandlers(props.onKeyDown, (event) => {
+                if (disabled || event.target !== event.currentTarget) {
+                  return;
+                }
+                if ([" ", "Enter"].includes(event.key)) {
+                  context.onValueChange(value);
+                }
+              }),
+              onFocus: composeEventHandlers(props.onFocus, () => {
+                const isAutomaticActivation = context.activationMode !== ActivationMode.Manual;
+                if (!isSelected && !disabled && isAutomaticActivation) {
+                  context.onValueChange(value);
+                }
+              })
+            }
+          )
+        }
+      );
+    }, "TabsTrigger")
+  );
+  var CONTENT_NAME4 = "TabsContent";
+  var TabsContent = /* @__PURE__ */ React35.forwardRef(
+    /* @__PURE__ */ __name26(function TabsContent2(props, forwardedRef) {
+      const { __scopeTabs, value, forceMount, children, ...contentProps } = props;
+      const context = useTabsContext(CONTENT_NAME4, __scopeTabs);
+      const triggerId = makeTriggerId(context.baseId, value);
+      const contentId = makeContentId(context.baseId, value);
+      const isSelected = value === context.value;
+      const isMountAnimationPreventedRef = React35.useRef(isSelected);
+      React35.useEffect(() => {
+        const rAF = requestAnimationFrame(() => isMountAnimationPreventedRef.current = false);
+        return () => cancelAnimationFrame(rAF);
+      }, []);
+      return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Presence, { present: forceMount || isSelected, children: ({ present }) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+        Primitive.div,
+        {
+          "data-state": isSelected ? "active" : "inactive",
+          "data-orientation": context.orientation,
+          role: "tabpanel",
+          "aria-labelledby": triggerId,
+          hidden: !present,
+          id: contentId,
+          tabIndex: 0,
+          ...contentProps,
+          ref: forwardedRef,
+          style: {
+            ...props.style,
+            animationDuration: isMountAnimationPreventedRef.current ? "0s" : void 0
+          },
+          children: present && children
+        }
+      ) });
+    }, "TabsContent")
+  );
+  function makeTriggerId(baseId, value) {
+    return `${baseId}-trigger-${value}`;
+  }
+  __name26(makeTriggerId, "makeTriggerId");
+  function makeContentId(baseId, value) {
+    return `${baseId}-content-${value}`;
+  }
+  __name26(makeContentId, "makeContentId");
+
+  // src/components/ui/badge.tsx
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime(), 1);
+  var badgeVariants = cva(
+    "inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3",
+    {
+      variants: {
+        variant: {
+          default: "bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
+          secondary: "bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
+          destructive: "bg-destructive text-white focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40 [a&]:hover:bg-destructive/90",
+          outline: "border-border text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
+          ghost: "[a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
+          link: "text-primary underline-offset-4 [a&]:hover:underline"
+        }
+      },
+      defaultVariants: {
+        variant: "default"
+      }
+    }
+  );
+  function Badge({
+    className,
+    variant = "default",
+    asChild = false,
+    ...props
+  }) {
+    const Comp = asChild ? dist_exports.Root : "span";
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+      Comp,
+      {
+        "data-slot": "badge",
+        "data-variant": variant,
+        className: cn(badgeVariants({ variant }), className),
+        ...props
+      }
+    );
+  }
+
+  // src/components/ui/button.tsx
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
+  var buttonVariants = cva(
+    "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+    {
+      variants: {
+        variant: {
+          default: "bg-primary text-primary-foreground hover:bg-primary/90",
+          destructive: "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40",
+          outline: "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+          secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+          link: "text-primary underline-offset-4 hover:underline"
+        },
+        size: {
+          default: "h-9 px-4 py-2 has-[>svg]:px-3",
+          xs: "h-6 gap-1 rounded-md px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
+          sm: "h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5",
+          lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+          icon: "size-9",
+          "icon-xs": "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
+          "icon-sm": "size-8",
+          "icon-lg": "size-10"
+        }
+      },
+      defaultVariants: {
+        variant: "default",
+        size: "default"
+      }
+    }
+  );
+  function Button({
+    className,
+    variant = "default",
+    size = "default",
+    asChild = false,
+    ...props
+  }) {
+    const Comp = asChild ? dist_exports.Root : "button";
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+      Comp,
+      {
+        "data-slot": "button",
+        "data-variant": variant,
+        "data-size": size,
+        className: cn(buttonVariants({ variant, size, className })),
+        ...props
+      }
+    );
+  }
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/createLucideIcon.mjs
+  var import_react4 = __toESM(require_react(), 1);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/utils/toKebabCase.mjs
+  var toKebabCase = (string) => string?.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/utils/toLucideIconData.mjs
+  function toLucideIconData(iconName, iconNode, aliases = []) {
+    if (iconNode == null) {
+      throw new Error("[lucide]: iconNode is required when icon name is used");
+    }
+    return {
+      name: toKebabCase(iconName),
+      size: 24,
+      node: iconNode,
+      ...aliases.length > 0 ? { aliases } : {}
+    };
+  }
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/utils/toCamelCase.mjs
+  var toCamelCase = (string) => {
+    let out = "";
+    let upperNext = false;
+    for (const ch of string) {
+      if (ch === "-" || ch === "_" || ch <= " ") {
+        upperNext = out.length > 0;
+        continue;
+      }
+      if (out.length === 0) {
+        out += ch.toLowerCase();
+      } else {
+        out += upperNext ? ch.toUpperCase() : ch;
+      }
+      upperNext = false;
+    }
+    return out;
+  };
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/utils/toPascalCase.mjs
+  var toPascalCase = (string) => {
+    const camelCase = toCamelCase(string);
+    return camelCase.charAt(0).toUpperCase() + camelCase.slice(1);
+  };
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/Icon.mjs
+  var import_react3 = __toESM(require_react(), 1);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/utils/mergeClasses.mjs
+  var mergeClasses = (...classes) => classes.filter((className, index, array) => {
+    return Boolean(className) && className.trim() !== "" && array.indexOf(className) === index;
+  }).join(" ").trim();
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/build/defaultAttributes.mjs
+  var defaultAttributes = {
+    xmlns: "http://www.w3.org/2000/svg",
+    width: 24,
+    height: 24,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    "stroke-width": 2,
+    "stroke-linecap": "round",
+    "stroke-linejoin": "round"
+  };
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/build/buildLucideIconNode.mjs
+  function isDefined(value) {
+    return value !== null && value !== void 0;
+  }
+  function buildLucideIconNode(icon, params = {}) {
+    const attributeNames = params.attributeNames ?? {};
+    const getAttributeName = (attributeName) => attributeNames[attributeName] ?? attributeName;
+    const viewBoxWidth = icon.size ?? icon.width ?? defaultAttributes["width"];
+    const viewBoxHeight = icon.size ?? icon.height ?? defaultAttributes["height"];
+    const aliasClassNames = icon.aliases?.filter((alias) => typeof alias === "string" && alias.trim() !== "").map((alias) => `lucide-${alias}`) ?? [];
+    const iconClassNames = [...icon.name ? [`lucide-${icon.name}`] : [], ...aliasClassNames];
+    const classNamesFromClassName = params.className?.split(" ").filter(Boolean) ?? [];
+    const className = params.includeDefaultClasses === false ? mergeClasses(...classNamesFromClassName) : mergeClasses("lucide", ...iconClassNames, ...classNamesFromClassName);
+    const calculatedStrokeWidth = params.absoluteStrokeWidth ? Number(params.strokeWidth ?? defaultAttributes["stroke-width"]) * Number(icon.size ?? icon.width ?? defaultAttributes["width"]) / Number(params.size ?? params.width ?? defaultAttributes["width"]) : params.strokeWidth ?? defaultAttributes["stroke-width"];
+    const attributes = {
+      ...Object.entries(defaultAttributes).reduce((attrs, [attrName, value]) => {
+        attrs[getAttributeName(attrName)] = value;
+        return attrs;
+      }, {}),
+      ..."color" in params && params.color && {
+        [getAttributeName("stroke")]: params.color
+      },
+      ..."size" in params && isDefined(params.size) && {
+        [getAttributeName("width")]: params.size,
+        [getAttributeName("height")]: params.size
+      },
+      ..."width" in params && isDefined(params.width) && {
+        [getAttributeName("width")]: params.width
+      },
+      ..."height" in params && isDefined(params.height) && {
+        [getAttributeName("height")]: params.height
+      },
+      [getAttributeName("stroke-width")]: calculatedStrokeWidth,
+      ...className && {
+        [getAttributeName("class")]: className
+      },
+      [getAttributeName("viewBox")]: `0 0 ${viewBoxWidth} ${viewBoxHeight}`,
+      ...params.hasA11yProp === false ? {
+        [getAttributeName("aria-hidden")]: "true"
+      } : {},
+      ..."attributes" in params && params.attributes
+    };
+    return [
+      "svg",
+      attributes,
+      icon.node.map((child) => {
+        const [name, attrs, children] = child;
+        const nextAttrs = params.nonScalingStroke ? { [getAttributeName("vector-effect")]: "non-scaling-stroke", ...attrs } : attrs;
+        return children ? [name, nextAttrs, children] : [name, nextAttrs];
+      })
+    ];
+  }
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/build/buildLucideIconForReact.mjs
+  function buildLucideIconForReact(icon, params = {}) {
+    return buildLucideIconNode(icon, {
+      ...params,
+      attributeNames: {
+        ...params.attributeNames,
+        class: "className",
+        "stroke-width": "strokeWidth",
+        "stroke-linecap": "strokeLinecap",
+        "stroke-linejoin": "strokeLinejoin",
+        "vector-effect": "vectorEffect"
+      }
+    });
+  }
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/shared/src/utils/hasA11yProp.mjs
+  var hasA11yProp = (props) => {
+    for (const prop in props) {
+      if (prop.startsWith("aria-") || prop === "role" || prop === "title") {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/context.mjs
+  var import_react2 = __toESM(require_react(), 1);
+  var LucideContext = (0, import_react2.createContext)({});
+  var useLucideContext = () => (0, import_react2.useContext)(LucideContext);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/Icon.mjs
+  var Icon = (0, import_react3.forwardRef)(
+    ({
+      color,
+      size,
+      width,
+      height,
+      strokeWidth,
+      absoluteStrokeWidth,
+      nonScalingStroke,
+      className = "",
+      children,
+      iconNode = [],
+      icon = {
+        node: iconNode,
+        aliases: [],
+        size: 24
+      },
+      ...rest
+    }, ref) => {
+      const {
+        size: contextSize = 24,
+        strokeWidth: contextStrokeWidth = 2,
+        absoluteStrokeWidth: contextAbsoluteStrokeWidth = false,
+        nonScalingStroke: contextNonScalingStroke = false,
+        color: contextColor = "currentColor",
+        className: contextClass = ""
+      } = useLucideContext() ?? {};
+      const hasAccessibleProp = Boolean(children) || hasA11yProp(rest);
+      const [name, svgAttributes, builtIconNode = []] = buildLucideIconForReact(icon, {
+        color: color ?? contextColor,
+        width: width ?? size ?? contextSize,
+        height: height ?? size ?? contextSize,
+        strokeWidth: strokeWidth ?? contextStrokeWidth,
+        absoluteStrokeWidth: absoluteStrokeWidth ?? contextAbsoluteStrokeWidth,
+        nonScalingStroke: nonScalingStroke ?? contextNonScalingStroke,
+        className: mergeClasses(contextClass, className),
+        hasA11yProp: hasAccessibleProp,
+        attributes: rest
+      });
+      return (0, import_react3.createElement)(
+        name,
+        {
+          ref,
+          ...svgAttributes
+        },
+        [
+          ...builtIconNode.map(([tag, attrs]) => (0, import_react3.createElement)(tag, attrs)),
+          ...Array.isArray(children) ? children : [children]
+        ]
+      );
+    }
+  );
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/createLucideIcon.mjs
+  function createLucideIcon(iconDataOrName, iconNode = [], aliases = []) {
+    const iconData = typeof iconDataOrName === "string" ? toLucideIconData(iconDataOrName, iconNode, aliases) : iconDataOrName;
+    const Component = (0, import_react4.forwardRef)(
+      ({ className, ...props }, ref) => (0, import_react4.createElement)(Icon, {
+        ref,
+        icon: iconData,
+        className,
+        ...props
+      })
+    );
+    if (iconData.name) {
+      Component.displayName = toPascalCase(iconData.name);
+    }
+    return Component;
+  }
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/chevron-down.mjs
+  var __iconData = {
+    name: "chevron-down",
+    size: 24,
+    node: [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]]
+  };
+  __iconData.node;
+  var ChevronDown = createLucideIcon(__iconData);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/chevron-right.mjs
+  var __iconData2 = {
+    name: "chevron-right",
+    size: 24,
+    node: [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]]
+  };
+  __iconData2.node;
+  var ChevronRight = createLucideIcon(__iconData2);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/chevron-up.mjs
+  var __iconData3 = {
+    name: "chevron-up",
+    size: 24,
+    node: [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]]
+  };
+  __iconData3.node;
+  var ChevronUp = createLucideIcon(__iconData3);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/circle-check.mjs
+  var __iconData4 = {
+    name: "circle-check",
+    size: 24,
+    node: [
+      ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+      ["path", { d: "m16 9-5.5 5.5L8 12", key: "xofnsj" }]
+    ],
+    aliases: ["check-circle-2"]
+  };
+  __iconData4.node;
+  var CircleCheck = createLucideIcon(__iconData4);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/construction.mjs
+  var __iconData5 = {
+    name: "construction",
+    size: 24,
+    node: [
+      ["rect", { x: "2", y: "6", width: "20", height: "8", rx: "1", key: "1estib" }],
+      ["path", { d: "M17 14v7", key: "7m2elx" }],
+      ["path", { d: "M7 14v7", key: "1cm7wv" }],
+      ["path", { d: "M17 3v3", key: "1v4jwn" }],
+      ["path", { d: "M7 3v3", key: "7o6guu" }],
+      ["path", { d: "M10 14 2.3 6.3", key: "1023jk" }],
+      ["path", { d: "m14 6 7.7 7.7", key: "1s8pl2" }],
+      ["path", { d: "m8 6 8 8", key: "hl96qh" }]
+    ]
+  };
+  __iconData5.node;
+  var Construction = createLucideIcon(__iconData5);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/download.mjs
+  var __iconData6 = {
+    name: "download",
+    size: 24,
+    node: [
+      ["path", { d: "M12 15V3", key: "m9g1x1" }],
+      ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }],
+      ["path", { d: "m7 10 5 5 5-5", key: "brsn70" }]
+    ]
+  };
+  __iconData6.node;
+  var Download = createLucideIcon(__iconData6);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/external-link.mjs
+  var __iconData7 = {
+    name: "external-link",
+    size: 24,
+    node: [
+      ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
+      ["path", { d: "M10 14 21 3", key: "gplh6r" }],
+      ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
+    ]
+  };
+  __iconData7.node;
+  var ExternalLink = createLucideIcon(__iconData7);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/list-ordered.mjs
+  var __iconData8 = {
+    name: "list-ordered",
+    size: 24,
+    node: [
+      ["path", { d: "M11 5h10", key: "1cz7ny" }],
+      ["path", { d: "M11 12h10", key: "1438ji" }],
+      ["path", { d: "M11 19h10", key: "11t30w" }],
+      ["path", { d: "M4 4h1v5", key: "10yrso" }],
+      ["path", { d: "M4 9h2", key: "r1h2o0" }],
+      ["path", { d: "M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02", key: "xtkcd5" }]
+    ]
+  };
+  __iconData8.node;
+  var ListOrdered = createLucideIcon(__iconData8);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/moon.mjs
+  var __iconData9 = {
+    name: "moon",
+    size: 24,
+    node: [
+      [
+        "path",
+        {
+          d: "M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401",
+          key: "kfwtm"
+        }
+      ]
+    ]
+  };
+  __iconData9.node;
+  var Moon = createLucideIcon(__iconData9);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/play.mjs
+  var __iconData10 = {
+    name: "play",
+    size: 24,
+    node: [
+      [
+        "path",
+        {
+          d: "M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z",
+          key: "10ikf1"
+        }
+      ]
+    ]
+  };
+  __iconData10.node;
+  var Play = createLucideIcon(__iconData10);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
+  var __iconData11 = {
+    name: "refresh-cw",
+    size: 24,
+    node: [
+      ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
+      ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
+      ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
+      ["path", { d: "M8 16H3v5", key: "1cv678" }]
+    ]
+  };
+  __iconData11.node;
+  var RefreshCw = createLucideIcon(__iconData11);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/rotate-ccw-clock.mjs
+  var __iconData12 = {
+    name: "rotate-ccw-clock",
+    size: 24,
+    node: [
+      ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
+      ["path", { d: "M3 3v5h5", key: "1xhq8a" }],
+      ["path", { d: "M12 7v5l4 2", key: "1fdv2h" }]
+    ],
+    aliases: ["history"]
+  };
+  __iconData12.node;
+  var RotateCcwClock = createLucideIcon(__iconData12);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/sparkles.mjs
+  var __iconData13 = {
+    name: "sparkles",
+    size: 24,
+    node: [
+      [
+        "path",
+        {
+          d: "M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z",
+          key: "1s2grr"
+        }
+      ],
+      ["path", { d: "M20 2v4", key: "1rf3ol" }],
+      ["path", { d: "M22 4h-4", key: "gwowj6" }],
+      ["circle", { cx: "4", cy: "20", r: "2", key: "6kqj1y" }]
+    ],
+    aliases: ["stars"]
+  };
+  __iconData13.node;
+  var Sparkles = createLucideIcon(__iconData13);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/square.mjs
+  var __iconData14 = {
+    name: "square",
+    size: 24,
+    node: [["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]]
+  };
+  __iconData14.node;
+  var Square = createLucideIcon(__iconData14);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/sun.mjs
+  var __iconData15 = {
+    name: "sun",
+    size: 24,
+    node: [
+      ["circle", { cx: "12", cy: "12", r: "4", key: "4exip2" }],
+      ["path", { d: "M12 2v2", key: "tus03m" }],
+      ["path", { d: "M12 20v2", key: "1lh1kg" }],
+      ["path", { d: "m4.93 4.93 1.41 1.41", key: "149t6j" }],
+      ["path", { d: "m17.66 17.66 1.41 1.41", key: "ptbguv" }],
+      ["path", { d: "M2 12h2", key: "1t8f8n" }],
+      ["path", { d: "M20 12h2", key: "1q8mjw" }],
+      ["path", { d: "m6.34 17.66-1.41 1.41", key: "1m8zz5" }],
+      ["path", { d: "m19.07 4.93-1.41 1.41", key: "1shlcs" }]
+    ]
+  };
+  __iconData15.node;
+  var Sun = createLucideIcon(__iconData15);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/x.mjs
+  var __iconData16 = {
+    name: "x",
+    size: 24,
+    node: [
+      ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
+      ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
+    ]
+  };
+  __iconData16.node;
+  var X = createLucideIcon(__iconData16);
+
+  // src/content/ui/components/HudHeader.tsx
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
+  function HudHeader({
+    version,
+    theme,
+    onToggleTheme,
+    isMinimized,
+    onToggleMinimize,
+    onHide,
+    onCheckUpdate,
+    isCheckingUpdate,
+    onMouseDownDrag
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
+      "div",
+      {
+        className: "flex items-center justify-between px-3.5 py-2.5 bg-slate-950/80 dark:bg-slate-950/80 light:bg-slate-100/90 border-b border-slate-800/80 dark:border-slate-800/80 light:border-slate-200 select-none cursor-move transition-colors rounded-t-2xl",
+        onMouseDown: onMouseDownDrag,
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-2", onMouseDown: (e) => e.stopPropagation(), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+              "button",
+              {
+                type: "button",
+                onClick: onHide,
+                className: "group relative flex h-3 w-3 items-center justify-center rounded-full bg-red-500 hover:bg-red-600 transition-transform active:scale-90 cursor-pointer shadow-xs",
+                title: "\u1EA8n b\u1EA3ng \u0111i\u1EC1u khi\u1EC3n (Alt+P)",
+                children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "opacity-0 group-hover:opacity-100 text-[8px] font-bold text-red-950 leading-none", children: "\u2715" })
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+              "button",
+              {
+                type: "button",
+                onClick: onToggleMinimize,
+                className: "group relative flex h-3 w-3 items-center justify-center rounded-full bg-amber-500 hover:bg-amber-600 transition-transform active:scale-90 cursor-pointer shadow-xs",
+                title: isMinimized ? "M\u1EDF r\u1ED9ng" : "Thu g\u1ECDn",
+                children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "opacity-0 group-hover:opacity-100 text-[8px] font-bold text-amber-950 leading-none", children: "\u2212" })
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+              "button",
+              {
+                type: "button",
+                onClick: onToggleTheme,
+                className: "group relative flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-600 transition-transform active:scale-90 cursor-pointer shadow-xs",
+                title: `Chuy\u1EC3n sang giao di\u1EC7n ${theme === "dark" ? "S\xE1ng" : "T\u1ED1i"}`,
+                children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "opacity-0 group-hover:opacity-100 text-[8px] font-bold text-emerald-950 leading-none", children: "\u26A1" })
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-1.5 font-bold text-xs tracking-tight", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "text-emerald-400", children: "\u{1F33E} NTG Auto" }),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "text-slate-400 font-normal", children: "by T\xFAn" }),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
+              Badge,
+              {
+                variant: "outline",
+                className: "ml-0.5 border-slate-700/60 bg-slate-900/60 light:bg-white px-1.5 py-0 text-[10px] font-mono text-slate-400",
+                children: [
+                  "v",
+                  version
+                ]
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex items-center gap-1 text-slate-400", onMouseDown: (e) => e.stopPropagation(), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+              Button,
+              {
+                variant: "ghost",
+                size: "icon-xs",
+                className: "h-6 w-6 text-slate-400 hover:text-slate-100 hover:bg-slate-800/80 rounded-md",
+                title: "Ki\u1EC3m tra b\u1EA3n c\u1EADp nh\u1EADt m\u1EDBi t\u1EEB GitHub",
+                onClick: onCheckUpdate,
+                children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RefreshCw, { className: `h-3 w-3 ${isCheckingUpdate ? "animate-spin text-emerald-400" : ""}` })
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+              Button,
+              {
+                variant: "ghost",
+                size: "icon-xs",
+                className: "h-6 w-6 text-slate-400 hover:text-amber-400 hover:bg-slate-800/80 rounded-md",
+                title: `\u0110\u1ED5i sang ch\u1EBF \u0111\u1ED9 ${theme === "dark" ? "S\xE1ng" : "T\u1ED1i"}`,
+                onClick: onToggleTheme,
+                children: theme === "dark" ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Sun, { className: "h-3.5 w-3.5 text-amber-400" }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Moon, { className: "h-3.5 w-3.5 text-indigo-500" })
+              }
+            )
+          ] })
+        ]
+      }
+    );
+  }
+
+  // src/content/scheduler/dom-helpers.ts
+  var sleep = (ms) => new Promise((r2) => setTimeout(r2, ms));
+  function isVisible(el) {
+    if (!el) return false;
+    const s = window.getComputedStyle(el);
+    if (s.display === "none" || s.visibility === "hidden" || Number(s.opacity) === 0) return false;
+    const r2 = el.getBoundingClientRect();
+    return r2.width > 0 && r2.height > 0;
+  }
+  function triggerPointerDownAndClick(el) {
+    if (!el) return false;
+    const rect = el.getBoundingClientRect();
+    const cx2 = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const opts = { bubbles: true, cancelable: true, clientX: cx2, clientY: cy, button: 0, buttons: 1 };
+    el.dispatchEvent(new PointerEvent("pointerdown", opts));
+    el.dispatchEvent(new MouseEvent("mousedown", opts));
+    el.dispatchEvent(new PointerEvent("pointerup", opts));
+    el.dispatchEvent(new MouseEvent("mouseup", opts));
+    el.click();
+    return true;
+  }
+  function triggerPointerDownOnly(el) {
+    if (!el) return false;
+    const rect = el.getBoundingClientRect();
+    const cx2 = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const opts = { bubbles: true, cancelable: true, clientX: cx2, clientY: cy, button: 0, buttons: 1 };
+    el.dispatchEvent(new PointerEvent("pointerdown", opts));
+    el.dispatchEvent(new PointerEvent("pointerup", opts));
+    return true;
+  }
+  function formatClock(minutes) {
+    if (typeof minutes !== "number") return "--:--";
+    const h = Math.floor(minutes / 60) % 24;
+    const m = Math.floor(minutes % 60);
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+  }
+  function formatGold(n) {
+    if (typeof n !== "number") return "--";
+    return n.toLocaleString("vi-VN") + "\u0111";
+  }
+
+  // src/content/ui/components/HudStats.tsx
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime(), 1);
+  function HudStats({ snap }) {
+    const day = snap?.day ?? 1;
+    const timeStr = typeof snap?.minutes === "number" ? formatClock(snap.minutes) : "--:--";
+    const goldStr = typeof snap?.gold === "number" ? formatGold(snap.gold) : "--";
+    const fullness = typeof snap?.fullness === "number" ? `${Math.round(snap.fullness)}%` : "--";
+    const hydration = typeof snap?.hydration === "number" ? `${Math.round(snap.hydration)}%` : "--";
+    const energy = typeof snap?.energy === "number" ? `${Math.round(snap.energy)}%` : "--";
+    let extraNote = "";
+    if (snap?.screen === "sea") {
+      extraNote = snap.sea?.bite ? "\u{1F3A3} C\xE1 c\u1EAFn c\xE2u!" : snap.sea?.phase ? `\u{1F30A} Bi\u1EC3n: ${snap.sea.phase}` : "\u{1F30A} Bi\u1EC3n";
+    } else if (snap?.screen === "benDo") {
+      const stam = snap.benWallet?.liveStamina ?? snap.benWallet?.stamina;
+      extraNote = typeof stam === "number" ? `\u{1F6F6} S\u1EE9c: ${stam}` : "\u{1F6F6} B\u1EBFn \u0111\xF2";
+    } else if (snap?.sleeping) {
+      extraNote = "\u{1F634} \u0110ang ng\u1EE7";
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "bg-slate-900/90 border-b border-slate-800/80 px-2.5 py-1.5 text-[11px] font-mono text-slate-300", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex flex-wrap items-center justify-between gap-1.5", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center gap-1 text-slate-300", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { className: "text-amber-400 font-semibold", children: [
+          "\u{1F4C5} Ng\xE0y ",
+          day
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-500", children: "\xB7" }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-emerald-400 font-semibold", children: timeStr }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-slate-500", children: "\xB7" }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-yellow-400 font-bold", children: goldStr })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center gap-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center gap-1", title: "\u0110\u1ED9 no", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F956}" }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-orange-300 font-medium", children: fullness })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center gap-1", title: "\u0110\u1ED9 kh\xE1t", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u{1F964}" }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-cyan-300 font-medium", children: hydration })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center gap-1", title: "N\u0103ng l\u01B0\u1EE3ng / Pin / Th\u1EC3 l\u1EF1c", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "\u26A1" }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "text-emerald-300 font-medium", children: energy })
+        ] }),
+        extraNote && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "rounded bg-slate-800 px-1 py-0.5 text-[10px] text-amber-300 border border-slate-700", children: extraNote })
+      ] })
+    ] }) });
+  }
+
+  // src/components/ui/slider.tsx
+  var React36 = __toESM(require_react(), 1);
+  var import_jsx_runtime20 = __toESM(require_jsx_runtime(), 1);
+  function Slider3({
+    className,
+    defaultValue,
+    value,
+    min = 0,
+    max = 100,
+    ...props
+  }) {
+    const _values = React36.useMemo(
+      () => Array.isArray(value) ? value : Array.isArray(defaultValue) ? defaultValue : [min, max],
+      [value, defaultValue, min, max]
+    );
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
+      dist_exports5.Root,
+      {
+        "data-slot": "slider",
+        defaultValue,
+        value,
+        min,
+        max,
+        className: cn(
+          "relative flex w-full touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col",
+          className
+        ),
+        ...props,
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+            dist_exports5.Track,
+            {
+              "data-slot": "slider-track",
+              className: cn(
+                "relative grow overflow-hidden rounded-full bg-muted data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5"
+              ),
+              children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+                dist_exports5.Range,
+                {
+                  "data-slot": "slider-range",
+                  className: cn(
+                    "absolute bg-primary data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full"
+                  )
+                }
+              )
+            }
+          ),
+          Array.from({ length: _values.length }, (_, index) => /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+            dist_exports5.Thumb,
+            {
+              "data-slot": "slider-thumb",
+              className: "block size-4 shrink-0 rounded-full border border-primary bg-white shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"
+            },
+            index
+          ))
+        ]
+      }
+    );
+  }
+
+  // src/components/ui/switch.tsx
+  var import_jsx_runtime21 = __toESM(require_jsx_runtime(), 1);
+  function Switch3({
+    className,
+    size = "default",
+    ...props
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+      dist_exports6.Root,
+      {
+        "data-slot": "switch",
+        "data-size": size,
+        className: cn(
+          "peer group/switch inline-flex shrink-0 items-center rounded-full border-2 transition-all outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer",
+          "data-[size=default]:h-5 data-[size=default]:w-9 data-[size=sm]:h-4 data-[size=sm]:w-7",
+          "data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-400 data-[state=checked]:shadow-[0_0_8px_rgba(16,185,129,0.35)]",
+          "data-[state=unchecked]:bg-slate-700/80 data-[state=unchecked]:border-slate-600 dark:data-[state=unchecked]:bg-slate-800 dark:data-[state=unchecked]:border-slate-700",
+          className
+        ),
+        ...props,
+        children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+          dist_exports6.Thumb,
+          {
+            "data-slot": "switch-thumb",
+            className: cn(
+              "pointer-events-none block rounded-full transition-transform",
+              "group-data-[size=default]/switch:size-3.5 group-data-[size=sm]/switch:size-2.5",
+              "data-[state=checked]:translate-x-4 data-[state=checked]:bg-white data-[state=checked]:shadow-md",
+              "data-[state=unchecked]:translate-x-0.5 data-[state=unchecked]:bg-slate-300 dark:data-[state=unchecked]:bg-slate-400"
+            )
+          }
+        )
+      }
+    );
+  }
+
+  // src/content/ui/components/HudControls.tsx
+  var import_jsx_runtime22 = __toESM(require_jsx_runtime(), 1);
+  function HudControls({
+    config: config2,
+    activeTab,
+    onUpdateConfig,
+    onToggleAll,
+    onToggleTab,
+    isOrderDrawerOpen,
+    onToggleOrderDrawer
+  }) {
+    const isRunningAll = config2.running && config2.runMode === "all";
+    const isRunningTab = config2.running && config2.runMode === "tab";
+    const handleDelayChange = (vals) => {
+      const val = vals[0] ?? 1200;
+      onUpdateConfig((prev) => ({ ...prev, taskDelayMs: val }));
+    };
+    const handleFishingSwitchChange = (e) => {
+      const val = Math.max(1, Math.min(100, Number(e.target.value) || 10));
+      onUpdateConfig((prev) => ({ ...prev, fishingSwitchCount: val }));
+    };
+    const handleMoveArea = (index, direction) => {
+      onUpdateConfig((prev) => {
+        const order = [...prev.areaOrder];
+        const targetIndex = direction === "up" ? index - 1 : index + 1;
+        if (targetIndex < 0 || targetIndex >= order.length) return prev;
+        const temp = order[index];
+        const targetItem = order[targetIndex];
+        if (temp && targetItem) {
+          order[index] = targetItem;
+          order[targetIndex] = temp;
+        }
+        return { ...prev, areaOrder: order };
+      });
+    };
+    const handleToggleAreaEnabled = (id, checked) => {
+      onUpdateConfig((prev) => ({
+        ...prev,
+        areaEnabled: {
+          ...prev.areaEnabled,
+          [id]: checked
+        }
+      }));
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "space-y-2 border-b border-slate-800/80 dark:border-slate-800/80 light:border-slate-200 bg-slate-900/60 dark:bg-slate-900/60 light:bg-slate-100/60 p-2.5 text-xs transition-colors", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "grid grid-cols-2 gap-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+          Button,
+          {
+            variant: isRunningAll ? "destructive" : "default",
+            size: "sm",
+            className: "w-full justify-center font-bold text-[11px] rounded-xl h-8.5 shadow-md shadow-emerald-950/20 active:scale-[0.98]",
+            onClick: onToggleAll,
+            children: isRunningAll ? /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Square, { className: "h-3.5 w-3.5 fill-current mr-1.5" }),
+              "D\u1EEANG AUTO T\u1EA4T C\u1EA2"
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Play, { className: "h-3.5 w-3.5 fill-current mr-1.5" }),
+              "\u25B6\uFE0F T\u1EA4T C\u1EA2 (Alt+A)"
+            ] })
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+          Button,
+          {
+            variant: isRunningTab ? "destructive" : "secondary",
+            size: "sm",
+            className: "w-full justify-center font-bold text-[11px] rounded-xl h-8.5 border border-slate-700/60 light:border-slate-300 shadow-md active:scale-[0.98]",
+            onClick: onToggleTab,
+            children: isRunningTab ? /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Square, { className: "h-3.5 w-3.5 fill-current mr-1.5" }),
+              "D\u1EEANG TAB N\xC0Y"
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Play, { className: "h-3.5 w-3.5 fill-current mr-1.5" }),
+              "\u{1F3AF} CH\u1EC8 ",
+              AREA_META[activeTab]?.name?.toUpperCase() || "TAB N\xC0Y"
+            ] })
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center justify-between gap-3 pt-1", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex-1 space-y-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center justify-between text-[11px] text-slate-400 light:text-slate-600", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "T\u1ED1c \u0111\u1ED9 delay m\u1ED7i l\u1EC7nh:" }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "font-mono text-emerald-400 font-bold", children: [
+              config2.taskDelayMs,
+              " ms"
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+            Slider3,
+            {
+              value: [config2.taskDelayMs],
+              min: 300,
+              max: 3500,
+              step: 100,
+              onValueChange: handleDelayChange,
+              className: "w-full"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
+          Button,
+          {
+            variant: "outline",
+            size: "xs",
+            className: `border-slate-700 light:border-slate-300 text-[10px] rounded-lg whitespace-nowrap self-end h-6 px-2 ${isOrderDrawerOpen ? "bg-slate-800 text-emerald-400 border-emerald-500/50" : "bg-slate-900/80 light:bg-white text-slate-300 light:text-slate-700"}`,
+            onClick: onToggleOrderDrawer,
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ListOrdered, { className: "h-3 w-3 mr-1" }),
+              "Th\u1EE9 t\u1EF1 khu"
+            ]
+          }
+        )
+      ] }),
+      isOrderDrawerOpen && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "mt-1.5 rounded-xl border border-slate-800 light:border-slate-300 bg-slate-950/80 light:bg-white p-2.5 space-y-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center justify-between text-[10px] text-slate-400 light:text-slate-600 font-medium border-b border-slate-800 light:border-slate-200 pb-1.5", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "Th\u1EE9 t\u1EF1 ch\u1EA1y Auto c\xE1c khu:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center gap-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "\u0110\u1ED5i khu sau" }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+              "input",
+              {
+                type: "number",
+                min: 1,
+                max: 50,
+                value: config2.fishingSwitchCount,
+                onChange: handleFishingSwitchChange,
+                className: "w-9 rounded-md bg-slate-900 light:bg-slate-100 px-1 py-0.5 text-center text-[10px] text-emerald-400 font-bold border border-slate-700 light:border-slate-300 font-mono"
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "con c\xE1" })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "space-y-1", children: config2.areaOrder.map((areaId, idx) => {
+          const meta = AREA_META[areaId];
+          const isEnabled = config2.areaEnabled[areaId] !== false;
+          return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
+            "div",
+            {
+              className: "flex items-center justify-between rounded-lg bg-slate-900/90 light:bg-slate-50 px-2.5 py-1.5 border border-slate-800/80 light:border-slate-200 text-[11px]",
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center gap-2", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "font-mono text-[10px] text-slate-500 font-semibold", children: [
+                    "#",
+                    idx + 1
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: isEnabled ? "text-slate-200 light:text-slate-800 font-medium" : "text-slate-500 line-through", children: meta?.name || areaId })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center gap-2", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center gap-0.5", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+                      Button,
+                      {
+                        variant: "ghost",
+                        size: "icon-xs",
+                        disabled: idx === 0,
+                        className: "h-5 w-5 text-slate-400 hover:text-white",
+                        onClick: () => handleMoveArea(idx, "up"),
+                        children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ChevronUp, { className: "h-3 w-3" })
+                      }
+                    ),
+                    /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+                      Button,
+                      {
+                        variant: "ghost",
+                        size: "icon-xs",
+                        disabled: idx === config2.areaOrder.length - 1,
+                        className: "h-5 w-5 text-slate-400 hover:text-white",
+                        onClick: () => handleMoveArea(idx, "down"),
+                        children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ChevronDown, { className: "h-3 w-3" })
+                      }
+                    )
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+                    Switch3,
+                    {
+                      size: "sm",
+                      checked: isEnabled,
+                      onCheckedChange: (checked) => handleToggleAreaEnabled(areaId, checked)
+                    }
+                  )
+                ] })
+              ]
+            },
+            areaId
+          );
+        }) })
+      ] })
+    ] });
+  }
+
+  // src/content/ui/components/FarmTabContent.tsx
+  var import_jsx_runtime23 = __toESM(require_jsx_runtime(), 1);
+  function FarmTabContent({ config: config2, onUpdateConfig }) {
+    const isFarmAreaEnabled = config2.areaEnabled.farm !== false;
+    const handleToggleArea = (checked) => {
+      onUpdateConfig((prev) => ({
+        ...prev,
+        areaEnabled: {
+          ...prev.areaEnabled,
+          farm: checked
+        }
+      }));
+    };
+    const handleToggleSubEnabled = (subId, checked) => {
+      onUpdateConfig((prev) => ({
+        ...prev,
+        farmSubEnabled: {
+          ...prev.farmSubEnabled,
+          [subId]: checked
+        }
+      }));
+    };
+    const handleToggleCollapse = (subId) => {
+      onUpdateConfig((prev) => ({
+        ...prev,
+        farmSubCollapsed: {
+          ...prev.farmSubCollapsed,
+          [subId]: !prev.farmSubCollapsed[subId]
+        }
+      }));
+    };
+    const handleMoveSub = (index, direction) => {
+      onUpdateConfig((prev) => {
+        const order = [...prev.farmSubOrder];
+        const targetIndex = direction === "up" ? index - 1 : index + 1;
+        if (targetIndex < 0 || targetIndex >= order.length) return prev;
+        const temp = order[index];
+        const targetItem = order[targetIndex];
+        if (temp && targetItem) {
+          order[index] = targetItem;
+          order[targetIndex] = temp;
+        }
+        return { ...prev, farmSubOrder: order };
+      });
+    };
+    const updateField = (key, value) => {
+      onUpdateConfig((prev) => ({
+        ...prev,
+        [key]: value
+      }));
+    };
+    const renderSubCardBody = (subId) => {
+      switch (subId) {
+        case "house":
+          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4AC} T\u1EAFt th\xF4ng b\xE1o Loa & \u0110i\u1EC7n tho\u1EA1i" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoDismissInterrupts),
+                  onCheckedChange: (c) => updateField("autoDismissInterrupts", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F373} T\u1EF1 n\u1EA5u m\xF3n \u0103n trong B\u1EBFp" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoCook),
+                  onCheckedChange: (c) => updateField("autoCook", c)
+                }
+              )
+            ] }),
+            config2.autoCook && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "M\xF3n \u01B0u ti\xEAn:" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+                "select",
+                {
+                  value: config2.preferDish,
+                  onChange: (e) => updateField("preferDish", e.target.value),
+                  className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                  children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "auto", children: "\u2728 T\u1EF1 ch\u1ECDn m\xF3n \u0111\u1EE7 nguy\xEAn li\u1EC7u" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "comTam", children: "\u{1F35B} C\u01A1m t\u1EA5m \u1ED1p la (No l\xE2u)" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "eggBread", children: "\u{1F96A} B\xE1nh m\xEC \u1ED1p la (T\u1ED1c \u0111\u1ED9)" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "radishSoup", children: "\u{1F372} Canh c\u1EE7 c\u1EA3i" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "carrotJuice", children: "\u{1F9C3} N\u01B0\u1EDBc \xE9p c\xE0 r\u1ED1t" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "grilledCorn", children: "\u{1F33D} B\u1EAFp n\u01B0\u1EDBng m\u1EE1 h\xE0nh" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "boiledEgg", children: "\u{1F95A} Tr\u1EE9ng lu\u1ED9c" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "cornCake", children: "\u{1F96E} B\xE1nh b\u1EAFp n\u01B0\u1EDBng" })
+                  ]
+                }
+              )
+            ] }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F372} T\u1EF1 \u0103n khi \u0110\xF3i" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoRecoverHunger),
+                  onCheckedChange: (c) => updateField("autoRecoverHunger", c)
+                }
+              )
+            ] }),
+            config2.autoRecoverHunger && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "\u0102n khi \u0110\xF3i < (%):" }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                  "input",
+                  {
+                    type: "number",
+                    min: 10,
+                    max: 90,
+                    step: 5,
+                    value: config2.hungerThreshold,
+                    onChange: (e) => updateField("hungerThreshold", Number(e.target.value)),
+                    className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Ngu\u1ED3n \u0103n:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+                  "select",
+                  {
+                    value: config2.foodSource,
+                    onChange: (e) => updateField("foodSource", e.target.value),
+                    className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                    children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "kitchen_first", children: "\u{1F372} \u01AFu ti\xEAn B\u1EBFp, thi\u1EBFu mua Ti\u1EC7m" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "kitchen_only", children: "\u{1F3E1} Ch\u1EC9 \u0103n m\xF3n B\u1EBFp / Kho" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "shop_only", children: "\u{1F956} Ch\u1EC9 mua Ti\u1EC7m b\xE1nh m\xEC" })
+                    ]
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "M\xF3n mua \u1EDF Ti\u1EC7m:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+                  "select",
+                  {
+                    value: config2.preferFoodShop,
+                    onChange: (e) => updateField("preferFoodShop", e.target.value),
+                    className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                    children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "banhMiThit", children: "\u{1F956} B\xE1nh m\xEC th\u1ECBt (15.000\u0111 \xB7 +50 no)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "banhMiCha", children: "\u{1F41F} B\xE1nh m\xEC ch\u1EA3 c\xE1 (15.000\u0111 \xB7 +45 no)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "banhMiTrung", children: "\u{1F373} B\xE1nh m\xEC tr\u1EE9ng (10.000\u0111 \xB7 +35 no)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "banhBao", children: "\u{1F95F} B\xE1nh bao (8.000\u0111 \xB7 +25 no)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "banhMiFull", children: "\u{1F924} B\xE1nh m\xEC full topping (25.000\u0111 \xB7 +80 no)" })
+                    ]
+                  }
+                )
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F964} T\u1EF1 u\u1ED1ng khi Kh\xE1t" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoRecoverThirst),
+                  onCheckedChange: (c) => updateField("autoRecoverThirst", c)
+                }
+              )
+            ] }),
+            config2.autoRecoverThirst && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "U\u1ED1ng khi Kh\xE1t < (%):" }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                  "input",
+                  {
+                    type: "number",
+                    min: 10,
+                    max: 90,
+                    step: 5,
+                    value: config2.thirstThreshold,
+                    onChange: (e) => updateField("thirstThreshold", Number(e.target.value)),
+                    className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Ngu\u1ED3n n\u01B0\u1EDBc:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+                  "select",
+                  {
+                    value: config2.drinkSource,
+                    onChange: (e) => updateField("drinkSource", e.target.value),
+                    className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                    children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "kitchen_first", children: "\u{1F9C3} \u01AFu ti\xEAn n\u01B0\u1EDBc B\u1EBFp, thi\u1EBFu mua Ti\u1EC7m" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "shop_only", children: "\u{1F964} Ch\u1EC9 mua n\u01B0\u1EDBc t\u1EA1i Ti\u1EC7m gi\u1EA3i kh\xE1t" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "both", children: "\u2728 Linh ho\u1EA1t c\u1EA3 B\u1EBFp & Ti\u1EC7m" })
+                    ]
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "N\u01B0\u1EDBc \u1EDF Ti\u1EC7m:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+                  "select",
+                  {
+                    value: config2.preferDrinkShop,
+                    onChange: (e) => updateField("preferDrinkShop", e.target.value),
+                    className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                    children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "nuocMia", children: "\u{1F964} N\u01B0\u1EDBc m\xEDa (8.000\u0111 \xB7 +35 n\u01B0\u1EDBc)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "traDao", children: "\u{1F351} Tr\xE0 \u0111\xE0o cam s\u1EA3 (15.000\u0111 \xB7 +50 n\u01B0\u1EDBc)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "traSua", children: "\u{1F9CB} Tr\xE0 s\u1EEFa tr\xE2n ch\xE2u (18.000\u0111 \xB7 +40 n\u01B0\u1EDBc)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "caPheSua", children: "\u2615 C\xE0 ph\xEA s\u1EEFa \u0111\xE1 (12.000\u0111 \xB7 +25 n\u01B0\u1EDBc)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "traDa", children: "\u{1F9CA} Tr\xE0 \u0111\xE1 v\u1EC9a h\xE8 (3.000\u0111 \xB7 +20 n\u01B0\u1EDBc)" })
+                    ]
+                  }
+                )
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u2615 T\u1EF1 u\u1ED1ng C\xE0 ph\xEA s\xE1ng (+50% t\u1ED1c \u0111\u1ED9 ch\u1EA1y)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoMorningCoffee),
+                  onCheckedChange: (c) => updateField("autoMorningCoffee", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F50B} T\u1EF1 s\u1EA1c \u0111i\u1EC7n cho Xe m\xE1y \u0111i\u1EC7n EV" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoChargeVehicle),
+                  onCheckedChange: (c) => updateField("autoChargeVehicle", c)
+                }
+              )
+            ] }),
+            config2.autoChargeVehicle && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "S\u1EA1c khi Pin < (%):" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                "input",
+                {
+                  type: "number",
+                  min: 10,
+                  max: 90,
+                  step: 5,
+                  value: config2.batteryThreshold,
+                  onChange: (e) => updateField("batteryThreshold", Number(e.target.value)),
+                  className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                }
+              )
+            ] }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F486} Salon Ch\u1ECB Linh: G\u1ED9i \u0111\u1EA7u d\u01B0\u1EE1ng sinh (Buff th\u01B0 gi\xE3n)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoSalonShampoo),
+                  onCheckedChange: (c) => updateField("autoSalonShampoo", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u2728 Salon Ch\u1ECB Linh: T\u1EAFm tr\u1EAFng n\xE2ng t\xF4ng khi \u0111en da" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoSalonWhiten),
+                  onCheckedChange: (c) => updateField("autoSalonWhiten", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F6CF}\uFE0F T\u1EF1 \u0111i ng\u1EE7 qua ng\xE0y m\u1EDBi" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoSleep),
+                  onCheckedChange: (c) => updateField("autoSleep", c)
+                }
+              )
+            ] }),
+            config2.autoSleep && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Gi\u1EDD \u0111i ng\u1EE7 bu\u1ED5i t\u1ED1i (h):" }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                  "input",
+                  {
+                    type: "number",
+                    min: 18,
+                    max: 23,
+                    step: 1,
+                    value: config2.sleepHour,
+                    onChange: (e) => updateField("sleepHour", Number(e.target.value)),
+                    className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-400 light:text-slate-600", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F319} Ng\u1EE7 ngay khi h\u1EBFt c\xE2u \u0111\u01B0\u1EE3c bu\u1ED5i t\u1ED1i" }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                  Switch3,
+                  {
+                    size: "sm",
+                    checked: Boolean(config2.sleepOnFishingLimit),
+                    onCheckedChange: (c) => updateField("sleepOnFishingLimit", c)
+                  }
+                )
+              ] })
+            ] })
+          ] });
+        case "crops":
+          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F33E} T\u1EF1 thu ho\u1EA1ch n\xF4ng s\u1EA3n ch\xEDn" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoHarvest),
+                  onCheckedChange: (c) => updateField("autoHarvest", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F41B} T\u1EF1 mua thu\u1ED1c & di\u1EC7t s\xE2u b\u1EC7nh" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoPesticide),
+                  onCheckedChange: (c) => updateField("autoPesticide", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4A7} T\u1EF1 t\u01B0\u1EDBi n\u01B0\u1EDBc gi\u1EEF \u1EA9m \u0111\u1EA5t" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoWater),
+                  onCheckedChange: (c) => updateField("autoWater", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F9EA} T\u1EF1 mua & b\xF3n ph\xE2n NPK" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoFertilize),
+                  onCheckedChange: (c) => updateField("autoFertilize", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F331} T\u1EF1 mua & gieo h\u1EA1t gi\u1ED1ng m\u1EDBi" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoPlant),
+                  onCheckedChange: (c) => updateField("autoPlant", c)
+                }
+              )
+            ] }),
+            config2.autoPlant && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "H\u1EA1t gi\u1ED1ng \u01B0u ti\xEAn:" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+                "select",
+                {
+                  value: config2.preferSeed,
+                  onChange: (e) => updateField("preferSeed", e.target.value),
+                  className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                  children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "auto", children: "\u2728 T\u1EF1 ch\u1ECDn t\u1ED1i \u01B0u" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "rice", children: "\u{1F33E} L\xFAa (8 ng\xE0y)" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "corn", children: "\u{1F33D} B\u1EAFp (6 ng\xE0y)" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "carrot", children: "\u{1F955} C\xE0 r\u1ED1t (4 ng\xE0y)" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "radish", children: "\u{1F331} C\u1EE7 c\u1EA3i (2 ng\xE0y)" })
+                  ]
+                }
+              )
+            ] }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u26CF\uFE0F T\u1EF1 mua th\xEAm \xF4 \u0111\u1EA5t ru\u1ED9ng khi m\u1EDF b\xE1n" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoBuyPlots),
+                  onCheckedChange: (c) => updateField("autoBuyPlots", c)
+                }
+              )
+            ] })
+          ] });
+        case "pet":
+          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F356} T\u1EF1 mua \u0111\u1ED3 \u0103n & cho Th\xFA c\u01B0ng \u0103n" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.petAutoFeed),
+                  onCheckedChange: (c) => updateField("petAutoFeed", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F496} T\u1EF1 vu\u1ED1t ve t\u0103ng vui v\u1EBB" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.petAutoCuddle),
+                  onCheckedChange: (c) => updateField("petAutoCuddle", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F9FC} T\u1EF1 t\u1EAFm s\u1EA1ch cho Th\xFA c\u01B0ng" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.petAutoBath),
+                  onCheckedChange: (c) => updateField("petAutoBath", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F3BE} T\u1EF1 t\u1EADp tr\xF2 hu\u1EA5n luy\u1EC7n (+XP)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.petAutoTrick),
+                  onCheckedChange: (c) => updateField("petAutoTrick", c)
+                }
+              )
+            ] })
+          ] });
+        case "barn":
+          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "text-[11px] font-bold text-emerald-400 border-b border-slate-800 light:border-slate-200 pb-1", children: "\u{1F403} Chu\u1ED3ng Tr\xE2u \u1ED4i" }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F33E} T\u1EF1 cho Tr\xE2u \u0103n c\u1ECF / r\u01A1m" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.barnAutoFeedBuffalo),
+                  onCheckedChange: (c) => updateField("barnAutoFeedBuffalo", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F6BF} T\u1EF1 t\u1EAFm m\xE1t cho Tr\xE2u" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.barnAutoBathBuffalo),
+                  onCheckedChange: (c) => updateField("barnAutoBathBuffalo", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F91D} Cho h\xE0ng x\xF3m thu\xEA Tr\xE2u c\xE0y (+Ti\u1EC1n)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.barnAutoLendBuffalo),
+                  onCheckedChange: (c) => updateField("barnAutoLendBuffalo", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "text-[11px] font-bold text-emerald-400 border-b border-slate-800 light:border-slate-200 pb-1 pt-2", children: "\u{1F404} Chu\u1ED3ng B\xF2 S\u1EEFa" }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F33F} T\u1EF1 cho \u0111\xE0n B\xF2 s\u1EEFa \u0103n c\u1ECF" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.barnAutoFeedCows),
+                  onCheckedChange: (c) => updateField("barnAutoFeedCows", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F95B} T\u1EF1 v\u1EAFt s\u1EEFa & b\xE1n s\u1EEFa t\u01B0\u01A1i" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.barnAutoSellMilk),
+                  onCheckedChange: (c) => updateField("barnAutoSellMilk", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F48A} T\u1EF1 mua thu\u1ED1c & ch\u1EEFa b\u1EC7nh cho B\xF2" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.barnAutoCureCows),
+                  onCheckedChange: (c) => updateField("barnAutoCureCows", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng ng\u01B0\u1EDDi ph\u1EE5 Chu\u1ED3ng" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.barnAutoPayHelper),
+                  onCheckedChange: (c) => updateField("barnAutoPayHelper", c)
+                }
+              )
+            ] })
+          ] });
+        case "coop":
+          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F95A} T\u1EF1 nh\u1EB7t tr\u1EE9ng g\xE0 m\u1ED7i ng\xE0y" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.coopAutoCollectEggs),
+                  onCheckedChange: (c) => updateField("coopAutoCollectEggs", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F424} T\u1EF1 mua th\xEAm G\xE0 con khi chu\u1ED3ng tr\u1ED1ng" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.coopAutoBuyChick),
+                  onCheckedChange: (c) => updateField("coopAutoBuyChick", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng ng\u01B0\u1EDDi ph\u1EE5 Chu\u1ED3ng g\xE0" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.coopAutoPayHelper),
+                  onCheckedChange: (c) => updateField("coopAutoPayHelper", c)
+                }
+              )
+            ] })
+          ] });
+        case "pond":
+          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F41F} T\u1EF1 k\xE9o l\u01B0\u1EDBi thu ho\u1EA1ch c\xE1 tr\u01B0\u1EDFng th\xE0nh" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.pondAutoNet),
+                  onCheckedChange: (c) => updateField("pondAutoNet", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F35E} T\u1EF1 r\u1EA3i c\xE1m cho c\xE1 \u0103n m\u1ED7i ng\xE0y" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.pondAutoFeed),
+                  onCheckedChange: (c) => updateField("pondAutoFeed", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F41F} T\u1EF1 th\u1EA3 c\xE1 gi\u1ED1ng m\u1EDBi khi ao tr\u1ED1ng" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.pondAutoStock),
+                  onCheckedChange: (c) => updateField("pondAutoStock", c)
+                }
+              )
+            ] }),
+            config2.pondAutoStock && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Lo\u1EA1i gi\u1ED1ng th\u1EA3:" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+                "select",
+                {
+                  value: config2.preferPondFish,
+                  onChange: (e) => updateField("preferPondFish", e.target.value),
+                  className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                  children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "chep", children: "\u{1F41F} C\xE1 ch\xE9p (L\u1EDDi cao)" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "tre", children: "\u{1F41F} C\xE1 tr\xEA" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "ro", children: "\u{1F41F} C\xE1 r\xF4" })
+                  ]
+                }
+              )
+            ] }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng ng\u01B0\u1EDDi ph\u1EE5 Ao c\xE1" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.pondAutoPayHelper),
+                  onCheckedChange: (c) => updateField("pondAutoPayHelper", c)
+                }
+              )
+            ] })
+          ] });
+        case "market":
+          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4E6} T\u1EF1 giao \u0111\u01A1n h\xE0ng T\u1EA1p h\xF3a Ch\u1ECB Na" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoDeliverOrder),
+                  onCheckedChange: (c) => updateField("autoDeliverOrder", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4CB} T\u1EF1 giao \u0111\u01A1n B\u1EA3ng tin l\xE0ng" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoVillageBoard),
+                  onCheckedChange: (c) => updateField("autoVillageBoard", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F525} B\xE1n N\xF4ng s\u1EA3n Trend (x2 gi\xE1, \u0111\xFAng quota)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoSellTrend),
+                  onCheckedChange: (c) => updateField("autoSellTrend", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4DC} T\u1EF1 b\xE1n n\xF4ng s\u1EA3n ho\xE0n th\xE0nh Vi\u1EC7c S\u1ED5 tay" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoSellDailyTask),
+                  onCheckedChange: (c) => updateField("autoSellDailyTask", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F3EA} T\u1EF1 b\xE1n n\xF4ng s\u1EA3n d\u01B0 th\u1EEBa trong kho" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoSellProduce),
+                  onCheckedChange: (c) => updateField("autoSellProduce", c)
+                }
+              )
+            ] }),
+            config2.autoSellProduce && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "T\u1ED1i thi\u1EC3u gi\u1EEF l\u1EA1i:" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                "input",
+                {
+                  type: "number",
+                  min: 5,
+                  max: 200,
+                  step: 5,
+                  value: config2.surplusKeepQty,
+                  onChange: (e) => updateField("surplusKeepQty", Number(e.target.value)),
+                  className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                }
+              )
+            ] }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "text-[11px] font-bold text-amber-400 border-b border-slate-800 light:border-slate-200 pb-1 pt-2", children: "\u{1FA99} Ti\u1EC7m V\xE0ng C\xF4 Kim" }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1FA99} T\u1EF1 mua v\xE0ng \u0111\u1EA7u t\u01B0" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.goldAutoBuy),
+                  onCheckedChange: (c) => updateField("goldAutoBuy", c)
+                }
+              )
+            ] }),
+            config2.goldAutoBuy && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Lo\u1EA1i v\xE0ng \u01B0u ti\xEAn:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+                  "select",
+                  {
+                    value: config2.goldPreferType,
+                    onChange: (e) => updateField("goldPreferType", e.target.value),
+                    className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                    children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "mieng", children: "\u{1F7E8} V\xE0ng mi\u1EBFng 9999 (Ch\xEAnh th\u1EA5p)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "nhan", children: "\u{1F48D} Nh\u1EABn tr\u01A1n 9999 (\u1ED4n \u0111\u1ECBnh)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "k18", children: "\u{1F4FF} V\xE0ng 18K (Trang s\u1EE9c)" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "non", children: "\u{1FA99} V\xE0ng non 10K (L\u01B0\u1EDBt s\xF3ng)" })
+                    ]
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Ti\u1EC1n m\u1EB7t t\u1ED1i thi\u1EC3u gi\u1EEF:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                  "input",
+                  {
+                    type: "number",
+                    min: 1e5,
+                    max: 1e7,
+                    step: 1e5,
+                    value: config2.goldKeepCash,
+                    onChange: (e) => updateField("goldKeepCash", Number(e.target.value)),
+                    className: "w-20 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                  }
+                )
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4C8} T\u1EF1 b\xE1n v\xE0ng khi c\xF3 l\xE3i" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.goldAutoSell),
+                  onCheckedChange: (c) => updateField("goldAutoSell", c)
+                }
+              )
+            ] }),
+            config2.goldAutoSell && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Ch\u1ED1t l\u1EDDi khi l\xE3i >= (%):" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                "input",
+                {
+                  type: "number",
+                  min: 3,
+                  max: 50,
+                  step: 1,
+                  value: config2.goldProfitPercent,
+                  onChange: (e) => updateField("goldProfitPercent", Number(e.target.value)),
+                  className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                }
+              )
+            ] }) })
+          ] });
+        case "dibay":
+          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F381} T\u1EF1 nh\u1EADn th\u01B0\u1EDFng Vi\u1EC7c h\xF4m nay & S\u1ED5 tay" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoClaimQuests),
+                  onCheckedChange: (c) => updateField("autoClaimQuests", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4DC} T\u1EF1 l\xE0m chu\u1ED7i h\u01B0\u1EDBng d\u1EABn Ng\xE0y 1 & 2" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoFirstDayTasks),
+                  onCheckedChange: (c) => updateField("autoFirstDayTasks", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F4D4} T\u1EF1 thu th\u1EADp trang S\u1ED5 tay \xD4ng N\u0103m" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoNotebookPages),
+                  onCheckedChange: (c) => updateField("autoNotebookPages", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1FA99} T\u1EF1 b\u1ECF ti\u1EC1n v\xE0o Heo \u0111\u1EA5t m\u1ED7i ng\xE0y" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoFeedPiggy),
+                  onCheckedChange: (c) => updateField("autoFeedPiggy", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F528} T\u1EF1 \u0111\u1EADp Heo \u0111\u1EA5t khi no (\u0111\u1EE7 7 ng\xE0y)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoBreakPiggy),
+                  onCheckedChange: (c) => updateField("autoBreakPiggy", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F6D2} T\u1EF1 mua Heo \u0111\u1EA5t m\u1EDBi khi chu\u1ED3ng tr\u1ED1ng" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoNewPiggy),
+                  onCheckedChange: (c) => updateField("autoNewPiggy", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { children: "\u{1F3E6} T\u1EF1 g\u1EEDi S\u1ED5 ti\u1EBFt ki\u1EC7m D\xEC B\u1EA3y" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoSavings),
+                  onCheckedChange: (c) => updateField("autoSavings", c)
+                }
+              )
+            ] }),
+            config2.autoSavings && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Gi\u1EEF ti\u1EC1n m\u1EB7t t\u1ED1i thi\u1EC3u:" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                "input",
+                {
+                  type: "number",
+                  min: 5e4,
+                  max: 5e6,
+                  step: 5e4,
+                  value: config2.savingsKeepGold,
+                  onChange: (e) => updateField("savingsKeepGold", Number(e.target.value)),
+                  className: "w-20 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+                }
+              )
+            ] }) })
+          ] });
+        default:
+          return null;
+      }
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-2 text-xs", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-emerald-950/40 light:bg-emerald-50 border border-emerald-500/30 px-3 py-2 text-emerald-300 light:text-emerald-900 shadow-sm", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F33E} Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c N\xF4ng Tr\u1EA1i" }),
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Switch3, { checked: isFarmAreaEnabled, onCheckedChange: handleToggleArea })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "space-y-2 pt-0.5", children: config2.farmSubOrder.map((subId, idx) => {
+        const meta = SUBAREA_META[subId];
+        const isCollapsed = Boolean(config2.farmSubCollapsed[subId]);
+        const isEnabled = config2.farmSubEnabled[subId] !== false;
+        return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+          "div",
+          {
+            className: `rounded-xl border bg-slate-900/80 dark:bg-slate-900/80 light:bg-white transition-all shadow-sm ${isEnabled ? "border-slate-800 light:border-slate-200" : "border-slate-800/40 light:border-slate-200/50 opacity-60"}`,
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+                "div",
+                {
+                  className: "flex items-center justify-between px-3 py-2 cursor-pointer select-none hover:bg-slate-800/40 light:hover:bg-slate-100 rounded-t-xl",
+                  onClick: () => handleToggleCollapse(subId),
+                  children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center gap-2", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "text-slate-400", children: isCollapsed ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChevronRight, { className: "h-3.5 w-3.5" }) : /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChevronDown, { className: "h-3.5 w-3.5" }) }),
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "font-semibold text-xs text-slate-200 light:text-slate-800", children: meta?.name || subId })
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center gap-2", onClick: (e) => e.stopPropagation(), children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center gap-0.5", children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                          Button,
+                          {
+                            variant: "ghost",
+                            size: "icon-xs",
+                            disabled: idx === 0,
+                            className: "h-5 w-5 text-slate-400 hover:text-white",
+                            onClick: () => handleMoveSub(idx, "up"),
+                            children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChevronUp, { className: "h-3 w-3" })
+                          }
+                        ),
+                        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                          Button,
+                          {
+                            variant: "ghost",
+                            size: "icon-xs",
+                            disabled: idx === config2.farmSubOrder.length - 1,
+                            className: "h-5 w-5 text-slate-400 hover:text-white",
+                            onClick: () => handleMoveSub(idx, "down"),
+                            children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(ChevronDown, { className: "h-3 w-3" })
+                          }
+                        )
+                      ] }),
+                      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                        Switch3,
+                        {
+                          size: "sm",
+                          checked: isEnabled,
+                          onCheckedChange: (checked) => handleToggleSubEnabled(subId, checked)
+                        }
+                      )
+                    ] })
+                  ]
+                }
+              ),
+              !isCollapsed && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "border-t border-slate-800/60 light:border-slate-200 p-3 bg-slate-950/40 light:bg-slate-50/50 rounded-b-xl", children: renderSubCardBody(subId) })
+            ]
+          },
+          subId
+        );
+      }) })
+    ] });
+  }
+
+  // src/content/ui/components/WharfTabContent.tsx
+  var import_jsx_runtime24 = __toESM(require_jsx_runtime(), 1);
+  function WharfTabContent({ config: config2, onUpdateConfig }) {
+    const isWharfAreaEnabled = config2.areaEnabled.benDo !== false;
+    const handleToggleArea = (checked) => {
+      onUpdateConfig((prev) => ({
+        ...prev,
+        areaEnabled: {
+          ...prev.areaEnabled,
+          benDo: checked
+        }
+      }));
+    };
+    const updateField = (key, value) => {
+      onUpdateConfig((prev) => ({
+        ...prev,
+        [key]: value
+      }));
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "space-y-2 text-xs", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-blue-950/40 light:bg-blue-50 border border-blue-500/30 px-3 py-2 text-blue-300 light:text-blue-900 shadow-sm", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F6F6} Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c B\u1EBFn \u0110\xF2" }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Switch3, { checked: isWharfAreaEnabled, onCheckedChange: handleToggleArea })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "rounded-xl border border-slate-800 dark:border-slate-800 light:border-slate-200 bg-slate-900/80 dark:bg-slate-900/80 light:bg-white p-3 space-y-2.5 shadow-sm", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "font-semibold text-xs text-slate-200 light:text-slate-800 border-b border-slate-800 light:border-slate-200 pb-1.5 flex items-center justify-between", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F3A3} V\u1ECB Tr\xED & Thao T\xE1c C\xE2u B\u1EBFn \u0110\xF2" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { className: "text-[11px] text-slate-400 light:text-slate-500 italic", children: "\u2728 T\u1EF1 nh\u1EADn di\u1EC7n phao ch\xECm h\u1EB3n m\u1EDBi gi\u1EADt v\xE0 t\u1EF1 gh\xECm c\u1EA7n ng\u01B0\u1EE3c h\u01B0\u1EDBng c\xE1 ch\u1EA1y." }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F4CD} T\u1EF1 \u0111i b\u1ED9 ra v\u1ECB tr\xED ng\u1ED3i c\xE2u" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            Switch3,
+            {
+              checked: Boolean(config2.benAutoSpot),
+              onCheckedChange: (c) => updateField("benAutoSpot", c)
+            }
+          )
+        ] }),
+        config2.benAutoSpot && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "V\u1ECB tr\xED ng\u1ED3i c\xE2u:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
+            "select",
+            {
+              value: config2.benSpot,
+              onChange: (e) => updateField("benSpot", e.target.value),
+              className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "dock", children: "\u{1F309} C\u1EA7u t\xE0u ch\xEDnh" }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "bamboo", children: "\u{1F38B} C\u1EA7u tre" }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "bank", children: "\u{1F33F} B\u1EDD s\xF4ng" })
+              ]
+            }
+          )
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u2B50 T\u1EF1 b\u1EA5m Gi\u1EEF l\u1EA1i c\xE1 L\u1EA1 / C\u1EA7u v\u1ED3ng / Th\u1EA7n tho\u1EA1i" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            Switch3,
+            {
+              checked: Boolean(config2.benAutoKeepRare),
+              onCheckedChange: (c) => updateField("benAutoKeepRare", c)
+            }
+          )
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "rounded-xl border border-slate-800 dark:border-slate-800 light:border-slate-200 bg-slate-900/80 dark:bg-slate-900/80 light:bg-white p-3 space-y-2.5 shadow-sm", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "font-semibold text-xs text-slate-200 light:text-slate-800 border-b border-slate-800 light:border-slate-200 pb-1.5", children: "\u{1FAB1} M\u1ED3i C\xE2u, B\xE1n C\xE1 & H\u1ED3i S\u1EE9c B\u1EBFn \u0110\xF2" }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1FAB1} T\u1EF1 \u0111i mua m\u1ED3i Ch\xFA \u0110\u1EF1c khi h\u1EBFt m\u1ED3i" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            Switch3,
+            {
+              checked: Boolean(config2.benAutoBuyBait),
+              onCheckedChange: (c) => updateField("benAutoBuyBait", c)
+            }
+          )
+        ] }),
+        config2.benAutoBuyBait && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Lo\u1EA1i m\u1ED3i \u01B0u ti\xEAn:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
+            "select",
+            {
+              value: config2.benPreferBait,
+              onChange: (e) => updateField("benPreferBait", e.target.value),
+              className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "moi60", children: "\u{1FAB1} Thau 60 m\u1ED3i (40 v\u1ECF s\xF2)" }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "moi150", children: "\u{1FAB1} Th\xF9ng 150 m\u1ED3i (90 v\u1ECF s\xF2)" }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "moi20", children: "\u{1FAB1} H\u1ED9p 20 m\u1ED3i (15 v\u1ECF s\xF2)" }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "xinMoi", children: "\u{1F932} Xin 10 m\u1ED3i mi\u1EC5n ph\xED" })
+              ]
+            }
+          )
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F41F} T\u1EF1 \u0111i b\xE1n c\xE1 t\u1EA1i V\u1EF1a Anh T\u01B0" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            Switch3,
+            {
+              checked: Boolean(config2.benAutoSell),
+              onCheckedChange: (c) => updateField("benAutoSell", c)
+            }
+          )
+        ] }),
+        config2.benAutoSell && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "B\xE1n khi gi\u1ECF c\xE1 \u0111\u1EA1t (con):" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            "input",
+            {
+              type: "number",
+              min: 1,
+              max: 60,
+              value: config2.benSellThreshold,
+              onChange: (e) => updateField("benSellThreshold", Number(e.target.value)),
+              className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+            }
+          )
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F371} T\u1EF1 \u0103n h\u1ED3i S\u1EE9c c\xE2u (\u26A1) khi \u0111u\u1ED1i s\u1EE9c" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            Switch3,
+            {
+              checked: Boolean(config2.benAutoRecoverStamina),
+              onCheckedChange: (c) => updateField("benAutoRecoverStamina", c)
+            }
+          )
+        ] }),
+        config2.benAutoRecoverStamina && /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "H\u1ED3i khi S\u1EE9c (\u26A1) d\u01B0\u1EDBi:" }),
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+              "input",
+              {
+                type: "number",
+                min: 5,
+                max: 80,
+                step: 5,
+                value: config2.benStaminaThreshold,
+                onChange: (e) => updateField("benStaminaThreshold", Number(e.target.value)),
+                className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "M\xF3n \u0103n Qu\xE1n D\xEC T\xE1m:" }),
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
+              "select",
+              {
+                value: config2.benPreferFood,
+                onChange: (e) => updateField("benPreferFood", e.target.value),
+                className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "comTam", children: "\u{1F35B} C\u01A1m t\u1EA5m (+60\u26A1 \xB7 28\u{1F41A})" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "lauMam", children: "\u{1F372} L\u1EA9u c\xE1 linh (+100\u26A1 \xB7 45\u{1F41A})" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "huTieu", children: "\u{1F35C} H\u1EE7 ti\u1EBFu (+40\u26A1 \xB7 20\u{1F41A})" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "chaoCa", children: "\u{1F963} Ch\xE1o c\xE1 l\xF3c (+28\u26A1 \xB7 14\u{1F41A})" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "banhMi", children: "\u{1F956} B\xE1nh m\xEC (+20\u26A1 \xB7 10\u{1F41A})" })
+                ]
+              }
+            )
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F486} Ti\u1EC7m \xDAt M\u01B0\u1EDDi: G\u1ED9i \u0111\u1EA7u (+50\u26A1 \xB7 25\u{1F41A})" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            Switch3,
+            {
+              checked: Boolean(config2.benAutoGoiDau),
+              onCheckedChange: (c) => updateField("benAutoGoiDau", c)
+            }
+          )
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F340} Xe tr\xE0 \u0111\xE1 Ch\u1ECB Th\u01A1m: U\u1ED1ng n\u01B0\u1EDBc May M\u1EAFn" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            Switch3,
+            {
+              checked: Boolean(config2.benAutoLuckDrink),
+              onCheckedChange: (c) => updateField("benAutoLuckDrink", c)
+            }
+          )
+        ] }),
+        config2.benAutoLuckDrink && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "N\u01B0\u1EDBc u\u1ED1ng Ch\u1ECB Th\u01A1m:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
+            "select",
+            {
+              value: config2.benPreferDrink,
+              onChange: (e) => updateField("benPreferDrink", e.target.value),
+              className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "nuocMia", children: "\u{1F964} N\u01B0\u1EDBc m\xEDa (+1 May m\u1EAFn \xB7 15\u{1F41A})" }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "rauMa", children: "\u{1F96C} N\u01B0\u1EDBc rau m\xE1 (+2 May m\u1EAFn \xB7 30\u{1F41A})" }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "caPhe", children: "\u2615 C\xE0 ph\xEA \u0111en (+2 May m\u1EAFn \xB7 35\u{1F41A})" }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "duaTuoi", children: "\u{1F965} D\u1EEBa t\u01B0\u01A1i B\u1EBFn Tre (+3 May m\u1EAFn \xB7 80\u{1F41A})" }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "traDa", children: "\u{1F9CA} Tr\xE0 \u0111\xE1 (+8\u26A1 \xB7 3\u{1F41A})" })
+              ]
+            }
+          )
+        ] }) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "rounded-xl border border-slate-800 dark:border-slate-800 light:border-slate-200 bg-slate-900/80 dark:bg-slate-900/80 light:bg-white p-3 space-y-2.5 shadow-sm", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "font-semibold text-xs text-slate-200 light:text-slate-800 border-b border-slate-800 light:border-slate-200 pb-1.5", children: "\u{1F3EE} Gi\u1EA3i Tr\xED & Ti\u1EC7n \xCDch B\u1EBFn \u0110\xF2" }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F3EE} L\u1ED3ng \u0111\xE8n C\xF4 B\u1EA3y: T\u1EF1 quay khi c\xF3 v\xE9" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            Switch3,
+            {
+              checked: Boolean(config2.benAutoLantern),
+              onCheckedChange: (c) => updateField("benAutoLantern", c)
+            }
+          )
+        ] }),
+        config2.benAutoLantern && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-400 light:text-slate-600", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F39F}\uFE0F T\u1EF1 mua th\xEAm v\xE9 quay (600\u{1F41A}/v\xE9)" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            Switch3,
+            {
+              size: "sm",
+              checked: Boolean(config2.benBuyLanternTicket),
+              onCheckedChange: (c) => updateField("benBuyLanternTicket", c)
+            }
+          )
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F39F}\uFE0F \u0110\u1EA1i l\xFD v\xE9 s\u1ED1 B\u1EBFn \u0110\xF2: T\u1EF1 \u0111\u1ED5i th\u01B0\u1EDFng" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            Switch3,
+            {
+              checked: Boolean(config2.benAutoLotto),
+              onCheckedChange: (c) => updateField("benAutoLotto", c)
+            }
+          )
+        ] }),
+        config2.benAutoLotto && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-400 light:text-slate-600", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F340} Mua 1 v\xE9 s\u1ED1 c\u1EA7u may m\u1ED7i ng\xE0y (10\u{1F41A})" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            Switch3,
+            {
+              size: "sm",
+              checked: Boolean(config2.benAutoBuyLotto),
+              onCheckedChange: (c) => updateField("benAutoBuyLotto", c)
+            }
+          )
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { children: "\u{1F3E7} C\xE2y ATM: \u0110\u1ED5i v\u1ECF s\xF2 ra ti\u1EC1n m\u1EB7t" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            Switch3,
+            {
+              checked: Boolean(config2.benAutoAtm),
+              onCheckedChange: (c) => updateField("benAutoAtm", c)
+            }
+          )
+        ] }),
+        config2.benAutoAtm && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "\u0110\u1ED5i khi v\u1ECF s\xF2 >=:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            "input",
+            {
+              type: "number",
+              min: 100,
+              max: 5e3,
+              step: 50,
+              value: config2.benAtmThreshold,
+              onChange: (e) => updateField("benAtmThreshold", Number(e.target.value)),
+              className: "w-16 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+            }
+          )
+        ] }) })
+      ] })
+    ] });
+  }
+
+  // src/content/ui/components/SeaTabContent.tsx
+  var import_jsx_runtime25 = __toESM(require_jsx_runtime(), 1);
+  function SeaTabContent({ config: config2, onUpdateConfig }) {
+    const isSeaAreaEnabled = config2.areaEnabled.sea !== false;
+    const handleToggleArea = (checked) => {
+      onUpdateConfig((prev) => ({
+        ...prev,
+        areaEnabled: {
+          ...prev.areaEnabled,
+          sea: checked
+        }
+      }));
+    };
+    const updateField = (key, value) => {
+      onUpdateConfig((prev) => ({
+        ...prev,
+        [key]: value
+      }));
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "space-y-2 text-xs", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-cyan-950/40 light:bg-cyan-50 border border-cyan-500/30 px-3 py-2 text-cyan-300 light:text-cyan-900 shadow-sm", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F3D6}\uFE0F Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c Bi\u1EC3n" }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Switch3, { checked: isSeaAreaEnabled, onCheckedChange: handleToggleArea })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "rounded-xl border border-slate-800 dark:border-slate-800 light:border-slate-200 bg-slate-900/80 dark:bg-slate-900/80 light:bg-white p-3 space-y-2.5 shadow-sm", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "font-semibold text-xs text-slate-200 light:text-slate-800 border-b border-slate-800 light:border-slate-200 pb-1.5", children: "\u{1F30A} V\u1ECB Tr\xED & Thao T\xE1c C\xE2u \u1EDE Bi\u1EC3n" }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { className: "text-[11px] text-slate-400 light:text-slate-500 italic", children: "\u2728 T\u1EF1 nh\u1EADn bi\u1EBFt c\xE1 c\u1EAFn c\xE2u \u0111\u1EC3 gi\u1EADt, t\u1EF1 gh\xECm c\u1EA7n theo h\u01B0\u1EDBng c\xE1 v\xE0 c\u1EA5t c\xE1 v\xE0o gi\u1ECF." }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: "\u{1F4CD} T\u1EF1 \u0111i b\u1ED9 ra v\u1ECB tr\xED ng\u1ED3i c\xE2u" }),
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+            Switch3,
+            {
+              checked: Boolean(config2.seaAutoSpot),
+              onCheckedChange: (c) => updateField("seaAutoSpot", c)
+            }
+          )
+        ] }),
+        config2.seaAutoSpot && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "V\u1ECB tr\xED c\xE2u \u1EDF Bi\u1EC3n:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
+            "select",
+            {
+              value: config2.seaSpot,
+              onChange: (e) => updateField("seaSpot", e.target.value),
+              className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "pier", children: "\u{1F309} C\u1EA7u t\xE0u (\u0110a d\u1EA1ng c\xE1c lo\u1EA1i c\xE1)" }),
+                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "rocks", children: "\u{1FAA8} B\xE3i \u0111\xE1 (Nhi\u1EC1u c\xE1 hi\u1EBFm)" }),
+                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "beach", children: "\u{1F3D6}\uFE0F M\xE9p b\xE3i c\xE1t (C\xE1 ven b\u1EDD)" })
+              ]
+            }
+          )
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: "\u{1F4D6} T\u1EF1 nh\u1EADn th\u01B0\u1EDFng S\u1ED5 c\xE1 B\xE1ch khoa \xD4ng T\u01B0" }),
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+            Switch3,
+            {
+              checked: Boolean(config2.seaAutoClaimDex),
+              onCheckedChange: (c) => updateField("seaAutoClaimDex", c)
+            }
+          )
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: "\u{1F359} T\u1EF1 \u0103n u\u1ED1ng h\u1ED3i ph\u1EE5c \u0110\xF3i Kh\xE1t khi c\xE2u Bi\u1EC3n" }),
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+            Switch3,
+            {
+              checked: Boolean(config2.seaAutoEat),
+              onCheckedChange: (c) => updateField("seaAutoEat", c)
+            }
+          )
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "rounded-xl border border-slate-800 dark:border-slate-800 light:border-slate-200 bg-slate-900/80 dark:bg-slate-900/80 light:bg-white p-3 space-y-2.5 shadow-sm", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "font-semibold text-xs text-slate-200 light:text-slate-800 border-b border-slate-800 light:border-slate-200 pb-1.5", children: "\u{1F6D6} Ch\xF2i \xD4ng T\u01B0 (Mua M\u1ED3i & B\xE1n C\xE1)" }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: "\u{1F990} T\u1EF1 mua m\u1ED3i c\xE2u khi h\u1EBFt m\u1ED3i" }),
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+            Switch3,
+            {
+              checked: Boolean(config2.seaAutoBuyBait),
+              onCheckedChange: (c) => updateField("seaAutoBuyBait", c)
+            }
+          )
+        ] }),
+        config2.seaAutoBuyBait && /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "Lo\u1EA1i m\u1ED3i \u01B0u ti\xEAn:" }),
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
+              "select",
+              {
+                value: config2.seaPreferBait,
+                onChange: (e) => updateField("seaPreferBait", e.target.value),
+                className: "rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs",
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "worm", children: "\u{1FAB1} M\u1ED3i Giun / Tr\xF9n (C\xE2u th\u01B0\u1EDDng)" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "shrimp", children: "\u{1F990} M\u1ED3i T\xF4m (C\xE2u c\xE1 hi\u1EBFm)" })
+                ]
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "S\u1ED1 g\xF3i mua m\u1ED7i l\u1EA7n:" }),
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+              "input",
+              {
+                type: "number",
+                min: 1,
+                max: 20,
+                value: config2.seaBaitPacks,
+                onChange: (e) => updateField("seaBaitPacks", Number(e.target.value)),
+                className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+              }
+            )
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "flex items-center justify-between text-slate-300 light:text-slate-700", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { children: "\u{1F41F} T\u1EF1 b\xE1n h\u1EA3i s\u1EA3n trong gi\u1ECF cho \xD4ng T\u01B0" }),
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+            Switch3,
+            {
+              checked: Boolean(config2.seaAutoSell),
+              onCheckedChange: (c) => updateField("seaAutoSell", c)
+            }
+          )
+        ] }),
+        config2.seaAutoSell && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "text-slate-400 light:text-slate-600", children: "B\xE1n khi gi\u1ECF c\xF3 t\u1EEB (con):" }),
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+            "input",
+            {
+              type: "number",
+              min: 1,
+              max: 30,
+              value: config2.seaSellThreshold,
+              onChange: (e) => updateField("seaSellThreshold", Number(e.target.value)),
+              className: "w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+            }
+          )
+        ] }) })
+      ] })
+    ] });
+  }
+
+  // src/content/ui/components/CityTabContent.tsx
+  var import_jsx_runtime26 = __toESM(require_jsx_runtime(), 1);
+  function CityTabContent({ config: config2, onUpdateConfig }) {
+    const isCityAreaEnabled = config2.areaEnabled.city !== false;
+    const handleToggleArea = (checked) => {
+      onUpdateConfig((prev) => ({
+        ...prev,
+        areaEnabled: {
+          ...prev.areaEnabled,
+          city: checked
+        }
+      }));
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "space-y-2 text-xs", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-purple-950/40 light:bg-purple-50 border border-purple-500/30 px-3 py-2 text-purple-300 light:text-purple-900 shadow-sm", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "font-semibold text-xs flex items-center gap-1.5", children: "\u{1F3D9}\uFE0F Cho ph\xE9p ch\u1EA1y Khu v\u1EF1c Th\xE0nh Ph\u1ED1" }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Switch3, { checked: isCityAreaEnabled, onCheckedChange: handleToggleArea })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex flex-col items-center justify-center rounded-xl border border-slate-800 dark:border-slate-800 light:border-slate-200 bg-slate-900/60 dark:bg-slate-900/60 light:bg-white p-6 text-center space-y-2.5 shadow-sm", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "flex h-11 w-11 items-center justify-center rounded-2xl bg-purple-500/10 text-purple-400 border border-purple-500/20 shadow-sm", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Construction, { className: "h-6 w-6" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "font-bold text-xs text-slate-100 light:text-slate-900", children: "Khu V\u1EF1c Th\xE0nh Ph\u1ED1 & H\u1ED9i Ch\u1EE3 X\xF3m Vui" }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { className: "text-[11px] text-slate-400 light:text-slate-600 max-w-[270px] leading-relaxed", children: "T\xEDnh n\u0103ng t\u1EF1 \u0111\u1ED9ng cho Khu v\u1EF1c Th\xE0nh Ph\u1ED1 & H\u1ED9i Ch\u1EE3 (Xe lam, Mini-game C\xE2u V\u1ECBt) \u0111ang \u0111\u01B0\u1EE3c ph\xE1t tri\u1EC3n v\xE0 s\u1EBD s\u1EDBm ra m\u1EAFt \u1EDF b\u1EA3n c\u1EADp nh\u1EADt ti\u1EBFp theo!" })
+      ] })
+    ] });
+  }
+
+  // src/components/ui/tabs.tsx
+  var import_jsx_runtime27 = __toESM(require_jsx_runtime(), 1);
+  function Tabs3({
+    className,
+    orientation = "horizontal",
+    ...props
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+      dist_exports7.Root,
+      {
+        "data-slot": "tabs",
+        "data-orientation": orientation,
+        orientation,
+        className: cn(
+          "group/tabs flex gap-2 data-[orientation=horizontal]:flex-col",
+          className
+        ),
+        ...props
+      }
+    );
+  }
+  var tabsListVariants = cva(
+    "group/tabs-list inline-flex w-fit items-center justify-center rounded-lg p-[3px] text-muted-foreground group-data-[orientation=horizontal]/tabs:h-9 group-data-[orientation=vertical]/tabs:h-fit group-data-[orientation=vertical]/tabs:flex-col data-[variant=line]:rounded-none",
+    {
+      variants: {
+        variant: {
+          default: "bg-muted",
+          line: "gap-1 bg-transparent"
+        }
+      },
+      defaultVariants: {
+        variant: "default"
+      }
+    }
+  );
+  function TabsList3({
+    className,
+    variant = "default",
+    ...props
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+      dist_exports7.List,
+      {
+        "data-slot": "tabs-list",
+        "data-variant": variant,
+        className: cn(tabsListVariants({ variant }), className),
+        ...props
+      }
+    );
+  }
+  function TabsTrigger3({
+    className,
+    ...props
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+      dist_exports7.Trigger,
+      {
+        "data-slot": "tabs-trigger",
+        className: cn(
+          "relative inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap text-foreground/60 transition-all group-data-[orientation=vertical]/tabs:w-full group-data-[orientation=vertical]/tabs:justify-start hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50 group-data-[variant=default]/tabs-list:data-[state=active]:shadow-sm group-data-[variant=line]/tabs-list:data-[state=active]:shadow-none dark:text-muted-foreground dark:hover:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+          "group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:data-[state=active]:bg-transparent dark:group-data-[variant=line]/tabs-list:data-[state=active]:border-transparent dark:group-data-[variant=line]/tabs-list:data-[state=active]:bg-transparent",
+          "data-[state=active]:bg-background data-[state=active]:text-foreground dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 dark:data-[state=active]:text-foreground",
+          "after:absolute after:bg-foreground after:opacity-0 after:transition-opacity group-data-[orientation=horizontal]/tabs:after:inset-x-0 group-data-[orientation=horizontal]/tabs:after:bottom-[-5px] group-data-[orientation=horizontal]/tabs:after:h-0.5 group-data-[orientation=vertical]/tabs:after:inset-y-0 group-data-[orientation=vertical]/tabs:after:-right-1 group-data-[orientation=vertical]/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:data-[state=active]:after:opacity-100",
+          className
+        ),
+        ...props
+      }
+    );
+  }
+  function TabsContent3({
+    className,
+    ...props
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+      dist_exports7.Content,
+      {
+        "data-slot": "tabs-content",
+        className: cn("flex-1 outline-none", className),
+        ...props
+      }
+    );
+  }
 
   // src/components/ui/dialog.tsx
-  var import_jsx_runtime26 = __toESM(require_jsx_runtime(), 1);
-  var Dialog2 = Dialog;
-  var DialogPortal2 = ({
+  var import_jsx_runtime28 = __toESM(require_jsx_runtime(), 1);
+  function Dialog2({
+    ...props
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(dist_exports4.Root, { "data-slot": "dialog", ...props });
+  }
+  function DialogPortal2({
+    ...props
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(dist_exports4.Portal, { "data-slot": "dialog-portal", ...props });
+  }
+  function DialogOverlay3({
+    className,
+    ...props
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+      dist_exports4.Overlay,
+      {
+        "data-slot": "dialog-overlay",
+        className: cn(
+          "fixed inset-0 z-50 bg-black/60 backdrop-blur-xs data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
+          className
+        ),
+        ...props
+      }
+    );
+  }
+  function DialogContent3({
+    className,
+    children,
+    showCloseButton = true,
     container,
+    ...props
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(DialogPortal2, { container, "data-slot": "dialog-portal", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(DialogOverlay3, {}),
+      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
+        dist_exports4.Content,
+        {
+          "data-slot": "dialog-content",
+          className: cn(
+            "fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border bg-background p-6 shadow-lg duration-200 outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:max-w-lg",
+            className
+          ),
+          ...props,
+          children: [
+            children,
+            showCloseButton && /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
+              dist_exports4.Close,
+              {
+                "data-slot": "dialog-close",
+                className: "absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(X, {}),
+                  /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { className: "sr-only", children: "Close" })
+                ]
+              }
+            )
+          ]
+        }
+      )
+    ] });
+  }
+
+  // src/components/ui/accordion.tsx
+  var import_jsx_runtime29 = __toESM(require_jsx_runtime(), 1);
+  function Accordion3({
+    ...props
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(dist_exports2.Root, { "data-slot": "accordion", ...props });
+  }
+  function AccordionItem3({
+    className,
+    ...props
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+      dist_exports2.Item,
+      {
+        "data-slot": "accordion-item",
+        className: cn("border-b last:border-b-0", className),
+        ...props
+      }
+    );
+  }
+  function AccordionTrigger3({
+    className,
     children,
     ...props
-  }) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(DialogPortal, { container, ...props, children });
-  DialogPortal2.displayName = DialogPortal.displayName;
-  var DialogOverlay3 = React39.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
-    DialogOverlay,
-    {
-      ref,
-      className: cn(
-        "fixed inset-0 z-50 bg-black/70 backdrop-blur-xs transition-opacity duration-150",
-        className
-      ),
-      ...props
-    }
-  ));
-  DialogOverlay3.displayName = DialogOverlay.displayName;
-  var DialogContent3 = React39.forwardRef(({ className, children, portalContainer, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(DialogPortal2, { container: portalContainer, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(DialogOverlay3, {}),
-    /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(
-      DialogContent,
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(dist_exports2.Header, { className: "flex", children: /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(
+      dist_exports2.Trigger,
       {
-        ref,
+        "data-slot": "accordion-trigger",
         className: cn(
-          "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-3 border border-border bg-card p-4 shadow-xl duration-150 rounded-xl text-card-foreground",
+          "flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180",
           className
         ),
         ...props,
         children: [
           children,
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(DialogClose, { className: "absolute right-3 top-3 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-1 focus:ring-ring disabled:pointer-events-none cursor-pointer", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(X, { className: "h-4 w-4" }),
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "sr-only", children: "\u0110\xF3ng" })
-          ] })
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(ChevronDown, { className: "pointer-events-none size-4 shrink-0 translate-y-0.5 text-muted-foreground transition-transform duration-200" })
         ]
       }
-    )
-  ] }));
-  DialogContent3.displayName = DialogContent.displayName;
-  var DialogHeader = ({
+    ) });
+  }
+  function AccordionContent3({
     className,
+    children,
     ...props
-  }) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
-    "div",
-    {
-      className: cn("flex flex-col space-y-1 text-left", className),
-      ...props
-    }
-  );
-  DialogHeader.displayName = "DialogHeader";
-  var DialogFooter = ({
-    className,
-    ...props
-  }) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
-    "div",
-    {
-      className: cn("flex items-center justify-end space-x-2 pt-2", className),
-      ...props
-    }
-  );
-  DialogFooter.displayName = "DialogFooter";
-  var DialogTitle3 = React39.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
-    DialogTitle,
-    {
-      ref,
-      className: cn("text-sm font-semibold leading-none tracking-tight", className),
-      ...props
-    }
-  ));
-  DialogTitle3.displayName = DialogTitle.displayName;
-  var DialogDescription3 = React39.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
-    DialogDescription,
-    {
-      ref,
-      className: cn("text-xs text-muted-foreground", className),
-      ...props
-    }
-  ));
-  DialogDescription3.displayName = DialogDescription.displayName;
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+      dist_exports2.Content,
+      {
+        "data-slot": "accordion-content",
+        className: "overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down",
+        ...props,
+        children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: cn("pt-0 pb-4", className), children })
+      }
+    );
+  }
+
+  // src/components/ReleaseChangelogView.tsx
+  var import_jsx_runtime30 = __toESM(require_jsx_runtime(), 1);
+  function ReleaseChangelogView({ updateInfo, onClose }) {
+    const hasUpdate = updateInfo.hasUpdate;
+    const older = updateInfo.olderReleases || [];
+    return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex flex-col space-y-3 font-sans", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between rounded-xl bg-slate-900/60 dark:bg-slate-900/60 light:bg-slate-100 p-3 border border-slate-700/50", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center gap-2.5", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+            "div",
+            {
+              className: `flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${hasUpdate ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-blue-500/10 text-blue-400 border-blue-500/30"}`,
+              children: hasUpdate ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Sparkles, { className: "h-5 w-5" }) : /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(CircleCheck, { className: "h-5 w-5" })
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "text-xs font-bold text-slate-100 light:text-slate-900", children: hasUpdate ? "\u0110\xE3 C\xF3 Phi\xEAn B\u1EA3n M\u1EDBi!" : "B\u1EA3n \u0110ang D\xF9ng M\u1EDBi Nh\u1EA5t" }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "text-[11px] text-slate-400 font-mono", children: hasUpdate ? `Hi\u1EC7n t\u1EA1i: v${updateInfo.currentVersion} \u2794 M\u1EDBi nh\u1EA5t: v${updateInfo.latestVersion}` : `Phi\xEAn b\u1EA3n hi\u1EC7n t\u1EA1i v${updateInfo.currentVersion}` })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Badge, { variant: hasUpdate ? "default" : "secondary", className: "text-[10px] uppercase font-bold", children: hasUpdate ? "UPDATE" : "LATEST" })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "rounded-xl border border-emerald-500/30 bg-emerald-950/20 light:bg-emerald-50/50 p-3 space-y-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between border-b border-emerald-500/20 pb-1.5", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "flex items-center gap-1.5", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("span", { className: "font-bold text-xs text-emerald-400 light:text-emerald-700", children: [
+            "\u2728 ",
+            updateInfo.releaseName || `Release v${updateInfo.latestVersion}`
+          ] }) }),
+          updateInfo.publishedAt && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-[10px] text-slate-400", children: new Date(updateInfo.publishedAt).toLocaleDateString("vi-VN") })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "max-h-[140px] overflow-y-auto pr-1 text-[11px] text-slate-300 light:text-slate-700 whitespace-pre-wrap leading-relaxed font-sans", children: updateInfo.releaseNotes || "Kh\xF4ng c\xF3 nh\u1EADt k\xFD chi ti\u1EBFt cho b\u1EA3n ph\xE1t h\xE0nh n\xE0y." }),
+        hasUpdate && updateInfo.downloadUrl && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "pt-1", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
+          Button,
+          {
+            variant: "default",
+            size: "sm",
+            className: "w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs h-8 shadow-md",
+            onClick: () => {
+              if (updateInfo.downloadUrl) {
+                window.open(updateInfo.downloadUrl, "_blank");
+              }
+            },
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Download, { className: "h-3.5 w-3.5 mr-1.5" }),
+              "T\u1EA3i B\u1EA3n C\u1EADp Nh\u1EADt v",
+              updateInfo.latestVersion
+            ]
+          }
+        ) })
+      ] }),
+      older.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center gap-1 text-[11px] font-semibold text-slate-400 px-1 pt-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(RotateCcwClock, { className: "h-3.5 w-3.5" }),
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "L\u1ECBch s\u1EED c\xE1c phi\xEAn b\u1EA3n tr\u01B0\u1EDBc:" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Accordion3, { type: "single", collapsible: true, className: "w-full space-y-1", children: older.map((rel, idx) => /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
+          AccordionItem3,
+          {
+            value: rel.tag || String(idx),
+            className: "rounded-lg border border-slate-800 bg-slate-900/40 px-2.5 py-0 text-xs",
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(AccordionTrigger3, { className: "py-2 hover:no-underline text-xs text-slate-300 light:text-slate-800 font-medium", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "rounded bg-slate-800 px-1.5 py-0.5 text-[10px] font-mono text-emerald-400", children: rel.tag }),
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "truncate max-w-[200px]", children: rel.name || rel.tag })
+              ] }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(AccordionContent3, { className: "pb-2.5 pt-1 text-[11px] text-slate-400 whitespace-pre-wrap leading-relaxed border-t border-slate-800/60 mt-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { children: rel.body || "Kh\xF4ng c\xF3 ghi ch\xFA." }),
+                rel.htmlUrl && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "mt-2 pt-1 border-t border-slate-800/40", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
+                  "a",
+                  {
+                    href: rel.htmlUrl,
+                    target: "_blank",
+                    rel: "noreferrer",
+                    className: "inline-flex items-center gap-1 text-[10px] text-emerald-400 hover:underline",
+                    children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(ExternalLink, { className: "h-3 w-3" }),
+                      "Xem tr\xEAn GitHub"
+                    ]
+                  }
+                ) })
+              ] })
+            ]
+          },
+          rel.tag || idx
+        )) })
+      ] }),
+      onClose && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "pt-1", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+        Button,
+        {
+          variant: "outline",
+          size: "sm",
+          className: "w-full border-slate-700 text-xs",
+          onClick: onClose,
+          children: "\u0110\xF3ng"
+        }
+      ) })
+    ] });
+  }
 
   // src/services/github-service.ts
   var GITHUB_REPO = "ntuan2502/ntgz";
-  var RELEASES_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
+  var RELEASES_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases?per_page=15`;
+  var LATEST_RELEASE_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
   function compareSemVer(v1, v2) {
     const clean1 = v1.replace(/^v/, "").trim();
     const clean2 = v2.replace(/^v/, "").trim();
@@ -24785,16 +26092,31 @@
     }
     return 0;
   }
-  async function fetchLatestRelease() {
-    const res = await fetch(RELEASES_API_URL, {
+  async function fetchAllReleases() {
+    try {
+      const res = await fetch(RELEASES_API_URL, {
+        headers: {
+          Accept: "application/vnd.github.v3+json"
+        }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          return data.filter((r2) => !r2.draft);
+        }
+      }
+    } catch {
+    }
+    const resLatest = await fetch(LATEST_RELEASE_API_URL, {
       headers: {
         Accept: "application/vnd.github.v3+json"
       }
     });
-    if (!res.ok) {
-      throw new Error(`GitHub API returned status ${res.status}: ${res.statusText}`);
+    if (!resLatest.ok) {
+      throw new Error(`GitHub API returned status ${resLatest.status}: ${resLatest.statusText}`);
     }
-    return await res.json();
+    const single = await resLatest.json();
+    return [single];
   }
   async function checkForUpdates(currentVersionOverride) {
     let currentVersion = currentVersionOverride;
@@ -24805,25 +26127,41 @@
         currentVersion = "1.0.0";
       }
     }
-    const release = await fetchLatestRelease();
-    const latestTag = release.tag_name || "1.0.0";
+    const releases = await fetchAllReleases();
+    if (releases.length === 0) {
+      throw new Error("Kh\xF4ng t\xECm th\u1EA5y b\u1EA3n ph\xE1t h\xE0nh n\xE0o tr\xEAn GitHub.");
+    }
+    const latest = releases[0];
+    const latestTag = latest.tag_name || "1.0.0";
     const cleanLatest = latestTag.replace(/^v/, "");
     const hasUpdate = compareSemVer(cleanLatest, currentVersion) > 0;
-    const zipAsset = release.assets?.find((a) => a.name.endsWith(".zip"));
+    const zipAsset = latest.assets?.find((a) => a.name.endsWith(".zip"));
+    const olderReleases = releases.slice(1).map((r2) => {
+      const asset = r2.assets?.find((a) => a.name.endsWith(".zip"));
+      return {
+        tag: r2.tag_name,
+        name: r2.name || r2.tag_name,
+        body: r2.body || "",
+        publishedAt: r2.published_at,
+        htmlUrl: r2.html_url,
+        downloadUrl: asset?.browser_download_url || r2.html_url
+      };
+    });
     return {
       hasUpdate,
       currentVersion,
       latestVersion: cleanLatest,
-      releaseName: release.name || latestTag,
-      releaseNotes: release.body || "",
-      releaseUrl: release.html_url,
-      downloadUrl: zipAsset?.browser_download_url || release.html_url,
-      publishedAt: release.published_at
+      releaseName: latest.name || latestTag,
+      releaseNotes: latest.body || "",
+      releaseUrl: latest.html_url,
+      downloadUrl: zipAsset?.browser_download_url || latest.html_url,
+      publishedAt: latest.published_at,
+      olderReleases
     };
   }
 
   // src/content/ui/HudApp.tsx
-  var import_jsx_runtime27 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime31 = __toESM(require_jsx_runtime(), 1);
   function HudApp({
     shadowRoot,
     initialConfig,
@@ -24837,11 +26175,12 @@
     const [isMinimized, setIsMinimized] = (0, import_react5.useState)(false);
     const [isOrderDrawerOpen, setIsOrderDrawerOpen] = (0, import_react5.useState)(false);
     const [version, setVersion] = (0, import_react5.useState)("1.0.0");
+    const [theme, setTheme] = (0, import_react5.useState)("dark");
     const [isCheckingUpdate, setIsCheckingUpdate] = (0, import_react5.useState)(false);
     const [updateInfo, setUpdateInfo] = (0, import_react5.useState)(null);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = (0, import_react5.useState)(false);
     const [position, setPosition] = (0, import_react5.useState)(() => ({
-      x: Math.max(10, window.innerWidth - 370),
+      x: Math.max(10, window.innerWidth - 400),
       y: 70
     }));
     const isDraggingRef = (0, import_react5.useRef)(false);
@@ -24852,7 +26191,22 @@
         if (v) setVersion(v);
       } catch {
       }
+      try {
+        const savedTheme = localStorage.getItem("ntg_theme");
+        if (savedTheme === "light" || savedTheme === "dark") {
+          setTheme(savedTheme);
+        }
+      } catch {
+      }
     }, []);
+    const toggleTheme = () => {
+      const next = theme === "dark" ? "light" : "dark";
+      setTheme(next);
+      try {
+        localStorage.setItem("ntg_theme", next);
+      } catch {
+      }
+    };
     (0, import_react5.useEffect)(() => {
       const handleSnapUpdate = (e) => {
         setSnap(e.detail);
@@ -24892,7 +26246,7 @@
         if (!isDraggingRef.current) return;
         const newX = Math.min(
           Math.max(10, moveEvent.clientX - dragOffsetRef.current.x),
-          window.innerWidth - 350
+          window.innerWidth - 380
         );
         const newY = Math.min(
           Math.max(10, moveEvent.clientY - dragOffsetRef.current.y),
@@ -24928,34 +26282,32 @@
     if (!config2.panelVisible) {
       return null;
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(
       "div",
       {
         style: {
           transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
           pointerEvents: "auto"
         },
-        className: "fixed left-0 top-0 z-[2147483647] w-[350px] overflow-hidden rounded-xl border border-slate-800 bg-slate-950/95 shadow-2xl backdrop-blur-md text-slate-100 font-sans select-none",
+        className: `fixed left-0 top-0 z-[2147483647] w-[380px] overflow-hidden rounded-2xl border border-slate-700/60 dark:border-slate-800/80 light:border-slate-300 shadow-2xl backdrop-blur-xl font-sans select-none transition-colors ${theme === "dark" ? "dark bg-slate-950/95 text-slate-100" : "light bg-white/95 text-slate-900"}`,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
             HudHeader,
             {
               version,
-              config: config2,
-              activeTab: config2.activeTab,
+              theme,
+              onToggleTheme: toggleTheme,
               isMinimized,
               onToggleMinimize: () => setIsMinimized(!isMinimized),
               onHide: handleHide,
-              onToggleAll,
-              onToggleTab,
               onCheckUpdate: handleCheckUpdate,
               isCheckingUpdate,
               onMouseDownDrag: handleMouseDownDrag
             }
           ),
-          !isMinimized && /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "flex flex-col", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(HudStats, { snap }),
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+          !isMinimized && /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "flex flex-col", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(HudStats, { snap }),
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
               HudControls,
               {
                 config: config2,
@@ -24967,75 +26319,40 @@
                 onToggleOrderDrawer: () => setIsOrderDrawerOpen(!isOrderDrawerOpen)
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "flex items-center gap-2 border-b border-slate-800/80 bg-slate-950 px-2.5 py-1 text-[11px] font-mono text-emerald-400", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { className: "relative flex h-2 w-2", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" }),
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "relative inline-flex h-2 w-2 rounded-full bg-emerald-500" })
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "flex items-center gap-2 border-b border-slate-800/80 dark:border-slate-800/80 light:border-slate-200 bg-slate-950 dark:bg-slate-950 light:bg-slate-100/90 px-3 py-1.5 text-[11px] font-mono text-emerald-400 light:text-emerald-700", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("span", { className: "relative flex h-2 w-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("span", { className: "absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" }),
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("span", { className: "relative inline-flex h-2 w-2 rounded-full bg-emerald-500" })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "truncate", children: lastAction })
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("span", { className: "truncate", children: lastAction })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(Tabs3, { value: config2.activeTab, onValueChange: handleTabChange, className: "w-full p-2", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(TabsList3, { className: "grid w-full grid-cols-4 h-7 text-[11px]", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(TabsTrigger3, { value: "farm", className: "px-1 py-0.5", children: "\u{1F33E} N\xF4ng tr\u1EA1i" }),
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(TabsTrigger3, { value: "benDo", className: "px-1 py-0.5", children: "\u{1F6F6} B\u1EBFn \u0111\xF2" }),
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(TabsTrigger3, { value: "sea", className: "px-1 py-0.5", children: "\u{1F3D6}\uFE0F Bi\u1EC3n" }),
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(TabsTrigger3, { value: "city", className: "px-1 py-0.5", children: "\u{1F3D9}\uFE0F Ph\u1ED1 x\xE1" })
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(Tabs3, { value: config2.activeTab, onValueChange: handleTabChange, className: "w-full p-2.5", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(TabsList3, { className: "grid w-full grid-cols-4 h-8 text-[11px] rounded-xl p-1 bg-slate-900/80 dark:bg-slate-900/80 light:bg-slate-200/80", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(TabsTrigger3, { value: "farm", className: "px-1 py-1 rounded-lg", children: "\u{1F33E} N\xF4ng tr\u1EA1i" }),
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(TabsTrigger3, { value: "benDo", className: "px-1 py-1 rounded-lg", children: "\u{1F6F6} B\u1EBFn \u0111\xF2" }),
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(TabsTrigger3, { value: "sea", className: "px-1 py-1 rounded-lg", children: "\u{1F3D6}\uFE0F Bi\u1EC3n" }),
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(TabsTrigger3, { value: "city", className: "px-1 py-1 rounded-lg", children: "\u{1F3D9}\uFE0F Ph\u1ED1 x\xE1" })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "mt-2 max-h-[360px] overflow-y-auto pr-1", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(TabsContent3, { value: "farm", className: "m-0", children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(FarmTabContent, { config: config2, onUpdateConfig: handleUpdateConfig }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(TabsContent3, { value: "benDo", className: "m-0", children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(WharfTabContent, { config: config2, onUpdateConfig: handleUpdateConfig }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(TabsContent3, { value: "sea", className: "m-0", children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(SeaTabContent, { config: config2, onUpdateConfig: handleUpdateConfig }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(TabsContent3, { value: "city", className: "m-0", children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(CityTabContent, { config: config2, onUpdateConfig: handleUpdateConfig }) })
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "mt-2.5 max-h-[380px] overflow-y-auto pr-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(TabsContent3, { value: "farm", className: "m-0", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(FarmTabContent, { config: config2, onUpdateConfig: handleUpdateConfig }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(TabsContent3, { value: "benDo", className: "m-0", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(WharfTabContent, { config: config2, onUpdateConfig: handleUpdateConfig }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(TabsContent3, { value: "sea", className: "m-0", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(SeaTabContent, { config: config2, onUpdateConfig: handleUpdateConfig }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(TabsContent3, { value: "city", className: "m-0", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(CityTabContent, { config: config2, onUpdateConfig: handleUpdateConfig }) })
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Dialog2, { open: isUpdateModalOpen, onOpenChange: setIsUpdateModalOpen, children: /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Dialog2, { open: isUpdateModalOpen, onOpenChange: setIsUpdateModalOpen, children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
             DialogContent3,
             {
-              portalContainer: shadowRoot,
-              className: "max-w-[320px] bg-slate-900 border-slate-800 text-slate-100 p-4",
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(DialogHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "flex items-center gap-2", children: [
-                  updateInfo?.hasUpdate ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20", children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Sparkles, { className: "h-4 w-4" }) }) : /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20", children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(CircleCheck, { className: "h-4 w-4" }) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(DialogTitle3, { className: "text-sm font-bold", children: updateInfo?.hasUpdate ? "\u0110\xE3 C\xF3 Phi\xEAn B\u1EA3n M\u1EDBi!" : "B\u1EA3n \u0110ang D\xF9ng M\u1EDBi Nh\u1EA5t" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(DialogDescription3, { className: "text-[11px] text-slate-400", children: updateInfo?.hasUpdate ? `v${updateInfo?.currentVersion} \u2794 v${updateInfo?.latestVersion}` : `Phi\xEAn b\u1EA3n hi\u1EC7n t\u1EA1i v${updateInfo?.currentVersion}` })
-                  ] })
-                ] }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "my-2 max-h-[160px] overflow-y-auto rounded-md bg-slate-950 p-2 text-xs text-slate-300 border border-slate-800 space-y-1 font-sans", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "font-semibold text-emerald-400 text-[11px] mb-1", children: updateInfo?.releaseName || `Release v${updateInfo?.latestVersion}` }),
-                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "whitespace-pre-wrap leading-relaxed text-[11px] text-slate-300", children: updateInfo?.releaseNotes || "Kh\xF4ng c\xF3 nh\u1EADt k\xFD c\u1EADp nh\u1EADt." })
-                ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(DialogFooter, { className: "flex justify-between sm:justify-between items-center gap-2", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
-                    Button,
-                    {
-                      variant: "outline",
-                      size: "sm",
-                      className: "border-slate-700 text-xs",
-                      onClick: () => setIsUpdateModalOpen(false),
-                      children: "\u0110\xF3ng"
-                    }
-                  ),
-                  updateInfo?.hasUpdate && updateInfo?.downloadUrl && /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
-                    Button,
-                    {
-                      variant: "emerald",
-                      size: "sm",
-                      className: "text-xs",
-                      onClick: () => {
-                        if (updateInfo.downloadUrl) {
-                          window.open(updateInfo.downloadUrl, "_blank");
-                        }
-                      },
-                      children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Download, { className: "h-3.5 w-3.5 mr-1" }),
-                        "T\u1EA3i B\u1EA3n M\u1EDBi"
-                      ]
-                    }
-                  )
-                ] })
-              ]
+              container: shadowRoot,
+              className: "max-w-[350px] bg-slate-900/98 dark:bg-slate-950/98 light:bg-white border-slate-800 light:border-slate-300 text-slate-100 light:text-slate-900 p-4 rounded-2xl shadow-2xl",
+              children: updateInfo && /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+                ReleaseChangelogView,
+                {
+                  updateInfo,
+                  onClose: () => setIsUpdateModalOpen(false)
+                }
+              )
             }
           ) })
         ]
@@ -25044,10 +26361,11 @@
   }
 
   // src/styles/tailwind.compiled.css
-  var tailwind_compiled_default = '/*! tailwindcss v4.3.3 | MIT License | https://tailwindcss.com */\n@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-scale-x:1;--tw-scale-y:1;--tw-scale-z:1;--tw-rotate-x:initial;--tw-rotate-y:initial;--tw-rotate-z:initial;--tw-skew-x:initial;--tw-skew-y:initial;--tw-pan-x:initial;--tw-pan-y:initial;--tw-pinch-zoom:initial;--tw-space-y-reverse:0;--tw-space-x-reverse:0;--tw-divide-x-reverse:0;--tw-border-style:solid;--tw-divide-y-reverse:0;--tw-leading:initial;--tw-font-weight:initial;--tw-tracking:initial;--tw-ordinal:initial;--tw-slashed-zero:initial;--tw-numeric-figure:initial;--tw-numeric-spacing:initial;--tw-numeric-fraction:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid;--tw-blur:initial;--tw-brightness:initial;--tw-contrast:initial;--tw-grayscale:initial;--tw-hue-rotate:initial;--tw-invert:initial;--tw-opacity:initial;--tw-saturate:initial;--tw-sepia:initial;--tw-drop-shadow:initial;--tw-drop-shadow-color:initial;--tw-drop-shadow-alpha:100%;--tw-drop-shadow-size:initial;--tw-backdrop-blur:initial;--tw-backdrop-brightness:initial;--tw-backdrop-contrast:initial;--tw-backdrop-grayscale:initial;--tw-backdrop-hue-rotate:initial;--tw-backdrop-invert:initial;--tw-backdrop-opacity:initial;--tw-backdrop-saturate:initial;--tw-backdrop-sepia:initial;--tw-duration:initial;--tw-ease:initial}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-red-300:oklch(80.8% .114 19.571);--color-red-400:oklch(70.4% .191 22.216);--color-red-500:oklch(63.7% .237 25.331);--color-red-600:oklch(57.7% .245 27.325);--color-red-900:oklch(39.6% .141 25.723);--color-red-950:oklch(25.8% .092 26.042);--color-orange-300:oklch(83.7% .128 66.29);--color-amber-50:oklch(98.7% .022 95.277);--color-amber-300:oklch(87.9% .169 91.605);--color-amber-400:oklch(82.8% .189 84.429);--color-amber-500:oklch(76.9% .188 70.08);--color-amber-600:oklch(66.6% .179 58.318);--color-yellow-400:oklch(85.2% .199 91.936);--color-emerald-300:oklch(84.5% .143 164.978);--color-emerald-400:oklch(76.5% .177 163.223);--color-emerald-500:oklch(69.6% .17 162.48);--color-emerald-600:oklch(59.6% .145 163.225);--color-emerald-700:oklch(50.8% .118 165.612);--color-emerald-950:oklch(26.2% .051 172.552);--color-cyan-300:oklch(86.5% .127 207.078);--color-cyan-500:oklch(71.5% .143 215.221);--color-cyan-950:oklch(30.2% .056 229.695);--color-blue-300:oklch(80.9% .105 251.813);--color-blue-400:oklch(70.7% .165 254.624);--color-blue-500:oklch(62.3% .214 259.815);--color-blue-600:oklch(54.6% .245 262.881);--color-blue-950:oklch(28.2% .091 267.935);--color-purple-300:oklch(82.7% .119 306.383);--color-purple-400:oklch(71.4% .203 305.504);--color-purple-500:oklch(62.7% .265 303.9);--color-purple-950:oklch(29.1% .149 302.717);--color-slate-100:oklch(96.8% .007 247.896);--color-slate-200:oklch(92.9% .013 255.508);--color-slate-300:oklch(86.9% .022 252.894);--color-slate-400:oklch(70.4% .04 256.788);--color-slate-500:oklch(55.4% .046 257.417);--color-slate-700:oklch(37.2% .044 257.287);--color-slate-800:oklch(27.9% .041 260.031);--color-slate-900:oklch(20.8% .042 265.755);--color-slate-950:oklch(12.9% .042 264.695);--color-gray-100:oklch(96.7% .003 264.542);--color-gray-200:oklch(92.8% .006 264.531);--color-gray-600:oklch(44.6% .03 256.802);--color-gray-900:oklch(21% .034 264.665);--color-zinc-100:oklch(96.7% .001 286.375);--color-zinc-200:oklch(92% .004 286.32);--color-zinc-700:oklch(37% .013 285.805);--color-zinc-900:oklch(21% .006 285.885);--color-zinc-950:oklch(14.1% .005 285.823);--color-black:#000;--color-white:#fff;--spacing:.25rem;--container-lg:32rem;--container-4xl:56rem;--container-5xl:64rem;--container-7xl:80rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-base:1rem;--text-base--line-height:calc(1.5 / 1);--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--text-4xl:2.25rem;--text-4xl--line-height:calc(2.5 / 2.25);--text-5xl:3rem;--text-5xl--line-height:1;--text-6xl:3.75rem;--text-6xl--line-height:1;--text-7xl:4.5rem;--text-7xl--line-height:1;--font-weight-normal:400;--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--tracking-tighter:-.05em;--tracking-tight:-.025em;--tracking-wide:.025em;--tracking-wider:.05em;--leading-relaxed:1.625;--ease-in:cubic-bezier(.4, 0, 1, 1);--ease-out:cubic-bezier(0, 0, .2, 1);--ease-in-out:cubic-bezier(.4, 0, .2, 1);--animate-spin:spin 1s linear infinite;--animate-ping:ping 1s cubic-bezier(0, 0, .2, 1) infinite;--animate-pulse:pulse 2s cubic-bezier(.4, 0, .6, 1) infinite;--animate-bounce:bounce 1s infinite;--blur-xs:4px;--blur-md:12px;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono);--color-primary:var(--primary)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.\\@container\\/card{container:card/inline-size}.\\@container{container-type:inline-size}.pointer-events-none{pointer-events:none}.collapse{visibility:collapse}.invisible{visibility:hidden}.visible{visibility:visible}.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.not-sr-only{clip-path:none;white-space:normal;width:auto;height:auto;margin:0;padding:0;position:static;overflow:visible}.absolute{position:absolute}.fixed{position:fixed}.relative{position:relative}.static{position:static}.sticky{position:sticky}.-inset-1{inset:calc(var(--spacing) * -1)}.inset-0{inset:0}.-top-0{top:0}.-top-0\\.5{top:calc(var(--spacing) * -.5)}.top-0{top:0}.top-3{top:calc(var(--spacing) * 3)}.top-\\[50\\%\\]{top:50%}.-right-0{right:0}.-right-0\\.5{right:calc(var(--spacing) * -.5)}.right-3{right:calc(var(--spacing) * 3)}.left-0{left:0}.left-\\[50\\%\\]{left:50%}.isolate{isolation:isolate}.isolation-auto{isolation:auto}.z-10{z-index:10}.z-50{z-index:50}.z-\\[60\\]{z-index:60}.z-\\[2147483647\\]{z-index:2147483647}.\\!container{width:100%!important}@media (min-width:40rem){.\\!container{max-width:40rem!important}}@media (min-width:48rem){.\\!container{max-width:48rem!important}}@media (min-width:64rem){.\\!container{max-width:64rem!important}}@media (min-width:80rem){.\\!container{max-width:80rem!important}}@media (min-width:96rem){.\\!container{max-width:96rem!important}}.container{width:100%}@media (min-width:40rem){.container{max-width:40rem}}@media (min-width:48rem){.container{max-width:48rem}}@media (min-width:64rem){.container{max-width:64rem}}@media (min-width:80rem){.container{max-width:80rem}}@media (min-width:96rem){.container{max-width:96rem}}.m-0{margin:0}.mx-auto{margin-inline:auto}.my-2{margin-block:calc(var(--spacing) * 2)}.mt-1{margin-top:var(--spacing)}.mt-2{margin-top:calc(var(--spacing) * 2)}.mr-0{margin-right:0}.mr-0\\.5{margin-right:calc(var(--spacing) * .5)}.mr-1{margin-right:var(--spacing)}.mb-1{margin-bottom:var(--spacing)}.ml-2{margin-left:calc(var(--spacing) * 2)}.block{display:block}.contents{display:contents}.flex{display:flex}.flow-root{display:flow-root}.grid{display:grid}.hidden{display:none}.inline{display:inline}.inline-block{display:inline-block}.inline-flex{display:inline-flex}.inline-grid{display:inline-grid}.inline-table{display:inline-table}.list-item{display:list-item}.table{display:table}.table-caption{display:table-caption}.table-cell{display:table-cell}.table-column{display:table-column}.table-column-group{display:table-column-group}.table-footer-group{display:table-footer-group}.table-header-group{display:table-header-group}.table-row{display:table-row}.table-row-group{display:table-row-group}.h-1{height:var(--spacing)}.h-1\\.5{height:calc(var(--spacing) * 1.5)}.h-2{height:calc(var(--spacing) * 2)}.h-2\\.5{height:calc(var(--spacing) * 2.5)}.h-3{height:calc(var(--spacing) * 3)}.h-3\\.5{height:calc(var(--spacing) * 3.5)}.h-4{height:calc(var(--spacing) * 4)}.h-5{height:calc(var(--spacing) * 5)}.h-6{height:calc(var(--spacing) * 6)}.h-7{height:calc(var(--spacing) * 7)}.h-8{height:calc(var(--spacing) * 8)}.h-9{height:calc(var(--spacing) * 9)}.h-10{height:calc(var(--spacing) * 10)}.h-20{height:calc(var(--spacing) * 20)}.h-\\[1-9\\]{height:1-9}.h-\\[1px\\]{height:1px}.h-\\[100dvh\\]{height:100dvh}.h-full{height:100%}.h-screen{height:100vh}.max-h-\\[160px\\]{max-height:160px}.max-h-\\[180px\\]{max-height:180px}.max-h-\\[360px\\]{max-height:360px}.min-h-\\[100dvh\\]{min-height:100dvh}.w-2{width:calc(var(--spacing) * 2)}.w-2\\.5{width:calc(var(--spacing) * 2.5)}.w-3{width:calc(var(--spacing) * 3)}.w-3\\.5{width:calc(var(--spacing) * 3.5)}.w-4{width:calc(var(--spacing) * 4)}.w-5{width:calc(var(--spacing) * 5)}.w-6{width:calc(var(--spacing) * 6)}.w-7{width:calc(var(--spacing) * 7)}.w-8{width:calc(var(--spacing) * 8)}.w-10{width:calc(var(--spacing) * 10)}.w-14{width:calc(var(--spacing) * 14)}.w-\\[1px\\]{width:1px}.w-\\[350px\\]{width:350px}.w-\\[360px\\]{width:360px}.w-\\[calc\\(33\\%-1rem\\)\\]{width:calc(33% - 1rem)}.w-full{width:100%}.max-w-4xl{max-width:var(--container-4xl)}.max-w-5xl{max-width:var(--container-5xl)}.max-w-7xl{max-width:var(--container-7xl)}.max-w-\\[65ch\\]{max-width:65ch}.max-w-\\[260px\\]{max-width:260px}.max-w-\\[320px\\]{max-width:320px}.max-w-\\[340px\\]{max-width:340px}.max-w-\\[1400px\\]{max-width:1400px}.max-w-lg{max-width:var(--container-lg)}.max-w-prose{max-width:65ch}.flex-1{flex:1}.shrink{flex-shrink:1}.shrink-0{flex-shrink:0}.grow{flex-grow:1}.border-collapse{border-collapse:collapse}.translate-x-\\[-50\\%\\]{--tw-translate-x:-50%;translate:var(--tw-translate-x) var(--tw-translate-y)}.-translate-y-\\[1px\\]{--tw-translate-y:calc(1px * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-y-\\[-50\\%\\]{--tw-translate-y:-50%;translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-none{translate:none}.scale-3d{scale:var(--tw-scale-x) var(--tw-scale-y) var(--tw-scale-z)}.scale-\\[0\\.98\\]{scale:.98}.transform{transform:var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,)}.animate-bounce{animation:var(--animate-bounce)}.animate-ping{animation:var(--animate-ping)}.animate-pulse{animation:var(--animate-pulse)}.animate-spin{animation:var(--animate-spin)}.cursor-move{cursor:move}.cursor-pointer{cursor:pointer}.touch-pinch-zoom{--tw-pinch-zoom:pinch-zoom;touch-action:var(--tw-pan-x,) var(--tw-pan-y,) var(--tw-pinch-zoom,)}.touch-none{touch-action:none}.resize{resize:both}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.grid-cols-\\[auto_1fr\\]{grid-template-columns:auto 1fr}.grid-cols-\\[repeat\\(auto-fit\\,minmax\\(250px\\,1fr\\)\\)\\]{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}.grid-rows-2{grid-template-rows:repeat(2,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.justify-end{justify-content:flex-end}.gap-0{gap:0}.gap-0\\.5{gap:calc(var(--spacing) * .5)}.gap-1{gap:var(--spacing)}.gap-1\\.5{gap:calc(var(--spacing) * 1.5)}.gap-2{gap:calc(var(--spacing) * 2)}.gap-2\\.5{gap:calc(var(--spacing) * 2.5)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}.gap-6{gap:calc(var(--spacing) * 6)}:where(.space-y-1>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(var(--spacing) * var(--tw-space-y-reverse));margin-block-end:calc(var(--spacing) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-1\\.5>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 1.5) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 1.5) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-2>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-reverse>:not(:last-child)){--tw-space-y-reverse:1}:where(.space-x-2>:not(:last-child)){--tw-space-x-reverse:0;margin-inline-start:calc(calc(var(--spacing) * 2) * var(--tw-space-x-reverse));margin-inline-end:calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-x-reverse)))}:where(.space-x-reverse>:not(:last-child)){--tw-space-x-reverse:1}:where(.divide-x>:not(:last-child)){--tw-divide-x-reverse:0;border-inline-style:var(--tw-border-style);border-inline-start-width:calc(1px * var(--tw-divide-x-reverse));border-inline-end-width:calc(1px * calc(1 - var(--tw-divide-x-reverse)))}:where(.divide-y>:not(:last-child)){--tw-divide-y-reverse:0;border-bottom-style:var(--tw-border-style);border-top-style:var(--tw-border-style);border-top-width:calc(1px * var(--tw-divide-y-reverse));border-bottom-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)))}:where(.divide-y-reverse>:not(:last-child)){--tw-divide-y-reverse:1}.self-end{align-self:flex-end}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.rounded{border-radius:.25rem}.rounded-full{border-radius:3.40282e38px}.rounded-lg{border-radius:var(--radius)}.rounded-md{border-radius:calc(var(--radius) - 2px)}.rounded-sm{border-radius:calc(var(--radius) - 4px)}.rounded-xl{border-radius:calc(var(--radius) + 4px)}.rounded-s{border-start-start-radius:.25rem;border-end-start-radius:.25rem}.rounded-ss{border-start-start-radius:.25rem}.rounded-e{border-start-end-radius:.25rem;border-end-end-radius:.25rem}.rounded-se{border-start-end-radius:.25rem}.rounded-ee{border-end-end-radius:.25rem}.rounded-es{border-end-start-radius:.25rem}.rounded-t{border-top-left-radius:.25rem;border-top-right-radius:.25rem}.rounded-t-lg{border-top-left-radius:var(--radius);border-top-right-radius:var(--radius)}.rounded-l{border-top-left-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-tl{border-top-left-radius:.25rem}.rounded-r{border-top-right-radius:.25rem;border-bottom-right-radius:.25rem}.rounded-tr{border-top-right-radius:.25rem}.rounded-b{border-bottom-right-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-b-lg{border-bottom-right-radius:var(--radius);border-bottom-left-radius:var(--radius)}.rounded-br{border-bottom-right-radius:.25rem}.rounded-bl{border-bottom-left-radius:.25rem}.border{border-style:var(--tw-border-style);border-width:1px}.border-2{border-style:var(--tw-border-style);border-width:2px}.border-x{border-inline-style:var(--tw-border-style);border-inline-width:1px}.border-y{border-block-style:var(--tw-border-style);border-block-width:1px}.border-s{border-inline-start-style:var(--tw-border-style);border-inline-start-width:1px}.border-e{border-inline-end-style:var(--tw-border-style);border-inline-end-width:1px}.border-bs{border-block-start-style:var(--tw-border-style);border-block-start-width:1px}.border-be{border-block-end-style:var(--tw-border-style);border-block-end-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-l{border-left-style:var(--tw-border-style);border-left-width:1px}.border-amber-500{border-color:var(--color-amber-500)}.border-amber-500\\/30{border-color:#f99c004d}@supports (color:color-mix(in lab, red, red)){.border-amber-500\\/30{border-color:color-mix(in oklab, var(--color-amber-500) 30%, transparent)}}.border-blue-500{border-color:var(--color-blue-500)}.border-blue-500\\/20{border-color:#3080ff33}@supports (color:color-mix(in lab, red, red)){.border-blue-500\\/20{border-color:color-mix(in oklab, var(--color-blue-500) 20%, transparent)}}.border-blue-500\\/30{border-color:#3080ff4d}@supports (color:color-mix(in lab, red, red)){.border-blue-500\\/30{border-color:color-mix(in oklab, var(--color-blue-500) 30%, transparent)}}.border-border,.border-border\\/50{border-color:var(--border)}@supports (color:color-mix(in lab, red, red)){.border-border\\/50{border-color:color-mix(in oklab, var(--border) 50%, transparent)}}.border-cyan-500{border-color:var(--color-cyan-500)}.border-cyan-500\\/30{border-color:#00b7d74d}@supports (color:color-mix(in lab, red, red)){.border-cyan-500\\/30{border-color:color-mix(in oklab, var(--color-cyan-500) 30%, transparent)}}.border-emerald-500{border-color:var(--color-emerald-500)}.border-emerald-500\\/20{border-color:#00bb7f33}@supports (color:color-mix(in lab, red, red)){.border-emerald-500\\/20{border-color:color-mix(in oklab, var(--color-emerald-500) 20%, transparent)}}.border-emerald-500\\/30{border-color:#00bb7f4d}@supports (color:color-mix(in lab, red, red)){.border-emerald-500\\/30{border-color:color-mix(in oklab, var(--color-emerald-500) 30%, transparent)}}.border-emerald-500\\/40{border-color:#00bb7f66}@supports (color:color-mix(in lab, red, red)){.border-emerald-500\\/40{border-color:color-mix(in oklab, var(--color-emerald-500) 40%, transparent)}}.border-primary,.border-primary\\/50{border-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.border-primary\\/50{border-color:color-mix(in oklab, var(--primary) 50%, transparent)}}.border-purple-500{border-color:var(--color-purple-500)}.border-purple-500\\/20{border-color:#ac4bff33}@supports (color:color-mix(in lab, red, red)){.border-purple-500\\/20{border-color:color-mix(in oklab, var(--color-purple-500) 20%, transparent)}}.border-purple-500\\/30{border-color:#ac4bff4d}@supports (color:color-mix(in lab, red, red)){.border-purple-500\\/30{border-color:color-mix(in oklab, var(--color-purple-500) 30%, transparent)}}.border-red-500{border-color:var(--color-red-500)}.border-red-900{border-color:var(--color-red-900)}.border-red-900\\/50{border-color:#82181a80}@supports (color:color-mix(in lab, red, red)){.border-red-900\\/50{border-color:color-mix(in oklab, var(--color-red-900) 50%, transparent)}}.border-slate-700{border-color:var(--color-slate-700)}.border-slate-700\\/50{border-color:#31415880}@supports (color:color-mix(in lab, red, red)){.border-slate-700\\/50{border-color:color-mix(in oklab, var(--color-slate-700) 50%, transparent)}}.border-slate-700\\/60{border-color:#31415899}@supports (color:color-mix(in lab, red, red)){.border-slate-700\\/60{border-color:color-mix(in oklab, var(--color-slate-700) 60%, transparent)}}.border-slate-700\\/80{border-color:#314158cc}@supports (color:color-mix(in lab, red, red)){.border-slate-700\\/80{border-color:color-mix(in oklab, var(--color-slate-700) 80%, transparent)}}.border-slate-800{border-color:var(--color-slate-800)}.border-slate-800\\/40{border-color:#1d293d66}@supports (color:color-mix(in lab, red, red)){.border-slate-800\\/40{border-color:color-mix(in oklab, var(--color-slate-800) 40%, transparent)}}.border-slate-800\\/60{border-color:#1d293d99}@supports (color:color-mix(in lab, red, red)){.border-slate-800\\/60{border-color:color-mix(in oklab, var(--color-slate-800) 60%, transparent)}}.border-slate-800\\/80{border-color:#1d293dcc}@supports (color:color-mix(in lab, red, red)){.border-slate-800\\/80{border-color:color-mix(in oklab, var(--color-slate-800) 80%, transparent)}}.border-slate-900{border-color:var(--color-slate-900)}.border-transparent{border-color:#0000}.border-white{border-color:var(--color-white)}.border-white\\/10{border-color:#ffffff1a}@supports (color:color-mix(in lab, red, red)){.border-white\\/10{border-color:color-mix(in oklab, var(--color-white) 10%, transparent)}}.border-zinc-200{border-color:var(--color-zinc-200)}.bg-amber-50{background-color:var(--color-amber-50)}.bg-amber-500{background-color:var(--color-amber-500)}.bg-amber-500\\/10{background-color:#f99c001a}@supports (color:color-mix(in lab, red, red)){.bg-amber-500\\/10{background-color:color-mix(in oklab, var(--color-amber-500) 10%, transparent)}}.bg-amber-600{background-color:var(--color-amber-600)}.bg-black{background-color:var(--color-black)}.bg-black\\/20{background-color:#0003}@supports (color:color-mix(in lab, red, red)){.bg-black\\/20{background-color:color-mix(in oklab, var(--color-black) 20%, transparent)}}.bg-black\\/70{background-color:#000000b3}@supports (color:color-mix(in lab, red, red)){.bg-black\\/70{background-color:color-mix(in oklab, var(--color-black) 70%, transparent)}}.bg-blue-500{background-color:var(--color-blue-500)}.bg-blue-500\\/10{background-color:#3080ff1a}@supports (color:color-mix(in lab, red, red)){.bg-blue-500\\/10{background-color:color-mix(in oklab, var(--color-blue-500) 10%, transparent)}}.bg-blue-600{background-color:var(--color-blue-600)}.bg-blue-950{background-color:var(--color-blue-950)}.bg-blue-950\\/40{background-color:#16245666}@supports (color:color-mix(in lab, red, red)){.bg-blue-950\\/40{background-color:color-mix(in oklab, var(--color-blue-950) 40%, transparent)}}.bg-border{background-color:var(--border)}.bg-card{background-color:var(--card)}.bg-cyan-950{background-color:var(--color-cyan-950)}.bg-cyan-950\\/40{background-color:#05334566}@supports (color:color-mix(in lab, red, red)){.bg-cyan-950\\/40{background-color:color-mix(in oklab, var(--color-cyan-950) 40%, transparent)}}.bg-destructive{background-color:var(--destructive)}.bg-emerald-400{background-color:var(--color-emerald-400)}.bg-emerald-500{background-color:var(--color-emerald-500)}.bg-emerald-500\\/10{background-color:#00bb7f1a}@supports (color:color-mix(in lab, red, red)){.bg-emerald-500\\/10{background-color:color-mix(in oklab, var(--color-emerald-500) 10%, transparent)}}.bg-emerald-600{background-color:var(--color-emerald-600)}.bg-emerald-700{background-color:var(--color-emerald-700)}.bg-emerald-700\\/60{background-color:#00795699}@supports (color:color-mix(in lab, red, red)){.bg-emerald-700\\/60{background-color:color-mix(in oklab, var(--color-emerald-700) 60%, transparent)}}.bg-emerald-950{background-color:var(--color-emerald-950)}.bg-emerald-950\\/40{background-color:#002c2266}@supports (color:color-mix(in lab, red, red)){.bg-emerald-950\\/40{background-color:color-mix(in oklab, var(--color-emerald-950) 40%, transparent)}}.bg-gray-200{background-color:var(--color-gray-200)}.bg-primary{background-color:var(--primary)}.bg-purple-500{background-color:var(--color-purple-500)}.bg-purple-500\\/10{background-color:#ac4bff1a}@supports (color:color-mix(in lab, red, red)){.bg-purple-500\\/10{background-color:color-mix(in oklab, var(--color-purple-500) 10%, transparent)}}.bg-purple-950{background-color:var(--color-purple-950)}.bg-purple-950\\/40{background-color:#3c036666}@supports (color:color-mix(in lab, red, red)){.bg-purple-950\\/40{background-color:color-mix(in oklab, var(--color-purple-950) 40%, transparent)}}.bg-red-950{background-color:var(--color-red-950)}.bg-red-950\\/30{background-color:#4608094d}@supports (color:color-mix(in lab, red, red)){.bg-red-950\\/30{background-color:color-mix(in oklab, var(--color-red-950) 30%, transparent)}}.bg-secondary{background-color:var(--secondary)}.bg-slate-500{background-color:var(--color-slate-500)}.bg-slate-700{background-color:var(--color-slate-700)}.bg-slate-800{background-color:var(--color-slate-800)}.bg-slate-800\\/60{background-color:#1d293d99}@supports (color:color-mix(in lab, red, red)){.bg-slate-800\\/60{background-color:color-mix(in oklab, var(--color-slate-800) 60%, transparent)}}.bg-slate-900{background-color:var(--color-slate-900)}.bg-slate-900\\/60{background-color:#0f172b99}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/60{background-color:color-mix(in oklab, var(--color-slate-900) 60%, transparent)}}.bg-slate-900\\/80{background-color:#0f172bcc}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/80{background-color:color-mix(in oklab, var(--color-slate-900) 80%, transparent)}}.bg-slate-900\\/90{background-color:#0f172be6}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/90{background-color:color-mix(in oklab, var(--color-slate-900) 90%, transparent)}}.bg-slate-950{background-color:var(--color-slate-950)}.bg-slate-950\\/40{background-color:#02061866}@supports (color:color-mix(in lab, red, red)){.bg-slate-950\\/40{background-color:color-mix(in oklab, var(--color-slate-950) 40%, transparent)}}.bg-slate-950\\/80{background-color:#020618cc}@supports (color:color-mix(in lab, red, red)){.bg-slate-950\\/80{background-color:color-mix(in oklab, var(--color-slate-950) 80%, transparent)}}.bg-slate-950\\/95{background-color:#020618f2}@supports (color:color-mix(in lab, red, red)){.bg-slate-950\\/95{background-color:color-mix(in oklab, var(--color-slate-950) 95%, transparent)}}.bg-transparent{background-color:#0000}.bg-white{background-color:var(--color-white)}.bg-zinc-200{background-color:var(--color-zinc-200)}.bg-zinc-900{background-color:var(--color-zinc-900)}.bg-zinc-950{background-color:var(--color-zinc-950)}.bg-repeat{background-repeat:repeat}.mask-no-clip{-webkit-mask-clip:no-clip;mask-clip:no-clip}.mask-repeat{-webkit-mask-repeat:repeat;mask-repeat:repeat}.fill-current{fill:currentColor}.p-0{padding:0}.p-0\\.5{padding:calc(var(--spacing) * .5)}.p-2{padding:calc(var(--spacing) * 2)}.p-2\\.5{padding:calc(var(--spacing) * 2.5)}.p-3{padding:calc(var(--spacing) * 3)}.p-4{padding:calc(var(--spacing) * 4)}.p-6{padding:calc(var(--spacing) * 6)}.px-1{padding-inline:var(--spacing)}.px-1\\.5{padding-inline:calc(var(--spacing) * 1.5)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-2\\.5{padding-inline:calc(var(--spacing) * 2.5)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.py-0{padding-block:0}.py-0\\.5{padding-block:calc(var(--spacing) * .5)}.py-1{padding-block:var(--spacing)}.py-1\\.5{padding-block:calc(var(--spacing) * 1.5)}.py-2{padding-block:calc(var(--spacing) * 2)}.py-8{padding-block:calc(var(--spacing) * 8)}.py-16{padding-block:calc(var(--spacing) * 16)}.py-24{padding-block:calc(var(--spacing) * 24)}.py-32{padding-block:calc(var(--spacing) * 32)}.py-48{padding-block:calc(var(--spacing) * 48)}.pt-0{padding-top:0}.pt-0\\.5{padding-top:calc(var(--spacing) * .5)}.pt-1{padding-top:var(--spacing)}.pt-2{padding-top:calc(var(--spacing) * 2)}.pt-3{padding-top:calc(var(--spacing) * 3)}.pt-24{padding-top:calc(var(--spacing) * 24)}.pr-1{padding-right:var(--spacing)}.pb-0{padding-bottom:0}.pb-0\\.5{padding-bottom:calc(var(--spacing) * .5)}.pb-1{padding-bottom:var(--spacing)}.pb-2{padding-bottom:calc(var(--spacing) * 2)}.pb-3{padding-bottom:calc(var(--spacing) * 3)}.pl-2{padding-left:calc(var(--spacing) * 2)}.text-center{text-align:center}.text-left{text-align:left}.font-mono{font-family:var(--font-mono)}.font-sans{font-family:var(--font-sans)}.text-4xl{font-size:var(--text-4xl);line-height:var(--tw-leading,var(--text-4xl--line-height))}.text-6xl{font-size:var(--text-6xl);line-height:var(--tw-leading,var(--text-6xl--line-height))}.text-base{font-size:var(--text-base);line-height:var(--tw-leading,var(--text-base--line-height))}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.text-xs{font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}.text-\\[10\\.5px\\]{font-size:10.5px}.text-\\[10px\\]{font-size:10px}.text-\\[11px\\]{font-size:11px}.leading-\\[1\\.1\\]{--tw-leading:1.1;line-height:1.1}.leading-\\[1\\],.leading-none{--tw-leading:1;line-height:1}.leading-relaxed{--tw-leading:var(--leading-relaxed);line-height:var(--leading-relaxed)}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.font-normal{--tw-font-weight:var(--font-weight-normal);font-weight:var(--font-weight-normal)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.tracking-\\[0\\.18em\\]{--tw-tracking:.18em;letter-spacing:.18em}.tracking-\\[0\\.22em\\]{--tw-tracking:.22em;letter-spacing:.22em}.tracking-tight{--tw-tracking:var(--tracking-tight);letter-spacing:var(--tracking-tight)}.tracking-tighter{--tw-tracking:var(--tracking-tighter);letter-spacing:var(--tracking-tighter)}.tracking-wide{--tw-tracking:var(--tracking-wide);letter-spacing:var(--tracking-wide)}.tracking-wider{--tw-tracking:var(--tracking-wider);letter-spacing:var(--tracking-wider)}.text-wrap{text-wrap:wrap}.text-clip{text-overflow:clip}.text-ellipsis{text-overflow:ellipsis}.whitespace-nowrap{white-space:nowrap}.whitespace-pre-wrap{white-space:pre-wrap}.text-amber-300{color:var(--color-amber-300)}.text-amber-400{color:var(--color-amber-400)}.text-blue-300{color:var(--color-blue-300)}.text-blue-400{color:var(--color-blue-400)}.text-card-foreground{color:var(--card-foreground)}.text-cyan-300{color:var(--color-cyan-300)}.text-destructive-foreground{color:var(--destructive-foreground)}.text-emerald-300{color:var(--color-emerald-300)}.text-emerald-400{color:var(--color-emerald-400)}.text-foreground{color:var(--foreground)}.text-gray-600{color:var(--color-gray-600)}.text-gray-900{color:var(--color-gray-900)}.text-muted-foreground{color:var(--muted-foreground)}.text-orange-300{color:var(--color-orange-300)}.text-primary{color:var(--primary)}.text-primary-foreground{color:var(--primary-foreground)}.text-purple-300{color:var(--color-purple-300)}.text-purple-400{color:var(--color-purple-400)}.text-red-300{color:var(--color-red-300)}.text-secondary-foreground{color:var(--secondary-foreground)}.text-slate-100{color:var(--color-slate-100)}.text-slate-200{color:var(--color-slate-200)}.text-slate-300{color:var(--color-slate-300)}.text-slate-400{color:var(--color-slate-400)}.text-slate-500{color:var(--color-slate-500)}.text-white{color:var(--color-white)}.text-yellow-400{color:var(--color-yellow-400)}.text-zinc-900{color:var(--color-zinc-900)}.capitalize{text-transform:capitalize}.lowercase{text-transform:lowercase}.normal-case{text-transform:none}.uppercase{text-transform:uppercase}.italic{font-style:italic}.not-italic{font-style:normal}.diagonal-fractions{--tw-numeric-fraction:diagonal-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.lining-nums{--tw-numeric-figure:lining-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.oldstyle-nums{--tw-numeric-figure:oldstyle-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.ordinal{--tw-ordinal:ordinal;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.proportional-nums{--tw-numeric-spacing:proportional-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.slashed-zero{--tw-slashed-zero:slashed-zero;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.stacked-fractions{--tw-numeric-fraction:stacked-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.tabular-nums{--tw-numeric-spacing:tabular-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.normal-nums{font-variant-numeric:normal}.line-through{text-decoration-line:line-through}.no-underline{text-decoration-line:none}.overline{text-decoration-line:overline}.underline{text-decoration-line:underline}.underline-offset-4{text-underline-offset:4px}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.subpixel-antialiased{-webkit-font-smoothing:auto;-moz-osx-font-smoothing:auto}.opacity-60{opacity:.6}.opacity-70{opacity:.7}.opacity-75{opacity:.75}.shadow{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px var(--tw-shadow-color,#00000040);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-\\[inset_0_1px_0_rgba\\(255\\,255\\,255\\,0\\.1\\)\\]{--tw-shadow:inset 0 1px 0 var(--tw-shadow-color,#ffffff1a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px var(--tw-shadow-color,#0000001a), 0 4px 6px -4px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px var(--tw-shadow-color,#0000001a), 0 2px 4px -2px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px var(--tw-shadow-color,#0000001a), 0 8px 10px -6px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-xs{--tw-shadow:0 1px 2px 0 var(--tw-shadow-color,#0000000d);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-0{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.inset-ring{--tw-inset-ring-shadow:inset 0 0 0 1px var(--tw-inset-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-emerald-950{--tw-shadow-color:oklch(26.2% .051 172.552)}@supports (color:color-mix(in lab, red, red)){.shadow-emerald-950{--tw-shadow-color:color-mix(in oklab, var(--color-emerald-950) var(--tw-shadow-alpha), transparent)}}.shadow-emerald-950\\/40{--tw-shadow-color:#002c2266}@supports (color:color-mix(in lab, red, red)){.shadow-emerald-950\\/40{--tw-shadow-color:color-mix(in oklab, color-mix(in oklab, var(--color-emerald-950) 40%, transparent) var(--tw-shadow-alpha), transparent)}}.ring-offset-background{--tw-ring-offset-color:var(--background)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.blur{--tw-blur:blur(8px);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.drop-shadow{--tw-drop-shadow-size:drop-shadow(0 1px 2px var(--tw-drop-shadow-color,#0000001a)) drop-shadow(0 1px 1px var(--tw-drop-shadow-color,#0000000f));--tw-drop-shadow:drop-shadow(0 1px 2px #0000001a) drop-shadow(0 1px 1px #0000000f);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.grayscale{--tw-grayscale:grayscale(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.invert{--tw-invert:invert(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.sepia{--tw-sepia:sepia(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.filter{filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-blur-md{--tw-backdrop-blur:blur(var(--blur-md));-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-blur-xs{--tw-backdrop-blur:blur(var(--blur-xs));-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-grayscale{--tw-backdrop-grayscale:grayscale(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-invert{--tw-backdrop-invert:invert(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-sepia{--tw-backdrop-sepia:sepia(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-filter{-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.transition{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,opacity,box-shadow,transform,translate,scale,rotate,filter,-webkit-backdrop-filter,backdrop-filter,display,content-visibility,overlay,pointer-events;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-opacity{transition-property:opacity;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-transform{transition-property:transform,translate,scale,rotate;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.duration-150{--tw-duration:.15s;transition-duration:.15s}.duration-200{--tw-duration:.2s;transition-duration:.2s}.ease-in{--tw-ease:var(--ease-in);transition-timing-function:var(--ease-in)}.ease-in-out{--tw-ease:var(--ease-in-out);transition-timing-function:var(--ease-in-out)}.ease-out{--tw-ease:var(--ease-out);transition-timing-function:var(--ease-out)}.select-none{-webkit-user-select:none;user-select:none}.\\[file\\:line\\]{file:line}:where(.divide-x-reverse>:not(:last-child)){--tw-divide-x-reverse:1}.ring-inset{--tw-ring-inset:inset}.selection\\:bg-emerald-500\\/30 ::selection{background-color:#00bb7f4d}@supports (color:color-mix(in lab, red, red)){.selection\\:bg-emerald-500\\/30 ::selection{background-color:color-mix(in oklab, var(--color-emerald-500) 30%, transparent)}}.selection\\:bg-emerald-500\\/30::selection{background-color:#00bb7f4d}@supports (color:color-mix(in lab, red, red)){.selection\\:bg-emerald-500\\/30::selection{background-color:color-mix(in oklab, var(--color-emerald-500) 30%, transparent)}}@media (hover:hover){.hover\\:scale-105:hover{--tw-scale-x:105%;--tw-scale-y:105%;--tw-scale-z:105%;scale:var(--tw-scale-x) var(--tw-scale-y)}.hover\\:bg-accent:hover{background-color:var(--accent)}.hover\\:bg-amber-500:hover{background-color:var(--color-amber-500)}.hover\\:bg-blue-500:hover{background-color:var(--color-blue-500)}.hover\\:bg-emerald-500:hover{background-color:var(--color-emerald-500)}.hover\\:bg-emerald-600:hover{background-color:var(--color-emerald-600)}.hover\\:bg-red-600:hover{background-color:var(--color-red-600)}.hover\\:bg-slate-700:hover{background-color:var(--color-slate-700)}.hover\\:bg-slate-800:hover{background-color:var(--color-slate-800)}.hover\\:bg-slate-800\\/40:hover{background-color:#1d293d66}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-slate-800\\/40:hover{background-color:color-mix(in oklab, var(--color-slate-800) 40%, transparent)}}.hover\\:text-accent-foreground:hover{color:var(--accent-foreground)}.hover\\:text-red-400:hover{color:var(--color-red-400)}.hover\\:text-slate-100:hover{color:var(--color-slate-100)}.hover\\:text-white:hover{color:var(--color-white)}.hover\\:underline:hover{text-decoration-line:underline}.hover\\:opacity-100:hover{opacity:1}}.focus\\:ring-1:focus{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus\\:ring-ring:focus{--tw-ring-color:var(--ring)}.focus\\:outline-none:focus{--tw-outline-style:none;outline-style:none}.focus-visible\\:ring-1:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus-visible\\:ring-ring:focus-visible{--tw-ring-color:var(--ring)}.focus-visible\\:outline-none:focus-visible{--tw-outline-style:none;outline-style:none}.active\\:scale-\\[0\\.98\\]:active{scale:.98}.disabled\\:pointer-events-none:disabled{pointer-events:none}.disabled\\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\\:opacity-50:disabled{opacity:.5}.data-\\[state\\=active\\]\\:bg-card[data-state=active]{background-color:var(--card)}.data-\\[state\\=active\\]\\:text-foreground[data-state=active]{color:var(--foreground)}.data-\\[state\\=active\\]\\:shadow-sm[data-state=active]{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.data-\\[state\\=checked\\]\\:translate-x-3[data-state=checked]{--tw-translate-x:calc(var(--spacing) * 3);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=checked\\]\\:bg-primary[data-state=checked]{background-color:var(--primary)}.data-\\[state\\=unchecked\\]\\:translate-x-0[data-state=unchecked]{--tw-translate-x:0px;translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=unchecked\\]\\:bg-slate-700[data-state=unchecked]{background-color:var(--color-slate-700)}@media (min-width:40rem){.sm\\:justify-between{justify-content:space-between}}@media (min-width:48rem){.md\\:w-1\\/2{width:50%}.md\\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\\:text-5xl{font-size:var(--text-5xl);line-height:var(--tw-leading,var(--text-5xl--line-height))}.md\\:text-6xl{font-size:var(--text-6xl);line-height:var(--tw-leading,var(--text-6xl--line-height))}.md\\:text-7xl{font-size:var(--text-7xl);line-height:var(--tw-leading,var(--text-7xl--line-height))}}@media (min-width:64rem){.lg\\:w-1\\/3{width:33.3333%}.lg\\:text-6xl{font-size:var(--text-6xl);line-height:var(--tw-leading,var(--text-6xl--line-height))}}@media (prefers-color-scheme:dark){.dark\\:border-zinc-700{border-color:var(--color-zinc-700)}.dark\\:bg-zinc-900{background-color:var(--color-zinc-900)}.dark\\:bg-zinc-950{background-color:var(--color-zinc-950)}.dark\\:text-gray-100{color:var(--color-gray-100)}.dark\\:text-zinc-100{color:var(--color-zinc-100)}}}:root{--background:#0f172a;--foreground:#f8fafc;--card:#1e293b;--card-foreground:#f8fafc;--popover:#1e293b;--popover-foreground:#f8fafc;--primary:#10b981;--primary-foreground:#022c22;--secondary:#334155;--secondary-foreground:#f8fafc;--muted:#1e293b;--muted-foreground:#94a3b8;--accent:#334155;--accent-foreground:#f8fafc;--destructive:#ef4444;--destructive-foreground:#fff;--border:#334155;--input:#334155;--ring:#10b981;--radius:.5rem}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-scale-x{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-y{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-z{syntax:"*";inherits:false;initial-value:1}@property --tw-rotate-x{syntax:"*";inherits:false}@property --tw-rotate-y{syntax:"*";inherits:false}@property --tw-rotate-z{syntax:"*";inherits:false}@property --tw-skew-x{syntax:"*";inherits:false}@property --tw-skew-y{syntax:"*";inherits:false}@property --tw-pan-x{syntax:"*";inherits:false}@property --tw-pan-y{syntax:"*";inherits:false}@property --tw-pinch-zoom{syntax:"*";inherits:false}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-space-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-divide-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-divide-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-tracking{syntax:"*";inherits:false}@property --tw-ordinal{syntax:"*";inherits:false}@property --tw-slashed-zero{syntax:"*";inherits:false}@property --tw-numeric-figure{syntax:"*";inherits:false}@property --tw-numeric-spacing{syntax:"*";inherits:false}@property --tw-numeric-fraction{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-blur{syntax:"*";inherits:false}@property --tw-brightness{syntax:"*";inherits:false}@property --tw-contrast{syntax:"*";inherits:false}@property --tw-grayscale{syntax:"*";inherits:false}@property --tw-hue-rotate{syntax:"*";inherits:false}@property --tw-invert{syntax:"*";inherits:false}@property --tw-opacity{syntax:"*";inherits:false}@property --tw-saturate{syntax:"*";inherits:false}@property --tw-sepia{syntax:"*";inherits:false}@property --tw-drop-shadow{syntax:"*";inherits:false}@property --tw-drop-shadow-color{syntax:"*";inherits:false}@property --tw-drop-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-drop-shadow-size{syntax:"*";inherits:false}@property --tw-backdrop-blur{syntax:"*";inherits:false}@property --tw-backdrop-brightness{syntax:"*";inherits:false}@property --tw-backdrop-contrast{syntax:"*";inherits:false}@property --tw-backdrop-grayscale{syntax:"*";inherits:false}@property --tw-backdrop-hue-rotate{syntax:"*";inherits:false}@property --tw-backdrop-invert{syntax:"*";inherits:false}@property --tw-backdrop-opacity{syntax:"*";inherits:false}@property --tw-backdrop-saturate{syntax:"*";inherits:false}@property --tw-backdrop-sepia{syntax:"*";inherits:false}@property --tw-duration{syntax:"*";inherits:false}@property --tw-ease{syntax:"*";inherits:false}@keyframes spin{to{transform:rotate(360deg)}}@keyframes ping{75%,to{opacity:0;transform:scale(2)}}@keyframes pulse{50%{opacity:.5}}@keyframes bounce{0%,to{animation-timing-function:cubic-bezier(.8,0,1,1);transform:translateY(-25%)}50%{animation-timing-function:cubic-bezier(0,0,.2,1);transform:none}}';
+  var tailwind_compiled_default = `/*! tailwindcss v4.3.3 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-scale-x:1;--tw-scale-y:1;--tw-scale-z:1;--tw-rotate-x:initial;--tw-rotate-y:initial;--tw-rotate-z:initial;--tw-skew-x:initial;--tw-skew-y:initial;--tw-pan-x:initial;--tw-pan-y:initial;--tw-pinch-zoom:initial;--tw-space-y-reverse:0;--tw-space-x-reverse:0;--tw-divide-x-reverse:0;--tw-border-style:solid;--tw-divide-y-reverse:0;--tw-leading:initial;--tw-font-weight:initial;--tw-tracking:initial;--tw-ordinal:initial;--tw-slashed-zero:initial;--tw-numeric-figure:initial;--tw-numeric-spacing:initial;--tw-numeric-fraction:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid;--tw-blur:initial;--tw-brightness:initial;--tw-contrast:initial;--tw-grayscale:initial;--tw-hue-rotate:initial;--tw-invert:initial;--tw-opacity:initial;--tw-saturate:initial;--tw-sepia:initial;--tw-drop-shadow:initial;--tw-drop-shadow-color:initial;--tw-drop-shadow-alpha:100%;--tw-drop-shadow-size:initial;--tw-backdrop-blur:initial;--tw-backdrop-brightness:initial;--tw-backdrop-contrast:initial;--tw-backdrop-grayscale:initial;--tw-backdrop-hue-rotate:initial;--tw-backdrop-invert:initial;--tw-backdrop-opacity:initial;--tw-backdrop-saturate:initial;--tw-backdrop-sepia:initial;--tw-duration:initial;--tw-ease:initial;--tw-content:""}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-red-300:oklch(80.8% .114 19.571);--color-red-400:oklch(70.4% .191 22.216);--color-red-500:oklch(63.7% .237 25.331);--color-red-600:oklch(57.7% .245 27.325);--color-red-900:oklch(39.6% .141 25.723);--color-red-950:oklch(25.8% .092 26.042);--color-orange-300:oklch(83.7% .128 66.29);--color-amber-50:oklch(98.7% .022 95.277);--color-amber-300:oklch(87.9% .169 91.605);--color-amber-400:oklch(82.8% .189 84.429);--color-amber-500:oklch(76.9% .188 70.08);--color-amber-600:oklch(66.6% .179 58.318);--color-amber-950:oklch(27.9% .077 45.635);--color-yellow-400:oklch(85.2% .199 91.936);--color-emerald-300:oklch(84.5% .143 164.978);--color-emerald-400:oklch(76.5% .177 163.223);--color-emerald-500:oklch(69.6% .17 162.48);--color-emerald-600:oklch(59.6% .145 163.225);--color-emerald-700:oklch(50.8% .118 165.612);--color-emerald-950:oklch(26.2% .051 172.552);--color-cyan-300:oklch(86.5% .127 207.078);--color-cyan-500:oklch(71.5% .143 215.221);--color-cyan-950:oklch(30.2% .056 229.695);--color-blue-300:oklch(80.9% .105 251.813);--color-blue-400:oklch(70.7% .165 254.624);--color-blue-500:oklch(62.3% .214 259.815);--color-blue-600:oklch(54.6% .245 262.881);--color-blue-950:oklch(28.2% .091 267.935);--color-indigo-500:oklch(58.5% .233 277.117);--color-purple-300:oklch(82.7% .119 306.383);--color-purple-400:oklch(71.4% .203 305.504);--color-purple-500:oklch(62.7% .265 303.9);--color-purple-950:oklch(29.1% .149 302.717);--color-slate-50:oklch(98.4% .003 247.858);--color-slate-100:oklch(96.8% .007 247.896);--color-slate-200:oklch(92.9% .013 255.508);--color-slate-300:oklch(86.9% .022 252.894);--color-slate-400:oklch(70.4% .04 256.788);--color-slate-500:oklch(55.4% .046 257.417);--color-slate-600:oklch(44.6% .043 257.281);--color-slate-700:oklch(37.2% .044 257.287);--color-slate-800:oklch(27.9% .041 260.031);--color-slate-900:oklch(20.8% .042 265.755);--color-slate-950:oklch(12.9% .042 264.695);--color-gray-100:oklch(96.7% .003 264.542);--color-gray-200:oklch(92.8% .006 264.531);--color-gray-600:oklch(44.6% .03 256.802);--color-gray-900:oklch(21% .034 264.665);--color-zinc-100:oklch(96.7% .001 286.375);--color-zinc-200:oklch(92% .004 286.32);--color-zinc-700:oklch(37% .013 285.805);--color-zinc-900:oklch(21% .006 285.885);--color-zinc-950:oklch(14.1% .005 285.823);--color-black:#000;--color-white:#fff;--spacing:.25rem;--container-lg:32rem;--container-4xl:56rem;--container-5xl:64rem;--container-7xl:80rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-base:1rem;--text-base--line-height:calc(1.5 / 1);--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--text-4xl:2.25rem;--text-4xl--line-height:calc(2.5 / 2.25);--text-5xl:3rem;--text-5xl--line-height:1;--text-6xl:3.75rem;--text-6xl--line-height:1;--text-7xl:4.5rem;--text-7xl--line-height:1;--font-weight-normal:400;--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--tracking-tighter:-.05em;--tracking-tight:-.025em;--tracking-wide:.025em;--tracking-wider:.05em;--leading-relaxed:1.625;--radius-xs:.125rem;--ease-in:cubic-bezier(.4, 0, 1, 1);--ease-out:cubic-bezier(0, 0, .2, 1);--ease-in-out:cubic-bezier(.4, 0, .2, 1);--animate-spin:spin 1s linear infinite;--animate-ping:ping 1s cubic-bezier(0, 0, .2, 1) infinite;--animate-pulse:pulse 2s cubic-bezier(.4, 0, .6, 1) infinite;--animate-bounce:bounce 1s infinite;--blur-xs:4px;--blur-md:12px;--blur-xl:24px;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono);--color-primary:var(--primary)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.\\@container\\/card{container:card/inline-size}.\\@container\\/card-header{container:card-header/inline-size}.\\@container{container-type:inline-size}.pointer-events-none{pointer-events:none}.collapse{visibility:collapse}.invisible{visibility:hidden}.visible{visibility:visible}.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.not-sr-only{clip-path:none;white-space:normal;width:auto;height:auto;margin:0;padding:0;position:static;overflow:visible}.absolute{position:absolute}.fixed{position:fixed}.relative{position:relative}.static{position:static}.sticky{position:sticky}.-inset-1{inset:calc(var(--spacing) * -1)}.inset-0{inset:0}.-top-0{top:0}.-top-0\\.5{top:calc(var(--spacing) * -.5)}.top-0{top:0}.top-3{top:calc(var(--spacing) * 3)}.top-4{top:calc(var(--spacing) * 4)}.top-\\[50\\%\\]{top:50%}.-right-0{right:0}.-right-0\\.5{right:calc(var(--spacing) * -.5)}.right-3{right:calc(var(--spacing) * 3)}.right-4{right:calc(var(--spacing) * 4)}.left-0{left:0}.left-\\[50\\%\\]{left:50%}.isolate{isolation:isolate}.isolation-auto{isolation:auto}.z-10{z-index:10}.z-50{z-index:50}.z-\\[60\\]{z-index:60}.z-\\[2147483647\\]{z-index:2147483647}.col-start-2{grid-column-start:2}.row-span-2{grid-row:span 2/span 2}.row-start-1{grid-row-start:1}.\\!container{width:100%!important}@media (min-width:40rem){.\\!container{max-width:40rem!important}}@media (min-width:48rem){.\\!container{max-width:48rem!important}}@media (min-width:64rem){.\\!container{max-width:64rem!important}}@media (min-width:80rem){.\\!container{max-width:80rem!important}}@media (min-width:96rem){.\\!container{max-width:96rem!important}}.container{width:100%}@media (min-width:40rem){.container{max-width:40rem}}@media (min-width:48rem){.container{max-width:48rem}}@media (min-width:64rem){.container{max-width:64rem}}@media (min-width:80rem){.container{max-width:80rem}}@media (min-width:96rem){.container{max-width:96rem}}.m-0{margin:0}.mx-auto{margin-inline:auto}.my-2{margin-block:calc(var(--spacing) * 2)}.mt-1{margin-top:var(--spacing)}.mt-1\\.5{margin-top:calc(var(--spacing) * 1.5)}.mt-2{margin-top:calc(var(--spacing) * 2)}.mt-2\\.5{margin-top:calc(var(--spacing) * 2.5)}.mr-0{margin-right:0}.mr-0\\.5{margin-right:calc(var(--spacing) * .5)}.mr-1{margin-right:var(--spacing)}.mr-1\\.5{margin-right:calc(var(--spacing) * 1.5)}.mb-1{margin-bottom:var(--spacing)}.ml-0\\.5{margin-left:calc(var(--spacing) * .5)}.ml-2{margin-left:calc(var(--spacing) * 2)}.block{display:block}.contents{display:contents}.flex{display:flex}.flow-root{display:flow-root}.grid{display:grid}.hidden{display:none}.inline{display:inline}.inline-block{display:inline-block}.inline-flex{display:inline-flex}.inline-grid{display:inline-grid}.inline-table{display:inline-table}.list-item{display:list-item}.table{display:table}.table-caption{display:table-caption}.table-cell{display:table-cell}.table-column{display:table-column}.table-column-group{display:table-column-group}.table-footer-group{display:table-footer-group}.table-header-group{display:table-header-group}.table-row{display:table-row}.table-row-group{display:table-row-group}.size-4{width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.size-6{width:calc(var(--spacing) * 6);height:calc(var(--spacing) * 6)}.size-8{width:calc(var(--spacing) * 8);height:calc(var(--spacing) * 8)}.size-9{width:calc(var(--spacing) * 9);height:calc(var(--spacing) * 9)}.size-10{width:calc(var(--spacing) * 10);height:calc(var(--spacing) * 10)}.h-1{height:var(--spacing)}.h-1\\.5{height:calc(var(--spacing) * 1.5)}.h-2{height:calc(var(--spacing) * 2)}.h-2\\.5{height:calc(var(--spacing) * 2.5)}.h-3{height:calc(var(--spacing) * 3)}.h-3\\.5{height:calc(var(--spacing) * 3.5)}.h-4{height:calc(var(--spacing) * 4)}.h-4\\.5{height:calc(var(--spacing) * 4.5)}.h-5{height:calc(var(--spacing) * 5)}.h-6{height:calc(var(--spacing) * 6)}.h-7{height:calc(var(--spacing) * 7)}.h-8{height:calc(var(--spacing) * 8)}.h-8\\.5{height:calc(var(--spacing) * 8.5)}.h-9{height:calc(var(--spacing) * 9)}.h-10{height:calc(var(--spacing) * 10)}.h-11{height:calc(var(--spacing) * 11)}.h-20{height:calc(var(--spacing) * 20)}.h-\\[1-9\\]{height:1-9}.h-\\[1px\\]{height:1px}.h-\\[100dvh\\]{height:100dvh}.h-\\[calc\\(100\\%-1px\\)\\]{height:calc(100% - 1px)}.h-full{height:100%}.h-screen{height:100vh}.max-h-\\[140px\\]{max-height:140px}.max-h-\\[160px\\]{max-height:160px}.max-h-\\[180px\\]{max-height:180px}.max-h-\\[360px\\]{max-height:360px}.max-h-\\[380px\\]{max-height:380px}.min-h-\\[100dvh\\]{min-height:100dvh}.w-2{width:calc(var(--spacing) * 2)}.w-2\\.5{width:calc(var(--spacing) * 2.5)}.w-3{width:calc(var(--spacing) * 3)}.w-3\\.5{width:calc(var(--spacing) * 3.5)}.w-4{width:calc(var(--spacing) * 4)}.w-4\\.5{width:calc(var(--spacing) * 4.5)}.w-5{width:calc(var(--spacing) * 5)}.w-6{width:calc(var(--spacing) * 6)}.w-7{width:calc(var(--spacing) * 7)}.w-8{width:calc(var(--spacing) * 8)}.w-8\\.5{width:calc(var(--spacing) * 8.5)}.w-9{width:calc(var(--spacing) * 9)}.w-10{width:calc(var(--spacing) * 10)}.w-11{width:calc(var(--spacing) * 11)}.w-14{width:calc(var(--spacing) * 14)}.w-16{width:calc(var(--spacing) * 16)}.w-20{width:calc(var(--spacing) * 20)}.w-\\[1px\\]{width:1px}.w-\\[350px\\]{width:350px}.w-\\[360px\\]{width:360px}.w-\\[380px\\]{width:380px}.w-\\[calc\\(33\\%-1rem\\)\\]{width:calc(33% - 1rem)}.w-fit{width:fit-content}.w-full{width:100%}.max-w-4xl{max-width:var(--container-4xl)}.max-w-5xl{max-width:var(--container-5xl)}.max-w-7xl{max-width:var(--container-7xl)}.max-w-\\[65ch\\]{max-width:65ch}.max-w-\\[200px\\]{max-width:200px}.max-w-\\[260px\\]{max-width:260px}.max-w-\\[270px\\]{max-width:270px}.max-w-\\[320px\\]{max-width:320px}.max-w-\\[340px\\]{max-width:340px}.max-w-\\[350px\\]{max-width:350px}.max-w-\\[1400px\\]{max-width:1400px}.max-w-\\[calc\\(100\\%-2rem\\)\\]{max-width:calc(100% - 2rem)}.max-w-lg{max-width:var(--container-lg)}.max-w-prose{max-width:65ch}.flex-1{flex:1}.shrink{flex-shrink:1}.shrink-0{flex-shrink:0}.grow{flex-grow:1}.border-collapse{border-collapse:collapse}.translate-x-\\[-50\\%\\]{--tw-translate-x:-50%;translate:var(--tw-translate-x) var(--tw-translate-y)}.-translate-y-\\[1px\\]{--tw-translate-y:calc(1px * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-y-0\\.5{--tw-translate-y:calc(var(--spacing) * .5);translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-y-\\[-50\\%\\]{--tw-translate-y:-50%;translate:var(--tw-translate-x) var(--tw-translate-y)}.translate-none{translate:none}.scale-3d{scale:var(--tw-scale-x) var(--tw-scale-y) var(--tw-scale-z)}.scale-\\[0\\.98\\]{scale:.98}.transform{transform:var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,)}.animate-bounce{animation:var(--animate-bounce)}.animate-ping{animation:var(--animate-ping)}.animate-pulse{animation:var(--animate-pulse)}.animate-spin{animation:var(--animate-spin)}.cursor-move{cursor:move}.cursor-pointer{cursor:pointer}.touch-pinch-zoom{--tw-pinch-zoom:pinch-zoom;touch-action:var(--tw-pan-x,) var(--tw-pan-y,) var(--tw-pinch-zoom,)}.touch-none{touch-action:none}.resize{resize:both}.auto-rows-min{grid-auto-rows:min-content}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.grid-cols-\\[auto_1fr\\]{grid-template-columns:auto 1fr}.grid-cols-\\[repeat\\(auto-fit\\,minmax\\(250px\\,1fr\\)\\)\\]{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}.grid-rows-2{grid-template-rows:repeat(2,minmax(0,1fr))}.grid-rows-\\[auto_auto\\]{grid-template-rows:auto auto}.flex-col{flex-direction:column}.flex-col-reverse{flex-direction:column-reverse}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.items-start{align-items:flex-start}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.justify-end{justify-content:flex-end}.gap-0{gap:0}.gap-0\\.5{gap:calc(var(--spacing) * .5)}.gap-1{gap:var(--spacing)}.gap-1\\.5{gap:calc(var(--spacing) * 1.5)}.gap-2{gap:calc(var(--spacing) * 2)}.gap-2\\.5{gap:calc(var(--spacing) * 2.5)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}.gap-6{gap:calc(var(--spacing) * 6)}:where(.space-y-1>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(var(--spacing) * var(--tw-space-y-reverse));margin-block-end:calc(var(--spacing) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-1\\.5>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 1.5) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 1.5) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-2>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-2\\.5>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 2.5) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 2.5) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-3>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-reverse>:not(:last-child)){--tw-space-y-reverse:1}:where(.space-x-2>:not(:last-child)){--tw-space-x-reverse:0;margin-inline-start:calc(calc(var(--spacing) * 2) * var(--tw-space-x-reverse));margin-inline-end:calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-x-reverse)))}:where(.space-x-reverse>:not(:last-child)){--tw-space-x-reverse:1}:where(.divide-x>:not(:last-child)){--tw-divide-x-reverse:0;border-inline-style:var(--tw-border-style);border-inline-start-width:calc(1px * var(--tw-divide-x-reverse));border-inline-end-width:calc(1px * calc(1 - var(--tw-divide-x-reverse)))}:where(.divide-y>:not(:last-child)){--tw-divide-y-reverse:0;border-bottom-style:var(--tw-border-style);border-top-style:var(--tw-border-style);border-top-width:calc(1px * var(--tw-divide-y-reverse));border-bottom-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)))}:where(.divide-y-reverse>:not(:last-child)){--tw-divide-y-reverse:1}.self-end{align-self:flex-end}.self-start{align-self:flex-start}.justify-self-end{justify-self:flex-end}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:calc(var(--radius) + 10px)}.rounded-full{border-radius:3.40282e38px}.rounded-lg{border-radius:var(--radius)}.rounded-md{border-radius:calc(var(--radius) - 2px)}.rounded-sm{border-radius:calc(var(--radius) - 4px)}.rounded-xl{border-radius:calc(var(--radius) + 6px)}.rounded-xs{border-radius:var(--radius-xs)}.rounded-s{border-start-start-radius:.25rem;border-end-start-radius:.25rem}.rounded-ss{border-start-start-radius:.25rem}.rounded-e{border-start-end-radius:.25rem;border-end-end-radius:.25rem}.rounded-se{border-start-end-radius:.25rem}.rounded-ee{border-end-end-radius:.25rem}.rounded-es{border-end-start-radius:.25rem}.rounded-t{border-top-left-radius:.25rem;border-top-right-radius:.25rem}.rounded-t-2xl{border-top-left-radius:calc(var(--radius) + 10px);border-top-right-radius:calc(var(--radius) + 10px)}.rounded-t-lg{border-top-left-radius:var(--radius);border-top-right-radius:var(--radius)}.rounded-t-xl{border-top-left-radius:calc(var(--radius) + 6px);border-top-right-radius:calc(var(--radius) + 6px)}.rounded-l{border-top-left-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-tl{border-top-left-radius:.25rem}.rounded-r{border-top-right-radius:.25rem;border-bottom-right-radius:.25rem}.rounded-tr{border-top-right-radius:.25rem}.rounded-b{border-bottom-right-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-b-lg{border-bottom-right-radius:var(--radius);border-bottom-left-radius:var(--radius)}.rounded-b-xl{border-bottom-right-radius:calc(var(--radius) + 6px);border-bottom-left-radius:calc(var(--radius) + 6px)}.rounded-br{border-bottom-right-radius:.25rem}.rounded-bl{border-bottom-left-radius:.25rem}.border{border-style:var(--tw-border-style);border-width:1px}.border-2{border-style:var(--tw-border-style);border-width:2px}.border-x{border-inline-style:var(--tw-border-style);border-inline-width:1px}.border-y{border-block-style:var(--tw-border-style);border-block-width:1px}.border-s{border-inline-start-style:var(--tw-border-style);border-inline-start-width:1px}.border-e{border-inline-end-style:var(--tw-border-style);border-inline-end-width:1px}.border-bs{border-block-start-style:var(--tw-border-style);border-block-start-width:1px}.border-be{border-block-end-style:var(--tw-border-style);border-block-end-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-l{border-left-style:var(--tw-border-style);border-left-width:1px}.border-l-2{border-left-style:var(--tw-border-style);border-left-width:2px}.border-amber-500{border-color:var(--color-amber-500)}.border-amber-500\\/30{border-color:#f99c004d}@supports (color:color-mix(in lab, red, red)){.border-amber-500\\/30{border-color:color-mix(in oklab, var(--color-amber-500) 30%, transparent)}}.border-blue-500{border-color:var(--color-blue-500)}.border-blue-500\\/20{border-color:#3080ff33}@supports (color:color-mix(in lab, red, red)){.border-blue-500\\/20{border-color:color-mix(in oklab, var(--color-blue-500) 20%, transparent)}}.border-blue-500\\/30{border-color:#3080ff4d}@supports (color:color-mix(in lab, red, red)){.border-blue-500\\/30{border-color:color-mix(in oklab, var(--color-blue-500) 30%, transparent)}}.border-border,.border-border\\/50{border-color:var(--border)}@supports (color:color-mix(in lab, red, red)){.border-border\\/50{border-color:color-mix(in oklab, var(--border) 50%, transparent)}}.border-cyan-500{border-color:var(--color-cyan-500)}.border-cyan-500\\/30{border-color:#00b7d74d}@supports (color:color-mix(in lab, red, red)){.border-cyan-500\\/30{border-color:color-mix(in oklab, var(--color-cyan-500) 30%, transparent)}}.border-emerald-500{border-color:var(--color-emerald-500)}.border-emerald-500\\/20{border-color:#00bb7f33}@supports (color:color-mix(in lab, red, red)){.border-emerald-500\\/20{border-color:color-mix(in oklab, var(--color-emerald-500) 20%, transparent)}}.border-emerald-500\\/30{border-color:#00bb7f4d}@supports (color:color-mix(in lab, red, red)){.border-emerald-500\\/30{border-color:color-mix(in oklab, var(--color-emerald-500) 30%, transparent)}}.border-emerald-500\\/40{border-color:#00bb7f66}@supports (color:color-mix(in lab, red, red)){.border-emerald-500\\/40{border-color:color-mix(in oklab, var(--color-emerald-500) 40%, transparent)}}.border-emerald-500\\/50{border-color:#00bb7f80}@supports (color:color-mix(in lab, red, red)){.border-emerald-500\\/50{border-color:color-mix(in oklab, var(--color-emerald-500) 50%, transparent)}}.border-primary,.border-primary\\/50{border-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.border-primary\\/50{border-color:color-mix(in oklab, var(--primary) 50%, transparent)}}.border-purple-500{border-color:var(--color-purple-500)}.border-purple-500\\/20{border-color:#ac4bff33}@supports (color:color-mix(in lab, red, red)){.border-purple-500\\/20{border-color:color-mix(in oklab, var(--color-purple-500) 20%, transparent)}}.border-purple-500\\/30{border-color:#ac4bff4d}@supports (color:color-mix(in lab, red, red)){.border-purple-500\\/30{border-color:color-mix(in oklab, var(--color-purple-500) 30%, transparent)}}.border-red-500{border-color:var(--color-red-500)}.border-red-900{border-color:var(--color-red-900)}.border-red-900\\/50{border-color:#82181a80}@supports (color:color-mix(in lab, red, red)){.border-red-900\\/50{border-color:color-mix(in oklab, var(--color-red-900) 50%, transparent)}}.border-slate-700{border-color:var(--color-slate-700)}.border-slate-700\\/50{border-color:#31415880}@supports (color:color-mix(in lab, red, red)){.border-slate-700\\/50{border-color:color-mix(in oklab, var(--color-slate-700) 50%, transparent)}}.border-slate-700\\/60{border-color:#31415899}@supports (color:color-mix(in lab, red, red)){.border-slate-700\\/60{border-color:color-mix(in oklab, var(--color-slate-700) 60%, transparent)}}.border-slate-700\\/80{border-color:#314158cc}@supports (color:color-mix(in lab, red, red)){.border-slate-700\\/80{border-color:color-mix(in oklab, var(--color-slate-700) 80%, transparent)}}.border-slate-800{border-color:var(--color-slate-800)}.border-slate-800\\/40{border-color:#1d293d66}@supports (color:color-mix(in lab, red, red)){.border-slate-800\\/40{border-color:color-mix(in oklab, var(--color-slate-800) 40%, transparent)}}.border-slate-800\\/60{border-color:#1d293d99}@supports (color:color-mix(in lab, red, red)){.border-slate-800\\/60{border-color:color-mix(in oklab, var(--color-slate-800) 60%, transparent)}}.border-slate-800\\/80{border-color:#1d293dcc}@supports (color:color-mix(in lab, red, red)){.border-slate-800\\/80{border-color:color-mix(in oklab, var(--color-slate-800) 80%, transparent)}}.border-slate-900{border-color:var(--color-slate-900)}.border-transparent{border-color:#0000}.border-white{border-color:var(--color-white)}.border-white\\/10{border-color:#ffffff1a}@supports (color:color-mix(in lab, red, red)){.border-white\\/10{border-color:color-mix(in oklab, var(--color-white) 10%, transparent)}}.border-zinc-200{border-color:var(--color-zinc-200)}.bg-amber-50{background-color:var(--color-amber-50)}.bg-amber-500{background-color:var(--color-amber-500)}.bg-amber-500\\/10{background-color:#f99c001a}@supports (color:color-mix(in lab, red, red)){.bg-amber-500\\/10{background-color:color-mix(in oklab, var(--color-amber-500) 10%, transparent)}}.bg-amber-600{background-color:var(--color-amber-600)}.bg-background{background-color:var(--background)}.bg-black{background-color:var(--color-black)}.bg-black\\/20{background-color:#0003}@supports (color:color-mix(in lab, red, red)){.bg-black\\/20{background-color:color-mix(in oklab, var(--color-black) 20%, transparent)}}.bg-black\\/60{background-color:#0009}@supports (color:color-mix(in lab, red, red)){.bg-black\\/60{background-color:color-mix(in oklab, var(--color-black) 60%, transparent)}}.bg-black\\/70{background-color:#000000b3}@supports (color:color-mix(in lab, red, red)){.bg-black\\/70{background-color:color-mix(in oklab, var(--color-black) 70%, transparent)}}.bg-blue-500{background-color:var(--color-blue-500)}.bg-blue-500\\/10{background-color:#3080ff1a}@supports (color:color-mix(in lab, red, red)){.bg-blue-500\\/10{background-color:color-mix(in oklab, var(--color-blue-500) 10%, transparent)}}.bg-blue-600{background-color:var(--color-blue-600)}.bg-blue-950{background-color:var(--color-blue-950)}.bg-blue-950\\/40{background-color:#16245666}@supports (color:color-mix(in lab, red, red)){.bg-blue-950\\/40{background-color:color-mix(in oklab, var(--color-blue-950) 40%, transparent)}}.bg-border{background-color:var(--border)}.bg-card{background-color:var(--card)}.bg-cyan-950{background-color:var(--color-cyan-950)}.bg-cyan-950\\/40{background-color:#05334566}@supports (color:color-mix(in lab, red, red)){.bg-cyan-950\\/40{background-color:color-mix(in oklab, var(--color-cyan-950) 40%, transparent)}}.bg-destructive{background-color:var(--destructive)}.bg-emerald-400{background-color:var(--color-emerald-400)}.bg-emerald-500{background-color:var(--color-emerald-500)}.bg-emerald-500\\/10{background-color:#00bb7f1a}@supports (color:color-mix(in lab, red, red)){.bg-emerald-500\\/10{background-color:color-mix(in oklab, var(--color-emerald-500) 10%, transparent)}}.bg-emerald-500\\/20{background-color:#00bb7f33}@supports (color:color-mix(in lab, red, red)){.bg-emerald-500\\/20{background-color:color-mix(in oklab, var(--color-emerald-500) 20%, transparent)}}.bg-emerald-600{background-color:var(--color-emerald-600)}.bg-emerald-700{background-color:var(--color-emerald-700)}.bg-emerald-700\\/60{background-color:#00795699}@supports (color:color-mix(in lab, red, red)){.bg-emerald-700\\/60{background-color:color-mix(in oklab, var(--color-emerald-700) 60%, transparent)}}.bg-emerald-950{background-color:var(--color-emerald-950)}.bg-emerald-950\\/20{background-color:#002c2233}@supports (color:color-mix(in lab, red, red)){.bg-emerald-950\\/20{background-color:color-mix(in oklab, var(--color-emerald-950) 20%, transparent)}}.bg-emerald-950\\/40{background-color:#002c2266}@supports (color:color-mix(in lab, red, red)){.bg-emerald-950\\/40{background-color:color-mix(in oklab, var(--color-emerald-950) 40%, transparent)}}.bg-gray-200{background-color:var(--color-gray-200)}.bg-muted{background-color:var(--muted)}.bg-primary{background-color:var(--primary)}.bg-purple-500{background-color:var(--color-purple-500)}.bg-purple-500\\/10{background-color:#ac4bff1a}@supports (color:color-mix(in lab, red, red)){.bg-purple-500\\/10{background-color:color-mix(in oklab, var(--color-purple-500) 10%, transparent)}}.bg-purple-950{background-color:var(--color-purple-950)}.bg-purple-950\\/40{background-color:#3c036666}@supports (color:color-mix(in lab, red, red)){.bg-purple-950\\/40{background-color:color-mix(in oklab, var(--color-purple-950) 40%, transparent)}}.bg-red-500{background-color:var(--color-red-500)}.bg-red-950{background-color:var(--color-red-950)}.bg-red-950\\/30{background-color:#4608094d}@supports (color:color-mix(in lab, red, red)){.bg-red-950\\/30{background-color:color-mix(in oklab, var(--color-red-950) 30%, transparent)}}.bg-secondary{background-color:var(--secondary)}.bg-slate-50{background-color:var(--color-slate-50)}.bg-slate-500{background-color:var(--color-slate-500)}.bg-slate-700{background-color:var(--color-slate-700)}.bg-slate-800{background-color:var(--color-slate-800)}.bg-slate-800\\/60{background-color:#1d293d99}@supports (color:color-mix(in lab, red, red)){.bg-slate-800\\/60{background-color:color-mix(in oklab, var(--color-slate-800) 60%, transparent)}}.bg-slate-900{background-color:var(--color-slate-900)}.bg-slate-900\\/40{background-color:#0f172b66}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/40{background-color:color-mix(in oklab, var(--color-slate-900) 40%, transparent)}}.bg-slate-900\\/60{background-color:#0f172b99}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/60{background-color:color-mix(in oklab, var(--color-slate-900) 60%, transparent)}}.bg-slate-900\\/80{background-color:#0f172bcc}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/80{background-color:color-mix(in oklab, var(--color-slate-900) 80%, transparent)}}.bg-slate-900\\/90{background-color:#0f172be6}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/90{background-color:color-mix(in oklab, var(--color-slate-900) 90%, transparent)}}.bg-slate-900\\/95{background-color:#0f172bf2}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/95{background-color:color-mix(in oklab, var(--color-slate-900) 95%, transparent)}}.bg-slate-900\\/98{background-color:#0f172bfa}@supports (color:color-mix(in lab, red, red)){.bg-slate-900\\/98{background-color:color-mix(in oklab, var(--color-slate-900) 98%, transparent)}}.bg-slate-950{background-color:var(--color-slate-950)}.bg-slate-950\\/40{background-color:#02061866}@supports (color:color-mix(in lab, red, red)){.bg-slate-950\\/40{background-color:color-mix(in oklab, var(--color-slate-950) 40%, transparent)}}.bg-slate-950\\/80{background-color:#020618cc}@supports (color:color-mix(in lab, red, red)){.bg-slate-950\\/80{background-color:color-mix(in oklab, var(--color-slate-950) 80%, transparent)}}.bg-slate-950\\/95{background-color:#020618f2}@supports (color:color-mix(in lab, red, red)){.bg-slate-950\\/95{background-color:color-mix(in oklab, var(--color-slate-950) 95%, transparent)}}.bg-transparent{background-color:#0000}.bg-white{background-color:var(--color-white)}.bg-white\\/95{background-color:#fffffff2}@supports (color:color-mix(in lab, red, red)){.bg-white\\/95{background-color:color-mix(in oklab, var(--color-white) 95%, transparent)}}.bg-zinc-200{background-color:var(--color-zinc-200)}.bg-zinc-900{background-color:var(--color-zinc-900)}.bg-zinc-950{background-color:var(--color-zinc-950)}.bg-repeat{background-repeat:repeat}.mask-no-clip{-webkit-mask-clip:no-clip;mask-clip:no-clip}.mask-repeat{-webkit-mask-repeat:repeat;mask-repeat:repeat}.fill-current{fill:currentColor}.p-0{padding:0}.p-0\\.5{padding:calc(var(--spacing) * .5)}.p-1{padding:var(--spacing)}.p-2{padding:calc(var(--spacing) * 2)}.p-2\\.5{padding:calc(var(--spacing) * 2.5)}.p-3{padding:calc(var(--spacing) * 3)}.p-4{padding:calc(var(--spacing) * 4)}.p-6{padding:calc(var(--spacing) * 6)}.p-\\[3px\\]{padding:3px}.px-1{padding-inline:var(--spacing)}.px-1\\.5{padding-inline:calc(var(--spacing) * 1.5)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-2\\.5{padding-inline:calc(var(--spacing) * 2.5)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-3\\.5{padding-inline:calc(var(--spacing) * 3.5)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-6{padding-inline:calc(var(--spacing) * 6)}.py-0{padding-block:0}.py-0\\.5{padding-block:calc(var(--spacing) * .5)}.py-1{padding-block:var(--spacing)}.py-1\\.5{padding-block:calc(var(--spacing) * 1.5)}.py-2{padding-block:calc(var(--spacing) * 2)}.py-2\\.5{padding-block:calc(var(--spacing) * 2.5)}.py-4{padding-block:calc(var(--spacing) * 4)}.py-6{padding-block:calc(var(--spacing) * 6)}.py-8{padding-block:calc(var(--spacing) * 8)}.py-16{padding-block:calc(var(--spacing) * 16)}.py-24{padding-block:calc(var(--spacing) * 24)}.py-32{padding-block:calc(var(--spacing) * 32)}.py-48{padding-block:calc(var(--spacing) * 48)}.pt-0{padding-top:0}.pt-0\\.5{padding-top:calc(var(--spacing) * .5)}.pt-1{padding-top:var(--spacing)}.pt-2{padding-top:calc(var(--spacing) * 2)}.pt-3{padding-top:calc(var(--spacing) * 3)}.pt-24{padding-top:calc(var(--spacing) * 24)}.pr-1{padding-right:var(--spacing)}.pb-0{padding-bottom:0}.pb-0\\.5{padding-bottom:calc(var(--spacing) * .5)}.pb-1{padding-bottom:var(--spacing)}.pb-1\\.5{padding-bottom:calc(var(--spacing) * 1.5)}.pb-2{padding-bottom:calc(var(--spacing) * 2)}.pb-2\\.5{padding-bottom:calc(var(--spacing) * 2.5)}.pb-3{padding-bottom:calc(var(--spacing) * 3)}.pb-4{padding-bottom:calc(var(--spacing) * 4)}.pl-2{padding-left:calc(var(--spacing) * 2)}.pl-2\\.5{padding-left:calc(var(--spacing) * 2.5)}.text-center{text-align:center}.text-left{text-align:left}.font-mono{font-family:var(--font-mono)}.font-sans{font-family:var(--font-sans)}.text-4xl{font-size:var(--text-4xl);line-height:var(--tw-leading,var(--text-4xl--line-height))}.text-6xl{font-size:var(--text-6xl);line-height:var(--tw-leading,var(--text-6xl--line-height))}.text-base{font-size:var(--text-base);line-height:var(--tw-leading,var(--text-base--line-height))}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.text-xs{font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}.text-\\[8px\\]{font-size:8px}.text-\\[10\\.5px\\]{font-size:10.5px}.text-\\[10px\\]{font-size:10px}.text-\\[11px\\]{font-size:11px}.leading-\\[1\\.1\\]{--tw-leading:1.1;line-height:1.1}.leading-\\[1\\],.leading-none{--tw-leading:1;line-height:1}.leading-relaxed{--tw-leading:var(--leading-relaxed);line-height:var(--leading-relaxed)}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.font-normal{--tw-font-weight:var(--font-weight-normal);font-weight:var(--font-weight-normal)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.tracking-\\[0\\.18em\\]{--tw-tracking:.18em;letter-spacing:.18em}.tracking-\\[0\\.22em\\]{--tw-tracking:.22em;letter-spacing:.22em}.tracking-tight{--tw-tracking:var(--tracking-tight);letter-spacing:var(--tracking-tight)}.tracking-tighter{--tw-tracking:var(--tracking-tighter);letter-spacing:var(--tracking-tighter)}.tracking-wide{--tw-tracking:var(--tracking-wide);letter-spacing:var(--tracking-wide)}.tracking-wider{--tw-tracking:var(--tracking-wider);letter-spacing:var(--tracking-wider)}.text-wrap{text-wrap:wrap}.text-clip{text-overflow:clip}.text-ellipsis{text-overflow:ellipsis}.whitespace-nowrap{white-space:nowrap}.whitespace-pre-wrap{white-space:pre-wrap}.text-amber-300{color:var(--color-amber-300)}.text-amber-400{color:var(--color-amber-400)}.text-amber-950{color:var(--color-amber-950)}.text-blue-300{color:var(--color-blue-300)}.text-blue-400{color:var(--color-blue-400)}.text-card-foreground{color:var(--card-foreground)}.text-cyan-300{color:var(--color-cyan-300)}.text-destructive-foreground{color:var(--destructive-foreground)}.text-emerald-300{color:var(--color-emerald-300)}.text-emerald-400{color:var(--color-emerald-400)}.text-emerald-950{color:var(--color-emerald-950)}.text-foreground,.text-foreground\\/60{color:var(--foreground)}@supports (color:color-mix(in lab, red, red)){.text-foreground\\/60{color:color-mix(in oklab, var(--foreground) 60%, transparent)}}.text-gray-600{color:var(--color-gray-600)}.text-gray-900{color:var(--color-gray-900)}.text-indigo-500{color:var(--color-indigo-500)}.text-muted-foreground{color:var(--muted-foreground)}.text-orange-300{color:var(--color-orange-300)}.text-primary{color:var(--primary)}.text-primary-foreground{color:var(--primary-foreground)}.text-purple-300{color:var(--color-purple-300)}.text-purple-400{color:var(--color-purple-400)}.text-red-300{color:var(--color-red-300)}.text-red-950{color:var(--color-red-950)}.text-secondary-foreground{color:var(--secondary-foreground)}.text-slate-100{color:var(--color-slate-100)}.text-slate-200{color:var(--color-slate-200)}.text-slate-300{color:var(--color-slate-300)}.text-slate-400{color:var(--color-slate-400)}.text-slate-500{color:var(--color-slate-500)}.text-slate-900{color:var(--color-slate-900)}.text-white{color:var(--color-white)}.text-yellow-400{color:var(--color-yellow-400)}.text-zinc-900{color:var(--color-zinc-900)}.capitalize{text-transform:capitalize}.lowercase{text-transform:lowercase}.normal-case{text-transform:none}.uppercase{text-transform:uppercase}.italic{font-style:italic}.not-italic{font-style:normal}.diagonal-fractions{--tw-numeric-fraction:diagonal-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.lining-nums{--tw-numeric-figure:lining-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.oldstyle-nums{--tw-numeric-figure:oldstyle-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.ordinal{--tw-ordinal:ordinal;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.proportional-nums{--tw-numeric-spacing:proportional-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.slashed-zero{--tw-slashed-zero:slashed-zero;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.stacked-fractions{--tw-numeric-fraction:stacked-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.tabular-nums{--tw-numeric-spacing:tabular-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.normal-nums{font-variant-numeric:normal}.line-through{text-decoration-line:line-through}.no-underline{text-decoration-line:none}.overline{text-decoration-line:overline}.underline{text-decoration-line:underline}.underline-offset-4{text-underline-offset:4px}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.subpixel-antialiased{-webkit-font-smoothing:auto;-moz-osx-font-smoothing:auto}.opacity-0{opacity:0}.opacity-60{opacity:.6}.opacity-70{opacity:.7}.opacity-75{opacity:.75}.shadow{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px var(--tw-shadow-color,#00000040);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-\\[inset_0_1px_0_rgba\\(255\\,255\\,255\\,0\\.1\\)\\]{--tw-shadow:inset 0 1px 0 var(--tw-shadow-color,#ffffff1a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px var(--tw-shadow-color,#0000001a), 0 4px 6px -4px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px var(--tw-shadow-color,#0000001a), 0 2px 4px -2px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px var(--tw-shadow-color,#0000001a), 0 8px 10px -6px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-xs{--tw-shadow:0 1px 2px 0 var(--tw-shadow-color,#0000000d);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-0{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.inset-ring{--tw-inset-ring-shadow:inset 0 0 0 1px var(--tw-inset-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-emerald-950{--tw-shadow-color:oklch(26.2% .051 172.552)}@supports (color:color-mix(in lab, red, red)){.shadow-emerald-950{--tw-shadow-color:color-mix(in oklab, var(--color-emerald-950) var(--tw-shadow-alpha), transparent)}}.shadow-emerald-950\\/20{--tw-shadow-color:#002c2233}@supports (color:color-mix(in lab, red, red)){.shadow-emerald-950\\/20{--tw-shadow-color:color-mix(in oklab, color-mix(in oklab, var(--color-emerald-950) 20%, transparent) var(--tw-shadow-alpha), transparent)}}.shadow-emerald-950\\/30{--tw-shadow-color:#002c224d}@supports (color:color-mix(in lab, red, red)){.shadow-emerald-950\\/30{--tw-shadow-color:color-mix(in oklab, color-mix(in oklab, var(--color-emerald-950) 30%, transparent) var(--tw-shadow-alpha), transparent)}}.shadow-emerald-950\\/40{--tw-shadow-color:#002c2266}@supports (color:color-mix(in lab, red, red)){.shadow-emerald-950\\/40{--tw-shadow-color:color-mix(in oklab, color-mix(in oklab, var(--color-emerald-950) 40%, transparent) var(--tw-shadow-alpha), transparent)}}.ring-ring\\/50{--tw-ring-color:var(--ring)}@supports (color:color-mix(in lab, red, red)){.ring-ring\\/50{--tw-ring-color:color-mix(in oklab, var(--ring) 50%, transparent)}}.ring-offset-background{--tw-ring-offset-color:var(--background)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.blur{--tw-blur:blur(8px);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.drop-shadow{--tw-drop-shadow-size:drop-shadow(0 1px 2px var(--tw-drop-shadow-color,#0000001a)) drop-shadow(0 1px 1px var(--tw-drop-shadow-color,#0000000f));--tw-drop-shadow:drop-shadow(0 1px 2px #0000001a) drop-shadow(0 1px 1px #0000000f);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.grayscale{--tw-grayscale:grayscale(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.invert{--tw-invert:invert(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.sepia{--tw-sepia:sepia(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.filter{filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-blur-md{--tw-backdrop-blur:blur(var(--blur-md));-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-blur-xl{--tw-backdrop-blur:blur(var(--blur-xl));-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-blur-xs{--tw-backdrop-blur:blur(var(--blur-xs));-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-grayscale{--tw-backdrop-grayscale:grayscale(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-invert{--tw-backdrop-invert:invert(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-sepia{--tw-backdrop-sepia:sepia(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-filter{-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.transition{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,opacity,box-shadow,transform,translate,scale,rotate,filter,-webkit-backdrop-filter,backdrop-filter,display,content-visibility,overlay,pointer-events;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-\\[color\\,box-shadow\\]{transition-property:color,box-shadow;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-opacity{transition-property:opacity;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-transform{transition-property:transform,translate,scale,rotate;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.duration-150{--tw-duration:.15s;transition-duration:.15s}.duration-200{--tw-duration:.2s;transition-duration:.2s}.ease-in{--tw-ease:var(--ease-in);transition-timing-function:var(--ease-in)}.ease-in-out{--tw-ease:var(--ease-in-out);transition-timing-function:var(--ease-in-out)}.ease-out{--tw-ease:var(--ease-out);transition-timing-function:var(--ease-out)}.outline-none{--tw-outline-style:none;outline-style:none}.select-none{-webkit-user-select:none;user-select:none}.\\[file\\:line\\]{file:line}:where(.divide-x-reverse>:not(:last-child)){--tw-divide-x-reverse:1}.ring-inset{--tw-ring-inset:inset}@media (hover:hover){.group-hover\\:opacity-100:is(:where(.group):hover *){opacity:1}}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:h-9:is(:where(.group\\/tabs)[data-orientation=horizontal] *){height:calc(var(--spacing) * 9)}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:h-fit:is(:where(.group\\/tabs)[data-orientation=vertical] *){height:fit-content}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:w-full:is(:where(.group\\/tabs)[data-orientation=vertical] *){width:100%}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:flex-col:is(:where(.group\\/tabs)[data-orientation=vertical] *){flex-direction:column}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:justify-start:is(:where(.group\\/tabs)[data-orientation=vertical] *){justify-content:flex-start}.group-data-\\[size\\=default\\]\\/switch\\:size-3\\.5:is(:where(.group\\/switch)[data-size=default] *){width:calc(var(--spacing) * 3.5);height:calc(var(--spacing) * 3.5)}.group-data-\\[size\\=sm\\]\\/switch\\:size-2\\.5:is(:where(.group\\/switch)[data-size=sm] *){width:calc(var(--spacing) * 2.5);height:calc(var(--spacing) * 2.5)}.group-data-\\[variant\\=line\\]\\/tabs-list\\:bg-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *){background-color:#0000}.selection\\:bg-emerald-500\\/30 ::selection{background-color:#00bb7f4d}@supports (color:color-mix(in lab, red, red)){.selection\\:bg-emerald-500\\/30 ::selection{background-color:color-mix(in oklab, var(--color-emerald-500) 30%, transparent)}}.selection\\:bg-emerald-500\\/30::selection{background-color:#00bb7f4d}@supports (color:color-mix(in lab, red, red)){.selection\\:bg-emerald-500\\/30::selection{background-color:color-mix(in oklab, var(--color-emerald-500) 30%, transparent)}}.after\\:absolute:after{content:var(--tw-content);position:absolute}.after\\:bg-foreground:after{content:var(--tw-content);background-color:var(--foreground)}.after\\:opacity-0:after{content:var(--tw-content);opacity:0}.after\\:transition-opacity:after{content:var(--tw-content);transition-property:opacity;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:after\\:inset-x-0:is(:where(.group\\/tabs)[data-orientation=horizontal] *):after{content:var(--tw-content);inset-inline:0}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:after\\:bottom-\\[-5px\\]:is(:where(.group\\/tabs)[data-orientation=horizontal] *):after{content:var(--tw-content);bottom:-5px}.group-data-\\[orientation\\=horizontal\\]\\/tabs\\:after\\:h-0\\.5:is(:where(.group\\/tabs)[data-orientation=horizontal] *):after{content:var(--tw-content);height:calc(var(--spacing) * .5)}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:after\\:inset-y-0:is(:where(.group\\/tabs)[data-orientation=vertical] *):after{content:var(--tw-content);inset-block:0}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:after\\:-right-1:is(:where(.group\\/tabs)[data-orientation=vertical] *):after{content:var(--tw-content);right:calc(var(--spacing) * -1)}.group-data-\\[orientation\\=vertical\\]\\/tabs\\:after\\:w-0\\.5:is(:where(.group\\/tabs)[data-orientation=vertical] *):after{content:var(--tw-content);width:calc(var(--spacing) * .5)}.last\\:border-b-0:last-child{border-bottom-style:var(--tw-border-style);border-bottom-width:0}@media (hover:hover){.hover\\:scale-105:hover{--tw-scale-x:105%;--tw-scale-y:105%;--tw-scale-z:105%;scale:var(--tw-scale-x) var(--tw-scale-y)}.hover\\:bg-accent:hover{background-color:var(--accent)}.hover\\:bg-amber-500:hover{background-color:var(--color-amber-500)}.hover\\:bg-amber-600:hover{background-color:var(--color-amber-600)}.hover\\:bg-blue-500:hover{background-color:var(--color-blue-500)}.hover\\:bg-destructive\\/90:hover{background-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-destructive\\/90:hover{background-color:color-mix(in oklab, var(--destructive) 90%, transparent)}}.hover\\:bg-emerald-500:hover{background-color:var(--color-emerald-500)}.hover\\:bg-emerald-600:hover{background-color:var(--color-emerald-600)}.hover\\:bg-primary\\/90:hover{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-primary\\/90:hover{background-color:color-mix(in oklab, var(--primary) 90%, transparent)}}.hover\\:bg-red-600:hover{background-color:var(--color-red-600)}.hover\\:bg-secondary\\/80:hover{background-color:var(--secondary)}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-secondary\\/80:hover{background-color:color-mix(in oklab, var(--secondary) 80%, transparent)}}.hover\\:bg-slate-700:hover{background-color:var(--color-slate-700)}.hover\\:bg-slate-800:hover{background-color:var(--color-slate-800)}.hover\\:bg-slate-800\\/40:hover{background-color:#1d293d66}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-slate-800\\/40:hover{background-color:color-mix(in oklab, var(--color-slate-800) 40%, transparent)}}.hover\\:bg-slate-800\\/80:hover{background-color:#1d293dcc}@supports (color:color-mix(in lab, red, red)){.hover\\:bg-slate-800\\/80:hover{background-color:color-mix(in oklab, var(--color-slate-800) 80%, transparent)}}.hover\\:text-accent-foreground:hover{color:var(--accent-foreground)}.hover\\:text-amber-400:hover{color:var(--color-amber-400)}.hover\\:text-foreground:hover{color:var(--foreground)}.hover\\:text-red-400:hover{color:var(--color-red-400)}.hover\\:text-slate-100:hover{color:var(--color-slate-100)}.hover\\:text-white:hover{color:var(--color-white)}.hover\\:no-underline:hover{text-decoration-line:none}.hover\\:underline:hover{text-decoration-line:underline}.hover\\:opacity-100:hover{opacity:1}.hover\\:ring-4:hover{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}}.focus\\:ring-1:focus{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus\\:ring-2:focus{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus\\:ring-ring:focus{--tw-ring-color:var(--ring)}.focus\\:ring-offset-2:focus{--tw-ring-offset-width:2px;--tw-ring-offset-shadow:var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color)}.focus\\:outline-hidden:focus{--tw-outline-style:none;outline-style:none}@media (forced-colors:active){.focus\\:outline-hidden:focus{outline-offset:2px;outline:2px solid #0000}}.focus\\:outline-none:focus{--tw-outline-style:none;outline-style:none}.focus-visible\\:border-ring:focus-visible{border-color:var(--ring)}.focus-visible\\:ring-1:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus-visible\\:ring-2:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus-visible\\:ring-4:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus-visible\\:ring-\\[3px\\]:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.focus-visible\\:ring-destructive\\/20:focus-visible{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.focus-visible\\:ring-destructive\\/20:focus-visible{--tw-ring-color:color-mix(in oklab, var(--destructive) 20%, transparent)}}.focus-visible\\:ring-ring:focus-visible,.focus-visible\\:ring-ring\\/50:focus-visible{--tw-ring-color:var(--ring)}@supports (color:color-mix(in lab, red, red)){.focus-visible\\:ring-ring\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--ring) 50%, transparent)}}.focus-visible\\:outline-hidden:focus-visible{--tw-outline-style:none;outline-style:none}@media (forced-colors:active){.focus-visible\\:outline-hidden:focus-visible{outline-offset:2px;outline:2px solid #0000}}.focus-visible\\:outline-1:focus-visible{outline-style:var(--tw-outline-style);outline-width:1px}.focus-visible\\:outline-ring:focus-visible{outline-color:var(--ring)}.focus-visible\\:outline-none:focus-visible{--tw-outline-style:none;outline-style:none}.active\\:scale-90:active{--tw-scale-x:90%;--tw-scale-y:90%;--tw-scale-z:90%;scale:var(--tw-scale-x) var(--tw-scale-y)}.active\\:scale-\\[0\\.98\\]:active{scale:.98}.disabled\\:pointer-events-none:disabled{pointer-events:none}.disabled\\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\\:opacity-50:disabled{opacity:.5}.has-data-\\[slot\\=card-action\\]\\:grid-cols-\\[1fr_auto\\]:has([data-slot=card-action]){grid-template-columns:1fr auto}.has-\\[\\>svg\\]\\:px-1\\.5:has(>svg){padding-inline:calc(var(--spacing) * 1.5)}.has-\\[\\>svg\\]\\:px-2\\.5:has(>svg){padding-inline:calc(var(--spacing) * 2.5)}.has-\\[\\>svg\\]\\:px-3:has(>svg){padding-inline:calc(var(--spacing) * 3)}.has-\\[\\>svg\\]\\:px-4:has(>svg){padding-inline:calc(var(--spacing) * 4)}.aria-invalid\\:border-destructive[aria-invalid=true]{border-color:var(--destructive)}.aria-invalid\\:ring-destructive\\/20[aria-invalid=true]{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.aria-invalid\\:ring-destructive\\/20[aria-invalid=true]{--tw-ring-color:color-mix(in oklab, var(--destructive) 20%, transparent)}}.data-\\[disabled\\]\\:opacity-50[data-disabled]{opacity:.5}.data-\\[orientation\\=horizontal\\]\\:h-1\\.5[data-orientation=horizontal]{height:calc(var(--spacing) * 1.5)}.data-\\[orientation\\=horizontal\\]\\:h-full[data-orientation=horizontal]{height:100%}.data-\\[orientation\\=horizontal\\]\\:h-px[data-orientation=horizontal]{height:1px}.data-\\[orientation\\=horizontal\\]\\:w-full[data-orientation=horizontal]{width:100%}.data-\\[orientation\\=horizontal\\]\\:flex-col[data-orientation=horizontal]{flex-direction:column}.data-\\[orientation\\=vertical\\]\\:h-full[data-orientation=vertical]{height:100%}.data-\\[orientation\\=vertical\\]\\:min-h-44[data-orientation=vertical]{min-height:calc(var(--spacing) * 44)}.data-\\[orientation\\=vertical\\]\\:w-1\\.5[data-orientation=vertical]{width:calc(var(--spacing) * 1.5)}.data-\\[orientation\\=vertical\\]\\:w-auto[data-orientation=vertical]{width:auto}.data-\\[orientation\\=vertical\\]\\:w-full[data-orientation=vertical]{width:100%}.data-\\[orientation\\=vertical\\]\\:w-px[data-orientation=vertical]{width:1px}.data-\\[orientation\\=vertical\\]\\:flex-col[data-orientation=vertical]{flex-direction:column}.data-\\[size\\=default\\]\\:h-5[data-size=default]{height:calc(var(--spacing) * 5)}.data-\\[size\\=default\\]\\:w-9[data-size=default]{width:calc(var(--spacing) * 9)}.data-\\[size\\=sm\\]\\:h-4[data-size=sm]{height:calc(var(--spacing) * 4)}.data-\\[size\\=sm\\]\\:w-7[data-size=sm]{width:calc(var(--spacing) * 7)}.data-\\[state\\=active\\]\\:bg-background[data-state=active]{background-color:var(--background)}.data-\\[state\\=active\\]\\:bg-card[data-state=active]{background-color:var(--card)}.data-\\[state\\=active\\]\\:text-foreground[data-state=active]{color:var(--foreground)}.data-\\[state\\=active\\]\\:shadow-sm[data-state=active],.group-data-\\[variant\\=default\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:shadow-sm:is(:where(.group\\/tabs-list)[data-variant=default] *)[data-state=active]{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:bg-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{background-color:#0000}.group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:shadow-none:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{--tw-shadow:0 0 #0000;box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:after\\:opacity-100:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]:after{content:var(--tw-content);opacity:1}.data-\\[state\\=checked\\]\\:translate-x-3[data-state=checked]{--tw-translate-x:calc(var(--spacing) * 3);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=checked\\]\\:translate-x-4[data-state=checked]{--tw-translate-x:calc(var(--spacing) * 4);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=checked\\]\\:border-emerald-400[data-state=checked]{border-color:var(--color-emerald-400)}.data-\\[state\\=checked\\]\\:bg-emerald-500[data-state=checked]{background-color:var(--color-emerald-500)}.data-\\[state\\=checked\\]\\:bg-primary[data-state=checked]{background-color:var(--primary)}.data-\\[state\\=checked\\]\\:bg-white[data-state=checked]{background-color:var(--color-white)}.data-\\[state\\=checked\\]\\:shadow-\\[0_0_8px_rgba\\(16\\,185\\,129\\,0\\.35\\)\\][data-state=checked]{--tw-shadow:0 0 8px var(--tw-shadow-color,#10b98159);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.data-\\[state\\=checked\\]\\:shadow-md[data-state=checked]{--tw-shadow:0 4px 6px -1px var(--tw-shadow-color,#0000001a), 0 2px 4px -2px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.data-\\[state\\=open\\]\\:bg-accent[data-state=open]{background-color:var(--accent)}.data-\\[state\\=open\\]\\:text-muted-foreground[data-state=open]{color:var(--muted-foreground)}.data-\\[state\\=unchecked\\]\\:translate-x-0[data-state=unchecked]{--tw-translate-x:0px;translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=unchecked\\]\\:translate-x-0\\.5[data-state=unchecked]{--tw-translate-x:calc(var(--spacing) * .5);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=unchecked\\]\\:border-slate-600[data-state=unchecked]{border-color:var(--color-slate-600)}.data-\\[state\\=unchecked\\]\\:bg-slate-300[data-state=unchecked]{background-color:var(--color-slate-300)}.data-\\[state\\=unchecked\\]\\:bg-slate-700[data-state=unchecked]{background-color:var(--color-slate-700)}.data-\\[state\\=unchecked\\]\\:bg-slate-700\\/80[data-state=unchecked]{background-color:#314158cc}@supports (color:color-mix(in lab, red, red)){.data-\\[state\\=unchecked\\]\\:bg-slate-700\\/80[data-state=unchecked]{background-color:color-mix(in oklab, var(--color-slate-700) 80%, transparent)}}.data-\\[variant\\=line\\]\\:rounded-none[data-variant=line]{border-radius:0}@media (min-width:40rem){.sm\\:max-w-lg{max-width:var(--container-lg)}.sm\\:flex-row{flex-direction:row}.sm\\:justify-between{justify-content:space-between}.sm\\:justify-end{justify-content:flex-end}.sm\\:text-left{text-align:left}}@media (min-width:48rem){.md\\:w-1\\/2{width:50%}.md\\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\\:text-5xl{font-size:var(--text-5xl);line-height:var(--tw-leading,var(--text-5xl--line-height))}.md\\:text-6xl{font-size:var(--text-6xl);line-height:var(--tw-leading,var(--text-6xl--line-height))}.md\\:text-7xl{font-size:var(--text-7xl);line-height:var(--tw-leading,var(--text-7xl--line-height))}}@media (min-width:64rem){.lg\\:w-1\\/3{width:33.3333%}.lg\\:text-6xl{font-size:var(--text-6xl);line-height:var(--tw-leading,var(--text-6xl--line-height))}}@media (prefers-color-scheme:dark){.dark\\:border-input{border-color:var(--input)}.dark\\:border-slate-800{border-color:var(--color-slate-800)}.dark\\:border-slate-800\\/80{border-color:#1d293dcc}@supports (color:color-mix(in lab, red, red)){.dark\\:border-slate-800\\/80{border-color:color-mix(in oklab, var(--color-slate-800) 80%, transparent)}}.dark\\:border-zinc-700{border-color:var(--color-zinc-700)}.dark\\:bg-destructive\\/60{background-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-destructive\\/60{background-color:color-mix(in oklab, var(--destructive) 60%, transparent)}}.dark\\:bg-input\\/30{background-color:var(--input)}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-input\\/30{background-color:color-mix(in oklab, var(--input) 30%, transparent)}}.dark\\:bg-slate-800{background-color:var(--color-slate-800)}.dark\\:bg-slate-900\\/60{background-color:#0f172b99}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-slate-900\\/60{background-color:color-mix(in oklab, var(--color-slate-900) 60%, transparent)}}.dark\\:bg-slate-900\\/80{background-color:#0f172bcc}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-slate-900\\/80{background-color:color-mix(in oklab, var(--color-slate-900) 80%, transparent)}}.dark\\:bg-slate-900\\/95{background-color:#0f172bf2}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-slate-900\\/95{background-color:color-mix(in oklab, var(--color-slate-900) 95%, transparent)}}.dark\\:bg-slate-950{background-color:var(--color-slate-950)}.dark\\:bg-slate-950\\/80{background-color:#020618cc}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-slate-950\\/80{background-color:color-mix(in oklab, var(--color-slate-950) 80%, transparent)}}.dark\\:bg-slate-950\\/98{background-color:#020618fa}@supports (color:color-mix(in lab, red, red)){.dark\\:bg-slate-950\\/98{background-color:color-mix(in oklab, var(--color-slate-950) 98%, transparent)}}.dark\\:bg-zinc-900{background-color:var(--color-zinc-900)}.dark\\:bg-zinc-950{background-color:var(--color-zinc-950)}.dark\\:text-gray-100{color:var(--color-gray-100)}.dark\\:text-muted-foreground{color:var(--muted-foreground)}.dark\\:text-zinc-100{color:var(--color-zinc-100)}@media (hover:hover){.dark\\:hover\\:bg-accent\\/50:hover{background-color:var(--accent)}@supports (color:color-mix(in lab, red, red)){.dark\\:hover\\:bg-accent\\/50:hover{background-color:color-mix(in oklab, var(--accent) 50%, transparent)}}.dark\\:hover\\:bg-input\\/50:hover{background-color:var(--input)}@supports (color:color-mix(in lab, red, red)){.dark\\:hover\\:bg-input\\/50:hover{background-color:color-mix(in oklab, var(--input) 50%, transparent)}}.dark\\:hover\\:text-foreground:hover{color:var(--foreground)}}.dark\\:focus-visible\\:ring-destructive\\/40:focus-visible{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.dark\\:focus-visible\\:ring-destructive\\/40:focus-visible{--tw-ring-color:color-mix(in oklab, var(--destructive) 40%, transparent)}}.dark\\:aria-invalid\\:ring-destructive\\/40[aria-invalid=true]{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){.dark\\:aria-invalid\\:ring-destructive\\/40[aria-invalid=true]{--tw-ring-color:color-mix(in oklab, var(--destructive) 40%, transparent)}}.dark\\:data-\\[state\\=active\\]\\:border-input[data-state=active]{border-color:var(--input)}.dark\\:data-\\[state\\=active\\]\\:bg-input\\/30[data-state=active]{background-color:var(--input)}@supports (color:color-mix(in lab, red, red)){.dark\\:data-\\[state\\=active\\]\\:bg-input\\/30[data-state=active]{background-color:color-mix(in oklab, var(--input) 30%, transparent)}}.dark\\:data-\\[state\\=active\\]\\:text-foreground[data-state=active]{color:var(--foreground)}.dark\\:group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:border-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{border-color:#0000}.dark\\:group-data-\\[variant\\=line\\]\\/tabs-list\\:data-\\[state\\=active\\]\\:bg-transparent:is(:where(.group\\/tabs-list)[data-variant=line] *)[data-state=active]{background-color:#0000}.dark\\:data-\\[state\\=unchecked\\]\\:border-slate-700[data-state=unchecked]{border-color:var(--color-slate-700)}.dark\\:data-\\[state\\=unchecked\\]\\:bg-slate-400[data-state=unchecked]{background-color:var(--color-slate-400)}.dark\\:data-\\[state\\=unchecked\\]\\:bg-slate-800[data-state=unchecked]{background-color:var(--color-slate-800)}}.\\[\\&_svg\\]\\:pointer-events-none svg{pointer-events:none}.\\[\\&_svg\\]\\:shrink-0 svg{flex-shrink:0}.\\[\\&_svg\\:not\\(\\[class\\*\\=\\'size-\\'\\]\\)\\]\\:size-3 svg:not([class*=size-]){width:calc(var(--spacing) * 3);height:calc(var(--spacing) * 3)}.\\[\\&_svg\\:not\\(\\[class\\*\\=\\'size-\\'\\]\\)\\]\\:size-4 svg:not([class*=size-]){width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.\\[\\.border-b\\]\\:pb-6.border-b{padding-bottom:calc(var(--spacing) * 6)}.\\[\\.border-t\\]\\:pt-6.border-t{padding-top:calc(var(--spacing) * 6)}.\\[\\&\\>svg\\]\\:pointer-events-none>svg{pointer-events:none}.\\[\\&\\>svg\\]\\:size-3>svg{width:calc(var(--spacing) * 3);height:calc(var(--spacing) * 3)}.\\[\\&\\[data-state\\=open\\]\\>svg\\]\\:rotate-180[data-state=open]>svg{rotate:180deg}@media (hover:hover){a.\\[a\\&\\]\\:hover\\:bg-accent:hover{background-color:var(--accent)}a.\\[a\\&\\]\\:hover\\:bg-destructive\\/90:hover{background-color:var(--destructive)}@supports (color:color-mix(in lab, red, red)){a.\\[a\\&\\]\\:hover\\:bg-destructive\\/90:hover{background-color:color-mix(in oklab, var(--destructive) 90%, transparent)}}a.\\[a\\&\\]\\:hover\\:bg-primary\\/90:hover{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){a.\\[a\\&\\]\\:hover\\:bg-primary\\/90:hover{background-color:color-mix(in oklab, var(--primary) 90%, transparent)}}a.\\[a\\&\\]\\:hover\\:bg-secondary\\/90:hover{background-color:var(--secondary)}@supports (color:color-mix(in lab, red, red)){a.\\[a\\&\\]\\:hover\\:bg-secondary\\/90:hover{background-color:color-mix(in oklab, var(--secondary) 90%, transparent)}}a.\\[a\\&\\]\\:hover\\:text-accent-foreground:hover{color:var(--accent-foreground)}a.\\[a\\&\\]\\:hover\\:underline:hover{text-decoration-line:underline}}}:root{--background:#0c1222;--foreground:#f1f5f9;--card:#141c2e;--card-foreground:#f8fafc;--popover:#141c2e;--popover-foreground:#f8fafc;--primary:#10b981;--primary-foreground:#022c22;--secondary:#1e293b;--secondary-foreground:#f8fafc;--muted:#1a2436;--muted-foreground:#94a3b8;--accent:#253349;--accent-foreground:#f8fafc;--destructive:#ef4444;--destructive-foreground:#fff;--border:#28364d;--input:#1e2b40;--ring:#10b981;--radius:.875rem}.light{--background:#f8fafc;--foreground:#0f172a;--card:#fff;--card-foreground:#0f172a;--popover:#fff;--popover-foreground:#0f172a;--primary:#059669;--primary-foreground:#fff;--secondary:#f1f5f9;--secondary-foreground:#0f172a;--muted:#f1f5f9;--muted-foreground:#64748b;--accent:#e2e8f0;--accent-foreground:#0f172a;--destructive:#dc2626;--destructive-foreground:#fff;--border:#e2e8f0;--input:#e2e8f0;--ring:#059669}::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:0 0}::-webkit-scrollbar-thumb{background:#94a3b840;border-radius:9999px}::-webkit-scrollbar-thumb:hover{background:#94a3b873}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-scale-x{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-y{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-z{syntax:"*";inherits:false;initial-value:1}@property --tw-rotate-x{syntax:"*";inherits:false}@property --tw-rotate-y{syntax:"*";inherits:false}@property --tw-rotate-z{syntax:"*";inherits:false}@property --tw-skew-x{syntax:"*";inherits:false}@property --tw-skew-y{syntax:"*";inherits:false}@property --tw-pan-x{syntax:"*";inherits:false}@property --tw-pan-y{syntax:"*";inherits:false}@property --tw-pinch-zoom{syntax:"*";inherits:false}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-space-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-divide-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-divide-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-tracking{syntax:"*";inherits:false}@property --tw-ordinal{syntax:"*";inherits:false}@property --tw-slashed-zero{syntax:"*";inherits:false}@property --tw-numeric-figure{syntax:"*";inherits:false}@property --tw-numeric-spacing{syntax:"*";inherits:false}@property --tw-numeric-fraction{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-blur{syntax:"*";inherits:false}@property --tw-brightness{syntax:"*";inherits:false}@property --tw-contrast{syntax:"*";inherits:false}@property --tw-grayscale{syntax:"*";inherits:false}@property --tw-hue-rotate{syntax:"*";inherits:false}@property --tw-invert{syntax:"*";inherits:false}@property --tw-opacity{syntax:"*";inherits:false}@property --tw-saturate{syntax:"*";inherits:false}@property --tw-sepia{syntax:"*";inherits:false}@property --tw-drop-shadow{syntax:"*";inherits:false}@property --tw-drop-shadow-color{syntax:"*";inherits:false}@property --tw-drop-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-drop-shadow-size{syntax:"*";inherits:false}@property --tw-backdrop-blur{syntax:"*";inherits:false}@property --tw-backdrop-brightness{syntax:"*";inherits:false}@property --tw-backdrop-contrast{syntax:"*";inherits:false}@property --tw-backdrop-grayscale{syntax:"*";inherits:false}@property --tw-backdrop-hue-rotate{syntax:"*";inherits:false}@property --tw-backdrop-invert{syntax:"*";inherits:false}@property --tw-backdrop-opacity{syntax:"*";inherits:false}@property --tw-backdrop-saturate{syntax:"*";inherits:false}@property --tw-backdrop-sepia{syntax:"*";inherits:false}@property --tw-duration{syntax:"*";inherits:false}@property --tw-ease{syntax:"*";inherits:false}@property --tw-content{syntax:"*";inherits:false;initial-value:""}@keyframes spin{to{transform:rotate(360deg)}}@keyframes ping{75%,to{opacity:0;transform:scale(2)}}@keyframes pulse{50%{opacity:.5}}@keyframes bounce{0%,to{animation-timing-function:cubic-bezier(.8,0,1,1);transform:translateY(-25%)}50%{animation-timing-function:cubic-bezier(0,0,.2,1);transform:none}}`;
 
   // src/content/ui/hud-core.tsx
-  var import_jsx_runtime28 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime32 = __toESM(require_jsx_runtime(), 1);
   var config = structuredClone(DEFAULT_CONFIG);
   var hudRoot = null;
   var reactRoot = null;
@@ -25167,7 +26485,7 @@
     shadow.appendChild(mountPoint);
     reactRoot = (0, import_client.createRoot)(mountPoint);
     reactRoot.render(
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(import_react6.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(import_react6.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
         HudApp,
         {
           shadowRoot: shadow,
@@ -25845,12 +27163,15 @@ lucide-react/dist/esm/icons/chevron-up.mjs:
 lucide-react/dist/esm/icons/circle-check.mjs:
 lucide-react/dist/esm/icons/construction.mjs:
 lucide-react/dist/esm/icons/download.mjs:
+lucide-react/dist/esm/icons/external-link.mjs:
 lucide-react/dist/esm/icons/list-ordered.mjs:
-lucide-react/dist/esm/icons/minus.mjs:
+lucide-react/dist/esm/icons/moon.mjs:
 lucide-react/dist/esm/icons/play.mjs:
 lucide-react/dist/esm/icons/refresh-cw.mjs:
+lucide-react/dist/esm/icons/rotate-ccw-clock.mjs:
 lucide-react/dist/esm/icons/sparkles.mjs:
 lucide-react/dist/esm/icons/square.mjs:
+lucide-react/dist/esm/icons/sun.mjs:
 lucide-react/dist/esm/icons/x.mjs:
 lucide-react/dist/esm/lucide-react.mjs:
   (**

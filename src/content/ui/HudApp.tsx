@@ -9,18 +9,13 @@ import { WharfTabContent } from './components/WharfTabContent';
 import { SeaTabContent } from './components/SeaTabContent';
 import { CityTabContent } from './components/CityTabContent';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
 } from '@/components/ui/dialog';
+import { ReleaseChangelogView } from '@/components/ReleaseChangelogView';
 import { checkForUpdates } from '@/services/github-service';
 import { UpdateCheckResult } from '@/shared/types/github';
-import { Sparkles, Download, CheckCircle2 } from 'lucide-react';
 
 interface HudAppProps {
   shadowRoot: ShadowRoot;
@@ -43,6 +38,7 @@ export function HudApp({
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
   const [isOrderDrawerOpen, setIsOrderDrawerOpen] = useState<boolean>(false);
   const [version, setVersion] = useState<string>('1.0.0');
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   // Dialog states
   const [isCheckingUpdate, setIsCheckingUpdate] = useState<boolean>(false);
@@ -51,13 +47,13 @@ export function HudApp({
 
   // Position & Dragging
   const [position, setPosition] = useState<{ x: number; y: number }>(() => ({
-    x: Math.max(10, window.innerWidth - 370),
+    x: Math.max(10, window.innerWidth - 400),
     y: 70,
   }));
   const isDraggingRef = useRef(false);
   const dragOffsetRef = useRef({ x: 0, y: 0 });
 
-  // Get manifest version
+  // Get manifest version & theme preference
   useEffect(() => {
     try {
       const v = chrome.runtime.getManifest().version;
@@ -65,7 +61,26 @@ export function HudApp({
     } catch {
       // Ignore
     }
+
+    try {
+      const savedTheme = localStorage.getItem('ntg_theme');
+      if (savedTheme === 'light' || savedTheme === 'dark') {
+        setTheme(savedTheme);
+      }
+    } catch {
+      // Ignore
+    }
   }, []);
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    try {
+      localStorage.setItem('ntg_theme', next);
+    } catch {
+      // Ignore
+    }
+  };
 
   // Expose global bridge update listeners
   useEffect(() => {
@@ -113,7 +128,7 @@ export function HudApp({
       if (!isDraggingRef.current) return;
       const newX = Math.min(
         Math.max(10, moveEvent.clientX - dragOffsetRef.current.x),
-        window.innerWidth - 350
+        window.innerWidth - 380
       );
       const newY = Math.min(
         Math.max(10, moveEvent.clientY - dragOffsetRef.current.y),
@@ -163,18 +178,20 @@ export function HudApp({
         transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
         pointerEvents: 'auto',
       }}
-      className="fixed left-0 top-0 z-[2147483647] w-[350px] overflow-hidden rounded-xl border border-slate-800 bg-slate-950/95 shadow-2xl backdrop-blur-md text-slate-100 font-sans select-none"
+      className={`fixed left-0 top-0 z-[2147483647] w-[380px] overflow-hidden rounded-2xl border border-slate-700/60 dark:border-slate-800/80 light:border-slate-300 shadow-2xl backdrop-blur-xl font-sans select-none transition-colors ${
+        theme === 'dark'
+          ? 'dark bg-slate-950/95 text-slate-100'
+          : 'light bg-white/95 text-slate-900'
+      }`}
     >
-      {/* Header */}
+      {/* macOS Styled Header */}
       <HudHeader
         version={version}
-        config={config}
-        activeTab={config.activeTab}
+        theme={theme}
+        onToggleTheme={toggleTheme}
         isMinimized={isMinimized}
         onToggleMinimize={() => setIsMinimized(!isMinimized)}
         onHide={handleHide}
-        onToggleAll={onToggleAll}
-        onToggleTab={onToggleTab}
         onCheckUpdate={handleCheckUpdate}
         isCheckingUpdate={isCheckingUpdate}
         onMouseDownDrag={handleMouseDownDrag}
@@ -198,7 +215,7 @@ export function HudApp({
           />
 
           {/* Current Action Status Text */}
-          <div className="flex items-center gap-2 border-b border-slate-800/80 bg-slate-950 px-2.5 py-1 text-[11px] font-mono text-emerald-400">
+          <div className="flex items-center gap-2 border-b border-slate-800/80 dark:border-slate-800/80 light:border-slate-200 bg-slate-950 dark:bg-slate-950 light:bg-slate-100/90 px-3 py-1.5 text-[11px] font-mono text-emerald-400 light:text-emerald-700">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
@@ -207,15 +224,15 @@ export function HudApp({
           </div>
 
           {/* Navigation Tabs */}
-          <Tabs value={config.activeTab} onValueChange={handleTabChange} className="w-full p-2">
-            <TabsList className="grid w-full grid-cols-4 h-7 text-[11px]">
-              <TabsTrigger value="farm" className="px-1 py-0.5">🌾 Nông trại</TabsTrigger>
-              <TabsTrigger value="benDo" className="px-1 py-0.5">🛶 Bến đò</TabsTrigger>
-              <TabsTrigger value="sea" className="px-1 py-0.5">🏖️ Biển</TabsTrigger>
-              <TabsTrigger value="city" className="px-1 py-0.5">🏙️ Phố xá</TabsTrigger>
+          <Tabs value={config.activeTab} onValueChange={handleTabChange} className="w-full p-2.5">
+            <TabsList className="grid w-full grid-cols-4 h-8 text-[11px] rounded-xl p-1 bg-slate-900/80 dark:bg-slate-900/80 light:bg-slate-200/80">
+              <TabsTrigger value="farm" className="px-1 py-1 rounded-lg">🌾 Nông trại</TabsTrigger>
+              <TabsTrigger value="benDo" className="px-1 py-1 rounded-lg">🛶 Bến đò</TabsTrigger>
+              <TabsTrigger value="sea" className="px-1 py-1 rounded-lg">🏖️ Biển</TabsTrigger>
+              <TabsTrigger value="city" className="px-1 py-1 rounded-lg">🏙️ Phố xá</TabsTrigger>
             </TabsList>
 
-            <div className="mt-2 max-h-[360px] overflow-y-auto pr-1">
+            <div className="mt-2.5 max-h-[380px] overflow-y-auto pr-1">
               <TabsContent value="farm" className="m-0">
                 <FarmTabContent config={config} onUpdateConfig={handleUpdateConfig} />
               </TabsContent>
@@ -236,70 +253,18 @@ export function HudApp({
         </div>
       )}
 
-      {/* GitHub Update Dialog (Scoped inside shadowRoot) */}
+      {/* GitHub Update Dialog (Scoped inside shadowRoot with ReleaseChangelogView) */}
       <Dialog open={isUpdateModalOpen} onOpenChange={setIsUpdateModalOpen}>
         <DialogContent
-          portalContainer={shadowRoot as unknown as HTMLElement}
-          className="max-w-[320px] bg-slate-900 border-slate-800 text-slate-100 p-4"
+          container={shadowRoot as unknown as HTMLElement}
+          className="max-w-[350px] bg-slate-900/98 dark:bg-slate-950/98 light:bg-white border-slate-800 light:border-slate-300 text-slate-100 light:text-slate-900 p-4 rounded-2xl shadow-2xl"
         >
-          <DialogHeader>
-            <div className="flex items-center gap-2">
-              {updateInfo?.hasUpdate ? (
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  <Sparkles className="h-4 w-4" />
-                </div>
-              ) : (
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                  <CheckCircle2 className="h-4 w-4" />
-                </div>
-              )}
-              <div>
-                <DialogTitle className="text-sm font-bold">
-                  {updateInfo?.hasUpdate ? 'Đã Có Phiên Bản Mới!' : 'Bản Đang Dùng Mới Nhất'}
-                </DialogTitle>
-                <DialogDescription className="text-[11px] text-slate-400">
-                  {updateInfo?.hasUpdate
-                    ? `v${updateInfo?.currentVersion} ➔ v${updateInfo?.latestVersion}`
-                    : `Phiên bản hiện tại v${updateInfo?.currentVersion}`}
-                </DialogDescription>
-              </div>
-            </div>
-          </DialogHeader>
-
-          <div className="my-2 max-h-[160px] overflow-y-auto rounded-md bg-slate-950 p-2 text-xs text-slate-300 border border-slate-800 space-y-1 font-sans">
-            <div className="font-semibold text-emerald-400 text-[11px] mb-1">
-              {updateInfo?.releaseName || `Release v${updateInfo?.latestVersion}`}
-            </div>
-            <div className="whitespace-pre-wrap leading-relaxed text-[11px] text-slate-300">
-              {updateInfo?.releaseNotes || 'Không có nhật ký cập nhật.'}
-            </div>
-          </div>
-
-          <DialogFooter className="flex justify-between sm:justify-between items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-slate-700 text-xs"
-              onClick={() => setIsUpdateModalOpen(false)}
-            >
-              Đóng
-            </Button>
-            {updateInfo?.hasUpdate && updateInfo?.downloadUrl && (
-              <Button
-                variant="emerald"
-                size="sm"
-                className="text-xs"
-                onClick={() => {
-                  if (updateInfo.downloadUrl) {
-                    window.open(updateInfo.downloadUrl, '_blank');
-                  }
-                }}
-              >
-                <Download className="h-3.5 w-3.5 mr-1" />
-                Tải Bản Mới
-              </Button>
-            )}
-          </DialogFooter>
+          {updateInfo && (
+            <ReleaseChangelogView
+              updateInfo={updateInfo}
+              onClose={() => setIsUpdateModalOpen(false)}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </div>

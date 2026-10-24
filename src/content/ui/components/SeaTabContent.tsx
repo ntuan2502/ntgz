@@ -30,7 +30,7 @@ export function SeaTabContent({ config, onUpdateConfig }: SeaTabContentProps) {
   return (
     <div className="space-y-2 text-xs">
       {/* Sea Banner Toggle */}
-      <div className="flex items-center justify-between rounded-md bg-cyan-950/40 border border-cyan-500/30 px-3 py-2 text-cyan-300">
+      <div className="flex items-center justify-between rounded-xl bg-cyan-950/40 light:bg-cyan-50 border border-cyan-500/30 px-3 py-2 text-cyan-300 light:text-cyan-900 shadow-sm">
         <span className="font-semibold text-xs flex items-center gap-1.5">
           🏖️ Cho phép chạy Khu vực Biển
         </span>
@@ -38,15 +38,15 @@ export function SeaTabContent({ config, onUpdateConfig }: SeaTabContentProps) {
       </div>
 
       {/* Spot Card */}
-      <div className="rounded-lg border border-slate-800 bg-slate-900/80 p-2.5 space-y-2">
-        <div className="font-semibold text-xs text-slate-200 border-b border-slate-800 pb-1">
+      <div className="rounded-xl border border-slate-800 dark:border-slate-800 light:border-slate-200 bg-slate-900/80 dark:bg-slate-900/80 light:bg-white p-3 space-y-2.5 shadow-sm">
+        <div className="font-semibold text-xs text-slate-200 light:text-slate-800 border-b border-slate-800 light:border-slate-200 pb-1.5">
           🌊 Vị Trí &amp; Thao Tác Câu Ở Biển
         </div>
-        <p className="text-[11px] text-slate-400 italic">
+        <p className="text-[11px] text-slate-400 light:text-slate-500 italic">
           ✨ Tự nhận biết cá cắn câu để giật, tự ghìm cần theo hướng cá và cất cá vào giỏ.
         </p>
 
-        <label className="flex items-center justify-between text-slate-300">
+        <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
           <span>📍 Tự đi bộ ra vị trí ngồi câu</span>
           <Switch
             checked={Boolean(config.seaAutoSpot)}
@@ -54,23 +54,23 @@ export function SeaTabContent({ config, onUpdateConfig }: SeaTabContentProps) {
           />
         </label>
         {config.seaAutoSpot && (
-          <div className="ml-2 pl-2 border-l border-slate-700/60 space-y-1 text-[11px]">
+          <div className="ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]">
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">Vị trí câu ở Biển:</span>
+              <span className="text-slate-400 light:text-slate-600">Vị trí câu ở Biển:</span>
               <select
                 value={config.seaSpot}
                 onChange={(e) => updateField('seaSpot', e.target.value as AppConfig['seaSpot'])}
-                className="rounded bg-slate-800 px-2 py-0.5 text-slate-200 border border-slate-700 text-xs"
+                className="rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs"
               >
-                <option value="pier">🌉 Cầu tàu</option>
-                <option value="rocks">🪨 Bãi đá</option>
-                <option value="beach">🏖️ Mép bãi cát</option>
+                <option value="pier">🌉 Cầu tàu (Đa dạng các loại cá)</option>
+                <option value="rocks">🪨 Bãi đá (Nhiều cá hiếm)</option>
+                <option value="beach">🏖️ Mép bãi cát (Cá ven bờ)</option>
               </select>
             </div>
           </div>
         )}
 
-        <label className="flex items-center justify-between text-slate-300">
+        <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
           <span>📖 Tự nhận thưởng Sổ cá Bách khoa Ông Tư</span>
           <Switch
             checked={Boolean(config.seaAutoClaimDex)}
@@ -78,7 +78,7 @@ export function SeaTabContent({ config, onUpdateConfig }: SeaTabContentProps) {
           />
         </label>
 
-        <label className="flex items-center justify-between text-slate-300">
+        <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
           <span>🍙 Tự ăn uống hồi phục Đói Khát khi câu Biển</span>
           <Switch
             checked={Boolean(config.seaAutoEat)}
@@ -88,12 +88,12 @@ export function SeaTabContent({ config, onUpdateConfig }: SeaTabContentProps) {
       </div>
 
       {/* Ong Tu Hut Card */}
-      <div className="rounded-lg border border-slate-800 bg-slate-900/80 p-2.5 space-y-2">
-        <div className="font-semibold text-xs text-slate-200 border-b border-slate-800 pb-1">
+      <div className="rounded-xl border border-slate-800 dark:border-slate-800 light:border-slate-200 bg-slate-900/80 dark:bg-slate-900/80 light:bg-white p-3 space-y-2.5 shadow-sm">
+        <div className="font-semibold text-xs text-slate-200 light:text-slate-800 border-b border-slate-800 light:border-slate-200 pb-1.5">
           🛖 Chòi Ông Tư (Mua Mồi &amp; Bán Cá)
         </div>
 
-        <label className="flex items-center justify-between text-slate-300">
+        <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
           <span>🦐 Tự mua mồi câu khi hết mồi</span>
           <Switch
             checked={Boolean(config.seaAutoBuyBait)}
@@ -101,28 +101,54 @@ export function SeaTabContent({ config, onUpdateConfig }: SeaTabContentProps) {
           />
         </label>
         {config.seaAutoBuyBait && (
-          <div className="ml-2 pl-2 border-l border-slate-700/60 space-y-1 text-[11px]">
+          <div className="ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]">
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">Loại mồi ưu tiên:</span>
+              <span className="text-slate-400 light:text-slate-600">Loại mồi ưu tiên:</span>
               <select
                 value={config.seaPreferBait}
                 onChange={(e) => updateField('seaPreferBait', e.target.value as AppConfig['seaPreferBait'])}
-                className="rounded bg-slate-800 px-2 py-0.5 text-slate-200 border border-slate-700 text-xs"
+                className="rounded-md bg-slate-800 light:bg-slate-100 px-2 py-1 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 text-xs"
               >
                 <option value="worm">🪱 Mồi Giun / Trùn (Câu thường)</option>
-                <option value="shrimp">🦐 Mồi Tép biển</option>
+                <option value="shrimp">🦐 Mồi Tôm (Câu cá hiếm)</option>
               </select>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400 light:text-slate-600">Số gói mua mỗi lần:</span>
+              <input
+                type="number"
+                min={1}
+                max={20}
+                value={config.seaBaitPacks}
+                onChange={(e) => updateField('seaBaitPacks', Number(e.target.value))}
+                className="w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+              />
             </div>
           </div>
         )}
 
-        <label className="flex items-center justify-between text-slate-300">
-          <span>💰 Tự bán hết cá trong giỏ cho Ông Tư (2 bước)</span>
+        <label className="flex items-center justify-between text-slate-300 light:text-slate-700">
+          <span>🐟 Tự bán hải sản trong giỏ cho Ông Tư</span>
           <Switch
             checked={Boolean(config.seaAutoSell)}
             onCheckedChange={(c) => updateField('seaAutoSell', c)}
           />
         </label>
+        {config.seaAutoSell && (
+          <div className="ml-2 pl-2.5 border-l-2 border-slate-700/60 light:border-slate-300 space-y-1.5 text-[11px]">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400 light:text-slate-600">Bán khi giỏ có từ (con):</span>
+              <input
+                type="number"
+                min={1}
+                max={30}
+                value={config.seaSellThreshold}
+                onChange={(e) => updateField('seaSellThreshold', Number(e.target.value))}
+                className="w-14 rounded-md bg-slate-800 light:bg-slate-100 px-1 py-0.5 text-center text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-mono"
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
