@@ -5,6 +5,19 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.1.2] - 2026-10-25
+
+### 🚀 Cải Tiến Trải Nghiệm Người Dùng (Improvements)
+- **Terminal Ghi Log Không Giới Hạn (Unlimited Session Logs)**:
+  - Gỡ bỏ hoàn toàn giới hạn 300 dòng; toàn bộ lịch sử thao tác trong phiên được ghi lại trọn vẹn và liên tục.
+  - Nút chuyển đổi trạng thái Terminal hiển thị chính xác tổng số dòng log trong phiên (`Log (N...)`), hỗ trợ nút "Xoá" để người dùng dọn dẹp bộ nhớ khi cần.
+- **Select Tự Động Co Giãn Toàn Diện Theo Kích Thước HUD**:
+  - Gỡ bỏ giới hạn chiều rộng tối đa cố định (`max-w-[195px]`) trên component `HudSelect`.
+  - Thiết lập thuộc tính `flex-1 w-full min-w-0` giúp ô Select tự động kéo dài lấp đầy toàn bộ khoảng trống hàng khi người dùng kéo dãn (resize) bảng điều khiển HUD.
+  - Menu danh sách thả xuống (`SelectContent`) tự động điều chỉnh độ rộng đồng bộ (`w-[var(--radix-select-trigger-width)]`), giúp các tùy chọn có tên dài (mồi câu, món ăn, thức uống, vị trí câu) hiển thị đầy đủ, không bị cắt ngắn `...`.
+
+---
+
 ## [1.1.1] - 2026-10-25
 
 ### 🛠️ Sửa Lỗi & Tối Ưu Giao Diện (Bug Fixes & UI Improvements)
