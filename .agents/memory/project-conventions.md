@@ -1,16 +1,15 @@
 ---
 type: project
 created: 2026-05-25
-updated: 2026-07-12
+updated: 2026-10-25
 ---
 
 # Project Conventions
 
 ## Git Workflow
-- Always create a new dedicated branch for major code changes.
-- Branch name format should follow: `feature/[task-slug]` or `fix/[bug-slug]`.
+- Commit and push directly to the `main` branch. Dedicated feature or bugfix branches are not required.
 
-## Supported AI platforms (AG Kit)
+## Supported AI Platforms (AG Kit)
 - AG Kit **only supports Gemini CLI and Google Antigravity**.
-- Do not claim compatibility with Claude Code, Cursor, Copilot, Windsurf, or other assistants unless the user explicitly expands scope.
-- Copy on the website, docs, FAQ, README, and marketing should describe AG Kit as a toolkit for Gemini CLI / Antigravity-style agent setups.
+- Do not claim compatibility with Claude Code, Cursor, Copilot, Windsurf, or other AI assistants unless explicitly requested by the user.
+- All documentation, website copy, FAQs, README files, and promotional materials must describe AG Kit exclusively as a toolkit designed for Gemini CLI and Google Antigravity agent environments.
