@@ -177,6 +177,7 @@ export function mergeConfig(saved: Partial<AppConfig> | null | undefined): AppCo
     hudWidth: (typeof saved.hudWidth === 'number' && saved.hudWidth >= 340 ? saved.hudWidth : DEFAULT_CONFIG.hudWidth),
     hudHeight: (typeof saved.hudHeight === 'number' && saved.hudHeight >= 360 ? saved.hudHeight : DEFAULT_CONFIG.hudHeight),
     showFullActions: Boolean(saved.showFullActions ?? DEFAULT_CONFIG.showFullActions),
+    benHuntZone: (saved.benHuntZone ?? DEFAULT_CONFIG.benHuntZone) as AppConfig['benHuntZone'],
   };
 
   if (!Array.isArray(next.areaOrder) || next.areaOrder.length === 0) {

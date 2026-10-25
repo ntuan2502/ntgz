@@ -14848,6 +14848,7 @@
     benBetAmount: 50,
     // Ben Do Cricket Hunt (Bắt Dế Đêm & Ống Tre)
     benAutoCricketHunt: true,
+    benHuntZone: "field",
     benHuntRareOnly: false,
     benAutoReleaseLowCricket: true,
     benAutoFeedCricket: false,
@@ -27723,7 +27724,25 @@
                 }
               )
             ] }),
-            config2.benAutoCricketHunt && /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-2 text-[11px]", children: [
+            config2.benAutoCricketHunt && /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-2 text-[11px] min-w-0 overflow-hidden", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "flex items-center justify-between gap-2 min-w-0", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("span", { className: "text-slate-600 shrink-0", children: "Khu v\u1EF1c s\u0103n d\u1EBF:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+                  HudSelect,
+                  {
+                    value: config2.benHuntZone || "field",
+                    onValueChange: (val) => updateField("benHuntZone", val),
+                    options: [
+                      { value: "field", label: "\u{1F33E} \u0110\u1ED3ng c\u1ECF ph\xEDa \u0111\xF4ng (m\u1ECDi lo\xE0i \xB7 D\u1EBF v\u01B0\u01A1ng 0h-3h)" },
+                      { value: "reeds", label: "\u{1F38B} B\xE3i lau s\u1EADy (D\u1EBF ng\u1ECDc \xB7 D\u1EBF ma 23h-4h)" },
+                      { value: "rice", label: "\u{1F33E} B\u1EDD ru\u1ED9ng (D\u1EBF tr\u0169i \xB7 D\u1EBF v\xE0ng \xB7 D\u1EBF s\u1EAFt)" },
+                      { value: "garden", label: "\u{1F96C} Quanh lu\u1ED1ng rau (D\u1EBF c\u1ED3 \xB7 D\u1EBF l\u1EEDa)" },
+                      { value: "grass", label: "\u{1F331} B\xE3i c\u1ECF kh\u1EAFp b\u1EBFn (D\u1EBF \u0111\u1EA5t \xB7 D\u1EBF c\u1ED3)" },
+                      { value: "rotate", label: "\u{1F504} T\u1EF1 lu\xE2n phi\xEAn qua l\u1EA1i c\xE1c khu" }
+                    ]
+                  }
+                )
+              ] }),
               /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("label", { className: "flex items-center justify-between text-slate-600 cursor-pointer", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("span", { children: "\u{1F319} Ch\u1EC9 s\u0103n khung gi\u1EDD D\u1EBF hi\u1EBFm/khuya (23h-4h)" }),
                 /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
@@ -29062,7 +29081,8 @@
       nightMarketStrategy: saved.nightMarketStrategy ?? DEFAULT_CONFIG.nightMarketStrategy,
       hudWidth: typeof saved.hudWidth === "number" && saved.hudWidth >= 340 ? saved.hudWidth : DEFAULT_CONFIG.hudWidth,
       hudHeight: typeof saved.hudHeight === "number" && saved.hudHeight >= 360 ? saved.hudHeight : DEFAULT_CONFIG.hudHeight,
-      showFullActions: Boolean(saved.showFullActions ?? DEFAULT_CONFIG.showFullActions)
+      showFullActions: Boolean(saved.showFullActions ?? DEFAULT_CONFIG.showFullActions),
+      benHuntZone: saved.benHuntZone ?? DEFAULT_CONFIG.benHuntZone
     };
     if (!Array.isArray(next.areaOrder) || next.areaOrder.length === 0) {
       next.areaOrder = [...DEFAULT_CONFIG.areaOrder];
@@ -29249,6 +29269,8 @@
   var lastWheelActionAt = 0;
   var lastCricketCatchAt = 0;
   var lastBoutCloseAt = 0;
+  var lastCricketEventSeq = -1;
+  var lastGotAwaySeq = -1;
   function handleBenLanternWheel(wheelEl, snap, config2, setStatus2, delayMs) {
     const now = performance.now();
     if (now - lastWheelActionAt < Math.max(350, delayMs * 0.7)) {
@@ -29366,6 +29388,23 @@
       return { finishedArea: false };
     }
     void execGameAction("BEN_WATCH", { config: config2 });
+    const crEvents = snap.benNet?.cricketEvents;
+    if (Array.isArray(crEvents) && crEvents.length > 0) {
+      const latest = crEvents[crEvents.length - 1];
+      if (latest && latest.seq > lastCricketEventSeq) {
+        lastCricketEventSeq = latest.seq;
+        setStatus2(latest.text);
+      }
+    }
+    const gotAway = snap.benNet?.gotAway;
+    if (gotAway && typeof gotAway.seq === "number" && gotAway.seq !== lastGotAwaySeq) {
+      lastGotAwaySeq = gotAway.seq;
+      if (gotAway.why === "none") {
+        setStatus2("\u{1F526} Khu v\u1EF1c n\xE0y im re kh\xF4ng nghe d\u1EBF g\xE1y -> Di chuy\u1EC3n sang v\u1ECB tr\xED kh\xE1c trong khu v\u1EF1c r\u1ECDi ti\u1EBFp...");
+      } else if (gotAway.why === "escaped") {
+        setStatus2("\u{1F997} D\u1EBF \u0111\xE3 nh\u1EA3y m\u1EA5t v\xE0o b\xF3ng \u0111\xEAm!");
+      }
+    }
     if (bn.fishing === "fight" || document.querySelector(".ben-fight")) {
       handleFightMinigame(snap, setStatus2);
       return { finishedArea: false };
@@ -29444,7 +29483,7 @@
     if (bn.hunt) {
       const hop = bn.hunt.phase === "hop" ? bn.hunt.hop : void 0;
       setStatus2(
-        hop ? `\u{1F997} D\u1EBF \u0111ang nh\u1EA3y (c\xF2n ${hop.left} l\u1EA7n) -> canh l\xFAc n\u1EB1m y\xEAn \u1EDF b\u1EE5i ${hop.spot + 1} \u0111\u1EC3 \xFAp...` : "\u{1F526} \u0110ang r\u1ECDi \u0111\xE8n nghe ng\xF3ng ti\u1EBFng d\u1EBF g\xE1y..."
+        hop ? `\u{1F997} D\u1EBF \u0111ang nh\u1EA3y (c\xF2n ${hop.left} l\u1EA7n) -> Canh b\u1EE5i c\u1ECF ${hop.spot + 1} \u0111\u1EC3 \xFAp...` : bn.hunt.rarity ? "\u{1F997} Nghe ti\u1EBFng d\u1EBF g\xE1y, \u0111ang ch\u1EDD n\xF3 nh\u1EA3y ra..." : "\u{1F526} \u0110ang r\u1ECDi \u0111\xE8n nghe ng\xF3ng ti\u1EBFng d\u1EBF g\xE1y..."
       );
       return { finishedArea: false };
     }

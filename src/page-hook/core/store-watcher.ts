@@ -1,4 +1,5 @@
 import { stores, discoverStores, hookPhaserGame, phaserGame, benWs } from './engine-access';
+import { getCricketEvents } from '../modules/wharf/cricket-watchers';
 import { GameSnapshot } from '../../shared/types/game-state';
 
 const _TREND_CROPS = ['radish', 'carrot', 'corn', 'rice'];
@@ -171,9 +172,11 @@ export function getSnapshot(): GameSnapshot {
           bouts: bn.bouts,
           hunt: bn.hunt,
           caught: bn.caught,
+          gotAway: bn.gotAway ?? null,
           boutDone: bn.boutDone,
           you: bn.you,
           watching: bn.watching ?? null,
+          cricketEvents: getCricketEvents(),
         }
       : null,
   };

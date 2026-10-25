@@ -2,6 +2,8 @@ import {
   AppConfig,
   AreaId,
   AreaMeta,
+  BenHuntZone,
+  BenHuntZoneChoice,
   FarmSubAreaId,
   SubAreaMeta,
   WharfSubAreaId,
@@ -36,6 +38,75 @@ export const WHARF_SUBAREA_META: Record<WharfSubAreaId, WharfSubAreaMeta> = {
   cricketHunt: { id: 'cricketHunt', icon: '🔦', name: 'Bắt Dế Đêm & Ống Tre Nuôi Dế' },
   entertainment: { id: 'entertainment', icon: '🏮', name: 'Tiện Ích & Giải Trí Bến Đò' },
 };
+
+export interface BenHuntZoneMeta {
+  id: BenHuntZone;
+  label: string;
+  /** Rare species found there (from the game's cricket table) */
+  rares: string;
+  /** Walkable, non-bank tiles inside the zone, ordered as a short walking loop */
+  spots: Array<{ x: number; y: number }>;
+}
+
+/**
+ * Cricket hunting zones extracted from the wharf map (game fn `fg()`): every tile
+ * below is walkable, reachable from the dock and not a fishing bank tile.
+ */
+export const BEN_HUNT_ZONES: Record<BenHuntZone, BenHuntZoneMeta> = {
+  field: {
+    id: 'field',
+    label: '🌾 Đồng cỏ phía đông',
+    rares: 'mọi loài · Dế vương 0h-3h',
+    spots: [
+      { x: 74, y: 21 }, { x: 73, y: 12 }, { x: 64, y: 11 }, { x: 83, y: 11 },
+      { x: 83, y: 20 }, { x: 83, y: 30 }, { x: 73, y: 30 }, { x: 64, y: 28 },
+    ],
+  },
+  reeds: {
+    id: 'reeds',
+    label: '🎋 Bãi lau sậy',
+    rares: 'Dế ngọc · Dế ma 23h-4h',
+    spots: [{ x: 50, y: 23 }, { x: 49, y: 21 }, { x: 51, y: 24 }, { x: 49, y: 24 }],
+  },
+  rice: {
+    id: 'rice',
+    label: '🌾 Bờ ruộng',
+    rares: 'Dế trũi · Dế vàng · Dế sắt',
+    spots: [{ x: 44, y: 32 }, { x: 60, y: 36 }, { x: 71, y: 36 }, { x: 82, y: 36 }],
+  },
+  garden: {
+    id: 'garden',
+    label: '🥬 Quanh luống rau',
+    rares: 'Dế cồ · Dế lửa',
+    spots: [{ x: 22, y: 35 }, { x: 26, y: 35 }, { x: 23, y: 39 }, { x: 20, y: 39 }],
+  },
+  grass: {
+    id: 'grass',
+    label: '🌱 Bãi cỏ (khắp bến)',
+    rares: 'Dế đất · Dế cồ',
+    spots: [
+      { x: 27, y: 22 }, { x: 14, y: 15 }, { x: 0, y: 12 }, { x: 8, y: 32 },
+      { x: 33, y: 39 }, { x: 50, y: 31 }, { x: 43, y: 10 }, { x: 63, y: 11 },
+    ],
+  },
+};
+
+/** Spot loop for a zone choice; 'rotate' interleaves all zones */
+export function getBenHuntSpots(choice: BenHuntZoneChoice): Array<{ x: number; y: number; zone: BenHuntZone }> {
+  if (choice !== 'rotate') {
+    const zone = BEN_HUNT_ZONES[choice] ?? BEN_HUNT_ZONES.field;
+    return zone.spots.map((s) => ({ ...s, zone: zone.id }));
+  }
+  const order: BenHuntZone[] = ['field', 'reeds', 'rice', 'garden', 'grass'];
+  const out: Array<{ x: number; y: number; zone: BenHuntZone }> = [];
+  for (let i = 0; i < 2; i++) {
+    for (const z of order) {
+      const s = BEN_HUNT_ZONES[z].spots[i];
+      if (s) out.push({ ...s, zone: z });
+    }
+  }
+  return out;
+}
 
 export const DEFAULT_CONFIG: AppConfig = {
   running: false,
@@ -254,6 +325,7 @@ export const DEFAULT_CONFIG: AppConfig = {
 
   // Ben Do Cricket Hunt (Bắt Dế Đêm & Ống Tre)
   benAutoCricketHunt: true,
+  benHuntZone: 'field',
   benHuntRareOnly: false,
   benAutoReleaseLowCricket: true,
   benAutoFeedCricket: false,

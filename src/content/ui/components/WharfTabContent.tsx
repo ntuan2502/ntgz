@@ -362,7 +362,23 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
             </label>
 
             {config.benAutoCricketHunt && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-2 text-[11px]">
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-2 text-[11px] min-w-0 overflow-hidden">
+                <div className="flex items-center justify-between gap-2 min-w-0">
+                  <span className="text-slate-600 shrink-0">Khu vực săn dế:</span>
+                  <HudSelect
+                    value={config.benHuntZone || 'field'}
+                    onValueChange={(val) => updateField('benHuntZone', val as AppConfig['benHuntZone'])}
+                    options={[
+                      { value: 'field', label: '🌾 Đồng cỏ phía đông (mọi loài · Dế vương 0h-3h)' },
+                      { value: 'reeds', label: '🎋 Bãi lau sậy (Dế ngọc · Dế ma 23h-4h)' },
+                      { value: 'rice', label: '🌾 Bờ ruộng (Dế trũi · Dế vàng · Dế sắt)' },
+                      { value: 'garden', label: '🥬 Quanh luống rau (Dế cồ · Dế lửa)' },
+                      { value: 'grass', label: '🌱 Bãi cỏ khắp bến (Dế đất · Dế cồ)' },
+                      { value: 'rotate', label: '🔄 Tự luân phiên qua lại các khu' },
+                    ]}
+                  />
+                </div>
+
                 <label className="flex items-center justify-between text-slate-600 cursor-pointer">
                   <span>🌙 Chỉ săn khung giờ Dế hiếm/khuya (23h-4h)</span>
                   <Switch

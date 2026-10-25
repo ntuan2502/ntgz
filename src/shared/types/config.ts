@@ -15,6 +15,9 @@ export type FarmSubAreaId =
   | 'goldShop';
 
 export type WharfSubAreaId = 'fishing' | 'cricketBoss' | 'cricketHunt' | 'entertainment';
+/** Cricket hunting zones on the wharf map (matches the game's fg() zone ids) + rotate-all */
+export type BenHuntZone = 'field' | 'reeds' | 'rice' | 'grass' | 'garden';
+export type BenHuntZoneChoice = BenHuntZone | 'rotate';
 
 export interface AreaMeta {
   id: AreaId;
@@ -197,6 +200,7 @@ export interface AppConfig {
 
   // Ben Do Cricket Hunt (Bắt Dế Đêm & Ống Tre)
   benAutoCricketHunt: boolean;
+  benHuntZone: BenHuntZoneChoice;
   benHuntRareOnly: boolean;
   benAutoReleaseLowCricket: boolean;
   benAutoFeedCricket: boolean;

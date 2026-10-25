@@ -11,11 +11,13 @@ import { BenNetState, BoutSide, BoutState } from '../../../shared/types/game-sto
 const WATCH_INTERVAL_MS = 50;
 const CONFIG_STALE_MS = 5000;
 const CLASH_INTERVAL_MS = 1600;
-/** Hops with a shorter rest window are treated as feints ("nhún giả") and skipped */
-const MIN_TRAP_WINDOW_MS = 180;
-/** Delay after landing before trapping; network latency adds on top of this */
-const TRAP_DELAY_AFTER_LANDING_MS = 40;
+/** Hops with a shorter rest window are feints ("nhún giả"): the cricket bounces off immediately */
+const MIN_TRAP_WINDOW_MS = 150;
+/** Target arrival on the server this long after the cricket lands (inside the 230-420ms rest window) */
+const TRAP_SERVER_MARGIN_MS = 60;
+const DEFAULT_RTT_MS = 150;
 const MAX_BETS_PER_DAY = 20;
+const MAX_EVENTS = 30;
 
 let watchCfg: AppConfig | null = null;
 let watchCfgAt = 0;
@@ -24,6 +26,34 @@ let timerId: ReturnType<typeof setInterval> | null = null;
 let scheduledHopN = -1;
 const tickledKeys = new Set<string>();
 const betBoutIds = new Set<string>();
+
+/** Round-trip latency to the wharf server, measured from `light` -> `seek` */
+let rttMs = DEFAULT_RTT_MS;
+let lightSentAt = 0;
+let lastHuntPhase: string | undefined;
+let lastMissSeq = -1;
+
+export interface CricketWatchEvent {
+  seq: number;
+  text: string;
+}
+let eventSeq = 0;
+const events: CricketWatchEvent[] = [];
+
+function pushEvent(text: string): void {
+  events.push({ seq: ++eventSeq, text });
+  if (events.length > MAX_EVENTS) events.shift();
+}
+
+/** Events for the content-script log (included in the game snapshot). */
+export function getCricketEvents(): CricketWatchEvent[] {
+  return events;
+}
+
+/** Call right before sending `{ t: 'light' }` so the RTT can be measured. */
+export function markHuntLightSent(): void {
+  lightSentAt = performance.now();
+}
 
 export function getBenServerNow(bn: BenNetState): number {
   return Date.now() + (bn.ti?.skew ?? 0);
@@ -57,7 +87,7 @@ export function refreshCricketWatchers(cfg: AppConfig): void {
 
 function isActive(cfg: AppConfig | null): cfg is AppConfig {
   if (!cfg || !cfg.running || Date.now() - watchCfgAt > CONFIG_STALE_MS) return false;
-  if (cfg.areaEnabled?.benDo === false) return false;
+  if (cfg.runMode === 'all' && cfg.areaEnabled?.benDo === false) return false;
   return stores.main?.getState().screen === 'benDo';
 }
 
@@ -89,21 +119,90 @@ function watchTick(): void {
 }
 
 function watchHuntHop(bn: BenNetState): void {
-  const hop = bn.hunt?.phase === 'hop' ? bn.hunt.hop : undefined;
+  const hunt = bn.hunt;
+  const phase = hunt?.phase;
+  if (phase !== lastHuntPhase) {
+    if (lastHuntPhase === 'light' && phase === 'seek' && lightSentAt > 0) {
+      const sample = performance.now() - lightSentAt;
+      if (sample > 0 && sample < 2000) rttMs = Math.round(rttMs * 0.5 + sample * 0.5);
+      lightSentAt = 0;
+    }
+    lastHuntPhase = phase;
+  }
+
+  const miss = hunt?.miss;
+  if (miss && typeof miss.seq === 'number' && miss.seq !== lastMissSeq) {
+    lastMissSeq = miss.seq;
+    const why: Record<string, string> = {
+      early: 'úp sớm, dế còn đang bay',
+      feint: 'dế nhún giả bật đi',
+      wrong: 'úp nhầm bụi',
+      slipped: 'úp trúng nhưng dế lách ra',
+    };
+    pushEvent(`🦗 Hụt: ${why[miss.kind] || miss.kind} (ping ~${rttMs}ms)`);
+  }
+
+  const hop = phase === 'hop' ? hunt?.hop : undefined;
   if (!hop || hop.n === scheduledHopN) return;
   scheduledHopN = hop.n;
-  if ((hop.window || 0) < MIN_TRAP_WINDOW_MS) return;
+  if ((hop.window || 0) < MIN_TRAP_WINDOW_MS) {
+    pushEvent(`🦗 Bụi ${hop.spot + 1}: dế nhún giả (${hop.window}ms) -> bỏ qua, chờ lần nhảy sau`);
+    return;
+  }
 
+  // Server landing ≈ arrival - oneWay + air; aim trap to arrive at server margin ms after landing
   const arrivedAt = typeof hop.at === 'number' ? hop.at : performance.now();
-  const fireAt = arrivedAt + (hop.air || 0) + TRAP_DELAY_AFTER_LANDING_MS;
+  const oneWayMs = Math.round(rttMs / 2);
+  const landingAt = arrivedAt - oneWayMs + (hop.air || 0);
+  const fireAt = landingAt + TRAP_SERVER_MARGIN_MS - oneWayMs;
   const delay = Math.max(0, fireAt - performance.now());
   const { n, spot } = hop;
 
   setTimeout(() => {
     const cur = stores.benNet?.getState().hunt;
     if (cur?.phase !== 'hop' || cur.hop?.n !== n) return;
-    sendBenWs({ t: 'trap', n, spot });
+    const pressed = pressTuft(spot);
+    if (!pressed) sendBenWs({ t: 'trap', n, spot });
+    pushEvent(`🦗 Đã bấm phím ${spot + 1} úp bụi cỏ (còn ${hop.left} lần nhảy · ping ~${rttMs}ms)`);
   }, delay);
+}
+
+/** Press the tuft button like a player (keyboard + DOM pointer), with golden outline and WS fallback */
+function pressTuft(spot: number): boolean {
+  // 1. Dispatch keyboard keydown on window to trigger game's z8 hook (plays P.sfx('click') and traps)
+  try {
+    const keyStr = String(spot + 1);
+    const codeStr = `Digit${spot + 1}`;
+    window.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: keyStr,
+        code: codeStr,
+        bubbles: true,
+        cancelable: true,
+      })
+    );
+  } catch {
+    // ignore
+  }
+
+  // 2. Dispatch PointerEvent on the actual .ben-tuft button in DOM
+  const btn = document.querySelectorAll<HTMLButtonElement>('.ben-hunt-field .ben-tuft')[spot];
+  if (btn) {
+    try {
+      const opts = { bubbles: true, cancelable: true, pointerId: 1, pointerType: 'mouse', isPrimary: true, button: 0 };
+      btn.dispatchEvent(new PointerEvent('pointerdown', opts));
+      btn.dispatchEvent(new PointerEvent('pointerup', opts));
+      btn.style.outline = '3px solid #ffd84d';
+      btn.style.borderRadius = '8px';
+      setTimeout(() => {
+        btn.style.outline = '';
+      }, 350);
+    } catch {
+      // ignore
+    }
+    return true;
+  }
+  return false;
 }
 
 function watchBoutTickle(bn: BenNetState): void {

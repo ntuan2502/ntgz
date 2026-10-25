@@ -10,6 +10,8 @@ let lastCastAt = 0;
 let lastWheelActionAt = 0;
 let lastCricketCatchAt = 0;
 let lastBoutCloseAt = 0;
+let lastCricketEventSeq = -1;
+let lastGotAwaySeq = -1;
 
 function handleBenLanternWheel(
   wheelEl: HTMLElement,
@@ -180,6 +182,27 @@ export async function stepBenDoFishing(
   // Keep the page-hook cricket watchers (trap / tickle / bet timing) alive
   void execGameAction('BEN_WATCH', { config });
 
+  // 0. Live status updates from page-hook cricket watchers (trapping / misses / tickles)
+  const crEvents = snap.benNet?.cricketEvents;
+  if (Array.isArray(crEvents) && crEvents.length > 0) {
+    const latest = crEvents[crEvents.length - 1];
+    if (latest && latest.seq > lastCricketEventSeq) {
+      lastCricketEventSeq = latest.seq;
+      setStatus(latest.text);
+    }
+  }
+
+  // Handle hunt gotAway notice (empty bush / escaped)
+  const gotAway = snap.benNet?.gotAway;
+  if (gotAway && typeof gotAway.seq === 'number' && gotAway.seq !== lastGotAwaySeq) {
+    lastGotAwaySeq = gotAway.seq;
+    if (gotAway.why === 'none') {
+      setStatus('🔦 Khu vực này im re không nghe dế gáy -> Di chuyển sang vị trí khác trong khu vực rọi tiếp...');
+    } else if (gotAway.why === 'escaped') {
+      setStatus('🦗 Dế đã nhảy mất vào bóng đêm!');
+    }
+  }
+
   // 1. Handle Fight Minigame
   if (bn.fishing === 'fight' || document.querySelector('.ben-fight')) {
     handleFightMinigame(snap, setStatus);
@@ -279,8 +302,10 @@ export async function stepBenDoFishing(
     const hop = bn.hunt.phase === 'hop' ? bn.hunt.hop : undefined;
     setStatus(
       hop
-        ? `🦗 Dế đang nhảy (còn ${hop.left} lần) -> canh lúc nằm yên ở bụi ${hop.spot + 1} để úp...`
-        : '🔦 Đang rọi đèn nghe ngóng tiếng dế gáy...'
+        ? `🦗 Dế đang nhảy (còn ${hop.left} lần) -> Canh bụi cỏ ${hop.spot + 1} để úp...`
+        : bn.hunt.rarity
+          ? '🦗 Nghe tiếng dế gáy, đang chờ nó nhảy ra...'
+          : '🔦 Đang rọi đèn nghe ngóng tiếng dế gáy...'
     );
     return { finishedArea: false };
   }

@@ -69,6 +69,8 @@ export interface BenNetState {
   soi?: SoiState | null;
   bouts?: Record<string, BoutState>;
   hunt?: CricketHuntState | null;
+  gotAway?: { why: string; seq: number } | null;
+  cricketEvents?: Array<{ seq: number; text: string }>;
   caught?: CricketCaughtState;
   boutDone?: {
     won?: boolean;

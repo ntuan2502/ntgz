@@ -176,6 +176,215 @@
     return stores;
   }
 
+  // src/page-hook/modules/wharf/cricket-watchers.ts
+  var WATCH_INTERVAL_MS = 50;
+  var CONFIG_STALE_MS = 5e3;
+  var CLASH_INTERVAL_MS = 1600;
+  var MIN_TRAP_WINDOW_MS = 150;
+  var TRAP_SERVER_MARGIN_MS = 60;
+  var DEFAULT_RTT_MS = 150;
+  var MAX_BETS_PER_DAY = 20;
+  var MAX_EVENTS = 30;
+  var watchCfg = null;
+  var watchCfgAt = 0;
+  var timerId = null;
+  var scheduledHopN = -1;
+  var tickledKeys = /* @__PURE__ */ new Set();
+  var betBoutIds = /* @__PURE__ */ new Set();
+  var rttMs = DEFAULT_RTT_MS;
+  var lightSentAt = 0;
+  var lastHuntPhase;
+  var lastMissSeq = -1;
+  var eventSeq = 0;
+  var events = [];
+  function pushEvent(text) {
+    events.push({ seq: ++eventSeq, text });
+    if (events.length > MAX_EVENTS) events.shift();
+  }
+  function getCricketEvents() {
+    return events;
+  }
+  function markHuntLightSent() {
+    lightSentAt = performance.now();
+  }
+  function getBenServerNow(bn) {
+    return Date.now() + (bn.ti?.skew ?? 0);
+  }
+  function getBenHour(bn) {
+    const d = new Date(getBenServerNow(bn) + 7 * 3600 * 1e3);
+    return d.getUTCHours() + d.getUTCMinutes() / 60;
+  }
+  function getMyBout(bn) {
+    const you = bn.you;
+    if (!you) return null;
+    for (const bout of Object.values(bn.bouts || {})) {
+      if (bout.end) continue;
+      if (bout.red?.id === you) return { bout, side: "red" };
+      if (bout.blue?.id === you) return { bout, side: "blue" };
+    }
+    return null;
+  }
+  function refreshCricketWatchers(cfg) {
+    watchCfg = cfg;
+    watchCfgAt = Date.now();
+    if (!timerId) {
+      timerId = setInterval(watchTick, WATCH_INTERVAL_MS);
+    }
+  }
+  function isActive(cfg) {
+    if (!cfg || !cfg.running || Date.now() - watchCfgAt > CONFIG_STALE_MS) return false;
+    if (cfg.runMode === "all" && cfg.areaEnabled?.benDo === false) return false;
+    return stores.main?.getState().screen === "benDo";
+  }
+  function watchTick() {
+    const cfg = watchCfg;
+    if (!isActive(cfg)) {
+      if (timerId && Date.now() - watchCfgAt > CONFIG_STALE_MS * 6) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      return;
+    }
+    const bnStore = stores.benNet;
+    if (!bnStore) return;
+    const bn = bnStore.getState();
+    if (bn.status !== "in") return;
+    try {
+      if (cfg.benSubEnabled?.cricketHunt !== false && cfg.benAutoCricketHunt !== false) {
+        watchHuntHop(bn);
+      }
+      if (cfg.benSubEnabled?.cricketBoss !== false) {
+        if (cfg.benAutoTickle !== false) watchBoutTickle(bn);
+        if (cfg.benAutoBet) watchArenaBets(bn, cfg);
+      }
+    } catch (err) {
+      console.warn("[NTG Auto] cricket watcher error:", err);
+    }
+  }
+  function watchHuntHop(bn) {
+    const hunt = bn.hunt;
+    const phase = hunt?.phase;
+    if (phase !== lastHuntPhase) {
+      if (lastHuntPhase === "light" && phase === "seek" && lightSentAt > 0) {
+        const sample = performance.now() - lightSentAt;
+        if (sample > 0 && sample < 2e3) rttMs = Math.round(rttMs * 0.5 + sample * 0.5);
+        lightSentAt = 0;
+      }
+      lastHuntPhase = phase;
+    }
+    const miss = hunt?.miss;
+    if (miss && typeof miss.seq === "number" && miss.seq !== lastMissSeq) {
+      lastMissSeq = miss.seq;
+      const why = {
+        early: "\xFAp s\u1EDBm, d\u1EBF c\xF2n \u0111ang bay",
+        feint: "d\u1EBF nh\xFAn gi\u1EA3 b\u1EADt \u0111i",
+        wrong: "\xFAp nh\u1EA7m b\u1EE5i",
+        slipped: "\xFAp tr\xFAng nh\u01B0ng d\u1EBF l\xE1ch ra"
+      };
+      pushEvent(`\u{1F997} H\u1EE5t: ${why[miss.kind] || miss.kind} (ping ~${rttMs}ms)`);
+    }
+    const hop = phase === "hop" ? hunt?.hop : void 0;
+    if (!hop || hop.n === scheduledHopN) return;
+    scheduledHopN = hop.n;
+    if ((hop.window || 0) < MIN_TRAP_WINDOW_MS) {
+      pushEvent(`\u{1F997} B\u1EE5i ${hop.spot + 1}: d\u1EBF nh\xFAn gi\u1EA3 (${hop.window}ms) -> b\u1ECF qua, ch\u1EDD l\u1EA7n nh\u1EA3y sau`);
+      return;
+    }
+    const arrivedAt = typeof hop.at === "number" ? hop.at : performance.now();
+    const oneWayMs = Math.round(rttMs / 2);
+    const landingAt = arrivedAt - oneWayMs + (hop.air || 0);
+    const fireAt = landingAt + TRAP_SERVER_MARGIN_MS - oneWayMs;
+    const delay = Math.max(0, fireAt - performance.now());
+    const { n, spot } = hop;
+    setTimeout(() => {
+      const cur = stores.benNet?.getState().hunt;
+      if (cur?.phase !== "hop" || cur.hop?.n !== n) return;
+      const pressed = pressTuft(spot);
+      if (!pressed) sendBenWs({ t: "trap", n, spot });
+      pushEvent(`\u{1F997} \u0110\xE3 b\u1EA5m ph\xEDm ${spot + 1} \xFAp b\u1EE5i c\u1ECF (c\xF2n ${hop.left} l\u1EA7n nh\u1EA3y \xB7 ping ~${rttMs}ms)`);
+    }, delay);
+  }
+  function pressTuft(spot) {
+    try {
+      const keyStr = String(spot + 1);
+      const codeStr = `Digit${spot + 1}`;
+      window.dispatchEvent(
+        new KeyboardEvent("keydown", {
+          key: keyStr,
+          code: codeStr,
+          bubbles: true,
+          cancelable: true
+        })
+      );
+    } catch {
+    }
+    const btn = document.querySelectorAll(".ben-hunt-field .ben-tuft")[spot];
+    if (btn) {
+      try {
+        const opts = { bubbles: true, cancelable: true, pointerId: 1, pointerType: "mouse", isPrimary: true, button: 0 };
+        btn.dispatchEvent(new PointerEvent("pointerdown", opts));
+        btn.dispatchEvent(new PointerEvent("pointerup", opts));
+        btn.style.outline = "3px solid #ffd84d";
+        btn.style.borderRadius = "8px";
+        setTimeout(() => {
+          btn.style.outline = "";
+        }, 350);
+      } catch {
+      }
+      return true;
+    }
+    return false;
+  }
+  function watchBoutTickle(bn) {
+    const mine = getMyBout(bn);
+    if (!mine) return;
+    const { bout, side } = mine;
+    const left = bout.tickles?.[side] ?? 0;
+    if (left <= 0 || typeof bout.startAt !== "number") return;
+    const now = getBenServerNow(bn);
+    const clashN = bout.n || 0;
+    const clashAt = bout.startAt + clashN * CLASH_INTERVAL_MS;
+    const inWindup = now >= clashAt - 500 && now < clashAt + 30;
+    const wavering = (bout.fire?.[side] ?? 100) < 30;
+    let key = null;
+    if (wavering) {
+      key = `${bout.id}:waver:${clashN}`;
+    } else if (inWindup && left > 1) {
+      key = `${bout.id}:windup:${clashN}`;
+    }
+    if (!key || tickledKeys.has(key)) return;
+    if (now < bout.startAt - 650) return;
+    tickledKeys.add(key);
+    if (tickledKeys.size > 200) tickledKeys.clear();
+    sendBenWs({ t: "tickle", id: bout.id });
+  }
+  function watchArenaBets(bn, cfg) {
+    const betsToday = bn.soi?.bets;
+    if (typeof betsToday !== "number" || betsToday >= MAX_BETS_PER_DAY) return;
+    const shells = bn.wallet?.shells || 0;
+    const amount = Math.max(10, Math.floor(Number(cfg.benBetAmount) || 50));
+    if (shells < amount) return;
+    const now = getBenServerNow(bn);
+    const you = bn.you;
+    for (const bout of Object.values(bn.bouts || {})) {
+      if (bout.end || !bout.odds || !bout.betUntil || now >= bout.betUntil - 300) continue;
+      if (bout.red?.id === you || bout.blue?.id === you) continue;
+      if (bn.myBets?.[bout.id] || betBoutIds.has(bout.id)) continue;
+      const side = pickBetSide(bout);
+      betBoutIds.add(bout.id);
+      sendBenWs({ t: "bet", id: bout.id, side, shells: amount });
+      return;
+    }
+  }
+  function pickBetSide(bout) {
+    const odds = bout.odds;
+    if (odds && typeof odds.red === "number" && typeof odds.blue === "number" && odds.red !== odds.blue) {
+      return odds.red < odds.blue ? "red" : "blue";
+    }
+    const sum = (s) => (s?.power || 0) + (s?.tough || 0) + (s?.nerve || 0);
+    return sum(bout.blue?.stats) > sum(bout.red?.stats) ? "blue" : "red";
+  }
+
   // src/page-hook/core/store-watcher.ts
   var _TREND_CROPS = ["radish", "carrot", "corn", "rice"];
   function _tt(e) {
@@ -319,9 +528,11 @@
         bouts: bn.bouts,
         hunt: bn.hunt,
         caught: bn.caught,
+        gotAway: bn.gotAway ?? null,
         boutDone: bn.boutDone,
         you: bn.you,
-        watching: bn.watching ?? null
+        watching: bn.watching ?? null,
+        cricketEvents: getCricketEvents()
       } : null
     };
   }
@@ -1786,136 +1997,71 @@
     return { acted: false };
   }
 
-  // src/page-hook/modules/wharf/cricket-watchers.ts
-  var WATCH_INTERVAL_MS = 50;
-  var CONFIG_STALE_MS = 5e3;
-  var CLASH_INTERVAL_MS = 1600;
-  var MIN_TRAP_WINDOW_MS = 180;
-  var TRAP_DELAY_AFTER_LANDING_MS = 40;
-  var MAX_BETS_PER_DAY = 20;
-  var watchCfg = null;
-  var watchCfgAt = 0;
-  var timerId = null;
-  var scheduledHopN = -1;
-  var tickledKeys = /* @__PURE__ */ new Set();
-  var betBoutIds = /* @__PURE__ */ new Set();
-  function getBenServerNow(bn) {
-    return Date.now() + (bn.ti?.skew ?? 0);
-  }
-  function getBenHour(bn) {
-    const d = new Date(getBenServerNow(bn) + 7 * 3600 * 1e3);
-    return d.getUTCHours() + d.getUTCMinutes() / 60;
-  }
-  function getMyBout(bn) {
-    const you = bn.you;
-    if (!you) return null;
-    for (const bout of Object.values(bn.bouts || {})) {
-      if (bout.end) continue;
-      if (bout.red?.id === you) return { bout, side: "red" };
-      if (bout.blue?.id === you) return { bout, side: "blue" };
+  // src/shared/constants/default-config.ts
+  var BEN_HUNT_ZONES = {
+    field: {
+      id: "field",
+      label: "\u{1F33E} \u0110\u1ED3ng c\u1ECF ph\xEDa \u0111\xF4ng",
+      rares: "m\u1ECDi lo\xE0i \xB7 D\u1EBF v\u01B0\u01A1ng 0h-3h",
+      spots: [
+        { x: 74, y: 21 },
+        { x: 73, y: 12 },
+        { x: 64, y: 11 },
+        { x: 83, y: 11 },
+        { x: 83, y: 20 },
+        { x: 83, y: 30 },
+        { x: 73, y: 30 },
+        { x: 64, y: 28 }
+      ]
+    },
+    reeds: {
+      id: "reeds",
+      label: "\u{1F38B} B\xE3i lau s\u1EADy",
+      rares: "D\u1EBF ng\u1ECDc \xB7 D\u1EBF ma 23h-4h",
+      spots: [{ x: 50, y: 23 }, { x: 49, y: 21 }, { x: 51, y: 24 }, { x: 49, y: 24 }]
+    },
+    rice: {
+      id: "rice",
+      label: "\u{1F33E} B\u1EDD ru\u1ED9ng",
+      rares: "D\u1EBF tr\u0169i \xB7 D\u1EBF v\xE0ng \xB7 D\u1EBF s\u1EAFt",
+      spots: [{ x: 44, y: 32 }, { x: 60, y: 36 }, { x: 71, y: 36 }, { x: 82, y: 36 }]
+    },
+    garden: {
+      id: "garden",
+      label: "\u{1F96C} Quanh lu\u1ED1ng rau",
+      rares: "D\u1EBF c\u1ED3 \xB7 D\u1EBF l\u1EEDa",
+      spots: [{ x: 22, y: 35 }, { x: 26, y: 35 }, { x: 23, y: 39 }, { x: 20, y: 39 }]
+    },
+    grass: {
+      id: "grass",
+      label: "\u{1F331} B\xE3i c\u1ECF (kh\u1EAFp b\u1EBFn)",
+      rares: "D\u1EBF \u0111\u1EA5t \xB7 D\u1EBF c\u1ED3",
+      spots: [
+        { x: 27, y: 22 },
+        { x: 14, y: 15 },
+        { x: 0, y: 12 },
+        { x: 8, y: 32 },
+        { x: 33, y: 39 },
+        { x: 50, y: 31 },
+        { x: 43, y: 10 },
+        { x: 63, y: 11 }
+      ]
     }
-    return null;
-  }
-  function refreshCricketWatchers(cfg) {
-    watchCfg = cfg;
-    watchCfgAt = Date.now();
-    if (!timerId) {
-      timerId = setInterval(watchTick, WATCH_INTERVAL_MS);
+  };
+  function getBenHuntSpots(choice) {
+    if (choice !== "rotate") {
+      const zone = BEN_HUNT_ZONES[choice] ?? BEN_HUNT_ZONES.field;
+      return zone.spots.map((s) => ({ ...s, zone: zone.id }));
     }
-  }
-  function isActive(cfg) {
-    if (!cfg || !cfg.running || Date.now() - watchCfgAt > CONFIG_STALE_MS) return false;
-    if (cfg.areaEnabled?.benDo === false) return false;
-    return stores.main?.getState().screen === "benDo";
-  }
-  function watchTick() {
-    const cfg = watchCfg;
-    if (!isActive(cfg)) {
-      if (timerId && Date.now() - watchCfgAt > CONFIG_STALE_MS * 6) {
-        clearInterval(timerId);
-        timerId = null;
+    const order = ["field", "reeds", "rice", "garden", "grass"];
+    const out = [];
+    for (let i = 0; i < 2; i++) {
+      for (const z of order) {
+        const s = BEN_HUNT_ZONES[z].spots[i];
+        if (s) out.push({ ...s, zone: z });
       }
-      return;
     }
-    const bnStore = stores.benNet;
-    if (!bnStore) return;
-    const bn = bnStore.getState();
-    if (bn.status !== "in") return;
-    try {
-      if (cfg.benSubEnabled?.cricketHunt !== false && cfg.benAutoCricketHunt !== false) {
-        watchHuntHop(bn);
-      }
-      if (cfg.benSubEnabled?.cricketBoss !== false) {
-        if (cfg.benAutoTickle !== false) watchBoutTickle(bn);
-        if (cfg.benAutoBet) watchArenaBets(bn, cfg);
-      }
-    } catch (err) {
-      console.warn("[NTG Auto] cricket watcher error:", err);
-    }
-  }
-  function watchHuntHop(bn) {
-    const hop = bn.hunt?.phase === "hop" ? bn.hunt.hop : void 0;
-    if (!hop || hop.n === scheduledHopN) return;
-    scheduledHopN = hop.n;
-    if ((hop.window || 0) < MIN_TRAP_WINDOW_MS) return;
-    const arrivedAt = typeof hop.at === "number" ? hop.at : performance.now();
-    const fireAt = arrivedAt + (hop.air || 0) + TRAP_DELAY_AFTER_LANDING_MS;
-    const delay = Math.max(0, fireAt - performance.now());
-    const { n, spot } = hop;
-    setTimeout(() => {
-      const cur = stores.benNet?.getState().hunt;
-      if (cur?.phase !== "hop" || cur.hop?.n !== n) return;
-      sendBenWs({ t: "trap", n, spot });
-    }, delay);
-  }
-  function watchBoutTickle(bn) {
-    const mine = getMyBout(bn);
-    if (!mine) return;
-    const { bout, side } = mine;
-    const left = bout.tickles?.[side] ?? 0;
-    if (left <= 0 || typeof bout.startAt !== "number") return;
-    const now = getBenServerNow(bn);
-    const clashN = bout.n || 0;
-    const clashAt = bout.startAt + clashN * CLASH_INTERVAL_MS;
-    const inWindup = now >= clashAt - 500 && now < clashAt + 30;
-    const wavering = (bout.fire?.[side] ?? 100) < 30;
-    let key = null;
-    if (wavering) {
-      key = `${bout.id}:waver:${clashN}`;
-    } else if (inWindup && left > 1) {
-      key = `${bout.id}:windup:${clashN}`;
-    }
-    if (!key || tickledKeys.has(key)) return;
-    if (now < bout.startAt - 650) return;
-    tickledKeys.add(key);
-    if (tickledKeys.size > 200) tickledKeys.clear();
-    sendBenWs({ t: "tickle", id: bout.id });
-  }
-  function watchArenaBets(bn, cfg) {
-    const betsToday = bn.soi?.bets;
-    if (typeof betsToday !== "number" || betsToday >= MAX_BETS_PER_DAY) return;
-    const shells = bn.wallet?.shells || 0;
-    const amount = Math.max(10, Math.floor(Number(cfg.benBetAmount) || 50));
-    if (shells < amount) return;
-    const now = getBenServerNow(bn);
-    const you = bn.you;
-    for (const bout of Object.values(bn.bouts || {})) {
-      if (bout.end || !bout.odds || !bout.betUntil || now >= bout.betUntil - 300) continue;
-      if (bout.red?.id === you || bout.blue?.id === you) continue;
-      if (bn.myBets?.[bout.id] || betBoutIds.has(bout.id)) continue;
-      const side = pickBetSide(bout);
-      betBoutIds.add(bout.id);
-      sendBenWs({ t: "bet", id: bout.id, side, shells: amount });
-      return;
-    }
-  }
-  function pickBetSide(bout) {
-    const odds = bout.odds;
-    if (odds && typeof odds.red === "number" && typeof odds.blue === "number" && odds.red !== odds.blue) {
-      return odds.red < odds.blue ? "red" : "blue";
-    }
-    const sum = (s) => (s?.power || 0) + (s?.tough || 0) + (s?.nerve || 0);
-    return sum(bout.blue?.stats) > sum(bout.red?.stats) ? "blue" : "red";
+    return out;
   }
 
   // src/page-hook/modules/wharf/index.ts
@@ -2012,7 +2158,6 @@
   ];
   var BOSS_MIN_STRENGTH_RATIO = 0.85;
   var SOI_TILE = { x: 4, y: 29 };
-  var HUNT_FIELD_TILE = { x: 70, y: 20 };
   var CRICKET_BOX_MAX = 6;
   var HUNT_STAMINA_COST = 3;
   var HUNT_LIGHT_STALE_MS = 8e3;
@@ -2020,6 +2165,9 @@
   var keepBenPanelMsg = "";
   var huntLightAt = 0;
   var hadMyBout = false;
+  var huntSpotIdx = 0;
+  var lastHandledGotAwaySeq = -1;
+  var lastHuntZoneChoice = null;
   var cricketTotal = (c) => (c.stats?.power || 0) + (c.stats?.tough || 0) + (c.stats?.nerve || 0);
   function execBenStep(cfg) {
     const mStore = stores.main;
@@ -2419,23 +2567,52 @@
           reason: "\u{1F62E}\u200D\u{1F4A8} B\u1EBFn \u0110\xF2: H\u1EBFt S\u1EE9c r\u1ECDi \u0111\xE8n b\u1EAFt d\u1EBF \u0111\xEAm -> Chuy\u1EC3n khu v\u1EF1c ti\u1EBFp theo!"
         };
       }
+      const zoneChoice = cfg.benHuntZone || "field";
+      if (zoneChoice !== lastHuntZoneChoice) {
+        lastHuntZoneChoice = zoneChoice;
+        huntSpotIdx = 0;
+      }
+      const spots = getBenHuntSpots(zoneChoice);
+      if (!spots || spots.length === 0) {
+        return { acted: false };
+      }
+      const gotAway = bn.gotAway;
+      if (gotAway && typeof gotAway.seq === "number" && gotAway.seq !== lastHandledGotAwaySeq) {
+        lastHandledGotAwaySeq = gotAway.seq;
+        if (gotAway.why === "none") {
+          huntSpotIdx = (huntSpotIdx + 1) % spots.length;
+        }
+      }
+      const currentSpot = spots[huntSpotIdx % spots.length];
+      const zoneMeta = BEN_HUNT_ZONES[currentSpot.zone] ?? BEN_HUNT_ZONES.field;
       return {
         acted: false,
         deferred: () => {
-          if (!bu.field || bu.spot) {
-            if (!benScene || typeof benScene.goFarmer !== "function") return { acted: false };
-            if (benScene.farmer?.running) return { acted: true, msg: "\u{1F6B6} \u0110ang ra \u0111\u1ED3ng c\u1ECF ph\xEDa \u0111\xF4ng..." };
-            benScene.goFarmer(HUNT_FIELD_TILE);
-            return { acted: true, msg: "\u{1F6B6} Ra \u0111\u1ED3ng c\u1ECF ph\xEDa \u0111\xF4ng s\u0103n d\u1EBF \u0111\xEAm..." };
+          if (!benScene || typeof benScene.goFarmer !== "function") return { acted: false };
+          const cur = benScene.farmer?.tile;
+          const atTarget = Boolean(
+            cur && Math.abs(cur.x - currentSpot.x) <= 1 && Math.abs(cur.y - currentSpot.y) <= 1
+          );
+          if (!atTarget) {
+            if (benScene.farmer?.running) {
+              return { acted: true, msg: `\u{1F6B6} \u0110ang di chuy\u1EC3n sang ${zoneMeta.label} (${currentSpot.x}, ${currentSpot.y})...` };
+            }
+            benScene.goFarmer({ x: currentSpot.x, y: currentSpot.y });
+            return { acted: true, msg: `\u{1F6B6} Ra ${zoneMeta.label} (${currentSpot.x}, ${currentSpot.y}) s\u0103n d\u1EBF \u0111\xEAm...` };
           }
           if (!canAct("ben_hunt_light", 2500)) {
             return { acted: true, msg: "\u{1F526} Chu\u1EA9n b\u1ECB r\u1ECDi \u0111\xE8n b\u1EAFt d\u1EBF..." };
           }
           markActed("ben_hunt_light");
+          markHuntLightSent();
           huntLightAt = Date.now();
           bnStore.setState({ hunt: { phase: "light" } });
           sendBenWs({ t: "light" });
-          return { acted: true, msg: `\u{1F526} R\u1ECDi \u0111\xE8n b\u1EAFt d\u1EBF \u0111\xEAm (\u26A1${HUNT_STAMINA_COST} S\u1EE9c \xB7 \u1ED1ng tre ${box.length}/${CRICKET_BOX_MAX})` };
+          huntSpotIdx = (huntSpotIdx + 1) % spots.length;
+          return {
+            acted: true,
+            msg: `\u{1F526} R\u1ECDi \u0111\xE8n b\u1EAFt d\u1EBF \u0111\xEAm t\u1EA1i ${zoneMeta.label} (\u26A1${HUNT_STAMINA_COST} S\u1EE9c \xB7 \u1ED1ng tre ${box.length}/${CRICKET_BOX_MAX})`
+          };
         }
       };
     };

@@ -4,7 +4,8 @@ import { computeBenStamina } from '../../core/store-watcher';
 import { dismissInterruptsIfNeeded } from '../../core/interrupts';
 import { AppConfig, WharfSubAreaId } from '../../../shared/types/config';
 import { CricketItem, SoiNpc } from '../../../shared/types/game-store';
-import { refreshCricketWatchers, getBenServerNow, getBenHour, getMyBout } from './cricket-watchers';
+import { getBenHuntSpots, BEN_HUNT_ZONES } from '../../../shared/constants/default-config';
+import { refreshCricketWatchers, getBenServerNow, getBenHour, getMyBout, markHuntLightSent } from './cricket-watchers';
 
 export { refreshCricketWatchers };
 
@@ -121,8 +122,6 @@ const BOSS_LADDER = [
 /** Only challenge a boss when our best cricket is at least this strong relative to it */
 const BOSS_MIN_STRENGTH_RATIO = 0.85;
 const SOI_TILE = { x: 4, y: 29 };
-/** Walkable tile in the middle of the eastern grass field (Vh = {x:64,y:11,w:20,h:21}) */
-const HUNT_FIELD_TILE = { x: 70, y: 20 };
 const CRICKET_BOX_MAX = 6;
 const HUNT_STAMINA_COST = 3;
 const HUNT_LIGHT_STALE_MS = 8000;
@@ -131,6 +130,9 @@ let keepBenPanelUntil = 0;
 let keepBenPanelMsg = '';
 let huntLightAt = 0;
 let hadMyBout = false;
+let huntSpotIdx = 0;
+let lastHandledGotAwaySeq = -1;
+let lastHuntZoneChoice: string | null = null;
 
 const cricketTotal = (c: { stats?: { power?: number; tough?: number; nerve?: number } }) =>
   (c.stats?.power || 0) + (c.stats?.tough || 0) + (c.stats?.nerve || 0);
@@ -659,24 +661,64 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
       };
     }
 
-    // 5. Walk to the eastern grass field, then shine the flashlight (deferred: continuous activity)
+    // 5. Hunt spot & zone selection
+    const zoneChoice = cfg.benHuntZone || 'field';
+    if (zoneChoice !== lastHuntZoneChoice) {
+      lastHuntZoneChoice = zoneChoice;
+      huntSpotIdx = 0;
+    }
+    const spots = getBenHuntSpots(zoneChoice);
+    if (!spots || spots.length === 0) {
+      return { acted: false };
+    }
+
+    // Handle gotAway: if why === 'none' (empty bush), move to next tile immediately
+    const gotAway = bn.gotAway;
+    if (gotAway && typeof gotAway.seq === 'number' && gotAway.seq !== lastHandledGotAwaySeq) {
+      lastHandledGotAwaySeq = gotAway.seq;
+      if (gotAway.why === 'none') {
+        huntSpotIdx = (huntSpotIdx + 1) % spots.length;
+      }
+    }
+
+    const currentSpot = spots[huntSpotIdx % spots.length];
+    const zoneMeta = BEN_HUNT_ZONES[currentSpot.zone] ?? BEN_HUNT_ZONES.field;
+
+    // 6. Walk to target spot and shine flashlight
     return {
       acted: false,
       deferred: () => {
-        if (!bu.field || bu.spot) {
-          if (!benScene || typeof benScene.goFarmer !== 'function') return { acted: false };
-          if (benScene.farmer?.running) return { acted: true, msg: '🚶 Đang ra đồng cỏ phía đông...' };
-          benScene.goFarmer(HUNT_FIELD_TILE);
-          return { acted: true, msg: '🚶 Ra đồng cỏ phía đông săn dế đêm...' };
+        if (!benScene || typeof benScene.goFarmer !== 'function') return { acted: false };
+        const cur = benScene.farmer?.tile;
+        const atTarget = Boolean(
+          cur && Math.abs(cur.x - currentSpot.x) <= 1 && Math.abs(cur.y - currentSpot.y) <= 1
+        );
+
+        if (!atTarget) {
+          if (benScene.farmer?.running) {
+            return { acted: true, msg: `🚶 Đang di chuyển sang ${zoneMeta.label} (${currentSpot.x}, ${currentSpot.y})...` };
+          }
+          benScene.goFarmer({ x: currentSpot.x, y: currentSpot.y });
+          return { acted: true, msg: `🚶 Ra ${zoneMeta.label} (${currentSpot.x}, ${currentSpot.y}) săn dế đêm...` };
         }
+
         if (!canAct('ben_hunt_light', 2500)) {
           return { acted: true, msg: '🔦 Chuẩn bị rọi đèn bắt dế...' };
         }
+
         markActed('ben_hunt_light');
+        markHuntLightSent();
         huntLightAt = Date.now();
         bnStore.setState({ hunt: { phase: 'light' } });
         sendBenWs({ t: 'light' });
-        return { acted: true, msg: `🔦 Rọi đèn bắt dế đêm (⚡${HUNT_STAMINA_COST} Sức · ống tre ${box.length}/${CRICKET_BOX_MAX})` };
+
+        // Advance to the next spot in the zone so that after this hunt finishes (or fails), farmer walks to another tile
+        huntSpotIdx = (huntSpotIdx + 1) % spots.length;
+
+        return {
+          acted: true,
+          msg: `🔦 Rọi đèn bắt dế đêm tại ${zoneMeta.label} (⚡${HUNT_STAMINA_COST} Sức · ống tre ${box.length}/${CRICKET_BOX_MAX})`,
+        };
       },
     };
   };

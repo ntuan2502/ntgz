@@ -448,6 +448,7 @@ export interface CricketHuntState {
   rarity?: string;
   miss?: {
     kind: string;
+    seq?: number;
   };
   [key: string]: unknown;
 }
@@ -522,6 +523,8 @@ export interface BenNetState {
   soi?: SoiState | null;
   bouts?: Record<string, BoutState>;
   hunt?: CricketHuntState | null;
+  /** Hunt ended without a catch: none = no cricket heard, escaped = ran out of hops, moved = walked away */
+  gotAway?: { why: 'none' | 'escaped' | 'moved' | string; seq: number } | null;
   caught?: CricketCaughtState;
   boutDone?: {
     won?: boolean;
