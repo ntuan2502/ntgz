@@ -17,6 +17,7 @@ export const SUBAREA_META: Record<FarmSubAreaId, SubAreaMeta> = {
   pond: { id: 'pond', icon: '🐟', name: 'Ao Cá (Bé Bi)' },
   salon: { id: 'salon', icon: '💆', name: 'Salon Chị Linh Tây' },
   market: { id: 'market', icon: '🏪', name: 'Tạp Hóa Chị Na & Bảng Tin' },
+  nightMarket: { id: 'nightMarket', icon: '🏮', name: 'Chợ Đêm (18:00 - 23:30)' },
   dibay: { id: 'dibay', icon: '🐷', name: 'Quầy Tiết Kiệm Dì Bảy & Sổ Tay' },
   goldShop: { id: 'goldShop', icon: '🪙', name: 'Tiệm Vàng Cô Kim (Chợ Lớn)' },
 };
@@ -58,6 +59,7 @@ export const DEFAULT_CONFIG: AppConfig = {
     'pond',
     'salon',
     'market',
+    'nightMarket',
     'dibay',
     'goldShop',
   ],
@@ -71,6 +73,7 @@ export const DEFAULT_CONFIG: AppConfig = {
     pond: true,
     salon: true,
     market: true,
+    nightMarket: true,
     dibay: true,
     goldShop: true,
   },
@@ -84,6 +87,7 @@ export const DEFAULT_CONFIG: AppConfig = {
     pond: false,
     salon: false,
     market: false,
+    nightMarket: false,
     dibay: false,
     goldShop: false,
   },
@@ -189,6 +193,13 @@ export const DEFAULT_CONFIG: AppConfig = {
   goldKeepCash: 500000,
   goldAutoSell: true,
   goldProfitPercent: 10,
+
+  // 12. Night Market (Chợ Đêm 18h00 - 23h30)
+  autoSellNightMarket: true,
+  nightMarketMinKeep: 3,
+  nightMarketSellEggs: true,
+  nightMarketReserveOrders: true,
+  nightMarketStrategy: 'max_stock',
 
   // Area 2: Ben Do Fishing Settings
   benAutoSpot: true,

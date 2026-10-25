@@ -10,6 +10,7 @@ export type FarmSubAreaId =
   | 'pond'
   | 'salon'
   | 'market'
+  | 'nightMarket'
   | 'dibay'
   | 'goldShop';
 
@@ -152,6 +153,13 @@ export interface AppConfig {
   goldKeepCash: number;
   goldAutoSell: boolean;
   goldProfitPercent: number;
+
+  // 12. Night Market (Chợ Đêm 18h00 - 23h30)
+  autoSellNightMarket: boolean;
+  nightMarketMinKeep: number;
+  nightMarketSellEggs: boolean;
+  nightMarketReserveOrders: boolean;
+  nightMarketStrategy: 'max_stock' | 'highest_price' | 'lowest_price';
 
   // Area 2: Ben Do Fishing Settings
   benAutoSpot: boolean;

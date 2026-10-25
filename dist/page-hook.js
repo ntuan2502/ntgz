@@ -267,7 +267,14 @@
       dairy: m.dairy,
       helpers: m.helpers,
       order: m.order,
-      village: m.village,
+      village: (() => {
+        const v = m.village;
+        const soldN = v?.nightSold?.day === m.day ? v?.nightSold?.n || 0 : 0;
+        return {
+          ...v,
+          quotaLeft: Math.max(0, 20 - soldN)
+        };
+      })(),
       savings: m.savings,
       daily: m.daily,
       goalIndex: m.goalIndex,
@@ -1533,6 +1540,80 @@
     return NOT_ACTED;
   }
 
+  // src/page-hook/modules/farm/night-market.ts
+  function handleNightMarketSubArea(cfg) {
+    if (cfg.autoSellNightMarket === false) return NOT_ACTED;
+    const m = getMainState();
+    if (!m.village?.marketOpen) return NOT_ACTED;
+    const mins = m.minutes ?? 0;
+    if (mins < 1080 || mins >= 1410) return NOT_ACTED;
+    const soldToday = m.village?.nightSold?.day === m.day ? m.village?.nightSold?.n || 0 : 0;
+    const quotaLeft = 20 - soldToday;
+    if (quotaLeft <= 0) return NOT_ACTED;
+    const reservedMap = {};
+    if (cfg.nightMarketReserveOrders !== false) {
+      if (m.order && !m.order.delivered && m.order.crop) {
+        reservedMap[m.order.crop] = (reservedMap[m.order.crop] || 0) + (m.order.qty || 0);
+      }
+      const villageReqs = m.village?.requests || [];
+      for (const req of villageReqs) {
+        if (!req.done && req.goods) {
+          reservedMap[req.goods] = (reservedMap[req.goods] || 0) + (req.qty || 0);
+        }
+      }
+    }
+    const minKeep = Math.max(0, Number(cfg.nightMarketMinKeep) || 0);
+    const candidates = [];
+    const produce = m.produce || {};
+    for (const [cropId, count] of Object.entries(produce)) {
+      const qty = Number(count) || 0;
+      const reserved = reservedMap[cropId] || 0;
+      const surplus = qty - minKeep - reserved;
+      if (surplus > 0) {
+        candidates.push({
+          id: cropId,
+          surplus,
+          price: m.prices?.[cropId] || 0,
+          isEgg: false
+        });
+      }
+    }
+    if (cfg.nightMarketSellEggs !== false) {
+      const eggs = m.eggs || 0;
+      const eggReserved = reservedMap["egg"] || 0;
+      const eggSurplus = eggs - minKeep - eggReserved;
+      if (eggSurplus > 0) {
+        candidates.push({
+          id: "egg",
+          surplus: eggSurplus,
+          price: 3e3,
+          isEgg: true
+        });
+      }
+    }
+    if (candidates.length === 0) return NOT_ACTED;
+    const strategy = cfg.nightMarketStrategy || "max_stock";
+    if (strategy === "highest_price") {
+      candidates.sort((a, b) => b.price - a.price);
+    } else if (strategy === "lowest_price") {
+      candidates.sort((a, b) => a.price - b.price);
+    } else {
+      candidates.sort((a, b) => b.surplus - a.surplus);
+    }
+    const target = candidates[0];
+    if (!target) return NOT_ACTED;
+    const res = m.sellNight?.(target.id);
+    if (res === "ok") {
+      showFarmActionUI(cfg, { panel: "nightMarket" });
+      const label = target.isEgg ? "Tr\u1EE9ng g\xE0 \u{1F95A}" : getItemLabel(target.id);
+      return {
+        acted: true,
+        msg: `\u{1F3EE} \u0110\xE3 b\xE1n 1 ${label} \u1EDF Ch\u1EE3 \u0110\xEAm (+25% gi\xE1 \xB7 C\xF2n ${quotaLeft - 1}/20 m\xF3n)`
+      };
+    }
+    return NOT_ACTED;
+  }
+
   // src/page-hook/modules/farm/index.ts
   var SUBAREA_HANDLERS = {
     house: handleHouseSubArea,
@@ -1544,6 +1625,7 @@
     pond: handlePondSubArea,
     salon: handleSalonSubArea,
     market: handleMarketSubArea,
+    nightMarket: handleNightMarketSubArea,
     dibay: handleDiBaySubArea,
     goldShop: handleGoldShopSubArea
   };

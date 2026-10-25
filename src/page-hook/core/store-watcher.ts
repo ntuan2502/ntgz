@@ -114,7 +114,14 @@ export function getSnapshot(): GameSnapshot {
     dairy: m.dairy,
     helpers: m.helpers,
     order: m.order,
-    village: m.village,
+    village: (() => {
+      const v = m.village;
+      const soldN = v?.nightSold?.day === m.day ? (v?.nightSold?.n || 0) : 0;
+      return {
+        ...v,
+        quotaLeft: Math.max(0, 20 - soldN),
+      };
+    })(),
     savings: m.savings,
     daily: m.daily,
     goalIndex: m.goalIndex,

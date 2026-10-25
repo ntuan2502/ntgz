@@ -190,6 +190,9 @@ export interface MainGameStoreState {
     newsDay?: number;
     met?: boolean;
     requests?: VillageRequest[];
+    marketOpen?: boolean;
+    marketBuild?: unknown;
+    nightSold?: { day?: number; n?: number };
     [key: string]: unknown;
   };
   savings?: {
@@ -333,6 +336,7 @@ export interface MainGameStoreState {
   meetKhang?: () => void;
   deliverRequest?: (reqId: string | number) => boolean;
   sellQty?: (goods: string, qty: number) => number;
+  sellNight?: (goods: string) => 'ok' | 'closed' | 'quota' | 'empty' | string;
   buyGold?: (type: string, qty: number) => string;
   sellGold?: (type: string, qty: number) => number | null;
 

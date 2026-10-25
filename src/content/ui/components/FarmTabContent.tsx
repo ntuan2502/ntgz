@@ -783,6 +783,77 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
           </div>
         );
 
+      case 'nightMarket':
+        return (
+          <div className="space-y-2 text-xs">
+            <div className="rounded-lg bg-amber-50/80 border border-amber-200/80 p-2.5 text-[11px] text-amber-900 space-y-1">
+              <div className="flex items-center justify-between font-semibold">
+                <span className="flex items-center gap-1.5">🏮 Khung giờ: 18h00 – 23h30</span>
+                <span className="text-emerald-700 bg-emerald-100/80 px-1.5 py-0.5 rounded text-[10px]">+25% Giá Bán</span>
+              </div>
+              <p className="text-amber-800/80 text-[10px] leading-relaxed">
+                Chợ Đêm làng mở cửa mỗi tối sau khi giữ đất thành công. Hạn mức bán tối đa 20 món/đêm với giá cao hơn ban ngày 1.25x.
+              </p>
+            </div>
+
+            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+              <span>🏮 Tự động bán hàng tại Chợ Đêm (18h-23h30)</span>
+              <Switch
+                checked={Boolean(config.autoSellNightMarket)}
+                onCheckedChange={(c) => updateField('autoSellNightMarket', c)}
+              />
+            </label>
+
+            {config.autoSellNightMarket && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-2 text-[11px] min-w-0 overflow-hidden">
+                <div className="flex items-center justify-between gap-2 min-w-0">
+                  <span className="text-slate-600 shrink-0">Chiến lược bán:</span>
+                  <HudSelect
+                    value={config.nightMarketStrategy}
+                    onValueChange={(val) => updateField('nightMarketStrategy', val as AppConfig['nightMarketStrategy'])}
+                    options={[
+                      { value: 'max_stock', label: '📦 Ưu tiên nông sản tồn kho nhiều nhất' },
+                      { value: 'highest_price', label: '💰 Ưu tiên nông sản có giá bán cao nhất' },
+                      { value: 'lowest_price', label: '🌱 Ưu tiên nông sản giá thấp xả kho' },
+                    ]}
+                  />
+                </div>
+
+                <label className="flex items-center justify-between text-slate-600 cursor-pointer">
+                  <span>🥚 Bán cả Trứng gà khi chuồng có dư</span>
+                  <Switch
+                    size="sm"
+                    checked={Boolean(config.nightMarketSellEggs)}
+                    onCheckedChange={(c) => updateField('nightMarketSellEggs', c)}
+                  />
+                </label>
+
+                <label className="flex items-center justify-between text-slate-600 cursor-pointer">
+                  <span>📦 Bảo lưu nông sản cho Đơn Chị Na &amp; Bảng tin</span>
+                  <Switch
+                    size="sm"
+                    checked={Boolean(config.nightMarketReserveOrders)}
+                    onCheckedChange={(c) => updateField('nightMarketReserveOrders', c)}
+                  />
+                </label>
+
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-slate-600">Giữ lại tối thiểu mỗi loại trong kho:</span>
+                  <input
+                    type="number"
+                    min={0}
+                    max={50}
+                    step={1}
+                    value={config.nightMarketMinKeep}
+                    onChange={(e) => updateField('nightMarketMinKeep', Number(e.target.value))}
+                    className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
       case 'dibay':
         return (
           <div className="space-y-2 text-xs">

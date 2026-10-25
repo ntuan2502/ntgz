@@ -12,6 +12,7 @@ import {
 import { handleMarketSubArea } from './market';
 import { handleDiBaySubArea } from './tasks';
 import { handleGoldShopSubArea } from './gold-shop';
+import { handleNightMarketSubArea } from './night-market';
 import { StepResult, NOT_ACTED } from './types';
 
 import { AppConfig, FarmSubAreaId } from '../../../shared/types/config';
@@ -26,6 +27,7 @@ const SUBAREA_HANDLERS: Record<FarmSubAreaId, (cfg: AppConfig) => StepResult> = 
   pond: handlePondSubArea,
   salon: handleSalonSubArea,
   market: handleMarketSubArea,
+  nightMarket: handleNightMarketSubArea,
   dibay: handleDiBaySubArea,
   goldShop: handleGoldShopSubArea,
 };

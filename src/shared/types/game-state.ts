@@ -100,6 +100,12 @@ export interface GameSnapshot {
   benNet?: BenNetState | null;
   benWallet?: BenNetWallet | null;
   benNonKeptCount?: number;
+  village?: {
+    marketOpen?: boolean;
+    nightSold?: { day?: number; n?: number };
+    quotaLeft?: number;
+    [key: string]: unknown;
+  };
   fishing?: {
     seaOpen?: boolean;
     bait?: {
