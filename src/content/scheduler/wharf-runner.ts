@@ -8,9 +8,7 @@ let lastModalClickAt = 0;
 let lastHookAt = 0;
 let lastCastAt = 0;
 let lastWheelActionAt = 0;
-let lastTickleAt = 0;
 let lastCricketCatchAt = 0;
-let lastTuftTrapAt = 0;
 let lastBoutCloseAt = 0;
 
 function handleBenLanternWheel(
@@ -179,6 +177,9 @@ export async function stepBenDoFishing(
     return { finishedArea: false };
   }
 
+  // Keep the page-hook cricket watchers (trap / tickle / bet timing) alive
+  void execGameAction('BEN_WATCH', { config });
+
   // 1. Handle Fight Minigame
   if (bn.fishing === 'fight' || document.querySelector('.ben-fight')) {
     handleFightMinigame(snap, setStatus);
@@ -249,10 +250,9 @@ export async function stepBenDoFishing(
     return { finishedArea: false };
   }
 
-  // 3d. Handle Cricket Arena Bout Modal (.panel.ben-bout)
+  // 3d. Handle Cricket Arena Bout Modal (.panel.ben-bout). Tickles are timed by the page-hook watcher.
   const boutPanel = document.querySelector('.panel.ben-bout') as HTMLElement | null;
   if (boutPanel && isVisible(boutPanel)) {
-    const tickleBtn = boutPanel.querySelector('button.ben-bout-tickle') as HTMLButtonElement | null;
     const endLine = boutPanel.querySelector('.ben-bout-line.end');
     const closeBtn = boutPanel.querySelector('.ben-panel-head button.btn-brown') as HTMLButtonElement | null;
 
@@ -266,21 +266,22 @@ export async function stepBenDoFishing(
       return { finishedArea: false };
     }
 
-    if (config.benAutoTickle && tickleBtn && !tickleBtn.disabled && now - lastTickleAt > 1200) {
-      triggerPointerDownAndClick(tickleBtn);
-      lastTickleAt = now;
-      setStatus('🌾 Sới Dế: Khều râu dế lấy đà tấn công!');
+    const tickleBtn = boutPanel.querySelector('button.ben-bout-tickle') as HTMLButtonElement | null;
+    if (tickleBtn) {
+      const left = tickleBtn.textContent?.match(/còn\s*(\d+)/)?.[1] ?? '?';
+      setStatus(`🥊 Sới Dế: Đang thi đấu${config.benAutoTickle ? ' · tự khều râu đúng nhịp' : ''} (còn ${left} lần khều)`);
       return { finishedArea: false };
     }
-    return { finishedArea: false };
   }
 
-  // 3e. Handle Cricket Hunt Field Tuft (.ben-hunt-field .ben-tuft.landed)
-  const landedTuft = document.querySelector('.ben-hunt-field .ben-tuft.landed') as HTMLButtonElement | null;
-  if (landedTuft && !landedTuft.disabled && now - lastTuftTrapAt > 250) {
-    triggerPointerDownAndClick(landedTuft);
-    lastTuftTrapAt = now;
-    setStatus('🦗 Dế đáp xuống bụi cỏ -> Đã bấm úp dế!');
+  // 3e. Cricket hunt in progress: the page-hook watcher traps at the right moment
+  if (bn.hunt) {
+    const hop = bn.hunt.phase === 'hop' ? bn.hunt.hop : undefined;
+    setStatus(
+      hop
+        ? `🦗 Dế đang nhảy (còn ${hop.left} lần) -> canh lúc nằm yên ở bụi ${hop.spot + 1} để úp...`
+        : '🔦 Đang rọi đèn nghe ngóng tiếng dế gáy...'
+    );
     return { finishedArea: false };
   }
 
@@ -332,7 +333,9 @@ export async function stepBenDoFishing(
     }
 
     const liveStam = bn.wallet?.liveStamina ?? 100;
-    const castBtn = document.querySelector('button.ben-cast.btn-green, button.ben-cast.btn-yellow') as HTMLButtonElement | null;
+    const castBtn = document.querySelector(
+      'button.ben-cast.btn-green:not(.ben-light), button.ben-cast.btn-yellow'
+    ) as HTMLButtonElement | null;
     const btnText = (castBtn?.textContent || '').trim();
 
     if (!config.benAutoRecoverStamina && (liveStam < 4 || btnText.includes('Đuối sức'))) {
@@ -345,9 +348,10 @@ export async function stepBenDoFishing(
       return { finishedArea: true, exhausted: true };
     }
 
-    const greenCastBtn = document.querySelector('button.ben-cast.btn-green') as HTMLButtonElement | null;
+    const greenCastBtn = document.querySelector('button.ben-cast.btn-green:not(.ben-light)') as HTMLButtonElement | null;
+    const allowCast = Boolean(prep?.ok && prep.allowCast);
     if (
-      config.benSubEnabled?.fishing !== false &&
+      allowCast &&
       greenCastBtn &&
       isVisible(greenCastBtn) &&
       !greenCastBtn.disabled &&
@@ -356,8 +360,10 @@ export async function stepBenDoFishing(
       triggerPointerDownAndClick(greenCastBtn);
       lastCastAt = now;
       setStatus(`🎣 Bến Đò: Quăng câu (🪱 ${bn.wallet?.bait ?? 0} · ⚡ ${bn.wallet?.liveStamina ?? 0})`);
-    } else if (!bu?.spot && config.benSubEnabled?.fishing !== false && !bu?.field) {
+    } else if (allowCast && !bu?.spot) {
       setStatus('📍 Hãy đứng sát mép nước (hoặc bật Tự ra vị trí câu)');
+    } else if (!allowCast) {
+      setStatus('✅ Bến Đò: Đã xong các việc được bật (đang canh tự động...)');
     }
   }
 

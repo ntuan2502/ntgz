@@ -65,10 +65,10 @@ export interface BenNetState {
   crickets?: {
     box?: CricketItem[];
     dex?: Array<{ species: string; count: number; best: number }>;
-  };
-  soi?: SoiState;
+  } | null;
+  soi?: SoiState | null;
   bouts?: Record<string, BoutState>;
-  hunt?: CricketHuntState;
+  hunt?: CricketHuntState | null;
   caught?: CricketCaughtState;
   boutDone?: {
     won?: boolean;
@@ -87,6 +87,8 @@ export interface BenUIState {
   inSeat?: boolean;
   hasBite?: boolean;
   fightActive?: boolean;
+  spot?: string;
+  field?: string | null;
   [key: string]: unknown;
 }
 

@@ -3,7 +3,7 @@ import { getSnapshot } from './core/store-watcher';
 import { dismissInterruptsIfNeeded } from './core/interrupts';
 import { execFarmSubAreaStep } from './modules/farm';
 import { execSeaStep } from './modules/sea';
-import { execBenStep } from './modules/wharf';
+import { execBenStep, refreshCricketWatchers } from './modules/wharf';
 import { AppConfig, FarmSubAreaId } from '../shared/types/config';
 
 interface GameActionPayload {
@@ -78,6 +78,12 @@ interface GameActionPayload {
           if (!payload.config) return { ok: false, error: 'NO_CONFIG' };
           const res = execBenStep(payload.config);
           return { ok: true, ...res };
+        }
+
+        case 'BEN_WATCH': {
+          if (!payload.config) return { ok: false, error: 'NO_CONFIG' };
+          refreshCricketWatchers(payload.config);
+          return { ok: true };
         }
 
         case 'SLEEP_NOW': {

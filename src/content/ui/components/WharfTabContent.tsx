@@ -15,6 +15,7 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
   const isWharfAreaEnabled = config.areaEnabled.benDo !== false;
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const dragSourceIndexRef = React.useRef<number | null>(null);
 
   const subOrder: WharfSubAreaId[] =
     Array.isArray(config.benSubOrder) && config.benSubOrder.length > 0
@@ -67,6 +68,7 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
   };
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
+    dragSourceIndexRef.current = index;
     e.dataTransfer.setData('text/plain', String(index));
     e.dataTransfer.effectAllowed = 'move';
     setDraggingIndex(index);
@@ -86,10 +88,12 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
 
   const handleDrop = (e: React.DragEvent, targetIndex: number) => {
     e.preventDefault();
-    const sourceIndex = Number(e.dataTransfer.getData('text/plain'));
+    const rawData = e.dataTransfer.getData('text/plain');
+    const sourceIndex = dragSourceIndexRef.current !== null ? dragSourceIndexRef.current : Number(rawData);
+    dragSourceIndexRef.current = null;
     setDraggingIndex(null);
     setDragOverIndex(null);
-    if (isNaN(sourceIndex) || sourceIndex === targetIndex) return;
+    if (sourceIndex === null || isNaN(sourceIndex) || sourceIndex === targetIndex) return;
 
     onUpdateConfig((prev) => {
       const order = [...subOrder];
@@ -102,6 +106,7 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
   };
 
   const handleDragEnd = () => {
+    dragSourceIndexRef.current = null;
     setDraggingIndex(null);
     setDragOverIndex(null);
   };
@@ -510,12 +515,9 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
           return (
             <div
               key={subId}
-              draggable
-              onDragStart={(e) => handleDragStart(e, idx)}
               onDragOver={(e) => handleDragOver(e, idx)}
               onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, idx)}
-              onDragEnd={handleDragEnd}
               className={`rounded-xl border bg-white shadow-xs transition-all shadow-sm ${
                 isDragging
                   ? 'opacity-40 border-dashed border-blue-400'
@@ -526,16 +528,18 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
                       : 'border-slate-200/60 opacity-60'
               }`}
             >
-              {/* Header */}
+              {/* Header (Draggable) */}
               <div
-                className="flex items-center justify-between px-3 py-2 cursor-pointer select-none hover:bg-slate-50 rounded-t-xl"
+                draggable
+                onDragStart={(e) => handleDragStart(e, idx)}
+                onDragEnd={handleDragEnd}
+                className="flex items-center justify-between px-3 py-2 cursor-grab active:cursor-grabbing select-none hover:bg-slate-50 rounded-t-xl"
                 onClick={() => handleToggleCollapse(subId)}
               >
                 <div className="flex items-center gap-1.5 min-w-0">
                   <span
-                    className="cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-700 p-0.5 -ml-1"
+                    className="text-slate-400 hover:text-slate-700 p-0.5 -ml-1"
                     title="Kéo thả để sắp xếp độ ưu tiên"
-                    onClick={(e) => e.stopPropagation()}
                   >
                     <GripVertical className="h-3.5 w-3.5" />
                   </span>

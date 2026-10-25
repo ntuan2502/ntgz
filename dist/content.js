@@ -27391,6 +27391,7 @@
     const isWharfAreaEnabled = config2.areaEnabled.benDo !== false;
     const [draggingIndex, setDraggingIndex] = (0, import_react7.useState)(null);
     const [dragOverIndex, setDragOverIndex] = (0, import_react7.useState)(null);
+    const dragSourceIndexRef = import_react7.default.useRef(null);
     const subOrder = Array.isArray(config2.benSubOrder) && config2.benSubOrder.length > 0 ? config2.benSubOrder : ["fishing", "cricketBoss", "cricketHunt", "entertainment"];
     const handleToggleArea = (checked) => {
       onUpdateConfig((prev) => ({
@@ -27434,6 +27435,7 @@
       });
     };
     const handleDragStart = (e, index2) => {
+      dragSourceIndexRef.current = index2;
       e.dataTransfer.setData("text/plain", String(index2));
       e.dataTransfer.effectAllowed = "move";
       setDraggingIndex(index2);
@@ -27450,10 +27452,12 @@
     };
     const handleDrop = (e, targetIndex) => {
       e.preventDefault();
-      const sourceIndex = Number(e.dataTransfer.getData("text/plain"));
+      const rawData = e.dataTransfer.getData("text/plain");
+      const sourceIndex = dragSourceIndexRef.current !== null ? dragSourceIndexRef.current : Number(rawData);
+      dragSourceIndexRef.current = null;
       setDraggingIndex(null);
       setDragOverIndex(null);
-      if (isNaN(sourceIndex) || sourceIndex === targetIndex) return;
+      if (sourceIndex === null || isNaN(sourceIndex) || sourceIndex === targetIndex) return;
       onUpdateConfig((prev) => {
         const order = [...subOrder];
         const [moved] = order.splice(sourceIndex, 1);
@@ -27464,6 +27468,7 @@
       });
     };
     const handleDragEnd = () => {
+      dragSourceIndexRef.current = null;
       setDraggingIndex(null);
       setDragOverIndex(null);
     };
@@ -27859,27 +27864,26 @@
         return /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(
           "div",
           {
-            draggable: true,
-            onDragStart: (e) => handleDragStart(e, idx),
             onDragOver: (e) => handleDragOver(e, idx),
             onDragLeave: handleDragLeave,
             onDrop: (e) => handleDrop(e, idx),
-            onDragEnd: handleDragEnd,
             className: `rounded-xl border bg-white shadow-xs transition-all shadow-sm ${isDragging ? "opacity-40 border-dashed border-blue-400" : isDragOver ? "border-blue-500 ring-2 ring-blue-200" : isEnabled ? "border-slate-200" : "border-slate-200/60 opacity-60"}`,
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(
                 "div",
                 {
-                  className: "flex items-center justify-between px-3 py-2 cursor-pointer select-none hover:bg-slate-50 rounded-t-xl",
+                  draggable: true,
+                  onDragStart: (e) => handleDragStart(e, idx),
+                  onDragEnd: handleDragEnd,
+                  className: "flex items-center justify-between px-3 py-2 cursor-grab active:cursor-grabbing select-none hover:bg-slate-50 rounded-t-xl",
                   onClick: () => handleToggleCollapse(subId),
                   children: [
                     /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "flex items-center gap-1.5 min-w-0", children: [
                       /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
                         "span",
                         {
-                          className: "cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-700 p-0.5 -ml-1",
+                          className: "text-slate-400 hover:text-slate-700 p-0.5 -ml-1",
                           title: "K\xE9o th\u1EA3 \u0111\u1EC3 s\u1EAFp x\u1EBFp \u0111\u1ED9 \u01B0u ti\xEAn",
-                          onClick: (e) => e.stopPropagation(),
                           children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(GripVertical, { className: "h-3.5 w-3.5" })
                         }
                       ),
@@ -29010,6 +29014,8 @@
       areaEnabled: { ...DEFAULT_CONFIG.areaEnabled, ...saved.areaEnabled || {} },
       farmSubEnabled: { ...DEFAULT_CONFIG.farmSubEnabled, ...saved.farmSubEnabled || {} },
       farmSubCollapsed: { ...DEFAULT_CONFIG.farmSubCollapsed, ...saved.farmSubCollapsed || {} },
+      benSubEnabled: { ...DEFAULT_CONFIG.benSubEnabled, ...saved.benSubEnabled || {} },
+      benSubCollapsed: { ...DEFAULT_CONFIG.benSubCollapsed, ...saved.benSubCollapsed || {} },
       // Backward-compatibility migrations
       barnAutoFeedBuffalo: saved.barnAutoFeedBuffalo ?? savedAny.barnAutoBuffalo ?? DEFAULT_CONFIG.barnAutoFeedBuffalo,
       barnAutoBathBuffalo: saved.barnAutoBathBuffalo ?? savedAny.barnAutoBuffalo ?? DEFAULT_CONFIG.barnAutoBathBuffalo,
@@ -29066,6 +29072,11 @@
     }
     for (const k of DEFAULT_CONFIG.farmSubOrder) {
       if (!next.farmSubOrder.includes(k)) next.farmSubOrder.push(k);
+    }
+    const validBenSubs = new Set(DEFAULT_CONFIG.benSubOrder);
+    next.benSubOrder = Array.isArray(next.benSubOrder) ? next.benSubOrder.filter((k, i, arr) => validBenSubs.has(k) && arr.indexOf(k) === i) : [];
+    for (const k of DEFAULT_CONFIG.benSubOrder) {
+      if (!next.benSubOrder.includes(k)) next.benSubOrder.push(k);
     }
     return next;
   }
@@ -29236,9 +29247,7 @@
   var lastHookAt = 0;
   var lastCastAt = 0;
   var lastWheelActionAt = 0;
-  var lastTickleAt = 0;
   var lastCricketCatchAt = 0;
-  var lastTuftTrapAt = 0;
   var lastBoutCloseAt = 0;
   function handleBenLanternWheel(wheelEl, snap, config2, setStatus2, delayMs) {
     const now = performance.now();
@@ -29356,6 +29365,7 @@
       setStatus2("\u23F3 \u0110ang k\u1EBFt n\u1ED1i m\xE1y ch\u1EE7 B\u1EBFn \u0110\xF2...");
       return { finishedArea: false };
     }
+    void execGameAction("BEN_WATCH", { config: config2 });
     if (bn.fishing === "fight" || document.querySelector(".ben-fight")) {
       handleFightMinigame(snap, setStatus2);
       return { finishedArea: false };
@@ -29413,7 +29423,6 @@
     }
     const boutPanel = document.querySelector(".panel.ben-bout");
     if (boutPanel && isVisible(boutPanel)) {
-      const tickleBtn = boutPanel.querySelector("button.ben-bout-tickle");
       const endLine = boutPanel.querySelector(".ben-bout-line.end");
       const closeBtn = boutPanel.querySelector(".ben-panel-head button.btn-brown");
       if (endLine) {
@@ -29425,19 +29434,18 @@
         }
         return { finishedArea: false };
       }
-      if (config2.benAutoTickle && tickleBtn && !tickleBtn.disabled && now - lastTickleAt > 1200) {
-        triggerPointerDownAndClick(tickleBtn);
-        lastTickleAt = now;
-        setStatus2("\u{1F33E} S\u1EDBi D\u1EBF: Kh\u1EC1u r\xE2u d\u1EBF l\u1EA5y \u0111\xE0 t\u1EA5n c\xF4ng!");
+      const tickleBtn = boutPanel.querySelector("button.ben-bout-tickle");
+      if (tickleBtn) {
+        const left = tickleBtn.textContent?.match(/còn\s*(\d+)/)?.[1] ?? "?";
+        setStatus2(`\u{1F94A} S\u1EDBi D\u1EBF: \u0110ang thi \u0111\u1EA5u${config2.benAutoTickle ? " \xB7 t\u1EF1 kh\u1EC1u r\xE2u \u0111\xFAng nh\u1ECBp" : ""} (c\xF2n ${left} l\u1EA7n kh\u1EC1u)`);
         return { finishedArea: false };
       }
-      return { finishedArea: false };
     }
-    const landedTuft = document.querySelector(".ben-hunt-field .ben-tuft.landed");
-    if (landedTuft && !landedTuft.disabled && now - lastTuftTrapAt > 250) {
-      triggerPointerDownAndClick(landedTuft);
-      lastTuftTrapAt = now;
-      setStatus2("\u{1F997} D\u1EBF \u0111\xE1p xu\u1ED1ng b\u1EE5i c\u1ECF -> \u0110\xE3 b\u1EA5m \xFAp d\u1EBF!");
+    if (bn.hunt) {
+      const hop = bn.hunt.phase === "hop" ? bn.hunt.hop : void 0;
+      setStatus2(
+        hop ? `\u{1F997} D\u1EBF \u0111ang nh\u1EA3y (c\xF2n ${hop.left} l\u1EA7n) -> canh l\xFAc n\u1EB1m y\xEAn \u1EDF b\u1EE5i ${hop.spot + 1} \u0111\u1EC3 \xFAp...` : "\u{1F526} \u0110ang r\u1ECDi \u0111\xE8n nghe ng\xF3ng ti\u1EBFng d\u1EBF g\xE1y..."
+      );
       return { finishedArea: false };
     }
     const benBobberBite = document.querySelector("span.ben-bobber.bite");
@@ -29477,7 +29485,9 @@
         return { finishedArea: true, exhausted: true };
       }
       const liveStam = bn.wallet?.liveStamina ?? 100;
-      const castBtn = document.querySelector("button.ben-cast.btn-green, button.ben-cast.btn-yellow");
+      const castBtn = document.querySelector(
+        "button.ben-cast.btn-green:not(.ben-light), button.ben-cast.btn-yellow"
+      );
       const btnText = (castBtn?.textContent || "").trim();
       if (!config2.benAutoRecoverStamina && (liveStam < 4 || btnText.includes("\u0110u\u1ED1i s\u1EE9c"))) {
         setStatus2("\u{1F62E}\u200D\u{1F4A8} B\u1EBFn \u0110\xF2: H\u1EBFt th\u1EC3 l\u1EF1c kh\xF4ng c\xE2u \u0111\u01B0\u1EE3c n\u1EEFa -> Chuy\u1EC3n khu v\u1EF1c ti\u1EBFp theo!");
@@ -29487,13 +29497,16 @@
         setStatus2("\u{1FAB1} B\u1EBFn \u0110\xF2: \u0110\xE3 h\u1EBFt m\u1ED3i c\xE2u -> Chuy\u1EC3n khu v\u1EF1c ti\u1EBFp theo!");
         return { finishedArea: true, exhausted: true };
       }
-      const greenCastBtn = document.querySelector("button.ben-cast.btn-green");
-      if (config2.benSubEnabled?.fishing !== false && greenCastBtn && isVisible(greenCastBtn) && !greenCastBtn.disabled && now - lastCastAt > Math.max(600, delayMs)) {
+      const greenCastBtn = document.querySelector("button.ben-cast.btn-green:not(.ben-light)");
+      const allowCast = Boolean(prep?.ok && prep.allowCast);
+      if (allowCast && greenCastBtn && isVisible(greenCastBtn) && !greenCastBtn.disabled && now - lastCastAt > Math.max(600, delayMs)) {
         triggerPointerDownAndClick(greenCastBtn);
         lastCastAt = now;
         setStatus2(`\u{1F3A3} B\u1EBFn \u0110\xF2: Qu\u0103ng c\xE2u (\u{1FAB1} ${bn.wallet?.bait ?? 0} \xB7 \u26A1 ${bn.wallet?.liveStamina ?? 0})`);
-      } else if (!bu?.spot && config2.benSubEnabled?.fishing !== false && !bu?.field) {
+      } else if (allowCast && !bu?.spot) {
         setStatus2("\u{1F4CD} H\xE3y \u0111\u1EE9ng s\xE1t m\xE9p n\u01B0\u1EDBc (ho\u1EB7c b\u1EADt T\u1EF1 ra v\u1ECB tr\xED c\xE2u)");
+      } else if (!allowCast) {
+        setStatus2("\u2705 B\u1EBFn \u0110\xF2: \u0110\xE3 xong c\xE1c vi\u1EC7c \u0111\u01B0\u1EE3c b\u1EADt (\u0111ang canh t\u1EF1 \u0111\u1ED9ng...)");
       }
     }
     return { finishedArea: false };

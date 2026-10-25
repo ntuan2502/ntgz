@@ -151,6 +151,7 @@ export function getSnapshot(): GameSnapshot {
           spot: bu.spot,
           walking: bu.walking,
           panel: bu.panel,
+          field: bu.field ?? null,
         }
       : null,
     benNet: bn
@@ -171,6 +172,8 @@ export function getSnapshot(): GameSnapshot {
           hunt: bn.hunt,
           caught: bn.caught,
           boutDone: bn.boutDone,
+          you: bn.you,
+          watching: bn.watching ?? null,
         }
       : null,
   };

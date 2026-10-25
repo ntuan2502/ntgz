@@ -300,7 +300,8 @@
       benUI: bu ? {
         spot: bu.spot,
         walking: bu.walking,
-        panel: bu.panel
+        panel: bu.panel,
+        field: bu.field ?? null
       } : null,
       benNet: bn ? {
         status: bn.status,
@@ -318,7 +319,9 @@
         bouts: bn.bouts,
         hunt: bn.hunt,
         caught: bn.caught,
-        boutDone: bn.boutDone
+        boutDone: bn.boutDone,
+        you: bn.you,
+        watching: bn.watching ?? null
       } : null
     };
   }
@@ -1783,6 +1786,138 @@
     return { acted: false };
   }
 
+  // src/page-hook/modules/wharf/cricket-watchers.ts
+  var WATCH_INTERVAL_MS = 50;
+  var CONFIG_STALE_MS = 5e3;
+  var CLASH_INTERVAL_MS = 1600;
+  var MIN_TRAP_WINDOW_MS = 180;
+  var TRAP_DELAY_AFTER_LANDING_MS = 40;
+  var MAX_BETS_PER_DAY = 20;
+  var watchCfg = null;
+  var watchCfgAt = 0;
+  var timerId = null;
+  var scheduledHopN = -1;
+  var tickledKeys = /* @__PURE__ */ new Set();
+  var betBoutIds = /* @__PURE__ */ new Set();
+  function getBenServerNow(bn) {
+    return Date.now() + (bn.ti?.skew ?? 0);
+  }
+  function getBenHour(bn) {
+    const d = new Date(getBenServerNow(bn) + 7 * 3600 * 1e3);
+    return d.getUTCHours() + d.getUTCMinutes() / 60;
+  }
+  function getMyBout(bn) {
+    const you = bn.you;
+    if (!you) return null;
+    for (const bout of Object.values(bn.bouts || {})) {
+      if (bout.end) continue;
+      if (bout.red?.id === you) return { bout, side: "red" };
+      if (bout.blue?.id === you) return { bout, side: "blue" };
+    }
+    return null;
+  }
+  function refreshCricketWatchers(cfg) {
+    watchCfg = cfg;
+    watchCfgAt = Date.now();
+    if (!timerId) {
+      timerId = setInterval(watchTick, WATCH_INTERVAL_MS);
+    }
+  }
+  function isActive(cfg) {
+    if (!cfg || !cfg.running || Date.now() - watchCfgAt > CONFIG_STALE_MS) return false;
+    if (cfg.areaEnabled?.benDo === false) return false;
+    return stores.main?.getState().screen === "benDo";
+  }
+  function watchTick() {
+    const cfg = watchCfg;
+    if (!isActive(cfg)) {
+      if (timerId && Date.now() - watchCfgAt > CONFIG_STALE_MS * 6) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      return;
+    }
+    const bnStore = stores.benNet;
+    if (!bnStore) return;
+    const bn = bnStore.getState();
+    if (bn.status !== "in") return;
+    try {
+      if (cfg.benSubEnabled?.cricketHunt !== false && cfg.benAutoCricketHunt !== false) {
+        watchHuntHop(bn);
+      }
+      if (cfg.benSubEnabled?.cricketBoss !== false) {
+        if (cfg.benAutoTickle !== false) watchBoutTickle(bn);
+        if (cfg.benAutoBet) watchArenaBets(bn, cfg);
+      }
+    } catch (err) {
+      console.warn("[NTG Auto] cricket watcher error:", err);
+    }
+  }
+  function watchHuntHop(bn) {
+    const hop = bn.hunt?.phase === "hop" ? bn.hunt.hop : void 0;
+    if (!hop || hop.n === scheduledHopN) return;
+    scheduledHopN = hop.n;
+    if ((hop.window || 0) < MIN_TRAP_WINDOW_MS) return;
+    const arrivedAt = typeof hop.at === "number" ? hop.at : performance.now();
+    const fireAt = arrivedAt + (hop.air || 0) + TRAP_DELAY_AFTER_LANDING_MS;
+    const delay = Math.max(0, fireAt - performance.now());
+    const { n, spot } = hop;
+    setTimeout(() => {
+      const cur = stores.benNet?.getState().hunt;
+      if (cur?.phase !== "hop" || cur.hop?.n !== n) return;
+      sendBenWs({ t: "trap", n, spot });
+    }, delay);
+  }
+  function watchBoutTickle(bn) {
+    const mine = getMyBout(bn);
+    if (!mine) return;
+    const { bout, side } = mine;
+    const left = bout.tickles?.[side] ?? 0;
+    if (left <= 0 || typeof bout.startAt !== "number") return;
+    const now = getBenServerNow(bn);
+    const clashN = bout.n || 0;
+    const clashAt = bout.startAt + clashN * CLASH_INTERVAL_MS;
+    const inWindup = now >= clashAt - 500 && now < clashAt + 30;
+    const wavering = (bout.fire?.[side] ?? 100) < 30;
+    let key = null;
+    if (wavering) {
+      key = `${bout.id}:waver:${clashN}`;
+    } else if (inWindup && left > 1) {
+      key = `${bout.id}:windup:${clashN}`;
+    }
+    if (!key || tickledKeys.has(key)) return;
+    if (now < bout.startAt - 650) return;
+    tickledKeys.add(key);
+    if (tickledKeys.size > 200) tickledKeys.clear();
+    sendBenWs({ t: "tickle", id: bout.id });
+  }
+  function watchArenaBets(bn, cfg) {
+    const betsToday = bn.soi?.bets;
+    if (typeof betsToday !== "number" || betsToday >= MAX_BETS_PER_DAY) return;
+    const shells = bn.wallet?.shells || 0;
+    const amount = Math.max(10, Math.floor(Number(cfg.benBetAmount) || 50));
+    if (shells < amount) return;
+    const now = getBenServerNow(bn);
+    const you = bn.you;
+    for (const bout of Object.values(bn.bouts || {})) {
+      if (bout.end || !bout.odds || !bout.betUntil || now >= bout.betUntil - 300) continue;
+      if (bout.red?.id === you || bout.blue?.id === you) continue;
+      if (bn.myBets?.[bout.id] || betBoutIds.has(bout.id)) continue;
+      const side = pickBetSide(bout);
+      betBoutIds.add(bout.id);
+      sendBenWs({ t: "bet", id: bout.id, side, shells: amount });
+      return;
+    }
+  }
+  function pickBetSide(bout) {
+    const odds = bout.odds;
+    if (odds && typeof odds.red === "number" && typeof odds.blue === "number" && odds.red !== odds.blue) {
+      return odds.red < odds.blue ? "red" : "blue";
+    }
+    const sum = (s) => (s?.power || 0) + (s?.tough || 0) + (s?.nerve || 0);
+    return sum(bout.blue?.stats) > sum(bout.red?.stats) ? "blue" : "red";
+  }
+
   // src/page-hook/modules/wharf/index.ts
   var BEN_FOOD_NAMES = {
     banhMi: "\u{1F956} B\xE1nh m\xEC th\u1ECBt (+20\u26A1)",
@@ -1869,14 +2004,23 @@
     deVuong: "legendary"
   };
   var BOSS_LADDER = [
-    { id: "cuBin", name: "Cu Bin", reward: 15 },
-    { id: "utMap", name: "\xDAt M\u1EADp", reward: 30 },
-    { id: "anhLuc", name: "Anh L\u1EF1c xe \xF4m", reward: 60 },
-    { id: "bacChin", name: "B\xE1c Ch\xEDn th\u1EE3 r\xE8n", reward: 110 },
-    { id: "ongSau", name: "\xD4ng S\xE1u ch\u1EE7 s\u1EDBi", reward: 220 }
+    { id: "cuBin", name: "Cu Bin", reward: 15, total: 60 },
+    { id: "utMap", name: "\xDAt M\u1EADp", reward: 30, total: 112 },
+    { id: "anhLuc", name: "Anh L\u1EF1c xe \xF4m", reward: 60, total: 138 },
+    { id: "bacChin", name: "B\xE1c Ch\xEDn th\u1EE3 r\xE8n", reward: 110, total: 194 },
+    { id: "ongSau", name: "\xD4ng S\xE1u ch\u1EE7 s\u1EDBi", reward: 220, total: 242 }
   ];
+  var BOSS_MIN_STRENGTH_RATIO = 0.85;
+  var SOI_TILE = { x: 4, y: 29 };
+  var HUNT_FIELD_TILE = { x: 70, y: 20 };
+  var CRICKET_BOX_MAX = 6;
+  var HUNT_STAMINA_COST = 3;
+  var HUNT_LIGHT_STALE_MS = 8e3;
   var keepBenPanelUntil = 0;
   var keepBenPanelMsg = "";
+  var huntLightAt = 0;
+  var hadMyBout = false;
+  var cricketTotal = (c) => (c.stats?.power || 0) + (c.stats?.tough || 0) + (c.stats?.nerve || 0);
   function execBenStep(cfg) {
     const mStore = stores.main;
     const buStore = stores.benUI;
@@ -1890,6 +2034,7 @@
     if (m.screen !== "benDo" || bn.status !== "in") {
       return { acted: false };
     }
+    refreshCricketWatchers(cfg);
     if (bu.walking || bn.fishing !== "idle") {
       return { acted: false };
     }
@@ -1902,6 +2047,43 @@
     const benScene = rawScene;
     const wallet = bn.wallet;
     if (!wallet) return { acted: false };
+    const huntEnabled = cfg.benSubEnabled?.cricketHunt !== false && cfg.benAutoCricketHunt !== false;
+    const bossEnabled = cfg.benSubEnabled?.cricketBoss !== false && cfg.benAutoBossBout !== false;
+    const arenaEnabled = cfg.benSubEnabled?.cricketBoss !== false && (bossEnabled || Boolean(cfg.benAutoBet));
+    if (bn.hunt) {
+      if (bn.hunt.phase === "light" && Date.now() - huntLightAt > HUNT_LIGHT_STALE_MS) {
+        bnStore.setState({ hunt: null });
+        return { acted: false };
+      }
+      const hop = bn.hunt.phase === "hop" ? bn.hunt.hop : void 0;
+      return {
+        acted: true,
+        msg: hop ? `\u{1F997} D\u1EBF \u0111ang nh\u1EA3y (c\xF2n ${hop.left} l\u1EA7n) -> canh b\u1EE5i c\u1ECF ${hop.spot + 1} \u0111\u1EC3 \xFAp...` : bn.hunt.rarity ? "\u{1F997} Nghe ti\u1EBFng d\u1EBF g\xE1y, \u0111ang ch\u1EDD n\xF3 nh\u1EA3y ra..." : "\u{1F526} \u0110ang r\u1ECDi \u0111\xE8n nghe ng\xF3ng ti\u1EBFng d\u1EBF g\xE1y..."
+      };
+    }
+    const myBout = getMyBout(bn);
+    if (myBout) {
+      hadMyBout = true;
+      const { bout, side } = myBout;
+      return {
+        acted: true,
+        msg: `\u{1F94A} S\u1EDBi D\u1EBF: \u0110ang thi \u0111\u1EA5u ${bout.n ? `(gi\xE1p ${bout.n}/12)` : "(s\u1EAFp v\xE0o tr\u1EADn)"} \xB7 c\xF2n ${bout.tickles?.[side] ?? 0} l\u1EA7n kh\u1EC1u r\xE2u`
+      };
+    }
+    if (hadMyBout) {
+      hadMyBout = false;
+      markActed("ben_boss_wait");
+      sendBenWs({ t: "soi" });
+      sendBenWs({ t: "crickets" });
+    }
+    if ((huntEnabled || arenaEnabled) && (!bn.crickets || !bn.soi) && canAct("ben_cricket_init", 5e3)) {
+      markActed("ben_cricket_init");
+      if (!bn.crickets) sendBenWs({ t: "crickets" });
+      if (!bn.soi) sendBenWs({ t: "soi" });
+    } else if (arenaEnabled && bn.soi && canAct("ben_soi_refresh", 6e4)) {
+      markActed("ben_soi_refresh");
+      sendBenWs({ t: "soi" });
+    }
     const stamina = computeBenStamina(wallet);
     const shells = wallet.shells || 0;
     const bait = wallet.bait || 0;
@@ -2136,113 +2318,99 @@
         const target = spotTargets[spotChoice] || spotTargets.bank;
         if (!bu.spot || bu.spot !== target.kind && spotChoice !== "any") {
           if (benScene && typeof benScene.goFarmer === "function") {
-            benScene.goFarmer({ x: target.x, y: target.y });
-            return { acted: true, msg: `\u{1F6B6} \u0110ang \u0111i ra ${target.label} c\xE2u c\xE1...` };
+            const goFarmer = benScene.goFarmer.bind(benScene);
+            return {
+              acted: false,
+              deferred: () => {
+                if (benScene.farmer?.running) return { acted: true, msg: "\u{1F6B6} \u0110ang di chuy\u1EC3n..." };
+                goFarmer({ x: target.x, y: target.y });
+                return { acted: true, msg: `\u{1F6B6} \u0110ang \u0111i ra ${target.label} c\xE2u c\xE1...` };
+              }
+            };
           }
         }
       }
-      return { acted: false };
+      return { acted: false, deferred: () => ({ acted: false, allowCast: true }) };
     };
     const runCricketBossStep = () => {
-      for (const bout of Object.values(bn.bouts || {})) {
-        if (!bout.end && bout.id) {
-          if (cfg.benAutoTickle && canAct("ben_cricket_tickle", 1200)) {
-            sendBenWs({ t: "tickle", id: bout.id });
-            markActed("ben_cricket_tickle");
-            return { acted: true, msg: "\u{1F33E} Kh\u1EC1u r\xE2u d\u1EBF l\u1EA5y \u0111\xE0 t\u1EA5n c\xF4ng!" };
-          }
-        }
+      if (!bossEnabled || !bn.soi || !canAct("ben_boss_wait", 3e3)) {
+        return { acted: false };
       }
-      if (cfg.benAutoBet) {
-        for (const bout of Object.values(bn.bouts || {})) {
-          if (!bout.end && bout.id && bout.betUntil && bout.betUntil > Date.now()) {
-            const betsToday = bn.soi?.bets || 0;
-            if (betsToday < 20 && canAct(`ben_bet_${bout.id}`, 8e3)) {
-              const redSum = (bout.red?.stats?.power || 0) + (bout.red?.stats?.tough || 0) + (bout.red?.stats?.nerve || 0);
-              const blueSum = (bout.blue?.stats?.power || 0) + (bout.blue?.stats?.tough || 0) + (bout.blue?.stats?.nerve || 0);
-              const side = blueSum > redSum ? "blue" : "red";
-              const sideLabel = side === "red" ? bout.red?.name || "\u0110\u1ECF" : bout.blue?.name || "Xanh";
-              const betAmount = Math.min(shells, Math.max(10, Number(cfg.benBetAmount) || 50));
-              if (shells >= betAmount) {
-                sendBenWs({ t: "bet", id: bout.id, side, shells: betAmount });
-                markActed(`ben_bet_${bout.id}`);
-                return { acted: true, msg: `\u{1F3B2} S\u1EDBi D\u1EBF: \u0110\u1EB7t ${betAmount}\u{1F41A} v\xE0o c\u1EEDa ${sideLabel} (${betsToday + 1}/20 l\u01B0\u1EE3t c\u01B0\u1EE3c)` };
-              }
-            }
-          }
-        }
-      }
-      if (cfg.benAutoBossBout !== false) {
-        const box = bn.crickets?.box || bn.soi?.box || [];
-        if (box.length === 0) {
-          return { acted: false };
-        }
-        const npcs = bn.soi?.npcs;
-        if (!npcs || npcs.length === 0) {
-          if (canAct("ben_soi_open", 3500)) {
-            return walkAndRun(
-              { x: 4, y: 29 },
-              () => {
-                sendBenWs({ t: "soi" });
-              },
-              "\u{1F997} Gh\xE9 S\u1EDBi D\u1EBF \xD4ng S\xE1u ki\u1EC3m tra danh s\xE1ch Boss...",
-              "ben_soi_open",
-              { panel: "soi" },
-              1600
-            );
-          }
-          return { acted: false };
-        }
-        const nextBoss = BOSS_LADDER.find((b) => {
-          const npcState = npcs.find((n) => n.id === b.id);
-          return npcState?.open && !npcState?.paidToday;
-        });
-        if (!nextBoss) {
-          return { acted: false };
-        }
-        const now = Date.now();
-        const readyCrickets = box.filter((c) => !c.restUntil || c.restUntil <= now);
-        if (readyCrickets.length === 0) {
-          return { acted: false };
-        }
-        readyCrickets.sort((a, b) => {
-          const sumA = (a.stats?.power || 0) + (a.stats?.tough || 0) + (a.stats?.nerve || 0);
-          const sumB = (b.stats?.power || 0) + (b.stats?.tough || 0) + (b.stats?.nerve || 0);
-          return sumB - sumA;
-        });
-        const bestCricket = readyCrickets[0];
-        const cName = CRICKET_SPECIES_NAMES[bestCricket.species] || "D\u1EBF";
-        const cTotal = (bestCricket.stats?.power || 0) + (bestCricket.stats?.tough || 0) + (bestCricket.stats?.nerve || 0);
-        if (canAct("ben_boss_bout", 4e3)) {
-          return walkAndRun(
-            { x: 4, y: 29 },
-            () => {
-              sendBenWs({ t: "bout", npc: nextBoss.id, cricket: bestCricket.id });
-            },
-            `\u{1F94A} Th\xE1ch \u0111\u1EA5u ${nextBoss.name} t\u1EA1i S\u1EDBi D\u1EBF (+${nextBoss.reward}\u{1F41A}) v\u1EDBi ${cName} (T\u1ED5ng: ${cTotal})`,
-            "ben_boss_bout",
-            { panel: "bout" },
-            2e3
-          );
-        }
-      }
-      return { acted: false };
+      const npcs = bn.soi.npcs || [];
+      const nextBoss = BOSS_LADDER.find((b) => {
+        const npcState = npcs.find((n) => n.id === b.id);
+        return npcState?.open && !npcState.paidToday;
+      });
+      if (!nextBoss) return { acted: false };
+      const box = bn.soi.box?.length ? bn.soi.box : bn.crickets?.box || [];
+      const nowServer = getBenServerNow(bn);
+      const readyCrickets = box.filter((c) => (!c.restUntil || c.restUntil <= nowServer) && (!c.diesAt || c.diesAt > nowServer)).sort((a, b) => cricketTotal(b) - cricketTotal(a));
+      const bestCricket = readyCrickets[0];
+      if (!bestCricket) return { acted: false };
+      const cTotal = cricketTotal(bestCricket);
+      if (cTotal < nextBoss.total * BOSS_MIN_STRENGTH_RATIO) return { acted: false };
+      const cName = CRICKET_SPECIES_NAMES[bestCricket.species] || "D\u1EBF";
+      return walkAndRun(
+        SOI_TILE,
+        () => {
+          sendBenWs({ t: "bout", npc: nextBoss.id, cricket: bestCricket.id });
+        },
+        `\u{1F94A} Th\xE1ch \u0111\u1EA5u ${nextBoss.name} t\u1EA1i S\u1EDBi D\u1EBF (+${nextBoss.reward}\u{1F41A}) v\u1EDBi ${cName} (T\u1ED5ng: ${cTotal} vs ${nextBoss.total})`,
+        "ben_boss_bout",
+        { panel: "soi" },
+        1200
+      );
     };
     const runCricketHuntStep = () => {
-      if (cfg.benAutoCricketHunt === false) {
+      if (!huntEnabled || !bn.crickets) {
         return { acted: false };
       }
-      const minutes = m.minutes || 0;
-      const gameHour = Math.floor(minutes % 1440 / 60);
-      const isNight = gameHour >= 18 || gameHour < 5;
-      const isRareHour = gameHour >= 23 || gameHour < 4;
-      if (!isNight) {
+      const box = bn.crickets.box || [];
+      if (cfg.benAutoFeedCricket && box.length > 0 && canAct("ben_cricket_feed", 3e3)) {
+        const capTotal = (c) => (c.caps?.power || 0) + (c.caps?.tough || 0) + (c.caps?.nerve || 0);
+        const target = [...box].sort((a, b) => capTotal(b) - capTotal(a))[0];
+        const foods = {
+          tough: { id: "laNon", name: "\u{1F33F} L\xE1 non", price: 25 },
+          power: { id: "trungKien", name: "\u{1F95A} Tr\u1EE9ng ki\u1EBFn", price: 40 },
+          nerve: { id: "otHiem", name: "\u{1F336}\uFE0F \u1EDAt hi\u1EC3m", price: 30 }
+        };
+        const gap = (stat2) => (target.caps?.[stat2] || 0) - (target.stats?.[stat2] || 0);
+        const pref = cfg.benPreferCricketFood || "balanced";
+        const stat = pref === "balanced" ? ["tough", "power", "nerve"].reduce((best, s) => gap(s) > gap(best) ? s : best, "tough") : pref;
+        const food = stat && gap(stat) > 0 ? foods[stat] : null;
+        if (food && shells >= food.price) {
+          markActed("ben_cricket_feed");
+          sendBenWs({ t: "feed", id: target.id, food: food.id });
+          const cName = CRICKET_SPECIES_NAMES[target.species] || "D\u1EBF";
+          return { acted: true, msg: `\u{1F33F} Cho ${cName} \u0103n ${food.name} (-${food.price}\u{1F41A})` };
+        }
+      }
+      const hour = getBenHour(bn);
+      const isNight = hour >= 18 || hour < 5;
+      const isRareHour = hour >= 23 || hour < 4;
+      if (!isNight || cfg.benHuntRareOnly && !isRareHour) {
         return { acted: false };
       }
-      if (cfg.benHuntRareOnly && !isRareHour) {
-        return { acted: false };
+      if (box.length >= CRICKET_BOX_MAX) {
+        if (cfg.benAutoReleaseLowCricket === false || !canAct("ben_cricket_release", 3e3)) {
+          return { acted: false };
+        }
+        const rankOrder = { common: 1, uncommon: 2, rare: 3, epic: 4, legendary: 5 };
+        const rank = (c) => rankOrder[CRICKET_SPECIES_RARITY[c.species] || "common"] || 1;
+        const lowest = [...box].sort((a, b) => rank(a) - rank(b) || cricketTotal(a) - cricketTotal(b))[0];
+        const lowestRarity = CRICKET_SPECIES_RARITY[lowest.species] || "common";
+        if (lowestRarity !== "common" && lowestRarity !== "uncommon") {
+          return { acted: false };
+        }
+        markActed("ben_cricket_release");
+        sendBenWs({ t: "release", id: lowest.id });
+        const cName = CRICKET_SPECIES_NAMES[lowest.species] || "D\u1EBF";
+        return {
+          acted: true,
+          msg: `\u{1F38B} \u1ED0ng tre \u0111\u1EA7y (${box.length}/${CRICKET_BOX_MAX}) -> Th\u1EA3 ${cName} v\u1EC1 \u0111\u1ED3ng (+${CRICKET_RARITY_REFUND[lowestRarity] || 5}\u{1F41A})`
+        };
       }
-      if (stamina < 3) {
+      if (stamina < HUNT_STAMINA_COST) {
         const stamRes = tryRecoverStamina();
         if (stamRes) return stamRes;
         return {
@@ -2251,95 +2419,25 @@
           reason: "\u{1F62E}\u200D\u{1F4A8} B\u1EBFn \u0110\xF2: H\u1EBFt S\u1EE9c r\u1ECDi \u0111\xE8n b\u1EAFt d\u1EBF \u0111\xEAm -> Chuy\u1EC3n khu v\u1EF1c ti\u1EBFp theo!"
         };
       }
-      const box = bn.crickets?.box || [];
-      if (box.length >= 6 && cfg.benAutoReleaseLowCricket !== false && canAct("ben_cricket_release", 3e3)) {
-        const rankOrder = { common: 1, uncommon: 2, rare: 3, epic: 4, legendary: 5 };
-        const sorted = [...box].sort((a, b) => {
-          const rarA = rankOrder[CRICKET_SPECIES_RARITY[a.species] || "common"] || 1;
-          const rarB = rankOrder[CRICKET_SPECIES_RARITY[b.species] || "common"] || 1;
-          if (rarA !== rarB) return rarA - rarB;
-          const sumA = (a.stats?.power || 0) + (a.stats?.tough || 0) + (a.stats?.nerve || 0);
-          const sumB = (b.stats?.power || 0) + (b.stats?.tough || 0) + (b.stats?.nerve || 0);
-          return sumA - sumB;
-        });
-        const lowest = sorted[0];
-        const lowestRarity = CRICKET_SPECIES_RARITY[lowest.species] || "common";
-        if (lowestRarity === "common" || lowestRarity === "uncommon") {
-          const refund = CRICKET_RARITY_REFUND[lowestRarity] || 5;
-          const cName = CRICKET_SPECIES_NAMES[lowest.species] || "D\u1EBF";
-          markActed("ben_cricket_release");
-          sendBenWs({ t: "release", id: lowest.id });
-          return {
-            acted: true,
-            msg: `\u{1F38B} \u1ED0ng tre \u0111\u1EA7y (6/6) -> \u0110\xE3 th\u1EA3 ${cName} v\u1EC1 \u0111\u1ED3ng (+${refund} v\u1ECF s\xF2 \u{1F41A})`
-          };
-        }
-      }
-      if (cfg.benAutoFeedCricket && box.length > 0 && canAct("ben_cricket_feed", 3e3)) {
-        const sortedBest = [...box].sort((a, b) => {
-          const sumA = (a.caps?.power || 0) + (a.caps?.tough || 0) + (a.caps?.nerve || 0);
-          const sumB = (b.caps?.power || 0) + (b.caps?.tough || 0) + (b.caps?.nerve || 0);
-          return sumB - sumA;
-        });
-        const targetCricket = sortedBest[0];
-        const prefFoodStat = cfg.benPreferCricketFood || "balanced";
-        let foodItem = null;
-        if (prefFoodStat === "tough" && targetCricket.stats.tough < targetCricket.caps.tough && shells >= 25) {
-          foodItem = { id: "laNon", name: "\u{1F33F} L\xE1 non", price: 25 };
-        } else if (prefFoodStat === "power" && targetCricket.stats.power < targetCricket.caps.power && shells >= 40) {
-          foodItem = { id: "trungKien", name: "\u{1F95A} Tr\u1EE9ng ki\u1EBFn", price: 40 };
-        } else if (prefFoodStat === "nerve" && targetCricket.stats.nerve < targetCricket.caps.nerve && shells >= 30) {
-          foodItem = { id: "otHiem", name: "\u{1F336}\uFE0F \u1EDAt hi\u1EC3m", price: 30 };
-        } else if (prefFoodStat === "balanced") {
-          const diffTough = targetCricket.caps.tough - targetCricket.stats.tough;
-          const diffPower = targetCricket.caps.power - targetCricket.stats.power;
-          const diffNerve = targetCricket.caps.nerve - targetCricket.stats.nerve;
-          if (diffTough >= diffPower && diffTough >= diffNerve && diffTough > 0 && shells >= 25) {
-            foodItem = { id: "laNon", name: "\u{1F33F} L\xE1 non", price: 25 };
-          } else if (diffPower >= diffTough && diffPower >= diffNerve && diffPower > 0 && shells >= 40) {
-            foodItem = { id: "trungKien", name: "\u{1F95A} Tr\u1EE9ng ki\u1EBFn", price: 40 };
-          } else if (diffNerve > 0 && shells >= 30) {
-            foodItem = { id: "otHiem", name: "\u{1F336}\uFE0F \u1EDAt hi\u1EC3m", price: 30 };
+      return {
+        acted: false,
+        deferred: () => {
+          if (!bu.field || bu.spot) {
+            if (!benScene || typeof benScene.goFarmer !== "function") return { acted: false };
+            if (benScene.farmer?.running) return { acted: true, msg: "\u{1F6B6} \u0110ang ra \u0111\u1ED3ng c\u1ECF ph\xEDa \u0111\xF4ng..." };
+            benScene.goFarmer(HUNT_FIELD_TILE);
+            return { acted: true, msg: "\u{1F6B6} Ra \u0111\u1ED3ng c\u1ECF ph\xEDa \u0111\xF4ng s\u0103n d\u1EBF \u0111\xEAm..." };
           }
+          if (!canAct("ben_hunt_light", 2500)) {
+            return { acted: true, msg: "\u{1F526} Chu\u1EA9n b\u1ECB r\u1ECDi \u0111\xE8n b\u1EAFt d\u1EBF..." };
+          }
+          markActed("ben_hunt_light");
+          huntLightAt = Date.now();
+          bnStore.setState({ hunt: { phase: "light" } });
+          sendBenWs({ t: "light" });
+          return { acted: true, msg: `\u{1F526} R\u1ECDi \u0111\xE8n b\u1EAFt d\u1EBF \u0111\xEAm (\u26A1${HUNT_STAMINA_COST} S\u1EE9c \xB7 \u1ED1ng tre ${box.length}/${CRICKET_BOX_MAX})` };
         }
-        if (foodItem) {
-          markActed("ben_cricket_feed");
-          sendBenWs({ t: "feed", id: targetCricket.id, food: foodItem.id });
-          const cName = CRICKET_SPECIES_NAMES[targetCricket.species] || "D\u1EBF";
-          return {
-            acted: true,
-            msg: `\u{1F33F} Cho ${cName} \u0103n ${foodItem.name} (-${foodItem.price}\u{1F41A}, +5 ch\u1EC9 s\u1ED1)`
-          };
-        }
-      }
-      const huntTarget = { x: 64, y: 11 };
-      if (!bu.field) {
-        return walkAndRun(
-          huntTarget,
-          () => {
-            sendBenWs({ t: "light" });
-          },
-          "\u{1F6B6} Ra \u0111\u1ED3ng c\u1ECF ph\xEDa \u0111\xF4ng s\u0103n d\u1EBF \u0111\xEAm...",
-          "ben_hunt_walk"
-        );
-      }
-      if (bn.hunt?.phase === "hop" && bn.hunt.hop) {
-        const spot = bn.hunt.hop.spot;
-        sendBenWs({ t: "trap", n: bn.hunt.hop.n, spot });
-        return {
-          acted: true,
-          msg: `\u{1F997} Canh d\u1EBF \u0111\xE1p xu\u1ED1ng b\u1EE5i c\u1ECF ${spot + 1} -> \xDAP B\u1EAET!`
-        };
-      }
-      if (!bn.hunt && canAct("ben_hunt_light", 2200)) {
-        markActed("ben_hunt_light");
-        sendBenWs({ t: "light" });
-        return {
-          acted: true,
-          msg: "\u{1F526} R\u1ECDi \u0111\xE8n pin nghe ng\xF3ng ti\u1EBFng d\u1EBF g\xE1y \u0111\xEAm... (\u26A13 S\u1EE9c)"
-        };
-      }
-      return { acted: false };
+      };
     };
     const runEntertainmentStep = () => {
       if (cfg.benAutoLantern !== false) {
@@ -2424,23 +2522,33 @@
       cricketHunt: runCricketHuntStep,
       entertainment: runEntertainmentStep
     };
+    const continuousSubs = /* @__PURE__ */ new Set(["fishing", "cricketHunt"]);
     const activeOrder = Array.isArray(cfg.benSubOrder) && cfg.benSubOrder.length > 0 ? cfg.benSubOrder : ["fishing", "cricketBoss", "cricketHunt", "entertainment"];
+    let deferred = null;
+    let exhaustedResult = null;
     for (const subId of activeOrder) {
-      if (cfg.benSubEnabled?.[subId] !== false) {
-        const runner = subAreaRunners[subId];
-        if (runner) {
-          const result = runner();
-          if (result.acted || result.exhausted) {
-            return result;
-          }
-        }
+      if (cfg.benSubEnabled?.[subId] === false) continue;
+      if (deferred && continuousSubs.has(subId)) continue;
+      const runner = subAreaRunners[subId];
+      if (!runner) continue;
+      const result = runner();
+      if (result.acted) return result;
+      if (result.deferred) {
+        deferred = result.deferred;
+      } else if (result.exhausted && !exhaustedResult) {
+        exhaustedResult = result;
       }
     }
     const lanternActive = bu.panel === "lantern" && cfg.benAutoLantern !== false && ((wallet.tickets || 0) > 0 || Boolean(cfg.benBuyLanternTicket && (bn.wheel?.bought || 0) < 5 && shells >= 600));
     if (bu.panel && !lanternActive && (!cfg.showFullActions || Date.now() >= keepBenPanelUntil)) {
       buStore.setState({ panel: null });
     }
-    return { acted: false };
+    if (deferred) {
+      const result = deferred();
+      if (result.acted || result.allowCast) return result;
+    }
+    if (exhaustedResult) return exhaustedResult;
+    return { acted: false, allowCast: false };
   }
 
   // src/page-hook/index.ts
@@ -2502,6 +2610,11 @@
             if (!payload.config) return { ok: false, error: "NO_CONFIG" };
             const res = execBenStep(payload.config);
             return { ok: true, ...res };
+          }
+          case "BEN_WATCH": {
+            if (!payload.config) return { ok: false, error: "NO_CONFIG" };
+            refreshCricketWatchers(payload.config);
+            return { ok: true };
           }
           case "SLEEP_NOW": {
             const mainState = mainStore.getState();

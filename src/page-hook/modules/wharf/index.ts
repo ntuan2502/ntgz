@@ -4,6 +4,20 @@ import { computeBenStamina } from '../../core/store-watcher';
 import { dismissInterruptsIfNeeded } from '../../core/interrupts';
 import { AppConfig, WharfSubAreaId } from '../../../shared/types/config';
 import { CricketItem, SoiNpc } from '../../../shared/types/game-store';
+import { refreshCricketWatchers, getBenServerNow, getBenHour, getMyBout } from './cricket-watchers';
+
+export { refreshCricketWatchers };
+
+interface BenStepResult {
+  acted: boolean;
+  msg?: string;
+  exhausted?: boolean;
+  reason?: string;
+  /** Content runner may click the cast button (fishing owns the continuous slot and stands at the spot) */
+  allowCast?: boolean;
+  /** Continuous activity (fishing / hunting) to run only if no bounded task is ready */
+  deferred?: () => BenStepResult;
+}
 
 const BEN_FOOD_NAMES: Record<string, string> = {
   banhMi: '🥖 Bánh mì thịt (+20⚡)',
@@ -98,17 +112,30 @@ export const CRICKET_SPECIES_RARITY: Record<string, string> = {
 };
 
 const BOSS_LADDER = [
-  { id: 'cuBin', name: 'Cu Bin', reward: 15 },
-  { id: 'utMap', name: 'Út Mập', reward: 30 },
-  { id: 'anhLuc', name: 'Anh Lực xe ôm', reward: 60 },
-  { id: 'bacChin', name: 'Bác Chín thợ rèn', reward: 110 },
-  { id: 'ongSau', name: 'Ông Sáu chủ sới', reward: 220 },
+  { id: 'cuBin', name: 'Cu Bin', reward: 15, total: 60 },
+  { id: 'utMap', name: 'Út Mập', reward: 30, total: 112 },
+  { id: 'anhLuc', name: 'Anh Lực xe ôm', reward: 60, total: 138 },
+  { id: 'bacChin', name: 'Bác Chín thợ rèn', reward: 110, total: 194 },
+  { id: 'ongSau', name: 'Ông Sáu chủ sới', reward: 220, total: 242 },
 ];
+/** Only challenge a boss when our best cricket is at least this strong relative to it */
+const BOSS_MIN_STRENGTH_RATIO = 0.85;
+const SOI_TILE = { x: 4, y: 29 };
+/** Walkable tile in the middle of the eastern grass field (Vh = {x:64,y:11,w:20,h:21}) */
+const HUNT_FIELD_TILE = { x: 70, y: 20 };
+const CRICKET_BOX_MAX = 6;
+const HUNT_STAMINA_COST = 3;
+const HUNT_LIGHT_STALE_MS = 8000;
 
 let keepBenPanelUntil = 0;
 let keepBenPanelMsg = '';
+let huntLightAt = 0;
+let hadMyBout = false;
 
-export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exhausted?: boolean; reason?: string } {
+const cricketTotal = (c: { stats?: { power?: number; tough?: number; nerve?: number } }) =>
+  (c.stats?.power || 0) + (c.stats?.tough || 0) + (c.stats?.nerve || 0);
+
+export function execBenStep(cfg: AppConfig): BenStepResult {
   const mStore = stores.main;
   const buStore = stores.benUI;
   const bnStore = stores.benNet;
@@ -123,6 +150,7 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
   if (m.screen !== 'benDo' || bn.status !== 'in') {
     return { acted: false };
   }
+  refreshCricketWatchers(cfg);
   if (bu.walking || bn.fishing !== 'idle') {
     return { acted: false };
   }
@@ -143,6 +171,55 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
 
   const wallet = bn.wallet;
   if (!wallet) return { acted: false };
+
+  const huntEnabled = cfg.benSubEnabled?.cricketHunt !== false && cfg.benAutoCricketHunt !== false;
+  const bossEnabled = cfg.benSubEnabled?.cricketBoss !== false && cfg.benAutoBossBout !== false;
+  const arenaEnabled = cfg.benSubEnabled?.cricketBoss !== false && (bossEnabled || Boolean(cfg.benAutoBet));
+
+  // Active hunt: stay still so no other task walks the player off the field.
+  if (bn.hunt) {
+    if (bn.hunt.phase === 'light' && Date.now() - huntLightAt > HUNT_LIGHT_STALE_MS) {
+      bnStore.setState({ hunt: null });
+      return { acted: false };
+    }
+    const hop = bn.hunt.phase === 'hop' ? bn.hunt.hop : undefined;
+    return {
+      acted: true,
+      msg: hop
+        ? `🦗 Dế đang nhảy (còn ${hop.left} lần) -> canh bụi cỏ ${hop.spot + 1} để úp...`
+        : bn.hunt.rarity
+          ? '🦗 Nghe tiếng dế gáy, đang chờ nó nhảy ra...'
+          : '🔦 Đang rọi đèn nghe ngóng tiếng dế gáy...',
+    };
+  }
+
+  // Own bout in progress: stay at the arena (tickles are handled by the watcher).
+  const myBout = getMyBout(bn);
+  if (myBout) {
+    hadMyBout = true;
+    const { bout, side } = myBout;
+    return {
+      acted: true,
+      msg: `🥊 Sới Dế: Đang thi đấu ${bout.n ? `(giáp ${bout.n}/12)` : '(sắp vào trận)'} · còn ${bout.tickles?.[side] ?? 0} lần khều râu`,
+    };
+  }
+  if (hadMyBout) {
+    // Bout just ended: refresh arena + tube so rest timers and paid rewards are up to date.
+    hadMyBout = false;
+    markActed('ben_boss_wait');
+    sendBenWs({ t: 'soi' });
+    sendBenWs({ t: 'crickets' });
+  }
+
+  // Cricket/arena state is null until requested; it can be fetched from anywhere on the map.
+  if ((huntEnabled || arenaEnabled) && (!bn.crickets || !bn.soi) && canAct('ben_cricket_init', 5000)) {
+    markActed('ben_cricket_init');
+    if (!bn.crickets) sendBenWs({ t: 'crickets' });
+    if (!bn.soi) sendBenWs({ t: 'soi' });
+  } else if (arenaEnabled && bn.soi && canAct('ben_soi_refresh', 60000)) {
+    markActed('ben_soi_refresh');
+    sendBenWs({ t: 'soi' });
+  }
 
   const stamina = computeBenStamina(wallet);
   const shells = wallet.shells || 0;
@@ -232,7 +309,7 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
     shells < targetFoodPrice;
 
   // Helper: Recover Stamina
-  const tryRecoverStamina = (): { acted: boolean; msg?: string; exhausted?: boolean; reason?: string } | null => {
+  const tryRecoverStamina = (): BenStepResult | null => {
     if (stamina < 4 || (cfg.benAutoRecoverStamina !== false && stamina <= stamMin)) {
       if (cfg.benAutoRecoverStamina !== false) {
         // Eat from pack
@@ -338,7 +415,7 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
   // ---------------------------------------------------------------------------
   // SUB-AREA RUNNER 1: FISHING (Câu cá & Bán cá Bến Đò)
   // ---------------------------------------------------------------------------
-  const runFishingStep = (): { acted: boolean; msg?: string; exhausted?: boolean; reason?: string } => {
+  const runFishingStep = (): BenStepResult => {
     // 1. Sell basket at Vựa cá Anh Tư
     const sellThreshold = Number(cfg.benSellThreshold) || 60;
     if (
@@ -440,7 +517,7 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
       }
     }
 
-    // 5. Walk to fishing spot
+    // 5. Walk to fishing spot, then let the content runner cast (deferred so ready bounded tasks go first)
     if (cfg.benAutoSpot !== false) {
       const spotChoice = cfg.benSpot || 'bank';
       const spotTargets: Record<string, { x: number; y: number; kind: string; label: string }> = {
@@ -452,146 +529,127 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
 
       if (!bu.spot || (bu.spot !== target.kind && (spotChoice as string) !== 'any')) {
         if (benScene && typeof benScene.goFarmer === 'function') {
-          benScene.goFarmer({ x: target.x, y: target.y });
-          return { acted: true, msg: `🚶 Đang đi ra ${target.label} câu cá...` };
+          const goFarmer = benScene.goFarmer.bind(benScene);
+          return {
+            acted: false,
+            deferred: () => {
+              if (benScene.farmer?.running) return { acted: true, msg: '🚶 Đang di chuyển...' };
+              goFarmer({ x: target.x, y: target.y });
+              return { acted: true, msg: `🚶 Đang đi ra ${target.label} câu cá...` };
+            },
+          };
         }
       }
     }
 
-    return { acted: false };
+    return { acted: false, deferred: () => ({ acted: false, allowCast: true }) };
   };
 
   // ---------------------------------------------------------------------------
-  // SUB-AREA RUNNER 2: CRICKET ARENA & BOSS FIGHT (Sới dế Ông Sáu & Đặt cửa)
+  // SUB-AREA RUNNER 2: CRICKET ARENA & BOSS FIGHT (Sới dế Ông Sáu)
+  // Tickles and arena bets are timing-critical and run in cricket-watchers.ts.
   // ---------------------------------------------------------------------------
-  const runCricketBossStep = (): { acted: boolean; msg?: string; exhausted?: boolean; reason?: string } => {
-    // A. In-bout Feelers Tickle (Active in any bout)
-    for (const bout of Object.values(bn.bouts || {})) {
-      if (!bout.end && bout.id) {
-        if (cfg.benAutoTickle && canAct('ben_cricket_tickle', 1200)) {
-          sendBenWs({ t: 'tickle', id: bout.id });
-          markActed('ben_cricket_tickle');
-          return { acted: true, msg: '🌾 Khều râu dế lấy đà tấn công!' };
-        }
-      }
+  const runCricketBossStep = (): BenStepResult => {
+    if (!bossEnabled || !bn.soi || !canAct('ben_boss_wait', 3000)) {
+      return { acted: false };
     }
 
-    // B. Arena Betting (Tự động đặt cược nếu bật)
-    if (cfg.benAutoBet) {
-      for (const bout of Object.values(bn.bouts || {})) {
-        if (!bout.end && bout.id && bout.betUntil && bout.betUntil > Date.now()) {
-          const betsToday = bn.soi?.bets || 0;
-          if (betsToday < 20 && canAct(`ben_bet_${bout.id}`, 8000)) {
-            const redSum = (bout.red?.stats?.power || 0) + (bout.red?.stats?.tough || 0) + (bout.red?.stats?.nerve || 0);
-            const blueSum = (bout.blue?.stats?.power || 0) + (bout.blue?.stats?.tough || 0) + (bout.blue?.stats?.nerve || 0);
-            const side: 'red' | 'blue' = blueSum > redSum ? 'blue' : 'red';
-            const sideLabel = side === 'red' ? (bout.red?.name || 'Đỏ') : (bout.blue?.name || 'Xanh');
-            const betAmount = Math.min(shells, Math.max(10, Number(cfg.benBetAmount) || 50));
-            if (shells >= betAmount) {
-              sendBenWs({ t: 'bet', id: bout.id, side, shells: betAmount });
-              markActed(`ben_bet_${bout.id}`);
-              return { acted: true, msg: `🎲 Sới Dế: Đặt ${betAmount}🐚 vào cửa ${sideLabel} (${betsToday + 1}/20 lượt cược)` };
-            }
-          }
-        }
-      }
-    }
+    const npcs = bn.soi.npcs || [];
+    const nextBoss = BOSS_LADDER.find((b) => {
+      const npcState = npcs.find((n: SoiNpc) => n.id === b.id);
+      return npcState?.open && !npcState.paidToday;
+    });
+    if (!nextBoss) return { acted: false };
 
-    // C. Daily Boss Challenge Ladder (Cu Bin -> Ông Sáu)
-    if (cfg.benAutoBossBout !== false) {
-      const box = bn.crickets?.box || bn.soi?.box || [];
-      if (box.length === 0) {
-        // Tube is empty -> Cannot fight boss
-        return { acted: false };
-      }
+    const box: CricketItem[] = bn.soi.box?.length ? bn.soi.box : bn.crickets?.box || [];
+    const nowServer = getBenServerNow(bn);
+    const readyCrickets = box
+      .filter((c) => (!c.restUntil || c.restUntil <= nowServer) && (!c.diesAt || c.diesAt > nowServer))
+      .sort((a, b) => cricketTotal(b) - cricketTotal(a));
+    const bestCricket = readyCrickets[0];
+    if (!bestCricket) return { acted: false };
 
-      // Check if Sới info is known
-      const npcs = bn.soi?.npcs;
-      if (!npcs || npcs.length === 0) {
-        if (canAct('ben_soi_open', 3500)) {
-          return walkAndRun(
-            { x: 4, y: 29 },
-            () => {
-              sendBenWs({ t: 'soi' });
-            },
-            '🦗 Ghé Sới Dế Ông Sáu kiểm tra danh sách Boss...',
-            'ben_soi_open',
-            { panel: 'soi' },
-            1600
-          );
-        }
-        return { acted: false };
-      }
+    const cTotal = cricketTotal(bestCricket);
+    if (cTotal < nextBoss.total * BOSS_MIN_STRENGTH_RATIO) return { acted: false };
 
-      // Find next available boss in ladder that hasn't been beaten/paid today
-      const nextBoss = BOSS_LADDER.find((b) => {
-        const npcState = npcs.find((n: SoiNpc) => n.id === b.id);
-        return npcState?.open && !npcState?.paidToday;
-      });
-
-      if (!nextBoss) {
-        // All unlocked bosses paid today -> Finished boss ladder for today!
-        return { acted: false };
-      }
-
-      // Find best available cricket not resting
-      const now = Date.now();
-      const readyCrickets = box.filter((c: CricketItem) => !c.restUntil || c.restUntil <= now);
-      if (readyCrickets.length === 0) {
-        // Crickets are resting
-        return { acted: false };
-      }
-
-      // Pick cricket with highest total stats
-      readyCrickets.sort((a, b) => {
-        const sumA = (a.stats?.power || 0) + (a.stats?.tough || 0) + (a.stats?.nerve || 0);
-        const sumB = (b.stats?.power || 0) + (b.stats?.tough || 0) + (b.stats?.nerve || 0);
-        return sumB - sumA;
-      });
-      const bestCricket = readyCrickets[0];
-      const cName = CRICKET_SPECIES_NAMES[bestCricket.species] || 'Dế';
-      const cTotal = (bestCricket.stats?.power || 0) + (bestCricket.stats?.tough || 0) + (bestCricket.stats?.nerve || 0);
-
-      if (canAct('ben_boss_bout', 4000)) {
-        return walkAndRun(
-          { x: 4, y: 29 },
-          () => {
-            sendBenWs({ t: 'bout', npc: nextBoss.id, cricket: bestCricket.id });
-          },
-          `🥊 Thách đấu ${nextBoss.name} tại Sới Dế (+${nextBoss.reward}🐚) với ${cName} (Tổng: ${cTotal})`,
-          'ben_boss_bout',
-          { panel: 'bout' },
-          2000
-        );
-      }
-    }
-
-    return { acted: false };
+    const cName = CRICKET_SPECIES_NAMES[bestCricket.species] || 'Dế';
+    return walkAndRun(
+      SOI_TILE,
+      () => {
+        sendBenWs({ t: 'bout', npc: nextBoss.id, cricket: bestCricket.id });
+      },
+      `🥊 Thách đấu ${nextBoss.name} tại Sới Dế (+${nextBoss.reward}🐚) với ${cName} (Tổng: ${cTotal} vs ${nextBoss.total})`,
+      'ben_boss_bout',
+      { panel: 'soi' },
+      1200
+    );
   };
 
   // ---------------------------------------------------------------------------
   // SUB-AREA RUNNER 3: CRICKET HUNT & TUBE CARE (Bắt dế đêm & Nuôi dế ống tre)
+  // The trap timing itself runs in cricket-watchers.ts.
   // ---------------------------------------------------------------------------
-  const runCricketHuntStep = (): { acted: boolean; msg?: string; exhausted?: boolean; reason?: string } => {
-    if (cfg.benAutoCricketHunt === false) {
+  const runCricketHuntStep = (): BenStepResult => {
+    if (!huntEnabled || !bn.crickets) {
+      return { acted: false };
+    }
+    const box: CricketItem[] = bn.crickets.box || [];
+
+    // 1. Feed the highest-potential cricket (off by default, costs shells)
+    if (cfg.benAutoFeedCricket && box.length > 0 && canAct('ben_cricket_feed', 3000)) {
+      const capTotal = (c: CricketItem) => (c.caps?.power || 0) + (c.caps?.tough || 0) + (c.caps?.nerve || 0);
+      const target = [...box].sort((a, b) => capTotal(b) - capTotal(a))[0];
+      const foods = {
+        tough: { id: 'laNon', name: '🌿 Lá non', price: 25 },
+        power: { id: 'trungKien', name: '🥚 Trứng kiến', price: 40 },
+        nerve: { id: 'otHiem', name: '🌶️ Ớt hiểm', price: 30 },
+      } as const;
+      const gap = (stat: keyof typeof foods) => (target.caps?.[stat] || 0) - (target.stats?.[stat] || 0);
+      const pref = cfg.benPreferCricketFood || 'balanced';
+      const stat: keyof typeof foods | null =
+        pref === 'balanced'
+          ? (['tough', 'power', 'nerve'] as const).reduce((best, s) => (gap(s) > gap(best) ? s : best), 'tough' as keyof typeof foods)
+          : pref;
+      const food = stat && gap(stat) > 0 ? foods[stat] : null;
+      if (food && shells >= food.price) {
+        markActed('ben_cricket_feed');
+        sendBenWs({ t: 'feed', id: target.id, food: food.id });
+        const cName = CRICKET_SPECIES_NAMES[target.species] || 'Dế';
+        return { acted: true, msg: `🌿 Cho ${cName} ăn ${food.name} (-${food.price}🐚)` };
+      }
+    }
+
+    // 2. Night window check (wharf runs on real Vietnam time, 18h-5h)
+    const hour = getBenHour(bn);
+    const isNight = hour >= 18 || hour < 5;
+    const isRareHour = hour >= 23 || hour < 4;
+    if (!isNight || (cfg.benHuntRareOnly && !isRareHour)) {
       return { acted: false };
     }
 
-    // 1. Time Check: Night hours (18:00 to 05:00)
-    const minutes = m.minutes || 0;
-    const gameHour = Math.floor((minutes % 1440) / 60);
-    const isNight = gameHour >= 18 || gameHour < 5;
-    const isRareHour = gameHour >= 23 || gameHour < 4;
-
-    if (!isNight) {
-      return { acted: false };
+    // 3. Full tube: release the weakest common/uncommon cricket to make room
+    if (box.length >= CRICKET_BOX_MAX) {
+      if (cfg.benAutoReleaseLowCricket === false || !canAct('ben_cricket_release', 3000)) {
+        return { acted: false };
+      }
+      const rankOrder: Record<string, number> = { common: 1, uncommon: 2, rare: 3, epic: 4, legendary: 5 };
+      const rank = (c: CricketItem) => rankOrder[CRICKET_SPECIES_RARITY[c.species] || 'common'] || 1;
+      const lowest = [...box].sort((a, b) => rank(a) - rank(b) || cricketTotal(a) - cricketTotal(b))[0];
+      const lowestRarity = CRICKET_SPECIES_RARITY[lowest.species] || 'common';
+      if (lowestRarity !== 'common' && lowestRarity !== 'uncommon') {
+        return { acted: false };
+      }
+      markActed('ben_cricket_release');
+      sendBenWs({ t: 'release', id: lowest.id });
+      const cName = CRICKET_SPECIES_NAMES[lowest.species] || 'Dế';
+      return {
+        acted: true,
+        msg: `🎋 Ống tre đầy (${box.length}/${CRICKET_BOX_MAX}) -> Thả ${cName} về đồng (+${CRICKET_RARITY_REFUND[lowestRarity] || 5}🐚)`,
+      };
     }
-    if (cfg.benHuntRareOnly && !isRareHour) {
-      return { acted: false };
-    }
 
-    // 2. Stamina Check: Hunt requires 3 stamina
-    if (stamina < 3) {
+    // 4. Stamina: each light costs 3
+    if (stamina < HUNT_STAMINA_COST) {
       const stamRes = tryRecoverStamina();
       if (stamRes) return stamRes;
       return {
@@ -601,119 +659,32 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
       };
     }
 
-    const box = bn.crickets?.box || [];
-
-    // 3. Bamboo Tube Management: Box capacity = 6
-    if (box.length >= 6 && cfg.benAutoReleaseLowCricket !== false && canAct('ben_cricket_release', 3000)) {
-      // Find lowest rarity or lowest stats cricket to release
-      const rankOrder: Record<string, number> = { common: 1, uncommon: 2, rare: 3, epic: 4, legendary: 5 };
-      const sorted = [...box].sort((a, b) => {
-        const rarA = rankOrder[CRICKET_SPECIES_RARITY[a.species] || 'common'] || 1;
-        const rarB = rankOrder[CRICKET_SPECIES_RARITY[b.species] || 'common'] || 1;
-        if (rarA !== rarB) return rarA - rarB;
-        const sumA = (a.stats?.power || 0) + (a.stats?.tough || 0) + (a.stats?.nerve || 0);
-        const sumB = (b.stats?.power || 0) + (b.stats?.tough || 0) + (b.stats?.nerve || 0);
-        return sumA - sumB;
-      });
-
-      const lowest = sorted[0];
-      const lowestRarity = CRICKET_SPECIES_RARITY[lowest.species] || 'common';
-      if (lowestRarity === 'common' || lowestRarity === 'uncommon') {
-        const refund = CRICKET_RARITY_REFUND[lowestRarity] || 5;
-        const cName = CRICKET_SPECIES_NAMES[lowest.species] || 'Dế';
-        markActed('ben_cricket_release');
-        sendBenWs({ t: 'release', id: lowest.id });
-        return {
-          acted: true,
-          msg: `🎋 Ống tre đầy (6/6) -> Đã thả ${cName} về đồng (+${refund} vỏ sò 🐚)`,
-        };
-      }
-    }
-
-    // 4. Feed Best Cricket if enabled
-    if (cfg.benAutoFeedCricket && box.length > 0 && canAct('ben_cricket_feed', 3000)) {
-      // Find highest rarity/potential cricket
-      const sortedBest = [...box].sort((a, b) => {
-        const sumA = (a.caps?.power || 0) + (a.caps?.tough || 0) + (a.caps?.nerve || 0);
-        const sumB = (b.caps?.power || 0) + (b.caps?.tough || 0) + (b.caps?.nerve || 0);
-        return sumB - sumA;
-      });
-      const targetCricket = sortedBest[0];
-      const prefFoodStat = cfg.benPreferCricketFood || 'balanced';
-
-      let foodItem: { id: string; name: string; price: number } | null = null;
-      if (prefFoodStat === 'tough' && targetCricket.stats.tough < targetCricket.caps.tough && shells >= 25) {
-        foodItem = { id: 'laNon', name: '🌿 Lá non', price: 25 };
-      } else if (prefFoodStat === 'power' && targetCricket.stats.power < targetCricket.caps.power && shells >= 40) {
-        foodItem = { id: 'trungKien', name: '🥚 Trứng kiến', price: 40 };
-      } else if (prefFoodStat === 'nerve' && targetCricket.stats.nerve < targetCricket.caps.nerve && shells >= 30) {
-        foodItem = { id: 'otHiem', name: '🌶️ Ớt hiểm', price: 30 };
-      } else if (prefFoodStat === 'balanced') {
-        // Pick stat farthest from its cap
-        const diffTough = targetCricket.caps.tough - targetCricket.stats.tough;
-        const diffPower = targetCricket.caps.power - targetCricket.stats.power;
-        const diffNerve = targetCricket.caps.nerve - targetCricket.stats.nerve;
-
-        if (diffTough >= diffPower && diffTough >= diffNerve && diffTough > 0 && shells >= 25) {
-          foodItem = { id: 'laNon', name: '🌿 Lá non', price: 25 };
-        } else if (diffPower >= diffTough && diffPower >= diffNerve && diffPower > 0 && shells >= 40) {
-          foodItem = { id: 'trungKien', name: '🥚 Trứng kiến', price: 40 };
-        } else if (diffNerve > 0 && shells >= 30) {
-          foodItem = { id: 'otHiem', name: '🌶️ Ớt hiểm', price: 30 };
+    // 5. Walk to the eastern grass field, then shine the flashlight (deferred: continuous activity)
+    return {
+      acted: false,
+      deferred: () => {
+        if (!bu.field || bu.spot) {
+          if (!benScene || typeof benScene.goFarmer !== 'function') return { acted: false };
+          if (benScene.farmer?.running) return { acted: true, msg: '🚶 Đang ra đồng cỏ phía đông...' };
+          benScene.goFarmer(HUNT_FIELD_TILE);
+          return { acted: true, msg: '🚶 Ra đồng cỏ phía đông săn dế đêm...' };
         }
-      }
-
-      if (foodItem) {
-        markActed('ben_cricket_feed');
-        sendBenWs({ t: 'feed', id: targetCricket.id, food: foodItem.id });
-        const cName = CRICKET_SPECIES_NAMES[targetCricket.species] || 'Dế';
-        return {
-          acted: true,
-          msg: `🌿 Cho ${cName} ăn ${foodItem.name} (-${foodItem.price}🐚, +5 chỉ số)`,
-        };
-      }
-    }
-
-    // 5. Walk to Hunting Field (Vh = { x: 64, y: 11 })
-    const huntTarget = { x: 64, y: 11 };
-    if (!bu.field) {
-      return walkAndRun(
-        huntTarget,
-        () => {
-          sendBenWs({ t: 'light' });
-        },
-        '🚶 Ra đồng cỏ phía đông săn dế đêm...',
-        'ben_hunt_walk'
-      );
-    }
-
-    // 6. Minigame: Hopping Tuft
-    if (bn.hunt?.phase === 'hop' && bn.hunt.hop) {
-      const spot = bn.hunt.hop.spot;
-      sendBenWs({ t: 'trap', n: bn.hunt.hop.n, spot });
-      return {
-        acted: true,
-        msg: `🦗 Canh dế đáp xuống bụi cỏ ${spot + 1} -> ÚP BẮT!`,
-      };
-    }
-
-    // 7. Shine Light
-    if (!bn.hunt && canAct('ben_hunt_light', 2200)) {
-      markActed('ben_hunt_light');
-      sendBenWs({ t: 'light' });
-      return {
-        acted: true,
-        msg: '🔦 Rọi đèn pin nghe ngóng tiếng dế gáy đêm... (⚡3 Sức)',
-      };
-    }
-
-    return { acted: false };
+        if (!canAct('ben_hunt_light', 2500)) {
+          return { acted: true, msg: '🔦 Chuẩn bị rọi đèn bắt dế...' };
+        }
+        markActed('ben_hunt_light');
+        huntLightAt = Date.now();
+        bnStore.setState({ hunt: { phase: 'light' } });
+        sendBenWs({ t: 'light' });
+        return { acted: true, msg: `🔦 Rọi đèn bắt dế đêm (⚡${HUNT_STAMINA_COST} Sức · ống tre ${box.length}/${CRICKET_BOX_MAX})` };
+      },
+    };
   };
 
   // ---------------------------------------------------------------------------
   // SUB-AREA RUNNER 4: ENTERTAINMENT & UTILITIES (Lồng đèn, Vé số, ATM)
   // ---------------------------------------------------------------------------
-  const runEntertainmentStep = (): { acted: boolean; msg?: string; exhausted?: boolean; reason?: string } => {
+  const runEntertainmentStep = (): BenStepResult => {
     // A. Sạp lồng đèn Cô Bảy
     if (cfg.benAutoLantern !== false) {
       const tickets = wallet.tickets || 0;
@@ -803,28 +774,37 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
 
   // ---------------------------------------------------------------------------
   // DISPATCHER: EXECUTE SUB-AREAS IN ORDER DEFINED BY benSubOrder
+  // Bounded tasks (boss, entertainment, maintenance) run as soon as they are ready,
+  // in priority order. Continuous activities (fishing, night hunt) compete for a
+  // single slot: the highest-priority available one wins and the other is skipped,
+  // so the player never ping-pongs between the river and the grass field.
   // ---------------------------------------------------------------------------
-  const subAreaRunners: Record<WharfSubAreaId, () => { acted: boolean; msg?: string; exhausted?: boolean; reason?: string }> = {
+  const subAreaRunners: Record<WharfSubAreaId, () => BenStepResult> = {
     fishing: runFishingStep,
     cricketBoss: runCricketBossStep,
     cricketHunt: runCricketHuntStep,
     entertainment: runEntertainmentStep,
   };
+  const continuousSubs = new Set<WharfSubAreaId>(['fishing', 'cricketHunt']);
 
   const activeOrder: WharfSubAreaId[] =
     Array.isArray(cfg.benSubOrder) && cfg.benSubOrder.length > 0
       ? cfg.benSubOrder
       : ['fishing', 'cricketBoss', 'cricketHunt', 'entertainment'];
 
+  let deferred: (() => BenStepResult) | null = null;
+  let exhaustedResult: BenStepResult | null = null;
   for (const subId of activeOrder) {
-    if (cfg.benSubEnabled?.[subId] !== false) {
-      const runner = subAreaRunners[subId];
-      if (runner) {
-        const result = runner();
-        if (result.acted || result.exhausted) {
-          return result;
-        }
-      }
+    if (cfg.benSubEnabled?.[subId] === false) continue;
+    if (deferred && continuousSubs.has(subId)) continue;
+    const runner = subAreaRunners[subId];
+    if (!runner) continue;
+    const result = runner();
+    if (result.acted) return result;
+    if (result.deferred) {
+      deferred = result.deferred;
+    } else if (result.exhausted && !exhaustedResult) {
+      exhaustedResult = result;
     }
   }
 
@@ -837,5 +817,11 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
     buStore.setState({ panel: null });
   }
 
-  return { acted: false };
+  if (deferred) {
+    const result = deferred();
+    if (result.acted || result.allowCast) return result;
+  }
+  if (exhaustedResult) return exhaustedResult;
+
+  return { acted: false, allowCast: false };
 }

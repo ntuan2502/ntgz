@@ -125,6 +125,8 @@ export function mergeConfig(saved: Partial<AppConfig> | null | undefined): AppCo
     areaEnabled: { ...DEFAULT_CONFIG.areaEnabled, ...(saved.areaEnabled || {}) },
     farmSubEnabled: { ...DEFAULT_CONFIG.farmSubEnabled, ...(saved.farmSubEnabled || {}) },
     farmSubCollapsed: { ...DEFAULT_CONFIG.farmSubCollapsed, ...(saved.farmSubCollapsed || {}) },
+    benSubEnabled: { ...DEFAULT_CONFIG.benSubEnabled, ...(saved.benSubEnabled || {}) },
+    benSubCollapsed: { ...DEFAULT_CONFIG.benSubCollapsed, ...(saved.benSubCollapsed || {}) },
 
     // Backward-compatibility migrations
     barnAutoFeedBuffalo: (saved.barnAutoFeedBuffalo ?? savedAny.barnAutoBuffalo ?? DEFAULT_CONFIG.barnAutoFeedBuffalo) as boolean,
@@ -185,6 +187,13 @@ export function mergeConfig(saved: Partial<AppConfig> | null | undefined): AppCo
   }
   for (const k of DEFAULT_CONFIG.farmSubOrder) {
     if (!next.farmSubOrder.includes(k)) next.farmSubOrder.push(k);
+  }
+  const validBenSubs = new Set(DEFAULT_CONFIG.benSubOrder);
+  next.benSubOrder = Array.isArray(next.benSubOrder)
+    ? next.benSubOrder.filter((k, i, arr) => validBenSubs.has(k) && arr.indexOf(k) === i)
+    : [];
+  for (const k of DEFAULT_CONFIG.benSubOrder) {
+    if (!next.benSubOrder.includes(k)) next.benSubOrder.push(k);
   }
   return next;
 }

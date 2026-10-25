@@ -399,6 +399,7 @@ export interface BenUIStoreState {
   walking?: boolean;
   panel?: string | null;
   inSeat?: boolean;
+  field?: string | null;
   setSpot?: (spot: string) => void;
   setPanel?: (panel: string | null) => void;
   [key: string]: unknown;
@@ -433,7 +434,7 @@ export interface CricketItem {
 }
 
 export interface CricketHuntState {
-  phase?: 'hop' | string;
+  phase?: 'light' | 'seek' | 'hop' | string;
   hop?: {
     n: number;
     spot: number;
@@ -441,6 +442,8 @@ export interface CricketHuntState {
     air: number;
     window: number;
     from: number;
+    /** performance.now() timestamp when the hop message arrived */
+    at: number;
   };
   rarity?: string;
   miss?: {
@@ -479,24 +482,35 @@ export interface BoutParticipant {
   [key: string]: unknown;
 }
 
+export type BoutSide = 'red' | 'blue';
+
 export interface BoutState {
   id: string;
   n?: number;
+  /** Server timestamp (ms) when the first clash happens; clashes every 1600ms after */
+  startAt?: number;
   red: BoutParticipant;
   blue: BoutParticipant;
-  end?: boolean;
-  won?: string;
-  tickles?: Record<string, number>;
-  tickle?: { side: string; seq: number };
-  clash?: { seq: number; flip?: boolean };
+  end?: { winner: BoutSide; why: string } | null;
+  tickles?: Record<BoutSide, number>;
+  fire?: Record<BoutSide, number>;
+  grit?: Record<BoutSide, number>;
+  tickle?: { side: string; seq: number } | null;
+  clash?: { seq: number; flip?: boolean } | null;
   betUntil?: number;
-  odds?: Record<string, number>;
+  odds?: Record<BoutSide, number>;
   [key: string]: unknown;
 }
 
 export interface BenNetState {
   status?: string;
   fishing?: string;
+  /** Own player id on the wharf server */
+  you?: string;
+  /** Server clock skew; server time = Date.now() + skew */
+  ti?: { skew?: number; [key: string]: unknown } | null;
+  watching?: string | null;
+  myBets?: Record<string, { side: BoutSide; shells: number; mult?: number } | undefined>;
   wallet?: BenNetWallet | null;
   basket?: Array<{ id?: string; fish?: string; price?: number; size?: number; kept?: boolean; [key: string]: unknown }>;
   pack?: Record<string, number>;
@@ -504,10 +518,10 @@ export interface BenNetState {
   crickets?: {
     box?: CricketItem[];
     dex?: Array<{ species: string; count: number; best: number }>;
-  };
-  soi?: SoiState;
+  } | null;
+  soi?: SoiState | null;
   bouts?: Record<string, BoutState>;
-  hunt?: CricketHuntState;
+  hunt?: CricketHuntState | null;
   caught?: CricketCaughtState;
   boutDone?: {
     won?: boolean;
