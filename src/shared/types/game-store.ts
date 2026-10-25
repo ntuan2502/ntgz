@@ -416,6 +416,84 @@ export interface BenNetWallet {
   [key: string]: unknown;
 }
 
+export interface CricketStats {
+  power: number;
+  tough: number;
+  nerve: number;
+}
+
+export interface CricketItem {
+  id: string;
+  species: string;
+  stats: CricketStats;
+  caps: CricketStats;
+  diesAt?: number;
+  restUntil?: number;
+  [key: string]: unknown;
+}
+
+export interface CricketHuntState {
+  phase?: 'hop' | string;
+  hop?: {
+    n: number;
+    spot: number;
+    left: number;
+    air: number;
+    window: number;
+    from: number;
+  };
+  rarity?: string;
+  miss?: {
+    kind: string;
+  };
+  [key: string]: unknown;
+}
+
+export interface CricketCaughtState {
+  seq: number;
+  isNew?: boolean;
+  cricket: CricketItem;
+  [key: string]: unknown;
+}
+
+export interface SoiNpc {
+  id: string;
+  open?: boolean;
+  beaten?: boolean;
+  paidToday?: boolean;
+  [key: string]: unknown;
+}
+
+export interface SoiState {
+  npcs: SoiNpc[];
+  box?: CricketItem[];
+  bets?: number;
+  [key: string]: unknown;
+}
+
+export interface BoutParticipant {
+  id: string;
+  name: string;
+  species: string;
+  stats: CricketStats;
+  [key: string]: unknown;
+}
+
+export interface BoutState {
+  id: string;
+  n?: number;
+  red: BoutParticipant;
+  blue: BoutParticipant;
+  end?: boolean;
+  won?: string;
+  tickles?: Record<string, number>;
+  tickle?: { side: string; seq: number };
+  clash?: { seq: number; flip?: boolean };
+  betUntil?: number;
+  odds?: Record<string, number>;
+  [key: string]: unknown;
+}
+
 export interface BenNetState {
   status?: string;
   fishing?: string;
@@ -423,6 +501,19 @@ export interface BenNetState {
   basket?: Array<{ id?: string; fish?: string; price?: number; size?: number; kept?: boolean; [key: string]: unknown }>;
   pack?: Record<string, number>;
   closet?: string[];
+  crickets?: {
+    box?: CricketItem[];
+    dex?: Array<{ species: string; count: number; best: number }>;
+  };
+  soi?: SoiState;
+  bouts?: Record<string, BoutState>;
+  hunt?: CricketHuntState;
+  caught?: CricketCaughtState;
+  boutDone?: {
+    won?: boolean;
+    reward?: number;
+    points?: number;
+  };
   fight?: {
     run?: {
       dir?: 'left' | 'right';

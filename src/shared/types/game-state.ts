@@ -1,3 +1,5 @@
+import { CricketItem, SoiState, BoutState, CricketHuntState, CricketCaughtState } from './game-store';
+
 export interface VehicleState {
   id?: string;
   type?: string;
@@ -58,6 +60,21 @@ export interface BenNetState {
   status?: string;
   fishing?: 'idle' | 'cast' | 'bite' | 'fight' | 'landing' | string;
   wallet?: BenNetWallet | null;
+  basketCount?: number;
+  totalBasket?: number;
+  crickets?: {
+    box?: CricketItem[];
+    dex?: Array<{ species: string; count: number; best: number }>;
+  };
+  soi?: SoiState;
+  bouts?: Record<string, BoutState>;
+  hunt?: CricketHuntState;
+  caught?: CricketCaughtState;
+  boutDone?: {
+    won?: boolean;
+    reward?: number;
+    points?: number;
+  };
   wheel?: {
     bought?: number;
     picks?: string[];

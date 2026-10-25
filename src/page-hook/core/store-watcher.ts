@@ -165,6 +165,12 @@ export function getSnapshot(): GameSnapshot {
           landed: bn.landed,
           notice: bn.notice,
           wheel: bn.wheel,
+          crickets: bn.crickets,
+          soi: bn.soi,
+          bouts: bn.bouts,
+          hunt: bn.hunt,
+          caught: bn.caught,
+          boutDone: bn.boutDone,
         }
       : null,
   };

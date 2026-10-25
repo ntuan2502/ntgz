@@ -14,6 +14,8 @@ export type FarmSubAreaId =
   | 'dibay'
   | 'goldShop';
 
+export type WharfSubAreaId = 'fishing' | 'cricketBoss' | 'cricketHunt' | 'entertainment';
+
 export interface AreaMeta {
   id: AreaId;
   icon: string;
@@ -22,6 +24,12 @@ export interface AreaMeta {
 
 export interface SubAreaMeta {
   id: FarmSubAreaId;
+  icon: string;
+  name: string;
+}
+
+export interface WharfSubAreaMeta {
+  id: WharfSubAreaId;
   icon: string;
   name: string;
 }
@@ -161,7 +169,12 @@ export interface AppConfig {
   nightMarketReserveOrders: boolean;
   nightMarketStrategy: 'max_stock' | 'highest_price' | 'lowest_price';
 
-  // Area 2: Ben Do Fishing Settings
+  // Area 2: Ben Do Sub-Area Order & Enable/Disable toggles
+  benSubOrder: WharfSubAreaId[];
+  benSubEnabled: Record<WharfSubAreaId, boolean>;
+  benSubCollapsed: Record<WharfSubAreaId, boolean>;
+
+  // Ben Do Fishing Settings
   benAutoSpot: boolean;
   benSpot: 'dock' | 'bamboo' | 'bank';
   benAutoBuyBait: boolean;
@@ -175,6 +188,21 @@ export interface AppConfig {
   benPreferFood: string;
   benAutoLuckDrink: boolean;
   benPreferDrink: string;
+
+  // Ben Do Cricket Arena (Sới Dế Ông Sáu & Đặt Cửa)
+  benAutoBossBout: boolean;
+  benAutoTickle: boolean;
+  benAutoBet: boolean;
+  benBetAmount: number;
+
+  // Ben Do Cricket Hunt (Bắt Dế Đêm & Ống Tre)
+  benAutoCricketHunt: boolean;
+  benHuntRareOnly: boolean;
+  benAutoReleaseLowCricket: boolean;
+  benAutoFeedCricket: boolean;
+  benPreferCricketFood: 'balanced' | 'tough' | 'power' | 'nerve';
+
+  // Ben Do Entertainment & Utilities
   benAutoLantern: boolean;
   benBuyLanternTicket: boolean;
   benAutoLotto: boolean;

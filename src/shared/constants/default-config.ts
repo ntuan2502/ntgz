@@ -1,4 +1,12 @@
-import { AppConfig, AreaId, AreaMeta, FarmSubAreaId, SubAreaMeta } from '../types/config';
+import {
+  AppConfig,
+  AreaId,
+  AreaMeta,
+  FarmSubAreaId,
+  SubAreaMeta,
+  WharfSubAreaId,
+  WharfSubAreaMeta,
+} from '../types/config';
 
 export const AREA_META: Record<AreaId, AreaMeta> = {
   farm: { id: 'farm', icon: '🌾', name: 'Nông Trại' },
@@ -20,6 +28,13 @@ export const SUBAREA_META: Record<FarmSubAreaId, SubAreaMeta> = {
   nightMarket: { id: 'nightMarket', icon: '🏮', name: 'Chợ Đêm (18:00 - 23:30)' },
   dibay: { id: 'dibay', icon: '🐷', name: 'Quầy Tiết Kiệm Dì Bảy & Sổ Tay' },
   goldShop: { id: 'goldShop', icon: '🪙', name: 'Tiệm Vàng Cô Kim (Chợ Lớn)' },
+};
+
+export const WHARF_SUBAREA_META: Record<WharfSubAreaId, WharfSubAreaMeta> = {
+  fishing: { id: 'fishing', icon: '🎣', name: 'Câu Cá & Bán Cá Bến Đò' },
+  cricketBoss: { id: 'cricketBoss', icon: '🥊', name: 'Sới Dế & Đấu Boss Ông Sáu' },
+  cricketHunt: { id: 'cricketHunt', icon: '🔦', name: 'Bắt Dế Đêm & Ống Tre Nuôi Dế' },
+  entertainment: { id: 'entertainment', icon: '🏮', name: 'Tiện Ích & Giải Trí Bến Đò' },
 };
 
 export const DEFAULT_CONFIG: AppConfig = {
@@ -201,7 +216,22 @@ export const DEFAULT_CONFIG: AppConfig = {
   nightMarketReserveOrders: true,
   nightMarketStrategy: 'max_stock',
 
-  // Area 2: Ben Do Fishing Settings
+  // Area 2: Ben Do Settings & Sub-Area Priorities
+  benSubOrder: ['fishing', 'cricketBoss', 'cricketHunt', 'entertainment'],
+  benSubEnabled: {
+    fishing: true,
+    cricketBoss: true,
+    cricketHunt: true,
+    entertainment: true,
+  },
+  benSubCollapsed: {
+    fishing: false,
+    cricketBoss: false,
+    cricketHunt: false,
+    entertainment: false,
+  },
+
+  // Ben Do Fishing Settings
   benAutoSpot: true,
   benSpot: 'bank',
   benAutoBuyBait: true,
@@ -215,6 +245,21 @@ export const DEFAULT_CONFIG: AppConfig = {
   benPreferFood: 'lauMam',
   benAutoLuckDrink: true,
   benPreferDrink: 'duaTuoi',
+
+  // Ben Do Cricket Arena (Sới Dế Ông Sáu & Đặt Cửa)
+  benAutoBossBout: true,
+  benAutoTickle: true,
+  benAutoBet: false,
+  benBetAmount: 50,
+
+  // Ben Do Cricket Hunt (Bắt Dế Đêm & Ống Tre)
+  benAutoCricketHunt: true,
+  benHuntRareOnly: false,
+  benAutoReleaseLowCricket: true,
+  benAutoFeedCricket: false,
+  benPreferCricketFood: 'balanced',
+
+  // Ben Do Entertainment & Utilities
   benAutoLantern: false,
   benBuyLanternTicket: false,
   benAutoLotto: false,

@@ -8,6 +8,10 @@ let lastModalClickAt = 0;
 let lastHookAt = 0;
 let lastCastAt = 0;
 let lastWheelActionAt = 0;
+let lastTickleAt = 0;
+let lastCricketCatchAt = 0;
+let lastTuftTrapAt = 0;
+let lastBoutCloseAt = 0;
 
 function handleBenLanternWheel(
   wheelEl: HTMLElement,
@@ -225,6 +229,61 @@ export async function stepBenDoFishing(
     return { finishedArea: false };
   }
 
+  // 3c. Handle Caught Cricket Modal (.panel.ben-cr-caught)
+  const caughtCard = document.querySelector('.panel.ben-cr-caught') as HTMLElement | null;
+  if (caughtCard && isVisible(caughtCard) && now - lastCricketCatchAt > 600) {
+    const cName = caughtCard.querySelector('h3')?.textContent?.trim() || 'Dế';
+    const cRarity = caughtCard.querySelector('.ben-cr-rarity')?.textContent?.trim() || '';
+    const isNew = Boolean(caughtCard.querySelector('.ben-cr-new'));
+    const tubeBtn = caughtCard.querySelector('.ben-bye-actions button.btn-green') as HTMLButtonElement | null;
+    const releaseBtn = caughtCard.querySelector('.ben-bye-actions button.btn-brown') as HTMLButtonElement | null;
+
+    if (tubeBtn && !tubeBtn.disabled) {
+      triggerPointerDownAndClick(tubeBtn);
+      setStatus(`🦗 Bắt được ${cName} (${cRarity})${isNew ? ' ✨ Loài mới trong sổ!' : ''} -> Đã bỏ vô ống tre!`);
+    } else if (releaseBtn && !releaseBtn.disabled) {
+      triggerPointerDownAndClick(releaseBtn);
+      setStatus(`🦗 Bắt được ${cName} (${cRarity}) -> Đã thả về đồng lấy vỏ sò 🐚`);
+    }
+    lastCricketCatchAt = now;
+    return { finishedArea: false };
+  }
+
+  // 3d. Handle Cricket Arena Bout Modal (.panel.ben-bout)
+  const boutPanel = document.querySelector('.panel.ben-bout') as HTMLElement | null;
+  if (boutPanel && isVisible(boutPanel)) {
+    const tickleBtn = boutPanel.querySelector('button.ben-bout-tickle') as HTMLButtonElement | null;
+    const endLine = boutPanel.querySelector('.ben-bout-line.end');
+    const closeBtn = boutPanel.querySelector('.ben-panel-head button.btn-brown') as HTMLButtonElement | null;
+
+    if (endLine) {
+      if (closeBtn && !closeBtn.disabled && now - lastBoutCloseAt > 1500) {
+        const lineText = endLine.textContent?.trim() || 'Trận đấu kết thúc';
+        triggerPointerDownAndClick(closeBtn);
+        setStatus(`🥊 Sới Dế: ${lineText} -> Đóng bảng đấu`);
+        lastBoutCloseAt = now;
+      }
+      return { finishedArea: false };
+    }
+
+    if (config.benAutoTickle && tickleBtn && !tickleBtn.disabled && now - lastTickleAt > 1200) {
+      triggerPointerDownAndClick(tickleBtn);
+      lastTickleAt = now;
+      setStatus('🌾 Sới Dế: Khều râu dế lấy đà tấn công!');
+      return { finishedArea: false };
+    }
+    return { finishedArea: false };
+  }
+
+  // 3e. Handle Cricket Hunt Field Tuft (.ben-hunt-field .ben-tuft.landed)
+  const landedTuft = document.querySelector('.ben-hunt-field .ben-tuft.landed') as HTMLButtonElement | null;
+  if (landedTuft && !landedTuft.disabled && now - lastTuftTrapAt > 250) {
+    triggerPointerDownAndClick(landedTuft);
+    lastTuftTrapAt = now;
+    setStatus('🦗 Dế đáp xuống bụi cỏ -> Đã bấm úp dế!');
+    return { finishedArea: false };
+  }
+
   // 4. Handle Bite ("GIẬT!")
   const benBobberBite = document.querySelector('span.ben-bobber.bite');
   if (bn.fishing === 'bite' || (benBobberBite && isVisible(benBobberBite))) {
@@ -287,11 +346,17 @@ export async function stepBenDoFishing(
     }
 
     const greenCastBtn = document.querySelector('button.ben-cast.btn-green') as HTMLButtonElement | null;
-    if (greenCastBtn && isVisible(greenCastBtn) && !greenCastBtn.disabled && now - lastCastAt > Math.max(600, delayMs)) {
+    if (
+      config.benSubEnabled?.fishing !== false &&
+      greenCastBtn &&
+      isVisible(greenCastBtn) &&
+      !greenCastBtn.disabled &&
+      now - lastCastAt > Math.max(600, delayMs)
+    ) {
       triggerPointerDownAndClick(greenCastBtn);
       lastCastAt = now;
       setStatus(`🎣 Bến Đò: Quăng câu (🪱 ${bn.wallet?.bait ?? 0} · ⚡ ${bn.wallet?.liveStamina ?? 0})`);
-    } else if (!bu?.spot) {
+    } else if (!bu?.spot && config.benSubEnabled?.fishing !== false && !bu?.field) {
       setStatus('📍 Hãy đứng sát mép nước (hoặc bật Tự ra vị trí câu)');
     }
   }

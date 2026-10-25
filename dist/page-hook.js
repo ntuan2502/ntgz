@@ -312,7 +312,13 @@
         pack: bn.pack || {},
         landed: bn.landed,
         notice: bn.notice,
-        wheel: bn.wheel
+        wheel: bn.wheel,
+        crickets: bn.crickets,
+        soi: bn.soi,
+        bouts: bn.bouts,
+        hunt: bn.hunt,
+        caught: bn.caught,
+        boutDone: bn.boutDone
       } : null
     };
   }
@@ -1827,6 +1833,48 @@
     "dieuGiay",
     "canCau"
   ];
+  var CRICKET_SPECIES_NAMES = {
+    deCom: "D\u1EBF c\u01A1m",
+    deMen: "D\u1EBF m\xE8n",
+    deDat: "D\u1EBF \u0111\u1EA5t",
+    deThan: "D\u1EBF than",
+    deTrui: "D\u1EBF tr\u0169i",
+    deCo: "D\u1EBF c\u1ED3",
+    deLua: "D\u1EBF l\u1EEDa",
+    deNgoc: "D\u1EBF ng\u1ECDc",
+    deVang: "D\u1EBF v\xE0ng",
+    deMa: "D\u1EBF ma",
+    deSat: "D\u1EBF s\u1EAFt",
+    deVuong: "D\u1EBF v\u01B0\u01A1ng"
+  };
+  var CRICKET_RARITY_REFUND = {
+    common: 5,
+    uncommon: 15,
+    rare: 40,
+    epic: 120,
+    legendary: 400
+  };
+  var CRICKET_SPECIES_RARITY = {
+    deCom: "common",
+    deMen: "common",
+    deDat: "common",
+    deThan: "uncommon",
+    deTrui: "uncommon",
+    deCo: "uncommon",
+    deLua: "rare",
+    deNgoc: "rare",
+    deVang: "rare",
+    deMa: "epic",
+    deSat: "epic",
+    deVuong: "legendary"
+  };
+  var BOSS_LADDER = [
+    { id: "cuBin", name: "Cu Bin", reward: 15 },
+    { id: "utMap", name: "\xDAt M\u1EADp", reward: 30 },
+    { id: "anhLuc", name: "Anh L\u1EF1c xe \xF4m", reward: 60 },
+    { id: "bacChin", name: "B\xE1c Ch\xEDn th\u1EE3 r\xE8n", reward: 110 },
+    { id: "ongSau", name: "\xD4ng S\xE1u ch\u1EE7 s\u1EDBi", reward: 220 }
+  ];
   var keepBenPanelUntil = 0;
   var keepBenPanelMsg = "";
   function execBenStep(cfg) {
@@ -1919,251 +1967,478 @@
     const targetFoodPrice = foodPrices[prefFood] || 45;
     const needShellsForBait = bait <= 0 && shells < 15;
     const needShellsForFood = (stamina < 4 || cfg.benAutoRecoverStamina !== false && stamina <= stamMin) && packItems.length === 0 && shells < targetFoodPrice;
-    const sellThreshold = Number(cfg.benSellThreshold) || 60;
-    if (cfg.benAutoSell !== false && nonKeptCount > 0 && (nonKeptCount >= sellThreshold || nonKeptCount >= 55 || needShellsForBait || needShellsForFood)) {
-      return walkAndRun(
-        { x: 40, y: 10 },
-        () => {
-          sendBenWs({ t: "sell" });
-        },
-        `\u{1F41F} B\xE1n ${nonKeptCount} con c\xE1 t\u1EA1i V\u1EF1a Anh T\u01B0 (+${totalSellShells.toLocaleString("vi-VN")} v\u1ECF s\xF2 \u{1F41A})`,
-        "ben_sell",
-        { panel: "sell" },
-        1400
-      );
-    }
-    if (stamina < 4 || cfg.benAutoRecoverStamina !== false && stamina <= stamMin) {
-      if (cfg.benAutoRecoverStamina !== false) {
-        if (packItems.length > 0 && canAct("ben_eat_pack", 3e3)) {
-          const packItem = packItems[0];
-          const packLabel = BEN_PACK_NAMES[packItem] || packItem;
-          markActed("ben_eat_pack");
-          runWithOptionalPanel(
-            () => {
-              sendBenWs({ t: "eat", item: packItem });
-            },
-            `\u0110\xE3 \u0103n ${packLabel} trong balo h\u1ED3i S\u1EE9c c\xE2u`,
-            { panel: "pack", bagTab: "food" },
-            1400
-          );
-          return { acted: true, msg: `\u0110\xE3 \u0103n ${packLabel} trong balo h\u1ED3i S\u1EE9c c\xE2u` };
+    const tryRecoverStamina = () => {
+      if (stamina < 4 || cfg.benAutoRecoverStamina !== false && stamina <= stamMin) {
+        if (cfg.benAutoRecoverStamina !== false) {
+          if (packItems.length > 0 && canAct("ben_eat_pack", 3e3)) {
+            const packItem = packItems[0];
+            const packLabel = BEN_PACK_NAMES[packItem] || packItem;
+            markActed("ben_eat_pack");
+            runWithOptionalPanel(
+              () => {
+                sendBenWs({ t: "eat", item: packItem });
+              },
+              `\u0110\xE3 \u0103n ${packLabel} trong balo h\u1ED3i S\u1EE9c`,
+              { panel: "pack", bagTab: "food" },
+              1400
+            );
+            return { acted: true, msg: `\u0110\xE3 \u0103n ${packLabel} trong balo h\u1ED3i S\u1EE9c` };
+          }
+          if (cfg.benAutoGoiDau !== false && shells >= 25 && canAct("ben_goi_dau", 4e3)) {
+            return walkAndRun(
+              { x: 16, y: 24 },
+              () => {
+                sendBenWs({ t: "buy", item: "goiDau" });
+              },
+              `\u{1F486} G\u1ED9i \u0111\u1EA7u massage t\u1EA1i Ti\u1EC7m \xDAt M\u01B0\u1EDDi (+50\u26A1, -25\u{1F41A})`,
+              "ben_goi_dau",
+              { panel: "hair" },
+              1500
+            );
+          }
+          const buyItem = shells >= targetFoodPrice ? prefFood : shells >= 28 ? "comTam" : shells >= 20 ? "huTieu" : shells >= 14 ? "chaoCa" : "banhMi";
+          const foodCost = foodPrices[buyItem] || 10;
+          const foodLabel = BEN_FOOD_NAMES[buyItem] || buyItem;
+          if (shells >= foodCost && canAct("ben_buy_food", 4e3)) {
+            return walkAndRun(
+              { x: 39, y: 23 },
+              () => {
+                sendBenWs({ t: "buy", item: buyItem });
+              },
+              `Mua ${foodLabel} t\u1EA1i Qu\xE1n \u0103n D\xEC T\xE1m (-${foodCost}\u{1F41A})`,
+              "ben_buy_food",
+              { panel: "food" },
+              1500
+            );
+          }
+          if (shells >= 3 && canAct("ben_drink", 4e3)) {
+            return walkAndRun(
+              { x: 26, y: 12 },
+              () => {
+                sendBenWs({ t: "buy", item: "traDa" });
+              },
+              `U\u1ED1ng ${BEN_DRINK_NAMES.traDa} t\u1EA1i Xe tr\xE0 \u0111\xE1 Ch\u1ECB Th\u01A1m (-3\u{1F41A})`,
+              "ben_drink",
+              { panel: "tea", teaStand: "river" },
+              1500
+            );
+          }
+          if (!canAct("ben_buy_food", 4e3) || !canAct("ben_eat_pack", 3e3) || !canAct("ben_goi_dau", 4e3) || !canAct("ben_drink", 4e3)) {
+            return { acted: true, msg: "\u{1F35A} \u0110ang ch\u1EDD \u0103n h\u1ED3i ph\u1EE5c S\u1EE9c..." };
+          }
         }
-        if (cfg.benAutoGoiDau !== false && shells >= 25 && canAct("ben_goi_dau", 4e3)) {
-          return walkAndRun(
-            { x: 16, y: 24 },
-            () => {
-              sendBenWs({ t: "buy", item: "goiDau" });
-            },
-            `\u{1F486} G\u1ED9i \u0111\u1EA7u massage t\u1EA1i Ti\u1EC7m \xDAt M\u01B0\u1EDDi (+50\u26A1, -25\u{1F41A})`,
-            "ben_goi_dau",
-            { panel: "hair" },
-            1500
-          );
-        }
-        const buyItem = shells >= targetFoodPrice ? prefFood : shells >= 28 ? "comTam" : shells >= 20 ? "huTieu" : shells >= 14 ? "chaoCa" : "banhMi";
-        const foodCost = foodPrices[buyItem] || 10;
-        const foodLabel = BEN_FOOD_NAMES[buyItem] || buyItem;
-        if (shells >= foodCost && canAct("ben_buy_food", 4e3)) {
-          return walkAndRun(
-            { x: 39, y: 23 },
-            () => {
-              sendBenWs({ t: "buy", item: buyItem });
-            },
-            `Mua ${foodLabel} t\u1EA1i Qu\xE1n \u0103n D\xEC T\xE1m (-${foodCost}\u{1F41A})`,
-            "ben_buy_food",
-            { panel: "food" },
-            1500
-          );
-        }
-        if (shells >= 3 && canAct("ben_drink", 4e3)) {
-          return walkAndRun(
-            { x: 26, y: 12 },
-            () => {
-              sendBenWs({ t: "buy", item: "traDa" });
-            },
-            `U\u1ED1ng ${BEN_DRINK_NAMES.traDa} t\u1EA1i Xe tr\xE0 \u0111\xE1 Ch\u1ECB Th\u01A1m (-3\u{1F41A})`,
-            "ben_drink",
-            { panel: "tea", teaStand: "river" },
-            1500
-          );
-        }
-        if (!canAct("ben_buy_food", 4e3) || !canAct("ben_eat_pack", 3e3) || !canAct("ben_goi_dau", 4e3) || !canAct("ben_drink", 4e3)) {
-          return { acted: true, msg: "\u{1F35A} \u0110ang ch\u1EDD \u0103n h\u1ED3i ph\u1EE5c S\u1EE9c c\xE2u..." };
+        if (stamina < 4) {
+          if (cfg.benAutoSell !== false && nonKeptCount > 0) {
+            return walkAndRun(
+              { x: 40, y: 10 },
+              () => {
+                sendBenWs({ t: "sell" });
+              },
+              `\u{1F41F} B\xE1n ${nonKeptCount} con c\xE1 t\u1EA1i V\u1EF1a Anh T\u01B0 (+${totalSellShells.toLocaleString("vi-VN")} v\u1ECF s\xF2 \u{1F41A}) \u0111\u1EC3 l\u1EA5y ti\u1EC1n \u0103n`,
+              "ben_sell",
+              { panel: "sell" },
+              1400
+            );
+          }
+          return {
+            acted: false,
+            exhausted: true,
+            reason: "\u{1F62E}\u200D\u{1F4A8} B\u1EBFn \u0110\xF2: H\u1EBFt S\u1EE9c v\xE0 kh\xF4ng \u0111\u1EE7 v\u1ECF s\xF2 \u0111\u1EC3 \u0103n/g\u1ED9i \u0111\u1EA7u -> Chuy\u1EC3n khu v\u1EF1c ti\u1EBFp theo!"
+          };
         }
       }
-      if (stamina < 4) {
-        if (cfg.benAutoSell !== false && nonKeptCount > 0) {
-          return walkAndRun(
-            { x: 40, y: 10 },
-            () => {
-              sendBenWs({ t: "sell" });
-            },
-            `\u{1F41F} B\xE1n ${nonKeptCount} con c\xE1 t\u1EA1i V\u1EF1a Anh T\u01B0 (+${totalSellShells.toLocaleString("vi-VN")} v\u1ECF s\xF2 \u{1F41A}) \u0111\u1EC3 l\u1EA5y ti\u1EC1n \u0103n`,
-            "ben_sell",
-            { panel: "sell" },
-            1400
-          );
-        }
-        return {
-          acted: false,
-          exhausted: true,
-          reason: "\u{1F62E}\u200D\u{1F4A8} B\u1EBFn \u0110\xF2: H\u1EBFt S\u1EE9c c\xE2u v\xE0 kh\xF4ng \u0111\u1EE7 v\u1ECF s\xF2 \u0111\u1EC3 \u0103n/g\u1ED9i \u0111\u1EA7u -> Chuy\u1EC3n khu v\u1EF1c ti\u1EBFp theo!"
-        };
+      return null;
+    };
+    const runFishingStep = () => {
+      const sellThreshold = Number(cfg.benSellThreshold) || 60;
+      if (cfg.benAutoSell !== false && nonKeptCount > 0 && (nonKeptCount >= sellThreshold || nonKeptCount >= 55 || needShellsForBait || needShellsForFood)) {
+        return walkAndRun(
+          { x: 40, y: 10 },
+          () => {
+            sendBenWs({ t: "sell" });
+          },
+          `\u{1F41F} B\xE1n ${nonKeptCount} con c\xE1 t\u1EA1i V\u1EF1a Anh T\u01B0 (+${totalSellShells.toLocaleString("vi-VN")} v\u1ECF s\xF2 \u{1F41A})`,
+          "ben_sell",
+          { panel: "sell" },
+          1400
+        );
       }
-    }
-    if (bait <= 0) {
-      if (cfg.benAutoBuyBait !== false) {
-        const baitPrices = {
-          moi20: 15,
-          moi60: 40,
-          moi150: 90
-        };
-        const prefBait = cfg.benPreferBait || "moi150";
-        const buyBaitChoice = shells >= (baitPrices[prefBait] || 40) ? prefBait : shells >= 15 ? "moi20" : "xinMoi";
-        if (buyBaitChoice !== "xinMoi" && shells >= (baitPrices[buyBaitChoice] || 15) && canAct("ben_bait", 3e3)) {
-          const baitLabel = BEN_BAIT_NAMES[buyBaitChoice] || buyBaitChoice;
+      const stamRes = tryRecoverStamina();
+      if (stamRes) return stamRes;
+      if (bait <= 0) {
+        if (cfg.benAutoBuyBait !== false) {
+          const baitPrices = {
+            moi20: 15,
+            moi60: 40,
+            moi150: 90
+          };
+          const prefBait = cfg.benPreferBait || "moi150";
+          const buyBaitChoice = shells >= (baitPrices[prefBait] || 40) ? prefBait : shells >= 15 ? "moi20" : "xinMoi";
+          if (buyBaitChoice !== "xinMoi" && shells >= (baitPrices[buyBaitChoice] || 15) && canAct("ben_bait", 3e3)) {
+            const baitLabel = BEN_BAIT_NAMES[buyBaitChoice] || buyBaitChoice;
+            return walkAndRun(
+              { x: 53, y: 11 },
+              () => {
+                sendBenWs({ t: "buy", item: buyBaitChoice });
+              },
+              `Mua ${baitLabel} t\u1EA1i S\u1EA1p Ch\xFA \u0110\u1EF1c (-${baitPrices[buyBaitChoice]}\u{1F41A})`,
+              "ben_bait",
+              { panel: "bait" },
+              1500
+            );
+          }
+        }
+        const xinMoiBlocked = shells > 0 || lastXinMoiDay === (m.day || 0) && Date.now() - lastXinMoiAt < 6e5 || bn.notice?.error === "used" || bn.notice?.error === "noFree";
+        if (!xinMoiBlocked && canAct("ben_bait", 3e3)) {
+          setLastXinMoi(Date.now(), m.day || 0);
           return walkAndRun(
             { x: 53, y: 11 },
             () => {
-              sendBenWs({ t: "buy", item: buyBaitChoice });
+              sendBenWs({ t: "buy", item: "xinMoi" });
             },
-            `Mua ${baitLabel} t\u1EA1i S\u1EA1p Ch\xFA \u0110\u1EF1c (-${baitPrices[buyBaitChoice]}\u{1F41A})`,
+            `Xin ${BEN_BAIT_NAMES.xinMoi} t\u1EA1i S\u1EA1p Ch\xFA \u0110\u1EF1c`,
             "ben_bait",
             { panel: "bait" },
             1500
           );
         }
+        return {
+          acted: false,
+          exhausted: true,
+          reason: "\u{1FAB1} B\u1EBFn \u0110\xF2: \u0110\xE3 h\u1EBFt m\u1ED3i & v\u1ECF s\xF2 -> Chuy\u1EC3n khu v\u1EF1c ti\u1EBFp theo!"
+        };
       }
-      const xinMoiBlocked = shells > 0 || lastXinMoiDay === (m.day || 0) && Date.now() - lastXinMoiAt < 6e5 || bn.notice?.error === "used" || bn.notice?.error === "noFree";
-      if (!xinMoiBlocked && canAct("ben_bait", 3e3)) {
-        setLastXinMoi(Date.now(), m.day || 0);
-        return walkAndRun(
-          { x: 53, y: 11 },
-          () => {
-            sendBenWs({ t: "buy", item: "xinMoi" });
-          },
-          `Xin ${BEN_BAIT_NAMES.xinMoi} t\u1EA1i S\u1EA1p Ch\xFA \u0110\u1EF1c`,
-          "ben_bait",
-          { panel: "bait" },
-          1500
-        );
-      }
-      return {
-        acted: false,
-        exhausted: true,
-        reason: "\u{1FAB1} B\u1EBFn \u0110\xF2: \u0110\xE3 h\u1EBFt m\u1ED3i & v\u1ECF s\xF2 -> Chuy\u1EC3n khu v\u1EF1c ti\u1EBFp theo!"
-      };
-    }
-    if (cfg.benAutoLuckDrink && (wallet.luckCasts || 0) <= 0 && canAct("ben_luck_drink", 5e3)) {
-      const drinkId = cfg.benPreferDrink || "nuocMia";
-      const drinkPrices = { traDa: 3, nuocMia: 15, rauMa: 30, caPhe: 35, duaTuoi: 80 };
-      const drinkCost = drinkPrices[drinkId] || 15;
-      const drinkLabel = BEN_DRINK_NAMES[drinkId] || drinkId;
-      if (shells >= drinkCost) {
-        return walkAndRun(
-          { x: 26, y: 12 },
-          () => {
-            sendBenWs({ t: "buy", item: drinkId });
-          },
-          `U\u1ED1ng ${drinkLabel} t\u1EA1i Xe tr\xE0 \u0111\xE1 Ch\u1ECB Th\u01A1m (-${drinkCost}\u{1F41A})`,
-          "ben_luck_drink",
-          { panel: "tea", teaStand: "river" },
-          1500
-        );
-      }
-    }
-    if (cfg.benAutoLantern !== false) {
-      const tickets = wallet.tickets || 0;
-      const boughtToday = bn.wheel?.bought || 0;
-      const canBuyTicket = Boolean(cfg.benBuyLanternTicket && boughtToday < 5 && shells >= 600);
-      if ((tickets > 0 || canBuyTicket) && bu.panel !== "lantern" && canAct("ben_lantern_open", 2500)) {
-        return walkAndRun(
-          { x: 37, y: 28 },
-          () => {
-            const curBn = bnStore.getState();
-            const curPicks = curBn.wheel?.picks || [];
-            const ownedCloset = Array.isArray(curBn.closet) ? curBn.closet : [];
-            const unownedWheel = WHEEL_ITEM_IDS.filter((id) => !ownedCloset.includes(id));
-            const needPicks = Math.min(3, unownedWheel.length);
-            if (needPicks > 0 && curPicks.length < needPicks) {
-              sendBenWs({ t: "pick", items: unownedWheel.slice(0, needPicks) });
-            }
-            buStore.setState({ panel: "lantern" });
-          },
-          tickets > 0 ? `\u{1F3EE} M\u1EDF V\xF2ng quay l\u1ED3ng \u0111\xE8n C\xF4 B\u1EA3y (hi\u1EC7n c\xF3 ${tickets} v\xE9 \u{1F39F}\uFE0F)` : `\u{1F3EE} Gh\xE9 S\u1EA1p l\u1ED3ng \u0111\xE8n C\xF4 B\u1EA3y mua v\xE9 quay (${boughtToday}/5, -600\u{1F41A})`,
-          "ben_lantern_open",
-          { panel: "lantern" },
-          5e3
-        );
-      }
-    }
-    if (cfg.benAutoLotto !== false) {
-      const lottoState = bn.lotto;
-      const hasWins = (lottoState?.wins?.length || 0) > 0 || (lottoState?.pending || 0) > 0;
-      if (hasWins && canAct("ben_lotto_claim", 4e3)) {
-        return walkAndRun(
-          { x: 36, y: 31 },
-          () => {
-            sendBenWs({ t: "lottoClaim" });
-          },
-          `\u{1F39F}\uFE0F \u0110\u1ED5i th\u01B0\u1EDFng v\xE9 s\u1ED1 B\u1EBFn \u0110\xF2 t\u1EA1i \u0110\u1EA1i l\xFD Ch\xFA B\u1EA3y (+${(lottoState?.pending || 0).toLocaleString("vi-VN")}\u{1F41A})`,
-          "ben_lotto_claim",
-          { panel: "agent" },
-          1500
-        );
-      }
-      if (cfg.benAutoBuyLotto && shells >= 10 && canAct("ben_lotto_buy", 6e4)) {
-        const sellingDay = lottoState?.selling;
-        const alreadyBought = (lottoState?.mine || []).some((t) => t.day === sellingDay);
-        if (!alreadyBought) {
-          const randNum = Math.floor(Math.random() * 100);
+      if (cfg.benAutoLuckDrink && (wallet.luckCasts || 0) <= 0 && canAct("ben_luck_drink", 5e3)) {
+        const drinkId = cfg.benPreferDrink || "nuocMia";
+        const drinkPrices = { traDa: 3, nuocMia: 15, rauMa: 30, caPhe: 35, duaTuoi: 80 };
+        const drinkCost = drinkPrices[drinkId] || 15;
+        const drinkLabel = BEN_DRINK_NAMES[drinkId] || drinkId;
+        if (shells >= drinkCost) {
           return walkAndRun(
-            { x: 36, y: 31 },
+            { x: 26, y: 12 },
             () => {
-              sendBenWs({ t: "lottoBuy", num: randNum, qty: 1 });
+              sendBenWs({ t: "buy", item: drinkId });
             },
-            `\u{1F340} Mua 1 v\xE9 s\u1ED1 B\u1EBFn \u0110\xF2 (s\u1ED1 ${randNum < 10 ? "0" + randNum : randNum}) t\u1EA1i \u0110\u1EA1i l\xFD Ch\xFA B\u1EA3y (-10\u{1F41A})`,
-            "ben_lotto_buy",
-            { panel: "agent" },
+            `U\u1ED1ng ${drinkLabel} t\u1EA1i Xe tr\xE0 \u0111\xE1 Ch\u1ECB Th\u01A1m (-${drinkCost}\u{1F41A})`,
+            "ben_luck_drink",
+            { panel: "tea", teaStand: "river" },
             1500
           );
         }
       }
-    }
-    const atmMin = Number(cfg.benAtmThreshold) || 500;
-    if (cfg.benAutoAtm && shells >= atmMin + 100 && canAct("ben_atm", 4e3)) {
-      const cashShells = Math.floor((shells - 100) / 50) * 50;
-      if (cashShells >= 100) {
+      if (cfg.benAutoSpot !== false) {
+        const spotChoice = cfg.benSpot || "bank";
+        const spotTargets = {
+          dock: { x: 31, y: 4, kind: "dock", label: "C\u1EA7u tre" },
+          bamboo: { x: 7, y: 6, kind: "dock", label: "C\u1EA7u tre" },
+          bank: { x: 24, y: 10, kind: "bank", label: "B\u1EDD s\xF4ng" }
+        };
+        const target = spotTargets[spotChoice] || spotTargets.bank;
+        if (!bu.spot || bu.spot !== target.kind && spotChoice !== "any") {
+          if (benScene && typeof benScene.goFarmer === "function") {
+            benScene.goFarmer({ x: target.x, y: target.y });
+            return { acted: true, msg: `\u{1F6B6} \u0110ang \u0111i ra ${target.label} c\xE2u c\xE1...` };
+          }
+        }
+      }
+      return { acted: false };
+    };
+    const runCricketBossStep = () => {
+      for (const bout of Object.values(bn.bouts || {})) {
+        if (!bout.end && bout.id) {
+          if (cfg.benAutoTickle && canAct("ben_cricket_tickle", 1200)) {
+            sendBenWs({ t: "tickle", id: bout.id });
+            markActed("ben_cricket_tickle");
+            return { acted: true, msg: "\u{1F33E} Kh\u1EC1u r\xE2u d\u1EBF l\u1EA5y \u0111\xE0 t\u1EA5n c\xF4ng!" };
+          }
+        }
+      }
+      if (cfg.benAutoBet) {
+        for (const bout of Object.values(bn.bouts || {})) {
+          if (!bout.end && bout.id && bout.betUntil && bout.betUntil > Date.now()) {
+            const betsToday = bn.soi?.bets || 0;
+            if (betsToday < 20 && canAct(`ben_bet_${bout.id}`, 8e3)) {
+              const redSum = (bout.red?.stats?.power || 0) + (bout.red?.stats?.tough || 0) + (bout.red?.stats?.nerve || 0);
+              const blueSum = (bout.blue?.stats?.power || 0) + (bout.blue?.stats?.tough || 0) + (bout.blue?.stats?.nerve || 0);
+              const side = blueSum > redSum ? "blue" : "red";
+              const sideLabel = side === "red" ? bout.red?.name || "\u0110\u1ECF" : bout.blue?.name || "Xanh";
+              const betAmount = Math.min(shells, Math.max(10, Number(cfg.benBetAmount) || 50));
+              if (shells >= betAmount) {
+                sendBenWs({ t: "bet", id: bout.id, side, shells: betAmount });
+                markActed(`ben_bet_${bout.id}`);
+                return { acted: true, msg: `\u{1F3B2} S\u1EDBi D\u1EBF: \u0110\u1EB7t ${betAmount}\u{1F41A} v\xE0o c\u1EEDa ${sideLabel} (${betsToday + 1}/20 l\u01B0\u1EE3t c\u01B0\u1EE3c)` };
+              }
+            }
+          }
+        }
+      }
+      if (cfg.benAutoBossBout !== false) {
+        const box = bn.crickets?.box || bn.soi?.box || [];
+        if (box.length === 0) {
+          return { acted: false };
+        }
+        const npcs = bn.soi?.npcs;
+        if (!npcs || npcs.length === 0) {
+          if (canAct("ben_soi_open", 3500)) {
+            return walkAndRun(
+              { x: 4, y: 29 },
+              () => {
+                sendBenWs({ t: "soi" });
+              },
+              "\u{1F997} Gh\xE9 S\u1EDBi D\u1EBF \xD4ng S\xE1u ki\u1EC3m tra danh s\xE1ch Boss...",
+              "ben_soi_open",
+              { panel: "soi" },
+              1600
+            );
+          }
+          return { acted: false };
+        }
+        const nextBoss = BOSS_LADDER.find((b) => {
+          const npcState = npcs.find((n) => n.id === b.id);
+          return npcState?.open && !npcState?.paidToday;
+        });
+        if (!nextBoss) {
+          return { acted: false };
+        }
+        const now = Date.now();
+        const readyCrickets = box.filter((c) => !c.restUntil || c.restUntil <= now);
+        if (readyCrickets.length === 0) {
+          return { acted: false };
+        }
+        readyCrickets.sort((a, b) => {
+          const sumA = (a.stats?.power || 0) + (a.stats?.tough || 0) + (a.stats?.nerve || 0);
+          const sumB = (b.stats?.power || 0) + (b.stats?.tough || 0) + (b.stats?.nerve || 0);
+          return sumB - sumA;
+        });
+        const bestCricket = readyCrickets[0];
+        const cName = CRICKET_SPECIES_NAMES[bestCricket.species] || "D\u1EBF";
+        const cTotal = (bestCricket.stats?.power || 0) + (bestCricket.stats?.tough || 0) + (bestCricket.stats?.nerve || 0);
+        if (canAct("ben_boss_bout", 4e3)) {
+          return walkAndRun(
+            { x: 4, y: 29 },
+            () => {
+              sendBenWs({ t: "bout", npc: nextBoss.id, cricket: bestCricket.id });
+            },
+            `\u{1F94A} Th\xE1ch \u0111\u1EA5u ${nextBoss.name} t\u1EA1i S\u1EDBi D\u1EBF (+${nextBoss.reward}\u{1F41A}) v\u1EDBi ${cName} (T\u1ED5ng: ${cTotal})`,
+            "ben_boss_bout",
+            { panel: "bout" },
+            2e3
+          );
+        }
+      }
+      return { acted: false };
+    };
+    const runCricketHuntStep = () => {
+      if (cfg.benAutoCricketHunt === false) {
+        return { acted: false };
+      }
+      const minutes = m.minutes || 0;
+      const gameHour = Math.floor(minutes % 1440 / 60);
+      const isNight = gameHour >= 18 || gameHour < 5;
+      const isRareHour = gameHour >= 23 || gameHour < 4;
+      if (!isNight) {
+        return { acted: false };
+      }
+      if (cfg.benHuntRareOnly && !isRareHour) {
+        return { acted: false };
+      }
+      if (stamina < 3) {
+        const stamRes = tryRecoverStamina();
+        if (stamRes) return stamRes;
+        return {
+          acted: false,
+          exhausted: true,
+          reason: "\u{1F62E}\u200D\u{1F4A8} B\u1EBFn \u0110\xF2: H\u1EBFt S\u1EE9c r\u1ECDi \u0111\xE8n b\u1EAFt d\u1EBF \u0111\xEAm -> Chuy\u1EC3n khu v\u1EF1c ti\u1EBFp theo!"
+        };
+      }
+      const box = bn.crickets?.box || [];
+      if (box.length >= 6 && cfg.benAutoReleaseLowCricket !== false && canAct("ben_cricket_release", 3e3)) {
+        const rankOrder = { common: 1, uncommon: 2, rare: 3, epic: 4, legendary: 5 };
+        const sorted = [...box].sort((a, b) => {
+          const rarA = rankOrder[CRICKET_SPECIES_RARITY[a.species] || "common"] || 1;
+          const rarB = rankOrder[CRICKET_SPECIES_RARITY[b.species] || "common"] || 1;
+          if (rarA !== rarB) return rarA - rarB;
+          const sumA = (a.stats?.power || 0) + (a.stats?.tough || 0) + (a.stats?.nerve || 0);
+          const sumB = (b.stats?.power || 0) + (b.stats?.tough || 0) + (b.stats?.nerve || 0);
+          return sumA - sumB;
+        });
+        const lowest = sorted[0];
+        const lowestRarity = CRICKET_SPECIES_RARITY[lowest.species] || "common";
+        if (lowestRarity === "common" || lowestRarity === "uncommon") {
+          const refund = CRICKET_RARITY_REFUND[lowestRarity] || 5;
+          const cName = CRICKET_SPECIES_NAMES[lowest.species] || "D\u1EBF";
+          markActed("ben_cricket_release");
+          sendBenWs({ t: "release", id: lowest.id });
+          return {
+            acted: true,
+            msg: `\u{1F38B} \u1ED0ng tre \u0111\u1EA7y (6/6) -> \u0110\xE3 th\u1EA3 ${cName} v\u1EC1 \u0111\u1ED3ng (+${refund} v\u1ECF s\xF2 \u{1F41A})`
+          };
+        }
+      }
+      if (cfg.benAutoFeedCricket && box.length > 0 && canAct("ben_cricket_feed", 3e3)) {
+        const sortedBest = [...box].sort((a, b) => {
+          const sumA = (a.caps?.power || 0) + (a.caps?.tough || 0) + (a.caps?.nerve || 0);
+          const sumB = (b.caps?.power || 0) + (b.caps?.tough || 0) + (b.caps?.nerve || 0);
+          return sumB - sumA;
+        });
+        const targetCricket = sortedBest[0];
+        const prefFoodStat = cfg.benPreferCricketFood || "balanced";
+        let foodItem = null;
+        if (prefFoodStat === "tough" && targetCricket.stats.tough < targetCricket.caps.tough && shells >= 25) {
+          foodItem = { id: "laNon", name: "\u{1F33F} L\xE1 non", price: 25 };
+        } else if (prefFoodStat === "power" && targetCricket.stats.power < targetCricket.caps.power && shells >= 40) {
+          foodItem = { id: "trungKien", name: "\u{1F95A} Tr\u1EE9ng ki\u1EBFn", price: 40 };
+        } else if (prefFoodStat === "nerve" && targetCricket.stats.nerve < targetCricket.caps.nerve && shells >= 30) {
+          foodItem = { id: "otHiem", name: "\u{1F336}\uFE0F \u1EDAt hi\u1EC3m", price: 30 };
+        } else if (prefFoodStat === "balanced") {
+          const diffTough = targetCricket.caps.tough - targetCricket.stats.tough;
+          const diffPower = targetCricket.caps.power - targetCricket.stats.power;
+          const diffNerve = targetCricket.caps.nerve - targetCricket.stats.nerve;
+          if (diffTough >= diffPower && diffTough >= diffNerve && diffTough > 0 && shells >= 25) {
+            foodItem = { id: "laNon", name: "\u{1F33F} L\xE1 non", price: 25 };
+          } else if (diffPower >= diffTough && diffPower >= diffNerve && diffPower > 0 && shells >= 40) {
+            foodItem = { id: "trungKien", name: "\u{1F95A} Tr\u1EE9ng ki\u1EBFn", price: 40 };
+          } else if (diffNerve > 0 && shells >= 30) {
+            foodItem = { id: "otHiem", name: "\u{1F336}\uFE0F \u1EDAt hi\u1EC3m", price: 30 };
+          }
+        }
+        if (foodItem) {
+          markActed("ben_cricket_feed");
+          sendBenWs({ t: "feed", id: targetCricket.id, food: foodItem.id });
+          const cName = CRICKET_SPECIES_NAMES[targetCricket.species] || "D\u1EBF";
+          return {
+            acted: true,
+            msg: `\u{1F33F} Cho ${cName} \u0103n ${foodItem.name} (-${foodItem.price}\u{1F41A}, +5 ch\u1EC9 s\u1ED1)`
+          };
+        }
+      }
+      const huntTarget = { x: 64, y: 11 };
+      if (!bu.field) {
         return walkAndRun(
-          { x: 34, y: 35 },
+          huntTarget,
           () => {
-            sendBenWs({ t: "atmCash", shells: cashShells });
+            sendBenWs({ t: "light" });
           },
-          `\u{1F3E7} \u0110\u1ED5i ${cashShells.toLocaleString("vi-VN")} v\u1ECF s\xF2 ra ti\u1EC1n m\u1EB7t t\u1EA1i C\xE2y ATM`,
-          "ben_atm",
-          { panel: "atm" },
-          1500
+          "\u{1F6B6} Ra \u0111\u1ED3ng c\u1ECF ph\xEDa \u0111\xF4ng s\u0103n d\u1EBF \u0111\xEAm...",
+          "ben_hunt_walk"
         );
+      }
+      if (bn.hunt?.phase === "hop" && bn.hunt.hop) {
+        const spot = bn.hunt.hop.spot;
+        sendBenWs({ t: "trap", n: bn.hunt.hop.n, spot });
+        return {
+          acted: true,
+          msg: `\u{1F997} Canh d\u1EBF \u0111\xE1p xu\u1ED1ng b\u1EE5i c\u1ECF ${spot + 1} -> \xDAP B\u1EAET!`
+        };
+      }
+      if (!bn.hunt && canAct("ben_hunt_light", 2200)) {
+        markActed("ben_hunt_light");
+        sendBenWs({ t: "light" });
+        return {
+          acted: true,
+          msg: "\u{1F526} R\u1ECDi \u0111\xE8n pin nghe ng\xF3ng ti\u1EBFng d\u1EBF g\xE1y \u0111\xEAm... (\u26A13 S\u1EE9c)"
+        };
+      }
+      return { acted: false };
+    };
+    const runEntertainmentStep = () => {
+      if (cfg.benAutoLantern !== false) {
+        const tickets = wallet.tickets || 0;
+        const boughtToday = bn.wheel?.bought || 0;
+        const canBuyTicket = Boolean(cfg.benBuyLanternTicket && boughtToday < 5 && shells >= 600);
+        if ((tickets > 0 || canBuyTicket) && bu.panel !== "lantern" && canAct("ben_lantern_open", 2500)) {
+          return walkAndRun(
+            { x: 37, y: 28 },
+            () => {
+              const curBn = bnStore.getState();
+              const curPicks = curBn.wheel?.picks || [];
+              const ownedCloset = Array.isArray(curBn.closet) ? curBn.closet : [];
+              const unownedWheel = WHEEL_ITEM_IDS.filter((id) => !ownedCloset.includes(id));
+              const needPicks = Math.min(3, unownedWheel.length);
+              if (needPicks > 0 && curPicks.length < needPicks) {
+                sendBenWs({ t: "pick", items: unownedWheel.slice(0, needPicks) });
+              }
+              buStore.setState({ panel: "lantern" });
+            },
+            tickets > 0 ? `\u{1F3EE} M\u1EDF V\xF2ng quay l\u1ED3ng \u0111\xE8n C\xF4 B\u1EA3y (hi\u1EC7n c\xF3 ${tickets} v\xE9 \u{1F39F}\uFE0F)` : `\u{1F3EE} Gh\xE9 S\u1EA1p l\u1ED3ng \u0111\xE8n C\xF4 B\u1EA3y mua v\xE9 quay (${boughtToday}/5, -600\u{1F41A})`,
+            "ben_lantern_open",
+            { panel: "lantern" },
+            5e3
+          );
+        }
+      }
+      if (cfg.benAutoLotto !== false) {
+        const lottoState = bn.lotto;
+        const hasWins = (lottoState?.wins?.length || 0) > 0 || (lottoState?.pending || 0) > 0;
+        if (hasWins && canAct("ben_lotto_claim", 4e3)) {
+          return walkAndRun(
+            { x: 36, y: 31 },
+            () => {
+              sendBenWs({ t: "lottoClaim" });
+            },
+            `\u{1F39F}\uFE0F \u0110\u1ED5i th\u01B0\u1EDFng v\xE9 s\u1ED1 B\u1EBFn \u0110\xF2 t\u1EA1i \u0110\u1EA1i l\xFD Ch\xFA B\u1EA3y (+${(lottoState?.pending || 0).toLocaleString("vi-VN")}\u{1F41A})`,
+            "ben_lotto_claim",
+            { panel: "agent" },
+            1500
+          );
+        }
+        if (cfg.benAutoBuyLotto && shells >= 10 && canAct("ben_lotto_buy", 6e4)) {
+          const sellingDay = lottoState?.selling;
+          const alreadyBought = (lottoState?.mine || []).some((t) => t.day === sellingDay);
+          if (!alreadyBought) {
+            const randNum = Math.floor(Math.random() * 100);
+            return walkAndRun(
+              { x: 36, y: 31 },
+              () => {
+                sendBenWs({ t: "lottoBuy", num: randNum, qty: 1 });
+              },
+              `\u{1F340} Mua 1 v\xE9 s\u1ED1 B\u1EBFn \u0110\xF2 (s\u1ED1 ${randNum < 10 ? "0" + randNum : randNum}) t\u1EA1i \u0110\u1EA1i l\xFD Ch\xFA B\u1EA3y (-10\u{1F41A})`,
+              "ben_lotto_buy",
+              { panel: "agent" },
+              1500
+            );
+          }
+        }
+      }
+      const atmMin = Number(cfg.benAtmThreshold) || 500;
+      if (cfg.benAutoAtm && shells >= atmMin + 100 && canAct("ben_atm", 4e3)) {
+        const cashShells = Math.floor((shells - 100) / 50) * 50;
+        if (cashShells >= 100) {
+          return walkAndRun(
+            { x: 34, y: 35 },
+            () => {
+              sendBenWs({ t: "atmCash", shells: cashShells });
+            },
+            `\u{1F3E7} \u0110\u1ED5i ${cashShells.toLocaleString("vi-VN")} v\u1ECF s\xF2 ra ti\u1EC1n m\u1EB7t t\u1EA1i C\xE2y ATM`,
+            "ben_atm",
+            { panel: "atm" },
+            1500
+          );
+        }
+      }
+      return { acted: false };
+    };
+    const subAreaRunners = {
+      fishing: runFishingStep,
+      cricketBoss: runCricketBossStep,
+      cricketHunt: runCricketHuntStep,
+      entertainment: runEntertainmentStep
+    };
+    const activeOrder = Array.isArray(cfg.benSubOrder) && cfg.benSubOrder.length > 0 ? cfg.benSubOrder : ["fishing", "cricketBoss", "cricketHunt", "entertainment"];
+    for (const subId of activeOrder) {
+      if (cfg.benSubEnabled?.[subId] !== false) {
+        const runner = subAreaRunners[subId];
+        if (runner) {
+          const result = runner();
+          if (result.acted || result.exhausted) {
+            return result;
+          }
+        }
       }
     }
     const lanternActive = bu.panel === "lantern" && cfg.benAutoLantern !== false && ((wallet.tickets || 0) > 0 || Boolean(cfg.benBuyLanternTicket && (bn.wheel?.bought || 0) < 5 && shells >= 600));
     if (bu.panel && !lanternActive && (!cfg.showFullActions || Date.now() >= keepBenPanelUntil)) {
       buStore.setState({ panel: null });
-    }
-    if (cfg.benAutoSpot !== false) {
-      const spotChoice = cfg.benSpot || "bank";
-      const spotTargets = {
-        dock: { x: 31, y: 4, kind: "dock", label: "C\u1EA7u tre" },
-        bamboo: { x: 7, y: 6, kind: "dock", label: "C\u1EA7u tre" },
-        bank: { x: 24, y: 10, kind: "bank", label: "B\u1EDD s\xF4ng" }
-      };
-      const target = spotTargets[spotChoice] || spotTargets.bank;
-      if (!bu.spot || bu.spot !== target.kind && spotChoice !== "any") {
-        if (benScene && typeof benScene.goFarmer === "function") {
-          benScene.goFarmer({ x: target.x, y: target.y });
-          return { acted: true, msg: `\u{1F6B6} \u0110ang \u0111i ra ${target.label} c\xE2u c\xE1...` };
-        }
-      }
     }
     return { acted: false };
   }
