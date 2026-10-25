@@ -5,6 +5,41 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.3.0] - 2026-10-25
+
+### 🌟 Tính Năng Mới & Nâng Cấp Hệ Thống (Major Features & Architecture)
+- **Phân Nhóm Tính Năng Nông Trại Theo Chuẩn NPC & Khu Vực Game**:
+  - Tái cấu trúc toàn bộ Tab Nông Trại thành các nhóm rõ ràng theo NPC và khu vực thực tế trong game:
+    - 🏠 **Nhà & Bếp**: Tự nấu món ăn, tự ăn uống hồi Đói/Khát, sạc pin xe điện.
+    - 🌱 **Ruộng Đồng (Tèo)**: Tự thu hoạch, xịt sâu, tưới nước, bón phân NPK, gieo hạt, trả lương Tèo phụ ruộng, mở rộng ô đất.
+    - 🐕 **Thú Cưng**: Tự động dắt thú cưng đi dạo mát quanh làng (`petAutoWalk`), cho ăn theo khẩu vị/thông minh/khoái khẩu, tự mua đồ ăn thích hợp, vuốt ve, tắm rửa, chơi ném bóng và tập trò.
+    - 🐃 **Chuồng Trâu (Anh Tám)**: Cho ăn rơm, tắm mát, cho thuê cày ruộng, trả lương Anh Tám.
+    - 🐄 **Bò Sữa (Chị Mận)**: Cho ăn cỏ, chích thuốc chữa bệnh, vắt & bán sữa bò, trả lương Chị Mận.
+    - 🐔 **Chuồng Gà (Chú Ba)**: Nhặt trứng gà, mua gà con, trả lương Chú Ba.
+    - 🐟 **Ao Cá (Bé Bi)**: Kéo lưới bán cá, thả cá giống (chép/trê/rô đồng), rải cám, trả lương Bé Bi.
+    - 💆 **Salon Chị Linh Tây**: Gội đầu dưỡng sinh (buff thư giãn), tắm trắng nâng tông khi đen da.
+    - 🏪 **Tạp Hóa Chị Na & Bảng Tin Làng**: Tự giao đơn hàng Chị Na, giao đơn bảng tin (Anh Khang), bắt trend sốt dẻo x2 giá.
+    - 🐷 **Quầy Tiết Kiệm Dì Bảy & Sổ Tay**: Thắp nhang bàn thờ Ông Năm, thu thập trang sổ tay, ngâm giống lúa thơm, khui/mua heo đất, gửi sổ tiết kiệm Dì Bảy 7 ngày.
+    - 🪙 **Tiệm Vàng Cô Kim (Chợ Lớn)**: Tự động mua tích lũy và chốt lời vàng miếng 9999, nhẫn trơn, vàng 18K.
+- **Cơ Chế Bán Thông Minh Toàn Diện (Smart Produce & Dish Selling)**:
+  - Tùy chọn chiến lược bán đa dạng: Bán tất cả thông minh, chỉ bán món ăn nấu chín, hoặc chỉ bán nông sản.
+  - Tự động bảo lưu nông sản cho các đơn hàng của Chị Na và Bảng tin làng trước khi bán.
+  - Cho phép tùy chỉnh số lượng nông sản tối thiểu muốn giữ lại kho (Min Keep) để không bao giờ bị hụt hàng làm nhiệm vụ.
+  - Tự động bán món ăn dư thừa trong Bếp kiếm thêm thu nhập từ các món đã nấu.
+- **Vòng Lặp Tác Vụ Bền Bỉ (Robust Farm Task Loop)**:
+  - Khắc phục triệt để tình trạng dừng chuyển tác vụ khi đang tưới nước/gieo hạt giữa chừng.
+  - Cơ chế ghi nhớ tác vụ đang dở và hoàn tất toàn bộ chu trình trước khi chuyển sang nhóm việc tiếp theo.
+- **Ghi Nhận Đầy Đủ Thông Báo Loa Xã & Điện Thoại**:
+  - Tự động bóc tách và hiển thị đầy đủ tiêu đề, nội dung phát thanh của Loa xã (`📢 [Loa xã]: "..."`) và cuộc gọi/tin nhắn điện thoại (`👵 [Điện thoại Bà Nội]`, `📞 [Điện thoại Ông Sáu]`) vào Terminal log, tránh bỏ lỡ các sự kiện quan trọng trong game.
+
+### 🎨 Tinh Chỉnh Giao Diện & Trải Nghiệm (UI/UX Refinements)
+- **Chuẩn Hóa Danh Xưng Toàn Bộ NPC**: Cập nhật danh xưng chính xác theo game data: Tèo (Tèo phụ ruộng), Anh Tám, Chị Mận, Chú Ba, Bé Bi, Chị Linh Tây, Chị Na, Anh Khang, Dì Bảy, Ông Năm, Cô Kim.
+- **Hiển Thị Tên / Nhãn Tiếng Việt Thân Thiện**: Thay thế triệt để các ID kỹ thuật thô bằng tên món ăn, nông sản, thức ăn pet, cá ao và vàng đầu tư trong toàn bộ log thông báo.
+- **Lược Bỏ ID Thô Vị Trí Biển**: Bỏ nhãn kỹ thuật `(beach)` khi quăng câu ở Biển, hiển thị gọn gàng `🎣 Biển: Quăng câu!`.
+- **Tối Giản Thanh HUD Stats**: Loại bỏ badge trạng thái thừa thãi (`Biển: reel`) trên thanh chỉ số, giúp giao diện trên cùng gọn gàng và không gây rối mắt.
+
+---
+
 ## [1.2.0] - 2026-10-25
 
 ### 🌟 Tính Năng Mới & Nâng Cấp Kiến Trúc Giao Diện (Major UI Architecture)
