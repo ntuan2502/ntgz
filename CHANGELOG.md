@@ -5,6 +5,26 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.3.1] - 2026-10-25
+
+### 🌟 Tính Năng Mới (New Feature)
+- **Khu Vực Chợ Đêm Trong Nông Trại (18h00 – 23h30)**:
+  - Bổ sung nhóm tính năng **🏮 Chợ Đêm** trực tiếp vào Tab Nông Trại (`FarmSubAreaId: 'nightMarket'`).
+  - **Khung Giờ Mở Cửa**: Tự động nhận diện khung giờ mở cửa Chợ Đêm từ 18:00 đến 23:30 (1080 – 1410 phút trong game).
+  - **Thưởng Giá Bán +25%**: Tự động bán nông sản và trứng gà tại Chợ Đêm với giá cao hơn 1.25x so với ban ngày.
+  - **Quản Lý Hạn Mức Tự Động**: Theo dõi chính xác hạn mức 20 món/đêm của game (`quotaLeft = 20 - nightSold.n`), tự động dừng khi đã bán đủ 20 món.
+  - **Chiến Lược Bán Thông Minh**:
+    - Ưu tiên nông sản tồn kho nhiều nhất (`max_stock`).
+    - Ưu tiên nông sản có giá bán cao nhất (`highest_price`).
+    - Ưu tiên nông sản giá thấp xả kho (`lowest_price`).
+  - **Bảo Lưu Nông Sản**:
+    - Tự động trừ và bảo lưu số lượng cần thiết cho Đơn hàng Tạp hóa Chị Na và Bảng tin làng trước khi bán Chợ Đêm.
+    - Cấu hình số lượng nông sản tối thiểu muốn lưu kho (`nightMarketMinKeep`).
+    - Tùy chọn cho phép bán Trứng gà khi chuồng có dư.
+  - **Giao Diện Trực Quan**: Mở giao diện sạp đèn lồng chợ đêm gốc của game nếu người dùng bật *"Hiển thị đầy đủ thao tác"*.
+
+---
+
 ## [1.3.0] - 2026-10-25
 
 ### 🌟 Tính Năng Mới & Nâng Cấp Hệ Thống (Major Features & Architecture)
