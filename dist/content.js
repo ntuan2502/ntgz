@@ -24770,15 +24770,6 @@
     const fullness = typeof snap?.fullness === "number" ? `${Math.round(snap.fullness)}%` : "--";
     const hydration = typeof snap?.hydration === "number" ? `${Math.round(snap.hydration)}%` : "--";
     const energy = typeof snap?.energy === "number" ? `${Math.round(snap.energy)}%` : "--";
-    let extraNote = "";
-    if (snap?.screen === "sea") {
-      extraNote = snap.sea?.bite ? "\u{1F3A3} C\xE1 c\u1EAFn c\xE2u!" : snap.sea?.phase ? `\u{1F30A} Bi\u1EC3n: ${snap.sea.phase}` : "\u{1F30A} Bi\u1EC3n";
-    } else if (snap?.screen === "benDo") {
-      const stam = snap.benWallet?.liveStamina ?? snap.benWallet?.stamina;
-      extraNote = typeof stam === "number" ? `\u{1F6F6} S\u1EE9c: ${stam}` : "\u{1F6F6} B\u1EBFn \u0111\xF2";
-    } else if (snap?.sleeping) {
-      extraNote = "\u{1F634} \u0110ang ng\u1EE7";
-    }
     return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "bg-slate-50 border-b border-slate-200/90 px-3 py-1.5 text-[11px] font-mono text-slate-700", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "flex flex-wrap items-center justify-between gap-1.5", children: [
       /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "flex items-center gap-1.5 text-slate-700 font-semibold", children: [
         /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("span", { className: "text-amber-700", children: [
@@ -24802,8 +24793,7 @@
         /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "flex items-center gap-1", title: "N\u0103ng l\u01B0\u1EE3ng / Pin / Th\u1EC3 l\u1EF1c", children: [
           /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { children: "\u26A1" }),
           /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "text-emerald-700 font-semibold", children: energy })
-        ] }),
-        extraNote && /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "rounded bg-amber-50 px-1.5 py-0.5 text-[10px] text-amber-800 border border-amber-200/80 font-medium", children: extraNote })
+        ] })
       ] })
     ] }) });
   }
@@ -29185,7 +29175,7 @@
       if (castBtn && isVisible(castBtn) && !castBtn.disabled && now - lastCastAt2 > Math.max(600, delayMs)) {
         triggerPointerDownAndClick(castBtn);
         lastCastAt2 = now;
-        setStatus2(`\u{1F3A3} Bi\u1EC3n (${s.spot || "pier"}): Qu\u0103ng c\xE2u!`);
+        setStatus2("\u{1F3A3} Bi\u1EC3n: Qu\u0103ng c\xE2u!");
       }
     }
     return { finishedArea: false };

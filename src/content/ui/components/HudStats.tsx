@@ -14,16 +14,6 @@ export function HudStats({ snap }: HudStatsProps) {
   const hydration = typeof snap?.hydration === 'number' ? `${Math.round(snap.hydration)}%` : '--';
   const energy = typeof snap?.energy === 'number' ? `${Math.round(snap.energy)}%` : '--';
 
-  let extraNote = '';
-  if (snap?.screen === 'sea') {
-    extraNote = snap.sea?.bite ? '🎣 Cá cắn câu!' : snap.sea?.phase ? `🌊 Biển: ${snap.sea.phase}` : '🌊 Biển';
-  } else if (snap?.screen === 'benDo') {
-    const stam = snap.benWallet?.liveStamina ?? snap.benWallet?.stamina;
-    extraNote = typeof stam === 'number' ? `🛶 Sức: ${stam}` : '🛶 Bến đò';
-  } else if (snap?.sleeping) {
-    extraNote = '😴 Đang ngủ';
-  }
-
   return (
     <div className="bg-slate-50 border-b border-slate-200/90 px-3 py-1.5 text-[11px] font-mono text-slate-700">
       <div className="flex flex-wrap items-center justify-between gap-1.5">
@@ -48,11 +38,6 @@ export function HudStats({ snap }: HudStatsProps) {
             <span>⚡</span>
             <span className="text-emerald-700 font-semibold">{energy}</span>
           </div>
-          {extraNote && (
-            <span className="rounded bg-amber-50 px-1.5 py-0.5 text-[10px] text-amber-800 border border-amber-200/80 font-medium">
-              {extraNote}
-            </span>
-          )}
         </div>
       </div>
     </div>

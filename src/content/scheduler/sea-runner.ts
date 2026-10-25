@@ -178,7 +178,7 @@ export async function stepSeaFishing(
     if (castBtn && isVisible(castBtn) && !castBtn.disabled && now - lastCastAt > Math.max(600, delayMs)) {
       triggerPointerDownAndClick(castBtn);
       lastCastAt = now;
-      setStatus(`🎣 Biển (${s.spot || 'pier'}): Quăng câu!`);
+      setStatus('🎣 Biển: Quăng câu!');
     }
   }
 
