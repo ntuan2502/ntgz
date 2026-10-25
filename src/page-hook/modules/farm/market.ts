@@ -2,7 +2,7 @@ import { getMainState } from '../../core/engine-access';
 import { AppConfig } from '../../../shared/types/config';
 import { MainGameStoreState } from '../../../shared/types/game-store';
 import { getActiveTrend, getTrendQuota } from './trend';
-import { StepResult, NOT_ACTED, CROP_NAMES, formatVnd, showFarmActionUI } from './types';
+import { StepResult, NOT_ACTED, CROP_NAMES, getItemLabel, formatVnd, showFarmActionUI } from './types';
 
 const CROP_KEYS = ['rice', 'corn', 'carrot', 'radish', 'egg'];
 
@@ -155,7 +155,7 @@ function sellSmart(cfg: AppConfig): StepResult | null {
         const sold = typeof anySt.sellDish === 'function' ? anySt.sellDish(dish, toSell) : st.sellQty?.(dish, toSell);
         if (sold) {
           showFarmActionUI(cfg, { vendor: 'grocery', shop: 'storage' });
-          return { acted: true, msg: `🍲 Đã bán ${toSell} phần món ăn (${dish}) dư trong Bếp` };
+          return { acted: true, msg: `🍲 Đã bán ${toSell} phần món ăn (${getItemLabel(dish)}) dư trong Bếp` };
         }
       }
     }

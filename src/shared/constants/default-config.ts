@@ -9,7 +9,7 @@ export const AREA_META: Record<AreaId, AreaMeta> = {
 
 export const SUBAREA_META: Record<FarmSubAreaId, SubAreaMeta> = {
   house: { id: 'house', icon: '🏠', name: 'Nhà & Bếp (Nấu nướng, Đói/Khát)' },
-  crops: { id: 'crops', icon: '🌱', name: 'Ruộng Đồng (Trồng trọt · Bác Tèo)' },
+  crops: { id: 'crops', icon: '🌱', name: 'Ruộng Đồng (Trồng trọt · Tèo)' },
   pet: { id: 'pet', icon: '🐕', name: 'Thú Cưng (Chăm sóc & Cho ăn)' },
   barn: { id: 'barn', icon: '🐃', name: 'Chuồng Trâu (Anh Tám)' },
   dairy: { id: 'dairy', icon: '🐄', name: 'Bò Sữa (Chị Mận)' },
@@ -112,7 +112,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   sleepHour: 21,
   sleepOnFishingLimit: true,
 
-  // 2. Crops (Bác Tèo)
+  // 2. Crops (Tèo)
   autoHarvest: true,
   autoPesticide: true,
   autoPlant: true,
@@ -131,6 +131,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   petAutoCuddle: true,
   petAutoBath: true,
   petAutoTrick: true,
+  petAutoWalk: true,
 
   // 4. Barn (Trâu - Anh Tám)
   barnAutoFeedBuffalo: true,

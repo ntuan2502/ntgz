@@ -1,6 +1,7 @@
 import { stores, getActiveScene, sendBenWs, lastXinMoiAt, lastXinMoiDay, setLastXinMoi } from '../../core/engine-access';
 import { canAct, markActed } from '../../core/cooldown';
 import { computeBenStamina } from '../../core/store-watcher';
+import { dismissInterruptsIfNeeded } from '../../core/interrupts';
 import { AppConfig } from '../../../shared/types/config';
 
 const BEN_FOOD_NAMES: Record<string, string> = {
@@ -78,6 +79,9 @@ export function execBenStep(cfg: AppConfig): { acted: boolean; msg?: string; exh
   if (bu.walking || bn.fishing !== 'idle') {
     return { acted: false };
   }
+
+  const interrupted = dismissInterruptsIfNeeded(cfg);
+  if (interrupted) return interrupted;
 
   // If showFullActions is enabled and a native panel is currently being displayed for an action, keep it visible
   if (cfg.showFullActions && bu.panel && Date.now() < keepBenPanelUntil) {

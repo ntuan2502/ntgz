@@ -75,7 +75,7 @@ export interface AppConfig {
   sleepHour: number;
   sleepOnFishingLimit: boolean;
 
-  // 2. Crops (Bác Tèo)
+  // 2. Crops (Tèo)
   autoHarvest: boolean;
   autoPesticide: boolean;
   autoPlant: boolean;
@@ -94,6 +94,7 @@ export interface AppConfig {
   petAutoCuddle: boolean;
   petAutoBath: boolean;
   petAutoTrick: boolean;
+  petAutoWalk: boolean;
 
   // 4. Barn (Trâu - Anh Tám)
   barnAutoFeedBuffalo: boolean;

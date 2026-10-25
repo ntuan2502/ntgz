@@ -14632,7 +14632,7 @@
   };
   var SUBAREA_META = {
     house: { id: "house", icon: "\u{1F3E0}", name: "Nh\xE0 & B\u1EBFp (N\u1EA5u n\u01B0\u1EDBng, \u0110\xF3i/Kh\xE1t)" },
-    crops: { id: "crops", icon: "\u{1F331}", name: "Ru\u1ED9ng \u0110\u1ED3ng (Tr\u1ED3ng tr\u1ECDt \xB7 B\xE1c T\xE8o)" },
+    crops: { id: "crops", icon: "\u{1F331}", name: "Ru\u1ED9ng \u0110\u1ED3ng (Tr\u1ED3ng tr\u1ECDt \xB7 T\xE8o)" },
     pet: { id: "pet", icon: "\u{1F415}", name: "Th\xFA C\u01B0ng (Ch\u0103m s\xF3c & Cho \u0103n)" },
     barn: { id: "barn", icon: "\u{1F403}", name: "Chu\u1ED3ng Tr\xE2u (Anh T\xE1m)" },
     dairy: { id: "dairy", icon: "\u{1F404}", name: "B\xF2 S\u1EEFa (Ch\u1ECB M\u1EADn)" },
@@ -14729,7 +14729,7 @@
     autoSleep: true,
     sleepHour: 21,
     sleepOnFishingLimit: true,
-    // 2. Crops (Bác Tèo)
+    // 2. Crops (Tèo)
     autoHarvest: true,
     autoPesticide: true,
     autoPlant: true,
@@ -14747,6 +14747,7 @@
     petAutoCuddle: true,
     petAutoBath: true,
     petAutoTrick: true,
+    petAutoWalk: true,
     // 4. Barn (Trâu - Anh Tám)
     barnAutoFeedBuffalo: true,
     barnAutoBathBuffalo: true,
@@ -26557,7 +26558,7 @@
               )
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng B\xE1c T\xE8o ph\u1EE5 ru\u1ED9ng" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng T\xE8o ph\u1EE5 ru\u1ED9ng" }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 Switch3,
                 {
@@ -26678,6 +26679,16 @@
                 {
                   checked: Boolean(config2.petAutoTrick),
                   onCheckedChange: (c) => updateField("petAutoTrick", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F9AE} T\u1EF1 d\u1EAFt Th\xFA c\u01B0ng \u0111i d\u1EA1o m\xE1t quanh l\xE0ng" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.petAutoWalk),
+                  onCheckedChange: (c) => updateField("petAutoWalk", c)
                 }
               )
             ] })
@@ -28610,6 +28621,7 @@
       petPreferFood: saved.petPreferFood ?? DEFAULT_CONFIG.petPreferFood,
       petAutoBuyFood: saved.petAutoBuyFood ?? DEFAULT_CONFIG.petAutoBuyFood,
       petBuyFoodType: saved.petBuyFoodType ?? DEFAULT_CONFIG.petBuyFoodType,
+      petAutoWalk: saved.petAutoWalk ?? DEFAULT_CONFIG.petAutoWalk,
       autoSellSmart: saved.autoSellSmart ?? DEFAULT_CONFIG.autoSellSmart,
       sellStrategy: saved.sellStrategy ?? DEFAULT_CONFIG.sellStrategy,
       sellReserveForOrders: saved.sellReserveForOrders ?? DEFAULT_CONFIG.sellReserveForOrders,

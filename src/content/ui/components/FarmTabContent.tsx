@@ -381,7 +381,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
             </label>
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>💸 Tự trả lương Bác Tèo phụ ruộng</span>
+              <span>💸 Tự trả lương Tèo phụ ruộng</span>
               <Switch
                 checked={Boolean(config.autoPayHelperCrops)}
                 onCheckedChange={(c) => updateField('autoPayHelperCrops', c)}
@@ -491,6 +491,13 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               <Switch
                 checked={Boolean(config.petAutoTrick)}
                 onCheckedChange={(c) => updateField('petAutoTrick', c)}
+              />
+            </label>
+            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+              <span>🦮 Tự dắt Thú cưng đi dạo mát quanh làng</span>
+              <Switch
+                checked={Boolean(config.petAutoWalk)}
+                onCheckedChange={(c) => updateField('petAutoWalk', c)}
               />
             </label>
           </div>

@@ -311,21 +311,41 @@
   }
 
   // src/page-hook/core/interrupts.ts
+  function extractNotificationText(obj) {
+    if (!obj) return "";
+    if (typeof obj === "string") return obj.trim();
+    if (typeof obj === "object") {
+      const rec = obj;
+      const title = typeof rec.title === "string" ? rec.title.trim() : "";
+      const body = typeof rec.text === "string" ? rec.text.trim() : typeof rec.msg === "string" ? rec.msg.trim() : typeof rec.content === "string" ? rec.content.trim() : typeof rec.body === "string" ? rec.body.trim() : typeof rec.desc === "string" ? rec.desc.trim() : "";
+      if (title && body) return `${title}: ${body}`;
+      if (title) return title;
+      if (body) return body;
+      const topic = typeof rec.topic === "string" ? rec.topic.trim() : "";
+      if (topic) return `Ch\u1EE7 \u0111\u1EC1: ${topic}`;
+    }
+    return "";
+  }
   function dismissInterruptsIfNeeded(cfg) {
     const m = stores.main?.getState();
     if (!m) return null;
     if (cfg && cfg.autoDismissInterrupts === false) return null;
     if (m.phone) {
+      const info = extractNotificationText(m.phone);
       m.closePhone?.();
-      return { acted: true, msg: "\u{1F4F1} \u0110\xE3 \u0111\xF3ng th\xF4ng b\xE1o \u0111i\u1EC7n tho\u1EA1i" };
+      const detailMsg = info ? `\u{1F4F1} [\u0110i\u1EC7n tho\u1EA1i]: "${info}"` : "\u{1F4F1} [\u0110i\u1EC7n tho\u1EA1i]: C\xF3 th\xF4ng b\xE1o m\u1EDBi";
+      return { acted: true, msg: detailMsg };
     }
     if (m.announcement) {
+      const info = extractNotificationText(m.announcement);
       m.answerAnnouncement?.(false);
-      return { acted: true, msg: "\u{1F4E2} \u0110\xE3 t\u1EAFt th\xF4ng b\xE1o Loa ph\u01B0\u1EDDng" };
+      const detailMsg = info ? `\u{1F4E2} [Loa x\xE3]: "${info}"` : "\u{1F4E2} [Loa x\xE3]: Th\xF4ng b\xE1o ph\xE1t thanh m\u1EDBi";
+      return { acted: true, msg: detailMsg };
     }
     if (m.tip) {
+      const info = extractNotificationText(m.tip);
       m.answerTip?.(false);
-      return { acted: true, msg: "\u{1F4A1} \u0110\xE3 \u0111\xF3ng h\u01B0\u1EDBng d\u1EABn nhanh" };
+      return { acted: true, msg: info ? `\u{1F4A1} [M\u1EB9o nhanh]: ${info}` : "\u{1F4A1} \u0110\xE3 \u0111\xF3ng h\u01B0\u1EDBng d\u1EABn nhanh" };
     }
     if (m.call) {
       if (m.call.stage === "ringing") {
@@ -333,20 +353,23 @@
       }
       const stAfter = stores.main?.getState();
       if (stAfter?.call) {
+        const fromName = stAfter.call.from === "noi" ? "B\xE0 N\u1ED9i" : stAfter.call.from === "sau" ? "\xD4ng S\xE1u" : stAfter.call.from || "Ng\u01B0\u1EDDi g\u1ECDi";
+        const callText = extractNotificationText(stAfter.call);
+        const detailInfo = callText ? ` - "${callText}"` : "";
         if (stAfter.call.from === "noi") {
           stAfter.hangUpGrandma?.("bye");
-          return { acted: true, msg: "\u{1F475} \u0110\xE3 nghe \u0111i\u1EC7n tho\u1EA1i B\xE0 N\u1ED9i & nh\u1EADn qu\xE0" };
+          return { acted: true, msg: `\u{1F475} [\u0110i\u1EC7n tho\u1EA1i B\xE0 N\u1ED9i]: \u0110\xE3 nghe m\xE1y & nh\u1EADn qu\xE0${detailInfo}` };
         }
         if (stAfter.call.from === "sau" && stAfter.call.topic === "sea") {
           stAfter.openSea?.();
           stAfter.endCall?.("ok");
-          return { acted: true, msg: "\u{1F4DE} \u0110\xE3 nghe \u0111i\u1EC7n \xD4ng S\xE1u m\u1EDF \u0111\u01B0\u1EDDng ra Bi\u1EC3n" };
+          return { acted: true, msg: `\u{1F4DE} [\u0110i\u1EC7n tho\u1EA1i \xD4ng S\xE1u]: M\u1EDF \u0111\u01B0\u1EDDng ra Bi\u1EC3n${detailInfo}` };
         }
         if (stAfter.call.from === "sau" && !stAfter.uncleBa?.met) {
           stAfter.answerSau?.(false);
         }
         stAfter.endCall?.("ok");
-        return { acted: true, msg: "\u{1F4DE} \u0110\xE3 nghe xong cu\u1ED9c g\u1ECDi \u0111i\u1EC7n tho\u1EA1i" };
+        return { acted: true, msg: `\u{1F4DE} [\u0110i\u1EC7n tho\u1EA1i ${fromName}]: \u0110\xE3 nghe cu\u1ED9c g\u1ECDi${detailInfo}` };
       }
     }
     if (m.panel === "chapterOne") {
@@ -361,12 +384,35 @@
       m.setPanel?.(null);
       return { acted: true, msg: "\u{1F4D4} \u0110\xE3 \u0111\xF3ng trang S\u1ED5 tay \xD4ng N\u0103m" };
     }
-    if (m.pond?.news) m.ackPondNews?.();
-    if (m.buffalo?.news) m.ackBuffaloNews?.();
-    if (m.dairy?.news) m.ackDairyNews?.();
-    if (m.henNews) m.ackHenNews?.();
-    if (m.pets?.news) m.ackPetNews?.();
-    if (m.missedOrder) m.ackMissedOrder?.();
+    if (m.missedOrder) {
+      m.ackMissedOrder?.();
+      return { acted: true, msg: "\u26A0\uFE0F [Ch\u1ECB Na]: \u0110\xE3 b\u1ECF l\u1EE1 \u0111\u01A1n giao h\xE0ng h\xF4m nay!" };
+    }
+    if (m.dairy?.news) {
+      const n = extractNotificationText(m.dairy.news);
+      m.ackDairyNews?.();
+      return { acted: true, msg: n ? `\u{1F404} [B\xF2 s\u1EEFa]: ${n}` : "\u{1F404} [B\xF2 s\u1EEFa]: C\xF3 th\xF4ng b\xE1o m\u1EDBi v\u1EC1 \u0111\xE0n b\xF2!" };
+    }
+    if (m.buffalo?.news) {
+      const n = extractNotificationText(m.buffalo.news);
+      m.ackBuffaloNews?.();
+      return { acted: true, msg: n ? `\u{1F403} [Tr\xE2u]: ${n}` : "\u{1F403} [Tr\xE2u]: C\xF3 th\xF4ng b\xE1o m\u1EDBi v\u1EC1 Tr\xE2u!" };
+    }
+    if (m.henNews) {
+      const n = extractNotificationText(m.henNews);
+      m.ackHenNews?.();
+      return { acted: true, msg: n ? `\u{1F414} [Chu\u1ED3ng g\xE0]: ${n}` : "\u{1F414} [Chu\u1ED3ng g\xE0]: C\xF3 th\xF4ng b\xE1o m\u1EDBi v\u1EC1 \u0111\xE0n g\xE0!" };
+    }
+    if (m.pond?.news) {
+      const n = extractNotificationText(m.pond.news);
+      m.ackPondNews?.();
+      return { acted: true, msg: n ? `\u{1F41F} [Ao c\xE1]: ${n}` : "\u{1F41F} [Ao c\xE1]: C\xF3 th\xF4ng b\xE1o m\u1EDBi v\u1EC1 Ao c\xE1!" };
+    }
+    if (m.pets?.news) {
+      const n = extractNotificationText(m.pets.news);
+      m.ackPetNews?.();
+      return { acted: true, msg: n ? `\u{1F415} [Th\xFA c\u01B0ng]: ${n}` : "\u{1F415} [Th\xFA c\u01B0ng]: C\xF3 tin m\u1EDBi v\u1EC1 th\xFA c\u01B0ng!" };
+    }
     return null;
   }
 
@@ -389,6 +435,63 @@
     rice: "L\xFAa th\u01A1m",
     egg: "Tr\u1EE9ng g\xE0"
   };
+  var DISH_NAMES = {
+    radishSoup: "Canh c\u1EE7 c\u1EA3i",
+    boiledEgg: "Tr\u1EE9ng lu\u1ED9c",
+    grilledCorn: "B\u1EAFp n\u01B0\u1EDBng m\u1EE1 h\xE0nh",
+    carrotJuice: "N\u01B0\u1EDBc \xE9p c\xE0 r\u1ED1t",
+    eggBread: "B\xE1nh m\xEC \u1ED1p la",
+    comTam: "C\u01A1m t\u1EA5m \u1ED1p la",
+    cornCake: "B\xE1nh b\u1EAFp n\u01B0\u1EDBng"
+  };
+  var DISH_LABELS = {
+    radishSoup: "Canh c\u1EE7 c\u1EA3i \u{1F372}",
+    boiledEgg: "Tr\u1EE9ng lu\u1ED9c \u{1F95A}",
+    grilledCorn: "B\u1EAFp n\u01B0\u1EDBng m\u1EE1 h\xE0nh \u{1F33D}",
+    carrotJuice: "N\u01B0\u1EDBc \xE9p c\xE0 r\u1ED1t \u{1F9C3}",
+    eggBread: "B\xE1nh m\xEC \u1ED1p la \u{1F96A}",
+    comTam: "C\u01A1m t\u1EA5m \u1ED1p la \u{1F35B}",
+    cornCake: "B\xE1nh b\u1EAFp n\u01B0\u1EDBng \u{1F96E}"
+  };
+  var PET_FOOD_NAMES = {
+    xuong: "X\u01B0\u01A1ng g\u1EB7m \u{1F9B4}",
+    cakho: "C\xE1 kh\xF4 \u{1F41F}",
+    pate: "Pate c\xE1 ng\u1EEB \u{1F96B}",
+    hat: "H\u1EA1t t\u1ED5ng h\u1EE3p \u{1F963}",
+    coKho: "C\u1ECF kh\xF4 \u{1F33F}",
+    cam: "C\xE1m heo \u{1F33E}",
+    "crop:carrot": "C\xE0 r\u1ED1t \u{1F955}",
+    "crop:corn": "B\u1EAFp ng\xF4 \u{1F33D}",
+    "crop:radish": "C\u1EE7 c\u1EA3i \u{1F331}"
+  };
+  var POND_FISH_NAMES = {
+    chep: "C\xE1 ch\xE9p",
+    tre: "C\xE1 tr\xEA",
+    ro: "C\xE1 r\xF4 \u0111\u1ED3ng"
+  };
+  var GOLD_NAMES = {
+    mieng: "V\xE0ng mi\u1EBFng 9999",
+    nhan: "Nh\u1EABn tr\u01A1n 9999",
+    k18: "V\xE0ng 18K",
+    non: "V\xE0ng non 10K"
+  };
+  var SHOP_FOOD_NAMES = {
+    banhBao: "B\xE1nh bao \u{1F95F}",
+    banhMiTrung: "B\xE1nh m\xEC tr\u1EE9ng \u{1F373}",
+    banhMiThit: "B\xE1nh m\xEC th\u1ECBt \u{1F956}",
+    banhMiCha: "B\xE1nh m\xEC ch\u1EA3 c\xE1 \u{1F41F}",
+    banhMiFull: "B\xE1nh m\xEC full topping \u{1F924}"
+  };
+  var SHOP_DRINK_NAMES = {
+    traDa: "Tr\xE0 \u0111\xE1 \u{1F9CA}",
+    nuocMia: "N\u01B0\u1EDBc m\xEDa \u{1F964}",
+    caPheSua: "C\xE0 ph\xEA s\u1EEFa \u0111\xE1 \u2615",
+    traDao: "Tr\xE0 \u0111\xE0o cam s\u1EA3 \u{1F351}",
+    traSua: "Tr\xE0 s\u1EEFa tr\xE2n ch\xE2u \u{1F9CB}"
+  };
+  function getItemLabel(id) {
+    return DISH_NAMES[id] || CROP_NAMES[id] || PET_FOOD_NAMES[id] || POND_FISH_NAMES[id] || GOLD_NAMES[id] || SHOP_FOOD_NAMES[id] || SHOP_DRINK_NAMES[id] || id;
+  }
   var formatVnd = (n) => n.toLocaleString("vi-VN");
   var farmUiTimer = null;
   function showFarmActionUI(cfg, uiState, durationMs = 1200) {
@@ -410,24 +513,6 @@
   }
 
   // src/page-hook/modules/farm/house.ts
-  var DISH_NAMES = {
-    radishSoup: "Canh c\u1EE7 c\u1EA3i",
-    boiledEgg: "Tr\u1EE9ng lu\u1ED9c",
-    grilledCorn: "B\u1EAFp n\u01B0\u1EDBng m\u1EE1 h\xE0nh",
-    carrotJuice: "N\u01B0\u1EDBc \xE9p c\xE0 r\u1ED1t",
-    eggBread: "B\xE1nh m\xEC \u1ED1p la",
-    comTam: "C\u01A1m t\u1EA5m \u1ED1p la",
-    cornCake: "B\xE1nh b\u1EAFp n\u01B0\u1EDBng"
-  };
-  var DISH_LABELS = {
-    radishSoup: "Canh c\u1EE7 c\u1EA3i \u{1F372}",
-    boiledEgg: "Tr\u1EE9ng lu\u1ED9c \u{1F95A}",
-    grilledCorn: "B\u1EAFp n\u01B0\u1EDBng m\u1EE1 h\xE0nh \u{1F33D}",
-    carrotJuice: "N\u01B0\u1EDBc \xE9p c\xE0 r\u1ED1t \u{1F9C3}",
-    eggBread: "B\xE1nh m\xEC \u1ED1p la \u{1F96A}",
-    comTam: "C\u01A1m t\u1EA5m \u1ED1p la \u{1F35B}",
-    cornCake: "B\xE1nh b\u1EAFp n\u01B0\u1EDBng \u{1F96E}"
-  };
   var LEARN_LIST = ["grilledCorn", "carrotJuice", "eggBread", "comTam", "cornCake"];
   var ALL_DISHES_ORDER = ["radishSoup", "boiledEgg", "grilledCorn", "carrotJuice", "eggBread", "comTam", "cornCake"];
   var KITCHEN_FOOD_ORDER = ["radishSoup", "boiledEgg", "grilledCorn", "eggBread", "comTam", "cornCake"];
@@ -809,17 +894,6 @@
     sit: "Ng\u1ED3i ngoan",
     come: "L\u1EA1i \u0111\xE2y"
   };
-  var PET_FOOD_NAMES = {
-    xuong: "X\u01B0\u01A1ng g\u1EB7m \u{1F9B4}",
-    cakho: "C\xE1 kh\xF4 \u{1F41F}",
-    pate: "Pate c\xE1 ng\u1EEB \u{1F96B}",
-    hat: "H\u1EA1t t\u1ED5ng h\u1EE3p \u{1F963}",
-    coKho: "C\u1ECF kh\xF4 \u{1F33F}",
-    cam: "C\xE1m heo \u{1F33E}",
-    "crop:carrot": "C\xE0 r\u1ED1t \u{1F955}",
-    "crop:corn": "B\u1EAFp ng\xF4 \u{1F33D}",
-    "crop:radish": "C\u1EE7 c\u1EA3i \u{1F331}"
-  };
   var isFed = (res) => res === "ok" || res === "fav";
   function handlePetSubArea(cfg) {
     const m = getMainState();
@@ -871,6 +945,18 @@
           if (getMainState().doTrick?.(tr) === "ok") {
             return { acted: true, msg: `\u{1F3BE} T\u1EADp tr\xF2 "${PET_TRICK_NAMES[tr] || tr}" c\xF9ng th\xFA c\u01B0ng` };
           }
+        }
+      }
+    }
+    const stWalk = getMainState();
+    const walkPetObj = stWalk.pets?.pet;
+    if (cfg.petAutoWalk !== false && walkPetObj) {
+      const walkedToday = walkPetObj.walkDay === stWalk.day || walkPetObj.walkedDay === stWalk.day;
+      if (!walkedToday) {
+        const anySt = stWalk;
+        const walkRes = (typeof anySt.walkPet === "function" ? anySt.walkPet() : void 0) || (typeof anySt.doTrick === "function" ? anySt.doTrick("walk") : void 0);
+        if (walkRes === "ok" || walkRes === true) {
+          return { acted: true, msg: `\u{1F9AE} \u0110\xE3 d\u1EAFt th\xFA c\u01B0ng (${petName}) \u0111i d\u1EA1o m\xE1t (+tim)` };
         }
       }
     }
@@ -959,7 +1045,6 @@
     return NOT_ACTED;
   }
   var POND_MATURE_DAYS = { ro: 3, tre: 5, chep: 7 };
-  var POND_FISH_NAMES = { chep: "C\xE1 ch\xE9p", tre: "C\xE1 tr\xEA", ro: "C\xE1 r\xF4" };
   var POND_CAPACITY = 12;
   function handlePondSubArea(cfg) {
     const m = getMainState();
@@ -1153,7 +1238,7 @@
           const sold = typeof anySt.sellDish === "function" ? anySt.sellDish(dish, toSell) : st.sellQty?.(dish, toSell);
           if (sold) {
             showFarmActionUI(cfg, { vendor: "grocery", shop: "storage" });
-            return { acted: true, msg: `\u{1F372} \u0110\xE3 b\xE1n ${toSell} ph\u1EA7n m\xF3n \u0103n (${dish}) d\u01B0 trong B\u1EBFp` };
+            return { acted: true, msg: `\u{1F372} \u0110\xE3 b\xE1n ${toSell} ph\u1EA7n m\xF3n \u0103n (${getItemLabel(dish)}) d\u01B0 trong B\u1EBFp` };
           }
         }
       }
@@ -1678,6 +1763,8 @@
     if (bu.walking || bn.fishing !== "idle") {
       return { acted: false };
     }
+    const interrupted = dismissInterruptsIfNeeded(cfg);
+    if (interrupted) return interrupted;
     if (cfg.showFullActions && bu.panel && Date.now() < keepBenPanelUntil) {
       return { acted: true, msg: keepBenPanelMsg || "\u{1F441}\uFE0F \u0110ang hi\u1EC3n th\u1ECB giao di\u1EC7n thao t\xE1c..." };
     }

@@ -1,27 +1,7 @@
 import { getMainState } from '../../core/engine-access';
 import { canAct, markActed } from '../../core/cooldown';
 import { AppConfig } from '../../../shared/types/config';
-import { StepResult, NOT_ACTED, formatVnd, showFarmActionUI } from './types';
-
-const DISH_NAMES: Record<string, string> = {
-  radishSoup: 'Canh củ cải',
-  boiledEgg: 'Trứng luộc',
-  grilledCorn: 'Bắp nướng mỡ hành',
-  carrotJuice: 'Nước ép cà rốt',
-  eggBread: 'Bánh mì ốp la',
-  comTam: 'Cơm tấm ốp la',
-  cornCake: 'Bánh bắp nướng',
-};
-
-const DISH_LABELS: Record<string, string> = {
-  radishSoup: 'Canh củ cải 🍲',
-  boiledEgg: 'Trứng luộc 🥚',
-  grilledCorn: 'Bắp nướng mỡ hành 🌽',
-  carrotJuice: 'Nước ép cà rốt 🧃',
-  eggBread: 'Bánh mì ốp la 🥪',
-  comTam: 'Cơm tấm ốp la 🍛',
-  cornCake: 'Bánh bắp nướng 🥮',
-};
+import { StepResult, NOT_ACTED, formatVnd, showFarmActionUI, DISH_NAMES, DISH_LABELS } from './types';
 
 const LEARN_LIST = ['grilledCorn', 'carrotJuice', 'eggBread', 'comTam', 'cornCake'];
 const ALL_DISHES_ORDER = ['radishSoup', 'boiledEgg', 'grilledCorn', 'carrotJuice', 'eggBread', 'comTam', 'cornCake'];

@@ -1,6 +1,6 @@
 import { getMainState } from '../../core/engine-access';
 import { AppConfig } from '../../../shared/types/config';
-import { StepResult, NOT_ACTED, formatVnd } from './types';
+import { StepResult, NOT_ACTED, formatVnd, PET_FOOD_NAMES, POND_FISH_NAMES } from './types';
 
 // ---------------------------------------------------------------------------
 // PET
@@ -23,17 +23,6 @@ const PET_TRICK_NAMES: Record<string, string> = {
   paw: 'Bắt tay',
   sit: 'Ngồi ngoan',
   come: 'Lại đây',
-};
-const PET_FOOD_NAMES: Record<string, string> = {
-  xuong: 'Xương gặm 🦴',
-  cakho: 'Cá khô 🐟',
-  pate: 'Pate cá ngừ 🥫',
-  hat: 'Hạt tổng hợp 🥣',
-  coKho: 'Cỏ khô 🌿',
-  cam: 'Cám heo 🌾',
-  'crop:carrot': 'Cà rốt 🥕',
-  'crop:corn': 'Bắp ngô 🌽',
-  'crop:radish': 'Củ cải 🌱',
 };
 const isFed = (res: string | undefined) => res === 'ok' || res === 'fav';
 
@@ -107,6 +96,22 @@ export function handlePetSubArea(cfg: AppConfig): StepResult {
         if (getMainState().doTrick?.(tr) === 'ok') {
           return { acted: true, msg: `🎾 Tập trò "${PET_TRICK_NAMES[tr] || tr}" cùng thú cưng` };
         }
+      }
+    }
+  }
+
+  // Walk pet once per day
+  const stWalk = getMainState();
+  const walkPetObj = stWalk.pets?.pet;
+  if (cfg.petAutoWalk !== false && walkPetObj) {
+    const walkedToday = walkPetObj.walkDay === stWalk.day || walkPetObj.walkedDay === stWalk.day;
+    if (!walkedToday) {
+      const anySt = stWalk as unknown as Record<string, ((...args: unknown[]) => unknown) | undefined>;
+      const walkRes =
+        (typeof anySt.walkPet === 'function' ? anySt.walkPet() : undefined) ||
+        (typeof anySt.doTrick === 'function' ? anySt.doTrick('walk') : undefined);
+      if (walkRes === 'ok' || walkRes === true) {
+        return { acted: true, msg: `🦮 Đã dắt thú cưng (${petName}) đi dạo mát (+tim)` };
       }
     }
   }
@@ -240,7 +245,6 @@ export function handleCoopSubArea(cfg: AppConfig): StepResult {
 // ---------------------------------------------------------------------------
 
 const POND_MATURE_DAYS: Record<string, number> = { ro: 3, tre: 5, chep: 7 };
-const POND_FISH_NAMES: Record<string, string> = { chep: 'Cá chép', tre: 'Cá trê', ro: 'Cá rô' };
 const POND_CAPACITY = 12;
 
 export function handlePondSubArea(cfg: AppConfig): StepResult {

@@ -140,6 +140,7 @@ export function mergeConfig(saved: Partial<AppConfig> | null | undefined): AppCo
     petPreferFood: (saved.petPreferFood ?? DEFAULT_CONFIG.petPreferFood) as string,
     petAutoBuyFood: (saved.petAutoBuyFood ?? DEFAULT_CONFIG.petAutoBuyFood) as boolean,
     petBuyFoodType: (saved.petBuyFoodType ?? DEFAULT_CONFIG.petBuyFoodType) as string,
+    petAutoWalk: (saved.petAutoWalk ?? DEFAULT_CONFIG.petAutoWalk) as boolean,
     autoSellSmart: (saved.autoSellSmart ?? DEFAULT_CONFIG.autoSellSmart) as boolean,
     sellStrategy: (saved.sellStrategy ?? DEFAULT_CONFIG.sellStrategy) as AppConfig['sellStrategy'],
     sellReserveForOrders: (saved.sellReserveForOrders ?? DEFAULT_CONFIG.sellReserveForOrders) as boolean,

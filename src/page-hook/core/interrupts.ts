@@ -38,6 +38,33 @@ interface InterruptState {
   [key: string]: unknown;
 }
 
+function extractNotificationText(obj: unknown): string {
+  if (!obj) return '';
+  if (typeof obj === 'string') return obj.trim();
+  if (typeof obj === 'object') {
+    const rec = obj as Record<string, unknown>;
+    const title = typeof rec.title === 'string' ? rec.title.trim() : '';
+    const body =
+      typeof rec.text === 'string'
+        ? rec.text.trim()
+        : typeof rec.msg === 'string'
+          ? rec.msg.trim()
+          : typeof rec.content === 'string'
+            ? rec.content.trim()
+            : typeof rec.body === 'string'
+              ? rec.body.trim()
+              : typeof rec.desc === 'string'
+                ? rec.desc.trim()
+                : '';
+    if (title && body) return `${title}: ${body}`;
+    if (title) return title;
+    if (body) return body;
+    const topic = typeof rec.topic === 'string' ? rec.topic.trim() : '';
+    if (topic) return `Chủ đề: ${topic}`;
+  }
+  return '';
+}
+
 export function dismissInterruptsIfNeeded(cfg?: { autoDismissInterrupts?: boolean }): { acted: boolean; msg: string } | null {
   const m = stores.main?.getState() as InterruptState | undefined;
   if (!m) return null;
@@ -45,39 +72,57 @@ export function dismissInterruptsIfNeeded(cfg?: { autoDismissInterrupts?: boolea
   if (cfg && cfg.autoDismissInterrupts === false) return null;
 
   if (m.phone) {
+    const info = extractNotificationText(m.phone);
     m.closePhone?.();
-    return { acted: true, msg: '📱 Đã đóng thông báo điện thoại' };
+    const detailMsg = info ? `📱 [Điện thoại]: "${info}"` : '📱 [Điện thoại]: Có thông báo mới';
+    return { acted: true, msg: detailMsg };
   }
+
   if (m.announcement) {
+    const info = extractNotificationText(m.announcement);
     m.answerAnnouncement?.(false);
-    return { acted: true, msg: '📢 Đã tắt thông báo Loa phường' };
+    const detailMsg = info ? `📢 [Loa xã]: "${info}"` : '📢 [Loa xã]: Thông báo phát thanh mới';
+    return { acted: true, msg: detailMsg };
   }
+
   if (m.tip) {
+    const info = extractNotificationText(m.tip);
     m.answerTip?.(false);
-    return { acted: true, msg: '💡 Đã đóng hướng dẫn nhanh' };
+    return { acted: true, msg: info ? `💡 [Mẹo nhanh]: ${info}` : '💡 Đã đóng hướng dẫn nhanh' };
   }
+
   if (m.call) {
     if (m.call.stage === 'ringing') {
       m.acceptCall?.();
     }
     const stAfter = stores.main?.getState() as InterruptState | undefined;
     if (stAfter?.call) {
+      const fromName =
+        stAfter.call.from === 'noi'
+          ? 'Bà Nội'
+          : stAfter.call.from === 'sau'
+            ? 'Ông Sáu'
+            : stAfter.call.from || 'Người gọi';
+      const callText = extractNotificationText(stAfter.call);
+      const detailInfo = callText ? ` - "${callText}"` : '';
+
       if (stAfter.call.from === 'noi') {
         stAfter.hangUpGrandma?.('bye');
-        return { acted: true, msg: '👵 Đã nghe điện thoại Bà Nội & nhận quà' };
+        return { acted: true, msg: `👵 [Điện thoại Bà Nội]: Đã nghe máy & nhận quà${detailInfo}` };
       }
       if (stAfter.call.from === 'sau' && stAfter.call.topic === 'sea') {
         stAfter.openSea?.();
         stAfter.endCall?.('ok');
-        return { acted: true, msg: '📞 Đã nghe điện Ông Sáu mở đường ra Biển' };
+        return { acted: true, msg: `📞 [Điện thoại Ông Sáu]: Mở đường ra Biển${detailInfo}` };
       }
       if (stAfter.call.from === 'sau' && !stAfter.uncleBa?.met) {
         stAfter.answerSau?.(false);
       }
       stAfter.endCall?.('ok');
-      return { acted: true, msg: '📞 Đã nghe xong cuộc gọi điện thoại' };
+      return { acted: true, msg: `📞 [Điện thoại ${fromName}]: Đã nghe cuộc gọi${detailInfo}` };
     }
   }
+
   if (m.panel === 'chapterOne') {
     m.finishChapterOne?.();
     return { acted: true, msg: '📖 Đã xác nhận qua Chương 1' };
@@ -91,12 +136,35 @@ export function dismissInterruptsIfNeeded(cfg?: { autoDismissInterrupts?: boolea
     return { acted: true, msg: '📔 Đã đóng trang Sổ tay Ông Năm' };
   }
 
-  if (m.pond?.news) m.ackPondNews?.();
-  if (m.buffalo?.news) m.ackBuffaloNews?.();
-  if (m.dairy?.news) m.ackDairyNews?.();
-  if (m.henNews) m.ackHenNews?.();
-  if (m.pets?.news) m.ackPetNews?.();
-  if (m.missedOrder) m.ackMissedOrder?.();
+  if (m.missedOrder) {
+    m.ackMissedOrder?.();
+    return { acted: true, msg: '⚠️ [Chị Na]: Đã bỏ lỡ đơn giao hàng hôm nay!' };
+  }
+  if (m.dairy?.news) {
+    const n = extractNotificationText(m.dairy.news);
+    m.ackDairyNews?.();
+    return { acted: true, msg: n ? `🐄 [Bò sữa]: ${n}` : '🐄 [Bò sữa]: Có thông báo mới về đàn bò!' };
+  }
+  if (m.buffalo?.news) {
+    const n = extractNotificationText(m.buffalo.news);
+    m.ackBuffaloNews?.();
+    return { acted: true, msg: n ? `🐃 [Trâu]: ${n}` : '🐃 [Trâu]: Có thông báo mới về Trâu!' };
+  }
+  if (m.henNews) {
+    const n = extractNotificationText(m.henNews);
+    m.ackHenNews?.();
+    return { acted: true, msg: n ? `🐔 [Chuồng gà]: ${n}` : '🐔 [Chuồng gà]: Có thông báo mới về đàn gà!' };
+  }
+  if (m.pond?.news) {
+    const n = extractNotificationText(m.pond.news);
+    m.ackPondNews?.();
+    return { acted: true, msg: n ? `🐟 [Ao cá]: ${n}` : '🐟 [Ao cá]: Có thông báo mới về Ao cá!' };
+  }
+  if (m.pets?.news) {
+    const n = extractNotificationText(m.pets.news);
+    m.ackPetNews?.();
+    return { acted: true, msg: n ? `🐕 [Thú cưng]: ${n}` : '🐕 [Thú cưng]: Có tin mới về thú cưng!' };
+  }
 
   return null;
 }
