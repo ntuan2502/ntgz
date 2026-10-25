@@ -5,10 +5,13 @@ export type FarmSubAreaId =
   | 'crops'
   | 'pet'
   | 'barn'
+  | 'dairy'
   | 'coop'
   | 'pond'
+  | 'salon'
   | 'market'
-  | 'dibay';
+  | 'dibay'
+  | 'goldShop';
 
 export interface AreaMeta {
   id: AreaId;
@@ -72,7 +75,7 @@ export interface AppConfig {
   sleepHour: number;
   sleepOnFishingLimit: boolean;
 
-  // 2. Crops
+  // 2. Crops (Bác Tèo)
   autoHarvest: boolean;
   autoPesticide: boolean;
   autoPlant: boolean;
@@ -80,48 +83,59 @@ export interface AppConfig {
   autoWater: boolean;
   autoFertilize: boolean;
   autoBuyPlots: boolean;
+  autoPayHelperCrops: boolean;
 
-  // 3. Pet
+  // 3. Pet (Thú cưng)
   petAutoFeed: boolean;
+  petFeedMode: 'smart_diet' | 'inventory_only' | 'fav_only' | 'custom';
+  petPreferFood: string;
+  petAutoBuyFood: boolean;
+  petBuyFoodType: string;
   petAutoCuddle: boolean;
   petAutoBath: boolean;
   petAutoTrick: boolean;
 
-  // 4. Barn (Buffalo & Cows)
+  // 4. Barn (Trâu - Anh Tám)
   barnAutoFeedBuffalo: boolean;
   barnAutoBathBuffalo: boolean;
   barnAutoLendBuffalo: boolean;
-  barnAutoFeedCows: boolean;
-  barnAutoCureCows: boolean;
-  barnAutoSellMilk: boolean;
+  barnLendMoodMin: number;
   barnAutoPayHelper: boolean;
 
-  // 5. Coop (Chickens)
+  // 5. Dairy (Bò Sữa - Chị Mận)
+  dairyAutoFeedCows: boolean;
+  dairyAutoCureCows: boolean;
+  dairyAutoSellMilk: boolean;
+  dairyAutoPayHelper: boolean;
+
+  // 6. Coop (Chuồng Gà - Chú Ba)
   coopAutoCollectEggs: boolean;
   coopAutoBuyChick: boolean;
   coopAutoPayHelper: boolean;
 
-  // 6. Pond (Fish Pond)
+  // 7. Pond (Ao Cá - Bé Bi)
   pondAutoNet: boolean;
   pondAutoStock: boolean;
   preferPondFish: string;
   pondAutoFeed: boolean;
   pondAutoPayHelper: boolean;
 
-  // 7. Market & Gold Shop
+  // 8. Salon (Chị Linh Tây) - already covered in section 1 fields autoSalonShampoo, autoSalonWhiten
+
+  // 9. Market (Tạp Hóa Chị Na & Bảng Tin Làng)
   autoDeliverOrder: boolean;
   autoVillageBoard: boolean;
   autoSellTrend: boolean;
   autoSellDailyTask: boolean;
   autoSellProduce: boolean;
+  autoSellSmart: boolean;
+  sellStrategy: 'smart_all' | 'produce_only' | 'food_only';
+  sellReserveForOrders: boolean;
+  sellReserveForVillage: boolean;
+  sellReserveForKitchen: boolean;
   surplusKeepQty: number;
-  goldAutoBuy: boolean;
-  goldPreferType: string;
-  goldKeepCash: number;
-  goldAutoSell: boolean;
-  goldProfitPercent: number;
 
-  // 8. Di Bay & Quests
+  // 10. Di Bay & Quests (Dì Bảy & Sổ Tay)
   autoClaimQuests: boolean;
   autoFirstDayTasks: boolean;
   autoNotebookPages: boolean;
@@ -130,6 +144,13 @@ export interface AppConfig {
   autoNewPiggy: boolean;
   autoSavings: boolean;
   savingsKeepGold: number;
+
+  // 11. Gold Shop (Tiệm Vàng Cô Kim)
+  goldAutoBuy: boolean;
+  goldPreferType: string;
+  goldKeepCash: number;
+  goldAutoSell: boolean;
+  goldProfitPercent: number;
 
   // Area 2: Ben Do Fishing Settings
   benAutoSpot: boolean;

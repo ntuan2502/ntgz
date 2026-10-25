@@ -7,6 +7,11 @@ import { sleep } from './dom-helpers';
 export let lastFarmDoneDay = -1;
 export let lastFarmRunAt = 0;
 
+export function resetFarmTiming(): void {
+  lastFarmDoneDay = -1;
+  lastFarmRunAt = 0;
+}
+
 export async function runFarmSubAreas(
   snap: GameSnapshot,
   config: AppConfig,

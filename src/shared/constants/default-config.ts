@@ -8,14 +8,17 @@ export const AREA_META: Record<AreaId, AreaMeta> = {
 };
 
 export const SUBAREA_META: Record<FarmSubAreaId, SubAreaMeta> = {
-  house: { id: 'house', icon: '🏠', name: 'Nhà, Bếp & Nhu Cầu' },
-  crops: { id: 'crops', icon: '🌱', name: 'Ruộng Đồng (Trồng Trọt)' },
-  pet: { id: 'pet', icon: '🐕', name: 'Thú Cưng (Chó / Mèo)' },
-  barn: { id: 'barn', icon: '🐃', name: 'Chuồng Trâu & Bò Sữa' },
-  coop: { id: 'coop', icon: '🐔', name: 'Chuồng Gà' },
-  pond: { id: 'pond', icon: '🐟', name: 'Ao Cá' },
-  market: { id: 'market', icon: '🏪', name: 'Tạp Hóa & Bảng Tin Làng' },
-  dibay: { id: 'dibay', icon: '🐷', name: 'Quầy Dì Bảy & Sổ Tay' },
+  house: { id: 'house', icon: '🏠', name: 'Nhà & Bếp (Nấu nướng, Đói/Khát)' },
+  crops: { id: 'crops', icon: '🌱', name: 'Ruộng Đồng (Trồng trọt · Bác Tèo)' },
+  pet: { id: 'pet', icon: '🐕', name: 'Thú Cưng (Chăm sóc & Cho ăn)' },
+  barn: { id: 'barn', icon: '🐃', name: 'Chuồng Trâu (Anh Tám)' },
+  dairy: { id: 'dairy', icon: '🐄', name: 'Bò Sữa (Chị Mận)' },
+  coop: { id: 'coop', icon: '🐔', name: 'Chuồng Gà (Chú Ba)' },
+  pond: { id: 'pond', icon: '🐟', name: 'Ao Cá (Bé Bi)' },
+  salon: { id: 'salon', icon: '💆', name: 'Salon Chị Linh Tây' },
+  market: { id: 'market', icon: '🏪', name: 'Tạp Hóa Chị Na & Bảng Tin' },
+  dibay: { id: 'dibay', icon: '🐷', name: 'Quầy Tiết Kiệm Dì Bảy & Sổ Tay' },
+  goldShop: { id: 'goldShop', icon: '🪙', name: 'Tiệm Vàng Cô Kim (Chợ Lớn)' },
 };
 
 export const DEFAULT_CONFIG: AppConfig = {
@@ -45,26 +48,44 @@ export const DEFAULT_CONFIG: AppConfig = {
   },
 
   // Farm Sub-Area Order & Enable/Disable toggles
-  farmSubOrder: ['house', 'crops', 'pet', 'barn', 'coop', 'pond', 'market', 'dibay'],
+  farmSubOrder: [
+    'house',
+    'crops',
+    'pet',
+    'barn',
+    'dairy',
+    'coop',
+    'pond',
+    'salon',
+    'market',
+    'dibay',
+    'goldShop',
+  ],
   farmSubEnabled: {
     house: true,
     crops: true,
     pet: true,
     barn: true,
+    dairy: true,
     coop: true,
     pond: true,
+    salon: true,
     market: true,
     dibay: true,
+    goldShop: true,
   },
   farmSubCollapsed: {
     house: false,
     crops: false,
     pet: false,
     barn: false,
+    dairy: false,
     coop: false,
     pond: false,
+    salon: false,
     market: false,
     dibay: false,
+    goldShop: false,
   },
 
   // 1. House, Kitchen, Needs & Salon
@@ -91,7 +112,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   sleepHour: 21,
   sleepOnFishingLimit: true,
 
-  // 2. Crops
+  // 2. Crops (Bác Tèo)
   autoHarvest: true,
   autoPesticide: true,
   autoPlant: true,
@@ -99,48 +120,59 @@ export const DEFAULT_CONFIG: AppConfig = {
   autoWater: true,
   autoFertilize: true,
   autoBuyPlots: true,
+  autoPayHelperCrops: true,
 
-  // 3. Pet
+  // 3. Pet (Thú cưng)
   petAutoFeed: true,
+  petFeedMode: 'smart_diet',
+  petPreferFood: 'auto',
+  petAutoBuyFood: true,
+  petBuyFoodType: 'auto_fav',
   petAutoCuddle: true,
   petAutoBath: true,
   petAutoTrick: true,
 
-  // 4. Barn (Buffalo & Cows)
+  // 4. Barn (Trâu - Anh Tám)
   barnAutoFeedBuffalo: true,
   barnAutoBathBuffalo: true,
   barnAutoLendBuffalo: true,
-  barnAutoFeedCows: true,
-  barnAutoCureCows: true,
-  barnAutoSellMilk: true,
+  barnLendMoodMin: 50,
   barnAutoPayHelper: true,
 
-  // 5. Coop (Chickens)
+  // 5. Dairy (Bò Sữa - Chị Mận)
+  dairyAutoFeedCows: true,
+  dairyAutoCureCows: true,
+  dairyAutoSellMilk: true,
+  dairyAutoPayHelper: true,
+
+  // 6. Coop (Chuồng Gà - Chú Ba)
   coopAutoCollectEggs: true,
   coopAutoBuyChick: true,
   coopAutoPayHelper: true,
 
-  // 6. Pond (Fish Pond)
+  // 7. Pond (Ao Cá - Bé Bi)
   pondAutoNet: true,
   pondAutoStock: true,
   preferPondFish: 'chep',
   pondAutoFeed: true,
   pondAutoPayHelper: true,
 
-  // 7. Market & Gold Shop
+  // 8. Salon (Chị Linh Tây) - autoSalonShampoo & autoSalonWhiten in Section 1
+
+  // 9. Market (Tạp Hóa Chị Na & Bảng Tin Làng)
   autoDeliverOrder: true,
   autoVillageBoard: true,
   autoSellTrend: true,
   autoSellDailyTask: true,
   autoSellProduce: false,
-  surplusKeepQty: 20,
-  goldAutoBuy: false,
-  goldPreferType: 'mieng',
-  goldKeepCash: 500000,
-  goldAutoSell: true,
-  goldProfitPercent: 10,
+  autoSellSmart: true,
+  sellStrategy: 'smart_all',
+  sellReserveForOrders: true,
+  sellReserveForVillage: true,
+  sellReserveForKitchen: true,
+  surplusKeepQty: 10,
 
-  // 8. Di Bay & Quests
+  // 10. Di Bay & Quests (Dì Bảy & Sổ Tay)
   autoClaimQuests: true,
   autoFirstDayTasks: true,
   autoNotebookPages: true,
@@ -149,6 +181,13 @@ export const DEFAULT_CONFIG: AppConfig = {
   autoNewPiggy: true,
   autoSavings: false,
   savingsKeepGold: 200000,
+
+  // 11. Gold Shop (Tiệm Vàng Cô Kim)
+  goldAutoBuy: false,
+  goldPreferType: 'mieng',
+  goldKeepCash: 500000,
+  goldAutoSell: true,
+  goldProfitPercent: 10,
 
   // Area 2: Ben Do Fishing Settings
   benAutoSpot: true,

@@ -118,11 +118,11 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
             {config.autoRecoverHunger && (
               <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Ăn khi Đói &lt; (%):</span>
+                  <span className="text-slate-600">Ngưỡng đói cần ăn (%):</span>
                   <input
                     type="number"
                     min={10}
-                    max={90}
+                    max={80}
                     step={5}
                     value={config.hungerThreshold}
                     onChange={(e) => updateField('hungerThreshold', Number(e.target.value))}
@@ -130,47 +130,47 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                   />
                 </div>
                 <div className="flex items-center justify-between gap-2 min-w-0">
-                  <span className="text-slate-600 shrink-0">Nguồn ăn:</span>
+                  <span className="text-slate-600 shrink-0">Nguồn thức ăn:</span>
                   <HudSelect
                     value={config.foodSource}
                     onValueChange={(val) => updateField('foodSource', val as AppConfig['foodSource'])}
                     options={[
-                      { value: 'kitchen_first', label: '🍲 Ưu tiên Bếp, thiếu mua Tiệm' },
-                      { value: 'kitchen_only', label: '🏡 Chỉ món ăn Bếp, Kho' },
-                      { value: 'shop_only', label: '🥖 Chỉ mua Tiệm' },
+                      { value: 'kitchen_first', label: '🍲 Bếp trước ➔ Tiệm sau' },
+                      { value: 'kitchen_only', label: '🏠 Chỉ ăn món trong Bếp' },
+                      { value: 'shop_only', label: '🥖 Chỉ mua Tiệm bánh' },
                     ]}
                   />
                 </div>
                 {config.foodSource !== 'shop_only' && (
                   <div className="flex items-center justify-between gap-2 min-w-0">
-                    <span className="text-slate-600 shrink-0">Món ăn ở Bếp:</span>
+                    <span className="text-slate-600 shrink-0">Ưu tiên Bếp:</span>
                     <HudSelect
-                      value={config.preferFoodKitchen || 'auto'}
+                      value={config.preferFoodKitchen}
                       onValueChange={(val) => updateField('preferFoodKitchen', val)}
                       options={[
-                        { value: 'auto', label: '✨ Tự chọn món có sẵn trong Bếp' },
+                        { value: 'auto', label: '✨ Tự chọn món có sẵn' },
                         { value: 'radishSoup', label: '🍲 Canh củ cải (+20 no, +30 đã khát)' },
                         { value: 'boiledEgg', label: '🥚 Trứng luộc (+25 no)' },
                         { value: 'grilledCorn', label: '🌽 Bắp nướng mỡ hành (+30 no)' },
-                        { value: 'eggBread', label: '🥪 Bánh mì ốp la (+40 no, 💨 Đi nhanh)' },
-                        { value: 'comTam', label: '🍛 Cơm tấm ốp la (+60 no, +20 đã khát, 🍚 Không đói)' },
-                        { value: 'cornCake', label: '🥮 Bánh bắp nướng (+50 no, 🌾 Được mùa)' },
+                        { value: 'eggBread', label: '🥪 Bánh mì ốp la (+40 no)' },
+                        { value: 'comTam', label: '🍛 Cơm tấm ốp la (+60 no)' },
+                        { value: 'cornCake', label: '🥮 Bánh bắp nướng (+50 no)' },
                       ]}
                     />
                   </div>
                 )}
                 {config.foodSource !== 'kitchen_only' && (
                   <div className="flex items-center justify-between gap-2 min-w-0">
-                    <span className="text-slate-600 shrink-0">Món mua ở Tiệm:</span>
+                    <span className="text-slate-600 shrink-0">Ưu tiên Tiệm bánh:</span>
                     <HudSelect
                       value={config.preferFoodShop}
                       onValueChange={(val) => updateField('preferFoodShop', val)}
                       options={[
-                        { value: 'banhBao', label: '🥟 Bánh bao (+25 no · 8.000đ)' },
-                        { value: 'banhMiTrung', label: '🍳 Bánh mì trứng (+35 no · 10.000đ)' },
-                        { value: 'banhMiThit', label: '🥖 Bánh mì thịt (+50 no · 15.000đ)' },
-                        { value: 'banhMiCha', label: '🐟 Bánh mì chả cá (+45 no, +5 nước · 15.000đ)' },
-                        { value: 'banhMiFull', label: '🤤 Bánh mì full topping (+80 no · 25.000đ)' },
+                        { value: 'banhMiThit', label: '🥖 Bánh mì thịt (+35 no · 15.000đ)' },
+                        { value: 'banhMiCha', label: '🐟 Bánh mì chả (+35 no · 15.000đ)' },
+                        { value: 'banhMiTrung', label: '🍳 Bánh mì trứng (+25 no · 10.000đ)' },
+                        { value: 'banhBao', label: '🥟 Bánh bao (+20 no · 8.000đ)' },
+                        { value: 'banhMiFull', label: '🤤 Bánh mì full topping (+55 no · 25.000đ)' },
                       ]}
                     />
                   </div>
@@ -188,11 +188,11 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
             {config.autoRecoverThirst && (
               <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Uống khi Khát &lt; (%):</span>
+                  <span className="text-slate-600">Ngưỡng khát cần uống (%):</span>
                   <input
                     type="number"
                     min={10}
-                    max={90}
+                    max={80}
                     step={5}
                     value={config.thirstThreshold}
                     onChange={(e) => updateField('thirstThreshold', Number(e.target.value))}
@@ -200,44 +200,44 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                   />
                 </div>
                 <div className="flex items-center justify-between gap-2 min-w-0">
-                  <span className="text-slate-600 shrink-0">Nguồn nước:</span>
+                  <span className="text-slate-600 shrink-0">Nguồn đồ uống:</span>
                   <HudSelect
                     value={config.drinkSource}
                     onValueChange={(val) => updateField('drinkSource', val as AppConfig['drinkSource'])}
                     options={[
-                      { value: 'kitchen_first', label: '🧃 Ưu tiên Bếp, thiếu mua Tiệm' },
-                      { value: 'kitchen_only', label: '🏡 Chỉ món nước Bếp, Kho' },
-                      { value: 'shop_only', label: '🥤 Chỉ mua Tiệm' },
+                      { value: 'kitchen_first', label: '🧃 Bếp trước ➔ Quán sau' },
+                      { value: 'kitchen_only', label: '🏠 Chỉ uống nước trong Bếp' },
+                      { value: 'shop_only', label: '🥤 Chỉ mua Quán nước' },
                     ]}
                   />
                 </div>
                 {config.drinkSource !== 'shop_only' && (
                   <div className="flex items-center justify-between gap-2 min-w-0">
-                    <span className="text-slate-600 shrink-0">Nước ở Bếp:</span>
+                    <span className="text-slate-600 shrink-0">Ưu tiên Bếp:</span>
                     <HudSelect
-                      value={config.preferDrinkKitchen || 'auto'}
+                      value={config.preferDrinkKitchen}
                       onValueChange={(val) => updateField('preferDrinkKitchen', val)}
                       options={[
-                        { value: 'auto', label: '✨ Tự chọn nước có sẵn trong Bếp' },
+                        { value: 'auto', label: '✨ Tự chọn nước có sẵn' },
                         { value: 'radishSoup', label: '🍲 Canh củ cải (+30 đã khát, +20 no)' },
-                        { value: 'carrotJuice', label: '🧃 Nước ép cà rốt (+40 đã khát, 💧 Không khát)' },
-                        { value: 'comTam', label: '🍛 Cơm tấm ốp la (+20 đã khát, +60 no, 🍚 Không đói)' },
+                        { value: 'carrotJuice', label: '🧃 Nước ép cà rốt (+40 đã khát)' },
+                        { value: 'comTam', label: '🍛 Cơm tấm ốp la (+20 đã khát, +60 no)' },
                       ]}
                     />
                   </div>
                 )}
                 {config.drinkSource !== 'kitchen_only' && (
                   <div className="flex items-center justify-between gap-2 min-w-0">
-                    <span className="text-slate-600 shrink-0">Nước ở Tiệm:</span>
+                    <span className="text-slate-600 shrink-0">Ưu tiên Quán nước:</span>
                     <HudSelect
                       value={config.preferDrinkShop}
                       onValueChange={(val) => updateField('preferDrinkShop', val)}
                       options={[
-                        { value: 'traDa', label: '🧊 Trà đá (+20 nước · 3.000đ)' },
-                        { value: 'nuocMia', label: '🥤 Nước mía (+35 nước · 8.000đ)' },
-                        { value: 'caPheSua', label: '☕ Cà phê sữa đá (+25 nước, ⚡ Đi nhanh x1.5 · 12.000đ)' },
-                        { value: 'traDao', label: '🍑 Trà đào cam sả (+50 nước · 15.000đ)' },
-                        { value: 'traSua', label: '🧋 Trà sữa trân châu (+40 nước, +12 no · 18.000đ)' },
+                        { value: 'nuocMia', label: '🥤 Nước mía (+20 khát · 8.000đ)' },
+                        { value: 'traDa', label: '🧊 Trà đá (+10 khát · 3.000đ)' },
+                        { value: 'caPheSua', label: '☕ Cà phê sữa (+25 khát, chạy nhanh · 12.000đ)' },
+                        { value: 'traDao', label: '🍑 Trà đào cam sả (+30 khát · 15.000đ)' },
+                        { value: 'traSua', label: '🧋 Trà sữa trân châu (+35 khát · 18.000đ)' },
                       ]}
                     />
                   </div>
@@ -246,7 +246,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
             )}
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>☕ Tự uống Cà phê sáng (+50% tốc độ chạy)</span>
+              <span>☕ Uống Cà phê sữa mỗi sáng (+Chạy nhanh cả ngày)</span>
               <Switch
                 checked={Boolean(config.autoMorningCoffee)}
                 onCheckedChange={(c) => updateField('autoMorningCoffee', c)}
@@ -254,7 +254,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
             </label>
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>🔋 Tự sạc điện cho Xe máy điện EV</span>
+              <span>🔋 Tự sạc Xe điện EV</span>
               <Switch
                 checked={Boolean(config.autoChargeVehicle)}
                 onCheckedChange={(c) => updateField('autoChargeVehicle', c)}
@@ -263,11 +263,11 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
             {config.autoChargeVehicle && (
               <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Sạc khi Pin &lt; (%):</span>
+                  <span className="text-slate-600">Sạc khi pin dưới (%):</span>
                   <input
                     type="number"
                     min={10}
-                    max={90}
+                    max={60}
                     step={5}
                     value={config.batteryThreshold}
                     onChange={(e) => updateField('batteryThreshold', Number(e.target.value))}
@@ -278,23 +278,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
             )}
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>💆 Salon Chị Linh: Gội đầu dưỡng sinh (Buff thư giãn)</span>
-              <Switch
-                checked={Boolean(config.autoSalonShampoo)}
-                onCheckedChange={(c) => updateField('autoSalonShampoo', c)}
-              />
-            </label>
-
-            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>✨ Salon Chị Linh: Tắm trắng nâng tông khi đen da</span>
-              <Switch
-                checked={Boolean(config.autoSalonWhiten)}
-                onCheckedChange={(c) => updateField('autoSalonWhiten', c)}
-              />
-            </label>
-
-            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>🛏️ Tự đi ngủ qua ngày mới</span>
+              <span>😴 Tự về nhà đi ngủ qua ngày mới</span>
               <Switch
                 checked={Boolean(config.autoSleep)}
                 onCheckedChange={(c) => updateField('autoSleep', c)}
@@ -395,6 +379,14 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                 onCheckedChange={(c) => updateField('autoBuyPlots', c)}
               />
             </label>
+
+            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+              <span>💸 Tự trả lương Bác Tèo phụ ruộng</span>
+              <Switch
+                checked={Boolean(config.autoPayHelperCrops)}
+                onCheckedChange={(c) => updateField('autoPayHelperCrops', c)}
+              />
+            </label>
           </div>
         );
 
@@ -402,14 +394,86 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
         return (
           <div className="space-y-2 text-xs">
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>🍖 Tự mua đồ ăn &amp; cho Thú cưng ăn</span>
+              <span>🍖 Tự cho Thú cưng ăn hàng ngày</span>
               <Switch
                 checked={Boolean(config.petAutoFeed)}
                 onCheckedChange={(c) => updateField('petAutoFeed', c)}
               />
             </label>
+            {config.petAutoFeed && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
+                <div className="flex items-center justify-between gap-2 min-w-0">
+                  <span className="text-slate-600 shrink-0">Chế độ cho ăn:</span>
+                  <HudSelect
+                    value={config.petFeedMode}
+                    onValueChange={(val) => updateField('petFeedMode', val as AppConfig['petFeedMode'])}
+                    options={[
+                      { value: 'smart_diet', label: '✨ Thông minh theo loài (món ưa thích nhất)' },
+                      { value: 'inventory_only', label: '📦 Chỉ ăn đồ có sẵn trong kho (không mua)' },
+                      { value: 'fav_only', label: '💖 Chỉ ăn món ưa thích (+nhiều tim)' },
+                      { value: 'custom', label: '🍽️ Chỉ ăn món chỉ định bên dưới' },
+                    ]}
+                  />
+                </div>
+
+                {config.petFeedMode === 'custom' && (
+                  <div className="flex items-center justify-between gap-2 min-w-0">
+                    <span className="text-slate-600 shrink-0">Món chỉ định:</span>
+                    <HudSelect
+                      value={config.petPreferFood}
+                      onValueChange={(val) => updateField('petPreferFood', val)}
+                      options={[
+                        { value: 'auto', label: '✨ Tự động theo loài' },
+                        { value: 'xuong', label: '🦴 Xương gặm (Chó)' },
+                        { value: 'cakho', label: '🐟 Cá khô (Mèo)' },
+                        { value: 'pate', label: '🥫 Pate cá ngừ (Chó/Mèo)' },
+                        { value: 'hat', label: '🥣 Hạt tổng hợp (Chó/Mèo)' },
+                        { value: 'coKho', label: '🌿 Cỏ khô (Thỏ)' },
+                        { value: 'cam', label: '🌾 Cám heo (Heo)' },
+                        { value: 'crop:carrot', label: '🥕 Cà rốt (Thỏ/Heo)' },
+                        { value: 'crop:corn', label: '🌽 Bắp ngô (Heo)' },
+                        { value: 'crop:radish', label: '🌱 Củ cải (Thỏ/Heo)' },
+                      ]}
+                    />
+                  </div>
+                )}
+
+                {config.petFeedMode !== 'inventory_only' && (
+                  <>
+                    <label className="flex items-center justify-between text-slate-600 cursor-pointer pt-0.5">
+                      <span>🛒 Tự mua thêm thức ăn khi trong kho hết</span>
+                      <Switch
+                        size="sm"
+                        checked={Boolean(config.petAutoBuyFood)}
+                        onCheckedChange={(c) => updateField('petAutoBuyFood', c)}
+                      />
+                    </label>
+
+                    {config.petAutoBuyFood && (
+                      <div className="flex items-center justify-between gap-2 min-w-0">
+                        <span className="text-slate-600 shrink-0">Loại thức ăn mua:</span>
+                        <HudSelect
+                          value={config.petBuyFoodType}
+                          onValueChange={(val) => updateField('petBuyFoodType', val)}
+                          options={[
+                            { value: 'auto_fav', label: '✨ Tự mua món ưa thích của Pet' },
+                            { value: 'pate', label: '🥫 Pate cá ngừ (3.000đ)' },
+                            { value: 'hat', label: '🥣 Hạt tổng hợp (3.000đ)' },
+                            { value: 'xuong', label: '🦴 Xương gặm (2.000đ)' },
+                            { value: 'cakho', label: '🐟 Cá khô (2.500đ)' },
+                            { value: 'coKho', label: '🌿 Cỏ khô (1.500đ)' },
+                            { value: 'cam', label: '🌾 Cám heo (2.000đ)' },
+                          ]}
+                        />
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>💖 Tự vuốt ve tăng vui vẻ</span>
+              <span>💖 Tự vuốt ve tăng vui vẻ (3 lần/ngày)</span>
               <Switch
                 checked={Boolean(config.petAutoCuddle)}
                 onCheckedChange={(c) => updateField('petAutoCuddle', c)}
@@ -435,9 +499,6 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
       case 'barn':
         return (
           <div className="space-y-2 text-xs">
-            <div className="text-[11px] font-bold text-emerald-400 border-b border-slate-200 pb-1">
-              🐃 Chuồng Trâu Ổi
-            </div>
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
               <span>🌾 Tự cho Trâu ăn cỏ / rơm</span>
               <Switch
@@ -459,36 +520,61 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                 onCheckedChange={(c) => updateField('barnAutoLendBuffalo', c)}
               />
             </label>
+            {config.barnAutoLendBuffalo && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-600">Tâm trạng tối thiểu để cho thuê:</span>
+                  <input
+                    type="number"
+                    min={20}
+                    max={90}
+                    step={5}
+                    value={config.barnLendMoodMin}
+                    onChange={(e) => updateField('barnLendMoodMin', Number(e.target.value))}
+                    className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  />
+                </div>
+              </div>
+            )}
+            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+              <span>💸 Tự trả lương Anh Tám chăn trâu</span>
+              <Switch
+                checked={Boolean(config.barnAutoPayHelper)}
+                onCheckedChange={(c) => updateField('barnAutoPayHelper', c)}
+              />
+            </label>
+          </div>
+        );
 
-            <div className="text-[11px] font-bold text-emerald-400 border-b border-slate-200 pb-1 pt-2">
-              🐄 Chuồng Bò Sữa
-            </div>
+      case 'dairy':
+        return (
+          <div className="space-y-2 text-xs">
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
               <span>🌿 Tự cho đàn Bò sữa ăn cỏ</span>
               <Switch
-                checked={Boolean(config.barnAutoFeedCows)}
-                onCheckedChange={(c) => updateField('barnAutoFeedCows', c)}
+                checked={Boolean(config.dairyAutoFeedCows)}
+                onCheckedChange={(c) => updateField('dairyAutoFeedCows', c)}
               />
             </label>
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
               <span>🥛 Tự vắt sữa &amp; bán sữa tươi</span>
               <Switch
-                checked={Boolean(config.barnAutoSellMilk)}
-                onCheckedChange={(c) => updateField('barnAutoSellMilk', c)}
+                checked={Boolean(config.dairyAutoSellMilk)}
+                onCheckedChange={(c) => updateField('dairyAutoSellMilk', c)}
               />
             </label>
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>💊 Tự mua thuốc &amp; chữa bệnh cho Bò</span>
+              <span>💊 Tự mua thuốc &amp; tiêm chữa bệnh cho Bò</span>
               <Switch
-                checked={Boolean(config.barnAutoCureCows)}
-                onCheckedChange={(c) => updateField('barnAutoCureCows', c)}
+                checked={Boolean(config.dairyAutoCureCows)}
+                onCheckedChange={(c) => updateField('dairyAutoCureCows', c)}
               />
             </label>
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>💸 Tự trả lương người phụ Chuồng</span>
+              <span>💸 Tự trả lương Chị Mận chăm bò</span>
               <Switch
-                checked={Boolean(config.barnAutoPayHelper)}
-                onCheckedChange={(c) => updateField('barnAutoPayHelper', c)}
+                checked={Boolean(config.dairyAutoPayHelper)}
+                onCheckedChange={(c) => updateField('dairyAutoPayHelper', c)}
               />
             </label>
           </div>
@@ -512,7 +598,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               />
             </label>
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>💸 Tự trả lương người phụ Chuồng gà</span>
+              <span>💸 Tự trả lương Chú Ba chăm gà</span>
               <Switch
                 checked={Boolean(config.coopAutoPayHelper)}
                 onCheckedChange={(c) => updateField('coopAutoPayHelper', c)}
@@ -562,10 +648,30 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               </div>
             )}
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>💸 Tự trả lương người phụ Ao cá</span>
+              <span>💸 Tự trả lương người phụ Ao cá (Bé Bi)</span>
               <Switch
                 checked={Boolean(config.pondAutoPayHelper)}
                 onCheckedChange={(c) => updateField('pondAutoPayHelper', c)}
+              />
+            </label>
+          </div>
+        );
+
+      case 'salon':
+        return (
+          <div className="space-y-2 text-xs">
+            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+              <span>💆 Salon Chị Linh: Gội đầu dưỡng sinh (Buff thư giãn)</span>
+              <Switch
+                checked={Boolean(config.autoSalonShampoo)}
+                onCheckedChange={(c) => updateField('autoSalonShampoo', c)}
+              />
+            </label>
+            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+              <span>✨ Salon Chị Linh: Tắm trắng nâng tông khi đen da</span>
+              <Switch
+                checked={Boolean(config.autoSalonWhiten)}
+                onCheckedChange={(c) => updateField('autoSalonWhiten', c)}
               />
             </label>
           </div>
@@ -582,7 +688,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               />
             </label>
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>📋 Tự giao đơn Bảng tin làng</span>
+              <span>📋 Tự giao đơn Bảng tin làng (Anh Khang)</span>
               <Switch
                 checked={Boolean(config.autoVillageBoard)}
                 onCheckedChange={(c) => updateField('autoVillageBoard', c)}
@@ -602,88 +708,66 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                 onCheckedChange={(c) => updateField('autoSellDailyTask', c)}
               />
             </label>
+
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>🏪 Tự bán nông sản dư thừa trong kho</span>
+              <span>🏪 Tự bán nông sản &amp; đồ ăn thông minh</span>
               <Switch
-                checked={Boolean(config.autoSellProduce)}
-                onCheckedChange={(c) => updateField('autoSellProduce', c)}
+                checked={Boolean(config.autoSellSmart)}
+                onCheckedChange={(c) => updateField('autoSellSmart', c)}
               />
             </label>
-            {config.autoSellProduce && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Tối thiểu giữ lại:</span>
+            {config.autoSellSmart && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-2 text-[11px] min-w-0 overflow-hidden">
+                <div className="flex items-center justify-between gap-2 min-w-0">
+                  <span className="text-slate-600 shrink-0">Chiến lược bán:</span>
+                  <HudSelect
+                    value={config.sellStrategy}
+                    onValueChange={(val) => updateField('sellStrategy', val as AppConfig['sellStrategy'])}
+                    options={[
+                      { value: 'smart_all', label: '✨ Tối ưu: Món ăn bếp trước ➔ Nông sản dư thừa' },
+                      { value: 'produce_only', label: '🌾 Chỉ bán nông sản dư thừa, không bán món ăn' },
+                      { value: 'food_only', label: '🍲 Chỉ bán món ăn chế biến trong Bếp' },
+                    ]}
+                  />
+                </div>
+
+                <div className="space-y-1 pt-1">
+                  <span className="font-semibold text-slate-700">Tự động bảo lưu nguyên liệu:</span>
+                  <label className="flex items-center justify-between text-slate-600 cursor-pointer">
+                    <span>📦 Bảo lưu cho Đơn hàng Chị Na</span>
+                    <Switch
+                      size="sm"
+                      checked={Boolean(config.sellReserveForOrders)}
+                      onCheckedChange={(c) => updateField('sellReserveForOrders', c)}
+                    />
+                  </label>
+                  <label className="flex items-center justify-between text-slate-600 cursor-pointer">
+                    <span>📋 Bảo lưu cho Bảng tin làng</span>
+                    <Switch
+                      size="sm"
+                      checked={Boolean(config.sellReserveForVillage)}
+                      onCheckedChange={(c) => updateField('sellReserveForVillage', c)}
+                    />
+                  </label>
+                  <label className="flex items-center justify-between text-slate-600 cursor-pointer">
+                    <span>🍳 Bảo lưu nguyên liệu nấu ăn cơ bản</span>
+                    <Switch
+                      size="sm"
+                      checked={Boolean(config.sellReserveForKitchen)}
+                      onCheckedChange={(c) => updateField('sellReserveForKitchen', c)}
+                    />
+                  </label>
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-slate-600">Tối thiểu giữ lại mỗi loại:</span>
                   <input
                     type="number"
-                    min={5}
+                    min={0}
                     max={200}
                     step={5}
                     value={config.surplusKeepQty}
                     onChange={(e) => updateField('surplusKeepQty', Number(e.target.value))}
-                    className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                  />
-                </div>
-              </div>
-            )}
-
-            <div className="text-[11px] font-bold text-amber-400 border-b border-slate-200 pb-1 pt-2">
-              🪙 Tiệm Vàng Cô Kim
-            </div>
-            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>🪙 Tự mua vàng đầu tư</span>
-              <Switch
-                checked={Boolean(config.goldAutoBuy)}
-                onCheckedChange={(c) => updateField('goldAutoBuy', c)}
-              />
-            </label>
-            {config.goldAutoBuy && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
-                <div className="flex items-center justify-between gap-2 min-w-0">
-                  <span className="text-slate-600 shrink-0">Loại vàng ưu tiên:</span>
-                  <HudSelect
-                    value={config.goldPreferType}
-                    onValueChange={(val) => updateField('goldPreferType', val)}
-                    options={[
-                      { value: 'mieng', label: '🟨 Vàng miếng 9999 (~8,2tr · Chênh 1,6% · Hợp giữ lâu)' },
-                      { value: 'nhan', label: '💍 Nhẫn trơn 9999 (~7,6tr · Chênh 1,2% · Ổn định nhất)' },
-                      { value: 'k18', label: '📿 Vàng 18K (~5,6tr · Chênh 9% · Trang sức)' },
-                      { value: 'non', label: '🪙 Vàng non 10K (~3,1tr · Chênh 5% · Lướt sóng)' },
-                    ]}
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Tiền mặt tối thiểu giữ:</span>
-                  <input
-                    type="number"
-                    min={100000}
-                    max={10000000}
-                    step={100000}
-                    value={config.goldKeepCash}
-                    onChange={(e) => updateField('goldKeepCash', Number(e.target.value))}
-                    className="w-24 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                  />
-                </div>
-              </div>
-            )}
-
-            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>📈 Tự bán vàng khi có lãi</span>
-              <Switch
-                checked={Boolean(config.goldAutoSell)}
-                onCheckedChange={(c) => updateField('goldAutoSell', c)}
-              />
-            </label>
-            {config.goldAutoSell && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Chốt lời khi lãi &gt;= (%):</span>
-                  <input
-                    type="number"
-                    min={3}
-                    max={50}
-                    step={1}
-                    value={config.goldProfitPercent}
-                    onChange={(e) => updateField('goldProfitPercent', Number(e.target.value))}
                     className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>
@@ -738,7 +822,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               />
             </label>
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>🏦 Tự gửi Sổ tiết kiệm Dì Bảy</span>
+              <span>🏦 Tự gửi Sổ tiết kiệm Dì Bảy (7 ngày)</span>
               <Switch
                 checked={Boolean(config.autoSavings)}
                 onCheckedChange={(c) => updateField('autoSavings', c)}
@@ -756,6 +840,72 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                     value={config.savingsKeepGold}
                     onChange={(e) => updateField('savingsKeepGold', Number(e.target.value))}
                     className="w-24 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
+      case 'goldShop':
+        return (
+          <div className="space-y-2 text-xs">
+            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+              <span>🪙 Tự mua vàng đầu tư tại Tiệm Vàng Cô Kim</span>
+              <Switch
+                checked={Boolean(config.goldAutoBuy)}
+                onCheckedChange={(c) => updateField('goldAutoBuy', c)}
+              />
+            </label>
+            {config.goldAutoBuy && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
+                <div className="flex items-center justify-between gap-2 min-w-0">
+                  <span className="text-slate-600 shrink-0">Loại vàng ưu tiên:</span>
+                  <HudSelect
+                    value={config.goldPreferType}
+                    onValueChange={(val) => updateField('goldPreferType', val)}
+                    options={[
+                      { value: 'mieng', label: '🟨 Vàng miếng 9999 (~8,2tr · Chênh 1,6% · Hợp giữ lâu)' },
+                      { value: 'nhan', label: '💍 Nhẫn trơn 9999 (~7,6tr · Chênh 1,2% · Ổn định nhất)' },
+                      { value: 'k18', label: '📿 Vàng 18K (~5,6tr · Chênh 9% · Trang sức)' },
+                      { value: 'non', label: '🪙 Vàng non 10K (~3,1tr · Chênh 5% · Lướt sóng)' },
+                    ]}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-600">Tiền mặt tối thiểu giữ:</span>
+                  <input
+                    type="number"
+                    min={100000}
+                    max={10000000}
+                    step={100000}
+                    value={config.goldKeepCash}
+                    onChange={(e) => updateField('goldKeepCash', Number(e.target.value))}
+                    className="w-24 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  />
+                </div>
+              </div>
+            )}
+
+            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+              <span>📈 Tự bán vàng khi có lãi</span>
+              <Switch
+                checked={Boolean(config.goldAutoSell)}
+                onCheckedChange={(c) => updateField('goldAutoSell', c)}
+              />
+            </label>
+            {config.goldAutoSell && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-600">Chốt lời khi lãi &gt;= (%):</span>
+                  <input
+                    type="number"
+                    min={3}
+                    max={50}
+                    step={1}
+                    value={config.goldProfitPercent}
+                    onChange={(e) => updateField('goldProfitPercent', Number(e.target.value))}
+                    className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>
               </div>

@@ -2,7 +2,7 @@ import { AREA_META } from '../../shared/constants/default-config';
 import { getGameState, execGameAction } from '../bridge/content-bridge';
 import { sleep, formatClock } from './dom-helpers';
 import { handleFightMinigame } from './minigame';
-import { runFarmSubAreas } from './farm-runner';
+import { runFarmSubAreas, resetFarmTiming } from './farm-runner';
 import { stepBenDoFishing } from './wharf-runner';
 import { stepSeaFishing } from './sea-runner';
 import {
@@ -35,6 +35,9 @@ export function toggleAutoAll(): void {
     setLockedTabArea(null);
     currentAreaIdx = 0;
     areaCatchesCount = 0;
+    lastFarmDoneDay = -1;
+    lastFarmRunAt = 0;
+    resetFarmTiming();
     setStatus('▶️ Bắt đầu chạy Auto Tất Cả theo thứ tự...');
   }
   saveConfig();
@@ -51,6 +54,9 @@ export function toggleAutoTab(): void {
     config.runMode = 'tab';
     setLockedTabArea(config.activeTab);
     areaCatchesCount = 0;
+    lastFarmDoneDay = -1;
+    lastFarmRunAt = 0;
+    resetFarmTiming();
     const areaName = AREA_META[config.activeTab]?.name || config.activeTab;
     setStatus(`🎯 Bắt đầu chỉ Auto trong Tab: ${areaName}`);
   }
@@ -61,6 +67,9 @@ export function startAuto(mode: 'all' | 'tab' = 'all'): void {
   const config = getConfig();
   config.running = true;
   config.runMode = mode;
+  lastFarmDoneDay = -1;
+  lastFarmRunAt = 0;
+  resetFarmTiming();
   if (mode === 'tab') {
     setLockedTabArea(config.activeTab);
   } else {
@@ -193,9 +202,15 @@ export async function tickAuto(): Promise<void> {
         enabledAreas.length === 1;
 
       if (farmDue) {
-        await runFarmSubAreas(snap, config, setStatus, updateHeaderStats);
-        lastFarmDoneDay = snap.day ?? 0;
-        lastFarmRunAt = Date.now();
+        const acted = await runFarmSubAreas(snap, config, setStatus, updateHeaderStats);
+        if (config.running) {
+          lastFarmDoneDay = snap.day ?? 0;
+          lastFarmRunAt = Date.now();
+        }
+        if (acted && enabledAreas.length > 1) {
+          isBusy = false;
+          return;
+        }
       }
 
       if (enabledAreas.length > 1) {

@@ -14631,14 +14631,17 @@
     city: { id: "city", icon: "\u{1F3D9}\uFE0F", name: "Th\xE0nh Ph\u1ED1" }
   };
   var SUBAREA_META = {
-    house: { id: "house", icon: "\u{1F3E0}", name: "Nh\xE0, B\u1EBFp & Nhu C\u1EA7u" },
-    crops: { id: "crops", icon: "\u{1F331}", name: "Ru\u1ED9ng \u0110\u1ED3ng (Tr\u1ED3ng Tr\u1ECDt)" },
-    pet: { id: "pet", icon: "\u{1F415}", name: "Th\xFA C\u01B0ng (Ch\xF3 / M\xE8o)" },
-    barn: { id: "barn", icon: "\u{1F403}", name: "Chu\u1ED3ng Tr\xE2u & B\xF2 S\u1EEFa" },
-    coop: { id: "coop", icon: "\u{1F414}", name: "Chu\u1ED3ng G\xE0" },
-    pond: { id: "pond", icon: "\u{1F41F}", name: "Ao C\xE1" },
-    market: { id: "market", icon: "\u{1F3EA}", name: "T\u1EA1p H\xF3a & B\u1EA3ng Tin L\xE0ng" },
-    dibay: { id: "dibay", icon: "\u{1F437}", name: "Qu\u1EA7y D\xEC B\u1EA3y & S\u1ED5 Tay" }
+    house: { id: "house", icon: "\u{1F3E0}", name: "Nh\xE0 & B\u1EBFp (N\u1EA5u n\u01B0\u1EDBng, \u0110\xF3i/Kh\xE1t)" },
+    crops: { id: "crops", icon: "\u{1F331}", name: "Ru\u1ED9ng \u0110\u1ED3ng (Tr\u1ED3ng tr\u1ECDt \xB7 B\xE1c T\xE8o)" },
+    pet: { id: "pet", icon: "\u{1F415}", name: "Th\xFA C\u01B0ng (Ch\u0103m s\xF3c & Cho \u0103n)" },
+    barn: { id: "barn", icon: "\u{1F403}", name: "Chu\u1ED3ng Tr\xE2u (Anh T\xE1m)" },
+    dairy: { id: "dairy", icon: "\u{1F404}", name: "B\xF2 S\u1EEFa (Ch\u1ECB M\u1EADn)" },
+    coop: { id: "coop", icon: "\u{1F414}", name: "Chu\u1ED3ng G\xE0 (Ch\xFA Ba)" },
+    pond: { id: "pond", icon: "\u{1F41F}", name: "Ao C\xE1 (B\xE9 Bi)" },
+    salon: { id: "salon", icon: "\u{1F486}", name: "Salon Ch\u1ECB Linh T\xE2y" },
+    market: { id: "market", icon: "\u{1F3EA}", name: "T\u1EA1p H\xF3a Ch\u1ECB Na & B\u1EA3ng Tin" },
+    dibay: { id: "dibay", icon: "\u{1F437}", name: "Qu\u1EA7y Ti\u1EBFt Ki\u1EC7m D\xEC B\u1EA3y & S\u1ED5 Tay" },
+    goldShop: { id: "goldShop", icon: "\u{1FA99}", name: "Ti\u1EC7m V\xE0ng C\xF4 Kim (Ch\u1EE3 L\u1EDBn)" }
   };
   var DEFAULT_CONFIG = {
     running: false,
@@ -14664,26 +14667,44 @@
       city: false
     },
     // Farm Sub-Area Order & Enable/Disable toggles
-    farmSubOrder: ["house", "crops", "pet", "barn", "coop", "pond", "market", "dibay"],
+    farmSubOrder: [
+      "house",
+      "crops",
+      "pet",
+      "barn",
+      "dairy",
+      "coop",
+      "pond",
+      "salon",
+      "market",
+      "dibay",
+      "goldShop"
+    ],
     farmSubEnabled: {
       house: true,
       crops: true,
       pet: true,
       barn: true,
+      dairy: true,
       coop: true,
       pond: true,
+      salon: true,
       market: true,
-      dibay: true
+      dibay: true,
+      goldShop: true
     },
     farmSubCollapsed: {
       house: false,
       crops: false,
       pet: false,
       barn: false,
+      dairy: false,
       coop: false,
       pond: false,
+      salon: false,
       market: false,
-      dibay: false
+      dibay: false,
+      goldShop: false
     },
     // 1. House, Kitchen, Needs & Salon
     autoDismissInterrupts: true,
@@ -14708,7 +14729,7 @@
     autoSleep: true,
     sleepHour: 21,
     sleepOnFishingLimit: true,
-    // 2. Crops
+    // 2. Crops (Bác Tèo)
     autoHarvest: true,
     autoPesticide: true,
     autoPlant: true,
@@ -14716,42 +14737,51 @@
     autoWater: true,
     autoFertilize: true,
     autoBuyPlots: true,
-    // 3. Pet
+    autoPayHelperCrops: true,
+    // 3. Pet (Thú cưng)
     petAutoFeed: true,
+    petFeedMode: "smart_diet",
+    petPreferFood: "auto",
+    petAutoBuyFood: true,
+    petBuyFoodType: "auto_fav",
     petAutoCuddle: true,
     petAutoBath: true,
     petAutoTrick: true,
-    // 4. Barn (Buffalo & Cows)
+    // 4. Barn (Trâu - Anh Tám)
     barnAutoFeedBuffalo: true,
     barnAutoBathBuffalo: true,
     barnAutoLendBuffalo: true,
-    barnAutoFeedCows: true,
-    barnAutoCureCows: true,
-    barnAutoSellMilk: true,
+    barnLendMoodMin: 50,
     barnAutoPayHelper: true,
-    // 5. Coop (Chickens)
+    // 5. Dairy (Bò Sữa - Chị Mận)
+    dairyAutoFeedCows: true,
+    dairyAutoCureCows: true,
+    dairyAutoSellMilk: true,
+    dairyAutoPayHelper: true,
+    // 6. Coop (Chuồng Gà - Chú Ba)
     coopAutoCollectEggs: true,
     coopAutoBuyChick: true,
     coopAutoPayHelper: true,
-    // 6. Pond (Fish Pond)
+    // 7. Pond (Ao Cá - Bé Bi)
     pondAutoNet: true,
     pondAutoStock: true,
     preferPondFish: "chep",
     pondAutoFeed: true,
     pondAutoPayHelper: true,
-    // 7. Market & Gold Shop
+    // 8. Salon (Chị Linh Tây) - autoSalonShampoo & autoSalonWhiten in Section 1
+    // 9. Market (Tạp Hóa Chị Na & Bảng Tin Làng)
     autoDeliverOrder: true,
     autoVillageBoard: true,
     autoSellTrend: true,
     autoSellDailyTask: true,
     autoSellProduce: false,
-    surplusKeepQty: 20,
-    goldAutoBuy: false,
-    goldPreferType: "mieng",
-    goldKeepCash: 5e5,
-    goldAutoSell: true,
-    goldProfitPercent: 10,
-    // 8. Di Bay & Quests
+    autoSellSmart: true,
+    sellStrategy: "smart_all",
+    sellReserveForOrders: true,
+    sellReserveForVillage: true,
+    sellReserveForKitchen: true,
+    surplusKeepQty: 10,
+    // 10. Di Bay & Quests (Dì Bảy & Sổ Tay)
     autoClaimQuests: true,
     autoFirstDayTasks: true,
     autoNotebookPages: true,
@@ -14760,6 +14790,12 @@
     autoNewPiggy: true,
     autoSavings: false,
     savingsKeepGold: 2e5,
+    // 11. Gold Shop (Tiệm Vàng Cô Kim)
+    goldAutoBuy: false,
+    goldPreferType: "mieng",
+    goldKeepCash: 5e5,
+    goldAutoSell: true,
+    goldProfitPercent: 10,
     // Area 2: Ben Do Fishing Settings
     benAutoSpot: true,
     benSpot: "bank",
@@ -26226,13 +26262,13 @@
             ] }),
             config2.autoRecoverHunger && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden", children: [
               /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600", children: "\u0102n khi \u0110\xF3i < (%):" }),
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600", children: "Ng\u01B0\u1EE1ng \u0111\xF3i c\u1EA7n \u0103n (%):" }),
                 /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                   "input",
                   {
                     type: "number",
                     min: 10,
-                    max: 90,
+                    max: 80,
                     step: 5,
                     value: config2.hungerThreshold,
                     onChange: (e) => updateField("hungerThreshold", Number(e.target.value)),
@@ -26241,52 +26277,52 @@
                 )
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between gap-2 min-w-0", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600 shrink-0", children: "Ngu\u1ED3n \u0103n:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600 shrink-0", children: "Ngu\u1ED3n th\u1EE9c \u0103n:" }),
                 /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                   HudSelect,
                   {
                     value: config2.foodSource,
                     onValueChange: (val) => updateField("foodSource", val),
                     options: [
-                      { value: "kitchen_first", label: "\u{1F372} \u01AFu ti\xEAn B\u1EBFp, thi\u1EBFu mua Ti\u1EC7m" },
-                      { value: "kitchen_only", label: "\u{1F3E1} Ch\u1EC9 m\xF3n \u0103n B\u1EBFp, Kho" },
-                      { value: "shop_only", label: "\u{1F956} Ch\u1EC9 mua Ti\u1EC7m" }
+                      { value: "kitchen_first", label: "\u{1F372} B\u1EBFp tr\u01B0\u1EDBc \u2794 Ti\u1EC7m sau" },
+                      { value: "kitchen_only", label: "\u{1F3E0} Ch\u1EC9 \u0103n m\xF3n trong B\u1EBFp" },
+                      { value: "shop_only", label: "\u{1F956} Ch\u1EC9 mua Ti\u1EC7m b\xE1nh" }
                     ]
                   }
                 )
               ] }),
               config2.foodSource !== "shop_only" && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between gap-2 min-w-0", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600 shrink-0", children: "M\xF3n \u0103n \u1EDF B\u1EBFp:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600 shrink-0", children: "\u01AFu ti\xEAn B\u1EBFp:" }),
                 /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                   HudSelect,
                   {
-                    value: config2.preferFoodKitchen || "auto",
+                    value: config2.preferFoodKitchen,
                     onValueChange: (val) => updateField("preferFoodKitchen", val),
                     options: [
-                      { value: "auto", label: "\u2728 T\u1EF1 ch\u1ECDn m\xF3n c\xF3 s\u1EB5n trong B\u1EBFp" },
+                      { value: "auto", label: "\u2728 T\u1EF1 ch\u1ECDn m\xF3n c\xF3 s\u1EB5n" },
                       { value: "radishSoup", label: "\u{1F372} Canh c\u1EE7 c\u1EA3i (+20 no, +30 \u0111\xE3 kh\xE1t)" },
                       { value: "boiledEgg", label: "\u{1F95A} Tr\u1EE9ng lu\u1ED9c (+25 no)" },
                       { value: "grilledCorn", label: "\u{1F33D} B\u1EAFp n\u01B0\u1EDBng m\u1EE1 h\xE0nh (+30 no)" },
-                      { value: "eggBread", label: "\u{1F96A} B\xE1nh m\xEC \u1ED1p la (+40 no, \u{1F4A8} \u0110i nhanh)" },
-                      { value: "comTam", label: "\u{1F35B} C\u01A1m t\u1EA5m \u1ED1p la (+60 no, +20 \u0111\xE3 kh\xE1t, \u{1F35A} Kh\xF4ng \u0111\xF3i)" },
-                      { value: "cornCake", label: "\u{1F96E} B\xE1nh b\u1EAFp n\u01B0\u1EDBng (+50 no, \u{1F33E} \u0110\u01B0\u1EE3c m\xF9a)" }
+                      { value: "eggBread", label: "\u{1F96A} B\xE1nh m\xEC \u1ED1p la (+40 no)" },
+                      { value: "comTam", label: "\u{1F35B} C\u01A1m t\u1EA5m \u1ED1p la (+60 no)" },
+                      { value: "cornCake", label: "\u{1F96E} B\xE1nh b\u1EAFp n\u01B0\u1EDBng (+50 no)" }
                     ]
                   }
                 )
               ] }),
               config2.foodSource !== "kitchen_only" && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between gap-2 min-w-0", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600 shrink-0", children: "M\xF3n mua \u1EDF Ti\u1EC7m:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600 shrink-0", children: "\u01AFu ti\xEAn Ti\u1EC7m b\xE1nh:" }),
                 /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                   HudSelect,
                   {
                     value: config2.preferFoodShop,
                     onValueChange: (val) => updateField("preferFoodShop", val),
                     options: [
-                      { value: "banhBao", label: "\u{1F95F} B\xE1nh bao (+25 no \xB7 8.000\u0111)" },
-                      { value: "banhMiTrung", label: "\u{1F373} B\xE1nh m\xEC tr\u1EE9ng (+35 no \xB7 10.000\u0111)" },
-                      { value: "banhMiThit", label: "\u{1F956} B\xE1nh m\xEC th\u1ECBt (+50 no \xB7 15.000\u0111)" },
-                      { value: "banhMiCha", label: "\u{1F41F} B\xE1nh m\xEC ch\u1EA3 c\xE1 (+45 no, +5 n\u01B0\u1EDBc \xB7 15.000\u0111)" },
-                      { value: "banhMiFull", label: "\u{1F924} B\xE1nh m\xEC full topping (+80 no \xB7 25.000\u0111)" }
+                      { value: "banhMiThit", label: "\u{1F956} B\xE1nh m\xEC th\u1ECBt (+35 no \xB7 15.000\u0111)" },
+                      { value: "banhMiCha", label: "\u{1F41F} B\xE1nh m\xEC ch\u1EA3 (+35 no \xB7 15.000\u0111)" },
+                      { value: "banhMiTrung", label: "\u{1F373} B\xE1nh m\xEC tr\u1EE9ng (+25 no \xB7 10.000\u0111)" },
+                      { value: "banhBao", label: "\u{1F95F} B\xE1nh bao (+20 no \xB7 8.000\u0111)" },
+                      { value: "banhMiFull", label: "\u{1F924} B\xE1nh m\xEC full topping (+55 no \xB7 25.000\u0111)" }
                     ]
                   }
                 )
@@ -26304,13 +26340,13 @@
             ] }),
             config2.autoRecoverThirst && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden", children: [
               /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600", children: "U\u1ED1ng khi Kh\xE1t < (%):" }),
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600", children: "Ng\u01B0\u1EE1ng kh\xE1t c\u1EA7n u\u1ED1ng (%):" }),
                 /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                   "input",
                   {
                     type: "number",
                     min: 10,
-                    max: 90,
+                    max: 80,
                     step: 5,
                     value: config2.thirstThreshold,
                     onChange: (e) => updateField("thirstThreshold", Number(e.target.value)),
@@ -26319,56 +26355,56 @@
                 )
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between gap-2 min-w-0", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600 shrink-0", children: "Ngu\u1ED3n n\u01B0\u1EDBc:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600 shrink-0", children: "Ngu\u1ED3n \u0111\u1ED3 u\u1ED1ng:" }),
                 /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                   HudSelect,
                   {
                     value: config2.drinkSource,
                     onValueChange: (val) => updateField("drinkSource", val),
                     options: [
-                      { value: "kitchen_first", label: "\u{1F9C3} \u01AFu ti\xEAn B\u1EBFp, thi\u1EBFu mua Ti\u1EC7m" },
-                      { value: "kitchen_only", label: "\u{1F3E1} Ch\u1EC9 m\xF3n n\u01B0\u1EDBc B\u1EBFp, Kho" },
-                      { value: "shop_only", label: "\u{1F964} Ch\u1EC9 mua Ti\u1EC7m" }
+                      { value: "kitchen_first", label: "\u{1F9C3} B\u1EBFp tr\u01B0\u1EDBc \u2794 Qu\xE1n sau" },
+                      { value: "kitchen_only", label: "\u{1F3E0} Ch\u1EC9 u\u1ED1ng n\u01B0\u1EDBc trong B\u1EBFp" },
+                      { value: "shop_only", label: "\u{1F964} Ch\u1EC9 mua Qu\xE1n n\u01B0\u1EDBc" }
                     ]
                   }
                 )
               ] }),
               config2.drinkSource !== "shop_only" && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between gap-2 min-w-0", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600 shrink-0", children: "N\u01B0\u1EDBc \u1EDF B\u1EBFp:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600 shrink-0", children: "\u01AFu ti\xEAn B\u1EBFp:" }),
                 /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                   HudSelect,
                   {
-                    value: config2.preferDrinkKitchen || "auto",
+                    value: config2.preferDrinkKitchen,
                     onValueChange: (val) => updateField("preferDrinkKitchen", val),
                     options: [
-                      { value: "auto", label: "\u2728 T\u1EF1 ch\u1ECDn n\u01B0\u1EDBc c\xF3 s\u1EB5n trong B\u1EBFp" },
+                      { value: "auto", label: "\u2728 T\u1EF1 ch\u1ECDn n\u01B0\u1EDBc c\xF3 s\u1EB5n" },
                       { value: "radishSoup", label: "\u{1F372} Canh c\u1EE7 c\u1EA3i (+30 \u0111\xE3 kh\xE1t, +20 no)" },
-                      { value: "carrotJuice", label: "\u{1F9C3} N\u01B0\u1EDBc \xE9p c\xE0 r\u1ED1t (+40 \u0111\xE3 kh\xE1t, \u{1F4A7} Kh\xF4ng kh\xE1t)" },
-                      { value: "comTam", label: "\u{1F35B} C\u01A1m t\u1EA5m \u1ED1p la (+20 \u0111\xE3 kh\xE1t, +60 no, \u{1F35A} Kh\xF4ng \u0111\xF3i)" }
+                      { value: "carrotJuice", label: "\u{1F9C3} N\u01B0\u1EDBc \xE9p c\xE0 r\u1ED1t (+40 \u0111\xE3 kh\xE1t)" },
+                      { value: "comTam", label: "\u{1F35B} C\u01A1m t\u1EA5m \u1ED1p la (+20 \u0111\xE3 kh\xE1t, +60 no)" }
                     ]
                   }
                 )
               ] }),
               config2.drinkSource !== "kitchen_only" && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between gap-2 min-w-0", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600 shrink-0", children: "N\u01B0\u1EDBc \u1EDF Ti\u1EC7m:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600 shrink-0", children: "\u01AFu ti\xEAn Qu\xE1n n\u01B0\u1EDBc:" }),
                 /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                   HudSelect,
                   {
                     value: config2.preferDrinkShop,
                     onValueChange: (val) => updateField("preferDrinkShop", val),
                     options: [
-                      { value: "traDa", label: "\u{1F9CA} Tr\xE0 \u0111\xE1 (+20 n\u01B0\u1EDBc \xB7 3.000\u0111)" },
-                      { value: "nuocMia", label: "\u{1F964} N\u01B0\u1EDBc m\xEDa (+35 n\u01B0\u1EDBc \xB7 8.000\u0111)" },
-                      { value: "caPheSua", label: "\u2615 C\xE0 ph\xEA s\u1EEFa \u0111\xE1 (+25 n\u01B0\u1EDBc, \u26A1 \u0110i nhanh x1.5 \xB7 12.000\u0111)" },
-                      { value: "traDao", label: "\u{1F351} Tr\xE0 \u0111\xE0o cam s\u1EA3 (+50 n\u01B0\u1EDBc \xB7 15.000\u0111)" },
-                      { value: "traSua", label: "\u{1F9CB} Tr\xE0 s\u1EEFa tr\xE2n ch\xE2u (+40 n\u01B0\u1EDBc, +12 no \xB7 18.000\u0111)" }
+                      { value: "nuocMia", label: "\u{1F964} N\u01B0\u1EDBc m\xEDa (+20 kh\xE1t \xB7 8.000\u0111)" },
+                      { value: "traDa", label: "\u{1F9CA} Tr\xE0 \u0111\xE1 (+10 kh\xE1t \xB7 3.000\u0111)" },
+                      { value: "caPheSua", label: "\u2615 C\xE0 ph\xEA s\u1EEFa (+25 kh\xE1t, ch\u1EA1y nhanh \xB7 12.000\u0111)" },
+                      { value: "traDao", label: "\u{1F351} Tr\xE0 \u0111\xE0o cam s\u1EA3 (+30 kh\xE1t \xB7 15.000\u0111)" },
+                      { value: "traSua", label: "\u{1F9CB} Tr\xE0 s\u1EEFa tr\xE2n ch\xE2u (+35 kh\xE1t \xB7 18.000\u0111)" }
                     ]
                   }
                 )
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u2615 T\u1EF1 u\u1ED1ng C\xE0 ph\xEA s\xE1ng (+50% t\u1ED1c \u0111\u1ED9 ch\u1EA1y)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u2615 U\u1ED1ng C\xE0 ph\xEA s\u1EEFa m\u1ED7i s\xE1ng (+Ch\u1EA1y nhanh c\u1EA3 ng\xE0y)" }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 Switch3,
                 {
@@ -26378,7 +26414,7 @@
               )
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F50B} T\u1EF1 s\u1EA1c \u0111i\u1EC7n cho Xe m\xE1y \u0111i\u1EC7n EV" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F50B} T\u1EF1 s\u1EA1c Xe \u0111i\u1EC7n EV" }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 Switch3,
                 {
@@ -26388,13 +26424,13 @@
               )
             ] }),
             config2.autoChargeVehicle && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600", children: "S\u1EA1c khi Pin < (%):" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600", children: "S\u1EA1c khi pin d\u01B0\u1EDBi (%):" }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 "input",
                 {
                   type: "number",
                   min: 10,
-                  max: 90,
+                  max: 60,
                   step: 5,
                   value: config2.batteryThreshold,
                   onChange: (e) => updateField("batteryThreshold", Number(e.target.value)),
@@ -26403,27 +26439,7 @@
               )
             ] }) }),
             /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F486} Salon Ch\u1ECB Linh: G\u1ED9i \u0111\u1EA7u d\u01B0\u1EE1ng sinh (Buff th\u01B0 gi\xE3n)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoSalonShampoo),
-                  onCheckedChange: (c) => updateField("autoSalonShampoo", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u2728 Salon Ch\u1ECB Linh: T\u1EAFm tr\u1EAFng n\xE2ng t\xF4ng khi \u0111en da" }),
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.autoSalonWhiten),
-                  onCheckedChange: (c) => updateField("autoSalonWhiten", c)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F6CF}\uFE0F T\u1EF1 \u0111i ng\u1EE7 qua ng\xE0y m\u1EDBi" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F634} T\u1EF1 v\u1EC1 nh\xE0 \u0111i ng\u1EE7 qua ng\xE0y m\u1EDBi" }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 Switch3,
                 {
@@ -26539,12 +26555,22 @@
                   onCheckedChange: (c) => updateField("autoBuyPlots", c)
                 }
               )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng B\xE1c T\xE8o ph\u1EE5 ru\u1ED9ng" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoPayHelperCrops),
+                  onCheckedChange: (c) => updateField("autoPayHelperCrops", c)
+                }
+              )
             ] })
           ] });
         case "pet":
           return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-2 text-xs", children: [
             /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F356} T\u1EF1 mua \u0111\u1ED3 \u0103n & cho Th\xFA c\u01B0ng \u0103n" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F356} T\u1EF1 cho Th\xFA c\u01B0ng \u0103n h\xE0ng ng\xE0y" }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 Switch3,
                 {
@@ -26553,8 +26579,80 @@
                 }
               )
             ] }),
+            config2.petAutoFeed && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between gap-2 min-w-0", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600 shrink-0", children: "Ch\u1EBF \u0111\u1ED9 cho \u0103n:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                  HudSelect,
+                  {
+                    value: config2.petFeedMode,
+                    onValueChange: (val) => updateField("petFeedMode", val),
+                    options: [
+                      { value: "smart_diet", label: "\u2728 Th\xF4ng minh theo lo\xE0i (m\xF3n \u01B0a th\xEDch nh\u1EA5t)" },
+                      { value: "inventory_only", label: "\u{1F4E6} Ch\u1EC9 \u0103n \u0111\u1ED3 c\xF3 s\u1EB5n trong kho (kh\xF4ng mua)" },
+                      { value: "fav_only", label: "\u{1F496} Ch\u1EC9 \u0103n m\xF3n \u01B0a th\xEDch (+nhi\u1EC1u tim)" },
+                      { value: "custom", label: "\u{1F37D}\uFE0F Ch\u1EC9 \u0103n m\xF3n ch\u1EC9 \u0111\u1ECBnh b\xEAn d\u01B0\u1EDBi" }
+                    ]
+                  }
+                )
+              ] }),
+              config2.petFeedMode === "custom" && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between gap-2 min-w-0", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600 shrink-0", children: "M\xF3n ch\u1EC9 \u0111\u1ECBnh:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                  HudSelect,
+                  {
+                    value: config2.petPreferFood,
+                    onValueChange: (val) => updateField("petPreferFood", val),
+                    options: [
+                      { value: "auto", label: "\u2728 T\u1EF1 \u0111\u1ED9ng theo lo\xE0i" },
+                      { value: "xuong", label: "\u{1F9B4} X\u01B0\u01A1ng g\u1EB7m (Ch\xF3)" },
+                      { value: "cakho", label: "\u{1F41F} C\xE1 kh\xF4 (M\xE8o)" },
+                      { value: "pate", label: "\u{1F96B} Pate c\xE1 ng\u1EEB (Ch\xF3/M\xE8o)" },
+                      { value: "hat", label: "\u{1F963} H\u1EA1t t\u1ED5ng h\u1EE3p (Ch\xF3/M\xE8o)" },
+                      { value: "coKho", label: "\u{1F33F} C\u1ECF kh\xF4 (Th\u1ECF)" },
+                      { value: "cam", label: "\u{1F33E} C\xE1m heo (Heo)" },
+                      { value: "crop:carrot", label: "\u{1F955} C\xE0 r\u1ED1t (Th\u1ECF/Heo)" },
+                      { value: "crop:corn", label: "\u{1F33D} B\u1EAFp ng\xF4 (Heo)" },
+                      { value: "crop:radish", label: "\u{1F331} C\u1EE7 c\u1EA3i (Th\u1ECF/Heo)" }
+                    ]
+                  }
+                )
+              ] }),
+              config2.petFeedMode !== "inventory_only" && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(import_jsx_runtime30.Fragment, { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-600 cursor-pointer pt-0.5", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F6D2} T\u1EF1 mua th\xEAm th\u1EE9c \u0103n khi trong kho h\u1EBFt" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                    Switch3,
+                    {
+                      size: "sm",
+                      checked: Boolean(config2.petAutoBuyFood),
+                      onCheckedChange: (c) => updateField("petAutoBuyFood", c)
+                    }
+                  )
+                ] }),
+                config2.petAutoBuyFood && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between gap-2 min-w-0", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600 shrink-0", children: "Lo\u1EA1i th\u1EE9c \u0103n mua:" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                    HudSelect,
+                    {
+                      value: config2.petBuyFoodType,
+                      onValueChange: (val) => updateField("petBuyFoodType", val),
+                      options: [
+                        { value: "auto_fav", label: "\u2728 T\u1EF1 mua m\xF3n \u01B0a th\xEDch c\u1EE7a Pet" },
+                        { value: "pate", label: "\u{1F96B} Pate c\xE1 ng\u1EEB (3.000\u0111)" },
+                        { value: "hat", label: "\u{1F963} H\u1EA1t t\u1ED5ng h\u1EE3p (3.000\u0111)" },
+                        { value: "xuong", label: "\u{1F9B4} X\u01B0\u01A1ng g\u1EB7m (2.000\u0111)" },
+                        { value: "cakho", label: "\u{1F41F} C\xE1 kh\xF4 (2.500\u0111)" },
+                        { value: "coKho", label: "\u{1F33F} C\u1ECF kh\xF4 (1.500\u0111)" },
+                        { value: "cam", label: "\u{1F33E} C\xE1m heo (2.000\u0111)" }
+                      ]
+                    }
+                  )
+                ] })
+              ] })
+            ] }),
             /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F496} T\u1EF1 vu\u1ED1t ve t\u0103ng vui v\u1EBB" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F496} T\u1EF1 vu\u1ED1t ve t\u0103ng vui v\u1EBB (3 l\u1EA7n/ng\xE0y)" }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 Switch3,
                 {
@@ -26586,7 +26684,6 @@
           ] });
         case "barn":
           return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "text-[11px] font-bold text-emerald-400 border-b border-slate-200 pb-1", children: "\u{1F403} Chu\u1ED3ng Tr\xE2u \u1ED4i" }),
             /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F33E} T\u1EF1 cho Tr\xE2u \u0103n c\u1ECF / r\u01A1m" }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
@@ -26617,14 +26714,41 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "text-[11px] font-bold text-emerald-400 border-b border-slate-200 pb-1 pt-2", children: "\u{1F404} Chu\u1ED3ng B\xF2 S\u1EEFa" }),
+            config2.barnAutoLendBuffalo && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600", children: "T\xE2m tr\u1EA1ng t\u1ED1i thi\u1EC3u \u0111\u1EC3 cho thu\xEA:" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                "input",
+                {
+                  type: "number",
+                  min: 20,
+                  max: 90,
+                  step: 5,
+                  value: config2.barnLendMoodMin,
+                  onChange: (e) => updateField("barnLendMoodMin", Number(e.target.value)),
+                  className: "w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                }
+              )
+            ] }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng Anh T\xE1m ch\u0103n tr\xE2u" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.barnAutoPayHelper),
+                  onCheckedChange: (c) => updateField("barnAutoPayHelper", c)
+                }
+              )
+            ] })
+          ] });
+        case "dairy":
+          return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-2 text-xs", children: [
             /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F33F} T\u1EF1 cho \u0111\xE0n B\xF2 s\u1EEFa \u0103n c\u1ECF" }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 Switch3,
                 {
-                  checked: Boolean(config2.barnAutoFeedCows),
-                  onCheckedChange: (c) => updateField("barnAutoFeedCows", c)
+                  checked: Boolean(config2.dairyAutoFeedCows),
+                  onCheckedChange: (c) => updateField("dairyAutoFeedCows", c)
                 }
               )
             ] }),
@@ -26633,28 +26757,28 @@
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 Switch3,
                 {
-                  checked: Boolean(config2.barnAutoSellMilk),
-                  onCheckedChange: (c) => updateField("barnAutoSellMilk", c)
+                  checked: Boolean(config2.dairyAutoSellMilk),
+                  onCheckedChange: (c) => updateField("dairyAutoSellMilk", c)
                 }
               )
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F48A} T\u1EF1 mua thu\u1ED1c & ch\u1EEFa b\u1EC7nh cho B\xF2" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F48A} T\u1EF1 mua thu\u1ED1c & ti\xEAm ch\u1EEFa b\u1EC7nh cho B\xF2" }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 Switch3,
                 {
-                  checked: Boolean(config2.barnAutoCureCows),
-                  onCheckedChange: (c) => updateField("barnAutoCureCows", c)
+                  checked: Boolean(config2.dairyAutoCureCows),
+                  onCheckedChange: (c) => updateField("dairyAutoCureCows", c)
                 }
               )
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng ng\u01B0\u1EDDi ph\u1EE5 Chu\u1ED3ng" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng Ch\u1ECB M\u1EADn ch\u0103m b\xF2" }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 Switch3,
                 {
-                  checked: Boolean(config2.barnAutoPayHelper),
-                  onCheckedChange: (c) => updateField("barnAutoPayHelper", c)
+                  checked: Boolean(config2.dairyAutoPayHelper),
+                  onCheckedChange: (c) => updateField("dairyAutoPayHelper", c)
                 }
               )
             ] })
@@ -26682,7 +26806,7 @@
               )
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng ng\u01B0\u1EDDi ph\u1EE5 Chu\u1ED3ng g\xE0" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng Ch\xFA Ba ch\u0103m g\xE0" }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 Switch3,
                 {
@@ -26740,12 +26864,35 @@
               )
             ] }) }),
             /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng ng\u01B0\u1EDDi ph\u1EE5 Ao c\xE1" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng ng\u01B0\u1EDDi ph\u1EE5 Ao c\xE1 (B\xE9 Bi)" }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 Switch3,
                 {
                   checked: Boolean(config2.pondAutoPayHelper),
                   onCheckedChange: (c) => updateField("pondAutoPayHelper", c)
+                }
+              )
+            ] })
+          ] });
+        case "salon":
+          return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F486} Salon Ch\u1ECB Linh: G\u1ED9i \u0111\u1EA7u d\u01B0\u1EE1ng sinh (Buff th\u01B0 gi\xE3n)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoSalonShampoo),
+                  onCheckedChange: (c) => updateField("autoSalonShampoo", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u2728 Salon Ch\u1ECB Linh: T\u1EAFm tr\u1EAFng n\xE2ng t\xF4ng khi \u0111en da" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.autoSalonWhiten),
+                  onCheckedChange: (c) => updateField("autoSalonWhiten", c)
                 }
               )
             ] })
@@ -26763,7 +26910,7 @@
               )
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4CB} T\u1EF1 giao \u0111\u01A1n B\u1EA3ng tin l\xE0ng" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4CB} T\u1EF1 giao \u0111\u01A1n B\u1EA3ng tin l\xE0ng (Anh Khang)" }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 Switch3,
                 {
@@ -26793,99 +26940,83 @@
               )
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F3EA} T\u1EF1 b\xE1n n\xF4ng s\u1EA3n d\u01B0 th\u1EEBa trong kho" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F3EA} T\u1EF1 b\xE1n n\xF4ng s\u1EA3n & \u0111\u1ED3 \u0103n th\xF4ng minh" }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 Switch3,
                 {
-                  checked: Boolean(config2.autoSellProduce),
-                  onCheckedChange: (c) => updateField("autoSellProduce", c)
+                  checked: Boolean(config2.autoSellSmart),
+                  onCheckedChange: (c) => updateField("autoSellSmart", c)
                 }
               )
             ] }),
-            config2.autoSellProduce && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600", children: "T\u1ED1i thi\u1EC3u gi\u1EEF l\u1EA1i:" }),
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
-                "input",
-                {
-                  type: "number",
-                  min: 5,
-                  max: 200,
-                  step: 5,
-                  value: config2.surplusKeepQty,
-                  onChange: (e) => updateField("surplusKeepQty", Number(e.target.value)),
-                  className: "w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                }
-              )
-            ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "text-[11px] font-bold text-amber-400 border-b border-slate-200 pb-1 pt-2", children: "\u{1FA99} Ti\u1EC7m V\xE0ng C\xF4 Kim" }),
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1FA99} T\u1EF1 mua v\xE0ng \u0111\u1EA7u t\u01B0" }),
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.goldAutoBuy),
-                  onCheckedChange: (c) => updateField("goldAutoBuy", c)
-                }
-              )
-            ] }),
-            config2.goldAutoBuy && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden", children: [
+            config2.autoSellSmart && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-2 text-[11px] min-w-0 overflow-hidden", children: [
               /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between gap-2 min-w-0", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600 shrink-0", children: "Lo\u1EA1i v\xE0ng \u01B0u ti\xEAn:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600 shrink-0", children: "Chi\u1EBFn l\u01B0\u1EE3c b\xE1n:" }),
                 /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                   HudSelect,
                   {
-                    value: config2.goldPreferType,
-                    onValueChange: (val) => updateField("goldPreferType", val),
+                    value: config2.sellStrategy,
+                    onValueChange: (val) => updateField("sellStrategy", val),
                     options: [
-                      { value: "mieng", label: "\u{1F7E8} V\xE0ng mi\u1EBFng 9999 (~8,2tr \xB7 Ch\xEAnh 1,6% \xB7 H\u1EE3p gi\u1EEF l\xE2u)" },
-                      { value: "nhan", label: "\u{1F48D} Nh\u1EABn tr\u01A1n 9999 (~7,6tr \xB7 Ch\xEAnh 1,2% \xB7 \u1ED4n \u0111\u1ECBnh nh\u1EA5t)" },
-                      { value: "k18", label: "\u{1F4FF} V\xE0ng 18K (~5,6tr \xB7 Ch\xEAnh 9% \xB7 Trang s\u1EE9c)" },
-                      { value: "non", label: "\u{1FA99} V\xE0ng non 10K (~3,1tr \xB7 Ch\xEAnh 5% \xB7 L\u01B0\u1EDBt s\xF3ng)" }
+                      { value: "smart_all", label: "\u2728 T\u1ED1i \u01B0u: M\xF3n \u0103n b\u1EBFp tr\u01B0\u1EDBc \u2794 N\xF4ng s\u1EA3n d\u01B0 th\u1EEBa" },
+                      { value: "produce_only", label: "\u{1F33E} Ch\u1EC9 b\xE1n n\xF4ng s\u1EA3n d\u01B0 th\u1EEBa, kh\xF4ng b\xE1n m\xF3n \u0103n" },
+                      { value: "food_only", label: "\u{1F372} Ch\u1EC9 b\xE1n m\xF3n \u0103n ch\u1EBF bi\u1EBFn trong B\u1EBFp" }
                     ]
                   }
                 )
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600", children: "Ti\u1EC1n m\u1EB7t t\u1ED1i thi\u1EC3u gi\u1EEF:" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1 pt-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "font-semibold text-slate-700", children: "T\u1EF1 \u0111\u1ED9ng b\u1EA3o l\u01B0u nguy\xEAn li\u1EC7u:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-600 cursor-pointer", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4E6} B\u1EA3o l\u01B0u cho \u0110\u01A1n h\xE0ng Ch\u1ECB Na" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                    Switch3,
+                    {
+                      size: "sm",
+                      checked: Boolean(config2.sellReserveForOrders),
+                      onCheckedChange: (c) => updateField("sellReserveForOrders", c)
+                    }
+                  )
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-600 cursor-pointer", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4CB} B\u1EA3o l\u01B0u cho B\u1EA3ng tin l\xE0ng" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                    Switch3,
+                    {
+                      size: "sm",
+                      checked: Boolean(config2.sellReserveForVillage),
+                      onCheckedChange: (c) => updateField("sellReserveForVillage", c)
+                    }
+                  )
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-600 cursor-pointer", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F373} B\u1EA3o l\u01B0u nguy\xEAn li\u1EC7u n\u1EA5u \u0103n c\u01A1 b\u1EA3n" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                    Switch3,
+                    {
+                      size: "sm",
+                      checked: Boolean(config2.sellReserveForKitchen),
+                      onCheckedChange: (c) => updateField("sellReserveForKitchen", c)
+                    }
+                  )
+                ] })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between pt-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600", children: "T\u1ED1i thi\u1EC3u gi\u1EEF l\u1EA1i m\u1ED7i lo\u1EA1i:" }),
                 /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                   "input",
                   {
                     type: "number",
-                    min: 1e5,
-                    max: 1e7,
-                    step: 1e5,
-                    value: config2.goldKeepCash,
-                    onChange: (e) => updateField("goldKeepCash", Number(e.target.value)),
-                    className: "w-24 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    min: 0,
+                    max: 200,
+                    step: 5,
+                    value: config2.surplusKeepQty,
+                    onChange: (e) => updateField("surplusKeepQty", Number(e.target.value)),
+                    className: "w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   }
                 )
               ] })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4C8} T\u1EF1 b\xE1n v\xE0ng khi c\xF3 l\xE3i" }),
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
-                Switch3,
-                {
-                  checked: Boolean(config2.goldAutoSell),
-                  onCheckedChange: (c) => updateField("goldAutoSell", c)
-                }
-              )
-            ] }),
-            config2.goldAutoSell && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600", children: "Ch\u1ED1t l\u1EDDi khi l\xE3i >= (%):" }),
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
-                "input",
-                {
-                  type: "number",
-                  min: 3,
-                  max: 50,
-                  step: 1,
-                  value: config2.goldProfitPercent,
-                  onChange: (e) => updateField("goldProfitPercent", Number(e.target.value)),
-                  className: "w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                }
-              )
-            ] }) })
+            ] })
           ] });
         case "dibay":
           return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-2 text-xs", children: [
@@ -26950,7 +27081,7 @@
               )
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F3E6} T\u1EF1 g\u1EEDi S\u1ED5 ti\u1EBFt ki\u1EC7m D\xEC B\u1EA3y" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F3E6} T\u1EF1 g\u1EEDi S\u1ED5 ti\u1EBFt ki\u1EC7m D\xEC B\u1EA3y (7 ng\xE0y)" }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 Switch3,
                 {
@@ -26971,6 +27102,77 @@
                   value: config2.savingsKeepGold,
                   onChange: (e) => updateField("savingsKeepGold", Number(e.target.value)),
                   className: "w-24 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                }
+              )
+            ] }) })
+          ] });
+        case "goldShop":
+          return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1FA99} T\u1EF1 mua v\xE0ng \u0111\u1EA7u t\u01B0 t\u1EA1i Ti\u1EC7m V\xE0ng C\xF4 Kim" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.goldAutoBuy),
+                  onCheckedChange: (c) => updateField("goldAutoBuy", c)
+                }
+              )
+            ] }),
+            config2.goldAutoBuy && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between gap-2 min-w-0", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600 shrink-0", children: "Lo\u1EA1i v\xE0ng \u01B0u ti\xEAn:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                  HudSelect,
+                  {
+                    value: config2.goldPreferType,
+                    onValueChange: (val) => updateField("goldPreferType", val),
+                    options: [
+                      { value: "mieng", label: "\u{1F7E8} V\xE0ng mi\u1EBFng 9999 (~8,2tr \xB7 Ch\xEAnh 1,6% \xB7 H\u1EE3p gi\u1EEF l\xE2u)" },
+                      { value: "nhan", label: "\u{1F48D} Nh\u1EABn tr\u01A1n 9999 (~7,6tr \xB7 Ch\xEAnh 1,2% \xB7 \u1ED4n \u0111\u1ECBnh nh\u1EA5t)" },
+                      { value: "k18", label: "\u{1F4FF} V\xE0ng 18K (~5,6tr \xB7 Ch\xEAnh 9% \xB7 Trang s\u1EE9c)" },
+                      { value: "non", label: "\u{1FA99} V\xE0ng non 10K (~3,1tr \xB7 Ch\xEAnh 5% \xB7 L\u01B0\u1EDBt s\xF3ng)" }
+                    ]
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600", children: "Ti\u1EC1n m\u1EB7t t\u1ED1i thi\u1EC3u gi\u1EEF:" }),
+                /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                  "input",
+                  {
+                    type: "number",
+                    min: 1e5,
+                    max: 1e7,
+                    step: 1e5,
+                    value: config2.goldKeepCash,
+                    onChange: (e) => updateField("goldKeepCash", Number(e.target.value)),
+                    className: "w-24 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  }
+                )
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4C8} T\u1EF1 b\xE1n v\xE0ng khi c\xF3 l\xE3i" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.goldAutoSell),
+                  onCheckedChange: (c) => updateField("goldAutoSell", c)
+                }
+              )
+            ] }),
+            config2.goldAutoSell && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "text-slate-600", children: "Ch\u1ED1t l\u1EDDi khi l\xE3i >= (%):" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                "input",
+                {
+                  type: "number",
+                  min: 3,
+                  max: 50,
+                  step: 1,
+                  value: config2.goldProfitPercent,
+                  onChange: (e) => updateField("goldProfitPercent", Number(e.target.value)),
+                  className: "w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
                 }
               )
             ] }) })
@@ -28398,6 +28600,21 @@
       barnAutoFeedBuffalo: saved.barnAutoFeedBuffalo ?? savedAny.barnAutoBuffalo ?? DEFAULT_CONFIG.barnAutoFeedBuffalo,
       barnAutoBathBuffalo: saved.barnAutoBathBuffalo ?? savedAny.barnAutoBuffalo ?? DEFAULT_CONFIG.barnAutoBathBuffalo,
       barnAutoLendBuffalo: saved.barnAutoLendBuffalo ?? DEFAULT_CONFIG.barnAutoLendBuffalo,
+      barnLendMoodMin: saved.barnLendMoodMin ?? DEFAULT_CONFIG.barnLendMoodMin,
+      dairyAutoFeedCows: saved.dairyAutoFeedCows ?? savedAny.barnAutoFeedCows ?? DEFAULT_CONFIG.dairyAutoFeedCows,
+      dairyAutoCureCows: saved.dairyAutoCureCows ?? savedAny.barnAutoCureCows ?? DEFAULT_CONFIG.dairyAutoCureCows,
+      dairyAutoSellMilk: saved.dairyAutoSellMilk ?? savedAny.barnAutoSellMilk ?? DEFAULT_CONFIG.dairyAutoSellMilk,
+      dairyAutoPayHelper: saved.dairyAutoPayHelper ?? savedAny.barnAutoPayHelper ?? DEFAULT_CONFIG.dairyAutoPayHelper,
+      autoPayHelperCrops: saved.autoPayHelperCrops ?? DEFAULT_CONFIG.autoPayHelperCrops,
+      petFeedMode: saved.petFeedMode ?? DEFAULT_CONFIG.petFeedMode,
+      petPreferFood: saved.petPreferFood ?? DEFAULT_CONFIG.petPreferFood,
+      petAutoBuyFood: saved.petAutoBuyFood ?? DEFAULT_CONFIG.petAutoBuyFood,
+      petBuyFoodType: saved.petBuyFoodType ?? DEFAULT_CONFIG.petBuyFoodType,
+      autoSellSmart: saved.autoSellSmart ?? DEFAULT_CONFIG.autoSellSmart,
+      sellStrategy: saved.sellStrategy ?? DEFAULT_CONFIG.sellStrategy,
+      sellReserveForOrders: saved.sellReserveForOrders ?? DEFAULT_CONFIG.sellReserveForOrders,
+      sellReserveForVillage: saved.sellReserveForVillage ?? DEFAULT_CONFIG.sellReserveForVillage,
+      sellReserveForKitchen: saved.sellReserveForKitchen ?? DEFAULT_CONFIG.sellReserveForKitchen,
       autoRecoverHunger: saved.autoRecoverHunger ?? savedAny.autoRecoverNeeds ?? DEFAULT_CONFIG.autoRecoverHunger,
       preferFoodKitchen: saved.preferFoodKitchen ?? DEFAULT_CONFIG.preferFoodKitchen,
       autoRecoverThirst: saved.autoRecoverThirst ?? savedAny.autoRecoverNeeds ?? DEFAULT_CONFIG.autoRecoverThirst,
@@ -28548,6 +28765,10 @@
   // src/content/scheduler/farm-runner.ts
   var lastFarmDoneDay = -1;
   var lastFarmRunAt = 0;
+  function resetFarmTiming() {
+    lastFarmDoneDay = -1;
+    lastFarmRunAt = 0;
+  }
   async function runFarmSubAreas(snap, config2, setStatus2, updateHeaderStats2) {
     const delayMs = Math.max(150, Number(config2.taskDelayMs) || 650);
     if (snap.screen !== "playing") {
@@ -28978,6 +29199,9 @@
       setLockedTabArea(null);
       currentAreaIdx = 0;
       areaCatchesCount = 0;
+      lastFarmDoneDay2 = -1;
+      lastFarmRunAt2 = 0;
+      resetFarmTiming();
       setStatus("\u25B6\uFE0F B\u1EAFt \u0111\u1EA7u ch\u1EA1y Auto T\u1EA5t C\u1EA3 theo th\u1EE9 t\u1EF1...");
     }
     saveConfig();
@@ -28993,6 +29217,9 @@
       config2.runMode = "tab";
       setLockedTabArea(config2.activeTab);
       areaCatchesCount = 0;
+      lastFarmDoneDay2 = -1;
+      lastFarmRunAt2 = 0;
+      resetFarmTiming();
       const areaName = AREA_META[config2.activeTab]?.name || config2.activeTab;
       setStatus(`\u{1F3AF} B\u1EAFt \u0111\u1EA7u ch\u1EC9 Auto trong Tab: ${areaName}`);
     }
@@ -29084,9 +29311,15 @@
         const mustNavigateHome = snap.screen !== "playing";
         const farmDue = mustNavigateHome || lastFarmDoneDay2 !== snap.day || Date.now() - lastFarmRunAt2 > 6e4 || enabledAreas.length === 1;
         if (farmDue) {
-          await runFarmSubAreas(snap, config2, setStatus, updateHeaderStats);
-          lastFarmDoneDay2 = snap.day ?? 0;
-          lastFarmRunAt2 = Date.now();
+          const acted = await runFarmSubAreas(snap, config2, setStatus, updateHeaderStats);
+          if (config2.running) {
+            lastFarmDoneDay2 = snap.day ?? 0;
+            lastFarmRunAt2 = Date.now();
+          }
+          if (acted && enabledAreas.length > 1) {
+            isBusy = false;
+            return;
+          }
         }
         if (enabledAreas.length > 1) {
           const nowMs = Date.now();

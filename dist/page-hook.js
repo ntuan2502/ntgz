@@ -594,21 +594,23 @@
         }
       }
     }
-    if (getMainState().salonOpen) {
-      if (cfg.autoSalonShampoo !== false) {
-        const st = getMainState();
-        const hasRelax = (st.kitchen?.buffs || []).some((b) => b.kind === "relax" && b.day === st.day);
-        if (!hasRelax && (st.gold || 0) >= 15e4 && st.shampoo?.() === "ok") {
-          showFarmActionUI(cfg, { panel: "salon" });
-          return { acted: true, msg: "\u{1F486} \u0110\xE3 gh\xE9 Ch\u1ECB Linh T\xE2y g\u1ED9i \u0111\u1EA7u d\u01B0\u1EE1ng sinh (Buff th\u01B0 gi\xE3n)" };
-        }
+    return NOT_ACTED;
+  }
+  function handleSalonSubArea(cfg) {
+    if (!getMainState().salonOpen) return NOT_ACTED;
+    if (cfg.autoSalonShampoo !== false) {
+      const st = getMainState();
+      const hasRelax = (st.kitchen?.buffs || []).some((b) => b.kind === "relax" && b.day === st.day);
+      if (!hasRelax && (st.gold || 0) >= 15e4 && st.shampoo?.() === "ok") {
+        showFarmActionUI(cfg, { panel: "salon" });
+        return { acted: true, msg: "\u{1F486} \u0110\xE3 gh\xE9 Ch\u1ECB Linh T\xE2y g\u1ED9i \u0111\u1EA7u d\u01B0\u1EE1ng sinh (Buff th\u01B0 gi\xE3n)" };
       }
-      if (cfg.autoSalonWhiten) {
-        const st = getMainState();
-        if ((st.player?.outfit?.tan || 0) > 0 && (st.gold || 0) >= 3e5 && st.whiten?.() === "ok") {
-          showFarmActionUI(cfg, { panel: "salon" });
-          return { acted: true, msg: "\u2728 \u0110\xE3 gh\xE9 Ch\u1ECB Linh T\xE2y t\u1EAFm tr\u1EAFng n\xE2ng t\xF4ng da" };
-        }
+    }
+    if (cfg.autoSalonWhiten) {
+      const st = getMainState();
+      if ((st.player?.outfit?.tan || 0) > 0 && (st.gold || 0) >= 3e5 && st.whiten?.() === "ok") {
+        showFarmActionUI(cfg, { panel: "salon" });
+        return { acted: true, msg: "\u2728 \u0110\xE3 gh\xE9 Ch\u1ECB Linh T\xE2y t\u1EAFm tr\u1EAFng n\xE2ng t\xF4ng da" };
       }
     }
     return NOT_ACTED;
@@ -621,13 +623,21 @@
     const mainScene = getActiveScene("MainScene");
     const s0 = getMainState();
     s0.setActiveTool?.(tool);
-    const prevPlotRef = s0.plots?.[key];
+    const p0 = s0.plots?.[key];
+    const prevWatered = p0?.watered;
+    const prevCrop = p0?.crop;
+    const prevCropId = prevCrop?.id;
+    const prevStage = prevCrop?.stage;
+    const prevFertilized = prevCrop?.fertilized;
+    const prevPests = prevCrop?.pests;
     if (mainScene && typeof mainScene.doWork === "function") {
       try {
         mainScene.doWork({ plot: key, tool });
       } catch {
       }
-      if (getMainState().plots?.[key] !== prevPlotRef) return true;
+      const pAfter = getMainState().plots?.[key];
+      const hasChanged = pAfter !== p0 || pAfter?.watered !== prevWatered || pAfter?.crop?.id !== prevCropId || pAfter?.crop?.stage !== prevStage || pAfter?.crop?.fertilized !== prevFertilized || pAfter?.crop?.pests !== prevPests;
+      if (hasChanged) return true;
     }
     const res = getMainState().applyTool?.(key, tool);
     if (res && mainScene?.plots?.playEffect) {
@@ -636,7 +646,8 @@
       } catch {
       }
     }
-    return Boolean(res);
+    const pFinal = getMainState().plots?.[key];
+    return Boolean(res) || pFinal !== p0 || pFinal?.watered !== prevWatered || pFinal?.crop?.id !== prevCropId || pFinal?.crop?.stage !== prevStage || pFinal?.crop?.fertilized !== prevFertilized || pFinal?.crop?.pests !== prevPests;
   }
   function ensureSeed(cropId) {
     const cur = getMainState();
@@ -721,26 +732,35 @@
         }
       }
     }
-    if (cfg.autoPlant !== false && plotKeys.some((k) => st.plots?.[k] && !st.plots[k].crop)) {
-      if ((st.items?.mysteryBag || 0) > 0 && st.consumeItem?.("mysteryBag")) {
-        return { acted: true, msg: "\u{1F381} \u0110\xE3 m\u1EDF T\xFAi h\u1EA1t b\xED \u1EA9n nh\u1EADn th\xEAm h\u1EA1t gi\u1ED1ng" };
-      }
-      const emptyKey = plotKeys.find((k) => {
-        const p = getMainState().plots?.[k];
+    if (cfg.autoPlant !== false) {
+      const curP = getMainState();
+      const emptyKeys = plotKeys.filter((k) => {
+        const p = curP.plots?.[k];
         return p && !p.crop;
       });
-      if (emptyKey) {
+      if (emptyKeys.length > 0) {
+        if ((curP.items?.mysteryBag || 0) > 0 && curP.consumeItem?.("mysteryBag")) {
+          return { acted: true, msg: "\u{1F381} \u0110\xE3 m\u1EDF T\xFAi h\u1EA1t b\xED \u1EA9n nh\u1EADn th\xEAm h\u1EA1t gi\u1ED1ng" };
+        }
         const seed = chooseSeed(cfg);
-        if (seed && applyOnPlot(emptyKey, `seed:${seed}`)) {
-          return { acted: true, msg: `\u{1F331} \u0110\xE3 gieo h\u1EA1t ${CROP_NAMES[seed] || seed} \xF4 (${emptyKey})` };
+        if (seed) {
+          for (const emptyKey of emptyKeys) {
+            if (applyOnPlot(emptyKey, `seed:${seed}`)) {
+              return { acted: true, msg: `\u{1F331} \u0110\xE3 gieo h\u1EA1t ${CROP_NAMES[seed] || seed} \xF4 (${emptyKey})` };
+            }
+          }
         }
       }
     }
     if (cfg.autoWater !== false) {
-      const cur = getMainState();
+      const curW = getMainState();
       for (const key of plotKeys) {
-        if (cur.previewTool?.(key, "wateringCan") && applyOnPlot(key, "wateringCan")) {
-          return { acted: true, msg: `\u{1F4A7} \u0110\xE3 t\u01B0\u1EDBi n\u01B0\u1EDBc \xF4 (${key})` };
+        const p = curW.plots?.[key];
+        const isDry = p?.crop && !p.watered;
+        if (curW.previewTool?.(key, "wateringCan") || isDry) {
+          if (applyOnPlot(key, "wateringCan")) {
+            return { acted: true, msg: `\u{1F4A7} \u0110\xE3 t\u01B0\u1EDBi n\u01B0\u1EDBc \xF4 (${key})` };
+          }
         }
       }
     }
@@ -757,9 +777,11 @@
         }
       }
     }
-    const curHelper = getMainState();
-    if (curHelper.helpers?.crops?.hired && (curHelper.helpers.crops.unpaid || 0) > 0 && curHelper.payHelper?.("crops") === true) {
-      return { acted: true, msg: "\u{1F4B8} \u0110\xE3 tr\u1EA3 l\u01B0\u01A1ng n\u1EE3 cho T\xE8o ph\u1EE5 ru\u1ED9ng" };
+    if (cfg.autoPayHelperCrops !== false) {
+      const curHelper = getMainState();
+      if (curHelper.helpers?.crops?.hired && (curHelper.helpers.crops.unpaid || 0) > 0 && curHelper.payHelper?.("crops") === true) {
+        return { acted: true, msg: "\u{1F4B8} \u0110\xE3 tr\u1EA3 l\u01B0\u01A1ng n\u1EE3 cho T\xE8o ph\u1EE5 ru\u1ED9ng" };
+      }
     }
     const curOffer = getMainState();
     if (cfg.autoBuyPlots !== false && curOffer.plotOffer && (curOffer.gold || 0) >= (curOffer.plotOffer.price || 0)) {
@@ -810,16 +832,20 @@
     const petName = pet.name || "B\xE9";
     if (cfg.petAutoFeed !== false && pet.fedDay !== m.day) {
       const diet = PET_DIETS.find((d) => d.kinds.includes(pet.kind || ""));
-      const foods = diet?.foods || DEFAULT_PET_FOOD;
-      const shop = diet?.shop || DEFAULT_PET_SHOP;
-      for (const f of foods) {
+      const mode = cfg.petFeedMode || "smart_diet";
+      const foodOrder = mode === "custom" && cfg.petPreferFood && cfg.petPreferFood !== "auto" ? [cfg.petPreferFood] : mode === "fav_only" ? diet?.foods?.slice(0, 1) || DEFAULT_PET_FOOD.slice(0, 1) : diet?.foods || DEFAULT_PET_FOOD;
+      for (const f of foodOrder) {
         if (isFed(getMainState().feedPet?.(f))) {
           return { acted: true, msg: `\u{1F415} \u0110\xE3 cho th\xFA c\u01B0ng (${petName}) \u0103n ${PET_FOOD_NAMES[f] || f}` };
         }
       }
-      for (const sf of shop) {
-        if (getMainState().buyPetFood?.(sf, 1) === "ok" && isFed(getMainState().feedPet?.(sf))) {
-          return { acted: true, msg: `\u{1F9B4} \u0110\xE3 mua ${PET_FOOD_NAMES[sf] || sf} & cho th\xFA c\u01B0ng (${petName}) \u0103n` };
+      if (mode !== "inventory_only" && cfg.petAutoBuyFood !== false) {
+        const buyPref = cfg.petBuyFoodType || "auto_fav";
+        const shopItems = buyPref !== "auto_fav" ? [buyPref] : diet?.shop || DEFAULT_PET_SHOP;
+        for (const sf of shopItems) {
+          if (getMainState().buyPetFood?.(sf, 1) === "ok" && isFed(getMainState().feedPet?.(sf))) {
+            return { acted: true, msg: `\u{1F9B4} \u0110\xE3 mua ${PET_FOOD_NAMES[sf] || sf} & cho th\xFA c\u01B0ng (${petName}) \u0103n` };
+          }
         }
       }
     }
@@ -864,16 +890,26 @@
       }
     }
     const stL = getMainState();
-    if (cfg.barnAutoLendBuffalo !== false && stL.buffalo?.home && stL.buffalo.lentDay !== stL.day && (stL.buffalo.mood || 0) >= 50 && stL.lendBuffalo?.() === "ok") {
+    const minMood = Number(cfg.barnLendMoodMin) || 50;
+    if (cfg.barnAutoLendBuffalo !== false && stL.buffalo?.home && stL.buffalo.lentDay !== stL.day && (stL.buffalo.mood || 0) >= minMood && stL.lendBuffalo?.() === "ok") {
       return { acted: true, msg: "\u{1F91D} \u0110\xE3 cho b\xE0 con thu\xEA Tr\xE2u c\xE0y ru\u1ED9ng" };
     }
+    if (cfg.barnAutoPayHelper !== false) {
+      const stH = getMainState();
+      if (stH.helpers?.buffalo?.hired && (stH.helpers.buffalo.unpaid || 0) > 0 && stH.payHelper?.("buffalo") === true) {
+        return { acted: true, msg: "\u{1F4B8} \u0110\xE3 tr\u1EA3 l\u01B0\u01A1ng anh T\xE1m ch\u0103n tr\xE2u" };
+      }
+    }
+    return NOT_ACTED;
+  }
+  function handleDairySubArea(cfg) {
     const stC = getMainState();
-    if (cfg.barnAutoFeedCows !== false && (stC.dairy?.cows || []).some((c) => c.fedDay !== stC.day)) {
+    if (cfg.dairyAutoFeedCows !== false && (stC.dairy?.cows || []).some((c) => c.fedDay !== stC.day)) {
       if (stC.feedCows?.() === "ok") {
         return { acted: true, msg: "\u{1F404} \u0110\xE3 cho \u0111\xE0n B\xF2 s\u1EEFa \u0103n c\u1ECF" };
       }
     }
-    if (cfg.barnAutoCureCows !== false) {
+    if (cfg.dairyAutoCureCows !== false) {
       const stCure = getMainState();
       for (const cow of stCure.dairy?.cows || []) {
         if ((cow.sickDay || 0) <= 0) continue;
@@ -886,17 +922,13 @@
       }
     }
     const stMilk = getMainState();
-    if (cfg.barnAutoSellMilk !== false && (stMilk.dairy?.milk || 0) > 0) {
+    if (cfg.dairyAutoSellMilk !== false && (stMilk.dairy?.milk || 0) > 0) {
       const res = stMilk.sellMilk?.();
       if (res && res.liters > 0) {
         return { acted: true, msg: `\u{1F95B} \u0110\xE3 v\u1EAFt & b\xE1n ${res.liters} l\xEDt s\u1EEFa b\xF2 (+${formatVnd(res.total)}\u0111)` };
       }
     }
-    if (cfg.barnAutoPayHelper !== false) {
-      const stH = getMainState();
-      if (stH.helpers?.buffalo?.hired && (stH.helpers.buffalo.unpaid || 0) > 0 && stH.payHelper?.("buffalo") === true) {
-        return { acted: true, msg: "\u{1F4B8} \u0110\xE3 tr\u1EA3 l\u01B0\u01A1ng anh T\xE1m ch\u0103n tr\xE2u" };
-      }
+    if (cfg.dairyAutoPayHelper !== false) {
       const stH2 = getMainState();
       if (stH2.helpers?.dairy?.hired && (stH2.helpers.dairy.unpaid || 0) > 0 && stH2.payHelper?.("dairy") === true) {
         return { acted: true, msg: "\u{1F4B8} \u0110\xE3 tr\u1EA3 l\u01B0\u01A1ng ch\u1ECB M\u1EADn ch\u0103m b\xF2" };
@@ -964,99 +996,6 @@
     return NOT_ACTED;
   }
 
-  // src/page-hook/modules/farm/gold-sim.ts
-  var GOLD_DATA = [
-    { id: "mieng", name: "V\xE0ng mi\u1EBFng 9999", base: 82e5, beta: 1, noise: 2e-3, spread: 0.016 },
-    { id: "nhan", name: "Nh\u1EABn tr\u01A1n 9999", base: 76e5, beta: 0.9, noise: 15e-4, spread: 0.012 },
-    { id: "k18", name: "V\xE0ng 18K", base: 56e5, beta: 0.7, noise: 2e-3, spread: 0.09 },
-    { id: "non", name: "V\xE0ng non 10K", base: 31e5, beta: 2.2, noise: 6e-3, spread: 0.05 }
-  ];
-  var GOLD_CATALOG = Object.fromEntries(
-    GOLD_DATA.map((e) => [e.id, e])
-  );
-  var GOLD_WAVES = [
-    { kind: "calm", drift: 0, weight: 38, len: [6, 16] },
-    { kind: "up", drift: 5e-3, weight: 24, len: [6, 18] },
-    { kind: "down", drift: -5e-3, weight: 22, len: [6, 18] },
-    { kind: "boom", drift: 0.011, weight: 8, len: [6, 12] },
-    { kind: "crash", drift: -0.011, weight: 8, len: [6, 12] }
-  ];
-  var _G_A = 4e-3;
-  var _G_V = 0.02;
-  var _G_Y = 3e-4;
-  var _G_B = 0.045;
-  var _G_X = 0.7;
-  function _goldRng(seed) {
-    let t = seed >>> 0;
-    return () => {
-      t = t + 1831565813 >>> 0;
-      let e = t;
-      e = Math.imul(e ^ e >>> 15, e | 1);
-      e ^= e + Math.imul(e ^ e >>> 7, e | 61);
-      return ((e ^ e >>> 14) >>> 0) / 4294967296;
-    };
-  }
-  var _goldNorm = (rng) => Math.sqrt(-2 * Math.log(1 - rng())) * Math.cos(2 * Math.PI * rng());
-  var _goldStep = (day, min) => (day - 1) * 2 + (min >= 720 ? 1 : 0);
-  var _goldCache = /* @__PURE__ */ new Map();
-  function _goldSim(seed, step) {
-    let n = _goldCache.get(seed);
-    if (!n) {
-      n = {
-        index: [],
-        wave: [],
-        own: { mieng: [], nhan: [], k18: [], non: [] },
-        r: _goldRng(seed),
-        waveLeft: 0,
-        drift: 0,
-        kind: "calm",
-        x: 0,
-        bump: 0
-      };
-      _goldCache.set(seed, n);
-    }
-    while (n.index.length <= step) {
-      const e = n.index.length;
-      if (n.waveLeft <= 0) {
-        let total = n.r() * GOLD_WAVES.reduce((a, b) => a + b.weight, 0);
-        const w = GOLD_WAVES.find((x) => (total -= x.weight) < 0) || GOLD_WAVES[0];
-        n.kind = w.kind;
-        n.drift = w.drift;
-        n.waveLeft = w.len[0] + Math.floor(n.r() * (w.len[1] - w.len[0] + 1));
-      }
-      n.waveLeft--;
-      const t = Math.floor(e / 2) + 1;
-      const r = (t - 1) % 120 + 1;
-      n.bump = e % 2 === 0 && r === 10 && t > 120 ? _G_B : n.bump * _G_X;
-      n.x += n.drift + _G_A * _goldNorm(n.r) - _G_V * (n.x - _G_Y * e);
-      n.index.push(n.x + n.bump);
-      n.wave.push(n.kind);
-      for (const g of GOLD_DATA) {
-        if (!n.own[g.id]) n.own[g.id] = [];
-        n.own[g.id].push(g.noise * _goldNorm(n.r));
-      }
-    }
-    return n;
-  }
-  function _goldBasePrice(seed, type, step) {
-    const sim = _goldSim(seed, step);
-    const item = GOLD_CATALOG[type];
-    if (!item) return 0;
-    return item.base * Math.exp(item.beta * sim.index[step] + sim.own[type][step]);
-  }
-  function getGoldBuyPrice(seed, type, day, min) {
-    const step = _goldStep(day, min);
-    const base = _goldBasePrice(seed, type, step);
-    const item = GOLD_CATALOG[type];
-    return Math.round(base * (1 + (item ? item.spread / 2 : 0)) / 1e3) * 1e3;
-  }
-  function getGoldSellPrice(seed, type, day, min) {
-    const step = _goldStep(day, min);
-    const base = _goldBasePrice(seed, type, step);
-    const item = GOLD_CATALOG[type];
-    return Math.round(base * (1 - (item ? item.spread / 2 : 0)) / 1e3) * 1e3;
-  }
-
   // src/page-hook/modules/farm/trend.ts
   var TREND_CROPS = ["radish", "carrot", "corn", "rice"];
   function hash01(e) {
@@ -1090,9 +1029,45 @@
   }
 
   // src/page-hook/modules/farm/market.ts
-  var GOLD_TYPES = ["mieng", "nhan", "k18", "non"];
+  var CROP_KEYS = ["rice", "corn", "carrot", "radish", "egg"];
   var stockOf = (st, goods) => goods === "egg" ? st.eggs || 0 : st.produce?.[goods] || 0;
-  var reservedForOrder = (st, goods) => st.order && st.order.crop === goods ? st.order.qty : 0;
+  function getReservedQty(st, item, cfg) {
+    let reserved = 0;
+    if (cfg.sellReserveForOrders !== false && st.order && st.order.crop === item) {
+      reserved += st.order.qty || 0;
+    }
+    if (cfg.sellReserveForVillage !== false && Array.isArray(st.village?.requests)) {
+      for (const req of st.village.requests) {
+        if (!req.done && req.goods === item) {
+          reserved += req.qty || 0;
+        }
+      }
+    }
+    if (Array.isArray(st.daily?.tasks)) {
+      for (const t of st.daily.tasks) {
+        if (!t.claimed && t.crop === item && t.kind === "harvest") {
+          const harvested = (st.stats?.harvested?.[item] || 0) - (t.base || 0);
+          const missing = Math.max(0, (t.need || 0) - harvested);
+          reserved += missing;
+        }
+      }
+    }
+    if (cfg.sellReserveForKitchen !== false) {
+      const dishNeeds = {
+        radish: 3,
+        // Canh củ cải
+        carrot: 3,
+        // Nước ép cà rốt
+        corn: 2,
+        // Bắp nướng mỡ hành
+        rice: 0,
+        egg: 2
+        // Trứng luộc / Bánh mì
+      };
+      reserved += dishNeeds[item] || 0;
+    }
+    return reserved;
+  }
   function deliverGroceryOrder(cfg) {
     const m = getMainState();
     if (!m.order || stockOf(m, m.order.crop) < m.order.qty) return null;
@@ -1127,7 +1102,8 @@
     if (!trend) return null;
     const quota = getTrendQuota2(trend.goods, day, Object.keys(st.plots || {}).length, st.trendLog);
     if (quota <= 0) return null;
-    const toSell = Math.min(Math.max(0, stockOf(st, trend.goods) - reservedForOrder(st, trend.goods)), quota);
+    const reserved = getReservedQty(st, trend.goods, cfg);
+    const toSell = Math.min(Math.max(0, stockOf(st, trend.goods) - reserved), quota);
     if (toSell <= 0) return null;
     const sold = st.sellQty?.(trend.goods, toSell) || 0;
     if (sold > 0) {
@@ -1144,9 +1120,12 @@
     );
     const day1NeedSell = st.day === 1 && earned === 0;
     if (!sellTask && !day1NeedSell) return null;
-    for (const item of ["radish", "carrot", "corn", "rice", "egg"]) {
-      const sellable = Math.max(0, stockOf(st, item) - reservedForOrder(st, item));
-      if (sellable <= 0) continue;
+    const candidates = CROP_KEYS.map((item) => {
+      const reserved = getReservedQty(st, item, cfg);
+      const sellable = Math.max(0, stockOf(st, item) - reserved);
+      return { item, sellable };
+    }).filter((c) => c.sellable > 0).sort((a, b) => b.sellable - a.sellable);
+    for (const { item, sellable } of candidates) {
       let qty = 1;
       if (sellTask) {
         const missing = (sellTask.need || 0) - (earned - (sellTask.base || 0));
@@ -1161,65 +1140,42 @@
     }
     return null;
   }
-  function sellSurplus(cfg) {
+  function sellSmart(cfg) {
+    if (!cfg.autoSellSmart && !cfg.autoSellProduce) return null;
     const st = getMainState();
-    const minKeep = Math.max(0, Number(cfg.surplusKeepQty) || 20);
-    for (const item of ["rice", "corn", "carrot", "radish", "egg"]) {
-      const sellable = stockOf(st, item) - reservedForOrder(st, item) - minKeep;
-      if (sellable <= 0) continue;
-      const sold = st.sellQty?.(item, sellable) || 0;
-      if (sold > 0) {
-        showFarmActionUI(cfg, { vendor: "grocery", shop: "storage" });
-        return { acted: true, msg: `\u{1F3EA} \u0110\xE3 b\xE1n ${sold} ${CROP_NAMES[item] || item} n\xF4ng s\u1EA3n d\u01B0 (gi\u1EEF l\u1EA1i ${minKeep})` };
-      }
-    }
-    return null;
-  }
-  function tradeGold(cfg) {
-    const st = getMainState();
-    const shop = st.goldShop;
-    if (!shop || !((shop.newsDay || 0) > 0 || (st.day || 0) >= 30)) return null;
-    const seed = shop.seed || 0;
-    const day = st.day || 0;
-    const minutes = st.minutes || 0;
-    if (cfg.goldAutoSell !== false) {
-      const targetProfitPct = Number(cfg.goldProfitPercent) || 10;
-      for (const type of GOLD_TYPES) {
-        const holding = shop.hold?.[type];
-        if (!holding || holding.qty <= 0 || holding.cost <= 0) continue;
-        const costPerUnit = holding.cost / holding.qty;
-        const sellPrice = getGoldSellPrice(seed, type, day, minutes);
-        const profitPct = (sellPrice - costPerUnit) / costPerUnit * 100;
-        if (profitPct >= targetProfitPct && canAct("farm_gold", 3500)) {
-          const profit = st.sellGold?.(type, holding.qty);
-          if (profit !== null && profit !== void 0) {
-            markActed("farm_gold");
-            showFarmActionUI(cfg, { vendor: "goldShop", shop: "goldShop" });
-            return {
-              acted: true,
-              msg: `\u{1FA99} \u0110\xE3 b\xE1n ch\u1ED1t l\u1EDDi ${holding.qty} ch\u1EC9 ${GOLD_CATALOG[type]?.name || type} t\u1EA1i Ti\u1EC7m V\xE0ng C\xF4 Kim (+${formatVnd(profit)}\u0111, l\xE3i ${Math.round(profitPct)}%)`
-            };
+    const strategy = cfg.sellStrategy || "smart_all";
+    if (strategy === "smart_all" || strategy === "food_only") {
+      const kitchenStock = st.kitchen?.stock || {};
+      for (const [dish, count] of Object.entries(kitchenStock)) {
+        if ((count || 0) > 1) {
+          const toSell = (count || 0) - 1;
+          const anySt = st;
+          const sold = typeof anySt.sellDish === "function" ? anySt.sellDish(dish, toSell) : st.sellQty?.(dish, toSell);
+          if (sold) {
+            showFarmActionUI(cfg, { vendor: "grocery", shop: "storage" });
+            return { acted: true, msg: `\u{1F372} \u0110\xE3 b\xE1n ${toSell} ph\u1EA7n m\xF3n \u0103n (${dish}) d\u01B0 trong B\u1EBFp` };
           }
         }
       }
+      if (strategy === "food_only") return null;
     }
-    if (cfg.goldAutoBuy && canAct("farm_gold", 3500)) {
-      const prefType = cfg.goldPreferType || "mieng";
-      const keepCash = Number(cfg.goldKeepCash) || 5e5;
-      const buyPrice = getGoldBuyPrice(seed, prefType, day, minutes);
-      if (buyPrice > 0 && (st.gold || 0) - buyPrice >= keepCash && st.buyGold?.(prefType, 1) === "ok") {
-        markActed("farm_gold");
-        showFarmActionUI(cfg, { vendor: "goldShop", shop: "goldShop" });
-        return {
-          acted: true,
-          msg: `\u{1FA99} \u0110\xE3 mua 1 ch\u1EC9 ${GOLD_CATALOG[prefType]?.name || prefType} \u0111\u1EA7u t\u01B0 t\u1EA1i Ti\u1EC7m V\xE0ng C\xF4 Kim (-${formatVnd(buyPrice)}\u0111)`
-        };
+    const minKeep = Math.max(0, Number(cfg.surplusKeepQty) || 10);
+    const itemsWithSurplus = CROP_KEYS.map((item) => {
+      const reserved = getReservedQty(st, item, cfg);
+      const surplus = stockOf(st, item) - reserved - minKeep;
+      return { item, surplus };
+    }).filter((x) => x.surplus > 0).sort((a, b) => b.surplus - a.surplus);
+    for (const { item, surplus } of itemsWithSurplus) {
+      const sold = st.sellQty?.(item, surplus) || 0;
+      if (sold > 0) {
+        showFarmActionUI(cfg, { vendor: "grocery", shop: "storage" });
+        return { acted: true, msg: `\u{1F3EA} \u0110\xE3 b\xE1n ${sold} ${CROP_NAMES[item] || item} n\xF4ng s\u1EA3n d\u01B0 (B\u1EA3o l\u01B0u \u0111\u01A1n h\xE0ng + gi\u1EEF l\u1EA1i ${minKeep})` };
       }
     }
     return null;
   }
   function handleMarketSubArea(cfg) {
-    return (cfg.autoDeliverOrder !== false ? deliverGroceryOrder(cfg) : null) || (cfg.autoVillageBoard !== false ? deliverVillageBoard(cfg) : null) || (cfg.autoSellTrend !== false ? sellTrendGoods(cfg) : null) || (cfg.autoSellDailyTask !== false ? sellForDailyTask(cfg) : null) || (cfg.autoSellProduce === true ? sellSurplus(cfg) : null) || tradeGold(cfg) || NOT_ACTED;
+    return (cfg.autoDeliverOrder !== false ? deliverGroceryOrder(cfg) : null) || (cfg.autoVillageBoard !== false ? deliverVillageBoard(cfg) : null) || (cfg.autoSellTrend !== false ? sellTrendGoods(cfg) : null) || (cfg.autoSellDailyTask !== false ? sellForDailyTask(cfg) : null) || sellSmart(cfg) || NOT_ACTED;
   }
 
   // src/page-hook/modules/farm/tasks.ts
@@ -1353,16 +1309,158 @@
     return (cfg.autoFirstDayTasks !== false ? runFirstDayGuide() : null) || (cfg.autoNotebookPages !== false ? collectNotebookPages() : null) || (cfg.autoClaimQuests !== false ? claimQuests(cfg) : null) || (cfg.autoBreakPiggy !== false ? breakFullPiggy(cfg) : null) || (cfg.autoNewPiggy !== false ? buyNewPiggy(cfg) : null) || (cfg.autoFeedPiggy !== false ? feedPiggy(cfg) : null) || (cfg.autoSavings ? depositSavings(cfg) : null) || NOT_ACTED;
   }
 
+  // src/page-hook/modules/farm/gold-sim.ts
+  var GOLD_DATA = [
+    { id: "mieng", name: "V\xE0ng mi\u1EBFng 9999", base: 82e5, beta: 1, noise: 2e-3, spread: 0.016 },
+    { id: "nhan", name: "Nh\u1EABn tr\u01A1n 9999", base: 76e5, beta: 0.9, noise: 15e-4, spread: 0.012 },
+    { id: "k18", name: "V\xE0ng 18K", base: 56e5, beta: 0.7, noise: 2e-3, spread: 0.09 },
+    { id: "non", name: "V\xE0ng non 10K", base: 31e5, beta: 2.2, noise: 6e-3, spread: 0.05 }
+  ];
+  var GOLD_CATALOG = Object.fromEntries(
+    GOLD_DATA.map((e) => [e.id, e])
+  );
+  var GOLD_WAVES = [
+    { kind: "calm", drift: 0, weight: 38, len: [6, 16] },
+    { kind: "up", drift: 5e-3, weight: 24, len: [6, 18] },
+    { kind: "down", drift: -5e-3, weight: 22, len: [6, 18] },
+    { kind: "boom", drift: 0.011, weight: 8, len: [6, 12] },
+    { kind: "crash", drift: -0.011, weight: 8, len: [6, 12] }
+  ];
+  var _G_A = 4e-3;
+  var _G_V = 0.02;
+  var _G_Y = 3e-4;
+  var _G_B = 0.045;
+  var _G_X = 0.7;
+  function _goldRng(seed) {
+    let t = seed >>> 0;
+    return () => {
+      t = t + 1831565813 >>> 0;
+      let e = t;
+      e = Math.imul(e ^ e >>> 15, e | 1);
+      e ^= e + Math.imul(e ^ e >>> 7, e | 61);
+      return ((e ^ e >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  var _goldNorm = (rng) => Math.sqrt(-2 * Math.log(1 - rng())) * Math.cos(2 * Math.PI * rng());
+  var _goldStep = (day, min) => (day - 1) * 2 + (min >= 720 ? 1 : 0);
+  var _goldCache = /* @__PURE__ */ new Map();
+  function _goldSim(seed, step) {
+    let n = _goldCache.get(seed);
+    if (!n) {
+      n = {
+        index: [],
+        wave: [],
+        own: { mieng: [], nhan: [], k18: [], non: [] },
+        r: _goldRng(seed),
+        waveLeft: 0,
+        drift: 0,
+        kind: "calm",
+        x: 0,
+        bump: 0
+      };
+      _goldCache.set(seed, n);
+    }
+    while (n.index.length <= step) {
+      const e = n.index.length;
+      if (n.waveLeft <= 0) {
+        let total = n.r() * GOLD_WAVES.reduce((a, b) => a + b.weight, 0);
+        const w = GOLD_WAVES.find((x) => (total -= x.weight) < 0) || GOLD_WAVES[0];
+        n.kind = w.kind;
+        n.drift = w.drift;
+        n.waveLeft = w.len[0] + Math.floor(n.r() * (w.len[1] - w.len[0] + 1));
+      }
+      n.waveLeft--;
+      const t = Math.floor(e / 2) + 1;
+      const r = (t - 1) % 120 + 1;
+      n.bump = e % 2 === 0 && r === 10 && t > 120 ? _G_B : n.bump * _G_X;
+      n.x += n.drift + _G_A * _goldNorm(n.r) - _G_V * (n.x - _G_Y * e);
+      n.index.push(n.x + n.bump);
+      n.wave.push(n.kind);
+      for (const g of GOLD_DATA) {
+        if (!n.own[g.id]) n.own[g.id] = [];
+        n.own[g.id].push(g.noise * _goldNorm(n.r));
+      }
+    }
+    return n;
+  }
+  function _goldBasePrice(seed, type, step) {
+    const sim = _goldSim(seed, step);
+    const item = GOLD_CATALOG[type];
+    if (!item) return 0;
+    return item.base * Math.exp(item.beta * sim.index[step] + sim.own[type][step]);
+  }
+  function getGoldBuyPrice(seed, type, day, min) {
+    const step = _goldStep(day, min);
+    const base = _goldBasePrice(seed, type, step);
+    const item = GOLD_CATALOG[type];
+    return Math.round(base * (1 + (item ? item.spread / 2 : 0)) / 1e3) * 1e3;
+  }
+  function getGoldSellPrice(seed, type, day, min) {
+    const step = _goldStep(day, min);
+    const base = _goldBasePrice(seed, type, step);
+    const item = GOLD_CATALOG[type];
+    return Math.round(base * (1 - (item ? item.spread / 2 : 0)) / 1e3) * 1e3;
+  }
+
+  // src/page-hook/modules/farm/gold-shop.ts
+  var GOLD_TYPES = ["mieng", "nhan", "k18", "non"];
+  function handleGoldShopSubArea(cfg) {
+    const st = getMainState();
+    const shop = st.goldShop;
+    if (!shop || !((shop.newsDay || 0) > 0 || (st.day || 0) >= 30)) return NOT_ACTED;
+    const seed = shop.seed || 0;
+    const day = st.day || 0;
+    const minutes = st.minutes || 0;
+    if (cfg.goldAutoSell !== false) {
+      const targetProfitPct = Number(cfg.goldProfitPercent) || 10;
+      for (const type of GOLD_TYPES) {
+        const holding = shop.hold?.[type];
+        if (!holding || holding.qty <= 0 || holding.cost <= 0) continue;
+        const costPerUnit = holding.cost / holding.qty;
+        const sellPrice = getGoldSellPrice(seed, type, day, minutes);
+        const profitPct = (sellPrice - costPerUnit) / costPerUnit * 100;
+        if (profitPct >= targetProfitPct && canAct("farm_gold", 3500)) {
+          const profit = st.sellGold?.(type, holding.qty);
+          if (profit !== null && profit !== void 0) {
+            markActed("farm_gold");
+            showFarmActionUI(cfg, { vendor: "goldShop", shop: "goldShop" });
+            return {
+              acted: true,
+              msg: `\u{1FA99} \u0110\xE3 b\xE1n ch\u1ED1t l\u1EDDi ${holding.qty} ch\u1EC9 ${GOLD_CATALOG[type]?.name || type} t\u1EA1i Ti\u1EC7m V\xE0ng C\xF4 Kim (+${formatVnd(profit)}\u0111, l\xE3i ${Math.round(profitPct)}%)`
+            };
+          }
+        }
+      }
+    }
+    if (cfg.goldAutoBuy && canAct("farm_gold", 3500)) {
+      const prefType = cfg.goldPreferType || "mieng";
+      const keepCash = Number(cfg.goldKeepCash) || 5e5;
+      const buyPrice = getGoldBuyPrice(seed, prefType, day, minutes);
+      if (buyPrice > 0 && (st.gold || 0) - buyPrice >= keepCash && st.buyGold?.(prefType, 1) === "ok") {
+        markActed("farm_gold");
+        showFarmActionUI(cfg, { vendor: "goldShop", shop: "goldShop" });
+        return {
+          acted: true,
+          msg: `\u{1FA99} \u0110\xE3 mua 1 ch\u1EC9 ${GOLD_CATALOG[prefType]?.name || prefType} \u0111\u1EA7u t\u01B0 t\u1EA1i Ti\u1EC7m V\xE0ng C\xF4 Kim (-${formatVnd(buyPrice)}\u0111)`
+        };
+      }
+    }
+    return NOT_ACTED;
+  }
+
   // src/page-hook/modules/farm/index.ts
   var SUBAREA_HANDLERS = {
     house: handleHouseSubArea,
     crops: handleCropsSubArea,
     pet: handlePetSubArea,
     barn: handleBarnSubArea,
+    dairy: handleDairySubArea,
     coop: handleCoopSubArea,
     pond: handlePondSubArea,
+    salon: handleSalonSubArea,
     market: handleMarketSubArea,
-    dibay: handleDiBaySubArea
+    dibay: handleDiBaySubArea,
+    goldShop: handleGoldShopSubArea
   };
   function execFarmSubAreaStep(subAreaId, cfg) {
     if (!stores.main?.getState()) return NOT_ACTED;

@@ -16,7 +16,13 @@ function applyOnPlot(key: string, tool: string): boolean {
   const mainScene = getActiveScene('MainScene') as MainSceneLike | null;
   const s0 = getMainState();
   s0.setActiveTool?.(tool);
-  const prevPlotRef = s0.plots?.[key];
+  const p0 = s0.plots?.[key];
+  const prevWatered = p0?.watered;
+  const prevCrop = p0?.crop;
+  const prevCropId = prevCrop?.id;
+  const prevStage = prevCrop?.stage;
+  const prevFertilized = prevCrop?.fertilized;
+  const prevPests = prevCrop?.pests;
 
   if (mainScene && typeof mainScene.doWork === 'function') {
     try {
@@ -24,7 +30,15 @@ function applyOnPlot(key: string, tool: string): boolean {
     } catch {
       // Scene may reject the work call; fall back to the store action below
     }
-    if (getMainState().plots?.[key] !== prevPlotRef) return true;
+    const pAfter = getMainState().plots?.[key];
+    const hasChanged =
+      pAfter !== p0 ||
+      pAfter?.watered !== prevWatered ||
+      pAfter?.crop?.id !== prevCropId ||
+      pAfter?.crop?.stage !== prevStage ||
+      pAfter?.crop?.fertilized !== prevFertilized ||
+      pAfter?.crop?.pests !== prevPests;
+    if (hasChanged) return true;
   }
 
   const res = getMainState().applyTool?.(key, tool);
@@ -35,7 +49,17 @@ function applyOnPlot(key: string, tool: string): boolean {
       // Visual effect only
     }
   }
-  return Boolean(res);
+
+  const pFinal = getMainState().plots?.[key];
+  return (
+    Boolean(res) ||
+    pFinal !== p0 ||
+    pFinal?.watered !== prevWatered ||
+    pFinal?.crop?.id !== prevCropId ||
+    pFinal?.crop?.stage !== prevStage ||
+    pFinal?.crop?.fertilized !== prevFertilized ||
+    pFinal?.crop?.pests !== prevPests
+  );
 }
 
 function ensureSeed(cropId: string): string | null {
@@ -136,30 +160,40 @@ export function handleCropsSubArea(cfg: AppConfig): StepResult {
     }
   }
 
-  // C. Plant seed on 1 empty plot
-  if (cfg.autoPlant !== false && plotKeys.some((k) => st.plots?.[k] && !st.plots[k].crop)) {
-    if ((st.items?.mysteryBag || 0) > 0 && st.consumeItem?.('mysteryBag')) {
-      return { acted: true, msg: '🎁 Đã mở Túi hạt bí ẩn nhận thêm hạt giống' };
-    }
-
-    const emptyKey = plotKeys.find((k) => {
-      const p = getMainState().plots?.[k];
+  // C. Plant seed on empty plots
+  if (cfg.autoPlant !== false) {
+    const curP = getMainState();
+    const emptyKeys = plotKeys.filter((k) => {
+      const p = curP.plots?.[k];
       return p && !p.crop;
     });
-    if (emptyKey) {
+
+    if (emptyKeys.length > 0) {
+      if ((curP.items?.mysteryBag || 0) > 0 && curP.consumeItem?.('mysteryBag')) {
+        return { acted: true, msg: '🎁 Đã mở Túi hạt bí ẩn nhận thêm hạt giống' };
+      }
+
       const seed = chooseSeed(cfg);
-      if (seed && applyOnPlot(emptyKey, `seed:${seed}`)) {
-        return { acted: true, msg: `🌱 Đã gieo hạt ${CROP_NAMES[seed] || seed} ô (${emptyKey})` };
+      if (seed) {
+        for (const emptyKey of emptyKeys) {
+          if (applyOnPlot(emptyKey, `seed:${seed}`)) {
+            return { acted: true, msg: `🌱 Đã gieo hạt ${CROP_NAMES[seed] || seed} ô (${emptyKey})` };
+          }
+        }
       }
     }
   }
 
   // D. Water 1 dry plot
   if (cfg.autoWater !== false) {
-    const cur = getMainState();
+    const curW = getMainState();
     for (const key of plotKeys) {
-      if (cur.previewTool?.(key, 'wateringCan') && applyOnPlot(key, 'wateringCan')) {
-        return { acted: true, msg: `💧 Đã tưới nước ô (${key})` };
+      const p = curW.plots?.[key];
+      const isDry = p?.crop && !p.watered;
+      if (curW.previewTool?.(key, 'wateringCan') || isDry) {
+        if (applyOnPlot(key, 'wateringCan')) {
+          return { acted: true, msg: `💧 Đã tưới nước ô (${key})` };
+        }
       }
     }
   }
@@ -180,9 +214,11 @@ export function handleCropsSubArea(cfg: AppConfig): StepResult {
   }
 
   // F. Pay crop helper (Tèo) if unpaid
-  const curHelper = getMainState();
-  if (curHelper.helpers?.crops?.hired && (curHelper.helpers.crops.unpaid || 0) > 0 && curHelper.payHelper?.('crops') === true) {
-    return { acted: true, msg: '💸 Đã trả lương nợ cho Tèo phụ ruộng' };
+  if (cfg.autoPayHelperCrops !== false) {
+    const curHelper = getMainState();
+    if (curHelper.helpers?.crops?.hired && (curHelper.helpers.crops.unpaid || 0) > 0 && curHelper.payHelper?.('crops') === true) {
+      return { acted: true, msg: '💸 Đã trả lương nợ cho Tèo phụ ruộng' };
+    }
   }
 
   // G. Buy new land plot if offered

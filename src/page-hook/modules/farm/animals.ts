@@ -51,17 +51,31 @@ export function handlePetSubArea(cfg: AppConfig): StepResult {
   // Feed once per day
   if (cfg.petAutoFeed !== false && pet.fedDay !== m.day) {
     const diet = PET_DIETS.find((d) => d.kinds.includes(pet.kind || ''));
-    const foods = diet?.foods || DEFAULT_PET_FOOD;
-    const shop = diet?.shop || DEFAULT_PET_SHOP;
+    const mode = cfg.petFeedMode || 'smart_diet';
 
-    for (const f of foods) {
+    const foodOrder =
+      mode === 'custom' && cfg.petPreferFood && cfg.petPreferFood !== 'auto'
+        ? [cfg.petPreferFood]
+        : mode === 'fav_only'
+          ? diet?.foods?.slice(0, 1) || DEFAULT_PET_FOOD.slice(0, 1)
+          : diet?.foods || DEFAULT_PET_FOOD;
+
+    // Try feeding foods from inventory first
+    for (const f of foodOrder) {
       if (isFed(getMainState().feedPet?.(f))) {
         return { acted: true, msg: `🐕 Đã cho thú cưng (${petName}) ăn ${PET_FOOD_NAMES[f] || f}` };
       }
     }
-    for (const sf of shop) {
-      if (getMainState().buyPetFood?.(sf, 1) === 'ok' && isFed(getMainState().feedPet?.(sf))) {
-        return { acted: true, msg: `🦴 Đã mua ${PET_FOOD_NAMES[sf] || sf} & cho thú cưng (${petName}) ăn` };
+
+    // If still not fed and auto-buy is allowed (not inventory_only)
+    if (mode !== 'inventory_only' && cfg.petAutoBuyFood !== false) {
+      const buyPref = cfg.petBuyFoodType || 'auto_fav';
+      const shopItems = buyPref !== 'auto_fav' ? [buyPref] : diet?.shop || DEFAULT_PET_SHOP;
+
+      for (const sf of shopItems) {
+        if (getMainState().buyPetFood?.(sf, 1) === 'ok' && isFed(getMainState().feedPet?.(sf))) {
+          return { acted: true, msg: `🦴 Đã mua ${PET_FOOD_NAMES[sf] || sf} & cho thú cưng (${petName}) ăn` };
+        }
       }
     }
   }
@@ -101,7 +115,7 @@ export function handlePetSubArea(cfg: AppConfig): StepResult {
 }
 
 // ---------------------------------------------------------------------------
-// BARN (Buffalo & Dairy cows)
+// BARN (Buffalo - Anh Tám)
 // ---------------------------------------------------------------------------
 
 export function handleBarnSubArea(cfg: AppConfig): StepResult {
@@ -120,24 +134,40 @@ export function handleBarnSubArea(cfg: AppConfig): StepResult {
   }
 
   const stL = getMainState();
+  const minMood = Number(cfg.barnLendMoodMin) || 50;
   if (
     cfg.barnAutoLendBuffalo !== false &&
     stL.buffalo?.home &&
     stL.buffalo.lentDay !== stL.day &&
-    (stL.buffalo.mood || 0) >= 50 &&
+    (stL.buffalo.mood || 0) >= minMood &&
     stL.lendBuffalo?.() === 'ok'
   ) {
     return { acted: true, msg: '🤝 Đã cho bà con thuê Trâu cày ruộng' };
   }
 
+  if (cfg.barnAutoPayHelper !== false) {
+    const stH = getMainState();
+    if (stH.helpers?.buffalo?.hired && (stH.helpers.buffalo.unpaid || 0) > 0 && stH.payHelper?.('buffalo') === true) {
+      return { acted: true, msg: '💸 Đã trả lương anh Tám chăn trâu' };
+    }
+  }
+
+  return NOT_ACTED;
+}
+
+// ---------------------------------------------------------------------------
+// DAIRY (Dairy cows - Chị Mận)
+// ---------------------------------------------------------------------------
+
+export function handleDairySubArea(cfg: AppConfig): StepResult {
   const stC = getMainState();
-  if (cfg.barnAutoFeedCows !== false && (stC.dairy?.cows || []).some((c) => c.fedDay !== stC.day)) {
+  if (cfg.dairyAutoFeedCows !== false && (stC.dairy?.cows || []).some((c) => c.fedDay !== stC.day)) {
     if (stC.feedCows?.() === 'ok') {
       return { acted: true, msg: '🐄 Đã cho đàn Bò sữa ăn cỏ' };
     }
   }
 
-  if (cfg.barnAutoCureCows !== false) {
+  if (cfg.dairyAutoCureCows !== false) {
     const stCure = getMainState();
     for (const cow of stCure.dairy?.cows || []) {
       if ((cow.sickDay || 0) <= 0) continue;
@@ -151,18 +181,14 @@ export function handleBarnSubArea(cfg: AppConfig): StepResult {
   }
 
   const stMilk = getMainState();
-  if (cfg.barnAutoSellMilk !== false && (stMilk.dairy?.milk || 0) > 0) {
+  if (cfg.dairyAutoSellMilk !== false && (stMilk.dairy?.milk || 0) > 0) {
     const res = stMilk.sellMilk?.();
     if (res && res.liters > 0) {
       return { acted: true, msg: `🥛 Đã vắt & bán ${res.liters} lít sữa bò (+${formatVnd(res.total)}đ)` };
     }
   }
 
-  if (cfg.barnAutoPayHelper !== false) {
-    const stH = getMainState();
-    if (stH.helpers?.buffalo?.hired && (stH.helpers.buffalo.unpaid || 0) > 0 && stH.payHelper?.('buffalo') === true) {
-      return { acted: true, msg: '💸 Đã trả lương anh Tám chăn trâu' };
-    }
+  if (cfg.dairyAutoPayHelper !== false) {
     const stH2 = getMainState();
     if (stH2.helpers?.dairy?.hired && (stH2.helpers.dairy.unpaid || 0) > 0 && stH2.payHelper?.('dairy') === true) {
       return { acted: true, msg: '💸 Đã trả lương chị Mận chăm bò' };

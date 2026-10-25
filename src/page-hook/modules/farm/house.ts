@@ -220,21 +220,26 @@ export function handleHouseSubArea(cfg: AppConfig): StepResult {
     }
   }
 
-  if (getMainState().salonOpen) {
-    if (cfg.autoSalonShampoo !== false) {
-      const st = getMainState();
-      const hasRelax = (st.kitchen?.buffs || []).some((b) => b.kind === 'relax' && b.day === st.day);
-      if (!hasRelax && (st.gold || 0) >= 150000 && st.shampoo?.() === 'ok') {
-        showFarmActionUI(cfg, { panel: 'salon' });
-        return { acted: true, msg: '💆 Đã ghé Chị Linh Tây gội đầu dưỡng sinh (Buff thư giãn)' };
-      }
+  return NOT_ACTED;
+}
+
+export function handleSalonSubArea(cfg: AppConfig): StepResult {
+  if (!getMainState().salonOpen) return NOT_ACTED;
+
+  if (cfg.autoSalonShampoo !== false) {
+    const st = getMainState();
+    const hasRelax = (st.kitchen?.buffs || []).some((b) => b.kind === 'relax' && b.day === st.day);
+    if (!hasRelax && (st.gold || 0) >= 150000 && st.shampoo?.() === 'ok') {
+      showFarmActionUI(cfg, { panel: 'salon' });
+      return { acted: true, msg: '💆 Đã ghé Chị Linh Tây gội đầu dưỡng sinh (Buff thư giãn)' };
     }
-    if (cfg.autoSalonWhiten) {
-      const st = getMainState();
-      if ((st.player?.outfit?.tan || 0) > 0 && (st.gold || 0) >= 300000 && st.whiten?.() === 'ok') {
-        showFarmActionUI(cfg, { panel: 'salon' });
-        return { acted: true, msg: '✨ Đã ghé Chị Linh Tây tắm trắng nâng tông da' };
-      }
+  }
+
+  if (cfg.autoSalonWhiten) {
+    const st = getMainState();
+    if ((st.player?.outfit?.tan || 0) > 0 && (st.gold || 0) >= 300000 && st.whiten?.() === 'ok') {
+      showFarmActionUI(cfg, { panel: 'salon' });
+      return { acted: true, msg: '✨ Đã ghé Chị Linh Tây tắm trắng nâng tông da' };
     }
   }
 
