@@ -27,6 +27,8 @@ export const DEFAULT_CONFIG: AppConfig = {
   showOrderDrawer: true,
   hudWidth: 400,
   hudHeight: 800,
+  terminalWidth: 380,
+  isTerminalOpen: false,
 
   // General Delay & Transition settings
   taskDelayMs: 500,

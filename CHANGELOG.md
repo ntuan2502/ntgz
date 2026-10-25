@@ -5,6 +5,25 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.2.0] - 2026-10-25
+
+### 🌟 Tính Năng Mới & Nâng Cấp Kiến Trúc Giao Diện (Major UI Architecture)
+- **Tách Cửa Sổ Terminal Độc Lập Khỏi HUD (Standalone Floating Terminal)**:
+  - Tách cửa sổ Terminal ra khỏi thân HUD gốc, hiển thị dưới dạng một cửa sổ nổi riêng biệt khi nhấn nút `>_ Log (N...)`.
+  - **Tự động chuyển vị trí thông minh**: Hệ thống tự động xác định vị trí HUD đang gần mép màn hình nào hơn để neo Terminal vào bên Trái hoặc bên Phải HUD, tránh tuyệt đối việc bị tràn ra ngoài màn hình.
+  - **Đồng bộ chiều cao (Shared Height)**: Chiều cao của Terminal luôn bằng với HUD gốc; khi người dùng resize chiều cao ở một trong 2 cửa sổ, cửa sổ còn lại sẽ tự động thay đổi chiều cao tương ứng.
+  - **Chiều ngang độc lập (Independent Width)**: Cho phép kéo dãn chiều rộng Terminal riêng biệt từ 280px đến 800px (mặc định 380px), nhấp đúp vào góc để trở về mặc định.
+  - **Kéo di chuyển đồng bộ**: Kéo thanh tiêu đề của HUD hoặc Terminal sẽ di chuyển mượt mà cả hai cửa sổ cùng lúc.
+  - **Tiện ích tích hợp**: Nút sao chép toàn bộ log 1-click, nút chuyển đổi tự động cuộn (Auto-scroll), nút Xoá và nút Đóng.
+- **Vị Trí HUD Mặc Định Bên Trái**:
+  - Chuyển vị trí xuất hiện mặc định của HUD sang góc trái màn hình (`x = 16, y = 16`), thuận tiện cho việc thao tác và quan sát.
+- **Khống Chế Ranh Giới Màn Hình Tuyệt Đối (Screen Bounds Clamping)**:
+  - Khắc phục triệt để lỗi cho phép kéo HUD tràn tụt xuống dưới đáy màn hình.
+  - Chặn toàn bộ 4 cạnh (trên, dưới, trái, phải) trong phạm vi hiển thị an toàn của trình duyệt.
+  - Tự động kéo HUD vào trong khung nhìn nếu người dùng thu nhỏ cửa sổ trình duyệt (`window.resize`).
+
+---
+
 ## [1.1.2] - 2026-10-25
 
 ### 🚀 Cải Tiến Trải Nghiệm Người Dùng (Improvements)

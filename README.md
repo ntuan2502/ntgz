@@ -1,4 +1,4 @@
-# 🌾 Nông Trại GenZ Auto by Tún (v1.1.2)
+# 🌾 Nông Trại GenZ Auto by Tún (v1.2.0)
 
 > **Công cụ Auto đa khu vực (DOM + Canvas) thông minh, toàn diện dành riêng cho tựa game [Nông Trại GenZ](https://nongtraigenz.online/play/).**  
 > Bản quyền phát triển bởi **Tún**. Tiện ích mở rộng Google Chrome Extension theo chuẩn **Manifest V3**.
@@ -117,5 +117,5 @@ Xem toàn bộ lịch sử cập nhật và mô tả chức năng chi tiết t�
 ## 👤 Tác Giả & Bản Quyền
 
 - **Tác giả**: Tún (Nông Trại GenZ Auto by Tún)
-- **Phiên bản hiện tại**: `v1.1.2`
+- **Phiên bản hiện tại**: `v1.2.0`
 - **Giấy phép**: Bản quyền mã nguồn dành riêng cho cộng đồng người chơi Nông Trại GenZ.

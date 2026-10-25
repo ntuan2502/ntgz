@@ -4,7 +4,8 @@ import { GameSnapshot } from '@/shared/types/game-state';
 import { HudHeader } from './components/HudHeader';
 import { HudStats } from './components/HudStats';
 import { HudControls } from './components/HudControls';
-import { HudTerminal } from './components/HudTerminal';
+import { HudStatusBar } from './components/HudStatusBar';
+import { HudTerminalWindow } from './components/HudTerminalWindow';
 import { FarmTabContent } from './components/FarmTabContent';
 import { WharfTabContent } from './components/WharfTabContent';
 import { SeaTabContent } from './components/SeaTabContent';
@@ -38,6 +39,10 @@ export function HudApp({
   const [isOrderDrawerOpen, setIsOrderDrawerOpen] = useState<boolean>(false);
   const [version, setVersion] = useState<string>('1.0.0');
 
+  // Terminal Window State
+  const [terminalWidth, setTerminalWidth] = useState<number>(() => initialConfig.terminalWidth || 380);
+  const [isTerminalOpen, setIsTerminalOpen] = useState<boolean>(() => Boolean(initialConfig.isTerminalOpen));
+
   // Dialog states
   const [isCheckingUpdate, setIsCheckingUpdate] = useState<boolean>(false);
   const [updateInfo, setUpdateInfo] = useState<UpdateCheckResult | null>(null);
@@ -50,12 +55,11 @@ export function HudApp({
     width: initialConfig.hudWidth || 400,
     height: initialConfig.hudHeight || 800,
   }));
+  // Default position: appear from the left
   const [position, setPosition] = useState<{ x: number; y: number }>(() => {
-    const initW = initialConfig.hudWidth || 400;
-    const initH = initialConfig.hudHeight || 800;
     return {
-      x: Math.max(10, window.innerWidth - initW - 20),
-      y: Math.max(10, Math.min(40, window.innerHeight - initH - 10)),
+      x: 16,
+      y: 16,
     };
   });
   const isDraggingRef = useRef(false);
@@ -138,13 +142,18 @@ export function HudApp({
 
     const handleMouseMove = (moveEvent: MouseEvent) => {
       if (!isDraggingRef.current) return;
+      const minX = 10;
+      const maxX = Math.max(minX, window.innerWidth - size.width - 10);
+      const minY = 10;
+      const maxY = Math.max(minY, window.innerHeight - size.height - 10);
+
       const newX = Math.min(
-        Math.max(10, moveEvent.clientX - dragOffsetRef.current.x),
-        Math.max(10, window.innerWidth - size.width - 10)
+        Math.max(minX, moveEvent.clientX - dragOffsetRef.current.x),
+        maxX
       );
       const newY = Math.min(
-        Math.max(10, moveEvent.clientY - dragOffsetRef.current.y),
-        window.innerHeight - 50
+        Math.max(minY, moveEvent.clientY - dragOffsetRef.current.y),
+        maxY
       );
       setPosition({ x: newX, y: newY });
     };
@@ -232,6 +241,40 @@ export function HudApp({
     }));
   };
 
+  const handleUpdateTerminalWidth = (w: number) => {
+    setTerminalWidth(w);
+    handleUpdateConfig((prev) => ({ ...prev, terminalWidth: w }));
+  };
+
+  const handleUpdateSharedHeight = (h: number) => {
+    setSize((prev) => ({ ...prev, height: h }));
+    handleUpdateConfig((prev) => ({ ...prev, hudHeight: h }));
+  };
+
+  const handleToggleTerminal = () => {
+    setIsTerminalOpen((prev) => {
+      const next = !prev;
+      handleUpdateConfig((c) => ({ ...c, isTerminalOpen: next }));
+      return next;
+    });
+  };
+
+  // Clamp HUD inside viewport bounds on browser window resize
+  useEffect(() => {
+    const handleWindowResize = () => {
+      setPosition((prev) => {
+        const maxX = Math.max(10, window.innerWidth - size.width - 10);
+        const maxY = Math.max(10, window.innerHeight - size.height - 10);
+        return {
+          x: Math.min(Math.max(10, prev.x), maxX),
+          y: Math.min(Math.max(10, prev.y), maxY),
+        };
+      });
+    };
+    window.addEventListener('resize', handleWindowResize);
+    return () => window.removeEventListener('resize', handleWindowResize);
+  }, [size.width, size.height]);
+
   const handleCheckUpdate = async () => {
     setIsCheckingUpdate(true);
     try {
@@ -258,15 +301,16 @@ export function HudApp({
   }
 
   return (
-    <div
-      style={{
-        transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
-        width: `${size.width}px`,
-        height: isMinimized ? 'auto' : `${Math.min(size.height, window.innerHeight - 20)}px`,
-        pointerEvents: 'auto',
-      }}
-      className="fixed left-0 top-0 z-[2147483600] flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 shadow-2xl bg-white/98 text-slate-800 backdrop-blur-xl font-sans select-none ring-1 ring-black/5"
-    >
+    <>
+      <div
+        style={{
+          transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
+          width: `${size.width}px`,
+          height: isMinimized ? 'auto' : `${Math.min(size.height, Math.max(MIN_HEIGHT, window.innerHeight - position.y - 10))}px`,
+          pointerEvents: 'auto',
+        }}
+        className="fixed left-0 top-0 z-[2147483600] flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 shadow-2xl bg-white/98 text-slate-800 backdrop-blur-xl font-sans select-none ring-1 ring-black/5"
+      >
       {/* macOS Styled Header with Traffic Light Buttons */}
       <HudHeader
         version={version}
@@ -295,11 +339,12 @@ export function HudApp({
             onToggleOrderDrawer={() => setIsOrderDrawerOpen(!isOrderDrawerOpen)}
           />
 
-          {/* Current Action Status Bar & Session Log Terminal */}
-          <HudTerminal
+          {/* Current Action Status Bar (Terminal toggles separate window) */}
+          <HudStatusBar
             lastAction={lastAction}
-            logs={logs}
-            onClearLogs={clearSessionLogs}
+            logsCount={logs.length}
+            isTerminalOpen={isTerminalOpen}
+            onToggleTerminal={handleToggleTerminal}
           />
 
           {/* Navigation Tabs */}
@@ -412,5 +457,22 @@ export function HudApp({
         </div>
       )}
     </div>
+
+    {/* Standalone Detached Terminal Window */}
+    <HudTerminalWindow
+      isOpen={isTerminalOpen && !isMinimized}
+      onClose={handleToggleTerminal}
+      logs={logs}
+      onClearLogs={clearSessionLogs}
+      lastAction={lastAction}
+      position={position}
+      hudSize={size}
+      terminalWidth={terminalWidth}
+      onUpdateTerminalWidth={handleUpdateTerminalWidth}
+      onUpdateSharedHeight={handleUpdateSharedHeight}
+      onMouseDownDrag={handleMouseDownDrag}
+      isHudMinimized={isMinimized}
+    />
+  </>
   );
 }

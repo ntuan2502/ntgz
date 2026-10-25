@@ -31,6 +31,8 @@ export interface AppConfig {
   showOrderDrawer: boolean;
   hudWidth: number;
   hudHeight: number;
+  terminalWidth?: number;
+  isTerminalOpen?: boolean;
 
   // General Delay & Transition settings
   taskDelayMs: number;
