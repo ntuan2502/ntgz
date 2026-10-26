@@ -60,11 +60,11 @@ export function handleFarmstayOperations(m: MainGameStoreState, cfg: AppConfig):
   if (!fs) return NOT_ACTED;
   const minGold = cfg.farmstayMinGoldKeep ?? 10000;
 
-  // 1. Tự động xác nhận cẩm nang đón khách nếu chưa nhận
-  if (cfg.farmstayAutoGuide && fs.guideDay !== m.day) {
+  // 1. Tự động xác nhận cẩm nang đón khách nếu chưa từng nhận
+  if (cfg.farmstayAutoGuide && (!fs.guideDay || fs.guideDay <= 0)) {
     if (typeof m.acceptFarmstayGuide === 'function') {
       m.acceptFarmstayGuide();
-      return { acted: true, msg: '📖 Đã tiếp nhận cẩm nang đón khách du lịch ngày mới' };
+      return { acted: true, msg: '📖 Đã tiếp nhận cẩm nang đón khách du lịch' };
     }
   }
 
@@ -124,7 +124,7 @@ export function handleFarmstayGarden(m: MainGameStoreState, cfg: AppConfig): Ste
   const plots = veg.plots || [];
 
   // 1. Tự động mua thêm luống rau mới nếu bật
-  if (cfg.farmstayVegAutoBuyPlots && openCount < 24 && typeof m.buyVegPlot === 'function') {
+  if (cfg.farmstayVegAutoBuyPlots && fs.built?.veggie && openCount < 24 && typeof m.buyVegPlot === 'function') {
     const plotCost = openCount < 4 ? 0 : Math.round(2000000 * Math.pow(1.15, openCount - 4) / 100000) * 100000;
     if ((m.gold || 0) >= plotCost + minGold) {
       const res = m.buyVegPlot();
@@ -177,7 +177,7 @@ export function handleFarmstayGarden(m: MainGameStoreState, cfg: AppConfig): Ste
   }
 
   // 5. Gieo hạt giống vào luống trống
-  if (cfg.farmstayVegAutoPlant) {
+  if (cfg.farmstayVegAutoPlant && fs.built?.veggie) {
     const hasEmpty = plots.some((p: FarmstayVegPlot | null, i: number) => i < openCount && !p) || plots.length < openCount;
     if (hasEmpty) {
       let seed = cfg.farmstayVegPreferSeed;
@@ -294,8 +294,8 @@ export function hasPendingFarmstayWork(m: MainGameStoreState, cfg: AppConfig): b
 
     const curTime = (m.day || 0) * 24 * 60 + (m.minutes || 0);
 
-    // 1. Cẩm nang đón khách du lịch ngày mới
-    if (cfg.farmstayAutoGuide && fs.guideDay !== m.day) {
+    // 1. Cẩm nang đón khách du lịch (chỉ nhận 1 lần duy nhất khi mở Farmstay)
+    if (cfg.farmstayAutoGuide && (!fs.guideDay || fs.guideDay <= 0)) {
       return true;
     }
 

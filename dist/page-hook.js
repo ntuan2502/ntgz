@@ -2907,10 +2907,10 @@
     const fs = m.farmstay;
     if (!fs) return NOT_ACTED;
     const minGold = cfg.farmstayMinGoldKeep ?? 1e4;
-    if (cfg.farmstayAutoGuide && fs.guideDay !== m.day) {
+    if (cfg.farmstayAutoGuide && (!fs.guideDay || fs.guideDay <= 0)) {
       if (typeof m.acceptFarmstayGuide === "function") {
         m.acceptFarmstayGuide();
-        return { acted: true, msg: "\u{1F4D6} \u0110\xE3 ti\u1EBFp nh\u1EADn c\u1EA9m nang \u0111\xF3n kh\xE1ch du l\u1ECBch ng\xE0y m\u1EDBi" };
+        return { acted: true, msg: "\u{1F4D6} \u0110\xE3 ti\u1EBFp nh\u1EADn c\u1EA9m nang \u0111\xF3n kh\xE1ch du l\u1ECBch" };
       }
     }
     if (cfg.farmstayAutoOpen && !fs.open) {
@@ -2959,7 +2959,7 @@
     const minGold = cfg.farmstayMinGoldKeep ?? 1e4;
     const openCount = veg.open || 0;
     const plots = veg.plots || [];
-    if (cfg.farmstayVegAutoBuyPlots && openCount < 24 && typeof m.buyVegPlot === "function") {
+    if (cfg.farmstayVegAutoBuyPlots && fs.built?.veggie && openCount < 24 && typeof m.buyVegPlot === "function") {
       const plotCost = openCount < 4 ? 0 : Math.round(2e6 * Math.pow(1.15, openCount - 4) / 1e5) * 1e5;
       if ((m.gold || 0) >= plotCost + minGold) {
         const res = m.buyVegPlot();
@@ -3002,7 +3002,7 @@
         }
       }
     }
-    if (cfg.farmstayVegAutoPlant) {
+    if (cfg.farmstayVegAutoPlant && fs.built?.veggie) {
       const hasEmpty = plots.some((p, i) => i < openCount && !p) || plots.length < openCount;
       if (hasEmpty) {
         let seed = cfg.farmstayVegPreferSeed;
