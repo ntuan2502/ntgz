@@ -1302,10 +1302,6 @@
     if (cfg.pondAutoFeed !== false && (stF.pond?.fish?.length || 0) > 0 && stF.pond?.fedDay !== stF.day && stF.pond?.bebi !== "helper" && stF.feedFish?.() === "ok") {
       return { acted: true, msg: "\u{1F35E} \u0110\xE3 r\u1EA3i c\xE1m cho \u0111\xE0n c\xE1 trong ao \u0103n" };
     }
-    const stH = getMainState();
-    if (cfg.pondAutoPayHelper !== false && stH.helpers?.pond?.hired && (stH.helpers.pond.unpaid || 0) > 0 && stH.payHelper?.("pond") === true) {
-      return { acted: true, msg: "\u{1F4B8} \u0110\xE3 tr\u1EA3 l\u01B0\u01A1ng ng\u01B0\u1EDDi ph\u1EE5 Ao c\xE1" };
-    }
     return NOT_ACTED;
   }
 
@@ -1804,10 +1800,13 @@
       const eggReserved = reservedMap["egg"] || 0;
       const eggSurplus = eggs - minKeep - eggReserved;
       if (eggSurplus > 0) {
+        const EGG_BASE_PRICE = 15e3;
+        const NIGHT_MARKET_MULT = 1.25;
         candidates.push({
           id: "egg",
           surplus: eggSurplus,
-          price: 3e3,
+          price: Math.round(EGG_BASE_PRICE * NIGHT_MARKET_MULT),
+          // 18_750
           isEgg: true
         });
       }

@@ -139,6 +139,7 @@ export interface AppConfig {
   pondAutoStock: boolean;
   preferPondFish: string;
   pondAutoFeed: boolean;
+  /** @deprecated Game không có helper Ao cá, Bé Bi không nhận lương (ref: play.formatted.js:47728) */
   pondAutoPayHelper: boolean;
 
   // 8. Salon (Chị Linh Tây) - already covered in section 1 fields autoSalonShampoo, autoSalonWhiten

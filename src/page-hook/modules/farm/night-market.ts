@@ -68,10 +68,12 @@ export function handleNightMarketSubArea(cfg: AppConfig): StepResult {
     const eggReserved = reservedMap['egg'] || 0;
     const eggSurplus = eggs - minKeep - eggReserved;
     if (eggSurplus > 0) {
+      const EGG_BASE_PRICE = 15_000;      // mt — play.formatted.js:15073
+      const NIGHT_MARKET_MULT = 1.25;     // ZE — play.formatted.js:43878
       candidates.push({
         id: 'egg',
         surplus: eggSurplus,
-        price: 3000,
+        price: Math.round(EGG_BASE_PRICE * NIGHT_MARKET_MULT), // 18_750
         isEgg: true,
       });
     }

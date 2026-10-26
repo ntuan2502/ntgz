@@ -286,11 +286,9 @@ export function handlePondSubArea(cfg: AppConfig): StepResult {
     return { acted: true, msg: '🍞 Đã rải cám cho đàn cá trong ao ăn' };
   }
 
-  // Original JS had no pond helper payment; keep the config option working via payHelper('pond')
-  const stH = getMainState();
-  if (cfg.pondAutoPayHelper !== false && stH.helpers?.pond?.hired && (stH.helpers.pond.unpaid || 0) > 0 && stH.payHelper?.('pond') === true) {
-    return { acted: true, msg: '💸 Đã trả lương người phụ Ao cá' };
-  }
+  // NOTE: Game không có helper 'pond'. Chỉ có 5 loại: crops/fishing/poultry/buffalo/dairy.
+  // Ao cá dùng NPC Bé Bi (state.pond.bebi === 'helper'), không nhận lương.
+  // Ref: play.formatted.js:47728-47734 (WM), 42834 (Bé Bi).
 
   return NOT_ACTED;
 }
