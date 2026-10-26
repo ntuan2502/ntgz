@@ -29668,6 +29668,9 @@
             updateHeaderStats2(fresh);
           }
         } else {
+          if (res && !res.ok) {
+            console.warn(`[Farm Runner] subArea "${subId}" step error:`, res.error);
+          }
           break;
         }
       }
@@ -30145,6 +30148,9 @@
           updateHeaderStats2(fresh);
         }
       } else {
+        if (res && !res.ok) {
+          console.warn("[Farmstay Runner] FARMSTAY_STEP error:", res.error);
+        }
         break;
       }
     }

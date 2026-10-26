@@ -286,39 +286,55 @@ export const finishFarmstayCycle = async () => {
 };
 
 export function execFarmstayStep(cfg: AppConfig): StepResult {
-  const mainStore = stores.main;
-  if (!mainStore) return NOT_ACTED;
-  const m = mainStore.getState();
-  if (!m || !m.farmstay) return NOT_ACTED;
+  try {
+    const mainStore = stores.main;
+    if (!mainStore) return NOT_ACTED;
+    const m = mainStore.getState();
+    if (!m || !m.farmstay) return NOT_ACTED;
 
-  // Acknowledge farmstay news if any
-  if (m.farmstay.news && typeof m.ackFarmstayNews === 'function') {
-    m.ackFarmstayNews();
-  }
-
-  // Dismiss any dialogs/interrupts
-  const interrupted = dismissInterruptsIfNeeded(cfg);
-  if (interrupted) return interrupted;
-
-  // Execute sub-areas in configured order
-  const subOrder = cfg.farmstaySubOrder || ['operation', 'repairs', 'garden', 'staff', 'orders'];
-  for (const subId of subOrder) {
-    if (cfg.farmstaySubEnabled && cfg.farmstaySubEnabled[subId] === false) continue;
-    const handler = FARMTAY_SUBAREA_HANDLERS[subId];
-    if (handler) {
-      const res = handler(m, cfg);
-      if (res && res.acted) {
-        farmstayHadActions = true;
-        return res;
+    // Acknowledge farmstay news if any
+    if (m.farmstay.news && typeof m.ackFarmstayNews === 'function') {
+      try {
+        m.ackFarmstayNews();
+      } catch (e) {
+        console.warn('[Farmstay] ackFarmstayNews failed:', e);
       }
     }
-  }
 
-  // Nếu chu kỳ vừa qua đã có hành động thay đổi dữ liệu, thoát Farmstay an toàn về Farm để kích hoạt auto-save _K()
-  if (farmstayHadActions) {
-    farmstayHadActions = false;
-    finishFarmstayCycle().catch((e) => console.warn('[Farmstay] finish cycle failed:', e));
-  }
+    // Dismiss any dialogs/interrupts
+    const interrupted = dismissInterruptsIfNeeded(cfg);
+    if (interrupted) return interrupted;
 
-  return NOT_ACTED;
+    // Execute sub-areas in configured order
+    const subOrder = cfg.farmstaySubOrder || ['operation', 'repairs', 'garden', 'staff', 'orders'];
+    for (const subId of subOrder) {
+      if (cfg.farmstaySubEnabled && cfg.farmstaySubEnabled[subId] === false) continue;
+      const handler = FARMTAY_SUBAREA_HANDLERS[subId];
+      if (handler) {
+        try {
+          const res = handler(m, cfg);
+          if (res && res.acted) {
+            farmstayHadActions = true;
+            return res;
+          }
+        } catch (subErr) {
+          console.error(`[Farmstay SubArea Error] SubArea "${subId}" failed:`, subErr);
+        }
+      }
+    }
+
+    // Nếu chu kỳ vừa qua đã có hành động thay đổi dữ liệu, thoát Farmstay an toàn về Farm để kích hoạt auto-save _K()
+    // Lưu ý: Chỉ thoát nếu chạy chế độ tất cả khu vực, không thoát nếu người dùng đang khóa tab Farmstay
+    if (farmstayHadActions) {
+      farmstayHadActions = false;
+      if (cfg.runMode !== 'tab' || cfg.activeTab !== 'farmstay') {
+        finishFarmstayCycle().catch((e) => console.warn('[Farmstay] finish cycle failed:', e));
+      }
+    }
+
+    return NOT_ACTED;
+  } catch (err: unknown) {
+    console.error('[Farmstay Error] execFarmstayStep failed:', err);
+    return NOT_ACTED;
+  }
 }

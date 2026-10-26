@@ -35,10 +35,15 @@ const SUBAREA_HANDLERS: Record<FarmSubAreaId, (cfg: AppConfig) => StepResult> = 
 export function execFarmSubAreaStep(subAreaId: FarmSubAreaId, cfg: AppConfig): StepResult {
   if (!stores.main?.getState()) return NOT_ACTED;
 
-  // Always dismiss blocking interrupts first
-  const interrupted = dismissInterruptsIfNeeded(cfg);
-  if (interrupted) return interrupted;
+  try {
+    // Always dismiss blocking interrupts first
+    const interrupted = dismissInterruptsIfNeeded(cfg);
+    if (interrupted) return interrupted;
 
-  const handler = SUBAREA_HANDLERS[subAreaId];
-  return handler ? handler(cfg) : NOT_ACTED;
+    const handler = SUBAREA_HANDLERS[subAreaId];
+    return handler ? handler(cfg) : NOT_ACTED;
+  } catch (err: unknown) {
+    console.error(`[Farm SubArea Error] SubArea "${subAreaId}" failed:`, err);
+    return NOT_ACTED;
+  }
 }

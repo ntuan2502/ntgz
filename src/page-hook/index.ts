@@ -166,6 +166,7 @@ interface GameActionPayload {
       }
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : String(err);
+      console.error(`[NTG Hook Error] execAction failed for "${action}":`, err);
       return { ok: false, error: errorMsg };
     }
   }

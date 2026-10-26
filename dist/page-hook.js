@@ -1126,7 +1126,11 @@
   function handlePetSubArea(cfg) {
     const m = getMainState();
     if (m.pets?.pet?.away) {
-      m.pickUpPet?.();
+      try {
+        m.pickUpPet?.();
+      } catch (e) {
+        console.warn("[Pet] pickUpPet failed:", e);
+      }
       return getMainState().pets?.pet?.away ? NOT_ACTED : { acted: true, msg: "\u{1F43E} \u0110\xE3 \u0111\xF3n th\xFA c\u01B0ng v\u1EC1 nh\xE0" };
     }
     const pet = m.pets?.pet;
@@ -1137,16 +1141,24 @@
       const mode = cfg.petFeedMode || "smart_diet";
       const foodOrder = mode === "custom" && cfg.petPreferFood && cfg.petPreferFood !== "auto" ? [cfg.petPreferFood] : mode === "fav_only" ? diet?.foods?.slice(0, 1) || DEFAULT_PET_FOOD.slice(0, 1) : diet?.foods || DEFAULT_PET_FOOD;
       for (const f of foodOrder) {
-        if (isFed(getMainState().feedPet?.(f))) {
-          return { acted: true, msg: `\u{1F415} \u0110\xE3 cho th\xFA c\u01B0ng (${petName}) \u0103n ${PET_FOOD_NAMES[f] || f}` };
+        try {
+          if (isFed(getMainState().feedPet?.(f))) {
+            return { acted: true, msg: `\u{1F415} \u0110\xE3 cho th\xFA c\u01B0ng (${petName}) \u0103n ${PET_FOOD_NAMES[f] || f}` };
+          }
+        } catch (e) {
+          console.warn(`[Pet] feedPet(${f}) error:`, e);
         }
       }
       if (mode !== "inventory_only" && cfg.petAutoBuyFood !== false) {
         const buyPref = cfg.petBuyFoodType || "auto_fav";
         const shopItems = buyPref !== "auto_fav" ? [buyPref] : diet?.shop || DEFAULT_PET_SHOP;
         for (const sf of shopItems) {
-          if (getMainState().buyPetFood?.(sf, 1) === "ok" && isFed(getMainState().feedPet?.(sf))) {
-            return { acted: true, msg: `\u{1F9B4} \u0110\xE3 mua ${PET_FOOD_NAMES[sf] || sf} & cho th\xFA c\u01B0ng (${petName}) \u0103n` };
+          try {
+            if (getMainState().buyPetFood?.(sf, 1) === "ok" && isFed(getMainState().feedPet?.(sf))) {
+              return { acted: true, msg: `\u{1F9B4} \u0110\xE3 mua ${PET_FOOD_NAMES[sf] || sf} & cho th\xFA c\u01B0ng (${petName}) \u0103n` };
+            }
+          } catch (e) {
+            console.warn(`[Pet] buyPetFood/feedPet(${sf}) error:`, e);
           }
         }
       }
@@ -1155,23 +1167,47 @@
     const curPet = curM.pets?.pet;
     if (cfg.petAutoCuddle !== false && curPet) {
       const cuddlesToday = curPet.cuddleDay === curM.day ? curPet.cuddles || 0 : 0;
-      if (cuddlesToday < 3 && curM.cuddlePet?.() === "ok") {
-        return { acted: true, msg: `\u{1F495} \u0110\xE3 vu\u1ED1t ve th\xFA c\u01B0ng (${cuddlesToday + 1}/3)` };
+      if (cuddlesToday < 3) {
+        try {
+          if (curM.cuddlePet?.() === "ok") {
+            return { acted: true, msg: `\u{1F495} \u0110\xE3 vu\u1ED1t ve th\xFA c\u01B0ng (${cuddlesToday + 1}/3)` };
+          }
+        } catch (e) {
+          console.warn("[Pet] cuddlePet error:", e);
+        }
       }
     }
-    if (cfg.petAutoBath !== false && getMainState().bathPet?.() === "ok") {
-      return { acted: true, msg: "\u{1F6C1} \u0110\xE3 t\u1EAFm th\u01A1m tho cho th\xFA c\u01B0ng" };
+    if (cfg.petAutoBath !== false) {
+      try {
+        if (getMainState().bathPet?.() === "ok") {
+          return { acted: true, msg: "\u{1F6C1} \u0110\xE3 t\u1EAFm th\u01A1m tho cho th\xFA c\u01B0ng" };
+        }
+      } catch (e) {
+        console.warn("[Pet] bathPet error:", e);
+      }
     }
     const st = getMainState();
     const trickPet = st.pets?.pet;
     if (cfg.petAutoTrick !== false && trickPet) {
-      if (trickPet.playDay !== st.day && st.pets?.gear?.includes("ball") && st.doTrick?.("fetch") === "ok") {
-        return { acted: true, msg: "\u{1F3BE} Ch\u01A1i n\xE9m b\xF3ng c\xF9ng th\xFA c\u01B0ng (+8 tim)" };
+      const petGear = st.pets?.gear;
+      const hasBall = Array.isArray(petGear) && petGear.includes("ball");
+      if (trickPet.playDay !== st.day && hasBall) {
+        try {
+          if (st.doTrick?.("fetch") === "ok") {
+            return { acted: true, msg: "\u{1F3BE} Ch\u01A1i n\xE9m b\xF3ng c\xF9ng th\xFA c\u01B0ng (+8 tim)" };
+          }
+        } catch (e) {
+          console.warn("[Pet] doTrick(fetch) error:", e);
+        }
       }
       if (trickPet.trickDay !== st.day) {
         for (const tr of PET_TRICKS) {
-          if (getMainState().doTrick?.(tr) === "ok") {
-            return { acted: true, msg: `\u{1F3BE} T\u1EADp tr\xF2 "${PET_TRICK_NAMES[tr] || tr}" c\xF9ng th\xFA c\u01B0ng` };
+          try {
+            if (getMainState().doTrick?.(tr) === "ok") {
+              return { acted: true, msg: `\u{1F3BE} T\u1EADp tr\xF2 "${PET_TRICK_NAMES[tr] || tr}" c\xF9ng th\xFA c\u01B0ng` };
+            }
+          } catch (e) {
+            console.warn(`[Pet] doTrick(${tr}) error:`, e);
           }
         }
       }
@@ -1181,10 +1217,19 @@
     if (cfg.petAutoWalk !== false && walkPetObj) {
       const walkedToday = walkPetObj.walkDay === stWalk.day || walkPetObj.walkedDay === stWalk.day;
       if (!walkedToday) {
-        const anySt = stWalk;
-        const walkRes = (typeof anySt.walkPet === "function" ? anySt.walkPet() : void 0) || (typeof anySt.doTrick === "function" ? anySt.doTrick("walk") : void 0);
-        if (walkRes === "ok" || walkRes === true) {
-          return { acted: true, msg: `\u{1F9AE} \u0110\xE3 d\u1EAFt th\xFA c\u01B0ng (${petName}) \u0111i d\u1EA1o m\xE1t (+tim)` };
+        try {
+          const anySt = stWalk;
+          let walked = false;
+          if (typeof anySt.walkPet === "function") {
+            walked = anySt.walkPet() === "ok" || anySt.walkPet() === true;
+          } else if (typeof anySt.setPetFollow === "function" && !walkPetObj.follow) {
+            walked = anySt.setPetFollow(true) === "ok";
+          }
+          if (walked) {
+            return { acted: true, msg: `\u{1F9AE} \u0110\xE3 d\u1EAFt th\xFA c\u01B0ng (${petName}) \u0111i d\u1EA1o m\xE1t (+tim)` };
+          }
+        } catch (e) {
+          console.warn("[Pet] walkPet/setPetFollow error:", e);
         }
       }
     }
@@ -1193,25 +1238,49 @@
   function handleBarnSubArea(cfg) {
     const m = getMainState();
     if (cfg.barnAutoFeedBuffalo !== false && m.buffalo?.home) {
-      if (m.buffalo.fedDay !== m.day && m.buffalo.lentDay !== m.day && m.feedBuffalo?.() === "ok") {
-        return { acted: true, msg: "\u{1F403} \u0110\xE3 cho Tr\xE2u \u0103n r\u01A1m" };
+      if (m.buffalo.fedDay !== m.day && m.buffalo.lentDay !== m.day) {
+        try {
+          if (m.feedBuffalo?.() === "ok") {
+            return { acted: true, msg: "\u{1F403} \u0110\xE3 cho Tr\xE2u \u0103n r\u01A1m" };
+          }
+        } catch (e) {
+          console.warn("[Barn] feedBuffalo failed:", e);
+        }
       }
     }
     const stB = getMainState();
     if (cfg.barnAutoBathBuffalo !== false && stB.buffalo?.home) {
-      if (stB.buffalo.bathDay !== stB.day && stB.buffalo.lentDay !== stB.day && stB.bathBuffalo?.() === "ok") {
-        return { acted: true, msg: "\u{1F6BF} \u0110\xE3 t\u1EAFm m\xE1t cho Tr\xE2u" };
+      if (stB.buffalo.bathDay !== stB.day && stB.buffalo.lentDay !== stB.day) {
+        try {
+          if (stB.bathBuffalo?.() === "ok") {
+            return { acted: true, msg: "\u{1F6BF} \u0110\xE3 t\u1EAFm m\xE1t cho Tr\xE2u" };
+          }
+        } catch (e) {
+          console.warn("[Barn] bathBuffalo failed:", e);
+        }
       }
     }
     const stL = getMainState();
     const minMood = Number(cfg.barnLendMoodMin) || 50;
-    if (cfg.barnAutoLendBuffalo !== false && stL.buffalo?.home && stL.buffalo.lentDay !== stL.day && (stL.buffalo.mood || 0) >= minMood && stL.lendBuffalo?.() === "ok") {
-      return { acted: true, msg: "\u{1F91D} \u0110\xE3 cho b\xE0 con thu\xEA Tr\xE2u c\xE0y ru\u1ED9ng" };
+    if (cfg.barnAutoLendBuffalo !== false && stL.buffalo?.home && stL.buffalo.lentDay !== stL.day && (stL.buffalo.mood || 0) >= minMood) {
+      try {
+        if (stL.lendBuffalo?.() === "ok") {
+          return { acted: true, msg: "\u{1F91D} \u0110\xE3 cho b\xE0 con thu\xEA Tr\xE2u c\xE0y ru\u1ED9ng" };
+        }
+      } catch (e) {
+        console.warn("[Barn] lendBuffalo failed:", e);
+      }
     }
     if (cfg.barnAutoPayHelper !== false) {
       const stH = getMainState();
-      if (stH.helpers?.buffalo?.hired && (stH.helpers.buffalo.unpaid || 0) > 0 && stH.payHelper?.("buffalo") === true) {
-        return { acted: true, msg: "\u{1F4B8} \u0110\xE3 tr\u1EA3 l\u01B0\u01A1ng anh T\xE2m ch\u0103n tr\xE2u" };
+      if (stH.helpers?.buffalo?.hired && (stH.helpers.buffalo.unpaid || 0) > 0) {
+        try {
+          if (stH.payHelper?.("buffalo") === true) {
+            return { acted: true, msg: "\u{1F4B8} \u0110\xE3 tr\u1EA3 l\u01B0\u01A1ng anh T\xE2m ch\u0103n tr\xE2u" };
+          }
+        } catch (e) {
+          console.warn("[Barn] payHelper(buffalo) failed:", e);
+        }
       }
     }
     return NOT_ACTED;
@@ -1219,33 +1288,51 @@
   function handleDairySubArea(cfg) {
     const stC = getMainState();
     if (cfg.dairyAutoFeedCows !== false && (stC.dairy?.cows || []).some((c) => c.fedDay !== stC.day)) {
-      if (stC.feedCows?.() === "ok") {
-        return { acted: true, msg: "\u{1F404} \u0110\xE3 cho \u0111\xE0n B\xF2 s\u1EEFa \u0103n c\u1ECF" };
+      try {
+        if (stC.feedCows?.() === "ok") {
+          return { acted: true, msg: "\u{1F404} \u0110\xE3 cho \u0111\xE0n B\xF2 s\u1EEFa \u0103n c\u1ECF" };
+        }
+      } catch (e) {
+        console.warn("[Dairy] feedCows failed:", e);
       }
     }
     if (cfg.dairyAutoCureCows !== false) {
       const stCure = getMainState();
       for (const cow of stCure.dairy?.cows || []) {
         if ((cow.sickDay || 0) <= 0) continue;
-        if ((stCure.dairy?.medicine || 0) <= 0 && (stCure.gold || 0) >= 8e4) {
-          stCure.buyMedicine?.();
-        }
-        if (getMainState().cureCow?.(cow.id) === "ok") {
-          return { acted: true, msg: `\u{1F48A} \u0110\xE3 ti\xEAm thu\u1ED1c ch\u1EEFa b\u1EC7nh cho B\xF2 ${cow.name || "#" + cow.id}` };
+        try {
+          if ((stCure.dairy?.medicine || 0) <= 0 && (stCure.gold || 0) >= 8e4) {
+            stCure.buyMedicine?.();
+          }
+          if (getMainState().cureCow?.(cow.id) === "ok") {
+            return { acted: true, msg: `\u{1F48A} \u0110\xE3 ti\xEAm thu\u1ED1c ch\u1EEFa b\u1EC7nh cho B\xF2 ${cow.name || "#" + cow.id}` };
+          }
+        } catch (e) {
+          console.warn(`[Dairy] cureCow(${cow.id}) failed:`, e);
         }
       }
     }
     const stMilk = getMainState();
     if (cfg.dairyAutoSellMilk !== false && (stMilk.dairy?.milk || 0) > 0) {
-      const res = stMilk.sellMilk?.();
-      if (res && res.liters > 0) {
-        return { acted: true, msg: `\u{1F95B} \u0110\xE3 v\u1EAFt & b\xE1n ${res.liters} l\xEDt s\u1EEFa b\xF2 (+${formatVnd(res.total)}\u0111)` };
+      try {
+        const res = stMilk.sellMilk?.();
+        if (res && res.liters > 0) {
+          return { acted: true, msg: `\u{1F95B} \u0110\xE3 v\u1EAFt & b\xE1n ${res.liters} l\xEDt s\u1EEFa b\xF2 (+${formatVnd(res.total)}\u0111)` };
+        }
+      } catch (e) {
+        console.warn("[Dairy] sellMilk failed:", e);
       }
     }
     if (cfg.dairyAutoPayHelper !== false) {
       const stH2 = getMainState();
-      if (stH2.helpers?.dairy?.hired && (stH2.helpers.dairy.unpaid || 0) > 0 && stH2.payHelper?.("dairy") === true) {
-        return { acted: true, msg: "\u{1F4B8} \u0110\xE3 tr\u1EA3 l\u01B0\u01A1ng ch\u1ECB M\u1EADn ch\u0103m b\xF2" };
+      if (stH2.helpers?.dairy?.hired && (stH2.helpers.dairy.unpaid || 0) > 0) {
+        try {
+          if (stH2.payHelper?.("dairy") === true) {
+            return { acted: true, msg: "\u{1F4B8} \u0110\xE3 tr\u1EA3 l\u01B0\u01A1ng ch\u1ECB M\u1EADn ch\u0103m b\xF2" };
+          }
+        } catch (e) {
+          console.warn("[Dairy] payHelper(dairy) failed:", e);
+        }
       }
     }
     return NOT_ACTED;
@@ -1255,20 +1342,36 @@
     const m = getMainState();
     if (!m.unlockedZones?.includes("poultry")) return NOT_ACTED;
     if (cfg.coopAutoCollectEggs !== false && (m.nestEggs || 0) > 0) {
-      const got = m.collectEggs?.();
-      if (typeof got === "number" && got > 0) {
-        return { acted: true, msg: `\u{1F95A} \u0110\xE3 nh\u1EB7t ${got} qu\u1EA3 tr\u1EE9ng g\xE0 trong \u1ED5` };
+      try {
+        const got = m.collectEggs?.();
+        if (typeof got === "number" && got > 0) {
+          return { acted: true, msg: `\u{1F95A} \u0110\xE3 nh\u1EB7t ${got} qu\u1EA3 tr\u1EE9ng g\xE0 trong \u1ED5` };
+        }
+      } catch (e) {
+        console.warn("[Coop] collectEggs failed:", e);
       }
     }
     const stG = getMainState();
     const maxHens = MAX_HENS_BY_LEVEL[stG.coopLevel || 0] || 4;
     const henCount = stG.hens?.length || 0;
-    if (cfg.coopAutoBuyChick && !stG.flu && henCount < maxHens && (stG.gold || 0) >= 6e4 && stG.buyChick?.() === "ok") {
-      return { acted: true, msg: `\u{1F424} \u0110\xE3 mua th\xEAm 1 g\xE0 con v\xE0o chu\u1ED3ng (${henCount + 1}/${maxHens})` };
+    if (cfg.coopAutoBuyChick && !stG.flu && henCount < maxHens && (stG.gold || 0) >= 6e4) {
+      try {
+        if (stG.buyChick?.() === "ok") {
+          return { acted: true, msg: `\u{1F424} \u0110\xE3 mua th\xEAm 1 g\xE0 con v\xE0o chu\u1ED3ng (${henCount + 1}/${maxHens})` };
+        }
+      } catch (e) {
+        console.warn("[Coop] buyChick failed:", e);
+      }
     }
     const stP = getMainState();
-    if (cfg.coopAutoPayHelper !== false && stP.helpers?.poultry?.hired && (stP.helpers.poultry.unpaid || 0) > 0 && stP.payHelper?.("poultry") === true) {
-      return { acted: true, msg: "\u{1F4B8} \u0110\xE3 tr\u1EA3 l\u01B0\u01A1ng ch\xFA Ba ch\u0103m g\xE0" };
+    if (cfg.coopAutoPayHelper !== false && stP.helpers?.poultry?.hired && (stP.helpers.poultry.unpaid || 0) > 0) {
+      try {
+        if (stP.payHelper?.("poultry") === true) {
+          return { acted: true, msg: "\u{1F4B8} \u0110\xE3 tr\u1EA3 l\u01B0\u01A1ng ch\xFA Ba ch\u0103m g\xE0" };
+        }
+      } catch (e) {
+        console.warn("[Coop] payHelper(poultry) failed:", e);
+      }
     }
     return NOT_ACTED;
   }
@@ -1278,29 +1381,47 @@
     const m = getMainState();
     if (!m.pond?.ready) return NOT_ACTED;
     if (m.notebook?.found && !m.pond.noteRead) {
-      m.readPondNote?.();
+      try {
+        m.readPondNote?.();
+      } catch (e) {
+        console.warn("[Pond] readPondNote failed:", e);
+      }
     }
     const fish = getMainState().pond?.fish || [];
     if (cfg.pondAutoNet !== false && fish.some((f) => (f.days || 0) >= (POND_MATURE_DAYS[f.id || ""] || 7))) {
-      const res = getMainState().netFish?.();
-      if (res && res.n > 0) {
-        return { acted: true, msg: `\u{1F41F} \u0110\xE3 k\xE9o l\u01B0\u1EDBi b\xE1n ${res.n} con c\xE1 ao (+${formatVnd(res.total)}\u0111)` };
+      try {
+        const res = getMainState().netFish?.();
+        if (res && res.n > 0) {
+          return { acted: true, msg: `\u{1F41F} \u0110\xE3 k\xE9o l\u01B0\u1EDBi b\xE1n ${res.n} con c\xE1 ao (+${formatVnd(res.total)}\u0111)` };
+        }
+      } catch (e) {
+        console.warn("[Pond] netFish failed:", e);
       }
     }
     const stP = getMainState();
     const stocked = stP.pond?.fish?.length ?? POND_CAPACITY;
     if (cfg.pondAutoStock !== false && Array.isArray(stP.pond?.fish) && stocked < POND_CAPACITY) {
       const fishType = cfg.preferPondFish || "chep";
-      if (stP.stockFish?.(fishType) === "ok") {
-        return {
-          acted: true,
-          msg: `\u{1F41F} \u0110\xE3 th\u1EA3 gi\u1ED1ng ${POND_FISH_NAMES[fishType] || fishType} xu\u1ED1ng ao (${stocked + 1}/${POND_CAPACITY})`
-        };
+      try {
+        if (stP.stockFish?.(fishType) === "ok") {
+          return {
+            acted: true,
+            msg: `\u{1F41F} \u0110\xE3 th\u1EA3 gi\u1ED1ng ${POND_FISH_NAMES[fishType] || fishType} xu\u1ED1ng ao (${stocked + 1}/${POND_CAPACITY})`
+          };
+        }
+      } catch (e) {
+        console.warn(`[Pond] stockFish(${fishType}) failed:`, e);
       }
     }
     const stF = getMainState();
-    if (cfg.pondAutoFeed !== false && (stF.pond?.fish?.length || 0) > 0 && stF.pond?.fedDay !== stF.day && stF.pond?.bebi !== "helper" && stF.feedFish?.() === "ok") {
-      return { acted: true, msg: "\u{1F35E} \u0110\xE3 r\u1EA3i c\xE1m cho \u0111\xE0n c\xE1 trong ao \u0103n" };
+    if (cfg.pondAutoFeed !== false && (stF.pond?.fish?.length || 0) > 0 && stF.pond?.fedDay !== stF.day && stF.pond?.bebi !== "helper") {
+      try {
+        if (stF.feedFish?.() === "ok") {
+          return { acted: true, msg: "\u{1F35E} \u0110\xE3 r\u1EA3i c\xE1m cho \u0111\xE0n c\xE1 trong ao \u0103n" };
+        }
+      } catch (e) {
+        console.warn("[Pond] feedFish failed:", e);
+      }
     }
     return NOT_ACTED;
   }
@@ -1854,10 +1975,15 @@
   };
   function execFarmSubAreaStep(subAreaId, cfg) {
     if (!stores.main?.getState()) return NOT_ACTED;
-    const interrupted = dismissInterruptsIfNeeded(cfg);
-    if (interrupted) return interrupted;
-    const handler = SUBAREA_HANDLERS[subAreaId];
-    return handler ? handler(cfg) : NOT_ACTED;
+    try {
+      const interrupted = dismissInterruptsIfNeeded(cfg);
+      if (interrupted) return interrupted;
+      const handler = SUBAREA_HANDLERS[subAreaId];
+      return handler ? handler(cfg) : NOT_ACTED;
+    } catch (err) {
+      console.error(`[Farm SubArea Error] SubArea "${subAreaId}" failed:`, err);
+      return NOT_ACTED;
+    }
   }
 
   // src/page-hook/modules/sea/index.ts
@@ -2967,32 +3093,47 @@
     await new Promise((r) => setTimeout(r, 100));
   };
   function execFarmstayStep(cfg) {
-    const mainStore = stores.main;
-    if (!mainStore) return NOT_ACTED;
-    const m = mainStore.getState();
-    if (!m || !m.farmstay) return NOT_ACTED;
-    if (m.farmstay.news && typeof m.ackFarmstayNews === "function") {
-      m.ackFarmstayNews();
-    }
-    const interrupted = dismissInterruptsIfNeeded(cfg);
-    if (interrupted) return interrupted;
-    const subOrder = cfg.farmstaySubOrder || ["operation", "repairs", "garden", "staff", "orders"];
-    for (const subId of subOrder) {
-      if (cfg.farmstaySubEnabled && cfg.farmstaySubEnabled[subId] === false) continue;
-      const handler = FARMTAY_SUBAREA_HANDLERS[subId];
-      if (handler) {
-        const res = handler(m, cfg);
-        if (res && res.acted) {
-          farmstayHadActions = true;
-          return res;
+    try {
+      const mainStore = stores.main;
+      if (!mainStore) return NOT_ACTED;
+      const m = mainStore.getState();
+      if (!m || !m.farmstay) return NOT_ACTED;
+      if (m.farmstay.news && typeof m.ackFarmstayNews === "function") {
+        try {
+          m.ackFarmstayNews();
+        } catch (e) {
+          console.warn("[Farmstay] ackFarmstayNews failed:", e);
         }
       }
+      const interrupted = dismissInterruptsIfNeeded(cfg);
+      if (interrupted) return interrupted;
+      const subOrder = cfg.farmstaySubOrder || ["operation", "repairs", "garden", "staff", "orders"];
+      for (const subId of subOrder) {
+        if (cfg.farmstaySubEnabled && cfg.farmstaySubEnabled[subId] === false) continue;
+        const handler = FARMTAY_SUBAREA_HANDLERS[subId];
+        if (handler) {
+          try {
+            const res = handler(m, cfg);
+            if (res && res.acted) {
+              farmstayHadActions = true;
+              return res;
+            }
+          } catch (subErr) {
+            console.error(`[Farmstay SubArea Error] SubArea "${subId}" failed:`, subErr);
+          }
+        }
+      }
+      if (farmstayHadActions) {
+        farmstayHadActions = false;
+        if (cfg.runMode !== "tab" || cfg.activeTab !== "farmstay") {
+          finishFarmstayCycle().catch((e) => console.warn("[Farmstay] finish cycle failed:", e));
+        }
+      }
+      return NOT_ACTED;
+    } catch (err) {
+      console.error("[Farmstay Error] execFarmstayStep failed:", err);
+      return NOT_ACTED;
     }
-    if (farmstayHadActions) {
-      farmstayHadActions = false;
-      finishFarmstayCycle().catch((e) => console.warn("[Farmstay] finish cycle failed:", e));
-    }
-    return NOT_ACTED;
   }
 
   // src/page-hook/index.ts
@@ -3130,6 +3271,7 @@
         }
       } catch (err) {
         const errorMsg = err instanceof Error ? err.message : String(err);
+        console.error(`[NTG Hook Error] execAction failed for "${action}":`, err);
         return { ok: false, error: errorMsg };
       }
     }

@@ -59,6 +59,9 @@ export async function runFarmSubAreas(
           updateHeaderStats(fresh);
         }
       } else {
+        if (res && !res.ok) {
+          console.warn(`[Farm Runner] subArea "${subId}" step error:`, res.error);
+        }
         break;
       }
     }

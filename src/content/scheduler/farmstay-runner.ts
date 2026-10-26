@@ -54,6 +54,9 @@ export async function stepFarmstay(
         updateHeaderStats(fresh);
       }
     } else {
+      if (res && !res.ok) {
+        console.warn('[Farmstay Runner] FARMSTAY_STEP error:', res.error);
+      }
       break;
     }
   }
