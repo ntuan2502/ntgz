@@ -2956,6 +2956,13 @@
     staff: handleFarmstayStaff,
     orders: handleFarmstayOrders
   };
+  var farmstayHadActions = false;
+  var finishFarmstayCycle = async () => {
+    const st = getMainState();
+    if (st.screen !== "farmstay") return;
+    st.leaveFarmstay?.();
+    await new Promise((r) => setTimeout(r, 100));
+  };
   function execFarmstayStep(cfg) {
     const mainStore = stores.main;
     if (!mainStore) return NOT_ACTED;
@@ -2972,8 +2979,15 @@
       const handler = FARMTAY_SUBAREA_HANDLERS[subId];
       if (handler) {
         const res = handler(m, cfg);
-        if (res && res.acted) return res;
+        if (res && res.acted) {
+          farmstayHadActions = true;
+          return res;
+        }
       }
+    }
+    if (farmstayHadActions) {
+      farmstayHadActions = false;
+      finishFarmstayCycle().catch((e) => console.warn("[Farmstay] finish cycle failed:", e));
     }
     return NOT_ACTED;
   }

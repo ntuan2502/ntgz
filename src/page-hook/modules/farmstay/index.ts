@@ -1,4 +1,4 @@
-import { stores } from '../../core/engine-access';
+import { stores, getMainState } from '../../core/engine-access';
 import { dismissInterruptsIfNeeded } from '../../core/interrupts';
 import { AppConfig, FarmstaySubAreaId } from '../../../shared/types/config';
 import { StepResult, NOT_ACTED } from '../farm/types';
@@ -276,6 +276,15 @@ const FARMTAY_SUBAREA_HANDLERS: Record<FarmstaySubAreaId, (m: MainGameStoreState
   orders: handleFarmstayOrders,
 };
 
+let farmstayHadActions = false;
+
+export const finishFarmstayCycle = async () => {
+  const st = getMainState();
+  if (st.screen !== 'farmstay') return;
+  st.leaveFarmstay?.();
+  await new Promise((r) => setTimeout(r, 100));
+};
+
 export function execFarmstayStep(cfg: AppConfig): StepResult {
   const mainStore = stores.main;
   if (!mainStore) return NOT_ACTED;
@@ -298,8 +307,17 @@ export function execFarmstayStep(cfg: AppConfig): StepResult {
     const handler = FARMTAY_SUBAREA_HANDLERS[subId];
     if (handler) {
       const res = handler(m, cfg);
-      if (res && res.acted) return res;
+      if (res && res.acted) {
+        farmstayHadActions = true;
+        return res;
+      }
     }
+  }
+
+  // Nếu chu kỳ vừa qua đã có hành động thay đổi dữ liệu, thoát Farmstay an toàn về Farm để kích hoạt auto-save _K()
+  if (farmstayHadActions) {
+    farmstayHadActions = false;
+    finishFarmstayCycle().catch((e) => console.warn('[Farmstay] finish cycle failed:', e));
   }
 
   return NOT_ACTED;
