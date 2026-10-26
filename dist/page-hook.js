@@ -386,7 +386,7 @@
   }
 
   // src/page-hook/core/store-watcher.ts
-  var _TREND_CROPS = ["radish", "carrot", "corn", "rice"];
+  var _TREND_CROPS = ["radish", "carrot", "corn"];
   function _tt(e) {
     let t = e + 2135587861 | 0;
     t = Math.imul(t ^ t >>> 16, 73244475);
@@ -1427,7 +1427,7 @@
   }
 
   // src/page-hook/modules/farm/trend.ts
-  var TREND_CROPS = ["radish", "carrot", "corn", "rice"];
+  var TREND_CROPS = ["radish", "carrot", "corn"];
   function hash01(e) {
     let t = e + 2135587861 | 0;
     t = Math.imul(t ^ t >>> 16, 73244475);
@@ -1591,6 +1591,9 @@
         }
       }
       if (strategy === "food_only") return null;
+    }
+    if (!cfg.autoSellProduce && strategy !== "produce_only") {
+      return null;
     }
     const minKeep = Math.max(0, Number(cfg.surplusKeepQty) || 10);
     const itemsWithSurplus = CROP_KEYS.map((item) => {

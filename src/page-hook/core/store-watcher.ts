@@ -2,7 +2,8 @@ import { stores, discoverStores, hookPhaserGame, phaserGame, benWs } from './eng
 import { getCricketEvents } from '../modules/wharf/cricket-watchers';
 import { GameSnapshot } from '../../shared/types/game-state';
 
-const _TREND_CROPS = ['radish', 'carrot', 'corn', 'rice'];
+// Ref: play.formatted.js:14793 (_e = ge.filter((e) => !I[e].story)) -> lúa (rice) không nằm trong Trend.
+const _TREND_CROPS = ['radish', 'carrot', 'corn'];
 
 function _tt(e: number): number {
   let t = (e + 2135587861) | 0;

@@ -1,6 +1,6 @@
 // Trend goods calculation replicating the game's seeded trend schedule (play.js)
-
-const TREND_CROPS = ['radish', 'carrot', 'corn', 'rice'];
+// Ref: play.formatted.js:14793 (_e = ge.filter((e) => !I[e].story)) -> lúa (rice) là story crop nên KHÔNG nằm trong Trend.
+const TREND_CROPS = ['radish', 'carrot', 'corn'];
 
 export interface ActiveTrend {
   goods: string;

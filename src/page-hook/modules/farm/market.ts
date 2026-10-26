@@ -165,7 +165,13 @@ function sellSmart(cfg: AppConfig): StepResult | null {
     if (strategy === 'food_only') return null;
   }
 
-  // 2. Sell surplus raw crops (sorted by surplus amount descending)
+  // 2. Sell surplus raw crops:
+  // CHỈ bán nông sản thô nếu người dùng chủ động bật autoSellProduce hoặc chọn chiến lược produce_only.
+  // Tránh việc tự ý thanh lý toàn bộ hàng trăm nông sản thô dự trữ của người dùng khi chỉ muốn bán món ăn.
+  if (!cfg.autoSellProduce && strategy !== 'produce_only') {
+    return null;
+  }
+
   const minKeep = Math.max(0, Number(cfg.surplusKeepQty) || 10);
   const itemsWithSurplus = CROP_KEYS.map((item) => {
     const reserved = getReservedQty(st, item, cfg);
