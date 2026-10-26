@@ -1,5 +1,6 @@
 import { stores, discoverStores, hookPhaserGame, phaserGame, benWs } from './engine-access';
 import { getCricketEvents } from '../modules/wharf/cricket-watchers';
+import { getActiveImportantAlert } from './interrupts';
 import { GameSnapshot } from '../../shared/types/game-state';
 
 // Ref: play.formatted.js:14793 (_e = ge.filter((e) => !I[e].story)) -> lúa (rice) không nằm trong Trend.
@@ -81,6 +82,7 @@ export function getSnapshot(): GameSnapshot {
 
   return {
     ok: true,
+    recentAlert: getActiveImportantAlert(),
     hasPhaser: Boolean(phaserGame),
     hasBenWs: Boolean(benWs && benWs.readyState === WebSocket.OPEN),
     screen: m.screen,

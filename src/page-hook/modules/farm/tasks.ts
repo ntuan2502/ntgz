@@ -2,8 +2,6 @@ import { getMainState, setMainState } from '../../core/engine-access';
 import { AppConfig } from '../../../shared/types/config';
 import { StepResult, NOT_ACTED, formatVnd, showFarmActionUI } from './types';
 
-const DEBRIS_COUNT = 5;
-const NOTEBOOK_PAGES = [1, 4, 5];
 const PIGGY_TIERS = [500000, 200000, 100000, 50000, 10000];
 const PIGGY_FULL_STREAK = 7;
 
@@ -14,57 +12,6 @@ function ensureSavingsCounterOpen(): void {
   if ((st.savings.pig?.amount || 0) > 0 || (st.day || 0) >= 14) {
     setMainState((e) => ({ savings: { ...e.savings, newsDay: Math.max(1, e.day || 1) } }));
   }
-}
-
-function runFirstDayGuide(): StepResult | null {
-  const m = getMainState();
-  if (!m.firstDay?.incense && m.lightIncense?.() === 'first') {
-    return { acted: true, msg: '🙏 Đã thắp nhang bàn thờ Ông Năm' };
-  }
-
-  const stF = getMainState();
-  if (stF.firstDay?.incense && !stF.firstDay.sproutHarvested) {
-    if (!stF.firstDay.sprout) {
-      if (stF.plantSprouts?.() === 'ok') return { acted: true, msg: '🌱 Đã gieo khay rau mầm cạnh nhà' };
-    } else if (stF.harvestSprouts?.() === true) {
-      return { acted: true, msg: '🌿 Đã thu hoạch khay rau mầm (+4 củ cải)' };
-    }
-  }
-
-  const stD = getMainState();
-  const cleared = stD.firstDay?.cleared || [];
-  if (stD.firstDay && cleared.length < DEBRIS_COUNT) {
-    for (let i = 0; i < DEBRIS_COUNT; i++) {
-      if (!cleared.includes(i) && stD.clearDebris?.(i)) {
-        return { acted: true, msg: `🧹 Đã dọn cỏ/cành khô ngoài vườn (${cleared.length + 1}/${DEBRIS_COUNT})` };
-      }
-    }
-  }
-
-  const stE = getMainState();
-  const ledger = stE.ledger || [];
-  if (stE.day === 1 && !ledger.some((e) => e.kind === 'food') && (stE.gold || 0) >= 8000 && stE.buyFood?.('banhBao') === 'ok') {
-    return { acted: true, msg: '🥟 Đã mua Bánh bao ăn sáng (Việc Ngày 1)' };
-  }
-  const drankToday = ledger.some((e) => e.kind === 'food' && (e.label === 'Trà đá' || e.label === 'Nước mía'));
-  if (stE.day === 2 && !drankToday && (stE.gold || 0) >= 3000 && stE.buyFood?.('traDa') === 'ok') {
-    return { acted: true, msg: '🧊 Đã uống Trà đá (Việc Ngày 2)' };
-  }
-  return null;
-}
-
-function collectNotebookPages(): StepResult | null {
-  const st = getMainState();
-  if (!st.notebook?.found) return null;
-  for (const pg of NOTEBOOK_PAGES) {
-    if (getMainState().claimPage?.(pg) === true) {
-      return { acted: true, msg: `📔 Đã thu thập trang Sổ tay Ông Năm #${pg}` };
-    }
-  }
-  if (getMainState().startSoak?.() === true) {
-    return { acted: true, msg: '🌾 Đã ngâm ủ giống Lúa thơm của Ông Năm' };
-  }
-  return null;
 }
 
 function claimQuests(cfg: AppConfig): StepResult | null {
@@ -127,15 +74,42 @@ function depositSavings(cfg: AppConfig): StepResult | null {
   const st = getMainState();
   const savings = st.savings;
   if (!savings || (savings.newsDay || 0) <= 0 || savings.loan || (savings.books?.length || 0) >= 10) return null;
-  const minGold = Number(cfg.savingsKeepGold) || 200000;
+
+  // Ngưỡng giữ lại tiền an toàn (mặc định 10 triệu đồng)
+  const minKeepMillion = typeof cfg.savingsMinKeepMillion === 'number'
+    ? cfg.savingsMinKeepMillion
+    : typeof cfg.savingsKeepGold === 'number'
+      ? cfg.savingsKeepGold / 1_000_000
+      : 10;
+  const minKeepGold = Math.max(0, minKeepMillion * 1_000_000);
+
   const gold = st.gold || 0;
-  if (gold <= minGold + 50000) return null;
+  if (gold <= minKeepGold + 50_000) return null;
+
   const matured = savings.matured || 0;
-  const cap = matured >= 10 ? 20000000 : matured >= 5 ? 12000000 : matured >= 2 ? 8000000 : 5000000;
-  const amount = Math.min(cap, Math.floor((gold - minGold) / 10000) * 10000);
-  if (amount >= 50000 && st.deposit?.(amount, 7) === 'ok') {
+  // Hạn mức gửi tối đa theo bậc của game: 5M, 8M, 12M, 20M
+  const cap = matured >= 10 ? 20_000_000 : matured >= 5 ? 12_000_000 : matured >= 2 ? 8_000_000 : 5_000_000;
+
+  let amount: number;
+  if (cfg.savingsDepositMax !== false) {
+    // Gửi tối đa cho phép theo hạn mức mà không vi phạm ngưỡng giữ tiền
+    const maxAffordable = gold - minKeepGold;
+    amount = Math.min(cap, Math.floor(maxAffordable / 10_000) * 10_000);
+  } else {
+    // Gửi số tiền người dùng nhập
+    const requested = Number(cfg.savingsDepositAmount) || 5_000_000;
+    if (gold - requested < minKeepGold) return null;
+    amount = Math.min(cap, requested);
+  }
+
+  if (amount < 50_000) return null;
+
+  // Kỳ hạn gửi: 3 ngày (5%), 7 ngày (15%), 14 ngày (35%)
+  const term = (cfg.savingsTerm === 3 || cfg.savingsTerm === 14) ? cfg.savingsTerm : 7;
+
+  if (st.deposit?.(amount, term) === 'ok') {
     showFarmActionUI(cfg, { vendor: 'savings', shop: 'savings' });
-    return { acted: true, msg: `🏦 Đã gửi sổ tiết kiệm Dì Bảy ${formatVnd(amount)}đ (7 ngày)` };
+    return { acted: true, msg: `🏦 Đã gửi sổ tiết kiệm Dì Bảy ${formatVnd(amount)}đ (${term} ngày)` };
   }
   return null;
 }
@@ -143,8 +117,6 @@ function depositSavings(cfg: AppConfig): StepResult | null {
 export function handleDiBaySubArea(cfg: AppConfig): StepResult {
   ensureSavingsCounterOpen();
   return (
-    (cfg.autoFirstDayTasks !== false ? runFirstDayGuide() : null) ||
-    (cfg.autoNotebookPages !== false ? collectNotebookPages() : null) ||
     (cfg.autoClaimQuests !== false ? claimQuests(cfg) : null) ||
     (cfg.autoBreakPiggy !== false ? breakFullPiggy(cfg) : null) ||
     (cfg.autoNewPiggy !== false ? buyNewPiggy(cfg) : null) ||

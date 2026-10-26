@@ -40,6 +40,15 @@ export function HudStats({ snap }: HudStatsProps) {
           </div>
         </div>
       </div>
+      {snap?.recentAlert && (
+        <div
+          className="mt-1.5 flex items-center gap-1.5 px-2 py-1 rounded-md bg-amber-100/90 border border-amber-300 text-amber-950 text-[10.5px] font-sans shadow-xs animate-in fade-in"
+          title={`Thông báo quan trọng: ${snap.recentAlert.text}`}
+        >
+          <span className="shrink-0">{snap.recentAlert.icon || '📢'}</span>
+          <span className="font-semibold truncate">{snap.recentAlert.text}</span>
+        </div>
+      )}
     </div>
   );
 }

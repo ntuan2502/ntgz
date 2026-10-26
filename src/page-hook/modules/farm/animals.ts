@@ -251,10 +251,12 @@ export function handleDairySubArea(cfg: AppConfig): StepResult {
     for (const cow of stCure.dairy?.cows || []) {
       if ((cow.sickDay || 0) <= 0) continue;
       try {
-        if ((stCure.dairy?.medicine || 0) <= 0 && (stCure.gold || 0) >= 80000) {
-          stCure.buyMedicine?.();
+        if ((stCure.dairy?.medicine || 0) <= 0) {
+          if (cfg.dairyAutoBuyMedicine && (stCure.gold || 0) >= 80000) {
+            stCure.buyMedicine?.();
+          }
         }
-        if (getMainState().cureCow?.(cow.id) === 'ok') {
+        if ((getMainState().dairy?.medicine || 0) > 0 && getMainState().cureCow?.(cow.id) === 'ok') {
           return { acted: true, msg: `💊 Đã tiêm thuốc chữa bệnh cho Bò ${cow.name || '#' + cow.id}` };
         }
       } catch (e) {

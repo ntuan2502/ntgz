@@ -77,31 +77,34 @@ export interface AppConfig {
   preferDish: string;
   autoRecoverHunger: boolean;
   hungerThreshold: number;
+  eatUntilFull?: boolean;
   foodSource: 'kitchen_first' | 'kitchen_only' | 'shop_only';
   preferFoodKitchen: string;
   preferFoodShop: string;
   autoRecoverThirst: boolean;
   thirstThreshold: number;
+  drinkUntilFull?: boolean;
   drinkSource: 'kitchen_first' | 'kitchen_only' | 'shop_only';
   preferDrinkKitchen: string;
   preferDrinkShop: string;
   needThreshold: number;
-  autoMorningCoffee: boolean;
   autoChargeVehicle: boolean;
   batteryThreshold: number;
   autoSalonShampoo: boolean;
   autoSalonWhiten: boolean;
   autoSleep: boolean;
-  sleepHour: number;
   sleepOnFishingLimit: boolean;
 
   // 2. Crops (Tèo)
   autoHarvest: boolean;
   autoPesticide: boolean;
+  autoBuyPesticide?: boolean;
   autoPlant: boolean;
+  autoBuySeeds?: boolean;
   preferSeed: string;
   autoWater: boolean;
   autoFertilize: boolean;
+  autoBuyFertilizer?: boolean;
   autoBuyPlots: boolean;
   autoPayHelperCrops: boolean;
 
@@ -126,6 +129,7 @@ export interface AppConfig {
   // 5. Dairy (Bò Sữa - Chị Mận)
   dairyAutoFeedCows: boolean;
   dairyAutoCureCows: boolean;
+  dairyAutoBuyMedicine?: boolean;
   dairyAutoSellMilk: boolean;
   dairyAutoPayHelper: boolean;
 
@@ -139,35 +143,25 @@ export interface AppConfig {
   pondAutoStock: boolean;
   preferPondFish: string;
   pondAutoFeed: boolean;
-  /** @deprecated Game không có helper Ao cá, Bé Bi không nhận lương (ref: play.formatted.js:47728) */
-  pondAutoPayHelper: boolean;
 
   // 8. Salon (Chị Linh Tây) - already covered in section 1 fields autoSalonShampoo, autoSalonWhiten
 
   // 9. Market (Tạp Hóa Chị Na & Bảng Tin Làng)
   autoDeliverOrder: boolean;
-  /** Giữ trứng cho Chợ Đêm (không giao đơn tạp hóa Dì Bảy / Chị Na) để tối ưu lợi nhuận 18.750đ > 7.800đ */
-  keepEggsForNightMarket: boolean;
   autoVillageBoard: boolean;
   autoSellTrend: boolean;
-  autoSellDailyTask: boolean;
-  autoSellProduce: boolean;
-  autoSellSmart: boolean;
-  sellStrategy: 'smart_all' | 'produce_only' | 'food_only';
-  sellReserveForOrders: boolean;
-  sellReserveForVillage: boolean;
-  sellReserveForKitchen: boolean;
-  surplusKeepQty: number;
 
   // 10. Di Bay & Quests (Dì Bảy & Sổ Tay)
   autoClaimQuests: boolean;
-  autoFirstDayTasks: boolean;
-  autoNotebookPages: boolean;
   autoFeedPiggy: boolean;
   autoBreakPiggy: boolean;
   autoNewPiggy: boolean;
   autoSavings: boolean;
-  savingsKeepGold: number;
+  savingsDepositAmount?: number;
+  savingsDepositMax?: boolean;
+  savingsTerm?: 3 | 7 | 14;
+  savingsMinKeepMillion?: number;
+  savingsKeepGold?: number;
 
   // 11. Gold Shop (Tiệm Vàng Cô Kim)
   goldAutoBuy: boolean;
@@ -178,10 +172,9 @@ export interface AppConfig {
 
   // 12. Night Market (Chợ Đêm 18h00 - 23h30)
   autoSellNightMarket: boolean;
-  nightMarketMinKeep: number;
-  nightMarketSellEggs: boolean;
-  nightMarketReserveOrders: boolean;
-  nightMarketStrategy: 'max_stock' | 'highest_price' | 'lowest_price';
+  nightMarketMinStock: number;
+  nightMarketStrategy: 'highest_price' | 'max_stock' | 'selected_crop';
+  nightMarketSelectedCrop: string;
 
   // Area 2: Ben Do Sub-Area Order & Enable/Disable toggles
   benSubOrder: WharfSubAreaId[];

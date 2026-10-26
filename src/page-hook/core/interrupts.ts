@@ -1,4 +1,42 @@
 import { stores } from './engine-access';
+import { ImportantAlert } from '../../shared/types/game-state';
+
+let activeImportantAlert: ImportantAlert | null = null;
+
+export function getActiveImportantAlert(): ImportantAlert | null {
+  return activeImportantAlert;
+}
+
+function recordImportantAlertIfNeeded(raw: unknown, idHint?: string): void {
+  if (!raw || typeof raw !== 'object') return;
+  const rec = raw as Record<string, unknown>;
+  const text = extractNotificationText(raw);
+  const id = typeof rec.id === 'string' ? rec.id : idHint || '';
+  const lower = (text + ' ' + id).toLowerCase();
+
+  let icon = '';
+  if (id.includes('storm') || lower.includes('bão')) {
+    icon = '⛈️ Bão';
+  } else if (id.includes('gold') || lower.includes('vàng')) {
+    icon = '🪙 Giá vàng';
+  } else if (id.includes('fish') || lower.includes('cá biển')) {
+    icon = '🐟 Biển';
+  } else if (id.includes('buffalo') || lower.includes('dịch') || lower.includes('bệnh')) {
+    icon = '🐃 Gia súc';
+  } else if (id.includes('hui') || lower.includes('hụi')) {
+    icon = '🐷 Hụi Dì Bảy';
+  }
+
+  if (icon && text) {
+    const m = stores.main?.getState();
+    activeImportantAlert = {
+      id: id || 'alert',
+      text: `${icon}: ${text}`,
+      icon: icon.split(' ')[0],
+      day: m?.day,
+    };
+  }
+}
 
 interface InterruptState {
   phone?: unknown;
@@ -72,6 +110,7 @@ export function dismissInterruptsIfNeeded(cfg?: { autoDismissInterrupts?: boolea
   if (cfg && cfg.autoDismissInterrupts === false) return null;
 
   if (m.phone) {
+    recordImportantAlertIfNeeded(m.phone, 'phone');
     const info = extractNotificationText(m.phone);
     m.closePhone?.();
     const detailMsg = info ? `📱 [Điện thoại]: "${info}"` : '📱 [Điện thoại]: Có thông báo mới';
@@ -79,6 +118,7 @@ export function dismissInterruptsIfNeeded(cfg?: { autoDismissInterrupts?: boolea
   }
 
   if (m.announcement) {
+    recordImportantAlertIfNeeded(m.announcement, 'announcement');
     const info = extractNotificationText(m.announcement);
     m.answerAnnouncement?.(false);
     const detailMsg = info ? `📢 [Loa xã]: "${info}"` : '📢 [Loa xã]: Thông báo phát thanh mới';

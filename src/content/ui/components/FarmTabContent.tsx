@@ -121,14 +121,22 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                   <span className="text-slate-600">Ngưỡng đói cần ăn (%):</span>
                   <input
                     type="number"
-                    min={10}
-                    max={80}
-                    step={5}
-                    value={config.hungerThreshold}
+                    min={0}
+                    max={100}
+                    step={1}
+                    value={config.hungerThreshold ?? 10}
                     onChange={(e) => updateField('hungerThreshold', Number(e.target.value))}
                     className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>
+                <label className="flex items-center justify-between text-slate-600 cursor-pointer">
+                  <span>Ăn no tới khi đầy 100%</span>
+                  <Switch
+                    size="sm"
+                    checked={Boolean(config.eatUntilFull)}
+                    onCheckedChange={(c) => updateField('eatUntilFull', c)}
+                  />
+                </label>
                 <div className="flex items-center justify-between gap-2 min-w-0">
                   <span className="text-slate-600 shrink-0">Nguồn thức ăn:</span>
                   <HudSelect
@@ -191,14 +199,22 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                   <span className="text-slate-600">Ngưỡng khát cần uống (%):</span>
                   <input
                     type="number"
-                    min={10}
-                    max={80}
-                    step={5}
-                    value={config.thirstThreshold}
+                    min={0}
+                    max={100}
+                    step={1}
+                    value={config.thirstThreshold ?? 10}
                     onChange={(e) => updateField('thirstThreshold', Number(e.target.value))}
                     className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>
+                <label className="flex items-center justify-between text-slate-600 cursor-pointer">
+                  <span>Uống tới khi đã khát 100%</span>
+                  <Switch
+                    size="sm"
+                    checked={Boolean(config.drinkUntilFull)}
+                    onCheckedChange={(c) => updateField('drinkUntilFull', c)}
+                  />
+                </label>
                 <div className="flex items-center justify-between gap-2 min-w-0">
                   <span className="text-slate-600 shrink-0">Nguồn đồ uống:</span>
                   <HudSelect
@@ -246,14 +262,6 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
             )}
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>☕ Uống Cà phê sữa mỗi sáng (+Chạy nhanh cả ngày)</span>
-              <Switch
-                checked={Boolean(config.autoMorningCoffee)}
-                onCheckedChange={(c) => updateField('autoMorningCoffee', c)}
-              />
-            </label>
-
-            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
               <span>🔋 Tự sạc Xe điện EV</span>
               <Switch
                 checked={Boolean(config.autoChargeVehicle)}
@@ -266,10 +274,10 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                   <span className="text-slate-600">Sạc khi pin dưới (%):</span>
                   <input
                     type="number"
-                    min={10}
-                    max={60}
-                    step={5}
-                    value={config.batteryThreshold}
+                    min={0}
+                    max={100}
+                    step={1}
+                    value={config.batteryThreshold ?? 10}
                     onChange={(e) => updateField('batteryThreshold', Number(e.target.value))}
                     className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
@@ -278,36 +286,12 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
             )}
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>😴 Tự về nhà đi ngủ qua ngày mới</span>
+              <span>😴 Tự về nhà đi ngủ qua ngày mới (sau 22h30)</span>
               <Switch
                 checked={Boolean(config.autoSleep)}
                 onCheckedChange={(c) => updateField('autoSleep', c)}
               />
             </label>
-            {config.autoSleep && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Giờ đi ngủ buổi tối (h):</span>
-                  <input
-                    type="number"
-                    min={18}
-                    max={23}
-                    step={1}
-                    value={config.sleepHour}
-                    onChange={(e) => updateField('sleepHour', Number(e.target.value))}
-                    className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                  />
-                </div>
-                <label className="flex items-center justify-between text-slate-600">
-                  <span>🌙 Ngủ ngay khi hết câu được buổi tối</span>
-                  <Switch
-                    size="sm"
-                    checked={Boolean(config.sleepOnFishingLimit)}
-                    onCheckedChange={(c) => updateField('sleepOnFishingLimit', c)}
-                  />
-                </label>
-              </div>
-            )}
           </div>
         );
 
@@ -323,12 +307,24 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
             </label>
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>🐛 Tự mua thuốc &amp; diệt sâu bệnh</span>
+              <span>🐛 Tự xịt thuốc diệt sâu bệnh</span>
               <Switch
                 checked={Boolean(config.autoPesticide)}
                 onCheckedChange={(c) => updateField('autoPesticide', c)}
               />
             </label>
+            {config.autoPesticide && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 text-[11px]">
+                <label className="flex items-center justify-between text-slate-600 cursor-pointer">
+                  <span>Tự mua thuốc sâu khi hết (-8.000đ)</span>
+                  <Switch
+                    size="sm"
+                    checked={Boolean(config.autoBuyPesticide)}
+                    onCheckedChange={(c) => updateField('autoBuyPesticide', c)}
+                  />
+                </label>
+              </div>
+            )}
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
               <span>💧 Tự tưới nước giữ ẩm đất</span>
@@ -339,22 +335,42 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
             </label>
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>🧪 Tự mua &amp; bón phân NPK</span>
+              <span>🧪 Tự bón phân NPK</span>
               <Switch
                 checked={Boolean(config.autoFertilize)}
                 onCheckedChange={(c) => updateField('autoFertilize', c)}
               />
             </label>
+            {config.autoFertilize && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 text-[11px]">
+                <label className="flex items-center justify-between text-slate-600 cursor-pointer">
+                  <span>Tự mua phân NPK khi hết (-15.000đ)</span>
+                  <Switch
+                    size="sm"
+                    checked={Boolean(config.autoBuyFertilizer)}
+                    onCheckedChange={(c) => updateField('autoBuyFertilizer', c)}
+                  />
+                </label>
+              </div>
+            )}
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>🌱 Tự mua &amp; gieo hạt giống mới</span>
+              <span>🌱 Tự gieo hạt giống vào ô đất trống</span>
               <Switch
                 checked={Boolean(config.autoPlant)}
                 onCheckedChange={(c) => updateField('autoPlant', c)}
               />
             </label>
             {config.autoPlant && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px] min-w-0 overflow-hidden">
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
+                <label className="flex items-center justify-between text-slate-600 cursor-pointer">
+                  <span>Tự mua hạt giống khi hết</span>
+                  <Switch
+                    size="sm"
+                    checked={Boolean(config.autoBuySeeds)}
+                    onCheckedChange={(c) => updateField('autoBuySeeds', c)}
+                  />
+                </label>
                 <div className="flex items-center justify-between gap-2 min-w-0">
                   <span className="text-slate-600 shrink-0">Hạt giống ưu tiên:</span>
                   <HudSelect
@@ -571,12 +587,24 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               />
             </label>
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>💊 Tự mua thuốc &amp; tiêm chữa bệnh cho Bò</span>
+              <span>💊 Tự tiêm thuốc chữa bệnh cho Bò</span>
               <Switch
                 checked={Boolean(config.dairyAutoCureCows)}
                 onCheckedChange={(c) => updateField('dairyAutoCureCows', c)}
               />
             </label>
+            {config.dairyAutoCureCows && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 text-[11px]">
+                <label className="flex items-center justify-between text-slate-600 cursor-pointer">
+                  <span>Tự mua thuốc tiêm khi hết (-80.000đ)</span>
+                  <Switch
+                    size="sm"
+                    checked={Boolean(config.dairyAutoBuyMedicine)}
+                    onCheckedChange={(c) => updateField('dairyAutoBuyMedicine', c)}
+                  />
+                </label>
+              </div>
+            )}
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
               <span>💸 Tự trả lương Chị Mận chăm bò</span>
               <Switch
@@ -654,13 +682,6 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                 </div>
               </div>
             )}
-            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>💸 Tự trả lương người phụ Ao cá (Bé Bi)</span>
-              <Switch
-                checked={Boolean(config.pondAutoPayHelper)}
-                onCheckedChange={(c) => updateField('pondAutoPayHelper', c)}
-              />
-            </label>
           </div>
         );
 
@@ -694,17 +715,6 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                 onCheckedChange={(c) => updateField('autoDeliverOrder', c)}
               />
             </label>
-            {config.autoDeliverOrder && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]">
-                <label className="flex items-center justify-between text-slate-600 cursor-pointer">
-                  <span>🥚 Giữ trứng cho Chợ Đêm (không giao Dì Bảy)</span>
-                  <Switch
-                    checked={Boolean(config.keepEggsForNightMarket)}
-                    onCheckedChange={(c) => updateField('keepEggsForNightMarket', c)}
-                  />
-                </label>
-              </div>
-            )}
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
               <span>📋 Tự giao đơn Bảng tin làng (Anh Khang)</span>
               <Switch
@@ -719,78 +729,6 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                 onCheckedChange={(c) => updateField('autoSellTrend', c)}
               />
             </label>
-            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>📜 Tự bán nông sản hoàn thành Việc Sổ tay</span>
-              <Switch
-                checked={Boolean(config.autoSellDailyTask)}
-                onCheckedChange={(c) => updateField('autoSellDailyTask', c)}
-              />
-            </label>
-
-            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>🏪 Tự bán nông sản &amp; đồ ăn thông minh</span>
-              <Switch
-                checked={Boolean(config.autoSellSmart)}
-                onCheckedChange={(c) => updateField('autoSellSmart', c)}
-              />
-            </label>
-            {config.autoSellSmart && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-2 text-[11px] min-w-0 overflow-hidden">
-                <div className="flex items-center justify-between gap-2 min-w-0">
-                  <span className="text-slate-600 shrink-0">Chiến lược bán:</span>
-                  <HudSelect
-                    value={config.sellStrategy}
-                    onValueChange={(val) => updateField('sellStrategy', val as AppConfig['sellStrategy'])}
-                    options={[
-                      { value: 'smart_all', label: '✨ Tối ưu: Món ăn bếp trước ➔ Nông sản dư thừa' },
-                      { value: 'produce_only', label: '🌾 Chỉ bán nông sản dư thừa, không bán món ăn' },
-                      { value: 'food_only', label: '🍲 Chỉ bán món ăn chế biến trong Bếp' },
-                    ]}
-                  />
-                </div>
-
-                <div className="space-y-1 pt-1">
-                  <span className="font-semibold text-slate-700">Tự động bảo lưu nguyên liệu:</span>
-                  <label className="flex items-center justify-between text-slate-600 cursor-pointer">
-                    <span>📦 Bảo lưu cho Đơn hàng Chị Na</span>
-                    <Switch
-                      size="sm"
-                      checked={Boolean(config.sellReserveForOrders)}
-                      onCheckedChange={(c) => updateField('sellReserveForOrders', c)}
-                    />
-                  </label>
-                  <label className="flex items-center justify-between text-slate-600 cursor-pointer">
-                    <span>📋 Bảo lưu cho Bảng tin làng</span>
-                    <Switch
-                      size="sm"
-                      checked={Boolean(config.sellReserveForVillage)}
-                      onCheckedChange={(c) => updateField('sellReserveForVillage', c)}
-                    />
-                  </label>
-                  <label className="flex items-center justify-between text-slate-600 cursor-pointer">
-                    <span>🍳 Bảo lưu nguyên liệu nấu ăn cơ bản</span>
-                    <Switch
-                      size="sm"
-                      checked={Boolean(config.sellReserveForKitchen)}
-                      onCheckedChange={(c) => updateField('sellReserveForKitchen', c)}
-                    />
-                  </label>
-                </div>
-
-                <div className="flex items-center justify-between pt-1">
-                  <span className="text-slate-600">Tối thiểu giữ lại mỗi loại:</span>
-                  <input
-                    type="number"
-                    min={0}
-                    max={200}
-                    step={5}
-                    value={config.surplusKeepQty}
-                    onChange={(e) => updateField('surplusKeepQty', Number(e.target.value))}
-                    className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                  />
-                </div>
-              </div>
-            )}
           </div>
         );
 
@@ -820,43 +758,41 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                 <div className="flex items-center justify-between gap-2 min-w-0">
                   <span className="text-slate-600 shrink-0">Chiến lược bán:</span>
                   <HudSelect
-                    value={config.nightMarketStrategy}
+                    value={config.nightMarketStrategy ?? 'highest_price'}
                     onValueChange={(val) => updateField('nightMarketStrategy', val as AppConfig['nightMarketStrategy'])}
                     options={[
-                      { value: 'max_stock', label: '📦 Ưu tiên nông sản tồn kho nhiều nhất' },
-                      { value: 'highest_price', label: '💰 Ưu tiên nông sản có giá bán cao nhất' },
-                      { value: 'lowest_price', label: '🌱 Ưu tiên nông sản giá thấp xả kho' },
+                      { value: 'highest_price', label: '💰 Bán nông sản có giá cao nhất' },
+                      { value: 'max_stock', label: '📦 Bán nông sản có số lượng nhiều nhất' },
+                      { value: 'selected_crop', label: '🎯 Bán nông sản được chỉ định' },
                     ]}
                   />
                 </div>
 
-                <label className="flex items-center justify-between text-slate-600 cursor-pointer">
-                  <span>🥚 Bán cả Trứng gà khi chuồng có dư</span>
-                  <Switch
-                    size="sm"
-                    checked={Boolean(config.nightMarketSellEggs)}
-                    onCheckedChange={(c) => updateField('nightMarketSellEggs', c)}
-                  />
-                </label>
-
-                <label className="flex items-center justify-between text-slate-600 cursor-pointer">
-                  <span>📦 Bảo lưu nông sản cho Đơn Chị Na &amp; Bảng tin</span>
-                  <Switch
-                    size="sm"
-                    checked={Boolean(config.nightMarketReserveOrders)}
-                    onCheckedChange={(c) => updateField('nightMarketReserveOrders', c)}
-                  />
-                </label>
+                {config.nightMarketStrategy === 'selected_crop' && (
+                  <div className="flex items-center justify-between gap-2 min-w-0">
+                    <span className="text-slate-600 shrink-0">Nông sản chỉ định:</span>
+                    <HudSelect
+                      value={config.nightMarketSelectedCrop ?? 'radish'}
+                      onValueChange={(val) => updateField('nightMarketSelectedCrop', val)}
+                      options={[
+                        { value: 'radish', label: '🌱 Củ cải' },
+                        { value: 'carrot', label: '🥕 Cà rốt' },
+                        { value: 'corn', label: '🌽 Bắp ngô' },
+                        { value: 'rice', label: '🌾 Lúa thơm' },
+                      ]}
+                    />
+                  </div>
+                )}
 
                 <div className="flex items-center justify-between pt-1">
-                  <span className="text-slate-600">Giữ lại tối thiểu mỗi loại trong kho:</span>
+                  <span className="text-slate-600">Chặn không bán nếu tồn kho dưới:</span>
                   <input
                     type="number"
                     min={0}
-                    max={50}
-                    step={1}
-                    value={config.nightMarketMinKeep}
-                    onChange={(e) => updateField('nightMarketMinKeep', Number(e.target.value))}
+                    max={1000}
+                    step={5}
+                    value={config.nightMarketMinStock ?? 50}
+                    onChange={(e) => updateField('nightMarketMinStock', Number(e.target.value))}
                     className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>
@@ -873,20 +809,6 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               <Switch
                 checked={Boolean(config.autoClaimQuests)}
                 onCheckedChange={(c) => updateField('autoClaimQuests', c)}
-              />
-            </label>
-            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>📜 Tự làm chuỗi hướng dẫn Ngày 1 &amp; 2</span>
-              <Switch
-                checked={Boolean(config.autoFirstDayTasks)}
-                onCheckedChange={(c) => updateField('autoFirstDayTasks', c)}
-              />
-            </label>
-            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>📔 Tự thu thập trang Sổ tay Ông Năm</span>
-              <Switch
-                checked={Boolean(config.autoNotebookPages)}
-                onCheckedChange={(c) => updateField('autoNotebookPages', c)}
               />
             </label>
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
@@ -911,24 +833,60 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               />
             </label>
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>🏦 Tự gửi Sổ tiết kiệm Dì Bảy (7 ngày)</span>
+              <span>🏦 Tự gửi Sổ tiết kiệm Dì Bảy</span>
               <Switch
                 checked={Boolean(config.autoSavings)}
                 onCheckedChange={(c) => updateField('autoSavings', c)}
               />
             </label>
             {config.autoSavings && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]">
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
+                <div className="flex items-center justify-between gap-2 min-w-0">
+                  <span className="text-slate-600 shrink-0">Kỳ hạn gửi:</span>
+                  <HudSelect
+                    value={String(config.savingsTerm ?? 7)}
+                    onValueChange={(val) => updateField('savingsTerm', Number(val) as 3 | 7 | 14)}
+                    options={[
+                      { value: '3', label: '📅 3 ngày (+5% lãi)' },
+                      { value: '7', label: '📅 7 ngày (+15% lãi · Chuẩn)' },
+                      { value: '14', label: '📅 14 ngày (+35% lãi · Cao nhất)' },
+                    ]}
+                  />
+                </div>
+
+                <label className="flex items-center justify-between text-slate-600 cursor-pointer">
+                  <span>Gửi tối đa hạn mức cho phép</span>
+                  <Switch
+                    size="sm"
+                    checked={config.savingsDepositMax !== false}
+                    onCheckedChange={(c) => updateField('savingsDepositMax', c)}
+                  />
+                </label>
+
+                {!config.savingsDepositMax && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-600">Số tiền gửi (đ):</span>
+                    <input
+                      type="number"
+                      min={50000}
+                      step={50000}
+                      value={config.savingsDepositAmount ?? 5000000}
+                      onChange={(e) => updateField('savingsDepositAmount', Number(e.target.value))}
+                      className="w-24 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    />
+                  </div>
+                )}
+
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Giữ tiền mặt tối thiểu:</span>
+                  <span className="text-slate-600">Dừng gửi khi tiền dưới (triệu):</span>
                   <input
                     type="number"
-                    min={50000}
-                    max={5000000}
-                    step={50000}
-                    value={config.savingsKeepGold}
-                    onChange={(e) => updateField('savingsKeepGold', Number(e.target.value))}
-                    className="w-24 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    min={0}
+                    max={1000}
+                    step={1}
+                    value={config.savingsMinKeepMillion ?? 10}
+                    onChange={(e) => updateField('savingsMinKeepMillion', Number(e.target.value))}
+                    className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>
               </div>

@@ -202,32 +202,35 @@ export const DEFAULT_CONFIG: AppConfig = {
   autoCook: true,
   preferDish: 'auto',
   autoRecoverHunger: true,
-  hungerThreshold: 45,
+  hungerThreshold: 10,
+  eatUntilFull: false,
   foodSource: 'kitchen_first',
   preferFoodKitchen: 'auto',
   preferFoodShop: 'banhMiThit',
   autoRecoverThirst: true,
-  thirstThreshold: 45,
+  thirstThreshold: 10,
+  drinkUntilFull: false,
   drinkSource: 'kitchen_first',
   preferDrinkKitchen: 'auto',
   preferDrinkShop: 'nuocMia',
   needThreshold: 45,
-  autoMorningCoffee: true,
   autoChargeVehicle: true,
-  batteryThreshold: 35,
+  batteryThreshold: 10,
   autoSalonShampoo: true,
   autoSalonWhiten: false,
   autoSleep: true,
-  sleepHour: 21,
   sleepOnFishingLimit: true,
 
   // 2. Crops (Tèo)
   autoHarvest: true,
   autoPesticide: true,
+  autoBuyPesticide: false,
   autoPlant: true,
+  autoBuySeeds: false,
   preferSeed: 'auto',
   autoWater: true,
   autoFertilize: true,
+  autoBuyFertilizer: false,
   autoBuyPlots: true,
   autoPayHelperCrops: true,
 
@@ -252,6 +255,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   // 5. Dairy (Bò Sữa - Chị Mận)
   dairyAutoFeedCows: true,
   dairyAutoCureCows: true,
+  dairyAutoBuyMedicine: false,
   dairyAutoSellMilk: true,
   dairyAutoPayHelper: true,
 
@@ -265,32 +269,24 @@ export const DEFAULT_CONFIG: AppConfig = {
   pondAutoStock: true,
   preferPondFish: 'chep',
   pondAutoFeed: true,
-  pondAutoPayHelper: true,
 
   // 8. Salon (Chị Linh Tây) - autoSalonShampoo & autoSalonWhiten in Section 1
 
   // 9. Market (Tạp Hóa Chị Na & Bảng Tin Làng)
   autoDeliverOrder: true,
-  keepEggsForNightMarket: true,
   autoVillageBoard: true,
   autoSellTrend: true,
-  autoSellDailyTask: true,
-  autoSellProduce: false,
-  autoSellSmart: true,
-  sellStrategy: 'smart_all',
-  sellReserveForOrders: true,
-  sellReserveForVillage: true,
-  sellReserveForKitchen: true,
-  surplusKeepQty: 10,
 
   // 10. Di Bay & Quests (Dì Bảy & Sổ Tay)
   autoClaimQuests: true,
-  autoFirstDayTasks: true,
-  autoNotebookPages: true,
   autoFeedPiggy: true,
   autoBreakPiggy: true,
   autoNewPiggy: true,
   autoSavings: false,
+  savingsDepositAmount: 5000000,
+  savingsDepositMax: true,
+  savingsTerm: 7,
+  savingsMinKeepMillion: 10,
   savingsKeepGold: 200000,
 
   // 11. Gold Shop (Tiệm Vàng Cô Kim)
@@ -302,10 +298,9 @@ export const DEFAULT_CONFIG: AppConfig = {
 
   // 12. Night Market (Chợ Đêm 18h00 - 23h30)
   autoSellNightMarket: true,
-  nightMarketMinKeep: 3,
-  nightMarketSellEggs: true,
-  nightMarketReserveOrders: true,
-  nightMarketStrategy: 'max_stock',
+  nightMarketMinStock: 50,
+  nightMarketStrategy: 'highest_price',
+  nightMarketSelectedCrop: 'radish',
 
   // Area 2: Ben Do Settings & Sub-Area Priorities
   benSubOrder: ['fishing', 'cricketBoss', 'cricketHunt', 'entertainment'],

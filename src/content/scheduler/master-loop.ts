@@ -110,9 +110,6 @@ export async function tickAuto(): Promise<void> {
       return;
     }
 
-    const hour = Math.floor((snap.minutes || 0) / 60);
-    const sleepTargetHour = Number(config.sleepHour) || 21;
-
     // Priority 0: Handle fight minigame if visible on screen
     if (document.querySelector('.ben-fight')) {
       handleFightMinigame(snap, setStatus);
@@ -131,8 +128,7 @@ export async function tickAuto(): Promise<void> {
     if (
       config.autoSleep &&
       !isMidSeaCast &&
-      ((hour >= sleepTargetHour && (snap.screen === 'playing' || config.runMode === 'all')) ||
-        (snap.minutes || 0) >= 1350)
+      (snap.minutes || 0) >= 1350
     ) {
       setStatus(`😴 Đã ${formatClock(snap.minutes)} -> Về nhà đi ngủ qua ngày mới...`);
       await execGameAction('SLEEP_NOW');

@@ -101,8 +101,17 @@ export interface BenUIState {
   [key: string]: unknown;
 }
 
+export interface ImportantAlert {
+  id: string;
+  text: string;
+  icon?: string;
+  day?: number;
+  time?: string;
+}
+
 export interface GameSnapshot {
   ok: boolean;
+  recentAlert?: ImportantAlert | null;
   hasPhaser?: boolean;
   hasBenWs?: boolean;
   screen?: string;

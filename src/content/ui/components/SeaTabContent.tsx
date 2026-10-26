@@ -150,6 +150,14 @@ export function SeaTabContent({ config, onUpdateConfig }: SeaTabContentProps) {
             </div>
           </div>
         )}
+
+        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+          <span>😴 Tự về nhà đi ngủ khi hết câu được buổi tối</span>
+          <Switch
+            checked={Boolean(config.sleepOnFishingLimit)}
+            onCheckedChange={(c) => updateField('sleepOnFishingLimit', c)}
+          />
+        </label>
       </div>
     </div>
   );

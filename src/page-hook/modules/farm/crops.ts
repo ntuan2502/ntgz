@@ -62,9 +62,10 @@ function applyOnPlot(key: string, tool: string): boolean {
   );
 }
 
-function ensureSeed(cropId: string): string | null {
+function ensureSeed(cropId: string, allowBuy: boolean): string | null {
   const cur = getMainState();
   if ((cur.seeds?.[cropId] || 0) > 0) return cropId;
+  if (!allowBuy) return null;
   const payload: BuySeedsPayload = { radish: 0, carrot: 0, corn: 0, rice: 0 };
   if (!(cropId in payload)) return null;
   payload[cropId as keyof BuySeedsPayload] = 1;
@@ -83,16 +84,17 @@ function countGrowingCrop(cropId: string): number {
 function chooseSeed(cfg: AppConfig): string | null {
   const cur = getMainState();
   const pref = cfg.preferSeed || 'auto';
+  const allowBuy = cfg.autoBuySeeds === true;
 
   if (pref !== 'auto') {
-    const got = ensureSeed(pref);
+    const got = ensureSeed(pref, allowBuy);
     if (got) return got;
   }
 
   if (cur.order?.crop) {
     const c = cur.order.crop;
     if ((cur.produce?.[c] || 0) + countGrowingCrop(c) * YIELD_PER_PLOT < cur.order.qty) {
-      const got = ensureSeed(c);
+      const got = ensureSeed(c, allowBuy);
       if (got) return got;
     }
   }
@@ -101,7 +103,7 @@ function chooseSeed(cfg: AppConfig): string | null {
     if (!task.claimed && task.kind === 'harvest' && task.crop) {
       const harvestedNow = (cur.stats?.harvested?.[task.crop] || 0) - (task.base || 0);
       if (harvestedNow + countGrowingCrop(task.crop) * YIELD_PER_PLOT < (task.need || 0)) {
-        const got = ensureSeed(task.crop);
+        const got = ensureSeed(task.crop, allowBuy);
         if (got) return got;
       }
     }
@@ -110,23 +112,25 @@ function chooseSeed(cfg: AppConfig): string | null {
   for (const req of cur.village?.requests || []) {
     if (!req.done && req.goods && req.goods !== 'egg') {
       if ((cur.produce?.[req.goods] || 0) + countGrowingCrop(req.goods) * YIELD_PER_PLOT < (req.qty || 0)) {
-        const got = ensureSeed(req.goods);
+        const got = ensureSeed(req.goods, allowBuy);
         if (got) return got;
       }
     }
   }
 
   if ((cur.day || 0) <= 2 && !cur.firstDay?.cooked && (cur.produce?.radish || 0) + countGrowingCrop('radish') * YIELD_PER_PLOT < 3) {
-    const got = ensureSeed('radish');
+    const got = ensureSeed('radish', allowBuy);
     if (got) return got;
   }
 
   for (const c of SEED_FALLBACK_ORDER) {
     if ((cur.seeds?.[c] || 0) > 0) return c;
   }
-  for (const c of SEED_FALLBACK_ORDER) {
-    const got = ensureSeed(c);
-    if (got) return got;
+  if (allowBuy) {
+    for (const c of SEED_FALLBACK_ORDER) {
+      const got = ensureSeed(c, true);
+      if (got) return got;
+    }
   }
   return null;
 }
@@ -151,8 +155,10 @@ export function handleCropsSubArea(cfg: AppConfig): StepResult {
   if (cfg.autoPesticide !== false) {
     for (const key of plotKeys) {
       if (!st.plots?.[key]?.crop?.pests) continue;
-      if ((st.items?.pesticide || 0) <= 0 && (st.gold || 0) >= 8000) {
-        st.buyItems?.({ fertilizer: 0, pesticide: 1, mysteryBag: 0 });
+      if ((st.items?.pesticide || 0) <= 0) {
+        if (cfg.autoBuyPesticide && (st.gold || 0) >= 8000) {
+          st.buyItems?.({ fertilizer: 0, pesticide: 1, mysteryBag: 0 });
+        }
       }
       if ((getMainState().items?.pesticide || 0) > 0 && applyOnPlot(key, 'pesticide')) {
         return { acted: true, msg: `🐛 Đã xịt thuốc trừ sâu ô (${key})` };
@@ -204,8 +210,10 @@ export function handleCropsSubArea(cfg: AppConfig): StepResult {
     for (const key of plotKeys) {
       const p = cur.plots?.[key];
       if (!p?.crop || p.crop.fertilized || !cur.previewTool?.(key, 'fertilizer')) continue;
-      if ((cur.items?.fertilizer || 0) <= 0 && (cur.gold || 0) >= 15000) {
-        cur.buyItems?.({ fertilizer: 1, pesticide: 0, mysteryBag: 0 });
+      if ((cur.items?.fertilizer || 0) <= 0) {
+        if (cfg.autoBuyFertilizer && (cur.gold || 0) >= 15000) {
+          cur.buyItems?.({ fertilizer: 1, pesticide: 0, mysteryBag: 0 });
+        }
       }
       if ((getMainState().items?.fertilizer || 0) > 0 && applyOnPlot(key, 'fertilizer')) {
         return { acted: true, msg: `✨ Đã bón phân NPK ô (${key})` };

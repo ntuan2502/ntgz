@@ -87,9 +87,29 @@ function tryCook(cfg: AppConfig): StepResult | null {
   return null;
 }
 
+let isRecoveringHungerToFull = false;
+let isRecoveringThirstToFull = false;
+
 function tryRecoverHunger(cfg: AppConfig, threshold: number): StepResult | null {
   const st = getMainState();
-  if ((st.fullness || 0) >= threshold || !canAct('farm_eat', 3500)) return null;
+  const current = st.fullness || 0;
+
+  if (current >= 100) {
+    isRecoveringHungerToFull = false;
+    return null;
+  }
+
+  if (cfg.eatUntilFull) {
+    if (current < threshold) {
+      isRecoveringHungerToFull = true;
+    }
+    if (!isRecoveringHungerToFull) return null;
+  } else {
+    isRecoveringHungerToFull = false;
+    if (current >= threshold) return null;
+  }
+
+  if (!canAct('farm_eat', 3500)) return null;
   const foodSource = cfg.foodSource || 'kitchen_first';
 
   if (foodSource !== 'shop_only') {
@@ -120,12 +140,32 @@ function tryRecoverHunger(cfg: AppConfig, threshold: number): StepResult | null 
       }
     }
   }
+
+  // Out of food or gold
+  isRecoveringHungerToFull = false;
   return null;
 }
 
 function tryRecoverThirst(cfg: AppConfig, threshold: number): StepResult | null {
   const st = getMainState();
-  if ((st.hydration || 0) >= threshold || !canAct('farm_drink', 3500)) return null;
+  const current = st.hydration || 0;
+
+  if (current >= 100) {
+    isRecoveringThirstToFull = false;
+    return null;
+  }
+
+  if (cfg.drinkUntilFull) {
+    if (current < threshold) {
+      isRecoveringThirstToFull = true;
+    }
+    if (!isRecoveringThirstToFull) return null;
+  } else {
+    isRecoveringThirstToFull = false;
+    if (current >= threshold) return null;
+  }
+
+  if (!canAct('farm_drink', 3500)) return null;
   const drinkSource = cfg.drinkSource || 'kitchen_first';
 
   if (drinkSource !== 'shop_only') {
@@ -156,6 +196,9 @@ function tryRecoverThirst(cfg: AppConfig, threshold: number): StepResult | null 
       }
     }
   }
+
+  // Out of drinks or gold
+  isRecoveringThirstToFull = false;
   return null;
 }
 
@@ -165,9 +208,9 @@ export function handleHouseSubArea(cfg: AppConfig): StepResult {
     if (cooked) return cooked;
   }
 
-  const thH = Number(cfg.hungerThreshold) || Number(cfg.needThreshold) || 45;
-  const thT = Number(cfg.thirstThreshold) || Number(cfg.needThreshold) || 45;
-  const thB = Number(cfg.batteryThreshold) || 35;
+  const thH = typeof cfg.hungerThreshold === 'number' ? cfg.hungerThreshold : 10;
+  const thT = typeof cfg.thirstThreshold === 'number' ? cfg.thirstThreshold : 10;
+  const thB = typeof cfg.batteryThreshold === 'number' ? cfg.batteryThreshold : 10;
 
   if (cfg.autoRecoverHunger !== false) {
     const res = tryRecoverHunger(cfg, thH);
@@ -177,15 +220,6 @@ export function handleHouseSubArea(cfg: AppConfig): StepResult {
   if (cfg.autoRecoverThirst !== false) {
     const res = tryRecoverThirst(cfg, thT);
     if (res) return res;
-  }
-
-  if (cfg.autoMorningCoffee !== false) {
-    const st = getMainState();
-    if (st.coffeeDay !== st.day && (st.gold || 0) >= 30000 && canAct('farm_coffee', 4000) && st.buyFood?.('caPheSua') === 'ok') {
-      markActed('farm_coffee');
-      showFarmActionUI(cfg, { vendor: 'cafe', shop: 'menu' });
-      return { acted: true, msg: '☕ Đã uống Cà phê sữa đá (+25% nước, chạy nhanh suốt ngày)' };
-    }
   }
 
   if (cfg.autoChargeVehicle !== false) {
