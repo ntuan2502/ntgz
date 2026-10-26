@@ -34,6 +34,13 @@ interface GameActionPayload {
           dismissInterruptsIfNeeded({ autoDismissInterrupts: true });
           const cur = mainStore.getState();
 
+          if (cur.screen === 'playing' && target !== 'playing') {
+            console.warn(
+              '[NTG Tool] Đổi scene từ Nông trại. Game có thể rollback 0-10s dữ liệu ' +
+              'nếu bạn đóng tab ngay lập tức. Chờ 10s trước khi đóng tab để an toàn.'
+            );
+          }
+
           if (target === 'playing') {
             if (cur.screen === 'farmstay') {
               if (typeof cur.leaveFarmstay === 'function') {

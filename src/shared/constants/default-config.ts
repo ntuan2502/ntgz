@@ -23,7 +23,7 @@ export const SUBAREA_META: Record<FarmSubAreaId, SubAreaMeta> = {
   house: { id: 'house', icon: '🏠', name: 'Nhà & Bếp (Nấu nướng, Đói/Khát)' },
   crops: { id: 'crops', icon: '🌱', name: 'Ruộng Đồng (Trồng trọt · Tèo)' },
   pet: { id: 'pet', icon: '🐕', name: 'Thú Cưng (Chăm sóc & Cho ăn)' },
-  barn: { id: 'barn', icon: '🐃', name: 'Chuồng Trâu (Anh Tám)' },
+  barn: { id: 'barn', icon: '🐃', name: 'Chuồng Trâu (Anh Tâm)' },
   dairy: { id: 'dairy', icon: '🐄', name: 'Bò Sữa (Chị Mận)' },
   coop: { id: 'coop', icon: '🐔', name: 'Chuồng Gà (Chú Ba)' },
   pond: { id: 'pond', icon: '🐟', name: 'Ao Cá (Bé Bi)' },
@@ -242,7 +242,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   petAutoTrick: true,
   petAutoWalk: true,
 
-  // 4. Barn (Trâu - Anh Tám)
+  // 4. Barn (Trâu - Anh Tâm)
   barnAutoFeedBuffalo: true,
   barnAutoBathBuffalo: true,
   barnAutoLendBuffalo: true,
@@ -271,6 +271,7 @@ export const DEFAULT_CONFIG: AppConfig = {
 
   // 9. Market (Tạp Hóa Chị Na & Bảng Tin Làng)
   autoDeliverOrder: true,
+  keepEggsForNightMarket: true,
   autoVillageBoard: true,
   autoSellTrend: true,
   autoSellDailyTask: true,

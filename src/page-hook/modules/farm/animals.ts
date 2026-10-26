@@ -153,7 +153,7 @@ export function handleBarnSubArea(cfg: AppConfig): StepResult {
   if (cfg.barnAutoPayHelper !== false) {
     const stH = getMainState();
     if (stH.helpers?.buffalo?.hired && (stH.helpers.buffalo.unpaid || 0) > 0 && stH.payHelper?.('buffalo') === true) {
-      return { acted: true, msg: '💸 Đã trả lương anh Tám chăn trâu' };
+      return { acted: true, msg: '💸 Đã trả lương anh Tâm chăn trâu' };
     }
   }
 

@@ -1211,7 +1211,7 @@
     if (cfg.barnAutoPayHelper !== false) {
       const stH = getMainState();
       if (stH.helpers?.buffalo?.hired && (stH.helpers.buffalo.unpaid || 0) > 0 && stH.payHelper?.("buffalo") === true) {
-        return { acted: true, msg: "\u{1F4B8} \u0110\xE3 tr\u1EA3 l\u01B0\u01A1ng anh T\xE1m ch\u0103n tr\xE2u" };
+        return { acted: true, msg: "\u{1F4B8} \u0110\xE3 tr\u1EA3 l\u01B0\u01A1ng anh T\xE2m ch\u0103n tr\xE2u" };
       }
     }
     return NOT_ACTED;
@@ -1343,7 +1343,9 @@
   function getReservedQty(st, item, cfg) {
     let reserved = 0;
     if (cfg.sellReserveForOrders !== false && st.order && st.order.crop === item) {
-      reserved += st.order.qty || 0;
+      if (!(item === "egg" && cfg.keepEggsForNightMarket !== false)) {
+        reserved += st.order.qty || 0;
+      }
     }
     if (cfg.sellReserveForVillage !== false && Array.isArray(st.village?.requests)) {
       for (const req of st.village.requests) {
@@ -1380,6 +1382,7 @@
   function deliverGroceryOrder(cfg) {
     const m = getMainState();
     if (!m.order || stockOf(m, m.order.crop) < m.order.qty) return null;
+    if (m.order.crop === "egg" && cfg.keepEggsForNightMarket !== false) return null;
     const reward = m.order.reward || 0;
     const cropLabel = CROP_NAMES[m.order.crop] || m.order.crop;
     if (m.deliverOrder?.() === true) {
@@ -3009,6 +3012,11 @@
             const target = payload.target;
             dismissInterruptsIfNeeded({ autoDismissInterrupts: true });
             const cur = mainStore.getState();
+            if (cur.screen === "playing" && target !== "playing") {
+              console.warn(
+                "[NTG Tool] \u0110\u1ED5i scene t\u1EEB N\xF4ng tr\u1EA1i. Game c\xF3 th\u1EC3 rollback 0-10s d\u1EEF li\u1EC7u n\u1EBFu b\u1EA1n \u0111\xF3ng tab ngay l\u1EADp t\u1EE9c. Ch\u1EDD 10s tr\u01B0\u1EDBc khi \u0111\xF3ng tab \u0111\u1EC3 an to\xE0n."
+              );
+            }
             if (target === "playing") {
               if (cur.screen === "farmstay") {
                 if (typeof cur.leaveFarmstay === "function") {

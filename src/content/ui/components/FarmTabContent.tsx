@@ -544,7 +544,7 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               </div>
             )}
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>💸 Tự trả lương Anh Tám chăn trâu</span>
+              <span>💸 Tự trả lương Anh Tâm chăn trâu</span>
               <Switch
                 checked={Boolean(config.barnAutoPayHelper)}
                 onCheckedChange={(c) => updateField('barnAutoPayHelper', c)}
@@ -694,6 +694,17 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
                 onCheckedChange={(c) => updateField('autoDeliverOrder', c)}
               />
             </label>
+            {config.autoDeliverOrder && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]">
+                <label className="flex items-center justify-between text-slate-600 cursor-pointer">
+                  <span>🥚 Giữ trứng cho Chợ Đêm (không giao Dì Bảy)</span>
+                  <Switch
+                    checked={Boolean(config.keepEggsForNightMarket)}
+                    onCheckedChange={(c) => updateField('keepEggsForNightMarket', c)}
+                  />
+                </label>
+              </div>
+            )}
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
               <span>📋 Tự giao đơn Bảng tin làng (Anh Khang)</span>
               <Switch

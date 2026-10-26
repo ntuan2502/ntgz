@@ -14634,7 +14634,7 @@
     house: { id: "house", icon: "\u{1F3E0}", name: "Nh\xE0 & B\u1EBFp (N\u1EA5u n\u01B0\u1EDBng, \u0110\xF3i/Kh\xE1t)" },
     crops: { id: "crops", icon: "\u{1F331}", name: "Ru\u1ED9ng \u0110\u1ED3ng (Tr\u1ED3ng tr\u1ECDt \xB7 T\xE8o)" },
     pet: { id: "pet", icon: "\u{1F415}", name: "Th\xFA C\u01B0ng (Ch\u0103m s\xF3c & Cho \u0103n)" },
-    barn: { id: "barn", icon: "\u{1F403}", name: "Chu\u1ED3ng Tr\xE2u (Anh T\xE1m)" },
+    barn: { id: "barn", icon: "\u{1F403}", name: "Chu\u1ED3ng Tr\xE2u (Anh T\xE2m)" },
     dairy: { id: "dairy", icon: "\u{1F404}", name: "B\xF2 S\u1EEFa (Ch\u1ECB M\u1EADn)" },
     coop: { id: "coop", icon: "\u{1F414}", name: "Chu\u1ED3ng G\xE0 (Ch\xFA Ba)" },
     pond: { id: "pond", icon: "\u{1F41F}", name: "Ao C\xE1 (B\xE9 Bi)" },
@@ -14773,7 +14773,7 @@
     petAutoBath: true,
     petAutoTrick: true,
     petAutoWalk: true,
-    // 4. Barn (Trâu - Anh Tám)
+    // 4. Barn (Trâu - Anh Tâm)
     barnAutoFeedBuffalo: true,
     barnAutoBathBuffalo: true,
     barnAutoLendBuffalo: true,
@@ -14797,6 +14797,7 @@
     // 8. Salon (Chị Linh Tây) - autoSalonShampoo & autoSalonWhiten in Section 1
     // 9. Market (Tạp Hóa Chị Na & Bảng Tin Làng)
     autoDeliverOrder: true,
+    keepEggsForNightMarket: true,
     autoVillageBoard: true,
     autoSellTrend: true,
     autoSellDailyTask: true,
@@ -26824,7 +26825,7 @@
               )
             ] }) }),
             /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng Anh T\xE1m ch\u0103n tr\xE2u" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng Anh T\xE2m ch\u0103n tr\xE2u" }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 Switch3,
                 {
@@ -27003,6 +27004,16 @@
                 }
               )
             ] }),
+            config2.autoDeliverOrder && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-600 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F95A} Gi\u1EEF tr\u1EE9ng cho Ch\u1EE3 \u0110\xEAm (kh\xF4ng giao D\xEC B\u1EA3y)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.keepEggsForNightMarket),
+                  onCheckedChange: (c) => updateField("keepEggsForNightMarket", c)
+                }
+              )
+            ] }) }),
             /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4CB} T\u1EF1 giao \u0111\u01A1n B\u1EA3ng tin l\xE0ng (Anh Khang)" }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(

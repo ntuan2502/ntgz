@@ -15,7 +15,9 @@ function getReservedQty(st: MainGameStoreState, item: string, cfg: AppConfig): n
 
   // 1. Chị Na grocery order
   if (cfg.sellReserveForOrders !== false && st.order && st.order.crop === item) {
-    reserved += (st.order.qty || 0);
+    if (!(item === 'egg' && cfg.keepEggsForNightMarket !== false)) {
+      reserved += (st.order.qty || 0);
+    }
   }
 
   // 2. Village board requests
@@ -56,6 +58,7 @@ function getReservedQty(st: MainGameStoreState, item: string, cfg: AppConfig): n
 function deliverGroceryOrder(cfg: AppConfig): StepResult | null {
   const m = getMainState();
   if (!m.order || stockOf(m, m.order.crop) < m.order.qty) return null;
+  if (m.order.crop === 'egg' && cfg.keepEggsForNightMarket !== false) return null;
   const reward = m.order.reward || 0;
   const cropLabel = CROP_NAMES[m.order.crop] || m.order.crop;
   if (m.deliverOrder?.() === true) {

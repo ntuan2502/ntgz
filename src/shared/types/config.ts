@@ -116,7 +116,7 @@ export interface AppConfig {
   petAutoTrick: boolean;
   petAutoWalk: boolean;
 
-  // 4. Barn (Trâu - Anh Tám)
+  // 4. Barn (Trâu - Anh Tâm)
   barnAutoFeedBuffalo: boolean;
   barnAutoBathBuffalo: boolean;
   barnAutoLendBuffalo: boolean;
@@ -146,6 +146,8 @@ export interface AppConfig {
 
   // 9. Market (Tạp Hóa Chị Na & Bảng Tin Làng)
   autoDeliverOrder: boolean;
+  /** Giữ trứng cho Chợ Đêm (không giao đơn tạp hóa Dì Bảy / Chị Na) để tối ưu lợi nhuận 18.750đ > 7.800đ */
+  keepEggsForNightMarket: boolean;
   autoVillageBoard: boolean;
   autoSellTrend: boolean;
   autoSellDailyTask: boolean;
