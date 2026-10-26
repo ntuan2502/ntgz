@@ -5,6 +5,28 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.5.1] - 2026-10-26
+
+### 🐛 Sửa Lỗi Nghiêm Trọng & Nâng Cao Độ Ổn Định (Bug Fixes & Stability)
+- **Khu Vực Farmstay Ông Năm (Farmstay Fixes)**:
+  - **Khắc phục lỗi kẹt vòng lặp Cẩm nang**: Sửa điều kiện nhận cẩm nang đón khách ngày mới (`guideDay !== day`), ngăn chặn hiện tượng spam nhận cẩm nang liên tục trong ngày gây đứng tool.
+  - **Vô hiệu hóa tự động rời Farmstay (`leaveFarmstay`)**: Loại bỏ việc tự ý gọi lệnh thoát Farmstay khi đang chạy auto theo Tab, đảm bảo bot duy trì vận hành ổn định trong khu vực Farmstay mà không bị văng scene.
+  - **Bổ sung đầy đủ 7 vị trí nhân viên Farmstay**: Quản lý (`manager`), Làm vườn (`gardener`), Đầu bếp (`cook`), Bảo vệ (`guard`), Hướng dẫn viên (`guide`), Truyền thông (`media`), Tạp vụ (`cleaner`) khi tự động trò chuyện hàng ngày (tăng thân thiết Bond) và thanh toán nợ lương.
+  - **Chuẩn hóa kiểm tra công việc tồn đọng (`hasPendingFarmstayWork`)**: Đối chiếu chính xác cấu trúc dữ liệu game: vườn rau chín (`readyAt`), luống khô (`watered`), tiện ích hỏng (`broken`), đơn hàng khách (`orders`), đoàn khách chờ (`guests`), và cẩm nang du lịch ngày mới.
+- **Khu Vực Thú Cưng (Pet Crash Fix)**:
+  - **Khắc phục lỗi Crash Silent khi chăm thú cưng**: Bổ sung kiểm tra phòng vệ `Array.isArray(pet.gear)` trước khi gọi các hành động của game, loại bỏ hoàn toàn lỗi văng ngoại lệ `TypeError: Cannot read properties of undefined (reading 'includes')` từ `play-BWW_C6XM.js` khiến sập toàn bộ vòng lặp auto.
+  - **Cách ly ngoại lệ cấp phân khu (`execFarmSubAreaStep`)**: Bọc `try/catch` độc lập cho từng hành động của Pet và từng phân khu nông trại; nếu một tính năng gặp lỗi dữ liệu bất thường từ game, tool sẽ ghi cảnh báo và tiếp tục xử lý các phân khu khác mà không bị đứng hình.
+  - **Đảm bảo trạng thái thú cưng**: Tự động kích hoạt `setPetFollow(true)` khi dắt pet đi dạo mát.
+- **Khu Vực Chợ Lớn & Nông Sản (Market & Trend Fixes)**:
+  - **Sửa lỗi tính sai cây Trend sốt dẻo (x2 giá)**: Loại bỏ lúa (`rice`, thuộc cây cốt truyện `story: true`) khỏi danh sách cây trồng tính toán chỉ số xu hướng (`TREND_CROPS`), khắc phục triệt để hiện tượng lệch index khiến bot nhận diện sai cây trend sốt dẻo (trước đây bán nhầm bắp ngô thay vì cà rốt).
+  - **Chốt chặn an toàn khi bán nông sản (`sellSmart`)**: Bổ sung cờ bảo vệ `autoSellProduce` trong cơ chế Bán thông minh. Tool sẽ không tự ý bán nông sản thô dư thừa khi người dùng chỉ bật tính năng bán theo trend hoặc chỉ muốn bán món ăn nấu chín (`produce_only`), bảo toàn tối đa nông sản trong kho.
+- **Khu Vực Chợ Đêm & Mã Nguồn (Night Market & Cleanup)**:
+  - **Chuẩn hóa giá trứng Chợ Đêm**: Cập nhật giá bán trứng gà tại Chợ Đêm theo đúng công thức game: `15.000đ × 1.25 = 18.750đ` (thay vì mức giá cũ 3.000đ).
+  - **Dọn dẹp mã nguồn thừa (Dead code)**: Loại bỏ các đoạn code kiểm tra `helpers.pond` không còn sử dụng.
+  - **Tăng cường khả năng chẩn đoán**: Thêm logging trực quan và bọc bắt lỗi toàn diện trên tất cả các tác vụ chạy ngầm.
+
+---
+
 ## [1.5.0] - 2026-10-26
 
 ### 🌟 Tính Năng Mới & Nâng Cấp Hệ Thống (Major Features)

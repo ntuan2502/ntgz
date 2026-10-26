@@ -1,4 +1,4 @@
-# 🌾 Nông Trại GenZ Auto by Tún (v1.5.0)
+# 🌾 Nông Trại GenZ Auto by Tún (v1.5.1)
 
 > **Công cụ Auto đa khu vực (DOM + Canvas) thông minh, toàn diện dành riêng cho tựa game [Nông Trại GenZ](https://nongtraigenz.online/play/).**  
 > Bản quyền phát triển bởi **Tún**. Tiện ích mở rộng Google Chrome Extension theo chuẩn **Manifest V3**.
@@ -26,7 +26,7 @@ Tiện ích hoạt động mượt mà kết hợp giữa can thiệp giao diệ
   - **Vận Hành & Đón Khách**: Tự động mở cửa đón khách khi có cổng chào và quản lý; nhận cẩm nang du lịch mỗi ngày; tự thanh toán lương nhân viên với ngưỡng giữ vàng an toàn.
   - **Bảo Trì & Sửa Chữa Tiện Ích**: Tự động phát hiện và sửa chữa các tiện ích hư hỏng do du khách làm hỏng để giữ vững danh tiếng 5.0 ⭐ và duy trì dòng doanh thu.
   - **Vườn Rau Hữu Cơ (24 Luống)**: Tự động thu hoạch rau chín vào kho bếp; tưới nước cho luống khô; bón phân hữu cơ; tự gieo hạt giống hữu cơ (Rau muống, Cà chua, Dưa leo, Ớt, Dưa hấu); tự khai hoang mở thêm luống rau mới.
-  - **Nhân Viên & Tăng Điểm Thân Thiết**: Tự trò chuyện hàng ngày với 5 nhân sự (Quản lý, Làm vườn, Đầu bếp, Tạp vụ, Hướng dẫn viên) để đạt mốc Thân thiết (Bond) 10/10 mở khóa đặc quyền; tự động xử lý các sự kiện tâm sự của nhân viên.
+  - **Nhân Viên & Tăng Điểm Thân Thiết**: Tự trò chuyện hàng ngày với 7 nhân sự (Quản lý, Làm vườn, Đầu bếp, Bảo vệ, Hướng dẫn viên, Truyền thông, Tạp vụ) để đạt mốc Thân thiết (Bond) 10/10 mở khóa đặc quyền; tự động xử lý các sự kiện tâm sự của nhân viên.
   - **Phục Vụ Khách & Tour Đoàn**: Tự động đối chiếu nguyên liệu và giao món theo yêu cầu của khách nhận tiền bo (tips); tự duyệt nhận các đoàn khách tour du lịch của Chị Hồng.
   - **Sắp Xếp Ưu Tiên Kéo Thả**: Tự do kéo thả hoặc bấm mũi tên để sắp xếp thứ tự ưu tiên giữa 5 phân khu trong Farmstay.
 - 🔄 **Kiểm Tra Cập Nhật Trực Tiếp**: Tích hợp nút kiểm tra cập nhật trên cả Popup Extension và Menu Game HUD, tự động so sánh phiên bản với GitHub Releases và hiển thị nội dung Changelog Markdown chi tiết kèm đường dẫn tải bản mới.
@@ -128,5 +128,5 @@ Xem toàn bộ lịch sử cập nhật và mô tả chức năng chi tiết t�
 ## 👤 Tác Giả & Bản Quyền
 
 - **Tác giả**: Tún (Nông Trại GenZ Auto by Tún)
-- **Phiên bản hiện tại**: `v1.4.0`
+- **Phiên bản hiện tại**: `v1.5.1`
 - **Giấy phép**: Bản quyền mã nguồn dành riêng cho cộng đồng người chơi Nông Trại GenZ.
