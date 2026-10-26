@@ -30274,7 +30274,8 @@
         } else if (tab === "farmstay") {
           const res = await stepFarmstay(snap, config2, setStatus, updateHeaderStats);
           if (res.finishedArea && !res.acted && snap.screen === "farmstay") {
-            setStatus("\u2705 \u0110\xE3 ho\xE0n t\u1EA5t m\u1ECDi vi\u1EC7c \u0111\u01B0\u1EE3c b\u1EADt trong Farmstay \xD4ng N\u0103m");
+            setStatus("\u{1F3E1} Farmstay \xD4ng N\u0103m: \u0110\xE3 xong vi\u1EC7c hi\u1EC7n t\u1EA1i (\u0110ang canh rau ch\xEDn & kh\xE1ch \u0111\u1EBFn...)");
+            await sleep(1500);
           }
         }
         isBusy = false;

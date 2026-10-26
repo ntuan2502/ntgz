@@ -22,10 +22,12 @@ const FS_VEG_NAMES: Record<string, string> = {
 
 const FS_STAFF_NAMES: Record<string, string> = {
   manager: 'Quản lý',
-  gardener: 'Người làm vườn',
+  gardener: 'Người làm vườn Con Tí',
   cook: 'Đầu bếp Chín Cơm',
   cleaner: 'Tạp vụ',
-  guide: 'Hướng dẫn viên',
+  guide: 'Hướng dẫn viên Anh Tài',
+  guard: 'Bảo vệ Ông Bảy',
+  media: 'Quay clip Linh Ròm',
 };
 
 function hasEnoughOrderItems(state: MainGameStoreState, order: FarmstayOrder): boolean {
@@ -221,17 +223,21 @@ export function handleFarmstayStaff(m: MainGameStoreState, cfg: AppConfig): Step
 
   // 2. Tự động trò chuyện tăng thân thiết (Bond)
   if (cfg.farmstayAutoChatStaff && typeof m.chatStaff === 'function') {
-    const roles = ['manager', 'gardener', 'cook', 'cleaner', 'guide'];
+    const roles = ['manager', 'gardener', 'cook', 'cleaner', 'guide', 'guard', 'media'];
     for (const role of roles) {
       const s = fs.staff[role];
       if (s && s.chatDay !== m.day && (s.bond || 0) < 10) {
-        const ok = m.chatStaff(role);
-        if (ok) {
-          const bondNow = (s.bond || 0) + 1;
-          return {
-            acted: true,
-            msg: `💬 Trò chuyện với ${FS_STAFF_NAMES[role] || role} (Thân thiết: ${bondNow}/10 ⭐)`,
-          };
+        try {
+          const ok = m.chatStaff(role);
+          if (ok) {
+            const bondNow = (s.bond || 0) + 1;
+            return {
+              acted: true,
+              msg: `💬 Trò chuyện với ${FS_STAFF_NAMES[role] || role} (Thân thiết: ${bondNow}/10 ⭐)`,
+            };
+          }
+        } catch (e) {
+          console.warn(`[Farmstay] chatStaff(${role}) failed:`, e);
         }
       }
     }
@@ -276,7 +282,129 @@ const FARMTAY_SUBAREA_HANDLERS: Record<FarmstaySubAreaId, (m: MainGameStoreState
   orders: handleFarmstayOrders,
 };
 
-let farmstayHadActions = false;
+/**
+ * Kiểm tra xem Farmstay Ông Năm còn công việc nào đang chờ xử lý hay không.
+ * Trả về false CHỈ KHI chắc chắn 100% đã hết mọi việc được bật trong cấu hình.
+ * Nếu có lỗi hoặc không thể xác định chắc chắn, luôn mặc định trả về true (Defensive) để không đá người chơi ra.
+ */
+export function hasPendingFarmstayWork(m: MainGameStoreState, cfg: AppConfig): boolean {
+  try {
+    const fs = m.farmstay;
+    if (!fs) return false;
+
+    const curTime = (m.day || 0) * 24 * 60 + (m.minutes || 0);
+
+    // 1. Cẩm nang đón khách du lịch ngày mới
+    if (cfg.farmstayAutoGuide && fs.guideDay !== m.day) {
+      return true;
+    }
+
+    // 2. Mở cửa Farmstay (nếu có cổng + có quản lý và đang đóng)
+    if (cfg.farmstayAutoOpen && !fs.open) {
+      const hasGate = Boolean(fs.built && (fs.built.gate || 0) > 0);
+      const hasManager = Boolean(fs.staff && fs.staff.manager);
+      if (hasGate && hasManager) return true;
+    }
+
+    // 3. Trả lương nhân viên (nếu có nợ lương)
+    if (cfg.farmstayAutoPayStaff && typeof m.farmstayDebt === 'function') {
+      try {
+        const debt = m.farmstayDebt();
+        const minGold = cfg.farmstayMinGoldKeep ?? 10000;
+        if (debt > 0 && (m.gold || 0) >= debt + minGold) return true;
+      } catch (e) {
+        console.warn('[Farmstay] check debt error:', e);
+      }
+    }
+
+    // 4. Sửa chữa tiện ích hỏng (broken)
+    if (cfg.farmstayAutoRepair && fs.broken && Object.keys(fs.broken).length > 0) {
+      return true;
+    }
+
+    // 5. Vườn rau hữu cơ (Veg garden)
+    // Cấu trúc ground-truth từ play.formatted.js:44675:
+    // plots: Array(24), mỗi phần tử là null hoặc { crop: string, readyAt: number | null, fed?: boolean }
+    if (cfg.farmstayAutoVeg && fs.veg) {
+      const openCount = fs.veg.open || 0;
+      const plots = fs.veg.plots || [];
+
+      // 5.1. Luống rau chín cần thu hoạch (readyAt !== null && curTime >= readyAt)
+      if (cfg.farmstayVegAutoHarvest) {
+        const hasRipe = plots.some(
+          (p: FarmstayVegPlot | null, i: number) =>
+            i < openCount && p && typeof p.readyAt === 'number' && curTime >= p.readyAt
+        );
+        if (hasRipe) return true;
+      }
+
+      // 5.2. Luống rau khô cần tưới nước (readyAt === null)
+      if (cfg.farmstayVegAutoWater) {
+        const hasDry = plots.some(
+          (p: FarmstayVegPlot | null, i: number) =>
+            i < openCount && p && p.readyAt === null
+        );
+        if (hasDry) return true;
+      }
+
+      // 5.3. Bón phân hữu cơ (readyAt !== null && !fed && curTime < readyAt)
+      if (cfg.farmstayVegAutoFeed && (m.items?.fertilizer || 0) > 0) {
+        for (let i = 0; i < openCount; i++) {
+          const p = plots[i];
+          if (p && typeof p.readyAt === 'number' && !p.fed && curTime < p.readyAt) {
+            return true;
+          }
+        }
+      }
+
+      // 5.4. Gieo hạt vào luống trống (p === null && index < openCount && built.veggie)
+      if (cfg.farmstayVegAutoPlant && fs.built?.veggie) {
+        const hasEmpty = plots.some((p: FarmstayVegPlot | null, i: number) => i < openCount && !p) || plots.length < openCount;
+        if (hasEmpty) {
+          const minGold = cfg.farmstayMinGoldKeep ?? 10000;
+          if ((m.gold || 0) >= 5000 + minGold) {
+            return true;
+          }
+        }
+      }
+    }
+
+    // 6. Nhân viên Farmstay (Staff - 7 vai trò)
+    if (fs.staff) {
+      if (cfg.farmstayAutoAnswerStory && fs.story?.pending) {
+        return true;
+      }
+
+      if (cfg.farmstayAutoChatStaff) {
+        const roles = ['manager', 'gardener', 'cook', 'cleaner', 'guide', 'guard', 'media'];
+        for (const role of roles) {
+          const s = fs.staff[role];
+          if (s && s.chatDay !== m.day && (s.bond || 0) < 10) {
+            return true;
+          }
+        }
+      }
+    }
+
+    // 7. Đoàn khách Chị Hồng & Đơn món ăn
+    if (cfg.farmstayAutoGroupBooking && fs.booking && !fs.booking.accepted) {
+      return true;
+    }
+
+    if (cfg.farmstayAutoOrders && fs.orders) {
+      for (const order of fs.orders) {
+        if (!order.done && hasEnoughOrderItems(m, order)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  } catch (err) {
+    console.error('[Farmstay Error] hasPendingFarmstayWork failed:', err);
+    return true; // Defensive: Luôn ở lại nếu gặp lỗi không mong muốn
+  }
+}
 
 export const finishFarmstayCycle = async () => {
   const st = getMainState();
@@ -314,7 +442,6 @@ export function execFarmstayStep(cfg: AppConfig): StepResult {
         try {
           const res = handler(m, cfg);
           if (res && res.acted) {
-            farmstayHadActions = true;
             return res;
           }
         } catch (subErr) {
@@ -323,14 +450,9 @@ export function execFarmstayStep(cfg: AppConfig): StepResult {
       }
     }
 
-    // Nếu chu kỳ vừa qua đã có hành động thay đổi dữ liệu, thoát Farmstay an toàn về Farm để kích hoạt auto-save _K()
-    // Lưu ý: Chỉ thoát nếu chạy chế độ tất cả khu vực, không thoát nếu người dùng đang khóa tab Farmstay
-    if (farmstayHadActions) {
-      farmstayHadActions = false;
-      if (cfg.runMode !== 'tab' || cfg.activeTab !== 'farmstay') {
-        finishFarmstayCycle().catch((e) => console.warn('[Farmstay] finish cycle failed:', e));
-      }
-    }
+    // VÔ HIỆU HÓA AUTO-LEAVE:
+    // Tuyệt đối không tự động gọi leaveFarmstay() để tránh làm sập vòng lặp hoặc đá người chơi ra ngoài.
+    // Việc chuyển scene chỉ diễn ra khi người chơi chuyển tab hoặc do scheduler cấp cao điều phối.
 
     return NOT_ACTED;
   } catch (err: unknown) {

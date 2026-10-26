@@ -2874,10 +2874,12 @@
   };
   var FS_STAFF_NAMES = {
     manager: "Qu\u1EA3n l\xFD",
-    gardener: "Ng\u01B0\u1EDDi l\xE0m v\u01B0\u1EDDn",
+    gardener: "Ng\u01B0\u1EDDi l\xE0m v\u01B0\u1EDDn Con T\xED",
     cook: "\u0110\u1EA7u b\u1EBFp Ch\xEDn C\u01A1m",
     cleaner: "T\u1EA1p v\u1EE5",
-    guide: "H\u01B0\u1EDBng d\u1EABn vi\xEAn"
+    guide: "H\u01B0\u1EDBng d\u1EABn vi\xEAn Anh T\xE0i",
+    guard: "B\u1EA3o v\u1EC7 \xD4ng B\u1EA3y",
+    media: "Quay clip Linh R\xF2m"
   };
   function hasEnoughOrderItems(state, order) {
     if (!order || !order.items) return false;
@@ -3039,17 +3041,21 @@
       }
     }
     if (cfg.farmstayAutoChatStaff && typeof m.chatStaff === "function") {
-      const roles = ["manager", "gardener", "cook", "cleaner", "guide"];
+      const roles = ["manager", "gardener", "cook", "cleaner", "guide", "guard", "media"];
       for (const role of roles) {
         const s = fs.staff[role];
         if (s && s.chatDay !== m.day && (s.bond || 0) < 10) {
-          const ok = m.chatStaff(role);
-          if (ok) {
-            const bondNow = (s.bond || 0) + 1;
-            return {
-              acted: true,
-              msg: `\u{1F4AC} Tr\xF2 chuy\u1EC7n v\u1EDBi ${FS_STAFF_NAMES[role] || role} (Th\xE2n thi\u1EBFt: ${bondNow}/10 \u2B50)`
-            };
+          try {
+            const ok = m.chatStaff(role);
+            if (ok) {
+              const bondNow = (s.bond || 0) + 1;
+              return {
+                acted: true,
+                msg: `\u{1F4AC} Tr\xF2 chuy\u1EC7n v\u1EDBi ${FS_STAFF_NAMES[role] || role} (Th\xE2n thi\u1EBFt: ${bondNow}/10 \u2B50)`
+              };
+            }
+          } catch (e) {
+            console.warn(`[Farmstay] chatStaff(${role}) failed:`, e);
           }
         }
       }
@@ -3085,13 +3091,6 @@
     staff: handleFarmstayStaff,
     orders: handleFarmstayOrders
   };
-  var farmstayHadActions = false;
-  var finishFarmstayCycle = async () => {
-    const st = getMainState();
-    if (st.screen !== "farmstay") return;
-    st.leaveFarmstay?.();
-    await new Promise((r) => setTimeout(r, 100));
-  };
   function execFarmstayStep(cfg) {
     try {
       const mainStore = stores.main;
@@ -3115,18 +3114,11 @@
           try {
             const res = handler(m, cfg);
             if (res && res.acted) {
-              farmstayHadActions = true;
               return res;
             }
           } catch (subErr) {
             console.error(`[Farmstay SubArea Error] SubArea "${subId}" failed:`, subErr);
           }
-        }
-      }
-      if (farmstayHadActions) {
-        farmstayHadActions = false;
-        if (cfg.runMode !== "tab" || cfg.activeTab !== "farmstay") {
-          finishFarmstayCycle().catch((e) => console.warn("[Farmstay] finish cycle failed:", e));
         }
       }
       return NOT_ACTED;

@@ -178,7 +178,8 @@ export async function tickAuto(): Promise<void> {
       } else if (tab === 'farmstay') {
         const res = await stepFarmstay(snap, config, setStatus, updateHeaderStats);
         if (res.finishedArea && !res.acted && snap.screen === 'farmstay') {
-          setStatus('✅ Đã hoàn tất mọi việc được bật trong Farmstay Ông Năm');
+          setStatus('🏡 Farmstay Ông Năm: Đã xong việc hiện tại (Đang canh rau chín & khách đến...)');
+          await sleep(1500);
         }
       }
       isBusy = false;
