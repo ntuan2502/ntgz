@@ -1,4 +1,11 @@
-import { CricketItem, SoiState, BoutState, CricketHuntState, CricketCaughtState } from './game-store';
+import {
+  CricketItem,
+  SoiState,
+  BoutState,
+  CricketHuntState,
+  CricketCaughtState,
+  FarmstayState,
+} from './game-store';
 
 export interface VehicleState {
   id?: string;
@@ -137,5 +144,6 @@ export interface GameSnapshot {
     basket?: unknown[];
     [key: string]: unknown;
   };
+  farmstay?: FarmstayState | null;
   [key: string]: unknown;
 }

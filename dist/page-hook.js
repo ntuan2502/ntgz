@@ -533,7 +533,8 @@
         you: bn.you,
         watching: bn.watching ?? null,
         cricketEvents: getCricketEvents()
-      } : null
+      } : null,
+      farmstay: m.farmstay ?? null
     };
   }
 
@@ -2728,6 +2729,256 @@
     return { acted: false, allowCast: false };
   }
 
+  // src/page-hook/modules/farmstay/index.ts
+  var FS_VEG_PRICES = {
+    rauMuong: 5e3,
+    caChua: 1e4,
+    duaLeo: 8e3,
+    ot: 8e3,
+    duaHau: 2e4
+  };
+  var FS_VEG_NAMES = {
+    rauMuong: "Rau mu\u1ED1ng \u{1F96C}",
+    caChua: "C\xE0 chua \u{1F345}",
+    duaLeo: "D\u01B0a leo \u{1F952}",
+    ot: "\u1EDAt cay \u{1F336}\uFE0F",
+    duaHau: "D\u01B0a h\u1EA5u \u{1F349}"
+  };
+  var FS_STAFF_NAMES = {
+    manager: "Qu\u1EA3n l\xFD",
+    gardener: "Ng\u01B0\u1EDDi l\xE0m v\u01B0\u1EDDn",
+    cook: "\u0110\u1EA7u b\u1EBFp Ch\xEDn C\u01A1m",
+    cleaner: "T\u1EA1p v\u1EE5",
+    guide: "H\u01B0\u1EDBng d\u1EABn vi\xEAn"
+  };
+  function hasEnoughOrderItems(state, order) {
+    if (!order || !order.items) return false;
+    const fs = state.farmstay;
+    const pantry = fs?.veg?.pantry || {};
+    const produce = state.produce || {};
+    const eggs = state.eggs || 0;
+    const milk = state.dairy?.milk || 0;
+    for (const [key, qty] of Object.entries(order.items)) {
+      const required = Number(qty) || 0;
+      if (required <= 0) continue;
+      if (key in FS_VEG_PRICES) {
+        if ((pantry[key] || 0) < required) return false;
+      } else if (key === "egg") {
+        if (eggs < required) return false;
+      } else if (key === "milk") {
+        if (milk < required) return false;
+      } else {
+        if ((produce[key] || 0) < required) return false;
+      }
+    }
+    return true;
+  }
+  function handleFarmstayOperations(m, cfg) {
+    const fs = m.farmstay;
+    if (!fs) return NOT_ACTED;
+    const minGold = cfg.farmstayMinGoldKeep ?? 1e4;
+    if (cfg.farmstayAutoGuide && fs.guideDay !== m.day) {
+      if (typeof m.acceptFarmstayGuide === "function") {
+        m.acceptFarmstayGuide();
+        return { acted: true, msg: "\u{1F4D6} \u0110\xE3 ti\u1EBFp nh\u1EADn c\u1EA9m nang \u0111\xF3n kh\xE1ch du l\u1ECBch ng\xE0y m\u1EDBi" };
+      }
+    }
+    if (cfg.farmstayAutoOpen && !fs.open) {
+      const hasGate = Boolean(fs.built && (fs.built.gate || 0) > 0);
+      const hasManager = Boolean(fs.staff && fs.staff.manager);
+      if (hasGate && hasManager && typeof m.setFarmstayOpen === "function") {
+        const res = m.setFarmstayOpen(true);
+        if (res === "ok") {
+          return { acted: true, msg: "\u{1F3E1} \u0110\xE3 m\u1EDF c\u1EEDa \u0111\xF3n kh\xE1ch Farmstay \xD4ng N\u0103m" };
+        }
+      }
+    }
+    if (cfg.farmstayAutoPayStaff && typeof m.farmstayDebt === "function" && typeof m.payFarmstayStaff === "function") {
+      const debt = m.farmstayDebt();
+      if (debt > 0 && (m.gold || 0) >= debt + minGold) {
+        const ok = m.payFarmstayStaff();
+        if (ok) {
+          return { acted: true, msg: `\u{1F4B0} \u0110\xE3 tr\u1EA3 l\u01B0\u01A1ng nh\xE2n vi\xEAn Farmstay (${debt.toLocaleString()} v\xE0ng)` };
+        }
+      }
+    }
+    return NOT_ACTED;
+  }
+  function handleFarmstayRepairs(m, cfg) {
+    if (!cfg.farmstayAutoRepair) return NOT_ACTED;
+    const fs = m.farmstay;
+    if (!fs || !fs.broken || typeof m.repairFarmstay !== "function") return NOT_ACTED;
+    const minGold = cfg.farmstayMinGoldKeep ?? 1e4;
+    const entries = Object.entries(fs.broken);
+    for (const [facilityId, info] of entries) {
+      const cost = Number(info?.cost) || 0;
+      if ((m.gold || 0) >= cost + minGold) {
+        const res = m.repairFarmstay(facilityId);
+        if (res === "ok") {
+          return { acted: true, msg: `\u{1F6E0}\uFE0F S\u1EEDa ch\u1EEFa \u0111\u1ED3 kh\xE1ch l\xE0m h\u01B0: ${facilityId} (-${cost.toLocaleString()} v\xE0ng)` };
+        }
+      }
+    }
+    return NOT_ACTED;
+  }
+  function handleFarmstayGarden(m, cfg) {
+    if (!cfg.farmstayAutoVeg) return NOT_ACTED;
+    const fs = m.farmstay;
+    if (!fs || !fs.veg) return NOT_ACTED;
+    const veg = fs.veg;
+    const minGold = cfg.farmstayMinGoldKeep ?? 1e4;
+    const openCount = veg.open || 0;
+    const plots = veg.plots || [];
+    if (cfg.farmstayVegAutoBuyPlots && openCount < 24 && typeof m.buyVegPlot === "function") {
+      const plotCost = openCount < 4 ? 0 : Math.round(2e6 * Math.pow(1.15, openCount - 4) / 1e5) * 1e5;
+      if ((m.gold || 0) >= plotCost + minGold) {
+        const res = m.buyVegPlot();
+        if (res === "ok") {
+          return { acted: true, msg: `\u{1F331} Khai hoang m\u1EDF th\xEAm lu\u1ED1ng rau th\u1EE9 ${openCount + 1}` };
+        }
+      }
+    }
+    const curTime = (m.day || 0) * 24 * 60 + (m.minutes || 0);
+    if (cfg.farmstayVegAutoHarvest && typeof m.harvestVeg === "function") {
+      const hasRipe = plots.some(
+        (p, i) => i < openCount && p && typeof p.readyAt === "number" && curTime >= p.readyAt
+      );
+      if (hasRipe) {
+        const harvested = m.harvestVeg();
+        if (harvested > 0) {
+          return { acted: true, msg: `\u{1F9FA} Thu ho\u1EA1ch ${harvested} lu\u1ED1ng rau ch\xEDn v\xE0o kho b\u1EBFp Farmstay` };
+        }
+      }
+    }
+    if (cfg.farmstayVegAutoWater && typeof m.waterVeg === "function") {
+      const hasDry = plots.some(
+        (p, i) => i < openCount && p && p.readyAt === null
+      );
+      if (hasDry) {
+        const watered = m.waterVeg();
+        if (watered > 0) {
+          return { acted: true, msg: `\u{1F6BF} \u0110\xE3 t\u01B0\u1EDBi n\u01B0\u1EDBc cho ${watered} lu\u1ED1ng rau h\u1EEFu c\u01A1` };
+        }
+      }
+    }
+    if (cfg.farmstayVegAutoFeed && (m.items?.fertilizer || 0) > 0 && typeof m.feedVeg === "function") {
+      for (let i = 0; i < openCount; i++) {
+        const p = plots[i];
+        if (p && typeof p.readyAt === "number" && !p.fed && curTime < p.readyAt) {
+          const ok = m.feedVeg(i);
+          if (ok) {
+            return { acted: true, msg: `\u{1F9EA} B\xF3n ph\xE2n h\u1EEFu c\u01A1 cho lu\u1ED1ng rau #${i + 1}` };
+          }
+        }
+      }
+    }
+    if (cfg.farmstayVegAutoPlant) {
+      const hasEmpty = plots.some((p, i) => i < openCount && !p) || plots.length < openCount;
+      if (hasEmpty) {
+        let seed = cfg.farmstayVegPreferSeed;
+        if (!seed || seed === "auto" || !FS_VEG_PRICES[seed]) {
+          seed = "caChua";
+        }
+        const seedPrice = FS_VEG_PRICES[seed] || 5e3;
+        if ((m.gold || 0) >= seedPrice + minGold) {
+          if (typeof m.plantAllVeg === "function") {
+            const planted = m.plantAllVeg(seed);
+            if (planted > 0) {
+              return { acted: true, msg: `\u{1F331} Gieo ${planted} lu\u1ED1ng h\u1EA1t ${FS_VEG_NAMES[seed] || seed}` };
+            }
+          } else if (typeof m.plantVeg === "function") {
+            for (let i = 0; i < openCount; i++) {
+              if (!plots[i]) {
+                const res = m.plantVeg(i, seed);
+                if (res === "ok") {
+                  return { acted: true, msg: `\u{1F331} Gieo lu\u1ED1ng #${i + 1} h\u1EA1t ${FS_VEG_NAMES[seed] || seed}` };
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    return NOT_ACTED;
+  }
+  function handleFarmstayStaff(m, cfg) {
+    const fs = m.farmstay;
+    if (!fs || !fs.staff) return NOT_ACTED;
+    if (cfg.farmstayAutoAnswerStory && fs.story?.pending && typeof m.answerStory === "function") {
+      const res = m.answerStory(0);
+      if (res && res.ok) {
+        return { acted: true, msg: `\u{1F4DC} \u0110\xE3 gi\u1EA3i quy\u1EBFt t\xE2m t\u01B0 nh\xE2n vi\xEAn: ${res.reply || "Xong"}` };
+      }
+    }
+    if (cfg.farmstayAutoChatStaff && typeof m.chatStaff === "function") {
+      const roles = ["manager", "gardener", "cook", "cleaner", "guide"];
+      for (const role of roles) {
+        const s = fs.staff[role];
+        if (s && s.chatDay !== m.day && (s.bond || 0) < 10) {
+          const ok = m.chatStaff(role);
+          if (ok) {
+            const bondNow = (s.bond || 0) + 1;
+            return {
+              acted: true,
+              msg: `\u{1F4AC} Tr\xF2 chuy\u1EC7n v\u1EDBi ${FS_STAFF_NAMES[role] || role} (Th\xE2n thi\u1EBFt: ${bondNow}/10 \u2B50)`
+            };
+          }
+        }
+      }
+    }
+    return NOT_ACTED;
+  }
+  function handleFarmstayOrders(m, cfg) {
+    const fs = m.farmstay;
+    if (!fs) return NOT_ACTED;
+    if (cfg.farmstayAutoGroupBooking && fs.booking && !fs.booking.accepted && typeof m.answerGroup === "function") {
+      const reply = m.answerGroup(true);
+      if (reply) {
+        return { acted: true, msg: `\u{1F68C} Ch\u1ED1t nh\u1EADn \u0111o\xE0n kh\xE1ch du l\u1ECBch: ${fs.booking.who || "\u0110o\xE0n kh\xE1ch"} (${reply})` };
+      }
+    }
+    if (cfg.farmstayAutoOrders && fs.orders && typeof m.serveFarmstayOrder === "function") {
+      for (const order of fs.orders) {
+        if (!order.done && hasEnoughOrderItems(m, order)) {
+          const res = m.serveFarmstayOrder(order.id);
+          if (res && res.ok) {
+            const tipStr = res.tip ? ` (+${res.tip.toLocaleString()} bo)` : "";
+            return { acted: true, msg: `\u{1F37D}\uFE0F Ph\u1EE5c v\u1EE5 m\xF3n cho kh\xE1ch ${order.who || "kh\xE1ch"}${tipStr}` };
+          }
+        }
+      }
+    }
+    return NOT_ACTED;
+  }
+  var FARMTAY_SUBAREA_HANDLERS = {
+    operation: handleFarmstayOperations,
+    repairs: handleFarmstayRepairs,
+    garden: handleFarmstayGarden,
+    staff: handleFarmstayStaff,
+    orders: handleFarmstayOrders
+  };
+  function execFarmstayStep(cfg) {
+    const mainStore = stores.main;
+    if (!mainStore) return NOT_ACTED;
+    const m = mainStore.getState();
+    if (!m || !m.farmstay) return NOT_ACTED;
+    if (m.farmstay.news && typeof m.ackFarmstayNews === "function") {
+      m.ackFarmstayNews();
+    }
+    const interrupted = dismissInterruptsIfNeeded(cfg);
+    if (interrupted) return interrupted;
+    const subOrder = cfg.farmstaySubOrder || ["operation", "repairs", "garden", "staff", "orders"];
+    for (const subId of subOrder) {
+      if (cfg.farmstaySubEnabled && cfg.farmstaySubEnabled[subId] === false) continue;
+      const handler = FARMTAY_SUBAREA_HANDLERS[subId];
+      if (handler) {
+        const res = handler(m, cfg);
+        if (res && res.acted) return res;
+      }
+    }
+    return NOT_ACTED;
+  }
+
   // src/page-hook/index.ts
   (() => {
     const win = window;
@@ -2746,7 +2997,13 @@
             dismissInterruptsIfNeeded({ autoDismissInterrupts: true });
             const cur = mainStore.getState();
             if (target === "playing") {
-              if (cur.screen !== "playing") {
+              if (cur.screen === "farmstay") {
+                if (typeof cur.leaveFarmstay === "function") {
+                  cur.leaveFarmstay();
+                } else {
+                  mainStore.setState({ screen: "playing", panel: null, shop: null, vendor: null });
+                }
+              } else if (cur.screen !== "playing") {
                 cur.showWorldMap?.();
                 mainStore.getState().enterFarm?.();
                 mainStore.setState({ screen: "playing", panel: null, shop: null, vendor: null });
@@ -2770,6 +3027,15 @@
                 if (cur.indoors) cur.leaveHouse?.();
                 mainStore.setState({ screen: "benDo", panel: null, shop: null, vendor: null, indoors: false });
               }
+            } else if (target === "farmstay") {
+              if (cur.screen !== "farmstay") {
+                if (cur.indoors) cur.leaveHouse?.();
+                if (typeof cur.goToFarmstay === "function") {
+                  cur.goToFarmstay();
+                } else {
+                  mainStore.setState({ screen: "farmstay", panel: null, shop: null, vendor: null, indoors: false });
+                }
+              }
             }
             return { ok: true, screen: mainStore.getState().screen };
           }
@@ -2788,6 +3054,11 @@
             const res = execBenStep(payload.config);
             return { ok: true, ...res };
           }
+          case "FARMSTAY_STEP": {
+            if (!payload.config) return { ok: false, error: "NO_CONFIG" };
+            const res = execFarmstayStep(payload.config);
+            return { ok: true, ...res };
+          }
           case "BEN_WATCH": {
             if (!payload.config) return { ok: false, error: "NO_CONFIG" };
             refreshCricketWatchers(payload.config);
@@ -2799,7 +3070,9 @@
               mainState.sellBasket?.();
             }
             dismissInterruptsIfNeeded({ autoDismissInterrupts: true });
-            if (mainStore.getState().screen !== "playing") {
+            if (mainStore.getState().screen === "farmstay") {
+              mainStore.getState().leaveFarmstay?.();
+            } else if (mainStore.getState().screen !== "playing") {
               mainStore.getState().showWorldMap?.();
               mainStore.getState().enterFarm?.();
             }

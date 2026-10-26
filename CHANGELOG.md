@@ -5,6 +5,36 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.5.0] - 2026-10-26
+
+### 🌟 Tính Năng Mới & Nâng Cấp Hệ Thống (Major Features)
+- **Tự Động Hóa Khu Vực Farmstay Ông Năm (Thay thế Phố Xá Coming Soon)**:
+  - Thay thế hoàn toàn khu vực giữ chỗ `🏙️ Phố xá` bằng `🏡 Farmstay Ông Năm`, tích hợp đầy đủ giao diện, bộ điều phối và logic tự động.
+  - **1. Vận Hành & Đón Khách (Operation)**:
+    - Tự động mở cửa Farmstay khi đã hoàn thành Cổng chào và có Quản lý.
+    - Tự động tiếp nhận cẩm nang đón khách du lịch ngày mới.
+    - Tự động thanh toán nợ lương nhân viên Farmstay với ngưỡng dự trữ vàng an toàn.
+  - **2. Bảo Trì & Sửa Chữa Tiện Ích (Repairs)**:
+    - Tự động quét và sửa chữa tức thì các tiện ích bị du khách làm hư hỏng (karaoke, thuyền, hồ bơi, v.v.), bảo toàn điểm đánh giá 5 sao không bị trừ và tiếp tục tạo doanh thu.
+  - **3. Vườn Rau Hữu Cơ Trải Nghiệm (Organic Garden - 24 Luống)**:
+    - Tự động thu hoạch rau chín vào kho bếp Farmstay.
+    - Tự động tưới nước cho các luống rau khô.
+    - Tự động bón phân hữu cơ khi có phân bón trong kho.
+    - Tự động gieo hạt giống (Rau muống, Cà chua, Dưa leo, Ớt, Dưa hấu) vào các luống trống.
+    - Tùy chọn tự động khai hoang mua thêm luống rau mới (tối đa 24 luống).
+  - **4. Nhân Viên & Tăng Điểm Thân Thiết (Staff & Bonds)**:
+    - Tự động trò chuyện hàng ngày với 5 nhân sự (Quản lý, Làm vườn, Đầu bếp, Tạp vụ, Hướng dẫn viên) để tăng điểm Thân thiết (Bond) lên 10 mở khóa đặc quyền.
+    - Tự động giải quyết các sự kiện tâm sự, tâm tư của nhân viên khi xuất hiện.
+  - **5. Phục Vụ Khách & Tour Đoàn Du Lịch (Orders & Groups)**:
+    - Tự động kiểm tra kho bếp và giao món ăn, nông sản theo đơn đặt hàng của khách để nhận tiền bo (tips) và nâng sao danh tiếng.
+    - Tự động duyệt nhận các tour đoàn du lịch đông người của Chị Hồng.
+  - **Kéo Thả Sắp Xếp Thứ Tự Ưu Tiên Farmstay (Drag & Drop Reordering)**:
+    - Cho phép kéo thả hoặc bấm nút mũi tên để tùy biến thứ tự ưu tiên giữa 5 phân khu Farmstay, bật/tắt từng phân khu và thu gọn/mở rộng trực quan.
+  - **Tương Thích Ngược Tuyệt Đối (Backward Compatibility)**:
+    - Tự động chuyển đổi cấu hình lưu trữ cũ (`city` ➔ `farmstay`) trong danh sách ưu tiên khu vực và tab hiện tại mà không làm mất cài đặt người dùng.
+
+---
+
 ## [1.4.0] - 2026-10-26
 
 ### 🌟 Tính Năng Mới & Nâng Cấp Hệ Thống (Major Features)

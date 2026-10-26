@@ -378,6 +378,28 @@ export interface MainGameStoreState {
   ackHenNews?: () => void;
   ackPetNews?: () => void;
   ackMissedOrder?: () => void;
+
+  // Farmstay
+  farmstay?: FarmstayState;
+  goToFarmstay?: () => void;
+  leaveFarmstay?: () => void;
+  setFarmstayOpen?: (open: boolean) => string;
+  acceptFarmstayGuide?: () => void;
+  payFarmstayStaff?: () => boolean;
+  farmstayDebt?: () => number;
+  chatStaff?: (role: string) => boolean;
+  repairFarmstay?: (facilityId: string) => string;
+  serveFarmstayOrder?: (orderId: string) => { ok: boolean; reason?: string; reply?: string; tip?: number };
+  answerGroup?: (accept: boolean) => string | null;
+  answerStory?: (choiceIndex: number) => { ok: boolean; reason?: string; reply?: string };
+  buyVegPlot?: () => string;
+  plantVeg?: (plotIdx: number, seed: string) => string;
+  plantAllVeg?: (seed: string) => number;
+  waterVeg?: (plotIdx?: number) => number;
+  feedVeg?: (plotIdx: number) => boolean;
+  harvestVeg?: (plotIdx?: number) => number;
+  chinCook?: (dish: string) => string;
+  buyFsMeal?: (meal: string) => string;
   [key: string]: unknown;
 }
 
@@ -556,5 +578,92 @@ export interface BenNetState {
     [key: string]: unknown;
   };
   landed?: unknown;
+  [key: string]: unknown;
+}
+
+export interface FarmstayStaff {
+  since?: number;
+  unpaid?: number;
+  bond?: number;
+  chatDay?: number;
+  leave?: {
+    until?: number;
+    paid?: boolean;
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
+}
+
+export interface FarmstayVegPlot {
+  crop?: string;
+  readyAt?: number | null;
+  fed?: boolean;
+  [key: string]: unknown;
+}
+
+export interface FarmstayVeg {
+  open?: number;
+  plots?: Array<FarmstayVegPlot | null>;
+  pantry?: Record<string, number>;
+  gardenerAt?: number;
+  [key: string]: unknown;
+}
+
+export interface FarmstayOrder {
+  id: string;
+  type?: string;
+  who: string;
+  items: Record<string, number>;
+  tip: number;
+  rating?: number;
+  lang?: string;
+  done?: boolean;
+  [key: string]: unknown;
+}
+
+export interface FarmstayBooking {
+  id?: string;
+  who?: string;
+  count?: number;
+  days?: number;
+  price?: number;
+  accepted?: boolean;
+  [key: string]: unknown;
+}
+
+export interface FarmstayStory {
+  pending?: string | null;
+  done?: Record<string, { choice: number; day: number }>;
+  perks?: string[];
+  gone?: string[];
+  [key: string]: unknown;
+}
+
+export interface FarmstayState {
+  open?: boolean;
+  built?: Record<string, number>;
+  broken?: Record<string, { cost: number; [key: string]: unknown }>;
+  staff?: {
+    manager?: FarmstayStaff | null;
+    gardener?: FarmstayStaff | null;
+    cook?: FarmstayStaff | null;
+    cleaner?: FarmstayStaff | null;
+    guide?: FarmstayStaff | null;
+    [key: string]: FarmstayStaff | null | undefined;
+  };
+  stars?: number;
+  income?: number;
+  spent?: number;
+  guests?: unknown[];
+  orders?: FarmstayOrder[];
+  ordersDone?: number;
+  booking?: FarmstayBooking | null;
+  story?: FarmstayStory | null;
+  guideDay?: number;
+  veg?: FarmstayVeg;
+  visits?: number;
+  news?: unknown;
+  log?: unknown[];
+  awards?: string[];
   [key: string]: unknown;
 }

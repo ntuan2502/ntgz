@@ -9,7 +9,7 @@ import { HudTerminalWindow } from './components/HudTerminalWindow';
 import { FarmTabContent } from './components/FarmTabContent';
 import { WharfTabContent } from './components/WharfTabContent';
 import { SeaTabContent } from './components/SeaTabContent';
-import { CityTabContent } from './components/CityTabContent';
+import { FarmstayTabContent } from './components/FarmstayTabContent';
 import { HudLogEntry, getSessionLogs, clearSessionLogs } from './hud-core';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ReleaseChangelogView } from '@/components/ReleaseChangelogView';
@@ -369,10 +369,10 @@ export function HudApp({
                 🏖️ Biển
               </TabsTrigger>
               <TabsTrigger
-                value="city"
+                value="farmstay"
                 className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
               >
-                🏙️ Phố xá
+                🏡 Farmstay
               </TabsTrigger>
             </TabsList>
 
@@ -389,8 +389,8 @@ export function HudApp({
                 <SeaTabContent config={config} onUpdateConfig={handleUpdateConfig} />
               </TabsContent>
 
-              <TabsContent value="city" className="m-0">
-                <CityTabContent config={config} onUpdateConfig={handleUpdateConfig} />
+              <TabsContent value="farmstay" className="m-0">
+                <FarmstayTabContent config={config} onUpdateConfig={handleUpdateConfig} />
               </TabsContent>
             </div>
           </Tabs>

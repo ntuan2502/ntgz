@@ -127,6 +127,8 @@ export function mergeConfig(saved: Partial<AppConfig> | null | undefined): AppCo
     farmSubCollapsed: { ...DEFAULT_CONFIG.farmSubCollapsed, ...(saved.farmSubCollapsed || {}) },
     benSubEnabled: { ...DEFAULT_CONFIG.benSubEnabled, ...(saved.benSubEnabled || {}) },
     benSubCollapsed: { ...DEFAULT_CONFIG.benSubCollapsed, ...(saved.benSubCollapsed || {}) },
+    farmstaySubEnabled: { ...DEFAULT_CONFIG.farmstaySubEnabled, ...(saved.farmstaySubEnabled || {}) },
+    farmstaySubCollapsed: { ...DEFAULT_CONFIG.farmstaySubCollapsed, ...(saved.farmstaySubCollapsed || {}) },
 
     // Backward-compatibility migrations
     barnAutoFeedBuffalo: (saved.barnAutoFeedBuffalo ?? savedAny.barnAutoBuffalo ?? DEFAULT_CONFIG.barnAutoFeedBuffalo) as boolean,
@@ -182,7 +184,20 @@ export function mergeConfig(saved: Partial<AppConfig> | null | undefined): AppCo
 
   if (!Array.isArray(next.areaOrder) || next.areaOrder.length === 0) {
     next.areaOrder = [...DEFAULT_CONFIG.areaOrder];
+  } else {
+    // Migrate legacy 'city' to 'farmstay'
+    next.areaOrder = (next.areaOrder as string[]).map((a) => (a === 'city' ? 'farmstay' : a)) as AreaId[];
+    const validAreas = new Set(DEFAULT_CONFIG.areaOrder);
+    next.areaOrder = next.areaOrder.filter((k, i, arr) => validAreas.has(k) && arr.indexOf(k) === i);
+    for (const k of DEFAULT_CONFIG.areaOrder) {
+      if (!next.areaOrder.includes(k)) next.areaOrder.push(k);
+    }
   }
+
+  if ((next.activeTab as string) === 'city') {
+    next.activeTab = 'farmstay';
+  }
+
   if (!Array.isArray(next.farmSubOrder) || next.farmSubOrder.length === 0) {
     next.farmSubOrder = [...DEFAULT_CONFIG.farmSubOrder];
   }
@@ -195,6 +210,14 @@ export function mergeConfig(saved: Partial<AppConfig> | null | undefined): AppCo
     : [];
   for (const k of DEFAULT_CONFIG.benSubOrder) {
     if (!next.benSubOrder.includes(k)) next.benSubOrder.push(k);
+  }
+
+  const validFarmstaySubs = new Set(DEFAULT_CONFIG.farmstaySubOrder);
+  next.farmstaySubOrder = Array.isArray(next.farmstaySubOrder)
+    ? next.farmstaySubOrder.filter((k, i, arr) => validFarmstaySubs.has(k) && arr.indexOf(k) === i)
+    : [];
+  for (const k of DEFAULT_CONFIG.farmstaySubOrder) {
+    if (!next.farmstaySubOrder.includes(k)) next.farmstaySubOrder.push(k);
   }
   return next;
 }

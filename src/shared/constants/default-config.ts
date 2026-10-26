@@ -5,6 +5,8 @@ import {
   BenHuntZone,
   BenHuntZoneChoice,
   FarmSubAreaId,
+  FarmstaySubAreaId,
+  FarmstaySubAreaMeta,
   SubAreaMeta,
   WharfSubAreaId,
   WharfSubAreaMeta,
@@ -14,7 +16,7 @@ export const AREA_META: Record<AreaId, AreaMeta> = {
   farm: { id: 'farm', icon: '🌾', name: 'Nông Trại' },
   benDo: { id: 'benDo', icon: '🛶', name: 'Bến Đò' },
   sea: { id: 'sea', icon: '🏖️', name: 'Biển' },
-  city: { id: 'city', icon: '🏙️', name: 'Thành Phố' },
+  farmstay: { id: 'farmstay', icon: '🏡', name: 'Farmstay Ông Năm' },
 };
 
 export const SUBAREA_META: Record<FarmSubAreaId, SubAreaMeta> = {
@@ -38,6 +40,23 @@ export const WHARF_SUBAREA_META: Record<WharfSubAreaId, WharfSubAreaMeta> = {
   cricketHunt: { id: 'cricketHunt', icon: '🔦', name: 'Bắt Dế Đêm & Ống Tre Nuôi Dế' },
   entertainment: { id: 'entertainment', icon: '🏮', name: 'Tiện Ích & Giải Trí Bến Đò' },
 };
+
+export const FARMSTAY_SUBAREA_META: Record<FarmstaySubAreaId, FarmstaySubAreaMeta> = {
+  operation: { id: 'operation', icon: '🏢', name: 'Vận Hành & Đón Khách' },
+  repairs: { id: 'repairs', icon: '🛠️', name: 'Bảo Trì & Sửa Chữa (Giữ 5 sao)' },
+  garden: { id: 'garden', icon: '🥬', name: 'Vườn Rau Hữu Cơ (24 Luống)' },
+  staff: { id: 'staff', icon: '🤝', name: 'Nhân Viên & Tăng Thân Thiết' },
+  orders: { id: 'orders', icon: '🍽️', name: 'Phục Vụ Khách & Tour Đoàn' },
+};
+
+export const FARMSTAY_VEG_SEEDS = [
+  { id: 'auto', name: 'Tự động (theo giá trị)', icon: '✨' },
+  { id: 'rauMuong', name: 'Rau muống (2h · 5k)', icon: '🥬' },
+  { id: 'caChua', name: 'Cà chua (4h · 10k)', icon: '🍅' },
+  { id: 'duaLeo', name: 'Dưa leo (4h · 8k)', icon: '🥒' },
+  { id: 'ot', name: 'Ớt (5h · 8k)', icon: '🌶️' },
+  { id: 'duaHau', name: 'Dưa hấu (8h · 20k)', icon: '🍉' },
+];
 
 export interface BenHuntZoneMeta {
   id: BenHuntZone;
@@ -126,12 +145,12 @@ export const DEFAULT_CONFIG: AppConfig = {
   showFullActions: false,
 
   // Main Area Order & Enable/Disable toggles
-  areaOrder: ['farm', 'benDo', 'sea'],
+  areaOrder: ['farm', 'benDo', 'sea', 'farmstay'],
   areaEnabled: {
     farm: true,
     benDo: false,
     sea: true,
-    city: false,
+    farmstay: true,
   },
 
   // Farm Sub-Area Order & Enable/Disable toggles
@@ -350,4 +369,47 @@ export const DEFAULT_CONFIG: AppConfig = {
   seaAutoClaimDex: true,
   seaAutoEat: false,
   seaStaminaThreshold: 20,
+
+  // Area 4: Farmstay Settings
+  farmstaySubOrder: ['operation', 'repairs', 'garden', 'staff', 'orders'],
+  farmstaySubEnabled: {
+    operation: true,
+    repairs: true,
+    garden: true,
+    staff: true,
+    orders: true,
+  },
+  farmstaySubCollapsed: {
+    operation: false,
+    repairs: false,
+    garden: false,
+    staff: false,
+    orders: false,
+  },
+
+  // 1. Operation & Reception
+  farmstayAutoOpen: true,
+  farmstayAutoGuide: true,
+  farmstayAutoPayStaff: true,
+  farmstayMinGoldKeep: 10000,
+
+  // 2. Repairs
+  farmstayAutoRepair: true,
+
+  // 3. Organic Veg Garden (24 plots)
+  farmstayAutoVeg: true,
+  farmstayVegAutoPlant: true,
+  farmstayVegPreferSeed: 'auto',
+  farmstayVegAutoWater: true,
+  farmstayVegAutoFeed: true,
+  farmstayVegAutoHarvest: true,
+  farmstayVegAutoBuyPlots: false,
+
+  // 4. Staff & Bonds
+  farmstayAutoChatStaff: true,
+  farmstayAutoAnswerStory: true,
+
+  // 5. Orders & Tour Bookings
+  farmstayAutoOrders: true,
+  farmstayAutoGroupBooking: true,
 };

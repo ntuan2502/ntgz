@@ -1,4 +1,4 @@
-export type AreaId = 'farm' | 'benDo' | 'sea' | 'city';
+export type AreaId = 'farm' | 'benDo' | 'sea' | 'farmstay';
 
 export type FarmSubAreaId =
   | 'house'
@@ -33,6 +33,14 @@ export interface SubAreaMeta {
 
 export interface WharfSubAreaMeta {
   id: WharfSubAreaId;
+  icon: string;
+  name: string;
+}
+
+export type FarmstaySubAreaId = 'operation' | 'repairs' | 'garden' | 'staff' | 'orders';
+
+export interface FarmstaySubAreaMeta {
+  id: FarmstaySubAreaId;
   icon: string;
   name: string;
 }
@@ -225,4 +233,35 @@ export interface AppConfig {
   seaAutoClaimDex: boolean;
   seaAutoEat: boolean;
   seaStaminaThreshold: number;
+
+  // Area 4: Farmstay Settings
+  farmstaySubOrder: FarmstaySubAreaId[];
+  farmstaySubEnabled: Record<FarmstaySubAreaId, boolean>;
+  farmstaySubCollapsed: Record<FarmstaySubAreaId, boolean>;
+
+  // 1. Operation & Reception
+  farmstayAutoOpen: boolean;
+  farmstayAutoGuide: boolean;
+  farmstayAutoPayStaff: boolean;
+  farmstayMinGoldKeep: number;
+
+  // 2. Repairs & Maintenance
+  farmstayAutoRepair: boolean;
+
+  // 3. Organic Veg Garden (24 plots)
+  farmstayAutoVeg: boolean;
+  farmstayVegAutoPlant: boolean;
+  farmstayVegPreferSeed: string;
+  farmstayVegAutoWater: boolean;
+  farmstayVegAutoFeed: boolean;
+  farmstayVegAutoHarvest: boolean;
+  farmstayVegAutoBuyPlots: boolean;
+
+  // 4. Staff & Bonds
+  farmstayAutoChatStaff: boolean;
+  farmstayAutoAnswerStory: boolean;
+
+  // 5. Orders & Tour Bookings
+  farmstayAutoOrders: boolean;
+  farmstayAutoGroupBooking: boolean;
 }

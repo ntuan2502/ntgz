@@ -1,4 +1,4 @@
-# 🌾 Nông Trại GenZ Auto by Tún (v1.4.0)
+# 🌾 Nông Trại GenZ Auto by Tún (v1.5.0)
 
 > **Công cụ Auto đa khu vực (DOM + Canvas) thông minh, toàn diện dành riêng cho tựa game [Nông Trại GenZ](https://nongtraigenz.online/play/).**  
 > Bản quyền phát triển bởi **Tún**. Tiện ích mở rộng Google Chrome Extension theo chuẩn **Manifest V3**.
@@ -7,7 +7,7 @@
 
 ## 📌 Giới Thiệu Tổng Quan
 
-**Nông Trại GenZ Auto by Tún** là tiện ích mở rộng cao cấp giúp tự động hóa mọi hoạt động trong game *Nông Trại GenZ* từ trồng trọt, chăn nuôi, giao thương chợ búa, gửi tiết kiệm, đầu tư vàng cho đến câu cá giải trí, sới dế và bắt dế đêm tại Bến Đò và Biển khơi.
+**Nông Trại GenZ Auto by Tún** là tiện ích mở rộng cao cấp giúp tự động hóa mọi hoạt động trong game *Nông Trại GenZ* từ trồng trọt, chăn nuôi, giao thương chợ búa, gửi tiết kiệm, đầu tư vàng cho đến câu cá giải trí, sới dế, bắt dế đêm tại Bến Đò, Biển khơi và vận hành khu nghỉ dưỡng sinh thái Farmstay Ông Năm.
 
 Tiện ích hoạt động mượt mà kết hợp giữa can thiệp giao diện người dùng (DOM) và tương tác trực tiếp với engine game Canvas (Phaser 3), đảm bảo tốc độ phản hồi nhanh, độ chính xác cao và an toàn cho tài khoản người chơi.
 
@@ -22,6 +22,13 @@ Tiện ích hoạt động mượt mà kết hợp giữa can thiệp giao diệ
   - **Câu Cá & Dịch Vụ**: Tự động nhận diện phao câu chìm giật cần chuẩn xác, chọn đa dạng điểm câu (Cầu tàu, Cầu tre, Bờ sông), mua/xin mồi câu Chú Đực, bán cá Vựa Anh Tư, gội đầu dưỡng sinh Út Mười hồi phục sức câu, ăn uống Dì Tám/Chị Thơm, sạp lồng đèn Cô Bảy, vé số Chú Bảy và đổi tiền tại cây ATM.
   - **Sắp Xếp Ưu Tiên Kéo Thả**: Tự do kéo thả hoặc bấm nút để sắp xếp thứ tự ưu tiên giữa Câu cá, Sới dế, Bắt dế đêm và Giải trí.
 - 🏖️ **Khu Vực Biển**: Tự động canh lực giật cần biển, ghìm cá ngược hướng bơi, câu tại 3 điểm (Cầu tàu, Bãi đá, Mép cát), mua mồi và bán cá Chòi Ông Tư, tự nhận thưởng Sổ cá biển bách khoa toàn thư.
+- 🏡 **Khu Vực Farmstay Ông Năm**: Tự động vận hành khu nghỉ dưỡng sinh thái cao cấp thay thế tab Phố xá.
+  - **Vận Hành & Đón Khách**: Tự động mở cửa đón khách khi có cổng chào và quản lý; nhận cẩm nang du lịch mỗi ngày; tự thanh toán lương nhân viên với ngưỡng giữ vàng an toàn.
+  - **Bảo Trì & Sửa Chữa Tiện Ích**: Tự động phát hiện và sửa chữa các tiện ích hư hỏng do du khách làm hỏng để giữ vững danh tiếng 5.0 ⭐ và duy trì dòng doanh thu.
+  - **Vườn Rau Hữu Cơ (24 Luống)**: Tự động thu hoạch rau chín vào kho bếp; tưới nước cho luống khô; bón phân hữu cơ; tự gieo hạt giống hữu cơ (Rau muống, Cà chua, Dưa leo, Ớt, Dưa hấu); tự khai hoang mở thêm luống rau mới.
+  - **Nhân Viên & Tăng Điểm Thân Thiết**: Tự trò chuyện hàng ngày với 5 nhân sự (Quản lý, Làm vườn, Đầu bếp, Tạp vụ, Hướng dẫn viên) để đạt mốc Thân thiết (Bond) 10/10 mở khóa đặc quyền; tự động xử lý các sự kiện tâm sự của nhân viên.
+  - **Phục Vụ Khách & Tour Đoàn**: Tự động đối chiếu nguyên liệu và giao món theo yêu cầu của khách nhận tiền bo (tips); tự duyệt nhận các đoàn khách tour du lịch của Chị Hồng.
+  - **Sắp Xếp Ưu Tiên Kéo Thả**: Tự do kéo thả hoặc bấm mũi tên để sắp xếp thứ tự ưu tiên giữa 5 phân khu trong Farmstay.
 - 🔄 **Kiểm Tra Cập Nhật Trực Tiếp**: Tích hợp nút kiểm tra cập nhật trên cả Popup Extension và Menu Game HUD, tự động so sánh phiên bản với GitHub Releases và hiển thị nội dung Changelog Markdown chi tiết kèm đường dẫn tải bản mới.
 - ⚡ **Công Nghệ & Trải Nghiệm**:
   - **100% TypeScript & Modular**: Kiến trúc module hóa tách biệt rõ ràng, type safety nghiêm ngặt, build siêu tốc bằng `esbuild`.

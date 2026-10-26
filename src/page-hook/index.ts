@@ -4,6 +4,7 @@ import { dismissInterruptsIfNeeded } from './core/interrupts';
 import { execFarmSubAreaStep } from './modules/farm';
 import { execSeaStep } from './modules/sea';
 import { execBenStep, refreshCricketWatchers } from './modules/wharf';
+import { execFarmstayStep } from './modules/farmstay';
 import { AppConfig, FarmSubAreaId } from '../shared/types/config';
 
 interface GameActionPayload {
@@ -34,7 +35,13 @@ interface GameActionPayload {
           const cur = mainStore.getState();
 
           if (target === 'playing') {
-            if (cur.screen !== 'playing') {
+            if (cur.screen === 'farmstay') {
+              if (typeof cur.leaveFarmstay === 'function') {
+                cur.leaveFarmstay();
+              } else {
+                mainStore.setState({ screen: 'playing', panel: null, shop: null, vendor: null });
+              }
+            } else if (cur.screen !== 'playing') {
               cur.showWorldMap?.();
               mainStore.getState().enterFarm?.();
               mainStore.setState({ screen: 'playing', panel: null, shop: null, vendor: null });
@@ -58,6 +65,15 @@ interface GameActionPayload {
               if (cur.indoors) cur.leaveHouse?.();
               mainStore.setState({ screen: 'benDo', panel: null, shop: null, vendor: null, indoors: false });
             }
+          } else if (target === 'farmstay') {
+            if (cur.screen !== 'farmstay') {
+              if (cur.indoors) cur.leaveHouse?.();
+              if (typeof cur.goToFarmstay === 'function') {
+                cur.goToFarmstay();
+              } else {
+                mainStore.setState({ screen: 'farmstay', panel: null, shop: null, vendor: null, indoors: false });
+              }
+            }
           }
           return { ok: true, screen: mainStore.getState().screen };
         }
@@ -80,6 +96,12 @@ interface GameActionPayload {
           return { ok: true, ...res };
         }
 
+        case 'FARMSTAY_STEP': {
+          if (!payload.config) return { ok: false, error: 'NO_CONFIG' };
+          const res = execFarmstayStep(payload.config);
+          return { ok: true, ...res };
+        }
+
         case 'BEN_WATCH': {
           if (!payload.config) return { ok: false, error: 'NO_CONFIG' };
           refreshCricketWatchers(payload.config);
@@ -94,7 +116,9 @@ interface GameActionPayload {
 
           dismissInterruptsIfNeeded({ autoDismissInterrupts: true });
 
-          if (mainStore.getState().screen !== 'playing') {
+          if (mainStore.getState().screen === 'farmstay') {
+            mainStore.getState().leaveFarmstay?.();
+          } else if (mainStore.getState().screen !== 'playing') {
             mainStore.getState().showWorldMap?.();
             mainStore.getState().enterFarm?.();
           }

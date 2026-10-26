@@ -179,5 +179,6 @@ export function getSnapshot(): GameSnapshot {
           cricketEvents: getCricketEvents(),
         }
       : null,
+    farmstay: m.farmstay ?? null,
   };
 }

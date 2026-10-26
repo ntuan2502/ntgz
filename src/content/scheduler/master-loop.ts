@@ -5,6 +5,7 @@ import { handleFightMinigame } from './minigame';
 import { runFarmSubAreas, resetFarmTiming } from './farm-runner';
 import { stepBenDoFishing } from './wharf-runner';
 import { stepSeaFishing } from './sea-runner';
+import { stepFarmstay, resetFarmstayTiming } from './farmstay-runner';
 import {
   getConfig,
   saveConfig,
@@ -70,6 +71,7 @@ export function startAuto(mode: 'all' | 'tab' = 'all'): void {
   lastFarmDoneDay = -1;
   lastFarmRunAt = 0;
   resetFarmTiming();
+  resetFarmstayTiming();
   if (mode === 'tab') {
     setLockedTabArea(config.activeTab);
   } else {
@@ -173,15 +175,18 @@ export async function tickAuto(): Promise<void> {
             await execGameAction('NAVIGATE', { target: 'playing', indoors: false });
           }
         }
-      } else {
-        setStatus('🏙️ Khu vực Thành Phố đang phát triển (Coming Soon)');
+      } else if (tab === 'farmstay') {
+        const res = await stepFarmstay(snap, config, setStatus, updateHeaderStats);
+        if (res.finishedArea && !res.acted && snap.screen === 'farmstay') {
+          setStatus('✅ Đã hoàn tất mọi việc được bật trong Farmstay Ông Năm');
+        }
       }
       isBusy = false;
       return;
     }
 
     // MODE B: "▶️ AUTO TẤT CẢ"
-    const enabledAreas = config.areaOrder.filter((a) => config.areaEnabled[a] && a !== 'city');
+    const enabledAreas = config.areaOrder.filter((a) => config.areaEnabled[a]);
     if (enabledAreas.length === 0) {
       setStatus('⚠️ Chưa bật Khu vực nào trong danh sách Auto Tất Cả!');
       isBusy = false;
@@ -297,6 +302,23 @@ export async function tickAuto(): Promise<void> {
       } else if (enabledAreas.length > 1 && areaCatchesCount >= switchMax && snap.sea?.phase === 'idle') {
         areaCatchesCount = 0;
         currentAreaIdx = (currentAreaIdx + 1) % enabledAreas.length;
+      }
+    } else if (currentArea === 'farmstay') {
+      if (enabledAreas.includes('farm') && lastFarmDoneDay !== snap.day) {
+        currentAreaIdx = enabledAreas.indexOf('farm');
+        isBusy = false;
+        return;
+      }
+
+      const res = await stepFarmstay(snap, config, setStatus, updateHeaderStats);
+      if (res.finishedArea) {
+        if (enabledAreas.length > 1) {
+          currentAreaIdx = (currentAreaIdx + 1) % enabledAreas.length;
+          lastFarmRunAt = 0;
+          if (snap.screen === 'farmstay') {
+            await execGameAction('NAVIGATE', { target: 'playing', indoors: false });
+          }
+        }
       }
     }
   } catch (err) {
