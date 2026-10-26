@@ -1,4 +1,4 @@
-# 🌾 Nông Trại GenZ Auto by Tún (v1.3.1)
+# 🌾 Nông Trại GenZ Auto by Tún (v1.4.0)
 
 > **Công cụ Auto đa khu vực (DOM + Canvas) thông minh, toàn diện dành riêng cho tựa game [Nông Trại GenZ](https://nongtraigenz.online/play/).**  
 > Bản quyền phát triển bởi **Tún**. Tiện ích mở rộng Google Chrome Extension theo chuẩn **Manifest V3**.
@@ -7,7 +7,7 @@
 
 ## 📌 Giới Thiệu Tổng Quan
 
-**Nông Trại GenZ Auto by Tún** là tiện ích mở rộng cao cấp giúp tự động hóa mọi hoạt động trong game *Nông Trại GenZ* từ trồng trọt, chăn nuôi, giao thương chợ búa, gửi tiết kiệm, đầu tư vàng cho đến câu cá giải trí tại Bến Đò và Biển khơi.
+**Nông Trại GenZ Auto by Tún** là tiện ích mở rộng cao cấp giúp tự động hóa mọi hoạt động trong game *Nông Trại GenZ* từ trồng trọt, chăn nuôi, giao thương chợ búa, gửi tiết kiệm, đầu tư vàng cho đến câu cá giải trí, sới dế và bắt dế đêm tại Bến Đò và Biển khơi.
 
 Tiện ích hoạt động mượt mà kết hợp giữa can thiệp giao diện người dùng (DOM) và tương tác trực tiếp với engine game Canvas (Phaser 3), đảm bảo tốc độ phản hồi nhanh, độ chính xác cao và an toàn cho tài khoản người chơi.
 
@@ -15,8 +15,12 @@ Tiện ích hoạt động mượt mà kết hợp giữa can thiệp giao diệ
 
 ## 🌟 Tổng Quan Tính Năng Chính
 
-- 🌾 **Khu Vực Nông Trại**: Tự động hóa toàn diện 8 cụm công việc (Nhà & Nhu cầu, Ruộng đồng, Thú cưng, Chuồng trâu/bò, Chuồng gà, Ao cá, Chợ Lớn & Tiệm Vàng Cô Kim, Quầy Dì Bảy & Sổ tay). Hỗ trợ kéo thả hoặc bấm nút để thay đổi thứ tự ưu tiên các cụm việc theo ý muốn.
-- 🛶 **Khu Vực Bến Đò**: Tự động nhận diện phao câu chìm giật cần chuẩn xác, chọn đa dạng điểm câu (Cầu tàu, Cầu tre, Bờ sông), mua/xin mồi câu Chú Đực, bán cá Vựa Anh Tư, gội đầu dưỡng sinh Út Mười hồi phục sức câu, ăn uống Dì Tám/Chị Thơm, sạp lồng đèn Cô Bảy, vé số Chú Bảy và đổi tiền tại cây ATM.
+- 🌾 **Khu Vực Nông Trại**: Tự động hóa toàn diện 8 cụm công việc (Nhà & Nhu cầu, Ruộng đồng, Thú cưng, Chuồng trâu/bò, Chuồng gà, Ao cá, Chợ Lớn & Tiệm Vàng Cô Kim, Quầy Dì Bảy & Sổ tay, Chợ Đêm 18h00-23h30 thưởng +25% giá). Hỗ trợ kéo thả hoặc bấm nút để thay đổi thứ tự ưu tiên các cụm việc theo ý muốn.
+- 🛶 **Khu Vực Bến Đò**:
+  - **Sới Dế Ông Sáu**: Tự thách đấu thang Boss sới dế (Cu Bin ➔ Út Mập ➔ Anh Lực ➔ Bác Chín ➔ Ông Sáu) bằng dế mạnh nhất trong ống tre; tự khều râu dế đúng nhịp thi đấu; tự động đặt cược cửa trên các trận PvP.
+  - **Bắt Dế Đêm (18h–5h) & Nuôi Ống Tre**: Tự rọi đèn đêm; chọn khu vực săn dế (Đồng cỏ phía đông, Bãi lau sậy, Bờ ruộng, Quanh luống rau, Bãi cỏ khắp bến hoặc Tự luân phiên); tự động di chuyển sang bụi khác khi im re tránh tốn sức; bắt dế chuẩn xác với bù trừ độ trễ Ping; tự bồi bổ thức ăn cho dế mạnh nhất; tự thả dế thường đổi vỏ sò khi đầy ống tre (6/6).
+  - **Câu Cá & Dịch Vụ**: Tự động nhận diện phao câu chìm giật cần chuẩn xác, chọn đa dạng điểm câu (Cầu tàu, Cầu tre, Bờ sông), mua/xin mồi câu Chú Đực, bán cá Vựa Anh Tư, gội đầu dưỡng sinh Út Mười hồi phục sức câu, ăn uống Dì Tám/Chị Thơm, sạp lồng đèn Cô Bảy, vé số Chú Bảy và đổi tiền tại cây ATM.
+  - **Sắp Xếp Ưu Tiên Kéo Thả**: Tự do kéo thả hoặc bấm nút để sắp xếp thứ tự ưu tiên giữa Câu cá, Sới dế, Bắt dế đêm và Giải trí.
 - 🏖️ **Khu Vực Biển**: Tự động canh lực giật cần biển, ghìm cá ngược hướng bơi, câu tại 3 điểm (Cầu tàu, Bãi đá, Mép cát), mua mồi và bán cá Chòi Ông Tư, tự nhận thưởng Sổ cá biển bách khoa toàn thư.
 - 🔄 **Kiểm Tra Cập Nhật Trực Tiếp**: Tích hợp nút kiểm tra cập nhật trên cả Popup Extension và Menu Game HUD, tự động so sánh phiên bản với GitHub Releases và hiển thị nội dung Changelog Markdown chi tiết kèm đường dẫn tải bản mới.
 - ⚡ **Công Nghệ & Trải Nghiệm**:
@@ -117,5 +121,5 @@ Xem toàn bộ lịch sử cập nhật và mô tả chức năng chi tiết t�
 ## 👤 Tác Giả & Bản Quyền
 
 - **Tác giả**: Tún (Nông Trại GenZ Auto by Tún)
-- **Phiên bản hiện tại**: `v1.3.1`
+- **Phiên bản hiện tại**: `v1.4.0`
 - **Giấy phép**: Bản quyền mã nguồn dành riêng cho cộng đồng người chơi Nông Trại GenZ.

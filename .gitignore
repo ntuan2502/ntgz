@@ -10,5 +10,6 @@ recorded-session.json
 # OS & Editor files
 .DS_Store
 Thumbs.db
+*.zip
 .vscode/
 .idea/

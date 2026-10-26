@@ -5,6 +5,34 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.4.0] - 2026-10-26
+
+### 🌟 Tính Năng Mới & Nâng Cấp Hệ Thống (Major Features)
+- **Sới Dế Bến Đò & Thách Đấu Thang Boss (Cricket Arena & Boss Ladder)**:
+  - Tự động di chuyển tới Sới Dế Ông Sáu tại gốc đa (`x:4, y:29`).
+  - Thách đấu thang Boss hàng ngày: **Cu Bin** (+15🐚) ➔ **Út Mập** (+30🐚) ➔ **Anh Lực xe ôm** (+60🐚) ➔ **Bác Chín thợ rèn** (+110🐚) ➔ **Ông Sáu chủ sới** (+220🐚).
+  - Tự động tuyển chọn con dế có tổng chỉ số mạnh nhất (`power + tough + nerve`) trong ống tre, kiểm tra dế hồi phục thể lực và so sánh tỷ lệ sức mạnh tối thiểu với Boss trước khi vào trận.
+  - **Khều Râu Dế Theo Nhịp**: Khều râu tự động đúng nhịp trong trận đấu (khi dế chùn hoặc chuẩn bị giáp chiến) giúp dế hăng máu, dồn sức húc và lật kèo đối thủ.
+  - **Đặt Cược Sới Dế PvP**: Tự động soi tỷ lệ cược nhà cái và so sánh chỉ số hai bên dế để đặt cược cửa có tỷ lệ thắng cao (tối đa 20 cược/ngày).
+- **Bắt Dế Đêm (18h00 – 05h00) & Nuôi Dế Ống Tre (Cricket Hunt & Care)**:
+  - **Tự động nhận diện giờ thực tế**: Đồng bộ theo giờ Việt Nam UTC+7 của máy chủ Bến Đò cho khung giờ săn dế đêm (18h–5h) và khung giờ săn dế hiếm (23h–4h).
+  - **Tùy chọn khu vực săn dế đa dạng**:
+    - 🌾 *Đồng cỏ phía đông* (mặc định): Mọi loài dế, đặc biệt là Dế vương (Huyền thoại) lúc 0h–3h.
+    - 🎋 *Bãi lau sậy*: Săn Dế ngọc và Dế ma (Sử thi) lúc 23h–4h.
+    - 🌾 *Bờ ruộng*: Săn Dế trũi, Dế vàng, Dế sắt.
+    - 🥬 *Quanh luống rau*: Săn Dế cồ, Dế lửa.
+    - 🌱 *Bãi cỏ khắp bến*: Săn Dế đất, Dế cồ.
+    - 🔄 *Tự luân phiên qua lại các khu*: Tự động tuần tra lần lượt qua toàn bộ các khu vực săn dế trên bến.
+  - **Cơ chế tuần tra chống spam lãng phí thể lực**: Khi rọi đèn xong hoặc gặp trạng thái vắng dế ("Im re, không nghe con nào gáy. Đi chỗ khác rọi thử nha 🔦"), bot tự động bước sang vị trí/bụi cỏ tiếp theo trong khu vực trước khi rọi lại, bảo toàn ⚡3 Sức mỗi lượt.
+  - **Úp dế chuẩn xác với bù trừ độ trễ Ping**: Tự động đo độ trễ mạng thực tế (RTT) để canh thời điểm úp đúng lúc dế chạm đất và nằm yên (`hop.air - rttMs + 60ms`). Kích hoạt phím bấm 1–5 và click bụi cỏ `.ben-tuft` kèm viền vàng trực quan.
+  - **Quản lý ống tre thông minh**: Tự động thả dế thường/dế chỉ số thấp nhận lại vỏ sò khi ống tre đầy (6/6) để nhường chỗ bắt dế hiếm.
+  - **Bồi bổ thức ăn cho dế**: Tùy chọn mua thức ăn (Lá non +Lì, Trứng kiến +Sức, Ớt hiểm +Gan) để nâng cấp chỉ số cho con dế mạnh nhất.
+- **Kéo Thả Sắp Xếp Độ Ưu Tiên Bến Đò (Wharf Drag & Drop Reordering)**:
+  - Cho phép kéo thả trực tiếp hoặc bấm nút mũi tên để tùy biến thứ tự thực hiện giữa các cụm việc tại Bến Đò: Câu cá, Sới dế, Bắt dế đêm, Giải trí.
+  - Tách bạch tác vụ giới hạn (Boss, Lồng đèn, Vé số, ATM) và tác vụ liên tục (Câu cá, Săn dế đêm), loại bỏ hoàn toàn hiện tượng di chuyển giật cục (ping-pong) giữa bãi cỏ và bờ sông.
+
+---
+
 ## [1.3.1] - 2026-10-25
 
 ### 🌟 Tính Năng Mới (New Feature)
