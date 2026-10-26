@@ -5,6 +5,46 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.6.0] - 2026-10-27
+
+### 🌟 Tính Năng Mới & Nâng Cấp Hệ Thống (Major Features & Optimizations)
+- **Banner Cảnh Báo Quan Trọng Trong Ngày (Important Alerts)**:
+  - Tự động bóc tách và ghim các thông báo khẩn cấp từ Loa xã, Điện thoại và Bản tin (*bão lớn, tin đồn giá vàng tăng/giảm, tin cá biển, dịch bệnh gia súc, tin hụi Dì Bảy*) thành Banner cảnh báo nổi bật ngay dưới thanh Stats HUD.
+  - Vẫn tự động đóng popup để không làm nghẽn tiến trình auto, nhưng đảm bảo người chơi không bao giờ bị bỏ lỡ các sự kiện quan trọng trong ngày.
+- **Tùy Biến Nhu Cầu & Tự Động Ăn/Uống Toàn Diện (Hunger & Thirst Overhaul)**:
+  - Ngưỡng Đói và Khát: Mở rộng toàn dải cài đặt từ `0 – 100%` (bước nhảy 1%, mặc định an toàn là **10%**).
+  - Bổ sung tùy chọn **"Ăn no tới khi đầy 100%"** & **"Uống tới khi đã khát 100%"**: Một khi chỉ số tụt dưới ngưỡng đã cài, bot sẽ tự động dùng món liên tục cho đến khi đạt đầy 100% rồi mới tiếp tục các công việc khác.
+  - Bỏ tính năng uống Cà phê sữa mỗi sáng (-30.000đ) để tiết kiệm vàng tối đa cho người chơi.
+  - Ngưỡng sạc pin xe điện EV: Mở rộng dải cài đặt từ `0 – 100%` (bước nhảy 1%, mặc định **10%**).
+- **Tối Ưu Chu Trình Đi Ngủ & Menu Biển (Sleep & Sea Logic)**:
+  - Bỏ ô nhập giờ ngủ buổi tối thủ công tại Tab Nông Trại; bot tự động về nhà đi ngủ khi xong hết việc ban đêm (sau 22h30).
+  - Chuyển tùy chọn **"😴 Tự về nhà đi ngủ khi hết câu được buổi tối"** sang **Tab Biển** (`SeaTabContent`), tự động về nhà ngủ ngay khi kết thúc giờ câu cá đêm ở Biển (`minutes > 1350`).
+- **Tách Riêng Hoàn Toàn Giữa Sử Dụng & Mua Vật Phẩm (Separated Buy & Use)**:
+  - **Ruộng đồng (Tèo)**: Tách riêng `Tự xịt thuốc sâu` và switch phụ con `Tự mua thuốc sâu khi hết (-8.000đ)`.
+  - **Phân bón**: Tách riêng `Tự bón phân NPK` và switch phụ con `Tự mua phân NPK khi hết (-15.000đ)`.
+  - **Gieo hạt**: Tách riêng `Tự gieo hạt giống có sẵn` và switch phụ con `Tự mua hạt giống khi hết`.
+  - **Bò sữa (Chị Mận)**: Tách riêng `Tự tiêm thuốc chữa bệnh cho Bò` và switch phụ con `Tự mua thuốc tiêm khi hết (-80.000đ)`.
+  - Giúp người chơi kiểm soát 100% chi tiêu, không bao giờ bị trừ vàng tự động khi chưa cho phép.
+- **Xóa Bỏ Lương Bé Bi Ao Cá (Pond Dead Code Removal)**:
+  - Đối chiếu chính xác theo Game Engine: Game chỉ có 4 helper nhận lương (`crops`, `poultry`, `buffalo`, `dairy`). Bé Bi hoàn toàn không có cơ chế nhận lương. Xóa bỏ hoàn toàn switch `pondAutoPayHelper`.
+- **Đại Tu Phân Khu Tạp Hóa Chị Na & Quầy Dì Bảy (Market & Savings Overhaul)**:
+  - **Bỏ logic giữ trứng gà**: Xóa bỏ cờ giữ trứng cho chợ đêm, đơn hàng Chị Na hoặc Bảng tin làng cần trứng gà sẽ được giao bình thường.
+  - **Bỏ tự bán nông sản sổ tay & bán thông minh**: Xóa bỏ hoàn toàn các hàm tự bán nông sản dư thừa ngoài trend (`sellForDailyTask`, `sellSmart`), loại bỏ nguy cơ hao hụt kho dự trữ.
+  - **Bỏ nhiệm vụ tân thủ**: Bỏ chuỗi hướng dẫn Ngày 1 & 2 và thu thập trang sổ tay Ông Năm để tinh gọn vòng lặp.
+  - **Nâng cấp Sổ Tiết Kiệm Dì Bảy**:
+    - Hỗ trợ đầy đủ 3 kỳ hạn chuẩn của game: **3 ngày (+5% lãi)**, **7 ngày (+15% lãi)**, **14 ngày (+35% lãi)**.
+    - Hỗ trợ tùy chọn **"Gửi tối đa hạn mức cho phép"** (5M ➔ 8M ➔ 12M ➔ 20M theo cấp) hoặc nhập số tiền gửi cụ thể.
+    - Bổ sung cấu hình **"Dừng gửi khi tiền dưới (triệu)"** (mặc định 10 triệu) bảo toàn vốn lưu động.
+- **Cải Tổ Toàn Diện Chợ Đêm (Night Market Overhaul)**:
+  - Bỏ bán trứng gà, bỏ bảo lưu đơn Chị Na.
+  - Thêm điều kiện an toàn: **"Chặn không bán nếu tồn kho dưới X món"** (mặc định **50 món**).
+  - Tích hợp 3 chiến lược bán linh hoạt:
+    1. 💰 *Bán nông sản có giá cao nhất* (`highest_price`)
+    2. 📦 *Bán nông sản có số lượng nhiều nhất* (`max_stock`)
+    3. 🎯 *Bán nông sản được chỉ định* (`selected_crop`) với Dropdown chọn cụ thể loại cây (*Củ cải, Cà rốt, Bắp ngô, Lúa thơm*).
+
+---
+
 ## [1.5.1] - 2026-10-26
 
 ### 🐛 Sửa Lỗi Nghiêm Trọng & Nâng Cao Độ Ổn Định (Bug Fixes & Stability)

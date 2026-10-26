@@ -10,14 +10,30 @@ updated: 2026-10-25
 - Commit and push directly to the `main` branch. Dedicated feature or bugfix branches are not required.
 
 ## Release Protocol (MANDATORY)
-- **Always update documentation before/during every release**:
-  - `CHANGELOG.md`: Record all new features, bug fixes, breaking changes, and refactoring with explicit version header (`## [X.Y.Z] - YYYY-MM-DD`) following Keep a Changelog & SemVer.
-  - `README.md`: Update version badges/strings and highlight major changes or stability improvements.
-  - `package.json` & `src/manifest.json`: Bump version string synchronously.
-- **Never commit temporary audit or debug files**:
-  - Files like `AUDIT_REPORT_*.md`, `FARMSTAY_DEBUG_REPORT.md`, or one-off scanner scripts MUST NOT be committed to git. Delete them prior to release.
-- **GitHub Release & Assets**:
-  - Always tag and create GitHub Release with release notes mirroring the changelog and zip archive of `dist/` and docs.
+Whenever the user asks to release, tag, or publish a new version, strictly follow this complete sequence without skipping any step:
+1. **Synchronize Version Numbers**:
+   - `package.json` -> bump `version`
+   - `manifest.json` (at workspace root) -> bump `version`
+2. **Update Documentation**:
+   - `CHANGELOG.md`: Record all new features, bug fixes, optimizations, breaking changes, and refactoring with explicit version header (`## [X.Y.Z] - YYYY-MM-DD`) following Keep a Changelog & SemVer.
+   - `README.md`: Update title version `(vX.Y.Z)`, feature summary highlights, and current version footer `vX.Y.Z`.
+3. **Verify Code Quality & Build**:
+   - Run `npm run build`
+   - Run `npm run type-check`
+   - Run `npm run check-syntax`
+   - Run `npm run lint`
+4. **Clean Temporary Files**:
+   - Ensure NO temporary files (e.g. `AUDIT_REPORT_*.md`, `*DEBUG_REPORT.md`, scratch scripts) remain in git staging or the workspace.
+5. **Git Commit & Push**:
+   - Stage release files: `git add package.json manifest.json CHANGELOG.md README.md dist/`
+   - Commit using Conventional Commits with strictly lowercase subject (e.g. `chore(release): bump version to 1.6.0 and update docs`).
+   - Push commit: `git push origin main`
+6. **Git Tagging & GitHub Release**:
+   - Tag version: `git tag vX.Y.Z`
+   - Push tag: `git push origin vX.Y.Z`
+   - Create release package: `Compress-Archive -Path dist\* -DestinationPath nongtraigenz-auto-vX.Y.Z.zip -Force`
+   - Create GitHub release: `gh release create vX.Y.Z nongtraigenz-auto-vX.Y.Z.zip --title "vX.Y.Z" --notes-file CHANGELOG.md` (or relevant section notes)
+   - Clean up local zip file: `Remove-Item nongtraigenz-auto-vX.Y.Z.zip`
 
 ## Supported AI Platforms (AG Kit)
 - AG Kit **only supports Gemini CLI and Google Antigravity**.
