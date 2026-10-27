@@ -182,6 +182,7 @@ export interface AppConfig {
   benSubOrder: WharfSubAreaId[];
   benSubEnabled: Record<WharfSubAreaId, boolean>;
   benSubCollapsed: Record<WharfSubAreaId, boolean>;
+  benQuickMonitorCollapsed?: boolean;
 
   // Ben Do Fishing Settings
   benAutoSpot: boolean;

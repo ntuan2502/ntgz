@@ -356,6 +356,15 @@ export function HudApp({
             onUpdateConfig={handleUpdateConfig}
             onClose={() => setViewMode('main')}
             onResetSize={handleResetSize}
+            hudSize={size}
+            onApplySize={(w, h) => {
+              setSize({ width: w, height: h });
+              handleUpdateConfig((prev) => ({
+                ...prev,
+                hudWidth: w,
+                hudHeight: h,
+              }));
+            }}
           />
         ) : viewMode === 'changelog' && updateInfo ? (
           <div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-white">

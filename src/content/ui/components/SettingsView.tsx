@@ -25,6 +25,8 @@ interface SettingsViewProps {
   onUpdateConfig: (updater: (prev: AppConfig) => AppConfig) => void;
   onClose: () => void;
   onResetSize: () => void;
+  hudSize?: { width: number; height: number };
+  onApplySize?: (width: number, height: number) => void;
 }
 
 export function SettingsView({
@@ -33,7 +35,40 @@ export function SettingsView({
   onUpdateConfig,
   onClose,
   onResetSize,
+  hudSize,
+  onApplySize,
 }: SettingsViewProps) {
+  const currentW = hudSize?.width ?? config.hudWidth ?? 400;
+  const currentH = hudSize?.height ?? config.hudHeight ?? 800;
+
+  const [inputWidth, setInputWidth] = React.useState<string>(() => String(currentW));
+  const [inputHeight, setInputHeight] = React.useState<string>(() => String(currentH));
+
+  React.useEffect(() => {
+    setInputWidth(String(currentW));
+    setInputHeight(String(currentH));
+  }, [currentW, currentH]);
+
+  const handleApplySize = () => {
+    const rawW = parseInt(inputWidth, 10);
+    const rawH = parseInt(inputHeight, 10);
+    const maxW = Math.max(800, window.innerWidth || 1920);
+    const maxH = Math.max(800, window.innerHeight || 1080);
+    const finalW = Math.max(340, Math.min(maxW, isNaN(rawW) ? currentW : rawW));
+    const finalH = Math.max(360, Math.min(maxH, isNaN(rawH) ? currentH : rawH));
+    setInputWidth(String(finalW));
+    setInputHeight(String(finalH));
+    if (onApplySize) {
+      onApplySize(finalW, finalH);
+    } else {
+      onUpdateConfig((prev) => ({
+        ...prev,
+        hudWidth: finalW,
+        hudHeight: finalH,
+      }));
+    }
+  };
+
   const handleDelayChange = (vals: number[]) => {
     const val = vals[0] ?? 1200;
     onUpdateConfig((prev) => ({ ...prev, taskDelayMs: val }));
@@ -44,14 +79,11 @@ export function SettingsView({
     onUpdateConfig((prev) => ({ ...prev, actionRepeatDelayMs: val }));
   };
 
-  const handleFishingSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = Math.max(1, Math.min(100, Number(e.target.value) || 10));
-    onUpdateConfig((prev) => ({ ...prev, fishingSwitchCount: val }));
-  };
+  const activeAreaOrder = config.areaOrder.filter((a) => a !== 'benDo');
 
   const handleMoveArea = (index: number, direction: 'up' | 'down') => {
     onUpdateConfig((prev) => {
-      const order = [...prev.areaOrder];
+      const order = prev.areaOrder.filter((a) => a !== 'benDo');
       const targetIndex = direction === 'up' ? index - 1 : index + 1;
       if (targetIndex < 0 || targetIndex >= order.length) return prev;
       const temp = order[index];
@@ -252,26 +284,17 @@ export function SettingsView({
               <ListOrdered className="h-4 w-4 text-amber-600" />
               <span>Thứ tự & Điều phối các khu</span>
             </div>
-            <div className="flex items-center gap-1 text-[11px] text-slate-600">
-              <span>Đổi khu sau</span>
-              <input
-                type="number"
-                min={1}
-                max={50}
-                value={config.fishingSwitchCount}
-                onChange={handleFishingSwitchChange}
-                className="w-10 h-6 rounded bg-slate-50 px-1 text-center text-xs text-emerald-700 font-bold border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
-              />
-              <span>con cá</span>
-            </div>
+            <Badge variant="outline" className="text-[10px] text-emerald-700 bg-emerald-50 border-emerald-200/80 font-medium">
+              ✨ Tự đổi thông minh khi xong việc
+            </Badge>
           </div>
 
           <p className="text-[11px] text-slate-500">
-            Thứ tự ưu tiên chạy từ trên xuống dưới khi bật chế độ <strong>▶️ TẤT CẢ (Alt+A)</strong>:
+            Thứ tự ưu tiên chạy từ trên xuống dưới khi bật chế độ <strong>▶️ TẤT CẢ (Alt+A)</strong>. Hệ thống sẽ tự động chuyển khu tiếp theo ngay khi hoàn tất các việc được bật trong khu hiện tại:
           </p>
 
           <div className="space-y-1.5">
-            {config.areaOrder.map((areaId, idx) => {
+            {activeAreaOrder.map((areaId, idx) => {
               const meta = AREA_META[areaId];
               const isEnabled = config.areaEnabled[areaId] !== false;
               return (
@@ -304,7 +327,7 @@ export function SettingsView({
                       <Button
                         variant="ghost"
                         size="icon-xs"
-                        disabled={idx === config.areaOrder.length - 1}
+                        disabled={idx === activeAreaOrder.length - 1}
                         className="h-5.5 w-5.5 text-slate-500 hover:text-slate-900"
                         onClick={() => handleMoveArea(idx, 'down')}
                         title="Đẩy xuống sau"
@@ -326,14 +349,68 @@ export function SettingsView({
           </div>
         </div>
 
-        {/* 4. Giao diện & Tiện ích */}
-        <div className="rounded-xl border border-slate-200/90 bg-white p-3 space-y-2.5 shadow-2xs">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-            <Sliders className="h-4 w-4 text-slate-600" />
-            <span>Tiện ích & Khôi phục</span>
+        {/* 4. Kích thước & Tiện ích HUD */}
+        <div className="rounded-xl border border-slate-200/90 bg-white p-3 space-y-3 shadow-2xs">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+              <Sliders className="h-4 w-4 text-slate-600" />
+              <span>Kích thước bảng điều khiển HUD</span>
+            </div>
+            <span className="text-[11px] font-mono font-semibold text-slate-500">
+              {currentW} × {currentH} px
+            </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 pt-1">
+          <div className="flex items-center gap-2">
+            <div className="flex-1 space-y-1">
+              <span className="text-[10px] text-slate-500 font-medium">Chiều rộng (W)</span>
+              <div className="flex items-center gap-1">
+                <input
+                  type="number"
+                  min={340}
+                  max={1920}
+                  step={10}
+                  value={inputWidth}
+                  onChange={(e) => setInputWidth(e.target.value)}
+                  className="w-full h-7 rounded-lg bg-slate-50 px-2 text-xs text-slate-800 font-mono font-medium border border-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  placeholder="Width"
+                />
+                <span className="text-[10px] text-slate-400">px</span>
+              </div>
+            </div>
+
+            <div className="flex-1 space-y-1">
+              <span className="text-[10px] text-slate-500 font-medium">Chiều cao (H)</span>
+              <div className="flex items-center gap-1">
+                <input
+                  type="number"
+                  min={360}
+                  max={1200}
+                  step={10}
+                  value={inputHeight}
+                  onChange={(e) => setInputHeight(e.target.value)}
+                  className="w-full h-7 rounded-lg bg-slate-50 px-2 text-xs text-slate-800 font-mono font-medium border border-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  placeholder="Height"
+                />
+                <span className="text-[10px] text-slate-400">px</span>
+              </div>
+            </div>
+
+            <div className="pt-4">
+              <Button
+                variant="default"
+                size="sm"
+                className="h-7 text-xs px-3 bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer font-medium"
+                onClick={handleApplySize}
+              >
+                Áp dụng
+              </Button>
+            </div>
+          </div>
+
+          <div className="border-t border-slate-100" />
+
+          <div className="grid grid-cols-2 gap-2 pt-0.5">
             <Button
               variant="outline"
               size="sm"
@@ -341,7 +418,7 @@ export function SettingsView({
               onClick={onResetSize}
             >
               <RotateCcw className="h-3.5 w-3.5 mr-1 text-slate-500" />
-              Đặt lại kích thước HUD
+              Đặt lại kích thước HUD (400×800)
             </Button>
 
             <Button

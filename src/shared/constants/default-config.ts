@@ -146,7 +146,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   showFullActions: false,
 
   // Main Area Order & Enable/Disable toggles
-  areaOrder: ['farm', 'benDo', 'sea', 'farmstay'],
+  areaOrder: ['farm', 'sea', 'farmstay'],
   areaEnabled: {
     farm: true,
     benDo: false,
@@ -318,6 +318,7 @@ export const DEFAULT_CONFIG: AppConfig = {
     cricketHunt: false,
     entertainment: false,
   },
+  benQuickMonitorCollapsed: false,
 
   // Ben Do Fishing Settings
   benAutoSpot: true,
