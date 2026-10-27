@@ -167,10 +167,19 @@ function handleBenAtmPanel(
     return true;
   }
 
+  const allBtn = Array.from(atmPanel.querySelectorAll('.ben-atm-pick button.btn')).find((b) =>
+    b.textContent?.includes('Hết')
+  ) as HTMLButtonElement | null;
   const goBtn = atmPanel.querySelector('.btn-green.ben-atm-go') as HTMLButtonElement | null;
   const closeBtn = atmPanel.querySelector('.ben-panel-head button.btn-brown') as HTMLButtonElement | null;
 
-  if (goBtn && !goBtn.disabled) {
+  if (allBtn && !allBtn.disabled && !allBtn.classList.contains('on')) {
+    lastAtmActionAt = now;
+    triggerPointerDownAndClick(allBtn);
+    return true;
+  }
+
+  if (goBtn && !goBtn.disabled && !goBtn.textContent?.includes('Giờ này nhận đủ rồi')) {
     lastAtmActionAt = now;
     triggerPointerDownAndClick(goBtn);
     setStatus('🏧 Đang bấm nút Rút tiền tại Cây ATM...');

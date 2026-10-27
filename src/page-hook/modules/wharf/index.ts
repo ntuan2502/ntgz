@@ -139,12 +139,13 @@ const ATM_NEXT_TIME_KEY = 'ntg_ben_next_atm_time';
 let nextAtmTime = (() => {
   try {
     const raw = sessionStorage.getItem(ATM_NEXT_TIME_KEY);
-    return raw ? Number(raw) || 0 : 0;
+    const val = raw ? Number(raw) || 0 : 0;
+    // Discard invalid / far future timestamps (> 1 hour)
+    return val > Date.now() + 3600000 ? 0 : val;
   } catch {
     return 0;
   }
 })();
-let atmTimerId: number | null = null;
 let lastAtmLogAt = 0;
 let lastAtmExchangeAt = 0;
 
@@ -158,16 +159,6 @@ function setNextAtmTime(timestamp: number): void {
     sessionStorage.setItem(ATM_NEXT_TIME_KEY, String(timestamp));
   } catch {
     // Ignore storage errors
-  }
-  if (atmTimerId) {
-    clearTimeout(atmTimerId);
-    atmTimerId = null;
-  }
-  const delay = Math.max(0, timestamp - Date.now());
-  if (delay > 0 && delay < 24 * 3600 * 1000) {
-    atmTimerId = window.setTimeout(() => {
-      sendBenWs({ t: 'atm' });
-    }, delay);
   }
 }
 
@@ -222,55 +213,64 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
 
   // Watch for ATM cash success confirmation from server
   if (bn.cashed && typeof bn.cashed.seq === 'number' && bn.cashed.seq !== lastObservedCashedSeq) {
-    lastObservedCashedSeq = bn.cashed.seq;
-    const cashed = bn.cashed;
-    const nextHour = getNextHourTimestamp(Date.now());
-    const nextHourStr = new Date(nextHour).toLocaleTimeString('vi-VN', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    });
-    lastAtmExchangeAt = Date.now();
-    setNextAtmTime(nextHour);
-    if (buStore.getState().panel === 'atm') {
-      buStore.setState({ panel: null });
-    }
-    return {
-      acted: true,
-      msg: `🏧 Cây ATM: 🎉 Đổi thành công ${cashed.shells.toLocaleString('vi-VN')} vỏ sò ➔ ${cashed.money.toLocaleString('vi-VN')}đ tiền mặt! Lần đổi kế tiếp lúc ${nextHourStr}`,
-    };
-  }
-
-  // Watch for ATM server error notices
-  if (bn.notice && typeof bn.notice.seq === 'number' && bn.notice.seq !== lastObservedNoticeSeq) {
-    lastObservedNoticeSeq = bn.notice.seq;
-    const err = bn.notice.error;
-    if (err === 'tired') {
-      benNoticeTired = true;
-      return {
-        acted: true,
-        msg: '😮‍💨 Bến Đò: Không đủ Sức câu -> Chuẩn bị đi ăn hồi phục Sức...',
-      };
-    } else if (err === 'farAtm') {
-      return {
-        acted: true,
-        msg: '⚠️ Cây ATM: Đứng ngay trước cây ATM mới rút tiền được nha 🏧',
-      };
-    } else if (err === 'atmLimit') {
+    if (lastObservedCashedSeq === -1) {
+      // First tick on load / script start - sync sequence without emitting false "success" log for historical exchange
+      lastObservedCashedSeq = bn.cashed.seq;
+    } else {
+      lastObservedCashedSeq = bn.cashed.seq;
+      const cashed = bn.cashed;
       const nextHour = getNextHourTimestamp(Date.now());
+      const nextHourStr = new Date(nextHour).toLocaleTimeString('vi-VN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      });
+      lastAtmExchangeAt = Date.now();
       setNextAtmTime(nextHour);
       if (buStore.getState().panel === 'atm') {
         buStore.setState({ panel: null });
       }
       return {
         acted: true,
-        msg: '⏳ Cây ATM: Giờ này nhận chạm hạn mức tiền rồi, bớt số sò hoặc chờ chút nữa đổi tiếp nha ⏳',
+        msg: `🏧 Cây ATM: 🎉 Đổi thành công ${cashed.shells.toLocaleString('vi-VN')} vỏ sò ➔ ${cashed.money.toLocaleString('vi-VN')}đ tiền mặt! Lần đổi kế tiếp lúc ${nextHourStr}`,
       };
-    } else if (err === 'atmMin') {
-      return {
-        acted: true,
-        msg: '⚠️ Cây ATM: Mỗi lần đổi ít nhất 100 vỏ sò nha 🏧',
-      };
+    }
+  }
+
+  // Watch for ATM server error notices
+  if (bn.notice && typeof bn.notice.seq === 'number' && bn.notice.seq !== lastObservedNoticeSeq) {
+    if (lastObservedNoticeSeq === -1) {
+      lastObservedNoticeSeq = bn.notice.seq;
+    } else {
+      lastObservedNoticeSeq = bn.notice.seq;
+      const err = bn.notice.error;
+      if (err === 'tired') {
+        benNoticeTired = true;
+        return {
+          acted: true,
+          msg: '😮‍💨 Bến Đò: Không đủ Sức câu -> Chuẩn bị đi ăn hồi phục Sức...',
+        };
+      } else if (err === 'farAtm') {
+        return {
+          acted: true,
+          msg: '⚠️ Cây ATM: Đứng ngay trước cây ATM mới rút tiền được nha 🏧',
+        };
+      } else if (err === 'atmLimit') {
+        const nextHour = getNextHourTimestamp(Date.now());
+        setNextAtmTime(nextHour);
+        if (buStore.getState().panel === 'atm') {
+          buStore.setState({ panel: null });
+        }
+        return {
+          acted: true,
+          msg: '⏳ Cây ATM: Giờ này nhận chạm hạn mức tiền rồi, bớt số sò hoặc chờ chút nữa đổi tiếp nha ⏳',
+        };
+      } else if (err === 'atmMin') {
+        return {
+          acted: true,
+          msg: '⚠️ Cây ATM: Mỗi lần đổi ít nhất 100 vỏ sò nha 🏧',
+        };
+      }
     }
   }
 
@@ -886,51 +886,66 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   // SUB-AREA RUNNER 4: ENTERTAINMENT & UTILITIES (Lồng đèn, Vé số, ATM)
   // ---------------------------------------------------------------------------
   const runEntertainmentStep = (): BenStepResult => {
-    // A. Sạp lồng đèn Cô Bảy
+    // A. Sạp lồng đèn Cô Bảy (bắt buộc lội bộ ra tận nơi, không kiểm tra hay thao tác từ xa)
     if (cfg.benAutoLantern !== false) {
       const tickets = wallet.tickets || 0;
-
-      // 1. Kiểm tra trước qua WebSocket từ xa nếu chưa có dữ liệu wheel (không chạy qua sạp)
-      if (!bn.wheel && canAct('ben_wheel_query', 5000)) {
-        markActed('ben_wheel_query');
-        sendBenWs({ t: 'wheel' });
-        return { acted: false };
-      }
-
       const boughtToday = bn.wheel?.bought ?? 0;
+      const needBuyTicket =
+        Boolean(cfg.benBuyLanternTicket) &&
+        (!bn.wheel || boughtToday < 5) &&
+        shells >= 600;
+      const shouldSpin = cfg.benLanternSpinMode === 'x1' ? tickets > 0 : tickets >= 10;
 
-      // 2. Tự mua 5 lượt vé quay: kiểm tra trước, nếu không mua được thì log hiển thị giống trong ingame, nếu được thì gửi qua WS từ xa (không chạy qua tận nơi)
-      if (cfg.benBuyLanternTicket) {
-        if (boughtToday >= 5) {
-          if (canAct('ben_lantern_limit_log', 120000)) {
-            markActed('ben_lantern_limit_log');
-            return {
-              acted: true,
-              msg: '🏮 Cô Bảy: Hôm nay cô bán đủ 5 vé rồi, mai ghé nha. Ra câu đi, cá còn ngậm vé đó!',
-            };
-          }
-        } else if (shells < 600) {
-          if (canAct('ben_lantern_poor_log', 60000)) {
-            markActed('ben_lantern_poor_log');
-            return {
-              acted: true,
-              msg: `🏮 Cô Bảy: Thiếu vỏ sò rồi con. (cần 600🐚, hiện có ${shells}🐚)`,
-            };
-          }
-        } else if (canAct('ben_lantern_buy', 1500)) {
+      // Chỉ đi lại sạp khi có việc cần làm (cần mua vé hoặc có vé để quay)
+      if (needBuyTicket || shouldSpin) {
+        const curTile = benScene?.farmer?.tile;
+        const isAtLanternSpot = Boolean(
+          curTile && Math.abs(curTile.x - 37) <= 1 && Math.abs(curTile.y - 28) <= 1
+        );
+
+        if (!isAtLanternSpot) {
+          return walkAndRun(
+            { x: 37, y: 28 },
+            () => {
+              sendBenWs({ t: 'wheel' });
+            },
+            `Đi lại Sạp Lồng Đèn Cô Bảy để ${shouldSpin ? `quay ${tickets} vé 🎟️` : 'mua vé quay'}...`,
+            'ben_lantern_walk'
+          );
+        }
+
+        // Đã đứng tại Sạp Lồng Đèn Cô Bảy { x: 37, y: 28 }
+        // 1. Kiểm tra trạng thái vòng quay nếu chưa có dữ liệu
+        if (!bn.wheel && canAct('ben_wheel_query', 3000)) {
+          markActed('ben_wheel_query');
+          sendBenWs({ t: 'wheel' });
+          return { acted: true, msg: '🏮 Đang hỏi Cô Bảy thông tin vòng quay...' };
+        }
+
+        // 2. Tự mua 5 lượt vé quay tại sạp
+        if (cfg.benBuyLanternTicket && boughtToday < 5 && shells >= 600 && canAct('ben_lantern_buy', 1500)) {
           markActed('ben_lantern_buy');
           sendBenWs({ t: 'ticket' });
           return {
             acted: true,
             msg: `🎟️ Cô Bảy: Nè, một vé. Quay đi con! (${boughtToday + 1}/5 · -600 vỏ sò 🐚)`,
           };
+        } else if (cfg.benBuyLanternTicket && boughtToday >= 5 && canAct('ben_lantern_limit_log', 120000)) {
+          markActed('ben_lantern_limit_log');
+          return {
+            acted: true,
+            msg: '🏮 Cô Bảy: Hôm nay cô bán đủ 5 vé rồi, mai ghé nha. Ra câu đi, cá còn ngậm vé đó!',
+          };
+        } else if (cfg.benBuyLanternTicket && shells < 600 && boughtToday < 5 && canAct('ben_lantern_poor_log', 60000)) {
+          markActed('ben_lantern_poor_log');
+          return {
+            acted: true,
+            msg: `🏮 Cô Bảy: Thiếu vỏ sò rồi con. (cần 600🐚, hiện có ${shells}🐚)`,
+          };
         }
-      }
 
-      // 3. Quay vé lồng đèn Cô Bảy (quay trực tiếp từ xa qua WS, không tự đi lại chỗ lồng đèn)
-      const shouldSpin = cfg.benLanternSpinMode === 'x1' ? tickets > 0 : tickets >= 10;
-      if (shouldSpin) {
-        if (canAct('ben_lantern_spin', 3000)) {
+        // 3. Quay vé lồng đèn Cô Bảy tại sạp
+        if (shouldSpin && canAct('ben_lantern_spin', 2500)) {
           markActed('ben_lantern_spin');
           const curBn = bnStore.getState();
           const curPicks = curBn.wheel?.picks || [];
@@ -944,7 +959,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
           sendBenWs({ t: 'spin', n: spinCount });
           return {
             acted: true,
-            msg: `🏮 Vòng quay Cô Bảy: Quay ${spinCount} vé (còn ${tickets} vé 🎟️)...`,
+            msg: `🏮 Vòng quay Cô Bảy: Đang quay ${spinCount} vé tại sạp (còn ${tickets} vé 🎟️)...`,
           };
         }
       } else if (tickets > 0 && cfg.benLanternSpinMode === 'x10' && canAct('ben_lantern_wait_x10', 120000)) {
@@ -992,109 +1007,113 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
       }
     }
 
-    // C. Exchange shells at ATM ({x: 34, y: 35})
+    // C. Exchange shells at ATM ({x: 34, y: 35}) - bắt buộc lội bộ ra tận nơi, không kiểm tra hay thao tác từ xa
     if (cfg.benAutoAtm) {
       const now = Date.now();
-      const bnAtm = bn.atm;
-
-      // If ATM state is not loaded yet, query it and wait
-      if (!bnAtm) {
-        if (canAct('ben_atm_init', 5000)) {
-          markActed('ben_atm_init');
-          sendBenWs({ t: 'atm' });
-        }
-        return { acted: false };
-      }
-
-      const rate = typeof bnAtm.rate === 'number'
-        ? bnAtm.rate
-        : ((m.day || 1) >= 200 ? 3000 : (m.day || 1) >= 90 ? 2000 : (m.day || 1) >= 60 ? 1000 : 500);
-
-      // Determine reopen timestamp: from server bnAtm.reopen, or next hour if quota reached, or local timer
-      let reopenAt = 0;
-      if (typeof bnAtm.reopen === 'number' && bnAtm.reopen > now) {
-        reopenAt = bnAtm.reopen;
-      } else if (typeof bnAtm.left === 'number' && bnAtm.left < 100 * rate) {
-        // Hourly quota reached (received 20m)
-        reopenAt = typeof bnAtm.reopen === 'number' && bnAtm.reopen > now
-          ? bnAtm.reopen
-          : getNextHourTimestamp(now);
-      } else if (nextAtmTime > now) {
-        reopenAt = nextAtmTime;
-      }
-
-      if (reopenAt > now) {
-        if (nextAtmTime !== reopenAt) {
-          setNextAtmTime(reopenAt);
-        }
-
-        const diffMs = reopenAt - now;
-        const diffMin = Math.floor(diffMs / 60000);
-        const diffSec = Math.floor((diffMs % 60000) / 1000);
-        const waitStr = diffMin > 0 ? `${diffMin} phút ${diffSec} giây` : `${diffSec} giây`;
-        const timeStr = new Date(reopenAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-        if (now - lastAtmExchangeAt > 60000 && now - lastAtmLogAt > 300000 && canAct('ben_atm_wait_log', 300000)) {
-          lastAtmLogAt = now;
-          markActed('ben_atm_wait_log');
-          return {
-            acted: true,
-            msg: `⏳ Cây ATM: Chưa tới giờ đổi (mở đổi lúc ${timeStr}, còn ${waitStr}) · Tiếp tục các việc khác`,
-          };
-        }
-
-        return { acted: false };
-      }
-
-      // Time has arrived! Check minimum shell threshold
       const atmMin = typeof cfg.benAtmThreshold === 'number' ? cfg.benAtmThreshold : 10000;
-      if (shells >= atmMin && canAct('ben_atm', 4000)) {
-        const MAX_ATM_HOURLY_MONEY = 20_000_000;
-        const moneyQuota = Math.min(
-          MAX_ATM_HOURLY_MONEY,
-          typeof bnAtm.left === 'number' ? bnAtm.left : MAX_ATM_HOURLY_MONEY
-        );
 
-        if (moneyQuota < 100 * rate) {
-          const nextHour = getNextHourTimestamp(now);
-          setNextAtmTime(nextHour);
+      // 1. Chỉ thực hiện khi số vỏ sò hiện có đạt ngưỡng cấu hình
+      if (shells >= atmMin) {
+        // 2. Kiểm tra xem đã tới giờ đổi chưa
+        let reopenAt = 0;
+        if (typeof bn.atm?.reopen === 'number' && bn.atm.reopen > now) {
+          reopenAt = bn.atm.reopen;
+        } else if (nextAtmTime > now && lastAtmExchangeAt > 0) {
+          reopenAt = nextAtmTime;
+        }
+
+        if (reopenAt > now) {
+          if (nextAtmTime !== reopenAt) {
+            setNextAtmTime(reopenAt);
+          }
+
+          const diffMs = reopenAt - now;
+          const diffMin = Math.floor(diffMs / 60000);
+          const diffSec = Math.floor((diffMs % 60000) / 1000);
+          const waitStr = diffMin > 0 ? `${diffMin} phút ${diffSec} giây` : `${diffSec} giây`;
+          const timeStr = new Date(reopenAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+          if (now - lastAtmExchangeAt > 60000 && now - lastAtmLogAt > 300000 && canAct('ben_atm_wait_log', 300000)) {
+            lastAtmLogAt = now;
+            markActed('ben_atm_wait_log');
+            return {
+              acted: true,
+              msg: `⏳ Cây ATM: Chưa tới giờ đổi (mở đổi lúc ${timeStr}, còn ${waitStr}) · Tiếp tục các việc khác`,
+            };
+          }
+
           return { acted: false };
         }
 
-        const maxShellsByQuota = Math.floor(moneyQuota / rate);
-        let shellsToCash = Math.min(shells, maxShellsByQuota);
-        shellsToCash = Math.floor(shellsToCash / 100) * 100;
+        // 3. Đã tới giờ đổi và đủ sò: BẮT BUỘC lội bộ ra tận cây ATM { x: 34, y: 35 }
+        const curTile = benScene?.farmer?.tile;
+        const isAtAtmSpot = Boolean(curTile && curTile.x === 34 && curTile.y === 35);
 
-        if (shellsToCash >= 100) {
-          const curTile = benScene?.farmer?.tile;
-          const isAtAtmSpot = Boolean(curTile && curTile.x === 34 && curTile.y === 35);
+        if (!isAtAtmSpot) {
+          return walkAndRun(
+            { x: 34, y: 35 },
+            () => {
+              if (benScene?.farmer?.lookAt) {
+                benScene.farmer.lookAt((34 + 0.5) * 16, 34 * 16);
+              }
+              sendBenWs({ t: 'atm' });
+            },
+            `Đi lại Cây ATM để đổi ${shells.toLocaleString('vi-VN')} vỏ sò...`,
+            'ben_atm_walk',
+            { panel: 'atm' }
+          );
+        }
 
-          if (!isAtAtmSpot) {
-            return walkAndRun(
-              { x: 34, y: 35 },
-              () => {
-                if (benScene?.farmer?.lookAt) {
-                  benScene.farmer.lookAt((34 + 0.5) * 16, 34 * 16);
-                }
-                sendBenWs({ t: 'atm' });
-                sendBenWs({ t: 'atmCash', shells: shellsToCash });
-              },
-              `Đi lại Cây ATM để đổi ${shellsToCash.toLocaleString('vi-VN')} vỏ sò...`,
-              'ben_atm_walk'
-            );
-          }
+        // Đã đứng ngay trước cây ATM { x: 34, y: 35 }
+        if (benScene?.farmer?.lookAt) {
+          benScene.farmer.lookAt((34 + 0.5) * 16, 34 * 16);
+        }
 
-          // Already at ATM spot { x: 34, y: 35 }
-          if (benScene?.farmer?.lookAt) {
-            benScene.farmer.lookAt((34 + 0.5) * 16, 34 * 16);
-          }
-          markActed('ben_atm');
+        // 4. Nếu chưa có thông tin ATM (tỷ giá, hạn mức) hoặc đã lâu chưa refresh, gửi truy vấn tại chỗ
+        if (!bn.atm && canAct('ben_atm_query', 3000)) {
+          markActed('ben_atm_query');
           sendBenWs({ t: 'atm' });
-          sendBenWs({ t: 'atmCash', shells: shellsToCash });
           return {
             acted: true,
-            msg: `🏧 Đang gửi lệnh đổi ${shellsToCash.toLocaleString('vi-VN')} vỏ sò tại Cây ATM...`,
+            msg: '🏧 Đang kiểm tra tỷ giá và hạn mức tại Cây ATM...',
           };
+        }
+
+        // 5. Đã có dữ liệu ATM tại chỗ, tính toán đổi tiền
+        if (bn.atm && canAct('ben_atm_cash', 4000)) {
+          const bnAtm = bn.atm;
+          const rate = typeof bnAtm.rate === 'number'
+            ? bnAtm.rate
+            : ((m.day || 1) >= 200 ? 3000 : (m.day || 1) >= 90 ? 2000 : (m.day || 1) >= 60 ? 1000 : 500);
+
+          const MAX_ATM_HOURLY_MONEY = 20_000_000;
+          const moneyQuota = Math.min(
+            MAX_ATM_HOURLY_MONEY,
+            typeof bnAtm.left === 'number' ? bnAtm.left : MAX_ATM_HOURLY_MONEY
+          );
+
+          if (moneyQuota < 100 * rate) {
+            const nextHour = getNextHourTimestamp(now);
+            setNextAtmTime(nextHour);
+            markActed('ben_atm_cash');
+            return {
+              acted: true,
+              msg: '⏳ Cây ATM: Giờ này hạn mức tiền đã hết, chờ giờ sau đổi tiếp!',
+            };
+          }
+
+          const maxShellsByQuota = Math.floor(moneyQuota / rate);
+          let shellsToCash = Math.min(shells, maxShellsByQuota);
+          shellsToCash = Math.floor(shellsToCash / 100) * 100;
+
+          if (shellsToCash >= 100) {
+            markActed('ben_atm_cash');
+            sendBenWs({ t: 'atmCash', shells: shellsToCash });
+            return {
+              acted: true,
+              msg: `🏧 Đang đổi ${shellsToCash.toLocaleString('vi-VN')} vỏ sò tại Cây ATM...`,
+            };
+          }
         }
       }
     }
