@@ -617,7 +617,17 @@ export interface BenNetState {
     error?: string;
     [key: string]: unknown;
   };
-  landed?: unknown;
+  landed?: {
+    id?: string;
+    fish?: string;
+    rarity?: string;
+    price?: number;
+    size?: number;
+    odd?: boolean;
+    rainbow?: boolean;
+    released?: boolean;
+    [key: string]: unknown;
+  } | null;
   [key: string]: unknown;
 }
 

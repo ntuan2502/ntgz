@@ -153,9 +153,21 @@ interface GameActionPayload {
 
         case 'BEN_SET_LOOK': {
           const slot = payload.slot as string;
-          const id = payload.id as string | null;
+          const id = (payload.id as string | null) ?? null;
           if (slot) {
-            sendBenWs({ t: 'look', slot, id: id ?? null });
+            if (!stores.benNet) discoverStores();
+            if (stores.benNet) {
+              stores.benNet.setState((prev) => {
+                const look = { ...((prev.look as Record<string, string>) || {}) };
+                if (id) {
+                  look[slot] = id;
+                } else {
+                  delete look[slot];
+                }
+                return { look };
+              });
+            }
+            sendBenWs({ t: 'wear', slot, item: id });
             return { ok: true };
           }
           return { ok: false, error: 'NO_SLOT_SPECIFIED' };

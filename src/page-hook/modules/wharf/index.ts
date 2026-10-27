@@ -516,6 +516,40 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   // SUB-AREA RUNNER 1: FISHING (Câu cá & Bán cá Bến Đò)
   // ---------------------------------------------------------------------------
   const runFishingStep = (): BenStepResult => {
+    // 0. Tự động bỏ giữ cá trùng loại nếu bật benAutoSellDuplicateKept (chỉ giữ 1 con đắt nhất mỗi loài)
+    if (cfg.benAutoSellDuplicateKept !== false && Array.isArray(bn.basket)) {
+      const keptList = bn.basket.filter(
+        (x: { kept?: boolean; id?: string; fish?: string; price?: number; size?: number }) =>
+          Boolean(x.kept) && Boolean(x.id)
+      );
+      const bySpecies = new Map<string, typeof keptList>();
+      for (const f of keptList) {
+        const key = f.fish || 'unknown';
+        if (!bySpecies.has(key)) bySpecies.set(key, []);
+        bySpecies.get(key)!.push(f);
+      }
+      for (const [, list] of bySpecies.entries()) {
+        if (list.length > 1) {
+          list.sort(
+            (a, b) =>
+              (Number(b.price) || 0) - (Number(a.price) || 0) ||
+              (Number(b.size) || 0) - (Number(a.size) || 0)
+          );
+          for (const dup of list.slice(1)) {
+            if (dup.id && canAct(`ben_unkeep_${dup.id}`, 1000)) {
+              markActed(`ben_unkeep_${dup.id}`);
+              sendBenWs({ t: 'keep', id: dup.id, on: false });
+              const fishName = (dup as { name?: string }).name || dup.fish || 'Cá';
+              return {
+                acted: true,
+                msg: `🔄 Bỏ giữ cá trùng: ${fishName} (${Number(dup.price || 0).toLocaleString('vi-VN')}🐚) để bán (ưu tiên giữ con ${Number(list[0].price || 0).toLocaleString('vi-VN')}🐚)`,
+              };
+            }
+          }
+        }
+      }
+    }
+
     // 1. Sell basket at Vựa cá Anh Tư khi giỏ cá đầy (60 con) hoặc khi thiếu sò mua mồi/ăn uống
     const isBasketFull = nonKeptCount >= 60 || bn.notice?.error === 'basketFull';
     if (

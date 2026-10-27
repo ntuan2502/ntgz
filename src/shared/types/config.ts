@@ -193,6 +193,8 @@ export interface AppConfig {
   benAutoSell: boolean;
   benSellThreshold: number;
   benAutoKeepRare: boolean;
+  benKeepRarities?: string[];
+  benAutoSellDuplicateKept?: boolean;
   benAutoGoiDau: boolean;
   benAutoRecoverStamina: boolean;
   benStaminaThreshold: number;

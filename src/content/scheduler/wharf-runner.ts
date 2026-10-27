@@ -283,18 +283,98 @@ export async function stepBenDoFishing(
     if (now - lastModalClickAt > Math.max(350, delayMs * 0.7)) {
       const card = document.querySelector('.catch-card.ben-catch') as HTMLElement | null;
       if (card) {
-        const isRareSpecial =
-          card.classList.contains('mythic') ||
-          Boolean(card.querySelector('.catch-tag.rainbow, .catch-tag.odd'));
+        const landed = bn.landed as {
+          id?: string;
+          fish?: string;
+          rarity?: string;
+          price?: number;
+          size?: number;
+          odd?: boolean;
+          rainbow?: boolean;
+          [key: string]: unknown;
+        } | null | undefined;
+
+        // 1. Determine rarity and special flags
+        let rawRarity = (landed?.rarity || '').toLowerCase();
+        if (!rawRarity) {
+          if (card.classList.contains('mythic')) {
+            rawRarity = 'mythic';
+          } else {
+            const h3Next = card.querySelector('h3')?.nextElementSibling?.textContent?.trim()?.toLowerCase() || '';
+            if (h3Next.includes('thần thoại')) rawRarity = 'mythic';
+            else if (h3Next.includes('huyền thoại')) rawRarity = 'legendary';
+            else if (h3Next.includes('rất hiếm') || h3Next.includes('quý')) rawRarity = 'epic';
+            else if (h3Next.includes('hiếm')) rawRarity = 'rare';
+            else if (h3Next.includes('hơi hiếm')) rawRarity = 'uncommon';
+            else if (h3Next.includes('thường')) rawRarity = 'common';
+          }
+        }
+        if (rawRarity === 'myth') rawRarity = 'mythic';
+        if (rawRarity === 'legend') rawRarity = 'legendary';
+
+        const isRainbow = Boolean(landed?.rainbow || card.querySelector('.catch-tag.rainbow'));
+        const isOdd = Boolean(landed?.odd || card.querySelector('.catch-tag.odd'));
+
+        const allowedRarities = Array.isArray(config.benKeepRarities)
+          ? config.benKeepRarities
+          : ['mythic', 'legendary', 'rainbow', 'odd'];
+
+        const shouldKeep =
+          Boolean(config.benAutoKeepRare) &&
+          ((isRainbow && allowedRarities.includes('rainbow')) ||
+            (isOdd && allowedRarities.includes('odd')) ||
+            allowedRarities.includes(rawRarity));
+
         const keepBtn = card.querySelector('.ben-catch-btns button.btn-yellow') as HTMLButtonElement | null;
         const bagBtn = card.querySelector('.ben-catch-btns button.btn-green') as HTMLButtonElement | null;
 
-        if (config.benAutoKeepRare && isRareSpecial && keepBtn && !keepBtn.disabled) {
-          const msg = formatBenCatchSummary(card, true);
+        // 2. Duplicate kept fish resolution: prioritize keeping higher-priced fish
+        let shouldKeepFinal = shouldKeep;
+        let oldKeptIdToUnkeep: string | null = null;
+        let duplicateNote = '';
+
+        if (shouldKeep && config.benAutoSellDuplicateKept !== false && Array.isArray(bn.basket)) {
+          const fishSpecies = landed?.fish || card.querySelector('h3')?.textContent?.trim() || '';
+          const fishPrice =
+            Number(landed?.price) ||
+            (() => {
+              const priceText = card.querySelector('.ben-catch-price')?.textContent || '';
+              const m = priceText.match(/([\d.,]+)\s*vỏ sò/i);
+              return m ? Number(m[1].replace(/[.,]/g, '')) : 0;
+            })();
+
+          const existingKept = bn.basket.filter(
+            (f: { kept?: boolean; fish?: string; name?: string; price?: number; id?: string }) =>
+              Boolean(f.kept) && (f.fish === fishSpecies || f.name === fishSpecies)
+          );
+
+          if (existingKept.length > 0) {
+            existingKept.sort(
+              (a: { price?: number }, b: { price?: number }) => (Number(b.price) || 0) - (Number(a.price) || 0)
+            );
+            const bestOld = existingKept[0];
+            const bestOldPrice = Number(bestOld.price) || 0;
+
+            if (fishPrice > bestOldPrice) {
+              shouldKeepFinal = true;
+              oldKeptIdToUnkeep = bestOld.id || null;
+              duplicateNote = ` (Đắt hơn con ${bestOldPrice.toLocaleString('vi-VN')}🐚 cũ, bỏ giữ con cũ để bán)`;
+            } else {
+              shouldKeepFinal = false;
+              duplicateNote = ` (Trùng loại, rẻ hơn con đã giữ ${bestOldPrice.toLocaleString('vi-VN')}🐚 -> Bỏ vô giỏ để bán)`;
+            }
+          }
+        }
+
+        if (shouldKeepFinal && keepBtn && !keepBtn.disabled) {
+          const msg = `${formatBenCatchSummary(card, true)}${duplicateNote}`;
           triggerPointerDownAndClick(keepBtn);
           setStatus(msg);
+          if (oldKeptIdToUnkeep) {
+            execGameAction('BEN_KEEP_FISH', { id: oldKeptIdToUnkeep, on: false });
+          }
         } else if (bagBtn) {
-          const msg = formatBenCatchSummary(card, false);
+          const msg = `${formatBenCatchSummary(card, false)}${duplicateNote}`;
           triggerPointerDownAndClick(bagBtn);
           setStatus(msg);
         }

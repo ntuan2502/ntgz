@@ -14,6 +14,17 @@ interface WharfTabContentProps {
   onOpenMonitorTab?: (tab: MonitorTabId) => void;
 }
 
+const KEEP_RARITY_OPTIONS = [
+  { id: 'mythic', label: 'Thần thoại', icon: '🔥' },
+  { id: 'legendary', label: 'Huyền thoại', icon: '👑' },
+  { id: 'rainbow', label: 'Cầu vồng', icon: '🌈' },
+  { id: 'odd', label: 'Cá lạ', icon: '✨' },
+  { id: 'epic', label: 'Rất hiếm', icon: '💎' },
+  { id: 'rare', label: 'Hiếm', icon: '⭐' },
+  { id: 'uncommon', label: 'Hơi hiếm', icon: '🐟' },
+  { id: 'common', label: 'Thường', icon: '🐟' },
+];
+
 export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab }: WharfTabContentProps) {
   const isWharfAreaEnabled = config.areaEnabled.benDo !== false;
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
@@ -156,12 +167,65 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab }: Wh
             )}
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>⭐ Tự bấm Giữ lại cá Lạ / Cầu vồng / Thần thoại</span>
+              <span>⭐ Tự động giữ lại cá trong giỏ</span>
               <Switch
                 checked={Boolean(config.benAutoKeepRare)}
                 onCheckedChange={(c) => updateField('benAutoKeepRare', c)}
               />
             </label>
+            {config.benAutoKeepRare && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-2 text-[11px]">
+                <div className="space-y-1">
+                  <span className="text-slate-600 block font-medium">Độ hiếm & phân loại giữ lại:</span>
+                  <div className="grid grid-cols-2 gap-1.5 pt-0.5">
+                    {KEEP_RARITY_OPTIONS.map((opt) => {
+                      const curRarities = Array.isArray(config.benKeepRarities)
+                        ? config.benKeepRarities
+                        : ['mythic', 'legendary', 'rainbow', 'odd'];
+                      const isChecked = curRarities.includes(opt.id);
+                      return (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          onClick={() => {
+                            const next = isChecked
+                              ? curRarities.filter((r) => r !== opt.id)
+                              : [...curRarities, opt.id];
+                            updateField('benKeepRarities', next);
+                          }}
+                          className={`flex items-center justify-between px-2 py-1 rounded-md border text-[11px] transition-all cursor-pointer ${
+                            isChecked
+                              ? 'bg-amber-50 border-amber-300 text-amber-900 font-semibold shadow-2xs'
+                              : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                          }`}
+                        >
+                          <span className="flex items-center gap-1">
+                            <span>{opt.icon}</span>
+                            <span>{opt.label}</span>
+                          </span>
+                          <span className={`text-[10px] ${isChecked ? 'text-amber-600 font-bold' : 'text-slate-300'}`}>
+                            {isChecked ? '✓' : '○'}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <label className="flex items-center justify-between text-slate-700 cursor-pointer pt-1 border-t border-slate-100">
+                  <span className="pr-2 leading-tight">
+                    <span className="font-medium text-slate-800">Tự bán cá giữ lại trùng loại:</span>
+                    <span className="block text-[10px] text-slate-500">
+                      Chỉ giữ 1 con đắt nhất mỗi loài cá, bán các con trùng giá rẻ hơn
+                    </span>
+                  </span>
+                  <Switch
+                    checked={Boolean(config.benAutoSellDuplicateKept ?? true)}
+                    onCheckedChange={(c) => updateField('benAutoSellDuplicateKept', c)}
+                  />
+                </label>
+              </div>
+            )}
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
               <span>🪱 Tự đi mua mồi Chú Đực khi hết mồi</span>

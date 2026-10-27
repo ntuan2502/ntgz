@@ -329,6 +329,8 @@ export const DEFAULT_CONFIG: AppConfig = {
   benAutoSell: true,
   benSellThreshold: 60,
   benAutoKeepRare: true,
+  benKeepRarities: ['mythic', 'legendary', 'rainbow', 'odd'],
+  benAutoSellDuplicateKept: true,
   benAutoGoiDau: false,
   benAutoRecoverStamina: true,
   benStaminaThreshold: 0,
