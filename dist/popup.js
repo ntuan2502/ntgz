@@ -18691,7 +18691,8 @@
     return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "w-[320px] font-sans select-none bg-white text-slate-900 overflow-hidden", children: [
       /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between px-3.5 py-2.5 bg-slate-50 border-b border-slate-200/90", children: [
         /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-1.5 font-bold text-xs tracking-tight", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-emerald-700", children: "\u{1F33E} NTG Auto" }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("img", { src: "images/icon-192.png", alt: "NTG Logo", className: "w-4 h-4 rounded-xs object-contain" }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-emerald-700", children: "NTG Auto" }),
           /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-slate-400 font-normal", children: "by T\xFAn" })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(

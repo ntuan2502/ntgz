@@ -29,6 +29,21 @@ function buildCss() {
   }
 }
 
+function copyDirRecursive(src, dest) {
+  if (!fs.existsSync(src)) return;
+  if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
+  const entries = fs.readdirSync(src, { withFileTypes: true });
+  for (const entry of entries) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+    if (entry.isDirectory()) {
+      copyDirRecursive(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
+}
+
 function copyStaticFiles() {
   const staticFiles = [
     { src: 'manifest.json', dest: 'dist/manifest.json' },
@@ -42,6 +57,8 @@ function copyStaticFiles() {
       fs.copyFileSync(srcPath, destPath);
     }
   }
+
+  copyDirRecursive(path.join(__dirname, 'src/images'), path.join(distDir, 'images'));
 }
 
 const commonConfig = {
@@ -100,6 +117,10 @@ async function run() {
     const popupDir = path.join(__dirname, 'src/popup');
     if (fs.existsSync(popupDir)) {
       fs.watch(popupDir, () => copyStaticFiles());
+    }
+    const imagesDir = path.join(__dirname, 'src/images');
+    if (fs.existsSync(imagesDir)) {
+      fs.watch(imagesDir, () => copyStaticFiles());
     }
     const stylesDir = path.join(__dirname, 'src/styles');
     if (fs.existsSync(stylesDir)) {

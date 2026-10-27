@@ -146,7 +146,8 @@ export function PopupApp() {
       {/* Edge-to-edge Header */}
       <div className="flex items-center justify-between px-3.5 py-2.5 bg-slate-50 border-b border-slate-200/90">
         <div className="flex items-center gap-1.5 font-bold text-xs tracking-tight">
-          <span className="text-emerald-700">🌾 NTG Auto</span>
+          <img src="images/icon-192.png" alt="NTG Logo" className="w-4 h-4 rounded-xs object-contain" />
+          <span className="text-emerald-700">NTG Auto</span>
           <span className="text-slate-400 font-normal">by Tún</span>
         </div>
 

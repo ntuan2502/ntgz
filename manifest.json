@@ -16,9 +16,21 @@
   "background": {
     "service_worker": "background.js"
   },
+  "icons": {
+    "16": "images/icon-192.png",
+    "32": "images/icon-192.png",
+    "48": "images/icon-192.png",
+    "128": "images/icon-192.png",
+    "192": "images/icon-192.png"
+  },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Nông Trại GenZ Auto by Tún"
+    "default_title": "Nông Trại GenZ Auto by Tún",
+    "default_icon": {
+      "16": "images/icon-192.png",
+      "24": "images/icon-192.png",
+      "32": "images/icon-192.png"
+    }
   },
   "content_scripts": [
     {
@@ -29,7 +41,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["page-hook.js", "tailwind.css"],
+      "resources": ["page-hook.js", "tailwind.css", "images/*"],
       "matches": ["https://nongtraigenz.online/*"]
     }
   ],
