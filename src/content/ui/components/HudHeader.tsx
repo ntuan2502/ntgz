@@ -11,6 +11,8 @@ interface HudHeaderProps {
   onMouseDownDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
   onToggleMonitor?: () => void;
   isMonitorActive?: boolean;
+  onToggleSettings?: () => void;
+  isSettingsActive?: boolean;
 }
 
 export function HudHeader({
@@ -23,6 +25,8 @@ export function HudHeader({
   onMouseDownDrag,
   onToggleMonitor,
   isMonitorActive,
+  onToggleSettings,
+  isSettingsActive,
 }: HudHeaderProps) {
   return (
     <div
@@ -97,6 +101,21 @@ export function HudHeader({
           >
             <span>🎒</span>
             <span>Giám sát</span>
+          </button>
+        )}
+        {onToggleSettings && (
+          <button
+            type="button"
+            onClick={onToggleSettings}
+            className={`flex items-center gap-1 text-[10px] px-2 py-0.5 rounded font-medium border transition-colors cursor-pointer shadow-xs ${
+              isSettingsActive
+                ? 'bg-slate-800 text-white border-slate-900 font-bold'
+                : 'bg-white text-slate-700 border-slate-200/90 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+            title="Mở Trang Cài đặt hệ thống (Tốc độ, Hiển thị thao tác, Thứ tự khu)"
+          >
+            <span>⚙️</span>
+            <span>Cài đặt</span>
           </button>
         )}
         <span

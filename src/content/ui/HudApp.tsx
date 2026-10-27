@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
 import { ReleaseChangelogView } from '@/components/ReleaseChangelogView';
+import { SettingsView } from './components/SettingsView';
 import { HudMonitorWindow } from './components/HudMonitorWindow';
 import { MonitorTabId } from './components/monitor/MonitorHub';
 import { checkForUpdates } from '@/services/github-service';
@@ -41,7 +42,6 @@ export function HudApp({
   const [lastAction, setLastAction] = useState<string>('Đang chờ lệnh...');
   const [logs, setLogs] = useState<HudLogEntry[]>(() => getSessionLogs());
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
-  const [isOrderDrawerOpen, setIsOrderDrawerOpen] = useState<boolean>(false);
   const [version, setVersion] = useState<string>('1.0.0');
 
   // Terminal Window State
@@ -61,7 +61,7 @@ export function HudApp({
   // Dialog & View states
   const [isCheckingUpdate, setIsCheckingUpdate] = useState<boolean>(false);
   const [updateInfo, setUpdateInfo] = useState<UpdateCheckResult | null>(null);
-  const [viewMode, setViewMode] = useState<'main' | 'changelog'>('main');
+  const [viewMode, setViewMode] = useState<'main' | 'changelog' | 'settings'>('main');
 
   // Position, Size & Dragging/Resizing
   const MIN_WIDTH = 340;
@@ -96,7 +96,7 @@ export function HudApp({
       if (e.key === 'Escape') {
         if (isMonitorOpen) {
           setIsMonitorOpen(false);
-        } else if (viewMode === 'changelog') {
+        } else if (viewMode === 'changelog' || viewMode === 'settings') {
           setViewMode('main');
         }
       }
@@ -348,11 +348,21 @@ export function HudApp({
         onMouseDownDrag={handleMouseDownDrag}
         onToggleMonitor={handleToggleMonitor}
         isMonitorActive={isMonitorOpen}
+        onToggleSettings={() => setViewMode((prev) => (prev === 'settings' ? 'main' : 'settings'))}
+        isSettingsActive={viewMode === 'settings'}
       />
 
       {/* Body content when not minimized */}
       {!isMinimized && (
-        viewMode === 'changelog' && updateInfo ? (
+        viewMode === 'settings' ? (
+          <SettingsView
+            config={config}
+            version={version}
+            onUpdateConfig={handleUpdateConfig}
+            onClose={() => setViewMode('main')}
+            onResetSize={handleResetSize}
+          />
+        ) : viewMode === 'changelog' && updateInfo ? (
           <div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-white">
             {/* Edge-to-edge Changelog Header Bar with Back button */}
             <div className="flex items-center justify-between px-3.5 py-2 bg-slate-50 border-b border-slate-200 shrink-0 select-none">
@@ -388,11 +398,9 @@ export function HudApp({
             <HudControls
               config={config}
               activeTab={config.activeTab}
-              onUpdateConfig={handleUpdateConfig}
               onToggleAll={onToggleAll}
               onToggleTab={onToggleTab}
-              isOrderDrawerOpen={isOrderDrawerOpen}
-              onToggleOrderDrawer={() => setIsOrderDrawerOpen(!isOrderDrawerOpen)}
+              onOpenSettings={() => setViewMode('settings')}
             />
 
             {/* Current Action Status Bar (Terminal toggles separate window) */}

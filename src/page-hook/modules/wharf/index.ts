@@ -288,8 +288,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
     panelState?: Record<string, unknown>,
     holdMs = 1500
   ) => {
-    const forceOpen = panelState?.panel === 'lantern';
-    if ((cfg.showFullActions || forceOpen) && panelState) {
+    if (cfg.showFullActions && panelState) {
       buStore.setState(panelState);
       keepBenPanelUntil = Date.now() + holdMs;
       keepBenPanelMsg = label;
@@ -811,13 +810,23 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
             if (needPicks > 0 && curPicks.length < needPicks) {
               sendBenWs({ t: 'pick', items: unownedWheel.slice(0, needPicks) });
             }
-            buStore.setState({ panel: 'lantern' });
+            if (cfg.showFullActions) {
+              buStore.setState({ panel: 'lantern' });
+            } else {
+              // Chạy ngầm (Stealth): Không mở bảng modal, gửi lệnh trực tiếp qua WebSocket
+              if (canBuyTicket) {
+                sendBenWs({ t: 'ticket' });
+              } else if (shouldSpin) {
+                const spinCount = cfg.benLanternSpinMode === 'x1' ? 1 : 10;
+                sendBenWs({ t: 'spin', n: spinCount });
+              }
+            }
           },
           canBuyTicket && boughtToday < 5
             ? `🏮 Ghé Sạp lồng đèn Cô Bảy mua vé quay (${boughtToday}/5, -600🐚)`
-            : `🏮 Mở Vòng quay lồng đèn Cô Bảy (hiện có ${tickets} vé 🎟️)`,
+            : `🏮 ${cfg.showFullActions ? 'Mở Vòng quay lồng đèn Cô Bảy' : 'Quay ngầm lồng đèn Cô Bảy'} (hiện có ${tickets} vé 🎟️)`,
           'ben_lantern_open',
-          { panel: 'lantern' },
+          cfg.showFullActions ? { panel: 'lantern' } : undefined,
           5000
         );
       }
@@ -1001,11 +1010,12 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
     }
   }
 
-  // Close panel if open (once hold duration expires, unless actively spinning lantern wheel)
+  // Close panel if open (once hold duration expires, unless actively spinning lantern wheel in full action mode)
   const shouldSpinTickets = cfg.benLanternSpinMode === 'x1' ? (wallet.tickets || 0) > 0 : (wallet.tickets || 0) >= 10;
   const lanternActive =
     bu.panel === 'lantern' &&
     cfg.benAutoLantern !== false &&
+    Boolean(cfg.showFullActions) &&
     (shouldSpinTickets || Boolean(cfg.benBuyLanternTicket && (bn.wheel?.bought || 0) < 5 && shells >= 600));
   if (bu.panel && !lanternActive && (!cfg.showFullActions || Date.now() >= keepBenPanelUntil)) {
     buStore.setState({ panel: null });
