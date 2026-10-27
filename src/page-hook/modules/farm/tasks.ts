@@ -75,7 +75,7 @@ function depositSavings(cfg: AppConfig): StepResult | null {
   const savings = st.savings;
   if (!savings || (savings.newsDay || 0) <= 0 || savings.loan || (savings.books?.length || 0) >= 10) return null;
 
-  // Ngưỡng giữ lại tiền an toàn (mặc định 10 triệu đồng)
+  // Ngưỡng dừng gửi: nếu số tiền hiện tại nhỏ hơn mức này thì không gửi nữa
   const minKeepMillion = typeof cfg.savingsMinKeepMillion === 'number'
     ? cfg.savingsMinKeepMillion
     : typeof cfg.savingsKeepGold === 'number'
@@ -84,7 +84,8 @@ function depositSavings(cfg: AppConfig): StepResult | null {
   const minKeepGold = Math.max(0, minKeepMillion * 1_000_000);
 
   const gold = st.gold || 0;
-  if (gold <= minKeepGold + 50_000) return null;
+  // Dừng gửi khi tiền còn nhỏ hơn ngưỡng cài đặt hoặc không đủ mức tối thiểu 50.000đ của game
+  if (gold < minKeepGold || gold < 50_000) return null;
 
   const matured = savings.matured || 0;
   // Hạn mức gửi tối đa theo bậc của game: 5M, 8M, 12M, 20M
@@ -92,15 +93,16 @@ function depositSavings(cfg: AppConfig): StepResult | null {
 
   let amount: number;
   if (cfg.savingsDepositMax !== false) {
-    // Gửi tối đa cho phép theo hạn mức mà không vi phạm ngưỡng giữ tiền
-    const maxAffordable = gold - minKeepGold;
-    amount = Math.min(cap, Math.floor(maxAffordable / 10_000) * 10_000);
+    // Gửi maximum hạn mức cao nhất của sổ tiết kiệm cho phép (hoặc toàn bộ số vàng hiện có nếu gold < cap)
+    amount = Math.min(cap, gold);
   } else {
     // Gửi số tiền người dùng nhập
     const requested = Number(cfg.savingsDepositAmount) || 5_000_000;
-    if (gold - requested < minKeepGold) return null;
-    amount = Math.min(cap, requested);
+    amount = Math.min(cap, Math.min(gold, requested));
   }
+
+  // Làm tròn xuống bội số 10.000đ theo chuẩn tiền gửi
+  amount = Math.floor(amount / 10_000) * 10_000;
 
   if (amount < 50_000) return null;
 

@@ -1684,18 +1684,17 @@
     const minKeepMillion = typeof cfg.savingsMinKeepMillion === "number" ? cfg.savingsMinKeepMillion : typeof cfg.savingsKeepGold === "number" ? cfg.savingsKeepGold / 1e6 : 10;
     const minKeepGold = Math.max(0, minKeepMillion * 1e6);
     const gold = st.gold || 0;
-    if (gold <= minKeepGold + 5e4) return null;
+    if (gold < minKeepGold || gold < 5e4) return null;
     const matured = savings.matured || 0;
     const cap = matured >= 10 ? 2e7 : matured >= 5 ? 12e6 : matured >= 2 ? 8e6 : 5e6;
     let amount;
     if (cfg.savingsDepositMax !== false) {
-      const maxAffordable = gold - minKeepGold;
-      amount = Math.min(cap, Math.floor(maxAffordable / 1e4) * 1e4);
+      amount = Math.min(cap, gold);
     } else {
       const requested = Number(cfg.savingsDepositAmount) || 5e6;
-      if (gold - requested < minKeepGold) return null;
-      amount = Math.min(cap, requested);
+      amount = Math.min(cap, Math.min(gold, requested));
     }
+    amount = Math.floor(amount / 1e4) * 1e4;
     if (amount < 5e4) return null;
     const term = cfg.savingsTerm === 3 || cfg.savingsTerm === 14 ? cfg.savingsTerm : 7;
     if (st.deposit?.(amount, term) === "ok") {
