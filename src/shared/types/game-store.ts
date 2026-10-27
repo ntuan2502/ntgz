@@ -622,6 +622,7 @@ export interface BenNetState {
   } | null;
   notice?: {
     error?: string;
+    seq?: number;
     [key: string]: unknown;
   };
   landed?: {

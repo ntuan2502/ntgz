@@ -3,7 +3,7 @@ import { canAct, markActed } from '../../core/cooldown';
 import { computeBenStamina } from '../../core/store-watcher';
 import { dismissInterruptsIfNeeded } from '../../core/interrupts';
 import { AppConfig, WharfSubAreaId } from '../../../shared/types/config';
-import { CricketItem, SoiNpc } from '../../../shared/types/game-store';
+import { CricketItem, SoiNpc, BenNetState } from '../../../shared/types/game-store';
 import { getBenHuntSpots, BEN_HUNT_ZONES } from '../../../shared/constants/default-config';
 import { refreshCricketWatchers, getBenServerNow, getBenHour, getMyBout, markHuntLightSent } from './cricket-watchers';
 
@@ -209,10 +209,19 @@ function setNextAtmTime(timestamp: number): void {
   }
 }
 
+let hasInitializedWharfSeqs = false;
 let isStockingBait = false;
 let lastObservedCashedSeq = -1;
 let lastObservedNoticeSeq = -1;
 let lastObservedSpunSeq = -1;
+
+function initWharfSeqsIfNeeded(bn: BenNetState): void {
+  if (hasInitializedWharfSeqs) return;
+  hasInitializedWharfSeqs = true;
+  lastObservedCashedSeq = typeof bn.cashed?.seq === 'number' ? bn.cashed.seq : 0;
+  lastObservedNoticeSeq = typeof bn.notice?.seq === 'number' ? bn.notice.seq : 0;
+  lastObservedSpunSeq = typeof bn.spun?.seq === 'number' ? bn.spun.seq : 0;
+}
 
 const cricketTotal = (c: { stats?: { power?: number; tough?: number; nerve?: number } }) =>
   (c.stats?.power || 0) + (c.stats?.tough || 0) + (c.stats?.nerve || 0);
@@ -232,6 +241,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   if (m.screen !== 'benDo' || bn.status !== 'in') {
     return { acted: false };
   }
+  initWharfSeqsIfNeeded(bn);
   refreshCricketWatchers(cfg);
   if (bu.walking || bn.fishing !== 'idle') {
     return { acted: false };
@@ -261,104 +271,90 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
 
   // Watch for ATM cash success confirmation from server
   if (bn.cashed && typeof bn.cashed.seq === 'number' && bn.cashed.seq !== lastObservedCashedSeq) {
-    if (lastObservedCashedSeq === -1) {
-      // First tick on load / script start - sync sequence without emitting false "success" log for historical exchange
-      lastObservedCashedSeq = bn.cashed.seq;
-    } else {
-      lastObservedCashedSeq = bn.cashed.seq;
-      const cashed = bn.cashed;
+    lastObservedCashedSeq = bn.cashed.seq;
+    const cashed = bn.cashed;
+    const nextHour = getNextHourTimestamp(Date.now());
+    const nextHourStr = new Date(nextHour).toLocaleTimeString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+    lastAtmExchangeAt = Date.now();
+    setNextAtmTime(nextHour);
+    if (buStore.getState().panel === 'atm') {
+      buStore.setState({ panel: null });
+    }
+    return {
+      acted: true,
+      msg: `🏧 Cây ATM: 🎉 Đổi thành công ${cashed.shells.toLocaleString('vi-VN')} vỏ sò ➔ ${cashed.money.toLocaleString('vi-VN')}đ tiền mặt! Lần đổi kế tiếp lúc ${nextHourStr}`,
+    };
+  }
+
+  // Watch for ATM server error notices
+  if (bn.notice && typeof bn.notice.seq === 'number' && bn.notice.seq !== lastObservedNoticeSeq) {
+    lastObservedNoticeSeq = bn.notice.seq;
+    const err = bn.notice.error;
+    if (err === 'tired') {
+      benNoticeTired = true;
+      return {
+        acted: true,
+        msg: '😮‍💨 Bến Đò: Không đủ Sức câu -> Chuẩn bị đi ăn hồi phục Sức...',
+      };
+    } else if (err === 'farAtm') {
+      return {
+        acted: true,
+        msg: '⚠️ Cây ATM: Đứng ngay trước cây ATM mới rút tiền được nha 🏧',
+      };
+    } else if (err === 'atmLimit') {
       const nextHour = getNextHourTimestamp(Date.now());
-      const nextHourStr = new Date(nextHour).toLocaleTimeString('vi-VN', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      });
-      lastAtmExchangeAt = Date.now();
       setNextAtmTime(nextHour);
       if (buStore.getState().panel === 'atm') {
         buStore.setState({ panel: null });
       }
       return {
         acted: true,
-        msg: `🏧 Cây ATM: 🎉 Đổi thành công ${cashed.shells.toLocaleString('vi-VN')} vỏ sò ➔ ${cashed.money.toLocaleString('vi-VN')}đ tiền mặt! Lần đổi kế tiếp lúc ${nextHourStr}`,
+        msg: '⏳ Cây ATM: Giờ này nhận chạm hạn mức tiền rồi, bớt số sò hoặc chờ chút nữa đổi tiếp nha ⏳',
       };
-    }
-  }
-
-  // Watch for ATM server error notices
-  if (bn.notice && typeof bn.notice.seq === 'number' && bn.notice.seq !== lastObservedNoticeSeq) {
-    if (lastObservedNoticeSeq === -1) {
-      lastObservedNoticeSeq = bn.notice.seq;
-    } else {
-      lastObservedNoticeSeq = bn.notice.seq;
-      const err = bn.notice.error;
-      if (err === 'tired') {
-        benNoticeTired = true;
-        return {
-          acted: true,
-          msg: '😮‍💨 Bến Đò: Không đủ Sức câu -> Chuẩn bị đi ăn hồi phục Sức...',
-        };
-      } else if (err === 'farAtm') {
-        return {
-          acted: true,
-          msg: '⚠️ Cây ATM: Đứng ngay trước cây ATM mới rút tiền được nha 🏧',
-        };
-      } else if (err === 'atmLimit') {
-        const nextHour = getNextHourTimestamp(Date.now());
-        setNextAtmTime(nextHour);
-        if (buStore.getState().panel === 'atm') {
-          buStore.setState({ panel: null });
-        }
-        return {
-          acted: true,
-          msg: '⏳ Cây ATM: Giờ này nhận chạm hạn mức tiền rồi, bớt số sò hoặc chờ chút nữa đổi tiếp nha ⏳',
-        };
-      } else if (err === 'atmMin') {
-        return {
-          acted: true,
-          msg: '⚠️ Cây ATM: Mỗi lần đổi ít nhất 100 vỏ sò nha 🏧',
-        };
-      }
+    } else if (err === 'atmMin') {
+      return {
+        acted: true,
+        msg: '⚠️ Cây ATM: Mỗi lần đổi ít nhất 100 vỏ sò nha 🏧',
+      };
     }
   }
 
   // Watch for wheel spin results from server
   if (bn.spun && typeof bn.spun.seq === 'number' && bn.spun.seq !== lastObservedSpunSeq) {
-    if (lastObservedSpunSeq === -1) {
-      // First observation on load - sync sequence without emitting stale log
-      lastObservedSpunSeq = bn.spun.seq;
-    } else {
-      lastObservedSpunSeq = bn.spun.seq;
-      const spun = bn.spun;
-      const hits = Array.isArray(spun.hits) ? spun.hits : [];
-      const totalShells = hits.reduce(
-        (sum: number, h: { shells?: number }) => sum + (Number(h.shells) || 0),
-        0
-      );
-      const wonItemIds: string[] = [];
-      if (spun.won) {
-        wonItemIds.push(spun.won);
-      }
-      for (const h of hits) {
-        if (h.item && !wonItemIds.includes(h.item)) {
-          wonItemIds.push(h.item);
-        }
-      }
-
-      const msg = wonItemIds.length > 0
-        ? (() => {
-            const itemLabels = wonItemIds.map((id) => {
-              const meta = WHEEL_ITEM_METAS[id];
-              return meta ? `"${meta.name}" (${meta.tierLabel})` : `"${id}"`;
-            });
-            return `🏮 Vòng quay Cô Bảy: 🎉 TRÚNG ${itemLabels.join(', ')}!${totalShells > 0 ? ` (+${totalShells.toLocaleString('vi-VN')} vỏ sò 🐚)` : ''}`;
-          })()
-        : `🏮 Vòng quay Cô Bảy: Kết quả quay${hits.length > 0 ? ` (x${hits.length})` : ''} ➔ Nhận +${totalShells.toLocaleString('vi-VN')} vỏ sò an ủi 🐚`;
-      return {
-        acted: true,
-        msg,
-      };
+    lastObservedSpunSeq = bn.spun.seq;
+    const spun = bn.spun;
+    const hits = Array.isArray(spun.hits) ? spun.hits : [];
+    const totalShells = hits.reduce(
+      (sum: number, h: { shells?: number }) => sum + (Number(h.shells) || 0),
+      0
+    );
+    const wonItemIds: string[] = [];
+    if (spun.won) {
+      wonItemIds.push(spun.won);
     }
+    for (const h of hits) {
+      if (h.item && !wonItemIds.includes(h.item)) {
+        wonItemIds.push(h.item);
+      }
+    }
+
+    const msg = wonItemIds.length > 0
+      ? (() => {
+          const itemLabels = wonItemIds.map((id) => {
+            const meta = WHEEL_ITEM_METAS[id];
+            return meta ? `"${meta.name}" (${meta.tierLabel})` : `"${id}"`;
+          });
+          return `🏮 Vòng quay Cô Bảy: 🎉 TRÚNG ${itemLabels.join(', ')}!${totalShells > 0 ? ` (+${totalShells.toLocaleString('vi-VN')} vỏ sò 🐚)` : ''}`;
+        })()
+      : `🏮 Vòng quay Cô Bảy: Kết quả quay${hits.length > 0 ? ` (x${hits.length})` : ''} ➔ Nhận +${totalShells.toLocaleString('vi-VN')} vỏ sò an ủi 🐚`;
+    return {
+      acted: true,
+      msg,
+    };
   }
 
   const huntEnabled = cfg.benSubEnabled?.cricketHunt !== false && cfg.benAutoCricketHunt !== false;
