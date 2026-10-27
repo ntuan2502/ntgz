@@ -310,11 +310,24 @@ export function handleCropsSubArea(cfg: AppConfig): StepResult {
     }
   }
 
-  // G. Buy new land plot if offered
-  const curOffer = getMainState();
-  if (cfg.autoBuyPlots !== false && curOffer.plotOffer && (curOffer.gold || 0) >= (curOffer.plotOffer.price || 0)) {
-    if (curOffer.buyPlot?.() === true) {
-      return { acted: true, msg: '🌱 Đã mua thêm ô đất ruộng mới (+1 ô)' };
+  // G. Buy new land plot if eligible
+  if (cfg.autoBuyPlots !== false) {
+    const cur = getMainState();
+    const curPlots = cur.plots || {};
+    const curCount = Object.keys(curPlots).length;
+    // Farm has up to 48 plots (8x6 grid in game engine)
+    if (curCount < 48 && typeof cur.buyPlot === 'function') {
+      const price = Math.round((30000 * Math.pow(1.1, curCount - 5)) / 5000) * 5000;
+      if ((cur.gold || 0) >= price) {
+        if (cur.buyPlot() === true) {
+          return {
+            acted: true,
+            msg: `⛏️ Tự động mua thêm ô đất ruộng mới #${curCount + 1} (-${price.toLocaleString('vi-VN')} vàng)!`,
+          };
+        }
+      } else if (cur.plotOffer) {
+        cur.setPlotOffer?.(null);
+      }
     }
   }
 

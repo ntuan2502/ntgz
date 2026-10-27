@@ -275,7 +275,7 @@ export interface MainGameStoreState {
   ledger?: Array<{ kind?: string; label?: string; [key: string]: unknown }>;
   goldStock?: Record<string, number>;
   goldAvgCost?: Record<string, number>;
-  plotOffer?: { price?: number; [key: string]: unknown } | null;
+  plotOffer?: string | { price?: number; [key: string]: unknown } | null;
   zoneOffer?: unknown;
 
   // Navigation & sleep
@@ -307,6 +307,7 @@ export interface MainGameStoreState {
   consumeItem?: (item: string) => unknown;
   buySeeds?: (payload: BuySeedsPayload) => boolean;
   buyPlot?: () => boolean;
+  setPlotOffer?: (plot: string | null) => void;
   payHelper?: (type: string) => boolean;
 
   // Pet
