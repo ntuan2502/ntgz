@@ -277,6 +277,22 @@ export function handleDairySubArea(cfg: AppConfig): StepResult {
     }
   }
 
+  if (cfg.dairyAutoBuyCow) {
+    const stCow = getMainState();
+    const cowCount = (stCow.dairy?.cows?.length || 0) + (stCow.dairy?.coming?.length || 0);
+    if (cowCount < 4 && (stCow.gold || 0) >= 1800000) {
+      try {
+        const res = stCow.buyCow?.();
+        if (res === 'ok') {
+          const nextCount = (getMainState().dairy?.cows?.length || 0) + (getMainState().dairy?.coming?.length || 0);
+          return { acted: true, msg: `🐄 Đã mua thêm Bò sữa (-1.800.000đ, đàn bò: ${nextCount}/4)` };
+        }
+      } catch (e) {
+        console.warn('[Dairy] buyCow failed:', e);
+      }
+    }
+  }
+
   if (cfg.dairyAutoPayHelper !== false) {
     const stH2 = getMainState();
     if (stH2.helpers?.dairy?.hired && (stH2.helpers.dairy.unpaid || 0) > 0) {

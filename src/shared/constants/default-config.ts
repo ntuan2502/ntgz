@@ -256,6 +256,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   dairyAutoFeedCows: true,
   dairyAutoCureCows: true,
   dairyAutoBuyMedicine: false,
+  dairyAutoBuyCow: true,
   dairyAutoSellMilk: true,
   dairyAutoPayHelper: true,
 

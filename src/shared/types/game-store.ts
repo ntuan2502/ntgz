@@ -170,6 +170,9 @@ export interface MainGameStoreState {
     cows?: DairyCow[];
     medicine?: number;
     milk?: number;
+    coming?: Array<{ id: number; at: number }>;
+    bought?: number;
+    newsDay?: number;
     [key: string]: unknown;
   };
   helpers?: {
@@ -322,6 +325,7 @@ export interface MainGameStoreState {
   buyMedicine?: () => void;
   cureCow?: (cowId: string | number) => string;
   sellMilk?: () => { liters: number; total: number } | null;
+  buyCow?: () => string;
 
   // Coop & pond
   collectEggs?: () => number;

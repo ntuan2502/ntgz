@@ -130,6 +130,7 @@ export interface AppConfig {
   dairyAutoFeedCows: boolean;
   dairyAutoCureCows: boolean;
   dairyAutoBuyMedicine?: boolean;
+  dairyAutoBuyCow?: boolean;
   dairyAutoSellMilk: boolean;
   dairyAutoPayHelper: boolean;
 

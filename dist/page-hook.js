@@ -1392,6 +1392,21 @@
         console.warn("[Dairy] sellMilk failed:", e);
       }
     }
+    if (cfg.dairyAutoBuyCow) {
+      const stCow = getMainState();
+      const cowCount = (stCow.dairy?.cows?.length || 0) + (stCow.dairy?.coming?.length || 0);
+      if (cowCount < 4 && (stCow.gold || 0) >= 18e5) {
+        try {
+          const res = stCow.buyCow?.();
+          if (res === "ok") {
+            const nextCount = (getMainState().dairy?.cows?.length || 0) + (getMainState().dairy?.coming?.length || 0);
+            return { acted: true, msg: `\u{1F404} \u0110\xE3 mua th\xEAm B\xF2 s\u1EEFa (-1.800.000\u0111, \u0111\xE0n b\xF2: ${nextCount}/4)` };
+          }
+        } catch (e) {
+          console.warn("[Dairy] buyCow failed:", e);
+        }
+      }
+    }
     if (cfg.dairyAutoPayHelper !== false) {
       const stH2 = getMainState();
       if (stH2.helpers?.dairy?.hired && (stH2.helpers.dairy.unpaid || 0) > 0) {

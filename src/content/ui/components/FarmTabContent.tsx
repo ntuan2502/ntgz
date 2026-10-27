@@ -606,6 +606,13 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
               </div>
             )}
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+              <span>🐄 Tự mua thêm Bò sữa khi chuồng trống (-1.800.000đ)</span>
+              <Switch
+                checked={Boolean(config.dairyAutoBuyCow)}
+                onCheckedChange={(c) => updateField('dairyAutoBuyCow', c)}
+              />
+            </label>
+            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
               <span>💸 Tự trả lương Chị Mận chăm bò</span>
               <Switch
                 checked={Boolean(config.dairyAutoPayHelper)}

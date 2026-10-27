@@ -14786,6 +14786,7 @@
     dairyAutoFeedCows: true,
     dairyAutoCureCows: true,
     dairyAutoBuyMedicine: false,
+    dairyAutoBuyCow: true,
     dairyAutoSellMilk: true,
     dairyAutoPayHelper: true,
     // 6. Coop (Chuồng Gà - Chú Ba)
@@ -26906,6 +26907,16 @@
               )
             ] }) }),
             /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F404} T\u1EF1 mua th\xEAm B\xF2 s\u1EEFa khi chu\u1ED3ng tr\u1ED1ng (-1.800.000\u0111)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                Switch3,
+                {
+                  checked: Boolean(config2.dairyAutoBuyCow),
+                  onCheckedChange: (c) => updateField("dairyAutoBuyCow", c)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { className: "flex items-center justify-between text-slate-700 cursor-pointer", children: [
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { children: "\u{1F4B8} T\u1EF1 tr\u1EA3 l\u01B0\u01A1ng Ch\u1ECB M\u1EADn ch\u0103m b\xF2" }),
               /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
                 Switch3,
@@ -29423,6 +29434,7 @@
       autoBuyFertilizer: saved.autoBuyFertilizer ?? DEFAULT_CONFIG.autoBuyFertilizer,
       autoBuySeeds: saved.autoBuySeeds ?? DEFAULT_CONFIG.autoBuySeeds,
       dairyAutoBuyMedicine: saved.dairyAutoBuyMedicine ?? DEFAULT_CONFIG.dairyAutoBuyMedicine,
+      dairyAutoBuyCow: saved.dairyAutoBuyCow ?? DEFAULT_CONFIG.dairyAutoBuyCow,
       savingsDepositAmount: saved.savingsDepositAmount ?? DEFAULT_CONFIG.savingsDepositAmount,
       savingsDepositMax: saved.savingsDepositMax ?? DEFAULT_CONFIG.savingsDepositMax,
       savingsTerm: saved.savingsTerm ?? DEFAULT_CONFIG.savingsTerm,

@@ -164,6 +164,7 @@ export function mergeConfig(saved: Partial<AppConfig> | null | undefined): AppCo
     autoBuyFertilizer: (saved.autoBuyFertilizer ?? DEFAULT_CONFIG.autoBuyFertilizer) as boolean,
     autoBuySeeds: (saved.autoBuySeeds ?? DEFAULT_CONFIG.autoBuySeeds) as boolean,
     dairyAutoBuyMedicine: (saved.dairyAutoBuyMedicine ?? DEFAULT_CONFIG.dairyAutoBuyMedicine) as boolean,
+    dairyAutoBuyCow: (saved.dairyAutoBuyCow ?? DEFAULT_CONFIG.dairyAutoBuyCow) as boolean,
     savingsDepositAmount: (saved.savingsDepositAmount ?? DEFAULT_CONFIG.savingsDepositAmount) as number,
     savingsDepositMax: (saved.savingsDepositMax ?? DEFAULT_CONFIG.savingsDepositMax) as boolean,
     savingsTerm: (saved.savingsTerm ?? DEFAULT_CONFIG.savingsTerm) as AppConfig['savingsTerm'],
