@@ -134,22 +134,41 @@ let huntSpotIdx = 0;
 let lastHandledGotAwaySeq = -1;
 let lastHuntZoneChoice: string | null = null;
 
-const ATM_STORAGE_KEY = 'ntg_ben_last_atm_at';
-let lastAtmExchangeAt = (() => {
+const ATM_NEXT_TIME_KEY = 'ntg_ben_next_atm_time';
+let nextAtmTime = (() => {
   try {
-    const raw = sessionStorage.getItem(ATM_STORAGE_KEY);
+    const raw = sessionStorage.getItem(ATM_NEXT_TIME_KEY);
     return raw ? Number(raw) || 0 : 0;
   } catch {
     return 0;
   }
 })();
+let atmTimerId: number | null = null;
+let lastAtmLogAt = 0;
 
-function recordAtmExchange(): void {
-  lastAtmExchangeAt = Date.now();
+function getNextHourTimestamp(now: number): number {
+  const d = new Date(now);
+  d.setMinutes(0, 0, 0);
+  d.setHours(d.getHours() + 1);
+  return d.getTime();
+}
+
+function setNextAtmTime(timestamp: number): void {
+  nextAtmTime = timestamp;
   try {
-    sessionStorage.setItem(ATM_STORAGE_KEY, String(lastAtmExchangeAt));
+    sessionStorage.setItem(ATM_NEXT_TIME_KEY, String(timestamp));
   } catch {
     // Ignore storage errors
+  }
+  if (atmTimerId) {
+    clearTimeout(atmTimerId);
+    atmTimerId = null;
+  }
+  const delay = Math.max(0, timestamp - Date.now());
+  if (delay > 0 && delay < 24 * 3600 * 1000) {
+    atmTimerId = window.setTimeout(() => {
+      sendBenWs({ t: 'atm' });
+    }, delay);
   }
 }
 
@@ -242,6 +261,12 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   } else if (arenaEnabled && bn.soi && canAct('ben_soi_refresh', 60000)) {
     markActed('ben_soi_refresh');
     sendBenWs({ t: 'soi' });
+  }
+
+  // ATM state is null until requested; it can be fetched from anywhere on the map.
+  if (cfg.benAutoAtm && !bn.atm && canAct('ben_atm_init', 5000)) {
+    markActed('ben_atm_init');
+    sendBenWs({ t: 'atm' });
   }
 
   const stamina = computeBenStamina(wallet);
@@ -836,34 +861,95 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
     }
 
     // C. Exchange shells at ATM ({x: 34, y: 35})
-    const atmMin = typeof cfg.benAtmThreshold === 'number' ? cfg.benAtmThreshold : 10000;
-    const ONE_HOUR_MS = 60 * 60 * 1000;
-    const canRunHourly = lastAtmExchangeAt === 0 || Date.now() - lastAtmExchangeAt >= ONE_HOUR_MS;
-
-    if (cfg.benAutoAtm && shells >= atmMin && canRunHourly && canAct('ben_atm', 4000)) {
+    if (cfg.benAutoAtm) {
+      const now = Date.now();
       const bnAtm = bn.atm;
-      const maxByAtmQuota =
-        bnAtm && typeof bnAtm.left === 'number' && typeof bnAtm.rate === 'number'
-          ? Math.floor(bnAtm.left / bnAtm.rate)
-          : shells;
-      const maxShells = Math.min(shells, maxByAtmQuota);
-      const cashShells = Math.floor(maxShells / 100) * 100;
 
-      if (cashShells >= 100) {
-        return walkAndRun(
-          { x: 34, y: 35 },
-          () => {
-            recordAtmExchange();
-            sendBenWs({ t: 'atmCash', shells: cashShells });
-          },
-          `🏧 Đổi tối đa ${cashShells.toLocaleString('vi-VN')} vỏ sò ra tiền mặt tại Cây ATM (lần đổi kế tiếp sau 1 tiếng)`,
-          'ben_atm',
-          { panel: 'atm' },
-          1500
+      // If ATM state is not loaded yet, query it and wait
+      if (!bnAtm) {
+        if (canAct('ben_atm_init', 5000)) {
+          markActed('ben_atm_init');
+          sendBenWs({ t: 'atm' });
+        }
+        return { acted: false };
+      }
+
+      const rate = typeof bnAtm.rate === 'number'
+        ? bnAtm.rate
+        : ((m.day || 1) >= 200 ? 3000 : (m.day || 1) >= 90 ? 2000 : (m.day || 1) >= 60 ? 1000 : 500);
+
+      // Determine reopen timestamp: from server bnAtm.reopen, or next hour if quota reached, or local timer
+      let reopenAt = 0;
+      if (typeof bnAtm.reopen === 'number' && bnAtm.reopen > now) {
+        reopenAt = bnAtm.reopen;
+      } else if (typeof bnAtm.left === 'number' && bnAtm.left < 100 * rate) {
+        // Hourly quota reached (received 20m)
+        reopenAt = typeof bnAtm.reopen === 'number' && bnAtm.reopen > now
+          ? bnAtm.reopen
+          : getNextHourTimestamp(now);
+      } else if (nextAtmTime > now) {
+        reopenAt = nextAtmTime;
+      }
+
+      if (reopenAt > now) {
+        if (nextAtmTime !== reopenAt) {
+          setNextAtmTime(reopenAt);
+        }
+
+        const diffMs = reopenAt - now;
+        const diffMin = Math.floor(diffMs / 60000);
+        const diffSec = Math.floor((diffMs % 60000) / 1000);
+        const waitStr = diffMin > 0 ? `${diffMin} phút ${diffSec} giây` : `${diffSec} giây`;
+        const timeStr = new Date(reopenAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+        if (now - lastAtmLogAt > 60000 && canAct('ben_atm_wait_log', 60000)) {
+          lastAtmLogAt = now;
+          markActed('ben_atm_wait_log');
+          return {
+            acted: true,
+            msg: `⏳ Cây ATM: Chưa tới giờ đổi (mở đổi lúc ${timeStr}, còn ${waitStr}) · Tiếp tục các việc khác`,
+          };
+        }
+
+        return { acted: false };
+      }
+
+      // Time has arrived! Check minimum shell threshold
+      const atmMin = typeof cfg.benAtmThreshold === 'number' ? cfg.benAtmThreshold : 10000;
+      if (shells >= atmMin && canAct('ben_atm', 4000)) {
+        const MAX_ATM_HOURLY_MONEY = 20_000_000; // 20 triệu đồng tối đa mỗi giờ (n5 = 2e7 trong game)
+        const moneyQuota = Math.min(
+          MAX_ATM_HOURLY_MONEY,
+          typeof bnAtm.left === 'number' ? bnAtm.left : MAX_ATM_HOURLY_MONEY
         );
-      } else if (bnAtm && typeof bnAtm.left === 'number' && bnAtm.left < 100 * (bnAtm.rate || 1)) {
-        // Hourly quota reached, record timestamp so we wait for the next hour
-        recordAtmExchange();
+
+        if (moneyQuota < 100 * rate) {
+          const nextHour = getNextHourTimestamp(now);
+          setNextAtmTime(nextHour);
+          return { acted: false };
+        }
+
+        const maxShellsByQuota = Math.floor(moneyQuota / rate);
+        let shellsToCash = Math.min(shells, maxShellsByQuota);
+        shellsToCash = Math.floor(shellsToCash / 100) * 100;
+
+        if (shellsToCash >= 100) {
+          const moneyReceived = shellsToCash * rate;
+          const nextHour = getNextHourTimestamp(now);
+          const nextHourStr = new Date(nextHour).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+
+          return walkAndRun(
+            { x: 34, y: 35 },
+            () => {
+              setNextAtmTime(nextHour);
+              sendBenWs({ t: 'atmCash', shells: shellsToCash });
+            },
+            `🏧 Đổi ${shellsToCash.toLocaleString('vi-VN')} vỏ sò ➔ ${moneyReceived.toLocaleString('vi-VN')}đ tiền mặt tại Cây ATM (Tối đa 20tr/giờ · Lần đổi kế tiếp: lúc ${nextHourStr})`,
+            'ben_atm',
+            { panel: 'atm' },
+            1500
+          );
+        }
       }
     }
 

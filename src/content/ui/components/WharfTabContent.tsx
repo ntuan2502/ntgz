@@ -542,7 +542,7 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
                   </div>
                 </div>
                 <p className="text-[10px] text-slate-500">
-                  ⏳ Tự động đổi tối đa số vỏ sò 1 tiếng/lần (so sánh thời gian lần đổi gần nhất).
+                  ⏳ Tự động đổi tối đa 20 triệu/giờ ra tiền mặt theo tỷ giá game. Tự canh đúng giờ mở đổi tiếp theo.
                 </p>
               </div>
             )}

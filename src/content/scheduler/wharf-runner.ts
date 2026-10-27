@@ -96,6 +96,19 @@ function handleBenLanternWheel(
   const ticketMatch = chipText.match(/🎟️\s*(\d+)/);
   const liveTickets = ticketMatch ? Number(ticketMatch[1]) : (snap.benNet?.wallet?.tickets ?? 0);
 
+  const boughtMatch = (buyTicketBtn?.textContent || '').match(/\((\d+)\/5\)/);
+  const boughtCount = boughtMatch ? Number(boughtMatch[1]) : (snap.benNet?.wheel?.bought ?? 0);
+  const shells = snap.benNet?.wallet?.shells ?? 0;
+
+  // 1. Ưu tiên mua hết 5 vé hàng ngày trước
+  if (config.benBuyLanternTicket && boughtCount < 5 && shells >= 600 && buyTicketBtn && !buyTicketBtn.disabled) {
+    triggerPointerDownAndClick(buyTicketBtn);
+    setStatus(`🎟️ Mua vé Vòng quay lồng đèn Cô Bảy (${boughtCount + 1}/5 · -600 vỏ sò 🐚)`);
+    lastWheelActionAt = now;
+    return true;
+  }
+
+  // 2. Sau khi đã mua hết vé hàng ngày (hoặc không đủ điều kiện mua tiếp), tiến hành quay
   if (liveTickets > 0) {
     const wantMulti = config.benLanternSpinMode === 'x10';
     if (wantMulti && liveTickets >= 2 && spinMultiBtn && !spinMultiBtn.disabled) {
@@ -108,17 +121,6 @@ function handleBenLanternWheel(
 
     triggerPointerDownAndClick(spinOneBtn);
     setStatus(`🏮 Vòng quay Cô Bảy: Nhấn quay 1 vé (còn ${liveTickets} vé 🎟️)...`);
-    lastWheelActionAt = now;
-    return true;
-  }
-
-  const boughtMatch = (buyTicketBtn?.textContent || '').match(/\((\d+)\/5\)/);
-  const boughtCount = boughtMatch ? Number(boughtMatch[1]) : (snap.benNet?.wheel?.bought ?? 0);
-  const shells = snap.benNet?.wallet?.shells ?? 0;
-
-  if (config.benBuyLanternTicket && boughtCount < 5 && shells >= 600 && buyTicketBtn && !buyTicketBtn.disabled) {
-    triggerPointerDownAndClick(buyTicketBtn);
-    setStatus(`🎟️ Đã mua thêm 1 vé Vòng quay lồng đèn Cô Bảy (${boughtCount + 1}/5 · -600 vỏ sò 🐚)`);
     lastWheelActionAt = now;
     return true;
   }
