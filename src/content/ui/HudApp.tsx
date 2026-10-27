@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
 import { ReleaseChangelogView } from '@/components/ReleaseChangelogView';
-import { MonitorHub } from './components/monitor/MonitorHub';
+import { HudMonitorWindow } from './components/HudMonitorWindow';
 import { checkForUpdates } from '@/services/github-service';
 import { UpdateCheckResult } from '@/shared/types/github';
 
@@ -47,10 +47,14 @@ export function HudApp({
   const [terminalWidth, setTerminalWidth] = useState<number>(() => initialConfig.terminalWidth || 380);
   const [isTerminalOpen, setIsTerminalOpen] = useState<boolean>(() => Boolean(initialConfig.isTerminalOpen));
 
+  // Monitor Window State (Side window opening horizontally)
+  const [monitorWidth, setMonitorWidth] = useState<number>(420);
+  const [isMonitorOpen, setIsMonitorOpen] = useState<boolean>(false);
+
   // Dialog & View states
   const [isCheckingUpdate, setIsCheckingUpdate] = useState<boolean>(false);
   const [updateInfo, setUpdateInfo] = useState<UpdateCheckResult | null>(null);
-  const [viewMode, setViewMode] = useState<'main' | 'changelog' | 'monitor'>('main');
+  const [viewMode, setViewMode] = useState<'main' | 'changelog'>('main');
 
   // Position, Size & Dragging/Resizing
   const MIN_WIDTH = 340;
@@ -79,17 +83,20 @@ export function HudApp({
     }
   }, []);
 
-  // Close changelog/monitor view on Escape key press
+  // Close changelog view or monitor window on Escape key press
   useEffect(() => {
-    if (viewMode === 'main') return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setViewMode('main');
+        if (isMonitorOpen) {
+          setIsMonitorOpen(false);
+        } else if (viewMode === 'changelog') {
+          setViewMode('main');
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [viewMode]);
+  }, [isMonitorOpen, viewMode]);
 
   // Expose global bridge update listeners
   useEffect(() => {
@@ -263,6 +270,14 @@ export function HudApp({
     });
   };
 
+  const handleUpdateMonitorWidth = (w: number) => {
+    setMonitorWidth(w);
+  };
+
+  const handleToggleMonitor = () => {
+    setIsMonitorOpen((prev) => !prev);
+  };
+
   // Clamp HUD inside viewport bounds on browser window resize
   useEffect(() => {
     const handleWindowResize = () => {
@@ -324,8 +339,8 @@ export function HudApp({
         onCheckUpdate={handleCheckUpdate}
         isCheckingUpdate={isCheckingUpdate}
         onMouseDownDrag={handleMouseDownDrag}
-        onToggleMonitor={() => setViewMode(viewMode === 'monitor' ? 'main' : 'monitor')}
-        isMonitorActive={viewMode === 'monitor'}
+        onToggleMonitor={handleToggleMonitor}
+        isMonitorActive={isMonitorOpen}
       />
 
       {/* Body content when not minimized */}
@@ -357,8 +372,6 @@ export function HudApp({
               />
             </div>
           </div>
-        ) : viewMode === 'monitor' ? (
-          <MonitorHub snap={snap} onClose={() => setViewMode('main')} />
         ) : (
           <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
             {/* Live Stats Bar */}
@@ -487,6 +500,22 @@ export function HudApp({
       onUpdateSharedHeight={handleUpdateSharedHeight}
       onMouseDownDrag={handleMouseDownDrag}
       isHudMinimized={isMinimized}
+    />
+
+    {/* Standalone Detached Realtime Monitor Window */}
+    <HudMonitorWindow
+      isOpen={isMonitorOpen && !isMinimized}
+      onClose={handleToggleMonitor}
+      snap={snap}
+      position={position}
+      hudSize={size}
+      monitorWidth={monitorWidth}
+      onUpdateMonitorWidth={handleUpdateMonitorWidth}
+      onUpdateSharedHeight={handleUpdateSharedHeight}
+      onMouseDownDrag={handleMouseDownDrag}
+      isHudMinimized={isMinimized}
+      isTerminalOpen={isTerminalOpen}
+      terminalWidth={terminalWidth}
     />
   </>
   );

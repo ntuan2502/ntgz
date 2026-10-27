@@ -70,11 +70,6 @@ export function HudHeader({
 
       {/* Clean Center Title & Version */}
       <div className="flex items-center gap-1.5 font-bold text-xs tracking-tight">
-        <img
-          src={chrome.runtime.getURL('images/icon-192.png')}
-          alt="NTG"
-          className="w-4 h-4 rounded-xs object-contain"
-        />
         <span className="text-emerald-700">NTG Auto</span>
         <span className="text-slate-400 font-normal">by Tún</span>
         <Badge

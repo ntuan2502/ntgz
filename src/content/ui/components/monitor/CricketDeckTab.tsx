@@ -38,7 +38,7 @@ export function CricketDeckTab({ snap }: CricketDeckTabProps) {
   };
 
   return (
-    <div className="flex flex-col gap-3 p-3">
+    <div className="flex flex-col gap-3 p-3 pr-4 overflow-y-auto min-h-0">
       {/* Night Hunt Golden Hour Radar Banner */}
       <div
         className={`relative overflow-hidden rounded-xl p-3.5 text-white shadow-md border ${
@@ -113,7 +113,7 @@ export function CricketDeckTab({ snap }: CricketDeckTabProps) {
       </div>
 
       {/* 6 Tubes Grid */}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-2 min-w-0">
         {Array.from({ length: 6 }).map((_, idx) => {
           const cricket = cricketsBox[idx];
 

@@ -45,6 +45,21 @@ export function HudTerminalWindow({
     setIsAutoScroll(isNearBottom);
   };
 
+  // Auto-scroll to bottom immediately when opening terminal
+  useEffect(() => {
+    if (isOpen) {
+      const frameId = requestAnimationFrame(() => {
+        const el = scrollRef.current;
+        if (el) {
+          el.scrollTop = el.scrollHeight;
+          stickToBottomRef.current = true;
+          setIsAutoScroll(true);
+        }
+      });
+      return () => cancelAnimationFrame(frameId);
+    }
+  }, [isOpen]);
+
   useEffect(() => {
     const el = scrollRef.current;
     if (el && stickToBottomRef.current) {
