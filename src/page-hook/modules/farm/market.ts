@@ -41,10 +41,12 @@ function getReservedQty(st: MainGameStoreState, item: string): number {
 
 function deliverGroceryOrder(cfg: AppConfig): StepResult | null {
   const m = getMainState();
-  if (!m.order || stockOf(m, m.order.crop) < m.order.qty) return null;
+  if (!m.order || !m.order.crop || typeof m.order.qty !== 'number' || stockOf(m, m.order.crop) < m.order.qty) {
+    return null;
+  }
   const reward = m.order.reward || 0;
   const cropLabel = CROP_NAMES[m.order.crop] || m.order.crop;
-  if (m.deliverOrder?.() === true) {
+  if (m.deliverOrder?.()) {
     showFarmActionUI(cfg, { vendor: 'grocery', shop: 'orders' });
     return { acted: true, msg: `📦 Đã giao đơn hàng Chị Na (${cropLabel}) +${formatVnd(reward)}đ` };
   }
@@ -60,7 +62,7 @@ function deliverVillageBoard(cfg: AppConfig): StepResult | null {
   for (const req of cur.village?.requests || []) {
     if (req.done || !req.goods) continue;
     const qty = req.qty || 0;
-    if (stockOf(cur, req.goods) >= qty && cur.deliverRequest?.(req.id) === true) {
+    if (stockOf(cur, req.goods) >= qty && cur.deliverRequest?.(req.id)) {
       showFarmActionUI(cfg, { panel: 'village' });
       return { acted: true, msg: `📋 Đã giao ${qty} ${CROP_NAMES[req.goods] || req.goods} giúp ${req.who || 'bà con'} (Bảng tin làng)` };
     }

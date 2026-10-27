@@ -20,7 +20,6 @@ let isBusy = false;
 let currentAreaIdx = 0;
 let areaCatchesCount = 0;
 let lastFarmDoneDay = -1;
-let lastFarmRunAt = 0;
 let benExhaustedUntil = 0;
 let seaExhaustedUntil = 0;
 let seaExhaustedDay = -1;
@@ -37,7 +36,6 @@ export function toggleAutoAll(): void {
     currentAreaIdx = 0;
     areaCatchesCount = 0;
     lastFarmDoneDay = -1;
-    lastFarmRunAt = 0;
     resetFarmTiming();
     setStatus('▶️ Bắt đầu chạy Auto Tất Cả theo thứ tự...');
   }
@@ -56,7 +54,6 @@ export function toggleAutoTab(): void {
     setLockedTabArea(config.activeTab);
     areaCatchesCount = 0;
     lastFarmDoneDay = -1;
-    lastFarmRunAt = 0;
     resetFarmTiming();
     const areaName = AREA_META[config.activeTab]?.name || config.activeTab;
     setStatus(`🎯 Bắt đầu chỉ Auto trong Tab: ${areaName}`);
@@ -69,7 +66,6 @@ export function startAuto(mode: 'all' | 'tab' = 'all'): void {
   config.running = true;
   config.runMode = mode;
   lastFarmDoneDay = -1;
-  lastFarmRunAt = 0;
   resetFarmTiming();
   resetFarmstayTiming();
   if (mode === 'tab') {
@@ -196,23 +192,9 @@ export async function tickAuto(): Promise<void> {
     const currentArea = enabledAreas[currentAreaIdx];
 
     if (currentArea === 'farm') {
-      const mustNavigateHome = snap.screen !== 'playing';
-      const farmDue =
-        mustNavigateHome ||
-        lastFarmDoneDay !== snap.day ||
-        Date.now() - lastFarmRunAt > 60000 ||
-        enabledAreas.length === 1;
-
-      if (farmDue) {
-        const acted = await runFarmSubAreas(snap, config, setStatus, updateHeaderStats);
-        if (config.running) {
-          lastFarmDoneDay = snap.day ?? 0;
-          lastFarmRunAt = Date.now();
-        }
-        if (acted && enabledAreas.length > 1) {
-          isBusy = false;
-          return;
-        }
+      const acted = await runFarmSubAreas(snap, config, setStatus, updateHeaderStats);
+      if (config.running) {
+        lastFarmDoneDay = snap.day ?? 0;
       }
 
       if (enabledAreas.length > 1) {
@@ -222,14 +204,41 @@ export async function tickAuto(): Promise<void> {
         const benReady = nowMs >= benExhaustedUntil;
         const seaReady = nowMs >= seaExhaustedUntil && (snap.minutes || 0) < 1305;
 
-        if ((nextArea === 'benDo' && benReady) || (nextArea === 'sea' && seaReady) || enabledAreas.length > 2) {
+        if (
+          nextArea === 'farmstay' ||
+          (nextArea === 'benDo' && benReady) ||
+          (nextArea === 'sea' && seaReady) ||
+          enabledAreas.length > 2
+        ) {
           currentAreaIdx = nextIdx;
           areaCatchesCount = 0;
         } else {
-          setStatus('🌾 Đang trực tại Nông Trại (đợi khu câu hồi sức / qua ngày)...');
+          let foundReadyIdx = -1;
+          for (let i = 1; i < enabledAreas.length; i++) {
+            const candIdx = (currentAreaIdx + i) % enabledAreas.length;
+            const candArea = enabledAreas[candIdx];
+            if (
+              candArea === 'farmstay' ||
+              (candArea === 'benDo' && benReady) ||
+              (candArea === 'sea' && seaReady)
+            ) {
+              foundReadyIdx = candIdx;
+              break;
+            }
+          }
+          if (foundReadyIdx !== -1) {
+            currentAreaIdx = foundReadyIdx;
+            areaCatchesCount = 0;
+          } else {
+            setStatus('🌾 Đang trực tại Nông Trại (đợi các khu khác hồi sức / qua ngày)...');
+            await sleep(1500);
+          }
         }
       } else {
-        setStatus('🌾 Đang trực tại Nông Trại...');
+        if (!acted) {
+          setStatus('🌾 Nông Trại: Đã xong việc hiện tại...');
+          await sleep(1500);
+        }
       }
     } else if (currentArea === 'benDo') {
       if (enabledAreas.includes('farm') && lastFarmDoneDay !== snap.day) {
@@ -255,7 +264,6 @@ export async function tickAuto(): Promise<void> {
         areaCatchesCount = 0;
         if (enabledAreas.length > 1) {
           currentAreaIdx = (currentAreaIdx + 1) % enabledAreas.length;
-          lastFarmRunAt = 0;
         } else if (config.autoSleep && config.sleepOnFishingLimit && (snap.minutes || 0) >= 1140) {
           setStatus('🌙 Đã hết sức câu ở Bến Đò buổi tối -> Về nhà đi ngủ...');
           await execGameAction('SLEEP_NOW');
@@ -294,7 +302,6 @@ export async function tickAuto(): Promise<void> {
         } else if (enabledAreas.length > 1) {
           areaCatchesCount = 0;
           currentAreaIdx = (currentAreaIdx + 1) % enabledAreas.length;
-          lastFarmRunAt = 0;
         }
       } else if (enabledAreas.length > 1 && areaCatchesCount >= switchMax && snap.sea?.phase === 'idle') {
         areaCatchesCount = 0;
@@ -311,7 +318,6 @@ export async function tickAuto(): Promise<void> {
       if (res.finishedArea) {
         if (enabledAreas.length > 1) {
           currentAreaIdx = (currentAreaIdx + 1) % enabledAreas.length;
-          lastFarmRunAt = 0;
           if (snap.screen === 'farmstay') {
             await execGameAction('NAVIGATE', { target: 'playing', indoors: false });
           }

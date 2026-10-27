@@ -26,13 +26,22 @@ export async function runFarmSubAreas(
     setStatus('🚜 Đang quay về Nông Trại...');
     await execGameAction('NAVIGATE', { target: 'playing', indoors: false });
     await sleep(switchDelayMs);
-    return true;
+    const fresh = await getGameState();
+    if (fresh && fresh.ok) {
+      snap = fresh;
+      updateHeaderStats(fresh);
+    }
   }
 
   // Leave house if indoors before doing outdoor tasks
   if (snap.indoors) {
     await execGameAction('NAVIGATE', { target: 'playing', indoors: false });
     await sleep(Math.min(400, switchDelayMs));
+    const fresh = await getGameState();
+    if (fresh && fresh.ok) {
+      snap = fresh;
+      updateHeaderStats(fresh);
+    }
   }
 
   let anyActed = false;
