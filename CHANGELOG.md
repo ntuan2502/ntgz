@@ -5,6 +5,17 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.6.1] - 2026-10-27
+
+### 🌟 Tính Năng Mới & Nâng Cấp (Features & Improvements)
+- **Tự Động Mua Bò Sữa Khi Chuồng Trống (Dairy Auto Buy Cow)**:
+  - Bổ sung tùy chọn **"🐄 Tự mua thêm Bò sữa khi chuồng trống (-1.800.000đ)"** tại phân khu Bò Sữa (Chị Mận).
+  - Tự động kiểm tra và nhận diện chính xác tổng đàn bò (bao gồm bò hiện có trong chuồng và bò đang trên đường giao về `cows + coming`).
+  - Khi chuồng còn chỗ trống (`< 4 con`) và tài khoản sở hữu từ `1.800.000đ` trở lên, bot sẽ tự động đặt mua thêm bò sữa để duy trì tối đa quy mô đàn bò 4 con, tối ưu hóa năng suất sữa bò tươi (đạt tối đa 32 lít/ngày).
+  - Thao tác được cách ly trong khối xử lý an toàn độc lập, hiển thị log thông báo chi tiết và minh bạch.
+
+---
+
 ## [1.6.0] - 2026-10-27
 
 ### 🌟 Tính Năng Mới & Nâng Cấp Hệ Thống (Major Features & Optimizations)

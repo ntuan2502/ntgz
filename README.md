@@ -1,4 +1,4 @@
-# 🌾 Nông Trại GenZ Auto by Tún (v1.6.0)
+# 🌾 Nông Trại GenZ Auto by Tún (v1.6.1)
 
 > **Công cụ Auto đa khu vực (DOM + Canvas) thông minh, toàn diện dành riêng cho tựa game [Nông Trại GenZ](https://nongtraigenz.online/play/).**  
 > Bản quyền phát triển bởi **Tún**. Tiện ích mở rộng Google Chrome Extension theo chuẩn **Manifest V3**.
@@ -15,7 +15,7 @@ Tiện ích hoạt động mượt mà kết hợp giữa can thiệp giao diệ
 
 ## 🌟 Tổng Quan Tính Năng Chính
 
-- 🌾 **Khu Vực Nông Trại**: Tự động hóa toàn diện 8 cụm công việc (Nhà & Nhu cầu cá nhân, Ruộng đồng, Thú cưng, Chuồng trâu/bò, Chuồng gà, Ao cá, Chợ Lớn & Tiệm Vàng Cô Kim, Quầy Dì Bảy & Sổ tiết kiệm linh hoạt, Chợ Đêm 18h00-23h30 thưởng +25% giá với ngưỡng bảo lưu an toàn). Tích hợp Banner thông báo khẩn cấp (giá vàng, bão lũ, dịch gia cầm, hụi) trực quan. Hỗ trợ kéo thả hoặc bấm nút để thay đổi thứ tự ưu tiên các cụm việc theo ý muốn.
+- 🌾 **Khu Vực Nông Trại**: Tự động hóa toàn diện 8 cụm công việc (Nhà & Nhu cầu cá nhân, Ruộng đồng, Thú cưng, Chuồng trâu, Bò sữa & tự mua thêm bò khi trống, Chuồng gà, Ao cá, Chợ Lớn & Tiệm Vàng Cô Kim, Quầy Dì Bảy & Sổ tiết kiệm linh hoạt, Chợ Đêm 18h00-23h30 thưởng +25% giá với ngưỡng bảo lưu an toàn). Tích hợp Banner thông báo khẩn cấp (giá vàng, bão lũ, dịch gia cầm, hụi) trực quan. Hỗ trợ kéo thả hoặc bấm nút để thay đổi thứ tự ưu tiên các cụm việc theo ý muốn.
 - 🛶 **Khu Vực Bến Đò**:
   - **Sới Dế Ông Sáu**: Tự thách đấu thang Boss sới dế (Cu Bin ➔ Út Mập ➔ Anh Lực ➔ Bác Chín ➔ Ông Sáu) bằng dế mạnh nhất trong ống tre; tự khều râu dế đúng nhịp thi đấu; tự động đặt cược cửa trên các trận PvP.
   - **Bắt Dế Đêm (18h–5h) & Nuôi Ống Tre**: Tự rọi đèn đêm; chọn khu vực săn dế (Đồng cỏ phía đông, Bãi lau sậy, Bờ ruộng, Quanh luống rau, Bãi cỏ khắp bến hoặc Tự luân phiên); tự động di chuyển sang bụi khác khi im re tránh tốn sức; bắt dế chuẩn xác với bù trừ độ trễ Ping; tự bồi bổ thức ăn cho dế mạnh nhất; tự thả dế thường đổi vỏ sò khi đầy ống tre (6/6).
@@ -128,5 +128,5 @@ Xem toàn bộ lịch sử cập nhật và mô tả chức năng chi tiết t�
 ## 👤 Tác Giả & Bản Quyền
 
 - **Tác giả**: Tún (Nông Trại GenZ Auto by Tún)
-- **Phiên bản hiện tại**: `v1.6.0`
+- **Phiên bản hiện tại**: `v1.6.1`
 - **Giấy phép**: Bản quyền mã nguồn dành riêng cho cộng đồng người chơi Nông Trại GenZ.
