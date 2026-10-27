@@ -5,6 +5,54 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.9.0] - 2026-10-28
+
+### 🌟 Tính Năng Mới & Nâng Cấp Toàn Diện (Major Features & Enhancements)
+- **Tối Ưu Hóa & Tách Biệt Độc Lập Khu Vực Bến Đò (Wharf Area Independence)**:
+  - Tách biệt hoàn toàn cấu hình Bến Đò khỏi các thiết lập điều phối và hiển thị toàn cục của các khu vực offline (nông trại, biển, farmstay).
+  - Loại bỏ Bến Đò khỏi thứ tự điều phối luân phiên thông thường để đảm bảo hoạt động trực tuyến liên tục, không ngắt quãng.
+  - **Cơ chế lội bộ an toàn (Safe Walk to NPC)**: Bắt buộc nhân vật di chuyển tới gần Sạp Lồng Đèn Cô Bảy (`x:37, y:28`) và Cây ATM (`x:34, y:35`) trước khi tương tác, loại bỏ hoàn toàn các gói tin WebSocket kiểm tra từ xa giúp chống phát hiện bot và tránh lỗi máy chủ.
+  - **Vòng quay lồng đèn thông minh**: Tự động quay liên tục toàn bộ số vé x10 hiện có (ví dụ: 29 vé -> quay 2 lần x10 liên tiếp) mà không bị phân tán sang các tác vụ khác; ghi log chi tiết phần thưởng quay ra (vỏ sò, mồi câu, cánh, trang phục...).
+  - **Đổi tiền Cây ATM chi tiết**: Ghi log rõ ràng số vỏ sò đổi thành công và số tiền mặt nhận được vào tài khoản.
+
+- **Đồng Hồ Đếm Ngược ATM Thời Gian Thực (Phân Tách Online vs Offline)**:
+  - Hiển thị thanh thông báo đếm ngược ATM thời gian thực từng giây tại tab Bến Đò (`⏳ Cây ATM: Mở đổi lúc HH:mm:ss (còn X phút Y giây)`).
+  - Tự động chuyển sang trạng thái sẵn sàng đổi tiền màu xanh khi đến giờ mở đổi (`🏧 Cây ATM: Đã đến giờ đổi tiền! Có thể ra rút tiền ngay (Hạn mức còn ...đ)`).
+  - Phân tách tuyệt đối giữa Bến Đò (khu vực online - chỉ hiển thị thông báo ATM) và Nông trại / Biển / Farmstay (khu vực offline - chỉ hiển thị thông báo bão lũ, giá vàng, loa xã).
+
+- **Bộ Chọn Giữ Lại Đa Lựa Chọn Chuẩn Shadcn (Multi-Select Combobox)**:
+  - Xây dựng component chọn đa mục hiện đại với popover, thao tác nhanh "Chọn hết", "Bỏ chọn" và nút "Đóng".
+  - Tương thích 100% Shadow DOM (hỗ trợ `composedPath`), triệt tiêu hiện tượng click vào item bị tự đóng menu.
+  - Tự động đảo hướng mở thông minh (Smart Flip): Tự động mở lật ngược lên trên khi combobox nằm gần đáy màn hình (< 230px), loại bỏ hoàn toàn tình trạng bị che khuất hoặc tràn khỏi khung nhìn.
+  - Áp dụng đồng bộ cho cả **Bộ chọn độ hiếm cá giữ lại** và **Bộ chọn loài dế nuôi ống tre**.
+  - Bổ sung tính năng tự động bán cá giữ lại trùng: Cho phép giữ nhiều loại cá khác nhau, nhưng mỗi loại chỉ giữ lại 1 con có giá trị cao nhất.
+
+- **Nâng Cấp Toàn Diện Bắt Dế Đêm & 6 Ống Tre Nuôi Dế**:
+  - **Đồng bộ khung giờ thực tế Việt Nam (UTC+7)**: Khung giờ bắt dế đêm (18h00 – 05h00) và khung giờ hoàng kim dế quý hiếm (23h00 – 04h00), không còn bị nhầm lẫn với giờ ngày nông trại offline.
+  - **Cơ chế săn dế chống hành vi bot**: Nhân vật đứng yên tại bụi cỏ rọi đèn liên tục; chỉ di chuyển sang bụi cỏ tiếp theo khi nhận được thông báo rọi không thấy dế (`gotAway.why === 'none'`).
+  - **Thuật toán thả dế thông minh khi ống tre đầy (6/6)**: Tự động thả dế không thuộc danh sách muốn giữ; ưu tiên giữ dế có độ hiếm cao hơn (`Huyền thoại > Sử thi > Hiếm > Đặc biệt > Thường`), giữ dế có CP cao hơn trong cùng độ hiếm hoặc cùng loài, thả con có CP thấp hơn để nhận lại vỏ sò (+5 đến +400🐚).
+  - **Hiển thị hồ sơ dế chi tiết chuẩn ingame**: Đầy đủ 12 loài dế, badge độ hiếm, thời gian sống còn lại (`diesAt`), trạng thái nghỉ ngơi/sẵn sàng (`restUntil`), và thanh tiến trình luyện tập chỉ số Công ⚔️, Lỳ 🛡️, Gan ⚡ so với tiềm năng tối đa.
+  - Định dạng phân cách hàng nghìn tiếng Việt chuẩn xác cho vỏ sò, thể lực, mồi câu, vé quay (`613.803 🐚`, `23.448 🪱`).
+
+- **Tinh Gọn Giao Diện HUD & Cải Tiến Trải Nghiệm (UI/UX)**:
+  - Tiêu đề **NTG Auto** được đưa ra chính giữa thanh tiêu đề Header.
+  - Cụm nút Giám Sát (🎒) và Cài Đặt (⚙️) được chuyển thành icon tinh gọn ở góc trên bên phải Header.
+  - Loại bỏ thanh công cụ phụ chứa nhãn 500ms và công tắc chạy ngầm dư thừa.
+  - Đồng nhất thanh điều hướng phụ (`HudSubHeader`) giữa trang Cài Đặt và trang Changelog.
+  - Hỗ trợ nhập thủ công kích thước HUD (Width & Height theo px) và lưu tức thì.
+  - Widget Xem Nhanh Bến Đò cho phép thu nhỏ / mở rộng linh hoạt.
+  - Căn chỉnh hoàn hảo theo chiều dọc các item trong hàng tài nguyên và lưới 6 ống tre.
+
+- **🌾 Nông Trại**: Tự động mở rộng mua thêm ô đất ruộng khi làng mở bán mà không cần bấm thủ công.
+
+### 🐛 Sửa Lỗi & Ổn Định Hệ Thống (Bug Fixes & Stability)
+- Khắc phục lỗi rớt mạng / mất kết nối WebSocket khi thay đổi trang phục trong tủ đồ Bến Đò.
+- Khắc phục lỗi sự kiện click trong Shadow DOM làm đóng menu Combobox Multi-Select ngay khi vừa click.
+- Khắc phục lỗi `overflow-hidden` che khuất bảng chọn loài dế giữ lại.
+- Dọn dẹp log di chuyển ATM (bỏ hiển thị số vỏ sò mang đi đổi vì ATM có hạn mức mỗi giờ).
+
+---
+
 ## [1.8.0] - 2026-10-27
 
 ### 🌟 Tính Năng Mới & Nâng Cấp Toàn Diện (Major Features & Enhancements)
