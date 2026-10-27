@@ -9,6 +9,8 @@ interface HudHeaderProps {
   onCheckUpdate: () => void;
   isCheckingUpdate: boolean;
   onMouseDownDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onToggleMonitor?: () => void;
+  isMonitorActive?: boolean;
 }
 
 export function HudHeader({
@@ -19,6 +21,8 @@ export function HudHeader({
   onCheckUpdate,
   isCheckingUpdate,
   onMouseDownDrag,
+  onToggleMonitor,
+  isMonitorActive,
 }: HudHeaderProps) {
   return (
     <div
@@ -83,8 +87,23 @@ export function HudHeader({
         </Badge>
       </div>
 
-      {/* Right Shortcut hint */}
-      <div className="flex items-center gap-1" onMouseDown={(e) => e.stopPropagation()}>
+      {/* Right Shortcut & Monitor hint */}
+      <div className="flex items-center gap-1.5" onMouseDown={(e) => e.stopPropagation()}>
+        {onToggleMonitor && (
+          <button
+            type="button"
+            onClick={onToggleMonitor}
+            className={`flex items-center gap-1 text-[10px] px-2 py-0.5 rounded font-medium border transition-colors cursor-pointer shadow-xs ${
+              isMonitorActive
+                ? 'bg-emerald-600 text-white border-emerald-700 font-bold'
+                : 'bg-emerald-50 text-emerald-800 border-emerald-200/80 hover:bg-emerald-100 hover:border-emerald-300'
+            }`}
+            title="Mở Trung tâm Giám sát Realtime (Kho, Mùa vụ, Tiết kiệm, Gia súc, Dế)"
+          >
+            <span>🎒</span>
+            <span>Giám sát</span>
+          </button>
+        )}
         <span
           className="text-[10px] text-slate-400 font-mono bg-slate-200/60 rounded px-1.5 py-0.5 cursor-pointer hover:bg-slate-200 transition-colors"
           onClick={onHide}

@@ -69,6 +69,7 @@ export interface BenNetState {
   wallet?: BenNetWallet | null;
   basketCount?: number;
   totalBasket?: number;
+  basket?: Array<{ id?: string; fish?: string; price?: number; size?: number; kept?: boolean; [key: string]: unknown }>;
   crickets?: {
     box?: CricketItem[];
     dex?: Array<{ species: string; count: number; best: number }>;
@@ -153,6 +154,53 @@ export interface GameSnapshot {
     basket?: unknown[];
     [key: string]: unknown;
   };
+  prices?: Record<string, number>;
   farmstay?: FarmstayState | null;
+  produce?: Record<string, number>;
+  seeds?: Record<string, number>;
+  items?: Record<string, number>;
+  eggs?: number;
+  nestEggs?: number;
+  hens?: Array<{ id?: string | number; fedDay?: number; sickDay?: number; [key: string]: unknown }> | unknown[];
+  coopLevel?: number;
+  kitchen?: {
+    stock?: Record<string, number>;
+    cooking?: unknown[];
+    known?: string[];
+    [key: string]: unknown;
+  } | unknown;
+  pets?: {
+    pet?: { name?: string; kind?: string; hunger?: number; [key: string]: unknown };
+    gear?: string[];
+    [key: string]: unknown;
+  } | Array<{ name?: string; kind?: string; [key: string]: unknown }> | unknown;
+  pond?: {
+    fish?: Array<{ id?: string; days?: number; [key: string]: unknown }>;
+    known?: boolean;
+    [key: string]: unknown;
+  } | unknown;
+  buffalo?: {
+    home?: boolean;
+    mood?: number;
+    bathDay?: number;
+    mudDay?: number;
+    lentDay?: number;
+    [key: string]: unknown;
+  } | unknown;
+  dairy?: {
+    cows?: Array<{ id?: string | number; name?: string; fedDay?: number; sickDay?: number }>;
+    medicine?: number;
+    milk?: number;
+    coming?: Array<{ id?: string | number; at?: number }>;
+    newsDay?: number;
+    [key: string]: unknown;
+  } | unknown;
+  savings?: {
+    books?: Array<{ id?: string | number; amount?: number; days?: number; start?: number; [key: string]: unknown }> | unknown[];
+    matured?: number;
+    earned?: number;
+    pig?: { amount?: number; streak?: number; lastDay?: number; [key: string]: unknown } | null;
+    [key: string]: unknown;
+  } | unknown;
   [key: string]: unknown;
 }

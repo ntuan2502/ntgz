@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
 import { ReleaseChangelogView } from '@/components/ReleaseChangelogView';
+import { MonitorHub } from './components/monitor/MonitorHub';
 import { checkForUpdates } from '@/services/github-service';
 import { UpdateCheckResult } from '@/shared/types/github';
 
@@ -49,7 +50,7 @@ export function HudApp({
   // Dialog & View states
   const [isCheckingUpdate, setIsCheckingUpdate] = useState<boolean>(false);
   const [updateInfo, setUpdateInfo] = useState<UpdateCheckResult | null>(null);
-  const [viewMode, setViewMode] = useState<'main' | 'changelog'>('main');
+  const [viewMode, setViewMode] = useState<'main' | 'changelog' | 'monitor'>('main');
 
   // Position, Size & Dragging/Resizing
   const MIN_WIDTH = 340;
@@ -78,9 +79,9 @@ export function HudApp({
     }
   }, []);
 
-  // Close changelog view on Escape key press
+  // Close changelog/monitor view on Escape key press
   useEffect(() => {
-    if (viewMode !== 'changelog') return;
+    if (viewMode === 'main') return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setViewMode('main');
@@ -323,6 +324,8 @@ export function HudApp({
         onCheckUpdate={handleCheckUpdate}
         isCheckingUpdate={isCheckingUpdate}
         onMouseDownDrag={handleMouseDownDrag}
+        onToggleMonitor={() => setViewMode(viewMode === 'monitor' ? 'main' : 'monitor')}
+        isMonitorActive={viewMode === 'monitor'}
       />
 
       {/* Body content when not minimized */}
@@ -354,6 +357,8 @@ export function HudApp({
               />
             </div>
           </div>
+        ) : viewMode === 'monitor' ? (
+          <MonitorHub snap={snap} onClose={() => setViewMode('main')} />
         ) : (
           <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
             {/* Live Stats Bar */}

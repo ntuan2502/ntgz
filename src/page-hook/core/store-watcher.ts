@@ -127,6 +127,7 @@ export function getSnapshot(): GameSnapshot {
       };
     })(),
     savings: m.savings,
+    prices: m.prices,
     daily: m.daily,
     goalIndex: m.goalIndex,
     firstDay: m.firstDay,
@@ -166,6 +167,7 @@ export function getSnapshot(): GameSnapshot {
           wallet: benWallet,
           basketCount: benNonKeptCount,
           totalBasket: Array.isArray(bn.basket) ? bn.basket.length : 0,
+          basket: bn.basket,
           pack: bn.pack || {},
           landed: bn.landed,
           notice: bn.notice,
