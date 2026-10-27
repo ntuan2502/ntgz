@@ -5,6 +5,42 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.8.0] - 2026-10-27
+
+### 🌟 Tính Năng Mới & Nâng Cấp Toàn Diện (Major Features & Enhancements)
+- **Trang Cài Đặt Chuyên Dụng (`SettingsView`)**:
+  - Tách biệt cài đặt tốc độ trễ, chế độ thao tác ẩn danh và sắp xếp thứ tự ưu tiên khu vực ra trang Cài Đặt độc lập, trực quan và chuyên nghiệp.
+  - Phân tách 2 khái niệm độ trễ độc lập:
+    1. **Tốc độ delay mỗi lệnh (`taskDelayMs`)**: Độ trễ khi chuyển đổi giữa 2 thao tác khác nhau (ví dụ: chuyển từ thu hoạch sang tưới nước hoặc gieo hạt).
+    2. **Tốc độ delay giữa 2 lệnh giống nhau (`actionRepeatDelayMs`)**: Độ trễ khi thực hiện liên tiếp các thao tác cùng loại (ví dụ: tưới 12 ô đất liên tiếp).
+  - Hỗ trợ chế độ siêu tốc **Turbo Batch Mode (0ms)**: Hoàn tất tưới nước, gieo hạt hoặc bón phân toàn bộ 12 ô đất ruộng làng và 24 ô farmstay tức thì trong 1 khung hình duy nhất mà không tốn thời gian chờ đợi từng ô.
+  - Đồng nhất cơ chế thao tác ẩn danh (`showFullActions = false`): Khi tắt hiển thị đầy đủ thao tác, mọi hoạt động mở bảng menu game (ăn uống, đổi tiền ATM, quay lồng đèn...) đều được chạy ngầm tự động thông qua bridge engine mà không mở popup UI che màn hình.
+
+- **Thanh Thông Tin Realtime & Tối Giản Header**:
+  - Tối giản phần Header của HUD: Lược bỏ các nhãn dư thừa (`by Tún`, `v1.7.0`, `Alt+P`), dời nút Giám Sát xuống thanh công cụ nhanh cùng dòng với Chạy ngầm và Cài đặt.
+  - Thanh Stats phân tách ngữ cảnh thông minh:
+    - Khi ở Bến Đò: Hiển thị đồng hồ ngày giờ thời gian thực (giây cập nhật liên tục), số vỏ sò 🐚, mồi câu 🪱, vé vòng quay 🎟️, sức ⚡ và chỉ số may mắn 🍀.
+    - Khi ở Nông trại / Biển / Farmstay: Hiển thị Ngày, Giờ game, Vàng, Độ no, Độ khát, Năng lượng.
+
+- **Tối Ưu Hóa Bến Đò & Tự Động Hóa Vòng Quay / ATM**:
+  - Vòng quay lồng đèn Cô Bảy: Bổ sung tùy chọn mua thêm 5 vé quay hàng ngày, ưu tiên mua hết vé trước khi quay; hỗ trợ tùy chọn quay x10 nghiêm ngặt (chỉ quay khi đủ 10 vé).
+  - Cây ATM đổi vỏ sò: Tự động đổi tối đa số vỏ sò (tối đa 20.000.000đ/giờ), dừng đổi nếu số vỏ sò < ngưỡng cấu hình (mặc định 10.000), tự động so sánh thời gian lần đổi gần nhất và tính đúng mốc mở đổi tiếp theo kèm log đếm ngược chuẩn xác.
+  - Mua mồi câu Chú Đực: Bổ sung ô nhập số lượng mồi tối đa (dừng khi đạt mốc, mặc định 10.000) và ngưỡng giữ tiền mặt an toàn.
+  - Vị trí ngồi câu cá: Cập nhật tọa độ chuẩn xác của 4 điểm câu tại bến đò (Cầu tàu lớn, Cầu tre lắt lẻo, Bờ sông bến giữa, Cầu ván qua lạch).
+
+### 🐛 Sửa Lỗi & Tăng Cường Độ Ổn Định (Bug Fixes & Stability)
+- **Khắc phục lỗi sập giao diện (Crash / Unmount) khi mở Cần câu ở Bến Đò**:
+  - Sửa lỗi `TypeError: Objects are not valid as a React child` trong `WharfPackTab` do game trả về mảng object `{ rod, until }`.
+  - Tích hợp từ điển 14 loại Cần câu đặc biệt từ mã nguồn game (`SPECIAL_RODS_MAP`) với tên tiếng Việt đầy đủ, cấp bậc (`Tối thượng`, `Huyền thoại`, `Quý`, `Hiếm`, `Tốt`), màu sắc, mô tả và thời gian thuê còn lại.
+- **Bổ sung cơ chế chống sập giao diện (`TabErrorBoundary`)**:
+  - Bọc `TabErrorBoundary` cho toàn bộ 10 tab trong cửa sổ Giám sát (`MonitorHub`), đảm bảo nếu có dữ liệu bất thường từ game ở một tab thì chỉ riêng tab đó hiện nút "Thử tải lại tab", toàn bộ hệ thống HUD và các tab khác vẫn hoạt động ổn định 100%.
+- **Việt hóa toàn diện mọi mã ID kỹ thuật tiếng Anh**:
+  - Chuyển toàn bộ các mã độ hiếm tiếng Anh (`junk`, `common`, `uncommon`, `rare`, `epic`, `legendary`, `mythic`) sang tiếng Việt (`Rác`, `Thường`, `Hơi hiếm`, `Hiếm`, `Rất hiếm`, `Huyền thoại`, `Thần thoại`).
+  - Việt hóa giống thú cưng trong Gia súc (`vang`, `muc`, `husky`, `muop`, `tamThe`...).
+  - Việt hóa giỏ cá trong Kho đồ (`inventory-data.ts`) và các món đồ ăn mang theo bến đò (`wharf-catalog-data.json`).
+
+---
+
 ## [1.7.0] - 2026-10-27
 
 ### 🌟 Tính Năng Mới & Nâng Cấp Toàn Diện (Major Features & Enhancements)
