@@ -5,6 +5,46 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.7.0] - 2026-10-27
+
+### 🌟 Tính Năng Mới & Nâng Cấp Toàn Diện (Major Features & Enhancements)
+- **Hệ Thống Xem Nhanh Thời Gian Thực Bến Đò (Wharf Realtime Quick-View & Monitor)**:
+  - Bổ sung trọn vẹn 6 phân hệ Bến Đò vào cửa sổ Giám Sát Realtime (`MonitorHub`), mô phỏng trung thực 100% cơ chế, giao diện và dữ liệu gốc trong game:
+    1. **🦗 Ống tre dế (`CricketDeckTab`)**:
+       - Hiển thị 6 ống tre nuôi dế với các chỉ số Sức (HP), Lì (Grit), Gan (Spirit), cấp độ, loài và mức trần kỹ năng (caps).
+       - Tích hợp radar khung giờ vàng săn dế đêm (18h00 - 05h00) và nút 1-click mở trực tiếp Sới dế trong game.
+    2. **📖 Sổ cá Bến Đò (`FishDexTab`)**:
+       - Toàn bộ 103 loài cá và mục ve chai với thông số kích thước (min/max cm), giá vỏ sò và độ hiếm.
+       - Đầy đủ các tab độ hiếm chuẩn màu game: Thường, Hơi hiếm, Hiếm, Rất hiếm, Huyền thoại, Thần thoại, Rác, cùng 2 biến thể đặc biệt Cá lạ ✨ và Cá cầu vồng 🌈.
+       - Hiển thị số lượng đã câu, kích thước kỷ lục cá nhân và kỷ lục toàn bến (với nhãn nhận diện nếu bạn đang giữ kỷ lục).
+       - Gợi ý chi tiết điều kiện câu (cần bốc tối thiểu, bờ sông/cầu tre, khung giờ, ngày cuối tuần) cho các loài chưa câu được.
+       - Tích hợp tab Cẩm nang câu cá 📜 và thanh tìm kiếm tức thời theo tên loài.
+    3. **🏆 Bảng vàng Bến Đò (`WharfBoardTab`)**:
+       - Bảng xếp hạng trực tuyến 8 hạng mục: Nhiều loài, Cá to, Chăm câu, Giàu vỏ sò, Săn thần thoại, Ve chai, Giữ kỷ lục, và Vua câu tuần.
+       - Hiển thị Top 3 với huy chương 🥇 🥈 🥉, thứ hạng hiện tại của chính bạn (`#rank`) và thành tích cá nhân.
+       - Đồng hồ đếm ngược tuần và thông tin người đạt giải tuần trước.
+    4. **👕 Tủ đồ ở Bến (`WharfClosetTab`)**:
+       - Quản lý trang phục bến đò: Áo, Quần, Nón, Đồ đeo lưng (cánh, lồng đèn, diều...), Thú cưng.
+       - Xem trang phục đang mặc, lọc theo đồ đã sở hữu hoặc toàn bộ mẫu tại tiệm bến đò.
+       - Cho phép bấm "Chọn" để đổi đồ ngay tức thì mà không cần di chuyển nhân vật trong game.
+    5. **👥 Bạn bè & Bến đò (`FriendsTab`)**:
+       - Danh sách các phòng bến đò đang mở, số người online (`x/20`), thanh tải bến, định vị bến hiện tại và nút bấm chuyển phòng bến đò tức thì.
+       - Danh bạ bạn bè với mã kết bạn (sao chép 1 chạm), số lượt tặng quà còn lại trong ngày, cấp ngày nông trại, thời gian online lần cuối và trạng thái đã giúp đỡ.
+    6. **🎒 Túi đồ Bến Đò (`WharfPackTab`)**:
+       - Chip tài nguyên thời gian thực: Vỏ sò 🐚, Thể lực ⚡/100, Mồi câu 🪱.
+       - Tab Đồ ăn: Hiển thị lượng đồ ăn hồi sức trong túi (Bánh mì, Bánh bao, Xôi bắp, Cơm tấm, Lẩu cá linh...) và lượng thể lực hồi phục (+⚡).
+       - Tab Giỏ cá: Danh sách cá đang giữ với kích thước, độ hiếm, giá bán và nút bật/tắt ghim giữ cá ⭐ (`Giữ` / `Bỏ giữ`).
+       - Tab Cần câu: Cấp cần chuẩn (Tre -> Sợi thuỷ tinh -> Carbon -> Nano) và danh sách cần bốc tiệm Chú Đực với nút trang bị ngay.
+  - **Bộ chuyển đổi phân hệ Giám sát (`MonitorHub`)**:
+    - Bổ sung bộ lọc danh mục: `🌾 Nông Trại` (4 tab) | `🛶 Bến Đò` (6 tab) | `✨ Tất cả` (10 tab) giúp chuyển đổi mượt mà giữa các không gian giám sát.
+  - **Khối truy cập nhanh trong HUD Bến Đò (`WharfTabContent`)**:
+    - Thêm khối "Xem Nhanh Bến Đò (Thời gian thực)" với 6 thẻ trực quan: bấm để mở cửa sổ Giám sát tại tab tương ứng hoặc bấm icon ↗️ để mở modal gốc trong game.
+  - **Mở rộng Store Watcher & Engine Access**:
+    - Khám phá và đồng bộ hóa real-time toàn bộ dữ liệu `dex`, `title`, `closet`, `look`, `board`, `rods`, `rooms`, `room`, `friends` từ Zustand store `benNet` và `friends`.
+    - Bổ sung bộ điều khiển hành động WebSocket chuyên dụng (`BEN_SET_PANEL`, `BEN_REFRESH`, `BEN_USE_ROD`, `BEN_SET_LOOK`, `BEN_KEEP_FISH`, `BEN_SWITCH_ROOM`).
+
+---
+
 ## [1.6.3] - 2026-10-27
 
 ### 🌟 Tính Năng Mới & Tối Ưu Hóa (Features & Optimizations)
