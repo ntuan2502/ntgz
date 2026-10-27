@@ -10,6 +10,8 @@ interface HudControlsProps {
   onToggleAll: () => void;
   onToggleTab: () => void;
   onOpenSettings?: () => void;
+  onToggleMonitor?: () => void;
+  isMonitorActive?: boolean;
 }
 
 export function HudControls({
@@ -18,6 +20,8 @@ export function HudControls({
   onToggleAll,
   onToggleTab,
   onOpenSettings,
+  onToggleMonitor,
+  isMonitorActive,
 }: HudControlsProps) {
   const isRunningAll = config.running && config.runMode === 'all';
   const isRunningTab = config.running && config.runMode === 'tab';
@@ -69,7 +73,7 @@ export function HudControls({
         </Button>
       </div>
 
-      {/* Quick Settings Bar */}
+      {/* Quick Settings & Tools Bar */}
       <div className="flex items-center justify-between px-1 text-[10px] text-slate-500 font-medium">
         <div className="flex items-center gap-1.5">
           <span className="font-mono text-emerald-700 font-semibold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60">
@@ -80,16 +84,35 @@ export function HudControls({
           </span>
         </div>
 
-        {onOpenSettings && (
-          <button
-            type="button"
-            onClick={onOpenSettings}
-            className="flex items-center gap-1 text-[10px] text-slate-600 hover:text-emerald-700 hover:underline cursor-pointer"
-          >
-            <Settings className="h-3 w-3" />
-            <span>Cài đặt</span>
-          </button>
-        )}
+        <div className="flex items-center gap-1.5">
+          {onToggleMonitor && (
+            <button
+              type="button"
+              onClick={onToggleMonitor}
+              className={`flex items-center gap-1 text-[10px] px-2 py-0.5 rounded font-medium border transition-colors cursor-pointer shadow-2xs ${
+                isMonitorActive
+                  ? 'bg-emerald-600 text-white border-emerald-700 font-bold'
+                  : 'bg-white text-emerald-800 border-emerald-200/80 hover:bg-emerald-50'
+              }`}
+              title="Mở Trung tâm Giám sát Realtime (Kho, Mùa vụ, Tiết kiệm, Gia súc, Dế)"
+            >
+              <span>🎒</span>
+              <span>Giám sát</span>
+            </button>
+          )}
+
+          {onOpenSettings && (
+            <button
+              type="button"
+              onClick={onOpenSettings}
+              className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded font-medium border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors cursor-pointer shadow-2xs"
+              title="Mở Trang Cài đặt hệ thống"
+            >
+              <Settings className="h-3 w-3 text-slate-500" />
+              <span>Cài đặt</span>
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

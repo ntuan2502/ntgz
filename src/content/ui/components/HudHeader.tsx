@@ -1,36 +1,25 @@
 import React from 'react';
-import { Badge } from '@/components/ui/badge';
 
 interface HudHeaderProps {
-  version: string;
   isMinimized: boolean;
   onToggleMinimize: () => void;
   onHide: () => void;
   onCheckUpdate: () => void;
   isCheckingUpdate: boolean;
   onMouseDownDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
-  onToggleMonitor?: () => void;
-  isMonitorActive?: boolean;
-  onToggleSettings?: () => void;
-  isSettingsActive?: boolean;
 }
 
 export function HudHeader({
-  version,
   isMinimized,
   onToggleMinimize,
   onHide,
   onCheckUpdate,
   isCheckingUpdate,
   onMouseDownDrag,
-  onToggleMonitor,
-  isMonitorActive,
-  onToggleSettings,
-  isSettingsActive,
 }: HudHeaderProps) {
   return (
     <div
-      className="flex items-center justify-between px-3.5 py-2.5 bg-slate-50 border-b border-slate-200/90 select-none cursor-move transition-colors"
+      className="flex items-center justify-between px-3 py-2 bg-slate-50 border-b border-slate-200/90 select-none cursor-move transition-colors"
       onMouseDown={onMouseDownDrag}
     >
       {/* macOS Traffic Light Buttons */}
@@ -72,59 +61,9 @@ export function HudHeader({
         </button>
       </div>
 
-      {/* Clean Center Title & Version */}
+      {/* Clean Center Title */}
       <div className="flex items-center gap-1.5 font-bold text-xs tracking-tight">
         <span className="text-emerald-700">NTG Auto</span>
-        <span className="text-slate-400 font-normal">by Tún</span>
-        <Badge
-          variant="outline"
-          onClick={onCheckUpdate}
-          className="ml-0.5 border-slate-200 bg-white px-1.5 py-0 text-[10px] font-mono text-slate-600 shadow-xs cursor-pointer hover:bg-slate-100 hover:text-emerald-700 transition-colors"
-          title="Bấm để xem chi tiết nhật ký cập nhật (Changelog)"
-        >
-          v{version}
-        </Badge>
-      </div>
-
-      {/* Right Shortcut & Monitor hint */}
-      <div className="flex items-center gap-1.5" onMouseDown={(e) => e.stopPropagation()}>
-        {onToggleMonitor && (
-          <button
-            type="button"
-            onClick={onToggleMonitor}
-            className={`flex items-center gap-1 text-[10px] px-2 py-0.5 rounded font-medium border transition-colors cursor-pointer shadow-xs ${
-              isMonitorActive
-                ? 'bg-emerald-600 text-white border-emerald-700 font-bold'
-                : 'bg-emerald-50 text-emerald-800 border-emerald-200/80 hover:bg-emerald-100 hover:border-emerald-300'
-            }`}
-            title="Mở Trung tâm Giám sát Realtime (Kho, Mùa vụ, Tiết kiệm, Gia súc, Dế)"
-          >
-            <span>🎒</span>
-            <span>Giám sát</span>
-          </button>
-        )}
-        {onToggleSettings && (
-          <button
-            type="button"
-            onClick={onToggleSettings}
-            className={`flex items-center gap-1 text-[10px] px-2 py-0.5 rounded font-medium border transition-colors cursor-pointer shadow-xs ${
-              isSettingsActive
-                ? 'bg-slate-800 text-white border-slate-900 font-bold'
-                : 'bg-white text-slate-700 border-slate-200/90 hover:bg-slate-100 hover:text-slate-900'
-            }`}
-            title="Mở Trang Cài đặt hệ thống (Tốc độ, Hiển thị thao tác, Thứ tự khu)"
-          >
-            <span>⚙️</span>
-            <span>Cài đặt</span>
-          </button>
-        )}
-        <span
-          className="text-[10px] text-slate-400 font-mono bg-slate-200/60 rounded px-1.5 py-0.5 cursor-pointer hover:bg-slate-200 transition-colors"
-          onClick={onHide}
-          title="Phím tắt ẩn/hiện: Alt + P"
-        >
-          Alt+P
-        </span>
       </div>
     </div>
   );

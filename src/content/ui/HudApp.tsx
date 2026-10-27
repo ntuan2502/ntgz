@@ -339,17 +339,12 @@ export function HudApp({
       >
       {/* macOS Styled Header with Traffic Light Buttons */}
       <HudHeader
-        version={version}
         isMinimized={isMinimized}
         onToggleMinimize={() => setIsMinimized(!isMinimized)}
         onHide={handleHide}
         onCheckUpdate={handleCheckUpdate}
         isCheckingUpdate={isCheckingUpdate}
         onMouseDownDrag={handleMouseDownDrag}
-        onToggleMonitor={handleToggleMonitor}
-        isMonitorActive={isMonitorOpen}
-        onToggleSettings={() => setViewMode((prev) => (prev === 'settings' ? 'main' : 'settings'))}
-        isSettingsActive={viewMode === 'settings'}
       />
 
       {/* Body content when not minimized */}
@@ -392,7 +387,7 @@ export function HudApp({
         ) : (
           <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
             {/* Live Stats Bar */}
-            <HudStats snap={snap} />
+            <HudStats snap={snap} activeTab={config.activeTab} />
 
             {/* Master Auto Controls & Sliders */}
             <HudControls
@@ -401,6 +396,8 @@ export function HudApp({
               onToggleAll={onToggleAll}
               onToggleTab={onToggleTab}
               onOpenSettings={() => setViewMode('settings')}
+              onToggleMonitor={handleToggleMonitor}
+              isMonitorActive={isMonitorOpen}
             />
 
             {/* Current Action Status Bar (Terminal toggles separate window) */}
