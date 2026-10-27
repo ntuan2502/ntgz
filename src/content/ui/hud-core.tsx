@@ -179,6 +179,10 @@ export function mergeConfig(saved: Partial<AppConfig> | null | undefined): AppCo
     hudHeight: (typeof saved.hudHeight === 'number' && saved.hudHeight >= 360 ? saved.hudHeight : DEFAULT_CONFIG.hudHeight),
     showFullActions: Boolean(saved.showFullActions ?? DEFAULT_CONFIG.showFullActions),
     benHuntZone: (saved.benHuntZone ?? DEFAULT_CONFIG.benHuntZone) as AppConfig['benHuntZone'],
+    benBaitMaxCount: (typeof saved.benBaitMaxCount === 'number' ? saved.benBaitMaxCount : DEFAULT_CONFIG.benBaitMaxCount) as number,
+    benBaitMinShells: (typeof saved.benBaitMinShells === 'number' ? saved.benBaitMinShells : DEFAULT_CONFIG.benBaitMinShells) as number,
+    benLanternSpinMode: (saved.benLanternSpinMode ?? DEFAULT_CONFIG.benLanternSpinMode) as AppConfig['benLanternSpinMode'],
+    benAtmThreshold: (typeof saved.benAtmThreshold === 'number' ? saved.benAtmThreshold : DEFAULT_CONFIG.benAtmThreshold) as number,
   };
 
   if (!Array.isArray(next.areaOrder) || next.areaOrder.length === 0) {

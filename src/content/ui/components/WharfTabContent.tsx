@@ -142,8 +142,10 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
                     value={config.benSpot}
                     onValueChange={(val) => updateField('benSpot', val as AppConfig['benSpot'])}
                     options={[
-                      { value: 'bank', label: '🌾 Bờ sông' },
-                      { value: 'dock', label: '🌉 Cầu tre' },
+                      { value: 'bank', label: '🌾 Bờ sông bến giữa' },
+                      { value: 'dock', label: '🌉 Cầu tàu lớn (Đầu mũi)' },
+                      { value: 'bamboo', label: '🎋 Cầu tre lắt lẻo' },
+                      { value: 'bridge', label: '🪵 Cầu ván qua lạch' },
                     ]}
                   />
                 </div>
@@ -179,6 +181,36 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
                       { value: 'xinMoi', label: '🤲 Xin 10 mồi miễn phí (khi hết vỏ sò)' },
                     ]}
                   />
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-600">Số lượng mồi tối đa trong túi:</span>
+                  <div className="flex items-center gap-1.5">
+                    <input
+                      type="number"
+                      min={100}
+                      max={100000}
+                      step={100}
+                      value={config.benBaitMaxCount ?? 10000}
+                      onChange={(e) => updateField('benBaitMaxCount', Math.max(0, Number(e.target.value) || 0))}
+                      className="w-20 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    />
+                    <span className="text-slate-500 text-[10px]">mồi</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-600">Dừng mua khi vỏ sò &lt;:</span>
+                  <div className="flex items-center gap-1.5">
+                    <input
+                      type="number"
+                      min={0}
+                      max={1000000}
+                      step={100}
+                      value={config.benBaitMinShells ?? 10000}
+                      onChange={(e) => updateField('benBaitMinShells', Math.max(0, Number(e.target.value) || 0))}
+                      className="w-20 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    />
+                    <span className="text-slate-500 text-[10px]">🐚</span>
+                  </div>
                 </div>
               </div>
             )}
@@ -442,9 +474,20 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
               />
             </label>
             {config.benAutoLantern && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]">
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
+                <div className="flex items-center justify-between gap-2 min-w-0">
+                  <span className="text-slate-600 shrink-0">Chế độ quay:</span>
+                  <HudSelect
+                    value={config.benLanternSpinMode || 'x10'}
+                    onValueChange={(val) => updateField('benLanternSpinMode', val as AppConfig['benLanternSpinMode'])}
+                    options={[
+                      { value: 'x10', label: '⚡ Quay x10 (hoặc tối đa vé còn lại)' },
+                      { value: 'x1', label: '🎟️ Quay x1 từng vé' },
+                    ]}
+                  />
+                </div>
                 <label className="flex items-center justify-between text-slate-600 cursor-pointer">
-                  <span>🎟️ Tự mua thêm vé quay (600🐚/vé)</span>
+                  <span>🎟️ Tự mua thêm 5 lượt vé quay hàng ngày (600🐚/vé, tối đa 5/5)</span>
                   <Switch
                     size="sm"
                     checked={Boolean(config.benBuyLanternTicket)}
@@ -475,7 +518,7 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
             )}
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>🏧 Cây ATM: Đổi vỏ sò ra tiền mặt</span>
+              <span>🏧 Cây ATM: Đổi tối đa vỏ sò ra tiền mặt</span>
               <Switch
                 checked={Boolean(config.benAutoAtm)}
                 onCheckedChange={(c) => updateField('benAutoAtm', c)}
@@ -484,17 +527,23 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
             {config.benAutoAtm && (
               <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Đổi khi vỏ sò &gt;=:</span>
-                  <input
-                    type="number"
-                    min={100}
-                    max={5000}
-                    step={50}
-                    value={config.benAtmThreshold}
-                    onChange={(e) => updateField('benAtmThreshold', Number(e.target.value))}
-                    className="w-20 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                  />
+                  <span className="text-slate-600">Dừng đổi nếu vỏ sò &lt;:</span>
+                  <div className="flex items-center gap-1.5">
+                    <input
+                      type="number"
+                      min={100}
+                      max={1000000}
+                      step={100}
+                      value={config.benAtmThreshold ?? 10000}
+                      onChange={(e) => updateField('benAtmThreshold', Math.max(0, Number(e.target.value) || 0))}
+                      className="w-20 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    />
+                    <span className="text-slate-500 text-[10px]">🐚</span>
+                  </div>
                 </div>
+                <p className="text-[10px] text-slate-500">
+                  ⏳ Tự động đổi tối đa số vỏ sò 1 tiếng/lần (so sánh thời gian lần đổi gần nhất).
+                </p>
               </div>
             )}
           </div>

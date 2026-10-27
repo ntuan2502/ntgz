@@ -184,9 +184,11 @@ export interface AppConfig {
 
   // Ben Do Fishing Settings
   benAutoSpot: boolean;
-  benSpot: 'dock' | 'bamboo' | 'bank';
+  benSpot: 'dock' | 'bamboo' | 'bank' | 'bridge';
   benAutoBuyBait: boolean;
   benPreferBait: 'moi20' | 'moi60' | 'moi150' | 'xinMoi';
+  benBaitMaxCount?: number;
+  benBaitMinShells?: number;
   benAutoSell: boolean;
   benSellThreshold: number;
   benAutoKeepRare: boolean;
@@ -213,6 +215,7 @@ export interface AppConfig {
 
   // Ben Do Entertainment & Utilities
   benAutoLantern: boolean;
+  benLanternSpinMode?: 'x1' | 'x10';
   benBuyLanternTicket: boolean;
   benAutoLotto: boolean;
   benAutoBuyLotto: boolean;

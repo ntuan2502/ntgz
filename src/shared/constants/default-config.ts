@@ -323,6 +323,8 @@ export const DEFAULT_CONFIG: AppConfig = {
   benSpot: 'bank',
   benAutoBuyBait: true,
   benPreferBait: 'moi150',
+  benBaitMaxCount: 10000,
+  benBaitMinShells: 10000,
   benAutoSell: true,
   benSellThreshold: 60,
   benAutoKeepRare: true,
@@ -349,11 +351,12 @@ export const DEFAULT_CONFIG: AppConfig = {
 
   // Ben Do Entertainment & Utilities
   benAutoLantern: false,
+  benLanternSpinMode: 'x10',
   benBuyLanternTicket: false,
   benAutoLotto: false,
   benAutoBuyLotto: false,
   benAutoAtm: false,
-  benAtmThreshold: 500,
+  benAtmThreshold: 10000,
 
   // Area 3: Sea Fishing Settings
   seaAutoSpot: true,

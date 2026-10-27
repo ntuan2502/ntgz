@@ -134,6 +134,27 @@ let huntSpotIdx = 0;
 let lastHandledGotAwaySeq = -1;
 let lastHuntZoneChoice: string | null = null;
 
+const ATM_STORAGE_KEY = 'ntg_ben_last_atm_at';
+let lastAtmExchangeAt = (() => {
+  try {
+    const raw = sessionStorage.getItem(ATM_STORAGE_KEY);
+    return raw ? Number(raw) || 0 : 0;
+  } catch {
+    return 0;
+  }
+})();
+
+function recordAtmExchange(): void {
+  lastAtmExchangeAt = Date.now();
+  try {
+    sessionStorage.setItem(ATM_STORAGE_KEY, String(lastAtmExchangeAt));
+  } catch {
+    // Ignore storage errors
+  }
+}
+
+let isStockingBait = false;
+
 const cricketTotal = (c: { stats?: { power?: number; tough?: number; nerve?: number } }) =>
   (c.stats?.power || 0) + (c.stats?.tough || 0) + (c.stats?.nerve || 0);
 
@@ -441,37 +462,53 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
     const stamRes = tryRecoverStamina();
     if (stamRes) return stamRes;
 
-    // 3. Buy Bait when out of bait
-    if (bait <= 0) {
-      if (cfg.benAutoBuyBait !== false) {
-        const baitPrices: Record<string, number> = {
-          moi20: 15,
-          moi60: 40,
-          moi150: 90,
-        };
-        const prefBait = cfg.benPreferBait || 'moi150';
-        const buyBaitChoice =
-          shells >= (baitPrices[prefBait] || 40)
-            ? prefBait
-            : shells >= 15
-              ? 'moi20'
-              : 'xinMoi';
+    // 3. Buy Bait when out of bait or stocking up to benBaitMaxCount
+    const maxBait = typeof cfg.benBaitMaxCount === 'number' ? cfg.benBaitMaxCount : 10000;
+    const minShellsForBait = typeof cfg.benBaitMinShells === 'number' ? cfg.benBaitMinShells : 10000;
 
-        if (buyBaitChoice !== 'xinMoi' && shells >= (baitPrices[buyBaitChoice] || 15) && canAct('ben_bait', 3000)) {
-          const baitLabel = BEN_BAIT_NAMES[buyBaitChoice] || buyBaitChoice;
-          return walkAndRun(
-            { x: 53, y: 11 },
-            () => {
-              sendBenWs({ t: 'buy', item: buyBaitChoice });
-            },
-            `Mua ${baitLabel} tại Sạp Chú Đực (-${baitPrices[buyBaitChoice]}🐚)`,
-            'ben_bait',
-            { panel: 'bait' },
-            1500
-          );
-        }
+    if (bait <= 0) {
+      isStockingBait = true;
+    } else if (bait >= maxBait || shells < minShellsForBait) {
+      isStockingBait = false;
+    }
+
+    if (isStockingBait && cfg.benAutoBuyBait !== false) {
+      const baitPrices: Record<string, number> = {
+        moi20: 15,
+        moi60: 40,
+        moi150: 90,
+      };
+      const prefBait = cfg.benPreferBait || 'moi150';
+      const buyBaitChoice =
+        shells >= (baitPrices[prefBait] || 40)
+          ? prefBait
+          : shells >= 15
+            ? 'moi20'
+            : 'xinMoi';
+
+      const baitCost = baitPrices[buyBaitChoice] || 0;
+      const canAfford = shells >= minShellsForBait + baitCost || (bait <= 0 && shells >= baitCost);
+
+      if (buyBaitChoice !== 'xinMoi' && canAfford && canAct('ben_bait', 1200)) {
+        const baitLabel = BEN_BAIT_NAMES[buyBaitChoice] || buyBaitChoice;
+        return walkAndRun(
+          { x: 53, y: 11 },
+          () => {
+            sendBenWs({ t: 'buy', item: buyBaitChoice });
+          },
+          `Mua ${baitLabel} tại Sạp Chú Đực (-${baitCost}🐚, hiện có ${bait}/${maxBait} mồi)`,
+          'ben_bait',
+          { panel: 'bait' },
+          1200
+        );
       }
 
+      if (bait > 0 && shells < minShellsForBait) {
+        isStockingBait = false;
+      }
+    }
+
+    if (bait <= 0) {
       const xinMoiBlocked =
         shells > 0 ||
         (lastXinMoiDay === (m.day || 0) && Date.now() - lastXinMoiAt < 600000) ||
@@ -495,7 +532,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
       return {
         acted: false,
         exhausted: true,
-        reason: '🪱 Bến Đò: Đã hết mồi & vỏ sò -> Chuyển khu vực tiếp theo!',
+        reason: '🪱 Bến Đò: Đã hết mồi & không đủ điều kiện mua tiếp -> Chuyển khu vực tiếp theo!',
       };
     }
 
@@ -523,13 +560,18 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
     if (cfg.benAutoSpot !== false) {
       const spotChoice = cfg.benSpot || 'bank';
       const spotTargets: Record<string, { x: number; y: number; kind: string; label: string }> = {
-        dock: { x: 31, y: 4, kind: 'dock', label: 'Cầu tre' },
-        bamboo: { x: 7, y: 6, kind: 'dock', label: 'Cầu tre' },
-        bank: { x: 24, y: 10, kind: 'bank', label: 'Bờ sông' },
+        dock: { x: 31, y: 3, kind: 'dock', label: 'Cầu tàu lớn (Đầu mũi)' },
+        bamboo: { x: 7, y: 6, kind: 'dock', label: 'Cầu tre lắt lẻo' },
+        bank: { x: 24, y: 10, kind: 'bank', label: 'Bờ sông bến giữa' },
+        bridge: { x: 46, y: 15, kind: 'dock', label: 'Cầu ván qua lạch' },
       };
       const target = spotTargets[spotChoice] || spotTargets.bank;
+      const curTile = benScene?.farmer?.tile;
+      const atSpot = curTile
+        ? curTile.x === target.x && curTile.y === target.y
+        : bu.spot === target.kind;
 
-      if (!bu.spot || (bu.spot !== target.kind && (spotChoice as string) !== 'any')) {
+      if (!atSpot && (spotChoice as string) !== 'any') {
         if (benScene && typeof benScene.goFarmer === 'function') {
           const goFarmer = benScene.goFarmer.bind(benScene);
           return {
@@ -537,7 +579,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
             deferred: () => {
               if (benScene.farmer?.running) return { acted: true, msg: '🚶 Đang di chuyển...' };
               goFarmer({ x: target.x, y: target.y });
-              return { acted: true, msg: `🚶 Đang đi ra ${target.label} câu cá...` };
+              return { acted: true, msg: `🚶 Đang đi ra ${target.label} (${target.x}, ${target.y}) câu cá...` };
             },
           };
         }
@@ -794,20 +836,34 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
     }
 
     // C. Exchange shells at ATM ({x: 34, y: 35})
-    const atmMin = Number(cfg.benAtmThreshold) || 500;
-    if (cfg.benAutoAtm && shells >= atmMin + 100 && canAct('ben_atm', 4000)) {
-      const cashShells = Math.floor((shells - 100) / 50) * 50;
+    const atmMin = typeof cfg.benAtmThreshold === 'number' ? cfg.benAtmThreshold : 10000;
+    const ONE_HOUR_MS = 60 * 60 * 1000;
+    const canRunHourly = lastAtmExchangeAt === 0 || Date.now() - lastAtmExchangeAt >= ONE_HOUR_MS;
+
+    if (cfg.benAutoAtm && shells >= atmMin && canRunHourly && canAct('ben_atm', 4000)) {
+      const bnAtm = bn.atm;
+      const maxByAtmQuota =
+        bnAtm && typeof bnAtm.left === 'number' && typeof bnAtm.rate === 'number'
+          ? Math.floor(bnAtm.left / bnAtm.rate)
+          : shells;
+      const maxShells = Math.min(shells, maxByAtmQuota);
+      const cashShells = Math.floor(maxShells / 100) * 100;
+
       if (cashShells >= 100) {
         return walkAndRun(
           { x: 34, y: 35 },
           () => {
+            recordAtmExchange();
             sendBenWs({ t: 'atmCash', shells: cashShells });
           },
-          `🏧 Đổi ${cashShells.toLocaleString('vi-VN')} vỏ sò ra tiền mặt tại Cây ATM`,
+          `🏧 Đổi tối đa ${cashShells.toLocaleString('vi-VN')} vỏ sò ra tiền mặt tại Cây ATM (lần đổi kế tiếp sau 1 tiếng)`,
           'ben_atm',
           { panel: 'atm' },
           1500
         );
+      } else if (bnAtm && typeof bnAtm.left === 'number' && bnAtm.left < 100 * (bnAtm.rate || 1)) {
+        // Hourly quota reached, record timestamp so we wait for the next hour
+        recordAtmExchange();
       }
     }
 

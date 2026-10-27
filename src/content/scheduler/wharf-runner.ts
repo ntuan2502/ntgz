@@ -69,7 +69,11 @@ function handleBenLanternWheel(
 
   // C. Main Wheel Panel Controls
   const btns = Array.from(wheelEl.querySelectorAll('.ben-wheel-btns button')) as HTMLButtonElement[];
-  const spinOneBtn = btns.find((b) => (b.textContent || '').includes('Quay 1'));
+  const spinOneBtn = btns.find((b) => (b.textContent || '').includes('Quay 1 ·'));
+  const spinMultiBtn = btns.find((b) => {
+    const text = b.textContent || '';
+    return text.includes('Quay ') && !text.includes('Quay 1 ·');
+  });
   const buyTicketBtn = btns.find((b) => (b.textContent || '').includes('Mua vé'));
   const closeBtn = wheelEl.querySelector('.ben-panel-head button.btn-brown') as HTMLButtonElement | null;
 
@@ -93,6 +97,15 @@ function handleBenLanternWheel(
   const liveTickets = ticketMatch ? Number(ticketMatch[1]) : (snap.benNet?.wallet?.tickets ?? 0);
 
   if (liveTickets > 0) {
+    const wantMulti = config.benLanternSpinMode === 'x10';
+    if (wantMulti && liveTickets >= 2 && spinMultiBtn && !spinMultiBtn.disabled) {
+      triggerPointerDownAndClick(spinMultiBtn);
+      const multiCount = Math.min(10, liveTickets);
+      setStatus(`🏮 Vòng quay Cô Bảy: Nhấn quay x10 hoặc tối đa (${multiCount} vé · còn ${liveTickets} vé 🎟️)...`);
+      lastWheelActionAt = now;
+      return true;
+    }
+
     triggerPointerDownAndClick(spinOneBtn);
     setStatus(`🏮 Vòng quay Cô Bảy: Nhấn quay 1 vé (còn ${liveTickets} vé 🎟️)...`);
     lastWheelActionAt = now;

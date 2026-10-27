@@ -577,6 +577,14 @@ export interface BenNetState {
     mine?: Array<{ day?: number; [key: string]: unknown }>;
     [key: string]: unknown;
   };
+  atm?: {
+    rate?: number;
+    left?: number;
+    day?: number;
+    reopen?: number;
+    log?: unknown[];
+    [key: string]: unknown;
+  } | null;
   notice?: {
     error?: string;
     [key: string]: unknown;
