@@ -14,6 +14,8 @@ import { TabErrorBoundary } from './TabErrorBoundary';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
+import { preloadGameAssets } from '@/content/bridge/game-assets';
+import fishDexRaw from '@/shared/constants/fish-dex-data.json';
 
 export type MonitorTabId =
   | 'inventory'
@@ -55,6 +57,48 @@ export function MonitorHub({
       setActiveDomain(WHARF_TABS.includes(defaultTab) ? 'wharf' : 'farm');
     }
   }, [defaultTab]);
+
+  useEffect(() => {
+    // Warm up common in-game pixel art assets
+    const commonKeys = [
+      'coin',
+      'plotSoil',
+      'plotSoilWet',
+      'hoe',
+      'wateringCan',
+      'basket',
+      'fertilizer',
+      'pesticide',
+      'coffee',
+      'mysteryBag',
+      'radish',
+      'carrot',
+      'corn',
+      'rice',
+      'crop-radish',
+      'crop-carrot',
+      'crop-corn',
+      'crop-rice',
+      'seed-radish',
+      'seed-carrot',
+      'seed-corn',
+      'seed-rice',
+      'ongTre',
+      'gui',
+      'cui',
+      'gioCa',
+      'thuocSau',
+      'thuocCo',
+      'canCau',
+      'fsveg-rauMuong',
+      'fsveg-caChua',
+      'fsveg-duaLeo',
+      'fsveg-ot',
+      'fsveg-duaHau',
+      ...((fishDexRaw as Array<{ id: string }>).map((f) => `benfish-${f.id}`)),
+    ];
+    void preloadGameAssets(commonKeys);
+  }, []);
 
   const allTabs: Array<{ id: MonitorTabId; label: string; icon: string; domain: 'farm' | 'wharf' }> = [
     // Nông trại

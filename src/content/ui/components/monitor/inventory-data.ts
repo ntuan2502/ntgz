@@ -83,6 +83,16 @@ export const FS_VEG_CONFIG: Record<string, { name: string; icon: string; price: 
   duaHau: { name: 'Dưa hấu ngọt', icon: '🍉', price: 20_000 },
 };
 
+export function getInventoryAssetKey(id: string): string {
+  if (id.startsWith('crop_')) return `crop-${id.slice(5)}`;
+  if (id.startsWith('seed_')) return `seed-${id.slice(5)}`;
+  if (id.startsWith('supply_')) return id.slice(7);
+  if (id.startsWith('fsveg_')) return `fsveg-${id.slice(6)}`;
+  if (id.startsWith('marine_')) return `benfish-${id.slice(7)}`;
+  if (id.startsWith('dish_')) return id.slice(5);
+  return id;
+}
+
 export function computeInventory(snap: GameSnapshot | null): {
   entries: InventoryEntry[];
   totalValuation: number;

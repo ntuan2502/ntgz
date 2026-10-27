@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GameSnapshot } from '@/shared/types/game-state';
 import { AreaId } from '@/shared/types/config';
 import { formatClock, formatGold } from '@/content/scheduler/dom-helpers';
+import { GameItemIcon } from '@/content/ui/components/GameItemIcon';
 
 interface HudStatsProps {
   snap: GameSnapshot | null;
@@ -177,7 +178,10 @@ export function HudStats({ snap, activeTab }: HudStatsProps) {
             <span className="text-slate-300">·</span>
             <span className="text-emerald-700">{timeStr}</span>
             <span className="text-slate-300">·</span>
-            <span className="text-amber-800 font-bold">{goldStr}</span>
+            <span className="text-amber-800 font-bold inline-flex items-center gap-1">
+              <GameItemIcon itemKey="coin" fallbackEmoji="🪙" size={14} />
+              <span>{goldStr}</span>
+            </span>
           </div>
 
           <div className="flex items-center gap-2">

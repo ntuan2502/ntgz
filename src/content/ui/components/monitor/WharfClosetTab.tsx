@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Shirt, ExternalLink, Check } from 'lucide-react';
 import { execGameAction } from '@/content/bridge/content-bridge';
 import wharfCatalogRaw from '@/shared/constants/wharf-catalog-data.json';
+import { GameItemIcon } from '@/content/ui/components/GameItemIcon';
 
 interface CatalogItem {
   id: string;
@@ -258,8 +259,8 @@ export function WharfClosetTab({ snap }: WharfClosetTabProps) {
                 }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-base">
-                    {item.icon || '👕'}
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-base shrink-0 overflow-hidden">
+                    <GameItemIcon itemKey={item.id} fallbackEmoji={item.icon || '👕'} size={28} />
                   </span>
                   <div>
                     <div className="flex items-center gap-1.5 flex-wrap">

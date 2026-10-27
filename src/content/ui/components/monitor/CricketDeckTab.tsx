@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Swords, Shield, Zap, Moon, Sun, Compass, ExternalLink, Flame } from 'lucide-react';
 import { execGameAction } from '@/content/bridge/content-bridge';
+import { GameItemIcon } from '@/content/ui/components/GameItemIcon';
 
 interface CricketDeckTabProps {
   snap: GameSnapshot | null;
@@ -312,7 +313,9 @@ export function CricketDeckTab({ snap }: CricketDeckTabProps) {
                 <span className="text-[10px] font-mono text-slate-400 font-semibold mb-1">
                   Ống tre #{idx + 1}
                 </span>
-                <span className="text-2xl text-slate-300 select-none my-1">🎋</span>
+                <div className="my-1 flex items-center justify-center">
+                  <GameItemIcon itemKey="ongTre" fallbackEmoji="🎋" size={32} />
+                </div>
                 <span className="text-[10px] text-slate-400 font-medium">Ống tre còn trống</span>
                 <span className="text-[9px] text-slate-400/80 mt-1">Sẵn sàng nuôi dế</span>
               </div>
@@ -360,7 +363,9 @@ export function CricketDeckTab({ snap }: CricketDeckTabProps) {
 
                 {/* Species Icon & Name */}
                 <div className="mt-1.5 flex items-start gap-1.5">
-                  <span className="text-xl leading-none shrink-0 select-none">{meta.icon}</span>
+                  <div className="flex h-6 w-6 items-center justify-center shrink-0 overflow-hidden">
+                    <GameItemIcon itemKey={species} fallbackEmoji={meta.icon} size={22} />
+                  </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-xs font-bold text-slate-800 truncate leading-tight">
                       {meta.label}

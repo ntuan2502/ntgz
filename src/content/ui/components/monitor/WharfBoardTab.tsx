@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Trophy, RefreshCw, ExternalLink, Calendar } from 'lucide-react';
 import { execGameAction } from '@/content/bridge/content-bridge';
 import fishDexRaw from '@/shared/constants/fish-dex-data.json';
+import { GameItemIcon } from '@/content/ui/components/GameItemIcon';
 
 interface FishEntry {
   id: string;
@@ -275,7 +276,12 @@ export function WharfBoardTab({ snap }: WharfBoardTabProps) {
                   </div>
                 </div>
 
-                <div className="text-right">
+                <div className="text-right flex items-center justify-end gap-1.5">
+                  {item.fish && (
+                    <div className="flex h-5 w-5 items-center justify-center shrink-0 overflow-hidden">
+                      <GameItemIcon itemKey={`benfish-${item.fish}`} fallbackEmoji="🐟" size={18} />
+                    </div>
+                  )}
                   <span className="font-bold text-xs font-mono text-emerald-800">
                     {currentCategory.formatValue(item.value, item)}
                   </span>

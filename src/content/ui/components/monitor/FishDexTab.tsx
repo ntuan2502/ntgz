@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { BookOpen, ExternalLink, RefreshCw, Search } from 'lucide-react';
 import fishDexRaw from '@/shared/constants/fish-dex-data.json';
 import { execGameAction } from '@/content/bridge/content-bridge';
+import { GameItemIcon } from '@/content/ui/components/GameItemIcon';
 
 interface FishEntry {
   id: string;
@@ -346,11 +347,23 @@ export function FishDexTab({ snap }: FishDexTabProps) {
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <div
-                      className={`flex h-8 w-8 items-center justify-center rounded-lg text-base shrink-0 ${
+                      className={`flex h-8 w-8 items-center justify-center rounded-lg text-base shrink-0 overflow-hidden ${
                         cardIsKnown ? meta.bg : 'bg-slate-200'
                       }`}
                     >
-                      {f.rarity === 'junk' ? '🗑️' : cardIsKnown ? '🐟' : '❓'}
+                      <GameItemIcon
+                        itemKey={
+                          cardIsKnown
+                            ? isRainbowTab
+                              ? `benfish-rainbow-${f.id}`
+                              : isOddTab
+                              ? `benfish-odd-${f.id}`
+                              : `benfish-${f.id}`
+                            : null
+                        }
+                        fallbackEmoji={cardIsKnown ? (f.rarity === 'junk' ? '🗑️' : '🐟') : '❓'}
+                        size={28}
+                      />
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5 flex-wrap">

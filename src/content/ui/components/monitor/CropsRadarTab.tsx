@@ -3,6 +3,7 @@ import { GameSnapshot } from '@/shared/types/game-state';
 import { CROP_CONFIG, FS_VEG_CONFIG } from './inventory-data';
 import { Badge } from '@/components/ui/badge';
 import { Droplet, Bug, Sparkles } from 'lucide-react';
+import { GameItemIcon } from '@/content/ui/components/GameItemIcon';
 
 interface CropsRadarTabProps {
   snap: GameSnapshot | null;
@@ -220,13 +221,27 @@ export function CropsRadarTab({ snap }: CropsRadarTabProps) {
                   <div className="my-2 flex flex-col items-center justify-center text-center">
                     {plot.hasCrop ? (
                       <>
-                        <span className="text-2xl leading-none">{meta?.icon || '🌱'}</span>
+                        <GameItemIcon
+                          itemKey={
+                            plot.isMature
+                              ? `crop-${plot.cropId}`
+                              : `crop-${plot.cropId}-${plot.stage}`
+                          }
+                          fallbackEmoji={meta?.icon || '🌱'}
+                          size={32}
+                        />
                         <span className="mt-1 font-semibold text-slate-800 text-[11px] truncate max-w-full">
                           {meta?.name || plot.cropId}
                         </span>
                       </>
                     ) : (
-                      <div className="py-2 text-slate-300">🟫</div>
+                      <div className="py-1">
+                        <GameItemIcon
+                          itemKey={plot.watered ? 'plotSoilWet' : 'plotSoil'}
+                          fallbackEmoji="🟫"
+                          size={32}
+                        />
+                      </div>
                     )}
                   </div>
 
@@ -346,10 +361,14 @@ export function CropsRadarTab({ snap }: CropsRadarTabProps) {
 
                   <div className="flex flex-col items-center justify-center my-0.5">
                     {plot.isEmpty ? (
-                      <span className="text-slate-300 text-sm">🌱</span>
+                      <GameItemIcon itemKey="plotSoil" fallbackEmoji="🌱" size={22} />
                     ) : (
                       <>
-                        <span className="text-base leading-none">{meta?.icon || '🥬'}</span>
+                        <GameItemIcon
+                          itemKey={plot.isReady ? `fsveg-${plot.cropKey}` : `fsveg-${plot.cropKey}-grow`}
+                          fallbackEmoji={meta?.icon || '🥬'}
+                          size={24}
+                        />
                         <span className="text-[9px] font-semibold text-slate-800 truncate max-w-full">
                           {meta?.name ? meta.name.split(' ')[0] : plot.cropKey}
                         </span>

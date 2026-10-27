@@ -6,9 +6,11 @@ import {
   formatCompactVnd,
   CATEGORY_LABELS,
   ItemCategory,
+  getInventoryAssetKey,
 } from './inventory-data';
 import { Badge } from '@/components/ui/badge';
 import { Search, Package, Sparkles } from 'lucide-react';
+import { GameItemIcon } from '@/content/ui/components/GameItemIcon';
 
 interface InventoryTabProps {
   snap: GameSnapshot | null;
@@ -162,7 +164,13 @@ export function InventoryTab({ snap }: InventoryTabProps) {
             >
               <div className="flex items-start justify-between gap-1">
                 <div className="flex items-center gap-1.5 min-w-0">
-                  <span className="text-lg leading-none shrink-0">{item.icon}</span>
+                  <div className="flex h-7 w-7 items-center justify-center shrink-0 overflow-hidden">
+                    <GameItemIcon
+                      itemKey={getInventoryAssetKey(item.id)}
+                      fallbackEmoji={item.icon}
+                      size={26}
+                    />
+                  </div>
                   <div className="min-w-0">
                     <p className="text-xs font-semibold text-slate-800 truncate" title={item.name}>
                       {item.name}

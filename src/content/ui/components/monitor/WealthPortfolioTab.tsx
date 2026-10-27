@@ -7,7 +7,8 @@ import {
   formatCompactVnd,
 } from './inventory-data';
 import { Badge } from '@/components/ui/badge';
-import { Wallet, Landmark, PiggyBank, Sparkles, TrendingUp } from 'lucide-react';
+import { Landmark, PiggyBank, Sparkles, TrendingUp } from 'lucide-react';
+import { GameItemIcon } from '@/content/ui/components/GameItemIcon';
 
 interface WealthPortfolioTabProps {
   snap: GameSnapshot | null;
@@ -101,8 +102,8 @@ export function WealthPortfolioTab({ snap }: WealthPortfolioTabProps) {
         {/* Wealth Breakdown Matrix */}
         <div className="mt-3 grid grid-cols-2 gap-2 pt-2.5 border-t border-white/10 text-[11px]">
           <div className="flex items-center justify-between bg-white/5 rounded-lg p-2">
-            <span className="flex items-center gap-1 text-slate-300">
-              <Wallet className="h-3.5 w-3.5 text-emerald-400" />
+            <span className="flex items-center gap-1.5 text-slate-300">
+              <GameItemIcon itemKey="coin" fallbackEmoji="🪙" size={16} />
               <span>Tiền mặt trong ví:</span>
             </span>
             <span className="font-mono font-bold text-white">{formatVnd(netWorth.gold)}đ</span>

@@ -1,6 +1,7 @@
 import { stores, discoverStores, sendBenWs } from './core/engine-access';
 import { getSnapshot } from './core/store-watcher';
 import { dismissInterruptsIfNeeded } from './core/interrupts';
+import { getGameAssets, drawGameAsset } from './core/asset-renderer';
 import { execFarmSubAreaStep } from './modules/farm';
 import { execSeaStep } from './modules/sea';
 import { execBenStep, refreshCricketWatchers } from './modules/wharf';
@@ -19,8 +20,16 @@ interface GameActionPayload {
   const win = window as unknown as Record<string, unknown>;
   if (win.__ntg_page_hook_v100) return;
   win.__ntg_page_hook_v100 = true;
+  win.__ntg_drawAsset = drawGameAsset;
+  win.__ntg_getGameAssets = getGameAssets;
 
   function execAction(action: string, payload: GameActionPayload = {}): Record<string, unknown> {
+    if (action === 'GET_GAME_ASSETS') {
+      const keys = Array.isArray(payload.keys) ? (payload.keys as string[]) : [];
+      const assets = getGameAssets(keys);
+      return { ok: true, assets };
+    }
+
     if (!stores.main) discoverStores();
     const mainStore = stores.main;
     if (!mainStore) return { ok: false, error: 'NO_MAIN_STORE' };
