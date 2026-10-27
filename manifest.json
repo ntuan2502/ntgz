@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Nông Trại GenZ Auto by Tún",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "Nông Trại GenZ Auto by Tún - Công cụ Auto đa khu vực (DOM + Canvas) thông minh cho game Nông Trại GenZ.",
   "permissions": [
     "storage",

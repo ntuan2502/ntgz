@@ -5,6 +5,36 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.6.3] - 2026-10-27
+
+### 🌟 Tính Năng Mới & Tối Ưu Hóa (Features & Optimizations)
+- **Tối Ưu Vòng Quay Lồng Đèn Cô Bảy (Lantern Wheel Optimization)**:
+  - **Ưu tiên mua vé trước khi quay**: Đảo thứ tự xử lý, gom mua toàn bộ 5 lượt vé quay hàng ngày (600🐚/lượt, tối đa 5/5) trước khi quay, loại bỏ hoàn toàn tình trạng mua 1 vé rồi quay 1 vé lặp lại.
+  - **Tùy chọn chế độ quay linh hoạt (`benLanternSpinMode`)**:
+    - `⚡ Quay x10 (hoặc tối đa vé còn lại)`: Tận dụng trực tiếp nút quay đa vé của game (`Quay ${Math.min(10, remaining)} · 🎟️`), quay nhanh gọn toàn bộ vé chỉ trong 1 lần nhấn.
+    - `🎟️ Quay x1 từng vé`: Giữ nhịp quay truyền thống từng lượt.
+  - **Tùy chọn tự mua thêm vé quay (`benBuyLanternTicket`)**: Cho phép người chơi tự do bật/tắt việc mua thêm 5 vé quay hàng ngày.
+- **Chuẩn Hóa Logic Rút Tiền Cây ATM Bến Đò (Shell ATM Exchange)**:
+  - **Khống chế chuẩn hạn mức 20 triệu/giờ**: Tự động tính toán số tiền tối đa có thể rút (tối đa 20.000.000đ tiền mặt mỗi giờ theo quy định game hoặc số dư hạn mức còn lại `left`), quy đổi ra lượng vỏ sò tương ứng theo tỷ giá của ngày chơi (`shellsToCash = Math.min(shells, Math.floor(20M / rate))`), không đổi lố toàn bộ số vỏ sò trong túi.
+  - **Thăm dò trạng thái ATM từ xa**: Tự động gửi gói tin WebSocket `{ t: 'atm' }` để nắm bắt tỷ giá, hạn mức còn lại và mốc giờ mở đổi tiếp theo (`reopen`) mà không cần nhân vật phải chạy ra ATM.
+  - **Kiểm tra thông minh & Hẹn giờ (Timer Scheduler)**: Nếu chưa tới giờ đổi (đã nhận đủ 20 triệu hoặc chưa tới mốc `reopen`), bot không đi ra cây ATM mà tiếp tục câu cá bình thường, tự động set timer tới đúng giờ mở đổi và hiển thị log đếm ngược rõ ràng (`⏳ Cây ATM: Chưa tới giờ đổi (mở đổi lúc HH:mm:ss, còn X phút Y giây)`).
+  - **Ngưỡng dừng bảo lưu vốn (`benAtmThreshold`)**: Mặc định 10.000 vỏ sò, bot tự động dừng không đổi tiền nếu số vỏ sò tụt xuống dưới ngưỡng này.
+- **Khảo Sát & Chuẩn Hóa Tọa Độ Điểm Ngồi Câu (Fishing Spots & Cast Validation)**:
+  - Phân tích toán học toàn bộ ma trận map Bến Đò (60×40) và thuật toán ném cần `Zh(e)` / `Qh(x, y)` từ mã nguồn game.
+  - Sửa dứt điểm lỗi tọa độ cũ của Cầu tre `(31, 4)` không câu được do nằm giữa sàn gỗ không tiếp giáp nước (game trả về `null` nên nút câu bị khóa).
+  - Cập nhật 4 vị trí câu tiếp giáp mép nước chuẩn xác vào menu chọn:
+    - `🌾 Bờ sông bến giữa` **`(24, 10)`**: Đứng sát mép bờ ném cần ra giữa dòng sông `(24, 7)`.
+    - `🌉 Cầu tàu lớn (Đầu mũi)` **`(31, 3)`**: Đứng sát mũi cầu tàu dài ném ra vùng nước sâu `(31, 0)` săn cá to.
+    - `🎋 Cầu tre lắt lẻo` **`(7, 6)`**: Đứng ở chóp cầu tre bờ Tây ném ra vụng sông `(7, 3)`.
+    - `🪵 Cầu ván qua lạch` **`(46, 15)`**: Đứng trên cầu ván ném cần vào nhánh lạch `(46, 12)`.
+  - Nhân vật tự động đi bộ đến đúng tọa độ được chọn trước khi vung cần câu.
+- **Nâng Cấp Bộ Cài Đặt Mua Mồi Chú Đực Khi Hết Mồi (Bait Stocking Logic)**:
+  - Thêm ô cấu hình số lượng mồi tối đa trong túi `benBaitMaxCount` (mặc định 10.000 mồi, dừng mua khi mồi >= x).
+  - Thêm ô cấu hình ngưỡng vỏ sò dừng mua `benBaitMinShells` (mặc định 10.000 vỏ sò, dừng mua khi vỏ sò < x).
+  - Cơ chế gom mồi thông minh: Khi hết mồi, bot chạy ra sạp Chú Đực và gom mồi theo đợt liên tục cho đến khi đạt hạn mức hoặc chạm ngưỡng dừng, giúp người chơi cắm câu hàng ngàn lượt mà không bị chạy đi chạy lại liên tục.
+
+---
+
 ## [1.6.2] - 2026-10-27
 
 ### 🌟 Tính Năng Mới & Nâng Cấp Giao Diện (Features & UI Enhancements)
