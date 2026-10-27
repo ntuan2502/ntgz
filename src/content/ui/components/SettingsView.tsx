@@ -109,21 +109,21 @@ export function SettingsView({
   const getDelayBadge = (ms: number) => {
     if (ms < 600) {
       return (
-        <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 font-medium">
+        <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200/80 font-medium shrink-0">
           ⚡ Nhanh
         </span>
       );
     }
     if (ms <= 1800) {
       return (
-        <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-medium">
-          ✅ Chuẩn & Khuyến nghị
+        <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/80 font-medium shrink-0">
+          ✅ Chuẩn
         </span>
       );
     }
     return (
-      <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-medium">
-        🐢 Rất an toàn
+      <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200/80 font-medium shrink-0">
+        🐢 An toàn
       </span>
     );
   };
@@ -131,21 +131,21 @@ export function SettingsView({
   const getRepeatDelayBadge = (ms: number) => {
     if (ms === 0) {
       return (
-        <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-100 text-purple-800 font-bold">
-          🚀 Tức thì 0ms (Đồng loạt cả vườn)
+        <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200/80 font-bold shrink-0">
+          🚀 Đồng loạt
         </span>
       );
     }
     if (ms <= 250) {
       return (
-        <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-medium">
-          ⚡ Siêu tốc & Mượt
+        <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/80 font-medium shrink-0">
+          ⚡ Siêu tốc
         </span>
       );
     }
     return (
-      <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-medium">
-        🚶 Nhịp từng ô
+      <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200/80 font-medium shrink-0">
+        🚶 Từng ô
       </span>
     );
   };
@@ -174,23 +174,23 @@ export function SettingsView({
       {/* Scrollable Settings Content */}
       <div className="flex-1 min-h-0 overflow-y-auto p-3 space-y-3">
         {/* 1. Tốc độ & Độ trễ chuyển bước thao tác */}
-        <div className="rounded-xl border border-slate-200/90 bg-white p-3 space-y-3.5 shadow-2xs">
+        <div className="rounded-xl border border-slate-200/90 bg-white p-3 space-y-3 shadow-2xs">
           {/* Slider 1: Độ trễ chuyển bước khác loại */}
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-                <Clock className="h-4 w-4 text-emerald-600" />
-                <span>Độ trễ chuyển bước thao tác (Khác loại)</span>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 min-w-0">
+                <Clock className="h-4 w-4 text-emerald-600 shrink-0" />
+                <span className="truncate">Độ trễ chuyển bước (Khác loại)</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 shrink-0">
                 {getDelayBadge(config.taskDelayMs)}
-                <span className="font-mono text-emerald-700 font-bold text-xs">
+                <span className="font-mono text-emerald-700 font-bold text-xs bg-emerald-50/80 border border-emerald-200/70 px-1.5 py-0.5 rounded-md">
                   {config.taskDelayMs} ms
                 </span>
               </div>
             </div>
 
-            <div className="pt-1">
+            <div className="pt-0.5">
               <Slider
                 value={[config.taskDelayMs]}
                 min={300}
@@ -202,7 +202,7 @@ export function SettingsView({
             </div>
 
             <p className="text-[11px] text-slate-500 leading-relaxed">
-              Khoảng nghỉ khi chuyển giữa các nhóm việc khác nhau (Thu hoạch ➔ Gieo hạt ➔ Tưới nước ➔ Chăm sóc vật nuôi ➔ Đổi khu).
+              Khoảng nghỉ khi chuyển giữa các nhóm việc (Thu hoạch ➔ Gieo hạt ➔ Tưới nước ➔ Chăm vật nuôi...).
             </p>
           </div>
 
@@ -210,20 +210,20 @@ export function SettingsView({
 
           {/* Slider 2: Tốc độ lặp lệnh cùng loại */}
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-                <Clock className="h-4 w-4 text-purple-600" />
-                <span>Tốc độ lặp lệnh cùng loại (Tưới / Gieo / Bón)</span>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 min-w-0">
+                <Clock className="h-4 w-4 text-purple-600 shrink-0" />
+                <span className="truncate">Tốc độ lặp lệnh cùng loại</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 shrink-0">
                 {getRepeatDelayBadge(config.actionRepeatDelayMs ?? 100)}
-                <span className="font-mono text-purple-700 font-bold text-xs">
+                <span className="font-mono text-purple-700 font-bold text-xs bg-purple-50/80 border border-purple-200/70 px-1.5 py-0.5 rounded-md">
                   {config.actionRepeatDelayMs ?? 100} ms
                 </span>
               </div>
             </div>
 
-            <div className="pt-1">
+            <div className="pt-0.5">
               <Slider
                 value={[config.actionRepeatDelayMs ?? 100]}
                 min={0}
@@ -235,7 +235,7 @@ export function SettingsView({
             </div>
 
             <p className="text-[11px] text-slate-500 leading-relaxed">
-              Khoảng cách giữa các ô đất cùng loại (Tưới ô 1 ➔ ô 2 ➔ ô 3...). Kéo về <strong className="text-purple-700">0ms</strong> để kích hoạt cơ chế <strong>Làm đồng loạt cả vườn trong 1 lượt</strong>!
+              Khoảng cách giữa các ô đất cùng loại (Tưới ô 1 ➔ ô 2...). Kéo về <strong className="text-purple-700 font-bold">0ms</strong> để <strong>làm đồng loạt cả vườn</strong>!
             </p>
           </div>
         </div>
@@ -244,7 +244,7 @@ export function SettingsView({
         <div className="rounded-xl border border-slate-200/90 bg-white p-3 space-y-2.5 shadow-2xs">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-              <Eye className="h-4 w-4 text-indigo-600" />
+              <Eye className="h-4 w-4 text-indigo-600 shrink-0" />
               <span>Hiển thị đầy đủ thao tác</span>
             </div>
             <Switch
@@ -256,22 +256,20 @@ export function SettingsView({
             />
           </div>
 
-          <div className="rounded-lg bg-slate-50 border border-slate-200/80 p-2.5 space-y-1.5 text-[11px]">
-            <div className="flex items-start gap-1.5">
-              <span className="font-bold text-slate-700 shrink-0">
-                {config.showFullActions ? '👁️ Đang BẬT UI Gốc:' : '🕶️ Đang chạy ngầm (Khuyến nghị):'}
-              </span>
-              <span className="text-slate-600">
-                {config.showFullActions
-                  ? 'Mở đầy đủ các bảng popup của game (Vòng quay lồng đèn quay số, bảng ATM, menu sạp hàng...) để xem trực quan.'
-                  : 'Không mở popup menu che màn hình game. Lệnh được gửi ngầm mượt mà, màn hình luôn sạch sẽ.'}
-              </span>
+          <div className="rounded-lg bg-slate-50 border border-slate-200/80 p-2.5 space-y-1 text-[11px]">
+            <div className="font-bold text-slate-700 flex items-center gap-1.5">
+              <span>{config.showFullActions ? '👁️ Đang mở giao diện gốc' : '🕶️ Chế độ chạy ngầm (Khuyến nghị)'}</span>
             </div>
+            <p className="text-slate-600 leading-relaxed">
+              {config.showFullActions
+                ? 'Mở đầy đủ các bảng popup của game (Vòng quay lồng đèn, ATM, menu sạp hàng...) để xem trực quan.'
+                : 'Không mở popup menu che màn hình game. Lệnh được gửi ngầm mượt mà, màn hình luôn sạch sẽ.'}
+            </p>
           </div>
 
-          <div className="flex items-center gap-1.5 text-[10px] text-emerald-800 bg-emerald-50/80 border border-emerald-200/70 rounded-lg px-2.5 py-1.5">
-            <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-            <span>
+          <div className="flex items-center gap-2 text-[10px] text-emerald-800 bg-emerald-50/80 border border-emerald-200/70 rounded-lg px-2.5 py-1.5">
+            <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+            <span className="leading-snug">
               <strong>Bảo vệ Anti-cheat:</strong> Nhân vật luôn tự động đi bộ tới vị trí NPC trước khi thực hiện hành động, đảm bảo an toàn tuyệt đối.
             </span>
           </div>
@@ -279,18 +277,18 @@ export function SettingsView({
 
         {/* 3. Thứ tự & Điều phối Đa khu vực */}
         <div className="rounded-xl border border-slate-200/90 bg-white p-3 space-y-2.5 shadow-2xs">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-              <ListOrdered className="h-4 w-4 text-amber-600" />
-              <span>Thứ tự & Điều phối các khu</span>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 min-w-0">
+              <ListOrdered className="h-4 w-4 text-amber-600 shrink-0" />
+              <span className="truncate">Thứ tự điều phối các khu</span>
             </div>
-            <Badge variant="outline" className="text-[10px] text-emerald-700 bg-emerald-50 border-emerald-200/80 font-medium">
-              ✨ Tự đổi thông minh khi xong việc
-            </Badge>
+            <span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2 py-0.5 rounded-full font-medium shrink-0">
+              ✨ Đổi thông minh
+            </span>
           </div>
 
-          <p className="text-[11px] text-slate-500">
-            Thứ tự ưu tiên chạy từ trên xuống dưới khi bật chế độ <strong>▶️ TẤT CẢ (Alt+A)</strong>. Hệ thống sẽ tự động chuyển khu tiếp theo ngay khi hoàn tất các việc được bật trong khu hiện tại:
+          <p className="text-[11px] text-slate-500 leading-relaxed">
+            Thứ tự ưu tiên chạy từ trên xuống dưới khi bật chế độ <strong>▶️ TẤT CẢ (Alt+A)</strong>. Hệ thống tự động chuyển khu tiếp theo ngay khi xong việc:
           </p>
 
           <div className="space-y-1.5">
@@ -300,25 +298,25 @@ export function SettingsView({
               return (
                 <div
                   key={areaId}
-                  className="flex items-center justify-between rounded-lg bg-slate-50 px-2.5 py-1.5 border border-slate-200/80 text-[11px] hover:bg-slate-100/70 transition-colors"
+                  className="flex items-center justify-between rounded-lg bg-slate-50 px-2.5 py-1.5 border border-slate-200/80 text-[11px] hover:bg-slate-100/70 transition-colors h-9"
                 >
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-[10px] text-slate-400 font-semibold w-4">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="font-mono text-[10px] text-slate-400 font-bold w-4.5 shrink-0 text-center">
                       #{idx + 1}
                     </span>
-                    <span className="text-sm">{meta?.icon || '📍'}</span>
-                    <span className={isEnabled ? 'text-slate-800 font-medium' : 'text-slate-400 line-through'}>
+                    <span className="text-sm shrink-0 leading-none">{meta?.icon || '📍'}</span>
+                    <span className={`text-xs truncate ${isEnabled ? 'text-slate-800 font-medium' : 'text-slate-400 line-through'}`}>
                       {meta?.name || areaId}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 shrink-0">
                     <div className="flex items-center gap-0.5">
                       <Button
                         variant="ghost"
                         size="icon-xs"
                         disabled={idx === 0}
-                        className="h-5.5 w-5.5 text-slate-500 hover:text-slate-900"
+                        className="h-6 w-6 p-0 text-slate-500 hover:text-slate-900 disabled:opacity-30 cursor-pointer flex items-center justify-center"
                         onClick={() => handleMoveArea(idx, 'up')}
                         title="Đẩy lên trước"
                       >
@@ -328,7 +326,7 @@ export function SettingsView({
                         variant="ghost"
                         size="icon-xs"
                         disabled={idx === activeAreaOrder.length - 1}
-                        className="h-5.5 w-5.5 text-slate-500 hover:text-slate-900"
+                        className="h-6 w-6 p-0 text-slate-500 hover:text-slate-900 disabled:opacity-30 cursor-pointer flex items-center justify-center"
                         onClick={() => handleMoveArea(idx, 'down')}
                         title="Đẩy xuống sau"
                       >
@@ -353,18 +351,18 @@ export function SettingsView({
         <div className="rounded-xl border border-slate-200/90 bg-white p-3 space-y-3 shadow-2xs">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-              <Sliders className="h-4 w-4 text-slate-600" />
+              <Sliders className="h-4 w-4 text-slate-600 shrink-0" />
               <span>Kích thước bảng điều khiển HUD</span>
             </div>
-            <span className="text-[11px] font-mono font-semibold text-slate-500">
+            <span className="text-[11px] font-mono font-bold text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
               {currentW} × {currentH} px
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="flex-1 space-y-1">
-              <span className="text-[10px] text-slate-500 font-medium">Chiều rộng (W)</span>
-              <div className="flex items-center gap-1">
+          <div className="grid grid-cols-5 gap-2 items-end">
+            <div className="col-span-2 space-y-1">
+              <label className="text-[10px] text-slate-500 font-medium block">Chiều rộng (W)</label>
+              <div className="relative flex items-center">
                 <input
                   type="number"
                   min={340}
@@ -372,16 +370,16 @@ export function SettingsView({
                   step={10}
                   value={inputWidth}
                   onChange={(e) => setInputWidth(e.target.value)}
-                  className="w-full h-7 rounded-lg bg-slate-50 px-2 text-xs text-slate-800 font-mono font-medium border border-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                  placeholder="Width"
+                  className="w-full h-8 rounded-lg bg-slate-50 pl-2.5 pr-6 text-xs text-slate-800 font-mono font-medium border border-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  placeholder="400"
                 />
-                <span className="text-[10px] text-slate-400">px</span>
+                <span className="absolute right-2 text-[10px] text-slate-400 pointer-events-none select-none">px</span>
               </div>
             </div>
 
-            <div className="flex-1 space-y-1">
-              <span className="text-[10px] text-slate-500 font-medium">Chiều cao (H)</span>
-              <div className="flex items-center gap-1">
+            <div className="col-span-2 space-y-1">
+              <label className="text-[10px] text-slate-500 font-medium block">Chiều cao (H)</label>
+              <div className="relative flex items-center">
                 <input
                   type="number"
                   min={360}
@@ -389,18 +387,18 @@ export function SettingsView({
                   step={10}
                   value={inputHeight}
                   onChange={(e) => setInputHeight(e.target.value)}
-                  className="w-full h-7 rounded-lg bg-slate-50 px-2 text-xs text-slate-800 font-mono font-medium border border-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                  placeholder="Height"
+                  className="w-full h-8 rounded-lg bg-slate-50 pl-2.5 pr-6 text-xs text-slate-800 font-mono font-medium border border-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  placeholder="800"
                 />
-                <span className="text-[10px] text-slate-400">px</span>
+                <span className="absolute right-2 text-[10px] text-slate-400 pointer-events-none select-none">px</span>
               </div>
             </div>
 
-            <div className="pt-4">
+            <div className="col-span-1">
               <Button
                 variant="default"
                 size="sm"
-                className="h-7 text-xs px-3 bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer font-medium"
+                className="w-full h-8 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer rounded-lg shadow-2xs"
                 onClick={handleApplySize}
               >
                 Áp dụng
@@ -414,23 +412,25 @@ export function SettingsView({
             <Button
               variant="outline"
               size="sm"
-              className="w-full justify-center text-[11px] h-8 rounded-lg border-slate-200 text-slate-700 hover:bg-slate-100 cursor-pointer shadow-2xs"
+              className="w-full justify-center text-[11px] h-8 px-2 rounded-lg border-slate-200 text-slate-700 hover:bg-slate-100 cursor-pointer shadow-2xs truncate"
               onClick={onResetSize}
+              title="Khôi phục kích thước chuẩn 400×800 px"
             >
-              <RotateCcw className="h-3.5 w-3.5 mr-1 text-slate-500" />
-              Đặt lại kích thước HUD (400×800)
+              <RotateCcw className="h-3.5 w-3.5 mr-1.5 shrink-0 text-slate-500" />
+              <span className="truncate">Mặc định (400×800)</span>
             </Button>
 
             <Button
               variant="outline"
               size="sm"
-              className="w-full justify-center text-[11px] h-8 rounded-lg border-slate-200 text-red-600 hover:bg-red-50 hover:border-red-200 cursor-pointer shadow-2xs"
+              className="w-full justify-center text-[11px] h-8 px-2 rounded-lg border-slate-200 text-red-600 hover:bg-red-50 hover:border-red-200 cursor-pointer shadow-2xs truncate"
               onClick={() => {
                 clearSessionLogs();
               }}
+              title="Xóa toàn bộ nhật ký phiên làm việc"
             >
-              <Trash2 className="h-3.5 w-3.5 mr-1 text-red-500" />
-              Xóa sạch nhật ký log
+              <Trash2 className="h-3.5 w-3.5 mr-1.5 shrink-0 text-red-500" />
+              <span className="truncate">Xóa nhật ký log</span>
             </Button>
           </div>
         </div>

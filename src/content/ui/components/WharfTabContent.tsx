@@ -26,7 +26,6 @@ const KEEP_RARITY_OPTIONS = [
 ];
 
 export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab }: WharfTabContentProps) {
-  const isWharfAreaEnabled = config.areaEnabled.benDo !== false;
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const dragSourceIndexRef = React.useRef<number | null>(null);
@@ -35,16 +34,6 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab }: Wh
     Array.isArray(config.benSubOrder) && config.benSubOrder.length > 0
       ? config.benSubOrder
       : ['fishing', 'cricketBoss', 'cricketHunt', 'entertainment'];
-
-  const handleToggleArea = (checked: boolean) => {
-    onUpdateConfig((prev) => ({
-      ...prev,
-      areaEnabled: {
-        ...prev.areaEnabled,
-        benDo: checked,
-      },
-    }));
-  };
 
   const handleToggleSubEnabled = (subId: WharfSubAreaId, checked: boolean) => {
     onUpdateConfig((prev) => ({
@@ -590,14 +579,6 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab }: Wh
 
   return (
     <div className="space-y-2.5 text-xs font-sans text-slate-800">
-      {/* Wharf Banner Toggle */}
-      <div className="flex items-center justify-between rounded-xl bg-blue-50 border border-blue-200/80 px-3.5 py-2 text-blue-900 shadow-xs">
-        <span className="font-semibold text-xs flex items-center gap-1.5">
-          🛶 Cho phép chạy Khu vực Bến Đò
-        </span>
-        <Switch checked={isWharfAreaEnabled} onCheckedChange={handleToggleArea} />
-      </div>
-
       {/* Hiển thị bảng thao tác Bến Đò */}
       <div className="flex items-center justify-between rounded-xl bg-white border border-slate-200/90 px-3.5 py-2 text-slate-800 shadow-2xs">
         <span className="font-semibold text-xs flex items-center gap-1.5">
