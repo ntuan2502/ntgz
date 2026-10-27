@@ -24782,13 +24782,23 @@
             )
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-center gap-1.5 font-bold text-xs tracking-tight", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "text-emerald-700", children: "\u{1F33E} NTG Auto" }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+              "img",
+              {
+                src: chrome.runtime.getURL("images/icon-192.png"),
+                alt: "NTG",
+                className: "w-4 h-4 rounded-xs object-contain"
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "text-emerald-700", children: "NTG Auto" }),
             /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "text-slate-400 font-normal", children: "by T\xFAn" }),
             /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
               Badge,
               {
                 variant: "outline",
-                className: "ml-0.5 border-slate-200 bg-white px-1.5 py-0 text-[10px] font-mono text-slate-600 shadow-xs",
+                onClick: onCheckUpdate,
+                className: "ml-0.5 border-slate-200 bg-white px-1.5 py-0 text-[10px] font-mono text-slate-600 shadow-xs cursor-pointer hover:bg-slate-100 hover:text-emerald-700 transition-colors",
+                title: "B\u1EA5m \u0111\u1EC3 xem chi ti\u1EBFt nh\u1EADt k\xFD c\u1EADp nh\u1EADt (Changelog)",
                 children: [
                   "v",
                   version
@@ -25275,44 +25285,56 @@
   __iconData.node;
   var ArrowDown = createLucideIcon(__iconData);
 
-  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/check.mjs
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/arrow-left.mjs
   var __iconData2 = {
+    name: "arrow-left",
+    size: 24,
+    node: [
+      ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
+      ["path", { d: "M19 12H5", key: "x3x0zl" }]
+    ]
+  };
+  __iconData2.node;
+  var ArrowLeft = createLucideIcon(__iconData2);
+
+  // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/check.mjs
+  var __iconData3 = {
     name: "check",
     size: 24,
     node: [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]]
   };
-  __iconData2.node;
-  var Check = createLucideIcon(__iconData2);
+  __iconData3.node;
+  var Check = createLucideIcon(__iconData3);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/chevron-down.mjs
-  var __iconData3 = {
+  var __iconData4 = {
     name: "chevron-down",
     size: 24,
     node: [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]]
   };
-  __iconData3.node;
-  var ChevronDown = createLucideIcon(__iconData3);
+  __iconData4.node;
+  var ChevronDown = createLucideIcon(__iconData4);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/chevron-right.mjs
-  var __iconData4 = {
+  var __iconData5 = {
     name: "chevron-right",
     size: 24,
     node: [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]]
   };
-  __iconData4.node;
-  var ChevronRight = createLucideIcon(__iconData4);
+  __iconData5.node;
+  var ChevronRight = createLucideIcon(__iconData5);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/chevron-up.mjs
-  var __iconData5 = {
+  var __iconData6 = {
     name: "chevron-up",
     size: 24,
     node: [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]]
   };
-  __iconData5.node;
-  var ChevronUp = createLucideIcon(__iconData5);
+  __iconData6.node;
+  var ChevronUp = createLucideIcon(__iconData6);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/circle-check.mjs
-  var __iconData6 = {
+  var __iconData7 = {
     name: "circle-check",
     size: 24,
     node: [
@@ -25321,11 +25343,11 @@
     ],
     aliases: ["check-circle-2"]
   };
-  __iconData6.node;
-  var CircleCheck = createLucideIcon(__iconData6);
+  __iconData7.node;
+  var CircleCheck = createLucideIcon(__iconData7);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/copy.mjs
-  var __iconData7 = {
+  var __iconData8 = {
     name: "copy",
     size: 24,
     node: [
@@ -25333,11 +25355,11 @@
       ["path", { d: "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2", key: "zix9uf" }]
     ]
   };
-  __iconData7.node;
-  var Copy = createLucideIcon(__iconData7);
+  __iconData8.node;
+  var Copy = createLucideIcon(__iconData8);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/download.mjs
-  var __iconData8 = {
+  var __iconData9 = {
     name: "download",
     size: 24,
     node: [
@@ -25346,11 +25368,11 @@
       ["path", { d: "m7 10 5 5 5-5", key: "brsn70" }]
     ]
   };
-  __iconData8.node;
-  var Download = createLucideIcon(__iconData8);
+  __iconData9.node;
+  var Download = createLucideIcon(__iconData9);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/external-link.mjs
-  var __iconData9 = {
+  var __iconData10 = {
     name: "external-link",
     size: 24,
     node: [
@@ -25359,11 +25381,11 @@
       ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
     ]
   };
-  __iconData9.node;
-  var ExternalLink = createLucideIcon(__iconData9);
+  __iconData10.node;
+  var ExternalLink = createLucideIcon(__iconData10);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/file-text.mjs
-  var __iconData10 = {
+  var __iconData11 = {
     name: "file-text",
     size: 24,
     node: [
@@ -25380,11 +25402,11 @@
       ["path", { d: "M16 17H8", key: "z1uh3a" }]
     ]
   };
-  __iconData10.node;
-  var FileText = createLucideIcon(__iconData10);
+  __iconData11.node;
+  var FileText = createLucideIcon(__iconData11);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/grip-vertical.mjs
-  var __iconData11 = {
+  var __iconData12 = {
     name: "grip-vertical",
     size: 24,
     node: [
@@ -25396,11 +25418,11 @@
       ["circle", { cx: "15", cy: "19", r: "1", key: "f4zoj3" }]
     ]
   };
-  __iconData11.node;
-  var GripVertical = createLucideIcon(__iconData11);
+  __iconData12.node;
+  var GripVertical = createLucideIcon(__iconData12);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/list-ordered.mjs
-  var __iconData12 = {
+  var __iconData13 = {
     name: "list-ordered",
     size: 24,
     node: [
@@ -25412,11 +25434,11 @@
       ["path", { d: "M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02", key: "xtkcd5" }]
     ]
   };
-  __iconData12.node;
-  var ListOrdered = createLucideIcon(__iconData12);
+  __iconData13.node;
+  var ListOrdered = createLucideIcon(__iconData13);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/play.mjs
-  var __iconData13 = {
+  var __iconData14 = {
     name: "play",
     size: 24,
     node: [
@@ -25429,11 +25451,11 @@
       ]
     ]
   };
-  __iconData13.node;
-  var Play = createLucideIcon(__iconData13);
+  __iconData14.node;
+  var Play = createLucideIcon(__iconData14);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/rotate-ccw-clock.mjs
-  var __iconData14 = {
+  var __iconData15 = {
     name: "rotate-ccw-clock",
     size: 24,
     node: [
@@ -25443,11 +25465,11 @@
     ],
     aliases: ["history"]
   };
-  __iconData14.node;
-  var RotateCcwClock = createLucideIcon(__iconData14);
+  __iconData15.node;
+  var RotateCcwClock = createLucideIcon(__iconData15);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/sparkles.mjs
-  var __iconData15 = {
+  var __iconData16 = {
     name: "sparkles",
     size: 24,
     node: [
@@ -25464,20 +25486,20 @@
     ],
     aliases: ["stars"]
   };
-  __iconData15.node;
-  var Sparkles = createLucideIcon(__iconData15);
+  __iconData16.node;
+  var Sparkles = createLucideIcon(__iconData16);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/square.mjs
-  var __iconData16 = {
+  var __iconData17 = {
     name: "square",
     size: 24,
     node: [["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]]
   };
-  __iconData16.node;
-  var Square = createLucideIcon(__iconData16);
+  __iconData17.node;
+  var Square = createLucideIcon(__iconData17);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/terminal.mjs
-  var __iconData17 = {
+  var __iconData18 = {
     name: "terminal",
     size: 24,
     node: [
@@ -25485,11 +25507,11 @@
       ["path", { d: "m4 17 6-6-6-6", key: "1yngyt" }]
     ]
   };
-  __iconData17.node;
-  var Terminal = createLucideIcon(__iconData17);
+  __iconData18.node;
+  var Terminal = createLucideIcon(__iconData18);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/trash.mjs
-  var __iconData18 = {
+  var __iconData19 = {
     name: "trash",
     size: 24,
     node: [
@@ -25501,11 +25523,11 @@
     ],
     aliases: ["trash-2"]
   };
-  __iconData18.node;
-  var Trash = createLucideIcon(__iconData18);
+  __iconData19.node;
+  var Trash = createLucideIcon(__iconData19);
 
   // node_modules/.pnpm/lucide-react@1.61.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react/dist/esm/icons/x.mjs
-  var __iconData19 = {
+  var __iconData20 = {
     name: "x",
     size: 24,
     node: [
@@ -25513,8 +25535,8 @@
       ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
     ]
   };
-  __iconData19.node;
-  var X = createLucideIcon(__iconData19);
+  __iconData20.node;
+  var X = createLucideIcon(__iconData20);
 
   // src/content/ui/components/HudControls.tsx
   var import_jsx_runtime25 = __toESM(require_jsx_runtime(), 1);
@@ -28916,7 +28938,7 @@
     const [isTerminalOpen, setIsTerminalOpen] = (0, import_react9.useState)(() => Boolean(initialConfig.isTerminalOpen));
     const [isCheckingUpdate, setIsCheckingUpdate] = (0, import_react9.useState)(false);
     const [updateInfo, setUpdateInfo] = (0, import_react9.useState)(null);
-    const [isUpdateModalOpen, setIsUpdateModalOpen] = (0, import_react9.useState)(false);
+    const [viewMode, setViewMode] = (0, import_react9.useState)("main");
     const MIN_WIDTH = 340;
     const MIN_HEIGHT = 360;
     const [size4, setSize] = (0, import_react9.useState)(() => ({
@@ -28939,15 +28961,15 @@
       }
     }, []);
     (0, import_react9.useEffect)(() => {
-      if (!isUpdateModalOpen) return;
+      if (viewMode !== "changelog") return;
       const handleKeyDown = (e) => {
         if (e.key === "Escape") {
-          setIsUpdateModalOpen(false);
+          setViewMode("main");
         }
       };
       window.addEventListener("keydown", handleKeyDown);
       return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [isUpdateModalOpen]);
+    }, [viewMode]);
     (0, import_react9.useEffect)(() => {
       const handleSnapUpdate = (e) => {
         setSnap(e.detail);
@@ -29112,7 +29134,7 @@
       try {
         const info = await checkForUpdates();
         setUpdateInfo(info);
-        setIsUpdateModalOpen(true);
+        setViewMode("changelog");
       } catch {
       } finally {
         setIsCheckingUpdate(false);
@@ -29151,7 +29173,35 @@
                 onMouseDownDrag: handleMouseDownDrag
               }
             ),
-            !isMinimized && /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { className: "flex flex-col flex-1 min-h-0 overflow-hidden", children: [
+            !isMinimized && (viewMode === "changelog" && updateInfo ? /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { className: "flex flex-col flex-1 min-h-0 overflow-hidden bg-white", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { className: "flex items-center justify-between px-3.5 py-2 bg-slate-50 border-b border-slate-200 shrink-0 select-none", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)(
+                  Button,
+                  {
+                    variant: "ghost",
+                    size: "sm",
+                    className: "text-xs text-slate-600 hover:text-slate-900 hover:bg-slate-100 h-7 px-2 -ml-1 cursor-pointer",
+                    onClick: () => setViewMode("main"),
+                    children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(ArrowLeft, { className: "h-3.5 w-3.5 mr-1" }),
+                      "Quay l\u1EA1i b\u1EA3ng \u0111i\u1EC1u khi\u1EC3n"
+                    ]
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)(Badge, { variant: "outline", className: "text-[10px] font-mono text-slate-500 bg-white", children: [
+                  "v",
+                  version
+                ] })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("div", { className: "flex-1 min-h-0 overflow-hidden", children: /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
+                ReleaseChangelogView,
+                {
+                  updateInfo,
+                  showHeader: false,
+                  onClose: () => setViewMode("main")
+                }
+              ) })
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { className: "flex flex-col flex-1 min-h-0 overflow-hidden", children: [
               /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(HudStats, { snap }),
               /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
                 HudControls,
@@ -29216,7 +29266,7 @@
                   /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(TabsContent3, { value: "farmstay", className: "m-0", children: /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(FarmstayTabContent, { config: config2, onUpdateConfig: handleUpdateConfig }) })
                 ] })
               ] })
-            ] }),
+            ] })),
             !isMinimized && /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)(import_jsx_runtime37.Fragment, { children: [
               /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
                 "div",
@@ -29257,30 +29307,7 @@
                   children: /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("svg", { width: "9", height: "9", viewBox: "0 0 10 10", fill: "none", stroke: "currentColor", strokeWidth: "1.6", strokeLinecap: "round", children: /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("path", { d: "M9 3L3 9M9 7L7 9" }) })
                 }
               )
-            ] }),
-            isUpdateModalOpen && /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
-              "div",
-              {
-                className: "fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-3 sm:p-4 pointer-events-auto select-auto",
-                onClick: (e) => {
-                  if (e.target === e.currentTarget) setIsUpdateModalOpen(false);
-                },
-                children: /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
-                  "div",
-                  {
-                    className: "relative w-full max-w-[440px] max-h-[85vh] flex flex-col bg-white border border-slate-200 text-slate-900 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in-0 zoom-in-95 duration-150",
-                    onClick: (e) => e.stopPropagation(),
-                    children: updateInfo && /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
-                      ReleaseChangelogView,
-                      {
-                        updateInfo,
-                        onClose: () => setIsUpdateModalOpen(false)
-                      }
-                    )
-                  }
-                )
-              }
-            )
+            ] })
           ]
         }
       ),
@@ -30503,6 +30530,7 @@ lucide-react/dist/esm/context.mjs:
 lucide-react/dist/esm/Icon.mjs:
 lucide-react/dist/esm/createLucideIcon.mjs:
 lucide-react/dist/esm/icons/arrow-down.mjs:
+lucide-react/dist/esm/icons/arrow-left.mjs:
 lucide-react/dist/esm/icons/check.mjs:
 lucide-react/dist/esm/icons/chevron-down.mjs:
 lucide-react/dist/esm/icons/chevron-right.mjs:

@@ -12,6 +12,9 @@ import { SeaTabContent } from './components/SeaTabContent';
 import { FarmstayTabContent } from './components/FarmstayTabContent';
 import { HudLogEntry, getSessionLogs, clearSessionLogs } from './hud-core';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft } from 'lucide-react';
 import { ReleaseChangelogView } from '@/components/ReleaseChangelogView';
 import { checkForUpdates } from '@/services/github-service';
 import { UpdateCheckResult } from '@/shared/types/github';
@@ -43,10 +46,10 @@ export function HudApp({
   const [terminalWidth, setTerminalWidth] = useState<number>(() => initialConfig.terminalWidth || 380);
   const [isTerminalOpen, setIsTerminalOpen] = useState<boolean>(() => Boolean(initialConfig.isTerminalOpen));
 
-  // Dialog states
+  // Dialog & View states
   const [isCheckingUpdate, setIsCheckingUpdate] = useState<boolean>(false);
   const [updateInfo, setUpdateInfo] = useState<UpdateCheckResult | null>(null);
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false);
+  const [viewMode, setViewMode] = useState<'main' | 'changelog'>('main');
 
   // Position, Size & Dragging/Resizing
   const MIN_WIDTH = 340;
@@ -75,17 +78,17 @@ export function HudApp({
     }
   }, []);
 
-  // Close update modal on Escape key press
+  // Close changelog view on Escape key press
   useEffect(() => {
-    if (!isUpdateModalOpen) return;
+    if (viewMode !== 'changelog') return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setIsUpdateModalOpen(false);
+        setViewMode('main');
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isUpdateModalOpen]);
+  }, [viewMode]);
 
   // Expose global bridge update listeners
   useEffect(() => {
@@ -280,7 +283,7 @@ export function HudApp({
     try {
       const info = await checkForUpdates();
       setUpdateInfo(info);
-      setIsUpdateModalOpen(true);
+      setViewMode('changelog');
     } catch {
       // Ignore
     } finally {
@@ -324,77 +327,106 @@ export function HudApp({
 
       {/* Body content when not minimized */}
       {!isMinimized && (
-        <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-          {/* Live Stats Bar */}
-          <HudStats snap={snap} />
-
-          {/* Master Auto Controls & Sliders */}
-          <HudControls
-            config={config}
-            activeTab={config.activeTab}
-            onUpdateConfig={handleUpdateConfig}
-            onToggleAll={onToggleAll}
-            onToggleTab={onToggleTab}
-            isOrderDrawerOpen={isOrderDrawerOpen}
-            onToggleOrderDrawer={() => setIsOrderDrawerOpen(!isOrderDrawerOpen)}
-          />
-
-          {/* Current Action Status Bar (Terminal toggles separate window) */}
-          <HudStatusBar
-            lastAction={lastAction}
-            logsCount={logs.length}
-            isTerminalOpen={isTerminalOpen}
-            onToggleTerminal={handleToggleTerminal}
-          />
-
-          {/* Navigation Tabs */}
-          <Tabs value={config.activeTab} onValueChange={handleTabChange} className="w-full flex-1 flex flex-col min-h-0 p-2.5 overflow-hidden">
-            <TabsList className="grid w-full grid-cols-4 h-8 text-[11px] rounded-xl p-1 bg-slate-100 border border-slate-200/80 text-slate-600 shrink-0">
-              <TabsTrigger
-                value="farm"
-                className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
+        viewMode === 'changelog' && updateInfo ? (
+          <div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-white">
+            {/* Edge-to-edge Changelog Header Bar with Back button */}
+            <div className="flex items-center justify-between px-3.5 py-2 bg-slate-50 border-b border-slate-200 shrink-0 select-none">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-xs text-slate-600 hover:text-slate-900 hover:bg-slate-100 h-7 px-2 -ml-1 cursor-pointer"
+                onClick={() => setViewMode('main')}
               >
-                🌾 Nông trại
-              </TabsTrigger>
-              <TabsTrigger
-                value="benDo"
-                className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
-              >
-                🛶 Bến đò
-              </TabsTrigger>
-              <TabsTrigger
-                value="sea"
-                className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
-              >
-                🏖️ Biển
-              </TabsTrigger>
-              <TabsTrigger
-                value="farmstay"
-                className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
-              >
-                🏡 Farmstay
-              </TabsTrigger>
-            </TabsList>
-
-            <div className="mt-2.5 flex-1 overflow-y-auto overflow-x-hidden pr-1 min-h-0">
-              <TabsContent value="farm" className="m-0">
-                <FarmTabContent config={config} onUpdateConfig={handleUpdateConfig} />
-              </TabsContent>
-
-              <TabsContent value="benDo" className="m-0">
-                <WharfTabContent config={config} onUpdateConfig={handleUpdateConfig} />
-              </TabsContent>
-
-              <TabsContent value="sea" className="m-0">
-                <SeaTabContent config={config} onUpdateConfig={handleUpdateConfig} />
-              </TabsContent>
-
-              <TabsContent value="farmstay" className="m-0">
-                <FarmstayTabContent config={config} onUpdateConfig={handleUpdateConfig} />
-              </TabsContent>
+                <ArrowLeft className="h-3.5 w-3.5 mr-1" />
+                Quay lại bảng điều khiển
+              </Button>
+              <Badge variant="outline" className="text-[10px] font-mono text-slate-500 bg-white">
+                v{version}
+              </Badge>
             </div>
-          </Tabs>
-        </div>
+
+            {/* Scrollable Changelog View - reused cleanly matching Popup */}
+            <div className="flex-1 min-h-0 overflow-hidden">
+              <ReleaseChangelogView
+                updateInfo={updateInfo}
+                showHeader={false}
+                onClose={() => setViewMode('main')}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+            {/* Live Stats Bar */}
+            <HudStats snap={snap} />
+
+            {/* Master Auto Controls & Sliders */}
+            <HudControls
+              config={config}
+              activeTab={config.activeTab}
+              onUpdateConfig={handleUpdateConfig}
+              onToggleAll={onToggleAll}
+              onToggleTab={onToggleTab}
+              isOrderDrawerOpen={isOrderDrawerOpen}
+              onToggleOrderDrawer={() => setIsOrderDrawerOpen(!isOrderDrawerOpen)}
+            />
+
+            {/* Current Action Status Bar (Terminal toggles separate window) */}
+            <HudStatusBar
+              lastAction={lastAction}
+              logsCount={logs.length}
+              isTerminalOpen={isTerminalOpen}
+              onToggleTerminal={handleToggleTerminal}
+            />
+
+            {/* Navigation Tabs */}
+            <Tabs value={config.activeTab} onValueChange={handleTabChange} className="w-full flex-1 flex flex-col min-h-0 p-2.5 overflow-hidden">
+              <TabsList className="grid w-full grid-cols-4 h-8 text-[11px] rounded-xl p-1 bg-slate-100 border border-slate-200/80 text-slate-600 shrink-0">
+                <TabsTrigger
+                  value="farm"
+                  className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
+                >
+                  🌾 Nông trại
+                </TabsTrigger>
+                <TabsTrigger
+                  value="benDo"
+                  className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
+                >
+                  🛶 Bến đò
+                </TabsTrigger>
+                <TabsTrigger
+                  value="sea"
+                  className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
+                >
+                  🏖️ Biển
+                </TabsTrigger>
+                <TabsTrigger
+                  value="farmstay"
+                  className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
+                >
+                  🏡 Farmstay
+                </TabsTrigger>
+              </TabsList>
+
+              <div className="mt-2.5 flex-1 overflow-y-auto overflow-x-hidden pr-1 min-h-0">
+                <TabsContent value="farm" className="m-0">
+                  <FarmTabContent config={config} onUpdateConfig={handleUpdateConfig} />
+                </TabsContent>
+
+                <TabsContent value="benDo" className="m-0">
+                  <WharfTabContent config={config} onUpdateConfig={handleUpdateConfig} />
+                </TabsContent>
+
+                <TabsContent value="sea" className="m-0">
+                  <SeaTabContent config={config} onUpdateConfig={handleUpdateConfig} />
+                </TabsContent>
+
+                <TabsContent value="farmstay" className="m-0">
+                  <FarmstayTabContent config={config} onUpdateConfig={handleUpdateConfig} />
+                </TabsContent>
+              </div>
+            </Tabs>
+          </div>
+        )
       )}
 
       {/* Resize Handles (Edges & Corners) */}
@@ -433,28 +465,6 @@ export function HudApp({
             </svg>
           </div>
         </>
-      )}
-
-      {/* GitHub Update Modal (Scoped inside shadowRoot with ReleaseChangelogView) */}
-      {isUpdateModalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-3 sm:p-4 pointer-events-auto select-auto"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setIsUpdateModalOpen(false);
-          }}
-        >
-          <div
-            className="relative w-full max-w-[440px] max-h-[85vh] flex flex-col bg-white border border-slate-200 text-slate-900 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in-0 zoom-in-95 duration-150"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {updateInfo && (
-              <ReleaseChangelogView
-                updateInfo={updateInfo}
-                onClose={() => setIsUpdateModalOpen(false)}
-              />
-            )}
-          </div>
-        </div>
       )}
     </div>
 

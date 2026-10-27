@@ -66,11 +66,18 @@ export function HudHeader({
 
       {/* Clean Center Title & Version */}
       <div className="flex items-center gap-1.5 font-bold text-xs tracking-tight">
-        <span className="text-emerald-700">🌾 NTG Auto</span>
+        <img
+          src={chrome.runtime.getURL('images/icon-192.png')}
+          alt="NTG"
+          className="w-4 h-4 rounded-xs object-contain"
+        />
+        <span className="text-emerald-700">NTG Auto</span>
         <span className="text-slate-400 font-normal">by Tún</span>
         <Badge
           variant="outline"
-          className="ml-0.5 border-slate-200 bg-white px-1.5 py-0 text-[10px] font-mono text-slate-600 shadow-xs"
+          onClick={onCheckUpdate}
+          className="ml-0.5 border-slate-200 bg-white px-1.5 py-0 text-[10px] font-mono text-slate-600 shadow-xs cursor-pointer hover:bg-slate-100 hover:text-emerald-700 transition-colors"
+          title="Bấm để xem chi tiết nhật ký cập nhật (Changelog)"
         >
           v{version}
         </Badge>
