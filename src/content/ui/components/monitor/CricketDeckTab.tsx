@@ -1,7 +1,9 @@
 import React from 'react';
 import { GameSnapshot } from '@/shared/types/game-state';
 import { Badge } from '@/components/ui/badge';
-import { Swords, Shield, Zap, Moon, Sun, Compass } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Swords, Shield, Zap, Moon, Sun, Compass, ExternalLink } from 'lucide-react';
+import { execGameAction } from '@/content/bridge/content-bridge';
 
 interface CricketDeckTabProps {
   snap: GameSnapshot | null;
@@ -72,11 +74,23 @@ export function CricketDeckTab({ snap }: CricketDeckTabProps) {
           </Badge>
         </div>
 
-        <p className="mt-1.5 text-[11px] text-slate-300">
-          {isNightHuntOpen
-            ? '🌙 Khung giờ 18h00 - 05h00 sáng: Dế quý hiếm xuất hiện dày đặc quanh Bến Đò.'
-            : '☀️ Khung giờ săn dế đêm mở lại vào lúc 18h00 tối. Hãy tích lũy thể lực và đèn pin!'}
-        </p>
+        <div className="flex items-center justify-between gap-2 mt-2">
+          <p className="text-[11px] text-slate-300">
+            {isNightHuntOpen
+              ? '🌙 Khung giờ 18h00 - 05h00 sáng: Dế quý hiếm xuất hiện dày đặc quanh Bến Đò.'
+              : '☀️ Khung giờ săn dế đêm mở lại vào lúc 18h00 tối. Hãy tích lũy thể lực và đèn pin!'}
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => execGameAction('BEN_SET_PANEL', { panel: 'soi' })}
+            className="h-6 px-2 text-[11px] bg-white/10 hover:bg-white/20 text-white border-white/20 rounded-lg gap-1 shrink-0 cursor-pointer"
+          >
+            <span>Sới dế</span>
+            <ExternalLink className="h-3 w-3" />
+          </Button>
+        </div>
 
         {/* Wharf Quick Resources */}
         <div className="mt-3 grid grid-cols-4 gap-1.5 pt-2 border-t border-white/10 text-center text-xs">

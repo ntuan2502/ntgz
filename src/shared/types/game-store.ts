@@ -542,6 +542,28 @@ export interface BenNetState {
   basket?: Array<{ id?: string; fish?: string; price?: number; size?: number; kept?: boolean; [key: string]: unknown }>;
   pack?: Record<string, number>;
   closet?: string[];
+  look?: Record<string, string>;
+  dex?: Record<string, { count: number; best: number; [key: string]: unknown }>;
+  title?: string | null;
+  board?: {
+    records?: Record<string, { name: string; size: number; id: string }>;
+    boards?: Record<string, Array<{ id: string; name: string; value: number; fish?: string }>>;
+    me?: Record<string, { rank: number; value: number }>;
+    weekStart?: number;
+    at?: number;
+    lastWeek?: Array<{ name: string; value: number }>;
+    [key: string]: unknown;
+  } | null;
+  rods?: {
+    owned?: string[];
+    using?: string | null;
+    [key: string]: unknown;
+  } | null;
+  rooms?: {
+    size: number;
+    rooms: Array<{ id: number; players: number }>;
+  } | null;
+  room?: number | null;
   crickets?: {
     box?: CricketItem[];
     dex?: Array<{ species: string; count: number; best: number }>;
@@ -590,6 +612,28 @@ export interface BenNetState {
     [key: string]: unknown;
   };
   landed?: unknown;
+  [key: string]: unknown;
+}
+
+export interface FriendUser {
+  code: string;
+  name: string;
+  day: number;
+  lastSeen: number;
+  helped?: boolean;
+  ask?: { crop?: string; qty?: number };
+  [key: string]: unknown;
+}
+
+export interface FriendsStoreState {
+  status?: string;
+  code?: string | null;
+  visitsOff?: boolean;
+  ask?: unknown;
+  giftsLeft?: number;
+  praiseTotal?: number | null;
+  friends?: FriendUser[];
+  error?: string;
   [key: string]: unknown;
 }
 

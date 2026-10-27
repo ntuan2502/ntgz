@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
 import { ReleaseChangelogView } from '@/components/ReleaseChangelogView';
 import { HudMonitorWindow } from './components/HudMonitorWindow';
+import { MonitorTabId } from './components/monitor/MonitorHub';
 import { checkForUpdates } from '@/services/github-service';
 import { UpdateCheckResult } from '@/shared/types/github';
 
@@ -50,6 +51,12 @@ export function HudApp({
   // Monitor Window State (Side window opening horizontally)
   const [monitorWidth, setMonitorWidth] = useState<number>(420);
   const [isMonitorOpen, setIsMonitorOpen] = useState<boolean>(false);
+  const [monitorTab, setMonitorTab] = useState<MonitorTabId>('inventory');
+
+  const handleOpenMonitorTab = (tab: MonitorTabId) => {
+    setMonitorTab(tab);
+    setIsMonitorOpen(true);
+  };
 
   // Dialog & View states
   const [isCheckingUpdate, setIsCheckingUpdate] = useState<boolean>(false);
@@ -431,7 +438,11 @@ export function HudApp({
                 </TabsContent>
 
                 <TabsContent value="benDo" className="m-0">
-                  <WharfTabContent config={config} onUpdateConfig={handleUpdateConfig} />
+                  <WharfTabContent
+                    config={config}
+                    onUpdateConfig={handleUpdateConfig}
+                    onOpenMonitorTab={handleOpenMonitorTab}
+                  />
                 </TabsContent>
 
                 <TabsContent value="sea" className="m-0">
@@ -516,6 +527,7 @@ export function HudApp({
       isHudMinimized={isMinimized}
       isTerminalOpen={isTerminalOpen}
       terminalWidth={terminalWidth}
+      defaultTab={monitorTab}
     />
   </>
   );

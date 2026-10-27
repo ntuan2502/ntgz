@@ -169,6 +169,15 @@ export function getSnapshot(): GameSnapshot {
           totalBasket: Array.isArray(bn.basket) ? bn.basket.length : 0,
           basket: bn.basket,
           pack: bn.pack || {},
+          closet: bn.closet || [],
+          look: bn.look || {},
+          dex: bn.dex || {},
+          title: bn.title ?? null,
+          board: bn.board ?? null,
+          rods: bn.rods ?? null,
+          rooms: bn.rooms ?? null,
+          room: bn.room ?? null,
+          atm: bn.atm ?? null,
           landed: bn.landed,
           notice: bn.notice,
           wheel: bn.wheel,
@@ -184,6 +193,7 @@ export function getSnapshot(): GameSnapshot {
           cricketEvents: getCricketEvents(),
         }
       : null,
+    friends: stores.friends ? stores.friends.getState() : null,
     farmstay: m.farmstay ?? null,
   };
 }

@@ -5,6 +5,7 @@ import {
   CricketHuntState,
   CricketCaughtState,
   FarmstayState,
+  FriendsStoreState,
 } from './game-store';
 
 export interface VehicleState {
@@ -136,6 +137,7 @@ export interface GameSnapshot {
   sea?: SeaState | null;
   benUI?: BenUIState | null;
   benNet?: BenNetState | null;
+  friends?: FriendsStoreState | null;
   benWallet?: BenNetWallet | null;
   benNonKeptCount?: number;
   village?: {

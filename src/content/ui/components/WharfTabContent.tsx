@@ -3,15 +3,18 @@ import { AppConfig, WharfSubAreaId } from '@/shared/types/config';
 import { WHARF_SUBAREA_META } from '@/shared/constants/default-config';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronRight, ChevronUp, GripVertical } from 'lucide-react';
+import { ChevronDown, ChevronRight, ChevronUp, GripVertical, ExternalLink } from 'lucide-react';
 import { HudSelect } from './HudSelect';
+import { MonitorTabId } from './monitor/MonitorHub';
+import { execGameAction } from '@/content/bridge/content-bridge';
 
 interface WharfTabContentProps {
   config: AppConfig;
   onUpdateConfig: (updater: (prev: AppConfig) => AppConfig) => void;
+  onOpenMonitorTab?: (tab: MonitorTabId) => void;
 }
 
-export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps) {
+export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab }: WharfTabContentProps) {
   const isWharfAreaEnabled = config.areaEnabled.benDo !== false;
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -562,6 +565,70 @@ export function WharfTabContent({ config, onUpdateConfig }: WharfTabContentProps
           🛶 Cho phép chạy Khu vực Bến Đò
         </span>
         <Switch checked={isWharfAreaEnabled} onCheckedChange={handleToggleArea} />
+      </div>
+
+      {/* Quick View Bến Đò Grid */}
+      <div className="rounded-xl border border-teal-200/90 bg-gradient-to-r from-teal-50/80 via-emerald-50/70 to-sky-50/80 p-2.5 shadow-2xs space-y-1.5">
+        <div className="flex items-center justify-between text-teal-950 font-bold px-0.5">
+          <span className="flex items-center gap-1.5">
+            <span>🔍</span>
+            <span>Xem Nhanh Bến Đò (Thời gian thực)</span>
+          </span>
+          <span className="text-[10px] text-teal-700 font-normal">Realtime Monitor</span>
+        </div>
+
+        <div className="grid grid-cols-3 gap-1.5 pt-0.5">
+          {[
+            { id: 'crickets' as MonitorTabId, label: 'Ống tre dế', icon: '🦗', panel: 'soi' },
+            { id: 'dex' as MonitorTabId, label: 'Sổ cá', icon: '📖', panel: 'dex' },
+            { id: 'board' as MonitorTabId, label: 'Bảng vàng', icon: '🏆', panel: 'board' },
+            { id: 'closet' as MonitorTabId, label: 'Tủ đồ', icon: '👕', panel: 'closet' },
+            { id: 'friends' as MonitorTabId, label: 'Bạn bè', icon: '👥', panel: 'friends' },
+            { id: 'pack' as MonitorTabId, label: 'Túi đồ', icon: '🎒', panel: 'pack' },
+          ].map((item) => (
+            <div
+              key={item.id}
+              className="group flex flex-col justify-between p-2 rounded-lg bg-white/95 border border-slate-200 hover:border-teal-400 hover:shadow-xs transition-all text-slate-800"
+            >
+              <div
+                onClick={() => onOpenMonitorTab?.(item.id)}
+                className="cursor-pointer"
+                title={`Mở giám sát ${item.label}`}
+              >
+                <div className="text-base">{item.icon}</div>
+                <div className="font-bold text-[11px] text-slate-900 group-hover:text-teal-800 mt-0.5 line-clamp-1">
+                  {item.label}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-1 mt-1.5 pt-1 border-t border-slate-100 text-[10px]">
+                <button
+                  type="button"
+                  onClick={() => onOpenMonitorTab?.(item.id)}
+                  className="text-teal-700 hover:text-teal-900 font-medium cursor-pointer"
+                  title="Mở xem trên cửa sổ Giám sát"
+                >
+                  Xem
+                </button>
+                <button
+                  type="button"
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    if (item.panel === 'friends') {
+                      await execGameAction('SET_PANEL', { panel: 'friends' });
+                    } else {
+                      await execGameAction('BEN_SET_PANEL', { panel: item.panel });
+                    }
+                  }}
+                  className="text-slate-400 hover:text-emerald-700 cursor-pointer"
+                  title="Mở trực tiếp bảng trong game"
+                >
+                  <ExternalLink className="h-3 w-3" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="text-[11px] text-slate-500 px-1 flex items-center gap-1">

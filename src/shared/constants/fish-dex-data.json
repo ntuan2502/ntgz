@@ -1,0 +1,1183 @@
+[
+  {
+    "id": "depNhua",
+    "name": "Dép nhựa lạc trôi",
+    "rarity": "junk",
+    "price": 1,
+    "desc": "Một chiếc dép đi lạc, chiếc kia chắc đang ở bến khác"
+  },
+  {
+    "id": "chaiNhua",
+    "name": "Chai nhựa",
+    "rarity": "junk",
+    "price": 1,
+    "desc": "Vớt lên bỏ thùng rác giùm sông nha"
+  },
+  {
+    "id": "lonRi",
+    "name": "Lon rỉ sét",
+    "rarity": "junk",
+    "price": 1,
+    "desc": "Chắc rớt từ hồi ông nội còn trẻ"
+  },
+  {
+    "id": "baoNiLong",
+    "name": "Bao ni lông",
+    "rarity": "junk",
+    "price": 1,
+    "desc": "Cá tưởng sứa nên né từ xa"
+  },
+  {
+    "id": "gaoDua",
+    "name": "Gáo dừa",
+    "rarity": "junk",
+    "price": 2,
+    "desc": "Đem về múc nước tưới cây cũng được"
+  },
+  {
+    "id": "nonRach",
+    "name": "Nón lá rách",
+    "rarity": "junk",
+    "price": 2,
+    "desc": "Ai đi đò lỡ tay làm bay mất"
+  },
+  {
+    "id": "cuiKho",
+    "name": "Cành củi khô",
+    "rarity": "junk",
+    "price": 1,
+    "desc": "Nhóm lửa nướng cá thì hợp"
+  },
+  {
+    "id": "lucBinh",
+    "name": "Cụm lục bình",
+    "rarity": "junk",
+    "price": 1,
+    "desc": "Trôi lững lờ, có bông tím xinh xinh"
+  },
+  {
+    "id": "roDong",
+    "name": "Cá rô đồng",
+    "rarity": "common",
+    "price": 8,
+    "size": [
+      8,
+      18
+    ],
+    "desc": "Gan lì số một, mắc câu rồi còn ráng quẫy"
+  },
+  {
+    "id": "roPhi",
+    "name": "Cá rô phi",
+    "rarity": "common",
+    "price": 7,
+    "size": [
+      10,
+      25
+    ],
+    "desc": "Ở đâu cũng sống được, dễ nuôi như cây xương rồng"
+  },
+  {
+    "id": "sacRan",
+    "name": "Cá sặc rằn",
+    "rarity": "common",
+    "price": 7,
+    "size": [
+      8,
+      16
+    ],
+    "desc": "Phơi khô chiên giòn là cả nhà giành nhau"
+  },
+  {
+    "id": "sacBuom",
+    "name": "Cá sặc bướm",
+    "rarity": "common",
+    "price": 8,
+    "size": [
+      5,
+      10
+    ],
+    "desc": "Có hai đốm đen như đôi mắt bướm"
+  },
+  {
+    "id": "treVang",
+    "name": "Cá trê vàng",
+    "rarity": "common",
+    "price": 9,
+    "size": [
+      15,
+      30
+    ],
+    "desc": "Râu dài như ông cụ, trốn trong bùn cả ngày",
+    "spot": "bank"
+  },
+  {
+    "id": "chep",
+    "name": "Cá chép",
+    "rarity": "common",
+    "price": 9,
+    "size": [
+      15,
+      35
+    ],
+    "desc": "Nấu cháo cá chép là món ruột của bà"
+  },
+  {
+    "id": "diec",
+    "name": "Cá diếc",
+    "rarity": "common",
+    "price": 6,
+    "size": [
+      8,
+      15
+    ],
+    "desc": "Nhỏ mà xương nhiều, kho tiêu thì đưa cơm"
+  },
+  {
+    "id": "muong",
+    "name": "Cá mương",
+    "rarity": "common",
+    "price": 5,
+    "size": [
+      8,
+      14
+    ],
+    "desc": "Bơi theo đàn sát mặt nước, lẹ như chớp"
+  },
+  {
+    "id": "thieu",
+    "name": "Cá thiểu",
+    "rarity": "common",
+    "price": 6,
+    "size": [
+      10,
+      20
+    ],
+    "desc": "Dẹt mỏng như tờ lịch, nướng than là thơm"
+  },
+  {
+    "id": "longTong",
+    "name": "Cá lòng tong",
+    "rarity": "common",
+    "price": 4,
+    "size": [
+      3,
+      7
+    ],
+    "desc": "Bé xíu, cả đàn rỉa mồi mà không con nào dính"
+  },
+  {
+    "id": "bongKeo",
+    "name": "Cá bống kèo",
+    "rarity": "common",
+    "price": 7,
+    "size": [
+      8,
+      16
+    ],
+    "desc": "Nằm im dưới bùn, nướng muối ớt là bá cháy",
+    "spot": "bank"
+  },
+  {
+    "id": "meVinh",
+    "name": "Cá mè vinh",
+    "rarity": "common",
+    "price": 7,
+    "size": [
+      12,
+      22
+    ],
+    "desc": "Vảy bạc lấp lánh, vây đỏ như son"
+  },
+  {
+    "id": "chot",
+    "name": "Cá chốt",
+    "rarity": "common",
+    "price": 7,
+    "size": [
+      8,
+      15
+    ],
+    "desc": "Có ngạnh đâm đau điếng, cầm nhẹ tay nha"
+  },
+  {
+    "id": "chay",
+    "name": "Cá chày",
+    "rarity": "common",
+    "price": 8,
+    "size": [
+      12,
+      25
+    ],
+    "desc": "Mắt đỏ hoe như mới coi phim buồn"
+  },
+  {
+    "id": "troi",
+    "name": "Cá trôi",
+    "rarity": "common",
+    "price": 8,
+    "size": [
+      15,
+      35
+    ],
+    "desc": "Bơi lờ đờ như ngủ chưa đủ giấc"
+  },
+  {
+    "id": "meTrang",
+    "name": "Cá mè trắng",
+    "rarity": "common",
+    "price": 7,
+    "size": [
+      20,
+      40
+    ],
+    "desc": "Hay nhảy vọt khỏi mặt nước làm giật mình"
+  },
+  {
+    "id": "tramCo",
+    "name": "Cá trắm cỏ",
+    "rarity": "common",
+    "price": 10,
+    "size": [
+      25,
+      50
+    ],
+    "desc": "Ăn cỏ mà mập ú, khoẻ re"
+  },
+  {
+    "id": "keo",
+    "name": "Cá kèo",
+    "rarity": "common",
+    "price": 8,
+    "size": [
+      10,
+      20
+    ],
+    "desc": "Lẩu cá kèo lá giang là hết sảy",
+    "spot": "bank",
+    "time": "night"
+  },
+  {
+    "id": "thacLac",
+    "name": "Cá thác lác",
+    "rarity": "common",
+    "price": 9,
+    "size": [
+      15,
+      30
+    ],
+    "desc": "Làm chả cá thác lác dai giòn sần sật"
+  },
+  {
+    "id": "doiSong",
+    "name": "Cá đối sông",
+    "rarity": "common",
+    "price": 8,
+    "size": [
+      15,
+      30
+    ],
+    "desc": "Đầu dẹt bụng tròn, ăn rong rêu sát bờ",
+    "time": "dawn"
+  },
+  {
+    "id": "comSong",
+    "name": "Cá cơm sông",
+    "rarity": "common",
+    "price": 4,
+    "size": [
+      3,
+      7
+    ],
+    "desc": "Trong veo thấy cả ruột, kho tộ là ngon"
+  },
+  {
+    "id": "chimTrang",
+    "name": "Cá chim trắng",
+    "rarity": "common",
+    "price": 9,
+    "size": [
+      15,
+      30
+    ],
+    "desc": "Tròn như đĩa, răng như người, hơi ghê ghê"
+  },
+  {
+    "id": "linh",
+    "name": "Cá linh",
+    "rarity": "common",
+    "price": 6,
+    "size": [
+      5,
+      12
+    ],
+    "desc": "Mùa nước nổi kéo về từng đàn, nấu canh bông điên điển",
+    "time": "dawn"
+  },
+  {
+    "id": "tepDong",
+    "name": "Tép đồng",
+    "rarity": "common",
+    "price": 5,
+    "size": [
+      2,
+      5
+    ],
+    "desc": "Rang khế chua chua là đưa cơm hết biết"
+  },
+  {
+    "id": "cuaDong",
+    "name": "Cua đồng",
+    "rarity": "common",
+    "price": 6,
+    "size": [
+      4,
+      8
+    ],
+    "desc": "Riêu cua mồng tơi trưa hè là mát ruột",
+    "spot": "bank"
+  },
+  {
+    "id": "ocBuou",
+    "name": "Ốc bươu",
+    "rarity": "common",
+    "price": 5,
+    "size": [
+      4,
+      8
+    ],
+    "desc": "Hấp sả chấm nước mắm gừng là hết ý",
+    "spot": "bank"
+  },
+  {
+    "id": "hen",
+    "name": "Hến",
+    "rarity": "common",
+    "price": 4,
+    "size": [
+      2,
+      4
+    ],
+    "desc": "Cơm hến xứ Huế cay xé lưỡi"
+  },
+  {
+    "id": "echDong",
+    "name": "Ếch đồng",
+    "rarity": "common",
+    "price": 9,
+    "size": [
+      8,
+      15
+    ],
+    "desc": "Nhảy cái phốc lên bờ, chụp không kịp",
+    "spot": "bank",
+    "time": "night"
+  },
+  {
+    "id": "ngat",
+    "name": "Cá ngát",
+    "rarity": "common",
+    "price": 9,
+    "size": [
+      20,
+      40
+    ],
+    "desc": "Râu tua tủa, ngạnh có độc, cẩn thận nha",
+    "time": "night"
+  },
+  {
+    "id": "locDong",
+    "name": "Cá lóc đồng",
+    "rarity": "uncommon",
+    "price": 25,
+    "size": [
+      25,
+      50
+    ],
+    "desc": "Nướng trui cuốn bánh tráng rau sống, nghe đã thèm"
+  },
+  {
+    "id": "locBong",
+    "name": "Cá lóc bông",
+    "rarity": "uncommon",
+    "price": 30,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Bông vằn như áo rằn ri, rượt mồi dữ dằn",
+    "time": "dusk"
+  },
+  {
+    "id": "tra",
+    "name": "Cá tra",
+    "rarity": "uncommon",
+    "price": 22,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Không vảy, trơn bóng, kho tộ là số một"
+  },
+  {
+    "id": "basa",
+    "name": "Cá ba sa",
+    "rarity": "uncommon",
+    "price": 24,
+    "size": [
+      30,
+      55
+    ],
+    "desc": "Bụng béo núc ních, chiên giòn chấm mắm"
+  },
+  {
+    "id": "bongLau",
+    "name": "Cá bông lau",
+    "rarity": "uncommon",
+    "price": 30,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Nấu canh chua bông so đũa là đặc sản miền Tây",
+    "time": "dusk"
+  },
+  {
+    "id": "hu",
+    "name": "Cá hú",
+    "rarity": "uncommon",
+    "price": 26,
+    "size": [
+      25,
+      50
+    ],
+    "desc": "Bị kéo lên là kêu \"hú hú\" thiệt luôn"
+  },
+  {
+    "id": "ket",
+    "name": "Cá kết",
+    "rarity": "uncommon",
+    "price": 28,
+    "size": [
+      15,
+      30
+    ],
+    "desc": "Trắng muốt, thịt ngọt, mùa nước nổi mới có"
+  },
+  {
+    "id": "leo",
+    "name": "Cá leo",
+    "rarity": "uncommon",
+    "price": 32,
+    "size": [
+      30,
+      70
+    ],
+    "desc": "Mình dài thượt, đuôi mảnh, ăn khoẻ như hổ",
+    "time": "night"
+  },
+  {
+    "id": "lang",
+    "name": "Cá lăng",
+    "rarity": "uncommon",
+    "price": 30,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Lẩu cá lăng măng chua, ai ăn cũng gật gù"
+  },
+  {
+    "id": "etMoi",
+    "name": "Cá ét mọi",
+    "rarity": "uncommon",
+    "price": 22,
+    "size": [
+      15,
+      30
+    ],
+    "desc": "Môi dày cộm, hay rỉa rong đá"
+  },
+  {
+    "id": "chai",
+    "name": "Cá chài",
+    "rarity": "uncommon",
+    "price": 20,
+    "size": [
+      15,
+      30
+    ],
+    "desc": "Vảy to như đồng xu, lấp loá dưới nắng",
+    "time": "day"
+  },
+  {
+    "id": "heVang",
+    "name": "Cá he vàng",
+    "rarity": "uncommon",
+    "price": 26,
+    "size": [
+      15,
+      30
+    ],
+    "desc": "Vàng óng như thỏi vàng, vây đỏ rực",
+    "time": "day"
+  },
+  {
+    "id": "meHoa",
+    "name": "Cá mè hoa",
+    "rarity": "uncommon",
+    "price": 24,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Đầu to chà bá, nấu lẩu đầu cá là đỉnh"
+  },
+  {
+    "id": "tramDen",
+    "name": "Cá trắm đen",
+    "rarity": "uncommon",
+    "price": 32,
+    "size": [
+      40,
+      80
+    ],
+    "desc": "Đen bóng như cục than, ăn ốc rốp rốp"
+  },
+  {
+    "id": "bongTuong",
+    "name": "Cá bống tượng",
+    "rarity": "uncommon",
+    "price": 34,
+    "size": [
+      15,
+      35
+    ],
+    "desc": "To như cục gạch mà nằm im ru, hấp xì dầu hết sẩy",
+    "spot": "bank"
+  },
+  {
+    "id": "luonDong",
+    "name": "Lươn đồng",
+    "rarity": "uncommon",
+    "price": 26,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Trơn tuột, xào sả ớt hay cháo lươn đều ngon",
+    "spot": "bank",
+    "time": "night"
+  },
+  {
+    "id": "tomCang",
+    "name": "Tôm càng xanh",
+    "rarity": "uncommon",
+    "price": 32,
+    "size": [
+      12,
+      25
+    ],
+    "desc": "Càng xanh lè dài ngoằng, nướng muối ớt là ghiền",
+    "time": "night"
+  },
+  {
+    "id": "thatLatCuom",
+    "name": "Cá thát lát cườm",
+    "rarity": "uncommon",
+    "price": 28,
+    "size": [
+      20,
+      40
+    ],
+    "desc": "Có hàng chấm như chuỗi cườm dọc hông"
+  },
+  {
+    "id": "chachLau",
+    "name": "Cá chạch lấu",
+    "rarity": "uncommon",
+    "price": 30,
+    "size": [
+      20,
+      45
+    ],
+    "desc": "Mình rắn rỏi, mõm nhọn như cây kim",
+    "spot": "bank"
+  },
+  {
+    "id": "uc",
+    "name": "Cá úc",
+    "rarity": "uncommon",
+    "price": 24,
+    "size": [
+      20,
+      40
+    ],
+    "desc": "Hay theo con nước lớn vô sông",
+    "time": "dusk"
+  },
+  {
+    "id": "ngach",
+    "name": "Cá ngạnh",
+    "rarity": "uncommon",
+    "price": 22,
+    "size": [
+      15,
+      30
+    ],
+    "desc": "Ba cái ngạnh nhọn hoắt, gỡ câu phải có nghề"
+  },
+  {
+    "id": "chotGiay",
+    "name": "Cá chốt giấy",
+    "rarity": "uncommon",
+    "price": 20,
+    "size": [
+      10,
+      18
+    ],
+    "desc": "Mỏng tang như tờ giấy, bơi ngược dòng giỏi",
+    "time": "dawn"
+  },
+  {
+    "id": "roDauVuong",
+    "name": "Cá rô đầu vuông",
+    "rarity": "uncommon",
+    "price": 35,
+    "size": [
+      15,
+      25
+    ],
+    "desc": "Rô đầu vuông to bằng bàn tay, chiên giòn là phê"
+  },
+  {
+    "id": "sacGam",
+    "name": "Cá sặc gấm",
+    "rarity": "uncommon",
+    "price": 26,
+    "size": [
+      5,
+      9
+    ],
+    "desc": "Sọc xanh đỏ lấp lánh như áo gấm ngày Tết",
+    "time": "day"
+  },
+  {
+    "id": "treTrang",
+    "name": "Cá trê trắng",
+    "rarity": "uncommon",
+    "price": 28,
+    "size": [
+      20,
+      40
+    ],
+    "desc": "Hiếm hơn trê vàng, mình trắng như sữa",
+    "spot": "bank",
+    "time": "night"
+  },
+  {
+    "id": "ocGao",
+    "name": "Ốc gạo",
+    "rarity": "uncommon",
+    "price": 18,
+    "size": [
+      2,
+      4
+    ],
+    "desc": "Nhỏ như hạt gạo, luộc lá chanh khều ăn cả buổi",
+    "spot": "bank",
+    "time": "dawn"
+  },
+  {
+    "id": "chien",
+    "name": "Cá chiên",
+    "rarity": "rare",
+    "price": 90,
+    "size": [
+      40,
+      80
+    ],
+    "desc": "Một trong \"ngũ quý\" cá sông, ăn một lần nhớ cả năm",
+    "time": "night"
+  },
+  {
+    "id": "anhVu",
+    "name": "Cá anh vũ",
+    "rarity": "rare",
+    "price": 120,
+    "size": [
+      25,
+      50
+    ],
+    "desc": "Ngày xưa chỉ dành tiến vua, môi dày như cái giác hút",
+    "spot": "dock",
+    "time": "dawn"
+  },
+  {
+    "id": "bong",
+    "name": "Cá bông",
+    "rarity": "rare",
+    "price": 80,
+    "size": [
+      40,
+      90
+    ],
+    "desc": "Lóc khổng lồ bông vằn, đớp mồi một phát mất tăm",
+    "time": "dusk"
+  },
+  {
+    "id": "langCham",
+    "name": "Cá lăng chấm",
+    "rarity": "rare",
+    "price": 110,
+    "size": [
+      50,
+      100
+    ],
+    "desc": "Chấm đen khắp mình, vây lưng cao vút",
+    "spot": "dock"
+  },
+  {
+    "id": "com",
+    "name": "Cá còm",
+    "rarity": "rare",
+    "price": 70,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Lưng gù gù như ông già, hông có chấm tròn như mắt"
+  },
+  {
+    "id": "chachBong",
+    "name": "Cá chạch bông",
+    "rarity": "rare",
+    "price": 75,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Hoa văn như gấm, trườn trong rễ cây ven bờ",
+    "spot": "bank",
+    "time": "night"
+  },
+  {
+    "id": "momTrau",
+    "name": "Cá mõm trâu",
+    "rarity": "rare",
+    "price": 85,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Mõm bè bè như mõm trâu, ăn chậm nhai kỹ"
+  },
+  {
+    "id": "voDem",
+    "name": "Cá vồ đém",
+    "rarity": "rare",
+    "price": 95,
+    "size": [
+      40,
+      80
+    ],
+    "desc": "Bụng béo ngậy, hay đi tìm trái cây rụng ven sông",
+    "time": "dusk"
+  },
+  {
+    "id": "satSoc",
+    "name": "Cá sát sọc",
+    "rarity": "rare",
+    "price": 70,
+    "size": [
+      20,
+      40
+    ],
+    "desc": "Sọc đen chạy dài từ đầu tới đuôi, nhìn sang chảnh"
+  },
+  {
+    "id": "baBa",
+    "name": "Ba ba",
+    "rarity": "rare",
+    "price": 100,
+    "size": [
+      20,
+      40
+    ],
+    "desc": "Mai mềm, cổ dài, cắn là không chịu nhả",
+    "spot": "bank"
+  },
+  {
+    "id": "treKhong",
+    "name": "Cá trê phi khổng lồ",
+    "rarity": "rare",
+    "price": 80,
+    "size": [
+      50,
+      100
+    ],
+    "desc": "Râu như cọng ăng-ten, quẫy một phát là ướt hết",
+    "time": "night"
+  },
+  {
+    "id": "tramCoKhung",
+    "name": "Cá trắm cỏ khủng",
+    "rarity": "rare",
+    "price": 75,
+    "size": [
+      60,
+      110
+    ],
+    "desc": "Trắm cỏ ăn tới mức không ai nhận ra nữa"
+  },
+  {
+    "id": "tomCangKhung",
+    "name": "Tôm càng khủng",
+    "rarity": "rare",
+    "price": 90,
+    "size": [
+      25,
+      40
+    ],
+    "desc": "Càng to hơn cả bàn tay, kẹp là thấy ông bà",
+    "spot": "dock",
+    "time": "night"
+  },
+  {
+    "id": "roBiet",
+    "name": "Cá rô biệt xứ",
+    "rarity": "rare",
+    "price": 65,
+    "size": [
+      15,
+      25
+    ],
+    "desc": "Rô đi lạc từ xứ khác tới, ai cũng tò mò",
+    "weekend": true
+  },
+  {
+    "id": "ngocBich",
+    "name": "Cá ngọc bích",
+    "rarity": "rare",
+    "price": 100,
+    "size": [
+      10,
+      20
+    ],
+    "desc": "Xanh trong như viên ngọc, hiếm khi trồi lên",
+    "time": "dawn",
+    "spot": "dock"
+  },
+  {
+    "id": "cuaGach",
+    "name": "Cua gạch son",
+    "rarity": "rare",
+    "price": 70,
+    "size": [
+      8,
+      14
+    ],
+    "desc": "Gạch đỏ au, nấu bún riêu là cả xóm kéo tới",
+    "spot": "bank",
+    "weekend": true
+  },
+  {
+    "id": "ruaNui",
+    "name": "Rùa núi vàng",
+    "rarity": "rare",
+    "price": 0,
+    "size": [
+      15,
+      30
+    ],
+    "desc": "Loài cần bảo vệ, ghi sổ rồi thả về sông nha",
+    "release": true
+  },
+  {
+    "id": "cocTamDao",
+    "name": "Cá cóc",
+    "rarity": "rare",
+    "price": 0,
+    "size": [
+      10,
+      18
+    ],
+    "desc": "Giống con kỳ nhông, quý hiếm lắm, thả về liền",
+    "release": true,
+    "time": "night"
+  },
+  {
+    "id": "chepVang",
+    "name": "Cá chép vàng",
+    "rarity": "epic",
+    "price": 300,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Vàng rực như dát vàng, câu được là hên cả tháng"
+  },
+  {
+    "id": "locKhung",
+    "name": "Cá lóc hoa khổng lồ",
+    "rarity": "epic",
+    "price": 260,
+    "size": [
+      70,
+      120
+    ],
+    "desc": "To bằng bắp đùi, kéo muốn sái tay",
+    "time": "dusk"
+  },
+  {
+    "id": "langDuoiDo",
+    "name": "Cá lăng đuôi đỏ",
+    "rarity": "epic",
+    "price": 320,
+    "size": [
+      60,
+      110
+    ],
+    "desc": "Đuôi đỏ như ngọn lửa, kéo lên là nghe tiếng vỗ tay",
+    "spot": "dock"
+  },
+  {
+    "id": "chienKhung",
+    "name": "Cá chiên khổng lồ",
+    "rarity": "epic",
+    "price": 350,
+    "size": [
+      80,
+      140
+    ],
+    "desc": "Chúa tể ghềnh đá, ít ai thấy tận mắt",
+    "time": "night",
+    "spot": "dock"
+  },
+  {
+    "id": "anhVuDo",
+    "name": "Cá anh vũ đỏ",
+    "rarity": "epic",
+    "price": 380,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Anh vũ mà đỏ au, nghe nói trăm năm mới có một con",
+    "time": "dawn"
+  },
+  {
+    "id": "hoCon",
+    "name": "Cá hô con",
+    "rarity": "epic",
+    "price": 280,
+    "size": [
+      50,
+      90
+    ],
+    "desc": "Mới là cá hô \"con\" thôi mà đã nặng trĩu tay"
+  },
+  {
+    "id": "sauVang",
+    "name": "Cá sấu vàng",
+    "rarity": "epic",
+    "price": 240,
+    "size": [
+      40,
+      70
+    ],
+    "desc": "Không phải cá sấu đâu, là cá có mõm dài như cá sấu",
+    "weekend": true
+  },
+  {
+    "id": "luonBong",
+    "name": "Lươn bông khổng lồ",
+    "rarity": "epic",
+    "price": 260,
+    "size": [
+      60,
+      110
+    ],
+    "desc": "Dài như sợi dây phơi, mình lốm đốm hoa",
+    "time": "night"
+  },
+  {
+    "id": "bachKim",
+    "name": "Cá rô bạch kim",
+    "rarity": "epic",
+    "price": 300,
+    "size": [
+      15,
+      25
+    ],
+    "desc": "Rô đồng mà trắng sáng như bạch kim, lạ đời",
+    "weekend": true,
+    "time": "day"
+  },
+  {
+    "id": "treHoa",
+    "name": "Cá trê hoa",
+    "rarity": "epic",
+    "price": 240,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Da hoa văn như da báo, quẫy mạnh khủng khiếp",
+    "spot": "bank",
+    "time": "night"
+  },
+  {
+    "id": "hoKhung",
+    "name": "Cá hô khổng lồ",
+    "rarity": "legendary",
+    "price": 1500,
+    "size": [
+      150,
+      300
+    ],
+    "desc": "Vua của sông, nặng cả trăm ký, kéo cả buổi mới lên",
+    "spot": "dock"
+  },
+  {
+    "id": "traDau",
+    "name": "Cá tra dầu",
+    "rarity": "legendary",
+    "price": 1400,
+    "size": [
+      150,
+      300
+    ],
+    "desc": "Cá tra to như chiếc xuồng, cả đời người chưa chắc thấy",
+    "time": "night"
+  },
+  {
+    "id": "chepRong",
+    "name": "Cá chép hoá rồng",
+    "rarity": "legendary",
+    "price": 2000,
+    "size": [
+      60,
+      100
+    ],
+    "desc": "Vượt vũ môn xong rồi, vảy đỏ ánh vàng, câu được là đổi đời",
+    "time": "dawn"
+  },
+  {
+    "id": "duoiKhung",
+    "name": "Cá đuối nước ngọt khổng lồ",
+    "rarity": "legendary",
+    "price": 1800,
+    "size": [
+      150,
+      250
+    ],
+    "desc": "To như cái nong phơi lúa, nằm im dưới đáy sông sâu",
+    "spot": "dock"
+  },
+  {
+    "id": "voCo",
+    "name": "Cá vồ cờ",
+    "rarity": "legendary",
+    "price": 1600,
+    "size": [
+      100,
+      200
+    ],
+    "desc": "Vây lưng cao như lá cờ, mỗi năm chỉ trồi lên vài lần",
+    "weekend": true
+  },
+  {
+    "id": "thuongLuong",
+    "name": "Bóng thuồng luồng",
+    "rarity": "legendary",
+    "price": 2200,
+    "size": [
+      200,
+      400
+    ],
+    "desc": "Ông bà kể dưới sông có thuồng luồng, giờ mới tin là thật",
+    "time": "night",
+    "weekend": true
+  },
+  {
+    "id": "chepTao",
+    "name": "Cá chép đỏ ông Táo",
+    "rarity": "mythic",
+    "price": 3000,
+    "size": [
+      50,
+      90
+    ],
+    "desc": "Con chép chở ông Táo về trời, vảy đỏ như lửa bếp",
+    "time": "dawn",
+    "minRod": 2
+  },
+  {
+    "id": "linhVang",
+    "name": "Cá linh vàng mùa nước nổi",
+    "rarity": "mythic",
+    "price": 3200,
+    "size": [
+      20,
+      35
+    ],
+    "desc": "Cá linh mà vàng óng như bông điên điển, nước nổi mới về",
+    "time": "dusk",
+    "minRod": 2
+  },
+  {
+    "id": "bachLong",
+    "name": "Bạch long ngư",
+    "rarity": "mythic",
+    "price": 4500,
+    "size": [
+      120,
+      220
+    ],
+    "desc": "Cá rồng trắng, vảy như ngọc trai, đêm xuống sáng cả khúc sông",
+    "time": "night",
+    "minRod": 3
+  },
+  {
+    "id": "hoChua",
+    "name": "Cá hô chúa",
+    "rarity": "mythic",
+    "price": 5000,
+    "size": [
+      250,
+      400
+    ],
+    "desc": "Chúa của loài cá hô, nằm dưới chân cầu tre cả trăm năm",
+    "spot": "dock",
+    "minRod": 3
+  },
+  {
+    "id": "trangRam",
+    "name": "Cá trăng rằm",
+    "rarity": "mythic",
+    "price": 4800,
+    "size": [
+      60,
+      110
+    ],
+    "desc": "Tròn vành vạnh như trăng, chỉ nổi lên đêm cuối tuần",
+    "time": "night",
+    "weekend": true,
+    "minRod": 3
+  },
+  {
+    "id": "thuongChua",
+    "name": "Thuồng luồng chúa",
+    "rarity": "mythic",
+    "price": 6000,
+    "size": [
+      400,
+      700
+    ],
+    "desc": "Thuồng luồng già nhất sông, chỉ chịu thua Cần Hà Bá",
+    "time": "night",
+    "weekend": true,
+    "minRod": 4
+  }
+]

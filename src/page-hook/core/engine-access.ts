@@ -5,6 +5,7 @@ import {
   SeaStoreState,
   BenUIStoreState,
   BenNetState,
+  FriendsStoreState,
 } from '../../shared/types/game-store';
 
 export interface ZustandStore<T> {
@@ -18,6 +19,7 @@ export interface StoreRegistry {
   sea: ZustandStore<SeaStoreState> | null;
   benUI: ZustandStore<BenUIStoreState> | null;
   benNet: ZustandStore<BenNetState> | null;
+  friends: ZustandStore<FriendsStoreState> | null;
 }
 
 export interface PhaserSceneInstance {
@@ -43,6 +45,7 @@ export const stores: StoreRegistry = {
   sea: null,
   benUI: null,
   benNet: null,
+  friends: null,
 };
 
 export function getMainStore(): ZustandStore<MainGameStoreState> | null {
@@ -184,6 +187,8 @@ function classifyStore(candidate: unknown) {
     stores.benUI = store as unknown as ZustandStore<BenUIStoreState>;
   } else if ('status' in st && 'fishing' in st && 'wallet' in st && 'basket' in st) {
     stores.benNet = store as unknown as ZustandStore<BenNetState>;
+  } else if ('visitsOff' in st && 'giftsLeft' in st && 'friends' in st) {
+    stores.friends = store as unknown as ZustandStore<FriendsStoreState>;
   }
 }
 

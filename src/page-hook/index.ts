@@ -1,4 +1,4 @@
-import { stores, discoverStores } from './core/engine-access';
+import { stores, discoverStores, sendBenWs } from './core/engine-access';
 import { getSnapshot } from './core/store-watcher';
 import { dismissInterruptsIfNeeded } from './core/interrupts';
 import { execFarmSubAreaStep } from './modules/farm';
@@ -113,6 +113,80 @@ interface GameActionPayload {
           if (!payload.config) return { ok: false, error: 'NO_CONFIG' };
           refreshCricketWatchers(payload.config);
           return { ok: true };
+        }
+
+        case 'BEN_SET_PANEL': {
+          if (!stores.benUI) discoverStores();
+          if (stores.benUI) {
+            stores.benUI.setState({
+              panel: (payload.panel as string | null) ?? null,
+              closetSlot: (payload.closetSlot as string | null) ?? null,
+              bagTab: (payload.bagTab as string | null) ?? null,
+            });
+            return { ok: true, panel: payload.panel };
+          }
+          return { ok: false, error: 'NO_BEN_UI_STORE' };
+        }
+
+        case 'BEN_REFRESH': {
+          const kind = payload.kind as string;
+          if (kind === 'board') {
+            sendBenWs({ t: 'board' });
+          } else if (kind === 'rods') {
+            sendBenWs({ t: 'rods' });
+          } else if (kind === 'rooms') {
+            sendBenWs({ t: 'rooms' });
+          } else if (kind === 'wheel') {
+            sendBenWs({ t: 'wheel' });
+          }
+          return { ok: true };
+        }
+
+        case 'BEN_USE_ROD': {
+          const rod = payload.rod as string;
+          if (rod) {
+            sendBenWs({ t: 'rodUse', rod });
+            return { ok: true };
+          }
+          return { ok: false, error: 'NO_ROD_SPECIFIED' };
+        }
+
+        case 'BEN_SET_LOOK': {
+          const slot = payload.slot as string;
+          const id = payload.id as string | null;
+          if (slot) {
+            sendBenWs({ t: 'look', slot, id: id ?? null });
+            return { ok: true };
+          }
+          return { ok: false, error: 'NO_SLOT_SPECIFIED' };
+        }
+
+        case 'BEN_KEEP_FISH': {
+          const id = payload.id as string;
+          const on = Boolean(payload.on);
+          if (id) {
+            sendBenWs({ t: 'keep', id, on });
+            return { ok: true };
+          }
+          return { ok: false, error: 'NO_FISH_ID' };
+        }
+
+        case 'BEN_SWITCH_ROOM': {
+          const id = Number(payload.id);
+          if (!isNaN(id)) {
+            sendBenWs({ t: 'room', id });
+            return { ok: true };
+          }
+          return { ok: false, error: 'NO_ROOM_ID' };
+        }
+
+        case 'SET_PANEL': {
+          if (!stores.main) discoverStores();
+          if (stores.main) {
+            stores.main.setState({ panel: (payload.panel as string | null) ?? null });
+            return { ok: true, panel: payload.panel };
+          }
+          return { ok: false, error: 'NO_MAIN_STORE' };
         }
 
         case 'SLEEP_NOW': {

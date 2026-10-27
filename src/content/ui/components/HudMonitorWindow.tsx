@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { GameSnapshot } from '@/shared/types/game-state';
-import { MonitorHub } from './monitor/MonitorHub';
+import { MonitorHub, MonitorTabId } from './monitor/MonitorHub';
 import { X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
@@ -17,6 +17,7 @@ export interface HudMonitorWindowProps {
   isHudMinimized?: boolean;
   isTerminalOpen?: boolean;
   terminalWidth?: number;
+  defaultTab?: MonitorTabId;
 }
 
 export function HudMonitorWindow({
@@ -32,6 +33,7 @@ export function HudMonitorWindow({
   isHudMinimized,
   isTerminalOpen,
   terminalWidth,
+  defaultTab,
 }: HudMonitorWindowProps) {
   // Close monitor window on Escape key press
   useEffect(() => {
@@ -230,7 +232,7 @@ export function HudMonitorWindow({
 
       {/* Monitor Hub Content with Horizontal Scrollable Tabs */}
       <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-        <MonitorHub snap={snap} onClose={onClose} showHeader={false} />
+        <MonitorHub snap={snap} onClose={onClose} showHeader={false} defaultTab={defaultTab} />
       </div>
 
       {/* Resize Handles */}
