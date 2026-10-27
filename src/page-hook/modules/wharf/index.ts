@@ -74,6 +74,53 @@ const WHEEL_ITEM_IDS = [
   'canCau',
 ];
 
+interface WheelItemMeta {
+  name: string;
+  tier: 'common' | 'uncommon' | 'rare' | 'epic' | 'legend' | 'myth';
+  tierLabel: string;
+}
+
+const WHEEL_ITEM_METAS: Record<string, WheelItemMeta> = {
+  // Common
+  gui: { name: 'Gùi tre', tier: 'common', tierLabel: 'Thường' },
+  gioCa: { name: 'Giỏ cá tre', tier: 'common', tierLabel: 'Thường' },
+  cui: { name: 'Bó củi khô', tier: 'common', tierLabel: 'Thường' },
+  thuocSau: { name: 'Bình xịt thuốc sâu', tier: 'common', tierLabel: 'Thường' },
+  thuocCo: { name: 'Bình xịt thuốc cỏ', tier: 'common', tierLabel: 'Thường' },
+  ongTre: { name: 'Ống tre đựng nước', tier: 'common', tierLabel: 'Thường' },
+  baoLua: { name: 'Bao lúa', tier: 'common', tierLabel: 'Thường' },
+  // Uncommon
+  maiCheo: { name: 'Mái chèo gỗ', tier: 'uncommon', tierLabel: 'Hơi hiếm' },
+  canCau: { name: 'Cần câu tre đeo chéo', tier: 'uncommon', tierLabel: 'Hơi hiếm' },
+  dieuGiay: { name: 'Diều giấy', tier: 'uncommon', tierLabel: 'Hơi hiếm' },
+  denOngSao: { name: 'Lồng đèn ông sao', tier: 'uncommon', tierLabel: 'Hơi hiếm' },
+  dienDien: { name: 'Bó bông điên điển', tier: 'uncommon', tierLabel: 'Hơi hiếm' },
+  // Rare
+  danKim: { name: 'Đàn kìm', tier: 'rare', tierLabel: 'Hiếm' },
+  loTre: { name: 'Lờ tre bắt cá', tier: 'rare', tierLabel: 'Hiếm' },
+  denCaChep: { name: 'Lồng đèn cá chép', tier: 'rare', tierLabel: 'Hiếm' },
+  coGhe: { name: 'Cờ đuôi nheo đua ghe', tier: 'rare', tierLabel: 'Hiếm' },
+  // Epic
+  danKimXaCu: { name: 'Đàn kìm cẩn xà cừ', tier: 'epic', tierLabel: 'Rất hiếm' },
+  dieuSao: { name: 'Diều sáo vi vu', tier: 'epic', tierLabel: 'Rất hiếm' },
+  denKeoQuan: { name: 'Lồng đèn kéo quân', tier: 'epic', tierLabel: 'Rất hiếm' },
+  // Legend
+  canhCo: { name: 'Đôi cánh cò trắng', tier: 'legend', tierLabel: 'Huyền thoại' },
+  vayRong: { name: 'Vây cá chép hoá rồng', tier: 'legend', tierLabel: 'Huyền thoại' },
+  canhThienThan: { name: 'Đôi cánh thiên thần', tier: 'legend', tierLabel: 'Huyền thoại' },
+  // Myth
+  canhPhuong: { name: 'Đôi cánh phượng hoàng lửa', tier: 'myth', tierLabel: 'Thần thoại' },
+  trangRam: { name: 'Vầng trăng rằm', tier: 'myth', tierLabel: 'Thần thoại' },
+  rongMay: { name: 'Rồng mây vàng', tier: 'myth', tierLabel: 'Thần thoại' },
+  canhHac: { name: 'Đôi cánh hạc tiên', tier: 'myth', tierLabel: 'Thần thoại' },
+  canhSaoDem: { name: 'Đôi cánh sao đêm', tier: 'myth', tierLabel: 'Thần thoại' },
+  limCanhPhaLe: { name: 'Đôi cánh pha lê', tier: 'myth', tierLabel: 'Thần thoại' },
+  limCanhBuomNeon: { name: 'Đôi cánh bướm neon', tier: 'myth', tierLabel: 'Thần thoại' },
+  limCanhCoKhi: { name: 'Đôi cánh cơ khí', tier: 'myth', tierLabel: 'Thần thoại' },
+  limCanhLuaXanh: { name: 'Đôi cánh lửa xanh', tier: 'myth', tierLabel: 'Thần thoại' },
+  limCanhCauVong: { name: 'Đôi cánh cầu vồng', tier: 'myth', tierLabel: 'Thần thoại' },
+};
+
 export const CRICKET_SPECIES_NAMES: Record<string, string> = {
   deCom: 'Dế cơm',
   deMen: 'Dế mèn',
@@ -165,6 +212,7 @@ function setNextAtmTime(timestamp: number): void {
 let isStockingBait = false;
 let lastObservedCashedSeq = -1;
 let lastObservedNoticeSeq = -1;
+let lastObservedSpunSeq = -1;
 
 const cricketTotal = (c: { stats?: { power?: number; tough?: number; nerve?: number } }) =>
   (c.stats?.power || 0) + (c.stats?.tough || 0) + (c.stats?.nerve || 0);
@@ -271,6 +319,45 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
           msg: '⚠️ Cây ATM: Mỗi lần đổi ít nhất 100 vỏ sò nha 🏧',
         };
       }
+    }
+  }
+
+  // Watch for wheel spin results from server
+  if (bn.spun && typeof bn.spun.seq === 'number' && bn.spun.seq !== lastObservedSpunSeq) {
+    if (lastObservedSpunSeq === -1) {
+      // First observation on load - sync sequence without emitting stale log
+      lastObservedSpunSeq = bn.spun.seq;
+    } else {
+      lastObservedSpunSeq = bn.spun.seq;
+      const spun = bn.spun;
+      const hits = Array.isArray(spun.hits) ? spun.hits : [];
+      const totalShells = hits.reduce(
+        (sum: number, h: { shells?: number }) => sum + (Number(h.shells) || 0),
+        0
+      );
+      const wonItemIds: string[] = [];
+      if (spun.won) {
+        wonItemIds.push(spun.won);
+      }
+      for (const h of hits) {
+        if (h.item && !wonItemIds.includes(h.item)) {
+          wonItemIds.push(h.item);
+        }
+      }
+
+      const msg = wonItemIds.length > 0
+        ? (() => {
+            const itemLabels = wonItemIds.map((id) => {
+              const meta = WHEEL_ITEM_METAS[id];
+              return meta ? `"${meta.name}" (${meta.tierLabel})` : `"${id}"`;
+            });
+            return `🏮 Vòng quay Cô Bảy: 🎉 TRÚNG ${itemLabels.join(', ')}!${totalShells > 0 ? ` (+${totalShells.toLocaleString('vi-VN')} vỏ sò 🐚)` : ''}`;
+          })()
+        : `🏮 Vòng quay Cô Bảy: Kết quả quay${hits.length > 0 ? ` (x${hits.length})` : ''} ➔ Nhận +${totalShells.toLocaleString('vi-VN')} vỏ sò an ủi 🐚`;
+      return {
+        acted: true,
+        msg,
+      };
     }
   }
 
@@ -907,14 +994,22 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
           return walkAndRun(
             { x: 37, y: 28 },
             () => {
+              if (benScene?.farmer?.lookAt) {
+                benScene.farmer.lookAt(39 * 16, 28 * 16);
+              }
               sendBenWs({ t: 'wheel' });
             },
             `Đi lại Sạp Lồng Đèn Cô Bảy để ${shouldSpin ? `quay ${tickets} vé 🎟️` : 'mua vé quay'}...`,
-            'ben_lantern_walk'
+            'ben_lantern_walk',
+            { panel: 'lantern' }
           );
         }
 
         // Đã đứng tại Sạp Lồng Đèn Cô Bảy { x: 37, y: 28 }
+        if (benScene?.farmer?.lookAt) {
+          benScene.farmer.lookAt(39 * 16, 28 * 16);
+        }
+
         // 1. Kiểm tra trạng thái vòng quay nếu chưa có dữ liệu
         if (!bn.wheel && canAct('ben_wheel_query', 3000)) {
           markActed('ben_wheel_query');
@@ -923,12 +1018,18 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
         }
 
         // 2. Tự mua 5 lượt vé quay tại sạp
-        if (cfg.benBuyLanternTicket && boughtToday < 5 && shells >= 600 && canAct('ben_lantern_buy', 1500)) {
-          markActed('ben_lantern_buy');
-          sendBenWs({ t: 'ticket' });
+        if (cfg.benBuyLanternTicket && boughtToday < 5 && shells >= 600) {
+          if (canAct('ben_lantern_buy', 1500)) {
+            markActed('ben_lantern_buy');
+            sendBenWs({ t: 'ticket' });
+            return {
+              acted: true,
+              msg: `🎟️ Cô Bảy: Nè, một vé. Quay đi con! (${boughtToday + 1}/5 · -600 vỏ sò 🐚)`,
+            };
+          }
           return {
             acted: true,
-            msg: `🎟️ Cô Bảy: Nè, một vé. Quay đi con! (${boughtToday + 1}/5 · -600 vỏ sò 🐚)`,
+            msg: `🎟️ Đang mua vé quay tại Sạp Cô Bảy (${boughtToday}/5)...`,
           };
         } else if (cfg.benBuyLanternTicket && boughtToday >= 5 && canAct('ben_lantern_limit_log', 120000)) {
           markActed('ben_lantern_limit_log');
@@ -944,22 +1045,30 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
           };
         }
 
-        // 3. Quay vé lồng đèn Cô Bảy tại sạp
-        if (shouldSpin && canAct('ben_lantern_spin', 2500)) {
-          markActed('ben_lantern_spin');
-          const curBn = bnStore.getState();
-          const curPicks = curBn.wheel?.picks || [];
-          const ownedCloset = Array.isArray(curBn.closet) ? curBn.closet : [];
-          const unownedWheel = WHEEL_ITEM_IDS.filter((id) => !ownedCloset.includes(id));
-          const needPicks = Math.min(3, unownedWheel.length);
-          if (needPicks > 0 && curPicks.length < needPicks) {
-            sendBenWs({ t: 'pick', items: unownedWheel.slice(0, needPicks) });
+        // 3. Quay vé lồng đèn Cô Bảy tại sạp (quay liên tục cho tới khi hết vé eligible)
+        if (shouldSpin) {
+          if (canAct('ben_lantern_spin', 2500)) {
+            markActed('ben_lantern_spin');
+            const curBn = bnStore.getState();
+            const curPicks = curBn.wheel?.picks || [];
+            const ownedCloset = Array.isArray(curBn.closet) ? curBn.closet : [];
+            const unownedWheel = WHEEL_ITEM_IDS.filter((id) => !ownedCloset.includes(id));
+            const needPicks = Math.min(3, unownedWheel.length);
+            if (needPicks > 0 && curPicks.length < needPicks) {
+              sendBenWs({ t: 'pick', items: unownedWheel.slice(0, needPicks) });
+            }
+            const spinCount = cfg.benLanternSpinMode === 'x1' ? 1 : 10;
+            sendBenWs({ t: 'spin', n: spinCount });
+            return {
+              acted: true,
+              msg: `🏮 Vòng quay Cô Bảy: Đang quay ${spinCount} vé tại sạp (còn ${tickets} vé 🎟️)...`,
+            };
           }
-          const spinCount = cfg.benLanternSpinMode === 'x1' ? 1 : 10;
-          sendBenWs({ t: 'spin', n: spinCount });
+
+          // Giữ chân nhân vật tại sạp trong thời gian chờ cooldown giữa các lượt quay (không để ATM / vựa cá kéo đi)
           return {
             acted: true,
-            msg: `🏮 Vòng quay Cô Bảy: Đang quay ${spinCount} vé tại sạp (còn ${tickets} vé 🎟️)...`,
+            msg: `🏮 Vòng quay Cô Bảy: Đang chờ kết quả vòng quay (còn ${tickets} vé 🎟️)...`,
           };
         }
       } else if (tickets > 0 && cfg.benLanternSpinMode === 'x10' && canAct('ben_lantern_wait_x10', 120000)) {
@@ -1107,11 +1216,17 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
           shellsToCash = Math.floor(shellsToCash / 100) * 100;
 
           if (shellsToCash >= 100) {
-            markActed('ben_atm_cash');
-            sendBenWs({ t: 'atmCash', shells: shellsToCash });
+            if (canAct('ben_atm_cash', 4000)) {
+              markActed('ben_atm_cash');
+              sendBenWs({ t: 'atmCash', shells: shellsToCash });
+              return {
+                acted: true,
+                msg: `🏧 Đang đổi ${shellsToCash.toLocaleString('vi-VN')} vỏ sò tại Cây ATM...`,
+              };
+            }
             return {
               acted: true,
-              msg: `🏧 Đang đổi ${shellsToCash.toLocaleString('vi-VN')} vỏ sò tại Cây ATM...`,
+              msg: `🏧 Đang chờ xác nhận đổi tiền tại Cây ATM...`,
             };
           }
         }

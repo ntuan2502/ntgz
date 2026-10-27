@@ -592,6 +592,13 @@ export interface BenNetState {
     picks?: string[];
     [key: string]: unknown;
   };
+  spun?: {
+    slots?: unknown[];
+    hits?: Array<{ slot?: number; shells?: number; item?: string }>;
+    won?: string | null;
+    seq?: number;
+    [key: string]: unknown;
+  } | null;
   lotto?: {
     wins?: unknown[];
     pending?: number;
