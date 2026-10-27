@@ -228,18 +228,10 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab }: Wh
             {config.benAutoSell && (
               <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Bán khi giỏ cá &gt;=:</span>
-                  <div className="flex items-center gap-1.5">
-                    <input
-                      type="number"
-                      min={10}
-                      max={60}
-                      value={config.benSellThreshold}
-                      onChange={(e) => updateField('benSellThreshold', Number(e.target.value))}
-                      className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                    />
-                    <span className="text-slate-500 text-[10px]">con</span>
-                  </div>
+                  <span className="text-slate-600">Bán khi giỏ cá đầy:</span>
+                  <span className="font-mono font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/60 text-[10px]">
+                    60/60 con
+                  </span>
                 </div>
               </div>
             )}
@@ -262,18 +254,10 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab }: Wh
             {config.benAutoRecoverStamina && (
               <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Ăn khi Sức &lt;=:</span>
-                  <div className="flex items-center gap-1.5">
-                    <input
-                      type="number"
-                      min={1}
-                      max={50}
-                      value={config.benStaminaThreshold}
-                      onChange={(e) => updateField('benStaminaThreshold', Number(e.target.value))}
-                      className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                    />
-                    <span className="text-slate-500 text-[10px]">⚡</span>
-                  </div>
+                  <span className="text-slate-600">Ăn khi không câu được nữa:</span>
+                  <span className="font-mono font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200/60 text-[10px]">
+                    Sức ≤ 0⚡
+                  </span>
                 </div>
 
                 <div className="flex items-center justify-between gap-2 min-w-0">

@@ -16,7 +16,7 @@ export const AREA_META: Record<AreaId, AreaMeta> = {
   farm: { id: 'farm', icon: '🌾', name: 'Nông Trại' },
   benDo: { id: 'benDo', icon: '🛶', name: 'Bến Đò' },
   sea: { id: 'sea', icon: '🏖️', name: 'Biển' },
-  farmstay: { id: 'farmstay', icon: '🏡', name: 'Farmstay Ông Năm' },
+  farmstay: { id: 'farmstay', icon: '🏡', name: 'Farmstay' },
 };
 
 export const SUBAREA_META: Record<FarmSubAreaId, SubAreaMeta> = {
@@ -331,7 +331,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   benAutoKeepRare: true,
   benAutoGoiDau: false,
   benAutoRecoverStamina: true,
-  benStaminaThreshold: 4,
+  benStaminaThreshold: 0,
   benPreferFood: 'lauMam',
   benAutoLuckDrink: true,
   benPreferDrink: 'duaTuoi',

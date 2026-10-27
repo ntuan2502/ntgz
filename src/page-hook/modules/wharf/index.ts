@@ -171,6 +171,8 @@ function setNextAtmTime(timestamp: number): void {
 }
 
 let isStockingBait = false;
+let lastObservedCashedSeq = -1;
+let lastObservedNoticeSeq = -1;
 
 const cricketTotal = (c: { stats?: { power?: number; tough?: number; nerve?: number } }) =>
   (c.stats?.power || 0) + (c.stats?.tough || 0) + (c.stats?.nerve || 0);
@@ -206,11 +208,63 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   const rawScene = getActiveScene('BenDoScene');
   const benScene = rawScene as unknown as {
     goFarmer?: (tile: { x: number; y: number }, cb?: () => void) => void;
-    farmer?: { tile?: { x: number; y: number }; running?: boolean };
+    farmer?: {
+      tile?: { x: number; y: number };
+      running?: boolean;
+      lookAt?: (x: number, y: number) => void;
+    };
   } | null;
 
   const wallet = bn.wallet;
   if (!wallet) return { acted: false };
+
+  // Watch for ATM cash success confirmation from server
+  if (bn.cashed && typeof bn.cashed.seq === 'number' && bn.cashed.seq !== lastObservedCashedSeq) {
+    lastObservedCashedSeq = bn.cashed.seq;
+    const cashed = bn.cashed;
+    const nextHour = getNextHourTimestamp(Date.now());
+    const nextHourStr = new Date(nextHour).toLocaleTimeString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+    lastAtmExchangeAt = Date.now();
+    setNextAtmTime(nextHour);
+    if (buStore.getState().panel === 'atm') {
+      buStore.setState({ panel: null });
+    }
+    return {
+      acted: true,
+      msg: `🏧 Cây ATM: 🎉 Đổi thành công ${cashed.shells.toLocaleString('vi-VN')} vỏ sò ➔ ${cashed.money.toLocaleString('vi-VN')}đ tiền mặt! Lần đổi kế tiếp lúc ${nextHourStr}`,
+    };
+  }
+
+  // Watch for ATM server error notices
+  if (bn.notice && typeof bn.notice.seq === 'number' && bn.notice.seq !== lastObservedNoticeSeq) {
+    lastObservedNoticeSeq = bn.notice.seq;
+    const err = bn.notice.error;
+    if (err === 'farAtm') {
+      return {
+        acted: true,
+        msg: '⚠️ Cây ATM: Đứng ngay trước cây ATM mới rút tiền được nha 🏧',
+      };
+    } else if (err === 'atmLimit') {
+      const nextHour = getNextHourTimestamp(Date.now());
+      setNextAtmTime(nextHour);
+      if (buStore.getState().panel === 'atm') {
+        buStore.setState({ panel: null });
+      }
+      return {
+        acted: true,
+        msg: '⏳ Cây ATM: Giờ này nhận chạm hạn mức tiền rồi, bớt số sò hoặc chờ chút nữa đổi tiếp nha ⏳',
+      };
+    } else if (err === 'atmMin') {
+      return {
+        acted: true,
+        msg: '⚠️ Cây ATM: Mỗi lần đổi ít nhất 100 vỏ sò nha 🏧',
+      };
+    }
+  }
 
   const huntEnabled = cfg.benSubEnabled?.cricketHunt !== false && cfg.benAutoCricketHunt !== false;
   const bossEnabled = cfg.benSubEnabled?.cricketBoss !== false && cfg.benAutoBossBout !== false;
@@ -280,7 +334,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   );
   const pack = bn.pack || {};
   const packItems = Object.keys(pack).filter((k) => (pack[k] || 0) > 0);
-  const stamMin = Number(cfg.benStaminaThreshold ?? 4);
+  const stamMin = Number(cfg.benStaminaThreshold ?? 0);
 
   const runWithOptionalPanel = (
     actionFn: () => void,
@@ -347,15 +401,16 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   const prefFood = cfg.benPreferFood || 'lauMam';
   const targetFoodPrice = foodPrices[prefFood] || 45;
 
+  const cannotFishStamina = stamina <= Math.max(0, stamMin) || bn.notice?.error === 'tired';
   const needShellsForBait = bait <= 0 && shells < 15;
   const needShellsForFood =
-    (stamina < 4 || (cfg.benAutoRecoverStamina !== false && stamina <= stamMin)) &&
+    cannotFishStamina &&
     packItems.length === 0 &&
     shells < targetFoodPrice;
 
-  // Helper: Recover Stamina
+  // Helper: Recover Stamina (Ăn khi không câu được nữa: Sức <= 0)
   const tryRecoverStamina = (): BenStepResult | null => {
-    if (stamina < 4 || (cfg.benAutoRecoverStamina !== false && stamina <= stamMin)) {
+    if (cannotFishStamina) {
       if (cfg.benAutoRecoverStamina !== false) {
         // Eat from pack
         if (packItems.length > 0 && canAct('ben_eat_pack', 3000)) {
@@ -433,7 +488,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
         }
       }
 
-      if (stamina < 4) {
+      if (cannotFishStamina) {
         if (cfg.benAutoSell !== false && nonKeptCount > 0) {
           return walkAndRun(
             { x: 40, y: 10 },
@@ -450,7 +505,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
         return {
           acted: false,
           exhausted: true,
-          reason: '😮‍💨 Bến Đò: Hết Sức và không đủ vỏ sò để ăn/gội đầu -> Chuyển khu vực tiếp theo!',
+          reason: '😮‍💨 Bến Đò: Không câu được nữa (Sức ≤ 0⚡) và không đủ vỏ sò để ăn/gội đầu -> Chuyển khu vực tiếp theo!',
         };
       }
     }
@@ -461,19 +516,19 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   // SUB-AREA RUNNER 1: FISHING (Câu cá & Bán cá Bến Đò)
   // ---------------------------------------------------------------------------
   const runFishingStep = (): BenStepResult => {
-    // 1. Sell basket at Vựa cá Anh Tư
-    const sellThreshold = Number(cfg.benSellThreshold) || 60;
+    // 1. Sell basket at Vựa cá Anh Tư khi giỏ cá đầy (60 con) hoặc khi thiếu sò mua mồi/ăn uống
+    const isBasketFull = nonKeptCount >= 60 || bn.notice?.error === 'basketFull';
     if (
       cfg.benAutoSell !== false &&
       nonKeptCount > 0 &&
-      (nonKeptCount >= sellThreshold || nonKeptCount >= 55 || needShellsForBait || needShellsForFood)
+      (isBasketFull || needShellsForBait || needShellsForFood)
     ) {
       return walkAndRun(
         { x: 40, y: 10 },
         () => {
           sendBenWs({ t: 'sell' });
         },
-        `🐟 Bán ${nonKeptCount} con cá tại Vựa Anh Tư (+${totalSellShells.toLocaleString('vi-VN')} vỏ sò 🐚)`,
+        `🐟 Bán ${nonKeptCount} con cá tại Vựa Anh Tư (+${totalSellShells.toLocaleString('vi-VN')} vỏ sò 🐚)${isBasketFull ? ' (Giỏ đã đầy 60/60)' : ''}`,
         'ben_sell',
         { panel: 'sell' },
         1400
@@ -794,41 +849,91 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
     // A. Sạp lồng đèn Cô Bảy
     if (cfg.benAutoLantern !== false) {
       const tickets = wallet.tickets || 0;
-      const boughtToday = bn.wheel?.bought || 0;
-      const canBuyTicket = Boolean(cfg.benBuyLanternTicket && boughtToday < 5 && shells >= 600);
-      const shouldSpin = cfg.benLanternSpinMode === 'x1' ? tickets > 0 : tickets >= 10;
 
-      if ((shouldSpin || canBuyTicket) && bu.panel !== 'lantern' && canAct('ben_lantern_open', 2500)) {
-        return walkAndRun(
-          { x: 37, y: 28 },
-          () => {
-            const curBn = bnStore.getState();
-            const curPicks = curBn.wheel?.picks || [];
-            const ownedCloset = Array.isArray(curBn.closet) ? curBn.closet : [];
-            const unownedWheel = WHEEL_ITEM_IDS.filter((id) => !ownedCloset.includes(id));
-            const needPicks = Math.min(3, unownedWheel.length);
-            if (needPicks > 0 && curPicks.length < needPicks) {
-              sendBenWs({ t: 'pick', items: unownedWheel.slice(0, needPicks) });
-            }
-            if (cfg.showFullActions) {
-              buStore.setState({ panel: 'lantern' });
-            } else {
-              // Chạy ngầm (Stealth): Không mở bảng modal, gửi lệnh trực tiếp qua WebSocket
-              if (canBuyTicket) {
-                sendBenWs({ t: 'ticket' });
-              } else if (shouldSpin) {
-                const spinCount = cfg.benLanternSpinMode === 'x1' ? 1 : 10;
-                sendBenWs({ t: 'spin', n: spinCount });
-              }
-            }
-          },
-          canBuyTicket && boughtToday < 5
-            ? `🏮 Ghé Sạp lồng đèn Cô Bảy mua vé quay (${boughtToday}/5, -600🐚)`
-            : `🏮 ${cfg.showFullActions ? 'Mở Vòng quay lồng đèn Cô Bảy' : 'Quay ngầm lồng đèn Cô Bảy'} (hiện có ${tickets} vé 🎟️)`,
-          'ben_lantern_open',
-          cfg.showFullActions ? { panel: 'lantern' } : undefined,
-          5000
-        );
+      // 1. Kiểm tra trước qua WebSocket từ xa nếu chưa có dữ liệu wheel (không chạy qua sạp)
+      if (!bn.wheel && canAct('ben_wheel_query', 5000)) {
+        markActed('ben_wheel_query');
+        sendBenWs({ t: 'wheel' });
+        return { acted: false };
+      }
+
+      const boughtToday = bn.wheel?.bought ?? 0;
+
+      // 2. Tự mua 5 lượt vé quay: kiểm tra trước, nếu không mua được thì log hiển thị giống trong ingame, nếu được thì gửi qua WS từ xa (không chạy qua tận nơi)
+      if (cfg.benBuyLanternTicket) {
+        if (boughtToday >= 5) {
+          if (canAct('ben_lantern_limit_log', 120000)) {
+            markActed('ben_lantern_limit_log');
+            return {
+              acted: true,
+              msg: '🏮 Cô Bảy: Hôm nay cô bán đủ 5 vé rồi, mai ghé nha. Ra câu đi, cá còn ngậm vé đó!',
+            };
+          }
+        } else if (shells < 600) {
+          if (canAct('ben_lantern_poor_log', 60000)) {
+            markActed('ben_lantern_poor_log');
+            return {
+              acted: true,
+              msg: `🏮 Cô Bảy: Thiếu vỏ sò rồi con. (cần 600🐚, hiện có ${shells}🐚)`,
+            };
+          }
+        } else if (canAct('ben_lantern_buy', 1500)) {
+          markActed('ben_lantern_buy');
+          sendBenWs({ t: 'ticket' });
+          return {
+            acted: true,
+            msg: `🎟️ Cô Bảy: Nè, một vé. Quay đi con! (${boughtToday + 1}/5 · -600 vỏ sò 🐚)`,
+          };
+        }
+      }
+
+      // 3. Quay vé lồng đèn Cô Bảy
+      const shouldSpin = cfg.benLanternSpinMode === 'x1' ? tickets > 0 : tickets >= 10;
+      if (shouldSpin) {
+        if (cfg.showFullActions) {
+          if (bu.panel !== 'lantern' && canAct('ben_lantern_open', 2500)) {
+            return walkAndRun(
+              { x: 37, y: 28 },
+              () => {
+                const curBn = bnStore.getState();
+                const curPicks = curBn.wheel?.picks || [];
+                const ownedCloset = Array.isArray(curBn.closet) ? curBn.closet : [];
+                const unownedWheel = WHEEL_ITEM_IDS.filter((id) => !ownedCloset.includes(id));
+                const needPicks = Math.min(3, unownedWheel.length);
+                if (needPicks > 0 && curPicks.length < needPicks) {
+                  sendBenWs({ t: 'pick', items: unownedWheel.slice(0, needPicks) });
+                }
+                buStore.setState({ panel: 'lantern' });
+              },
+              `🏮 Mở Vòng quay lồng đèn Cô Bảy (hiện có ${tickets} vé 🎟️)`,
+              'ben_lantern_open',
+              { panel: 'lantern' },
+              5000
+            );
+          }
+        } else if (canAct('ben_lantern_spin_stealth', 3000)) {
+          markActed('ben_lantern_spin_stealth');
+          const curBn = bnStore.getState();
+          const curPicks = curBn.wheel?.picks || [];
+          const ownedCloset = Array.isArray(curBn.closet) ? curBn.closet : [];
+          const unownedWheel = WHEEL_ITEM_IDS.filter((id) => !ownedCloset.includes(id));
+          const needPicks = Math.min(3, unownedWheel.length);
+          if (needPicks > 0 && curPicks.length < needPicks) {
+            sendBenWs({ t: 'pick', items: unownedWheel.slice(0, needPicks) });
+          }
+          const spinCount = cfg.benLanternSpinMode === 'x1' ? 1 : 10;
+          sendBenWs({ t: 'spin', n: spinCount });
+          return {
+            acted: true,
+            msg: `🏮 Vòng quay Cô Bảy: Quay ngầm ${spinCount} vé (còn ${tickets} vé 🎟️)...`,
+          };
+        }
+      } else if (tickets > 0 && cfg.benLanternSpinMode === 'x10' && canAct('ben_lantern_wait_x10', 120000)) {
+        markActed('ben_lantern_wait_x10');
+        return {
+          acted: true,
+          msg: `🏮 Vòng quay Cô Bảy: Có ${tickets}/10 vé (chờ đủ 10 vé mới quay x10) · Tiếp tục các việc khác`,
+        };
       }
     }
 
@@ -925,7 +1030,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
       // Time has arrived! Check minimum shell threshold
       const atmMin = typeof cfg.benAtmThreshold === 'number' ? cfg.benAtmThreshold : 10000;
       if (shells >= atmMin && canAct('ben_atm', 4000)) {
-        const MAX_ATM_HOURLY_MONEY = 20_000_000; // 20 triệu đồng tối đa mỗi giờ (n5 = 2e7 trong game)
+        const MAX_ATM_HOURLY_MONEY = 20_000_000;
         const moneyQuota = Math.min(
           MAX_ATM_HOURLY_MONEY,
           typeof bnAtm.left === 'number' ? bnAtm.left : MAX_ATM_HOURLY_MONEY
@@ -942,31 +1047,43 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
         shellsToCash = Math.floor(shellsToCash / 100) * 100;
 
         if (shellsToCash >= 100) {
-          const moneyReceived = shellsToCash * rate;
-          const nextHour = getNextHourTimestamp(now);
-          const nextHourStr = new Date(nextHour).toLocaleTimeString('vi-VN', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-          });
+          const curTile = benScene?.farmer?.tile;
+          const isAtAtmSpot = Boolean(curTile && curTile.x === 34 && curTile.y === 35);
 
-          lastAtmExchangeAt = now;
-          lastAtmLogAt = now;
-          setNextAtmTime(nextHour);
+          if (!isAtAtmSpot) {
+            return walkAndRun(
+              { x: 34, y: 35 },
+              () => {
+                if (benScene?.farmer?.lookAt) {
+                  benScene.farmer.lookAt((34 + 0.5) * 16, 34 * 16);
+                }
+                sendBenWs({ t: 'atm' });
+                if (cfg.showFullActions) {
+                  buStore.setState({ panel: 'atm' });
+                } else {
+                  sendBenWs({ t: 'atmCash', shells: shellsToCash });
+                }
+              },
+              `Đi lại Cây ATM để đổi ${shellsToCash.toLocaleString('vi-VN')} vỏ sò...`,
+              'ben_atm_walk'
+            );
+          }
 
-          return walkAndRun(
-            { x: 34, y: 35 },
-            () => {
-              lastAtmExchangeAt = Date.now();
-              lastAtmLogAt = Date.now();
-              setNextAtmTime(nextHour);
-              sendBenWs({ t: 'atmCash', shells: shellsToCash });
-            },
-            `🏧 Đổi ${shellsToCash.toLocaleString('vi-VN')} vỏ sò ➔ ${moneyReceived.toLocaleString('vi-VN')}đ tiền mặt tại Cây ATM (Tối đa 20tr/giờ · Lần đổi kế tiếp: lúc ${nextHourStr})`,
-            'ben_atm',
-            { panel: 'atm' },
-            1500
-          );
+          // Already at ATM spot { x: 34, y: 35 }
+          if (benScene?.farmer?.lookAt) {
+            benScene.farmer.lookAt((34 + 0.5) * 16, 34 * 16);
+          }
+          markActed('ben_atm');
+          sendBenWs({ t: 'atm' });
+          if (cfg.showFullActions) {
+            buStore.setState({ panel: 'atm' });
+          } else {
+            sendBenWs({ t: 'atmCash', shells: shellsToCash });
+          }
+          return {
+            acted: true,
+            msg: `🏧 Đang gửi lệnh đổi ${shellsToCash.toLocaleString('vi-VN')} vỏ sò tại Cây ATM...`,
+          };
         }
       }
     }

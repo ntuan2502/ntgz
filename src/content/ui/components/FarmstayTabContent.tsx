@@ -302,7 +302,7 @@ export function FarmstayTabContent({ config, onUpdateConfig }: FarmstayTabConten
       {/* Top Banner Toggle */}
       <div className="flex items-center justify-between rounded-xl bg-amber-50 border border-amber-200/80 px-3.5 py-2 text-amber-900 shadow-xs">
         <span className="font-semibold text-xs flex items-center gap-1.5">
-          🏡 Cho phép chạy Khu vực Farmstay Ông Năm
+          🏡 Cho phép chạy Khu vực Farmstay
         </span>
         <Switch checked={isFarmstayAreaEnabled} onCheckedChange={handleToggleArea} />
       </div>

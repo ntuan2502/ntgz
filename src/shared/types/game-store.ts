@@ -607,6 +607,12 @@ export interface BenNetState {
     log?: unknown[];
     [key: string]: unknown;
   } | null;
+  cashed?: {
+    shells: number;
+    money: number;
+    seq: number;
+    [key: string]: unknown;
+  } | null;
   notice?: {
     error?: string;
     [key: string]: unknown;

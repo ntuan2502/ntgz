@@ -8,6 +8,7 @@ let lastModalClickAt = 0;
 let lastHookAt = 0;
 let lastCastAt = 0;
 let lastWheelActionAt = 0;
+let lastAtmActionAt = 0;
 let lastCricketCatchAt = 0;
 let lastBoutCloseAt = 0;
 let lastCricketEventSeq = -1;
@@ -154,6 +155,37 @@ function handleBenLanternWheel(
   return true;
 }
 
+function handleBenAtmPanel(
+  atmPanel: HTMLElement,
+  _snap: GameSnapshot,
+  _config: AppConfig,
+  setStatus: (text: string) => void,
+  delayMs: number
+): boolean {
+  const now = performance.now();
+  if (now - lastAtmActionAt < Math.max(400, delayMs * 0.7)) {
+    return true;
+  }
+
+  const goBtn = atmPanel.querySelector('.btn-green.ben-atm-go') as HTMLButtonElement | null;
+  const closeBtn = atmPanel.querySelector('.ben-panel-head button.btn-brown') as HTMLButtonElement | null;
+
+  if (goBtn && !goBtn.disabled) {
+    lastAtmActionAt = now;
+    triggerPointerDownAndClick(goBtn);
+    setStatus('🏧 Đang bấm nút Rút tiền tại Cây ATM...');
+    return true;
+  }
+
+  if (closeBtn && !closeBtn.disabled) {
+    lastAtmActionAt = now;
+    triggerPointerDownAndClick(closeBtn);
+    return true;
+  }
+
+  return true;
+}
+
 function formatBenCatchSummary(card: HTMLElement, kept: boolean): string {
   const fishName = card.querySelector('h3')?.textContent?.trim() || 'Cá';
   const rarityText = card.querySelector('h3')?.nextElementSibling?.textContent?.trim() || 'Thường';
@@ -285,6 +317,13 @@ export async function stepBenDoFishing(
   const wheelEl = document.querySelector('.ben-wheel') as HTMLElement | null;
   if (wheelEl && isVisible(wheelEl)) {
     handleBenLanternWheel(wheelEl, snap, config, setStatus, delayMs);
+    return { finishedArea: false };
+  }
+
+  // 3b-2. Handle ATM Modal (.panel.ben-panel.ben-atm)
+  const atmPanel = document.querySelector('.panel.ben-panel.ben-shop.ben-atm') as HTMLElement | null;
+  if (atmPanel && isVisible(atmPanel)) {
+    handleBenAtmPanel(atmPanel, snap, config, setStatus, delayMs);
     return { finishedArea: false };
   }
 

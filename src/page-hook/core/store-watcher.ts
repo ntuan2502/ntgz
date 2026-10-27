@@ -178,6 +178,7 @@ export function getSnapshot(): GameSnapshot {
           rooms: bn.rooms ?? null,
           room: bn.room ?? null,
           atm: bn.atm ?? null,
+          cashed: bn.cashed ?? null,
           landed: bn.landed,
           notice: bn.notice,
           wheel: bn.wheel,
