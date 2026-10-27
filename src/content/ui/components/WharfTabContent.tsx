@@ -410,7 +410,7 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab }: Wh
             </label>
 
             {config.benAutoCricketHunt && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-2 text-[11px] min-w-0 overflow-hidden">
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-2 text-[11px] min-w-0">
                 <div className="flex items-center justify-between gap-2 min-w-0">
                   <span className="text-slate-600 shrink-0">Khu vực săn dế:</span>
                   <HudSelect
@@ -450,7 +450,7 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab }: Wh
             </label>
 
             {config.benAutoReleaseLowCricket && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-2 text-[11px] min-w-0 overflow-hidden">
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-2 text-[11px] min-w-0">
                 <div className="flex flex-col gap-1.5 min-w-0">
                   <span className="text-slate-600 font-medium">Loài dế ưu tiên giữ trong ống tre:</span>
                   <MultiSelectCombobox
@@ -474,7 +474,7 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab }: Wh
               />
             </label>
             {config.benAutoFeedCricket && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0">
                 <div className="flex items-center justify-between gap-2 min-w-0">
                   <span className="text-slate-600 shrink-0">Chỉ số ưu tiên:</span>
                   <HudSelect
@@ -692,7 +692,7 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab }: Wh
               onDragOver={(e) => handleDragOver(e, idx)}
               onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, idx)}
-              className={`rounded-xl border bg-white shadow-xs transition-all shadow-sm ${
+              className={`relative rounded-xl border bg-white shadow-xs transition-all shadow-sm ${
                 isDragging
                   ? 'opacity-40 border-dashed border-blue-400'
                   : isDragOver

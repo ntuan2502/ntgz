@@ -25,20 +25,46 @@ export function MultiSelectCombobox({
   className,
 }: MultiSelectComboboxProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [openUpward, setOpenUpward] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on click outside
+  // Close dropdown on click outside (Shadow DOM aware using composedPath)
   useEffect(() => {
     if (!isOpen) return;
 
     const handlePointerDown = (e: MouseEvent | TouchEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setIsOpen(false);
+      // In Shadow DOM, e.target is retargeted to the host element.
+      // e.composedPath() contains the actual path of clicked elements.
+      const path = typeof e.composedPath === 'function' ? e.composedPath() : [];
+      if (containerRef.current) {
+        if (path.length > 0) {
+          if (!path.includes(containerRef.current)) {
+            setIsOpen(false);
+          }
+        } else if (!containerRef.current.contains(e.target as Node)) {
+          setIsOpen(false);
+        }
       }
     };
 
     document.addEventListener('mousedown', handlePointerDown);
-    return () => document.removeEventListener('mousedown', handlePointerDown);
+    document.addEventListener('touchstart', handlePointerDown, { passive: true });
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('touchstart', handlePointerDown);
+    };
+  }, [isOpen]);
+
+  // Determine whether to open upward or downward based on viewport clearance
+  useEffect(() => {
+    if (!isOpen || !containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    if (spaceBelow < 230 && rect.top > 230) {
+      setOpenUpward(true);
+    } else {
+      setOpenUpward(false);
+    }
   }, [isOpen]);
 
   const toggleItem = (id: string) => {
@@ -67,7 +93,7 @@ export function MultiSelectCombobox({
     if (isAllSelected) {
       return (
         <span className="font-semibold text-amber-800">
-          ⭐ Tất cả độ hiếm ({options.length})
+          ⭐ Tất cả ({options.length})
         </span>
       );
     }
@@ -92,11 +118,17 @@ export function MultiSelectCombobox({
   };
 
   return (
-    <div ref={containerRef} className={cn('relative w-full', className)}>
+    <div
+      ref={containerRef}
+      className={cn('relative w-full', isOpen && 'z-50', className)}
+    >
       {/* Trigger Button */}
       <button
         type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsOpen((prev) => !prev);
+        }}
         className="flex items-center justify-between w-full h-8 px-2.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs text-slate-800 shadow-2xs cursor-pointer transition-colors focus:outline-none focus:ring-1 focus:ring-emerald-500"
       >
         <div className="flex items-center gap-1 min-w-0 pr-1">
@@ -107,17 +139,29 @@ export function MultiSelectCombobox({
 
       {/* Floating Popover Dropdown */}
       {isOpen && (
-        <div className="absolute left-0 right-0 top-full mt-1 z-[9999] rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl animate-in fade-in zoom-in-95 duration-100">
+        <div
+          onPointerDown={(e) => e.stopPropagation()}
+          className={cn(
+            'absolute left-0 right-0 z-[99999] rounded-xl border border-slate-200 bg-white p-1.5 shadow-2xl animate-in fade-in zoom-in-95 duration-100',
+            openUpward ? 'bottom-full mb-1.5' : 'top-full mt-1.5'
+          )}
+        >
           {/* Header Quick Controls */}
           <div className="flex items-center justify-between pb-1.5 mb-1 px-1 border-b border-slate-100 text-[10px] text-slate-500">
-            <span>Đã chọn: <strong className="text-amber-800">{selectedCount}/{options.length}</strong></span>
+            <span>
+              Đã chọn: <strong className="text-amber-800">{selectedCount}/{options.length}</strong>
+            </span>
             <div className="flex items-center gap-1">
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
                 className="h-5 px-1.5 text-[10px] text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 cursor-pointer"
-                onClick={selectAll}
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  selectAll();
+                }}
               >
                 Chọn hết
               </Button>
@@ -126,9 +170,26 @@ export function MultiSelectCombobox({
                 variant="ghost"
                 size="sm"
                 className="h-5 px-1.5 text-[10px] text-slate-600 hover:text-red-700 hover:bg-red-50 cursor-pointer"
-                onClick={clearAll}
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  clearAll();
+                }}
               >
                 Bỏ chọn
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-5 px-2 text-[10px] text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border-emerald-300 font-semibold cursor-pointer"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsOpen(false);
+                }}
+              >
+                Đóng
               </Button>
             </div>
           </div>
@@ -140,23 +201,29 @@ export function MultiSelectCombobox({
               return (
                 <div
                   key={opt.id}
-                  onClick={() => toggleItem(opt.id)}
-                  className={`flex items-center justify-between px-2 py-1.5 rounded-lg text-xs cursor-pointer transition-colors select-none ${
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleItem(opt.id);
+                  }}
+                  className={cn(
+                    'flex items-center justify-between px-2 py-1.5 rounded-lg text-xs cursor-pointer transition-colors select-none',
                     isChecked
                       ? 'bg-amber-50/90 text-amber-950 font-medium'
                       : 'text-slate-700 hover:bg-slate-50'
-                  }`}
+                  )}
                 >
                   <div className="flex items-center gap-1.5 min-w-0">
                     <span className="text-sm shrink-0">{opt.icon}</span>
                     <span className="truncate">{opt.label}</span>
                   </div>
                   <div
-                    className={`flex h-4 w-4 items-center justify-center rounded border transition-colors shrink-0 ${
+                    className={cn(
+                      'flex h-4 w-4 items-center justify-center rounded border transition-colors shrink-0',
                       isChecked
                         ? 'border-amber-500 bg-amber-500 text-white'
                         : 'border-slate-300 bg-white'
-                    }`}
+                    )}
                   >
                     {isChecked && <Check className="h-3 w-3 stroke-[3]" />}
                   </div>
