@@ -5,6 +5,25 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.6.2] - 2026-10-27
+
+### 🌟 Tính Năng Mới & Nâng Cấp Giao Diện (Features & UI Enhancements)
+- **Tích Hợp Biểu Tượng Extension Chính Thức (Extension Icon)**:
+  - Bổ sung tài nguyên ảnh nhận diện thương hiệu `src/images/icon-192.png`.
+  - Cấu hình chuẩn hóa Manifest V3 cho toàn bộ kích thước hiển thị (`16`, `32`, `48`, `128`, `192`) và biểu tượng Action Toolbar trên trình duyệt.
+  - Tích hợp hiển thị logo nhận diện chính thức trên thanh tiêu đề Popup lẫn thanh Header bảng điều khiển HUD trong game.
+- **Tái Cấu Trúc Toàn Diện Giao Diện Changelog Trong HUD (Full-Panel Changelog View)**:
+  - Loại bỏ hoàn toàn cửa sổ Modal popup chồng đè (`fixed inset-0`) vốn bị giới hạn bởi thuộc tính `transform` của container HUD dẫn đến lỗi tràn viền và che khuất nội dung.
+  - Tái sử dụng trọn vẹn mô hình View Mode của Extension Popup: Khi bấm kiểm tra cập nhật (hoặc nhấp vào badge phiên bản `v1.6.2`), toàn bộ thân bảng điều khiển HUD sẽ chuyển sang màn hình Changelog chuyên dụng với nút `← Quay lại bảng điều khiển` ở đầu trang.
+  - Tự động co giãn theo kích thước HUD, cuộn mượt mà, hỗ trợ phím `Esc` để quay lại bất kỳ lúc nào.
+
+### 🐛 Sửa Lỗi Logic (Bug Fixes)
+- **Chuẩn Hóa Logic Gửi Tiết Kiệm Dì Bảy (Savings Deposit Logic)**:
+  - Sửa lại công thức gửi tiền: Khi bật *"Gửi tối đa hạn mức cho phép"*, bot gửi trọn vẹn hạn mức cao nhất của sổ theo quy định của game (`cap`: 5M, 8M, 12M, 20M) thay vì trừ trước ngưỡng bảo lưu vốn.
+  - Ngưỡng *"Dừng gửi khi tiền dưới (triệu)"* hoạt động chuẩn xác theo cơ chế Chặn dừng (Guard Check): Ngừng mở thêm sổ mới ngay khi số dư ví giảm xuống dưới ngưỡng cài đặt.
+
+---
+
 ## [1.6.1] - 2026-10-27
 
 ### 🌟 Tính Năng Mới & Nâng Cấp (Features & Improvements)
