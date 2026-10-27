@@ -139,29 +139,60 @@ export function handleCropsSubArea(cfg: AppConfig): StepResult {
   const st = getMainState();
   const plotKeys = Object.keys(st.plots || {});
 
-  // A. Harvest 1 mature plot
+  // A. Harvest mature plots
   if (cfg.autoHarvest !== false) {
-    for (const key of plotKeys) {
-      if (st.previewTool?.(key, 'basket')) {
-        const cropId = st.plots?.[key]?.crop?.id || '';
-        if (applyOnPlot(key, 'basket')) {
-          return { acted: true, msg: `🧺 Thu hoạch ${CROP_NAMES[cropId] || 'nông sản'} ô (${key})` };
+    if (cfg.actionRepeatDelayMs === 0) {
+      let count = 0;
+      for (const key of plotKeys) {
+        if (getMainState().previewTool?.(key, 'basket')) {
+          if (applyOnPlot(key, 'basket')) count++;
+        }
+      }
+      if (count > 0) {
+        return { acted: true, msg: `🧺 Thu hoạch đồng loạt ${count} ô nông sản` };
+      }
+    } else {
+      for (const key of plotKeys) {
+        if (st.previewTool?.(key, 'basket')) {
+          const cropId = st.plots?.[key]?.crop?.id || '';
+          if (applyOnPlot(key, 'basket')) {
+            return { acted: true, msg: `🧺 Thu hoạch ${CROP_NAMES[cropId] || 'nông sản'} ô (${key})` };
+          }
         }
       }
     }
   }
 
-  // B. Spray pesticide on 1 pest-infested plot
+  // B. Spray pesticide on pest-infested plots
   if (cfg.autoPesticide !== false) {
-    for (const key of plotKeys) {
-      if (!st.plots?.[key]?.crop?.pests) continue;
-      if ((st.items?.pesticide || 0) <= 0) {
-        if (cfg.autoBuyPesticide && (st.gold || 0) >= 8000) {
-          st.buyItems?.({ fertilizer: 0, pesticide: 1, mysteryBag: 0 });
+    if (cfg.actionRepeatDelayMs === 0) {
+      let count = 0;
+      for (const key of plotKeys) {
+        const cur = getMainState();
+        if (!cur.plots?.[key]?.crop?.pests) continue;
+        if ((cur.items?.pesticide || 0) <= 0) {
+          if (cfg.autoBuyPesticide && (cur.gold || 0) >= 8000) {
+            cur.buyItems?.({ fertilizer: 0, pesticide: 1, mysteryBag: 0 });
+          }
+        }
+        if ((getMainState().items?.pesticide || 0) > 0 && applyOnPlot(key, 'pesticide')) {
+          count++;
         }
       }
-      if ((getMainState().items?.pesticide || 0) > 0 && applyOnPlot(key, 'pesticide')) {
-        return { acted: true, msg: `🐛 Đã xịt thuốc trừ sâu ô (${key})` };
+      if (count > 0) {
+        return { acted: true, msg: `🐛 Đã xịt thuốc trừ sâu đồng loạt ${count} ô đất` };
+      }
+    } else {
+      for (const key of plotKeys) {
+        if (!st.plots?.[key]?.crop?.pests) continue;
+        if ((st.items?.pesticide || 0) <= 0) {
+          if (cfg.autoBuyPesticide && (st.gold || 0) >= 8000) {
+            st.buyItems?.({ fertilizer: 0, pesticide: 1, mysteryBag: 0 });
+          }
+        }
+        if ((getMainState().items?.pesticide || 0) > 0 && applyOnPlot(key, 'pesticide')) {
+          return { acted: true, msg: `🐛 Đã xịt thuốc trừ sâu ô (${key})` };
+        }
       }
     }
   }
@@ -179,44 +210,94 @@ export function handleCropsSubArea(cfg: AppConfig): StepResult {
         return { acted: true, msg: '🎁 Đã mở Túi hạt bí ẩn nhận thêm hạt giống' };
       }
 
-      const seed = chooseSeed(cfg);
-      if (seed) {
+      if (cfg.actionRepeatDelayMs === 0) {
+        let count = 0;
         for (const emptyKey of emptyKeys) {
+          const seed = chooseSeed(cfg);
+          if (!seed) break;
           if (applyOnPlot(emptyKey, `seed:${seed}`)) {
-            return { acted: true, msg: `🌱 Đã gieo hạt ${CROP_NAMES[seed] || seed} ô (${emptyKey})` };
+            count++;
+          }
+        }
+        if (count > 0) {
+          return { acted: true, msg: `🌱 Đã gieo hạt đồng loạt ${count} ô đất` };
+        }
+      } else {
+        const seed = chooseSeed(cfg);
+        if (seed) {
+          for (const emptyKey of emptyKeys) {
+            if (applyOnPlot(emptyKey, `seed:${seed}`)) {
+              return { acted: true, msg: `🌱 Đã gieo hạt ${CROP_NAMES[seed] || seed} ô (${emptyKey})` };
+            }
           }
         }
       }
     }
   }
 
-  // D. Water 1 dry plot
+  // D. Water dry plots
   if (cfg.autoWater !== false) {
     const curW = getMainState();
-    for (const key of plotKeys) {
-      const p = curW.plots?.[key];
-      const isDry = p?.crop && !p.watered;
-      if (curW.previewTool?.(key, 'wateringCan') || isDry) {
-        if (applyOnPlot(key, 'wateringCan')) {
-          return { acted: true, msg: `💧 Đã tưới nước ô (${key})` };
+    if (cfg.actionRepeatDelayMs === 0) {
+      let count = 0;
+      for (const key of plotKeys) {
+        const p = getMainState().plots?.[key];
+        const isDry = p?.crop && !p.watered;
+        if (getMainState().previewTool?.(key, 'wateringCan') || isDry) {
+          if (applyOnPlot(key, 'wateringCan')) {
+            count++;
+          }
+        }
+      }
+      if (count > 0) {
+        return { acted: true, msg: `💧 Đã tưới nước đồng loạt ${count} ô đất` };
+      }
+    } else {
+      for (const key of plotKeys) {
+        const p = curW.plots?.[key];
+        const isDry = p?.crop && !p.watered;
+        if (curW.previewTool?.(key, 'wateringCan') || isDry) {
+          if (applyOnPlot(key, 'wateringCan')) {
+            return { acted: true, msg: `💧 Đã tưới nước ô (${key})` };
+          }
         }
       }
     }
   }
 
-  // E. Fertilize 1 unfertilized growing plot
+  // E. Fertilize unfertilized growing plots
   if (cfg.autoFertilize) {
-    const cur = getMainState();
-    for (const key of plotKeys) {
-      const p = cur.plots?.[key];
-      if (!p?.crop || p.crop.fertilized || !cur.previewTool?.(key, 'fertilizer')) continue;
-      if ((cur.items?.fertilizer || 0) <= 0) {
-        if (cfg.autoBuyFertilizer && (cur.gold || 0) >= 15000) {
-          cur.buyItems?.({ fertilizer: 1, pesticide: 0, mysteryBag: 0 });
+    if (cfg.actionRepeatDelayMs === 0) {
+      let count = 0;
+      for (const key of plotKeys) {
+        const cur = getMainState();
+        const p = cur.plots?.[key];
+        if (!p?.crop || p.crop.fertilized || !cur.previewTool?.(key, 'fertilizer')) continue;
+        if ((cur.items?.fertilizer || 0) <= 0) {
+          if (cfg.autoBuyFertilizer && (cur.gold || 0) >= 15000) {
+            cur.buyItems?.({ fertilizer: 1, pesticide: 0, mysteryBag: 0 });
+          }
+        }
+        if ((getMainState().items?.fertilizer || 0) > 0 && applyOnPlot(key, 'fertilizer')) {
+          count++;
         }
       }
-      if ((getMainState().items?.fertilizer || 0) > 0 && applyOnPlot(key, 'fertilizer')) {
-        return { acted: true, msg: `✨ Đã bón phân NPK ô (${key})` };
+      if (count > 0) {
+        return { acted: true, msg: `✨ Đã bón phân NPK đồng loạt ${count} ô đất` };
+      }
+    } else {
+      const cur = getMainState();
+      for (const key of plotKeys) {
+        const p = cur.plots?.[key];
+        if (!p?.crop || p.crop.fertilized || !cur.previewTool?.(key, 'fertilizer')) continue;
+        if ((cur.items?.fertilizer || 0) <= 0) {
+          if (cfg.autoBuyFertilizer && (cur.gold || 0) >= 15000) {
+            cur.buyItems?.({ fertilizer: 1, pesticide: 0, mysteryBag: 0 });
+          }
+        }
+        if ((getMainState().items?.fertilizer || 0) > 0 && applyOnPlot(key, 'fertilizer')) {
+          return { acted: true, msg: `✨ Đã bón phân NPK ô (${key})` };
+        }
       }
     }
   }

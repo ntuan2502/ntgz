@@ -59,6 +59,7 @@ export interface AppConfig {
 
   // General Delay & Transition settings
   taskDelayMs: number;
+  actionRepeatDelayMs?: number;
   fishingSwitchCount: number;
   showFullActions: boolean;
 

@@ -39,6 +39,11 @@ export function SettingsView({
     onUpdateConfig((prev) => ({ ...prev, taskDelayMs: val }));
   };
 
+  const handleRepeatDelayChange = (vals: number[]) => {
+    const val = vals[0] ?? 100;
+    onUpdateConfig((prev) => ({ ...prev, actionRepeatDelayMs: val }));
+  };
+
   const handleFishingSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = Math.max(1, Math.min(100, Number(e.target.value) || 10));
     onUpdateConfig((prev) => ({ ...prev, fishingSwitchCount: val }));
@@ -73,7 +78,7 @@ export function SettingsView({
     if (ms < 600) {
       return (
         <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 font-medium">
-          ⚡ Siêu nhanh (cần mạng tốt)
+          ⚡ Nhanh
         </span>
       );
     }
@@ -86,7 +91,29 @@ export function SettingsView({
     }
     return (
       <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-medium">
-        🐢 Rất an toàn (máy chậm)
+        🐢 Rất an toàn
+      </span>
+    );
+  };
+
+  const getRepeatDelayBadge = (ms: number) => {
+    if (ms === 0) {
+      return (
+        <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-100 text-purple-800 font-bold">
+          🚀 Tức thì 0ms (Đồng loạt cả vườn)
+        </span>
+      );
+    }
+    if (ms <= 250) {
+      return (
+        <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-medium">
+          ⚡ Siêu tốc & Mượt
+        </span>
+      );
+    }
+    return (
+      <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-medium">
+        🚶 Nhịp từng ô
       </span>
     );
   };
@@ -114,36 +141,71 @@ export function SettingsView({
 
       {/* Scrollable Settings Content */}
       <div className="flex-1 min-h-0 overflow-y-auto p-3 space-y-3">
-        {/* 1. Tốc độ & Độ trễ mỗi lệnh */}
-        <div className="rounded-xl border border-slate-200/90 bg-white p-3 space-y-2.5 shadow-2xs">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-              <Clock className="h-4 w-4 text-emerald-600" />
-              <span>Tốc độ delay mỗi lệnh</span>
+        {/* 1. Tốc độ & Độ trễ chuyển bước thao tác */}
+        <div className="rounded-xl border border-slate-200/90 bg-white p-3 space-y-3.5 shadow-2xs">
+          {/* Slider 1: Độ trễ chuyển bước khác loại */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+                <Clock className="h-4 w-4 text-emerald-600" />
+                <span>Độ trễ chuyển bước thao tác (Khác loại)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                {getDelayBadge(config.taskDelayMs)}
+                <span className="font-mono text-emerald-700 font-bold text-xs">
+                  {config.taskDelayMs} ms
+                </span>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              {getDelayBadge(config.taskDelayMs)}
-              <span className="font-mono text-emerald-700 font-bold text-xs">
-                {config.taskDelayMs} ms
-              </span>
+
+            <div className="pt-1">
+              <Slider
+                value={[config.taskDelayMs]}
+                min={300}
+                max={3500}
+                step={100}
+                onValueChange={handleDelayChange}
+                className="w-full"
+              />
             </div>
+
+            <p className="text-[11px] text-slate-500 leading-relaxed">
+              Khoảng nghỉ khi chuyển giữa các nhóm việc khác nhau (Thu hoạch ➔ Gieo hạt ➔ Tưới nước ➔ Chăm sóc vật nuôi ➔ Đổi khu).
+            </p>
           </div>
 
-          <div className="pt-1">
-            <Slider
-              value={[config.taskDelayMs]}
-              min={300}
-              max={3500}
-              step={100}
-              onValueChange={handleDelayChange}
-              className="w-full"
-            />
-          </div>
+          <div className="border-t border-slate-100" />
 
-          <p className="text-[11px] text-slate-500 leading-relaxed">
-            Khoảng thời gian nghỉ giữa các thao tác (câu cá, cho ăn, tưới cây, gặt lúa). Mức khuyến nghị từ{' '}
-            <strong className="text-slate-700">800ms - 1500ms</strong> giúp nhân vật hoạt động mượt mà và tự nhiên nhất.
-          </p>
+          {/* Slider 2: Tốc độ lặp lệnh cùng loại */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+                <Clock className="h-4 w-4 text-purple-600" />
+                <span>Tốc độ lặp lệnh cùng loại (Tưới / Gieo / Bón)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                {getRepeatDelayBadge(config.actionRepeatDelayMs ?? 100)}
+                <span className="font-mono text-purple-700 font-bold text-xs">
+                  {config.actionRepeatDelayMs ?? 100} ms
+                </span>
+              </div>
+            </div>
+
+            <div className="pt-1">
+              <Slider
+                value={[config.actionRepeatDelayMs ?? 100]}
+                min={0}
+                max={1000}
+                step={50}
+                onValueChange={handleRepeatDelayChange}
+                className="w-full"
+              />
+            </div>
+
+            <p className="text-[11px] text-slate-500 leading-relaxed">
+              Khoảng cách giữa các ô đất cùng loại (Tưới ô 1 ➔ ô 2 ➔ ô 3...). Kéo về <strong className="text-purple-700">0ms</strong> để kích hoạt cơ chế <strong>Làm đồng loạt cả vườn trong 1 lượt</strong>!
+            </p>
+          </div>
         </div>
 
         {/* 2. Chế độ hiển thị thao tác (Stealth vs Full Actions) */}

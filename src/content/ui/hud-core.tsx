@@ -183,6 +183,7 @@ export function mergeConfig(saved: Partial<AppConfig> | null | undefined): AppCo
     benBaitMinShells: (typeof saved.benBaitMinShells === 'number' ? saved.benBaitMinShells : DEFAULT_CONFIG.benBaitMinShells) as number,
     benLanternSpinMode: (saved.benLanternSpinMode ?? DEFAULT_CONFIG.benLanternSpinMode) as AppConfig['benLanternSpinMode'],
     benAtmThreshold: (typeof saved.benAtmThreshold === 'number' ? saved.benAtmThreshold : DEFAULT_CONFIG.benAtmThreshold) as number,
+    actionRepeatDelayMs: (typeof saved.actionRepeatDelayMs === 'number' ? saved.actionRepeatDelayMs : DEFAULT_CONFIG.actionRepeatDelayMs) as number,
   };
 
   if (!Array.isArray(next.areaOrder) || next.areaOrder.length === 0) {

@@ -18,20 +18,21 @@ export async function runFarmSubAreas(
   setStatus: (text: string) => void,
   updateHeaderStats: (snap: GameSnapshot) => void
 ): Promise<boolean> {
-  const delayMs = Math.max(150, Number(config.taskDelayMs) || 650);
+  const switchDelayMs = Math.max(150, Number(config.taskDelayMs) || 650);
+  const repeatDelayMs = Math.max(0, Number(config.actionRepeatDelayMs ?? 100));
 
   // Ensure player is at Farm ('playing')
   if (snap.screen !== 'playing') {
     setStatus('🚜 Đang quay về Nông Trại...');
     await execGameAction('NAVIGATE', { target: 'playing', indoors: false });
-    await sleep(delayMs);
+    await sleep(switchDelayMs);
     return true;
   }
 
   // Leave house if indoors before doing outdoor tasks
   if (snap.indoors) {
     await execGameAction('NAVIGATE', { target: 'playing', indoors: false });
-    await sleep(Math.min(400, delayMs));
+    await sleep(Math.min(400, switchDelayMs));
   }
 
   let anyActed = false;
@@ -42,6 +43,7 @@ export async function runFarmSubAreas(
 
     const meta = SUBAREA_META[subId];
     let stepSafety = 0;
+    let subAreaActed = false;
 
     while (config.running && stepSafety < 50) {
       stepSafety++;
@@ -52,8 +54,11 @@ export async function runFarmSubAreas(
 
       if (res && res.ok && res.acted) {
         anyActed = true;
+        subAreaActed = true;
         setStatus(res.msg || `${meta.icon} Đang xử lý ${meta.name}...`);
-        await sleep(delayMs);
+        if (repeatDelayMs > 0) {
+          await sleep(repeatDelayMs);
+        }
         const fresh = await getGameState();
         if (fresh && fresh.ok) {
           updateHeaderStats(fresh);
@@ -64,6 +69,11 @@ export async function runFarmSubAreas(
         }
         break;
       }
+    }
+
+    // Delay between switching different sub-areas
+    if (subAreaActed && switchDelayMs > 0) {
+      await sleep(switchDelayMs);
     }
   }
 

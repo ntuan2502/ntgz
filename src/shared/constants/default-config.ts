@@ -141,6 +141,7 @@ export const DEFAULT_CONFIG: AppConfig = {
 
   // General Delay & Transition settings
   taskDelayMs: 500,
+  actionRepeatDelayMs: 100,
   fishingSwitchCount: 15,
   showFullActions: false,
 
