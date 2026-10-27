@@ -29,7 +29,9 @@ const RARITY_META: Record<
   uncommon: { name: 'Hơi hiếm', color: '#3c8fd0', border: 'border-sky-200', bg: 'bg-sky-50', text: 'text-sky-800' },
   rare: { name: 'Hiếm', color: '#9b6bff', border: 'border-purple-200', bg: 'bg-purple-50', text: 'text-purple-800' },
   epic: { name: 'Rất hiếm', color: '#e0443a', border: 'border-rose-200', bg: 'bg-rose-50', text: 'text-rose-800' },
+  legend: { name: 'Huyền thoại', color: '#e8a020', border: 'border-amber-200', bg: 'bg-amber-50', text: 'text-amber-800' },
   legendary: { name: 'Huyền thoại', color: '#e8a020', border: 'border-amber-200', bg: 'bg-amber-50', text: 'text-amber-800' },
+  myth: { name: 'Thần thoại', color: '#e0306a', border: 'border-pink-200', bg: 'bg-pink-50', text: 'text-pink-800' },
   mythic: { name: 'Thần thoại', color: '#e0306a', border: 'border-pink-200', bg: 'bg-pink-50', text: 'text-pink-800' },
   junk: { name: 'Rác', color: '#8a8070', border: 'border-stone-200', bg: 'bg-stone-50', text: 'text-stone-700' },
 };
@@ -195,7 +197,13 @@ export function FishDexTab({ snap }: FishDexTabProps) {
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-thin pb-1">
           {rarityTabs.map((key) => {
-            const meta = RARITY_META[key];
+            const meta = RARITY_META[key] || {
+              name: key,
+              color: '#6a9a4a',
+              border: 'border-slate-200',
+              bg: 'bg-slate-50',
+              text: 'text-slate-800',
+            };
             const pool = fishCatalog.filter((f) => f.rarity === key);
             const caughtPool = pool.filter((f) => Boolean(dex[f.id]));
             const isSelected = activeTab === key;

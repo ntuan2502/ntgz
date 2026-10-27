@@ -10,6 +10,7 @@ import { WharfBoardTab } from './WharfBoardTab';
 import { WharfClosetTab } from './WharfClosetTab';
 import { FriendsTab } from './FriendsTab';
 import { WharfPackTab } from './WharfPackTab';
+import { TabErrorBoundary } from './TabErrorBoundary';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
@@ -184,16 +185,56 @@ export function MonitorHub({
 
       {/* Main Tab Content Area */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 bg-slate-50/50">
-        {activeTab === 'inventory' && <InventoryTab snap={snap} />}
-        {activeTab === 'crops' && <CropsRadarTab snap={snap} />}
-        {activeTab === 'wealth' && <WealthPortfolioTab snap={snap} />}
-        {activeTab === 'livestock' && <LivestockTab snap={snap} />}
-        {activeTab === 'crickets' && <CricketDeckTab snap={snap} />}
-        {activeTab === 'dex' && <FishDexTab snap={snap} />}
-        {activeTab === 'board' && <WharfBoardTab snap={snap} />}
-        {activeTab === 'closet' && <WharfClosetTab snap={snap} />}
-        {activeTab === 'friends' && <FriendsTab snap={snap} />}
-        {activeTab === 'pack' && <WharfPackTab snap={snap} />}
+        {activeTab === 'inventory' && (
+          <TabErrorBoundary fallbackName="Kho đồ">
+            <InventoryTab snap={snap} />
+          </TabErrorBoundary>
+        )}
+        {activeTab === 'crops' && (
+          <TabErrorBoundary fallbackName="Mùa vụ">
+            <CropsRadarTab snap={snap} />
+          </TabErrorBoundary>
+        )}
+        {activeTab === 'wealth' && (
+          <TabErrorBoundary fallbackName="Tiết kiệm">
+            <WealthPortfolioTab snap={snap} />
+          </TabErrorBoundary>
+        )}
+        {activeTab === 'livestock' && (
+          <TabErrorBoundary fallbackName="Gia súc">
+            <LivestockTab snap={snap} />
+          </TabErrorBoundary>
+        )}
+        {activeTab === 'crickets' && (
+          <TabErrorBoundary fallbackName="Ống tre dế">
+            <CricketDeckTab snap={snap} />
+          </TabErrorBoundary>
+        )}
+        {activeTab === 'dex' && (
+          <TabErrorBoundary fallbackName="Sổ cá">
+            <FishDexTab snap={snap} />
+          </TabErrorBoundary>
+        )}
+        {activeTab === 'board' && (
+          <TabErrorBoundary fallbackName="Bảng vàng">
+            <WharfBoardTab snap={snap} />
+          </TabErrorBoundary>
+        )}
+        {activeTab === 'closet' && (
+          <TabErrorBoundary fallbackName="Tủ đồ">
+            <WharfClosetTab snap={snap} />
+          </TabErrorBoundary>
+        )}
+        {activeTab === 'friends' && (
+          <TabErrorBoundary fallbackName="Bạn bè">
+            <FriendsTab snap={snap} />
+          </TabErrorBoundary>
+        )}
+        {activeTab === 'pack' && (
+          <TabErrorBoundary fallbackName="Túi đồ">
+            <WharfPackTab snap={snap} />
+          </TabErrorBoundary>
+        )}
       </div>
     </div>
   );

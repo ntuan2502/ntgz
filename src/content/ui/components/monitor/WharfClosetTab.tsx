@@ -23,6 +23,17 @@ const rawData = wharfCatalogRaw as {
   closetItems: CatalogItem[];
 };
 
+const TIER_MAP: Record<string, { name: string; color: string }> = {
+  common: { name: 'Thường', color: '#6a9a4a' },
+  uncommon: { name: 'Hơi hiếm', color: '#3c8fd0' },
+  rare: { name: 'Hiếm', color: '#9b6bff' },
+  epic: { name: 'Rất hiếm', color: '#e0443a' },
+  legend: { name: 'Huyền thoại', color: '#e8a020' },
+  legendary: { name: 'Huyền thoại', color: '#e8a020' },
+  myth: { name: 'Thần thoại', color: '#e0306a' },
+  mythic: { name: 'Thần thoại', color: '#e0306a' },
+};
+
 const SLOTS = [
   { id: 'shirt', name: '👕 Áo', defaultText: 'Như ở quê', defaultSub: 'Mặc lại đồ đang mặc ở nông trại', icon: '👕' },
   { id: 'bottom', name: '👖 Quần', defaultText: 'Như ở quê', defaultSub: 'Mặc lại đồ đang mặc ở nông trại', icon: '👖' },
@@ -251,8 +262,20 @@ export function WharfClosetTab({ snap }: WharfClosetTabProps) {
                     {item.icon || '👕'}
                   </span>
                   <div>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       <span className="font-bold text-xs text-slate-900">{item.name}</span>
+                      {item.tier && TIER_MAP[item.tier] && (
+                        <Badge
+                          variant="outline"
+                          className="text-[9px] px-1 py-0 font-normal border"
+                          style={{
+                            color: TIER_MAP[item.tier].color,
+                            borderColor: TIER_MAP[item.tier].color,
+                          }}
+                        >
+                          {TIER_MAP[item.tier].name}
+                        </Badge>
+                      )}
                       {item.limited && (
                         <Badge className="bg-amber-100 text-amber-800 text-[9px] px-1 py-0">Giới hạn</Badge>
                       )}

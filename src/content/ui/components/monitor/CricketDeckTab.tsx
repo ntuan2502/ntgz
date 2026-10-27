@@ -148,7 +148,7 @@ export function CricketDeckTab({ snap }: CricketDeckTabProps) {
 
           const species = cricket.species || 'deMen';
           const meta = speciesMeta[species] || {
-            label: species,
+            label: species.startsWith('de') ? `Dế ${species.slice(2)}` : species,
             icon: '🦗',
             specialty: 'Dế chiến dũng mãnh',
           };

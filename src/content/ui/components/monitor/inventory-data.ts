@@ -1,4 +1,9 @@
 import { GameSnapshot } from '@/shared/types/game-state';
+import fishDexRaw from '@/shared/constants/fish-dex-data.json';
+
+const fishNameMap = new Map<string, string>(
+  (fishDexRaw as Array<{ id: string; name: string }>).map((f) => [f.id, f.name])
+);
 
 export type ItemCategory = 'crops' | 'dishes' | 'seeds' | 'supplies' | 'farmstay' | 'marine';
 
@@ -250,7 +255,8 @@ export function computeInventory(snap: GameSnapshot | null): {
   if (Array.isArray(wharfBasket) && wharfBasket.length > 0) {
     const fishGroup: Record<string, { name: string; count: number; totalVal: number }> = {};
     for (const f of wharfBasket) {
-      const fName = String(f.fish || f.id || 'Cá bến đò');
+      const fishId = String(f.fish || f.id || '');
+      const fName = fishNameMap.get(fishId) || (f as { name?: string }).name || fishId || 'Cá bến đò';
       const fPrice = Number(f.price) || 8_000;
       if (!fishGroup[fName]) {
         fishGroup[fName] = { name: fName, count: 0, totalVal: 0 };

@@ -30,6 +30,38 @@ interface HenItem {
   id?: string | number;
 }
 
+const PET_KIND_NAMES: Record<string, string> = {
+  vang: 'Chó Vàng cỏ',
+  muc: 'Chó Mực',
+  husky: 'Chó Husky',
+  corgi: 'Chó Corgi',
+  pug: 'Chó Pug',
+  muop: 'Mèo Mướp',
+  tamThe: 'Mèo Tam Thể',
+  anhLongNgan: 'Mèo Anh Lông Ngắn',
+  xiem: 'Mèo Xiêm',
+  thoTrang: 'Thỏ Trắng',
+  thoNau: 'Thỏ Nâu',
+  heoHong: 'Heo Hồng',
+  heoMini: 'Heo Mini',
+};
+
+const PET_KIND_ICONS: Record<string, string> = {
+  vang: '🐕',
+  muc: '🐕‍🦺',
+  husky: '🐺',
+  corgi: '🐶',
+  pug: '🐶',
+  muop: '🐱',
+  tamThe: '🐈',
+  anhLongNgan: '🐱',
+  xiem: '🐈‍⬛',
+  thoTrang: '🐇',
+  thoNau: '🐰',
+  heoHong: '🐷',
+  heoMini: '🐽',
+};
+
 export function LivestockTab({ snap }: LivestockTabProps) {
   const currentDay = snap?.day || 0;
 
@@ -273,13 +305,13 @@ export function LivestockTab({ snap }: LivestockTabProps) {
         <div className="p-3 rounded-xl bg-gradient-to-r from-amber-50/60 to-orange-50/60 border border-amber-200/80 shadow-2xs">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-xl">🐕</span>
+              <span className="text-xl">{PET_KIND_ICONS[pet.kind || ''] || '🐕'}</span>
               <div>
                 <span className="text-xs font-bold text-slate-800">
                   {pet.name || 'Thú Cưng Đồng Hành'}
                 </span>
                 <span className="text-[10px] text-slate-500 block">
-                  {pet.kind || 'Chú cún trung thành'}
+                  {PET_KIND_NAMES[pet.kind || ''] || pet.kind || 'Chú cún trung thành'}
                 </span>
               </div>
             </div>

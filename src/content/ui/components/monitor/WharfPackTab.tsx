@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { GameSnapshot } from '@/shared/types/game-state';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Backpack, Star, ExternalLink, RefreshCw, Zap, Check } from 'lucide-react';
 import { execGameAction } from '@/content/bridge/content-bridge';
 import fishDexRaw from '@/shared/constants/fish-dex-data.json';
+import wharfCatalogRaw from '@/shared/constants/wharf-catalog-data.json';
 
 interface FishEntry {
   id: string;
@@ -17,14 +18,30 @@ const fishMetaMap = new Map<string, FishEntry>(
   (fishDexRaw as FishEntry[]).map((f) => [f.id, f])
 );
 
+export const RARITY_NAMES: Record<string, string> = {
+  common: 'Thường',
+  uncommon: 'Hơi hiếm',
+  rare: 'Hiếm',
+  epic: 'Rất hiếm',
+  legend: 'Huyền thoại',
+  legendary: 'Huyền thoại',
+  myth: 'Thần thoại',
+  mythic: 'Thần thoại',
+  junk: 'Rác',
+  rac: 'Rác',
+};
+
 const RARITY_COLORS: Record<string, string> = {
   common: '#6a9a4a',
   uncommon: '#3c8fd0',
   rare: '#9b6bff',
   epic: '#e0443a',
+  legend: '#e8a020',
   legendary: '#e8a020',
+  myth: '#e0306a',
   mythic: '#e0306a',
   junk: '#8a8070',
+  rac: '#8a8070',
 };
 
 const STANDARD_RODS = [
@@ -33,6 +50,47 @@ const STANDARD_RODS = [
   { level: 3, name: 'Cần carbon', desc: 'Nhẹ và chắc, cá huyền thoại cũng phải nể', icon: '🎣' },
   { level: 4, name: 'Cần nano', desc: 'Đỉnh cao kỹ thuật, bắt cá thần thoại', icon: '🎣' },
 ];
+
+export interface SpecialRodMeta {
+  id: string;
+  grade: string;
+  gradeName: string;
+  gradeColor: string;
+  name: string;
+  desc: string;
+  icon?: string;
+}
+
+export const SPECIAL_RODS_MAP: Record<string, SpecialRodMeta> = {
+  tamVong: { id: 'tamVong', grade: 'good', gradeName: 'Tốt', gradeColor: '#6a9a4a', name: 'Cần tầm vông', desc: 'Thân tre tầm vông dẻo dai bên bờ kênh', icon: '🎣' },
+  trucDen: { id: 'trucDen', grade: 'good', gradeName: 'Tốt', gradeColor: '#6a9a4a', name: 'Cần trúc đen', desc: 'Đốt trúc đen óng, cá quẫy không gãy', icon: '🎣' },
+  sayDong: { id: 'sayDong', grade: 'good', gradeName: 'Tốt', gradeColor: '#6a9a4a', name: 'Cần sậy đồng', desc: 'Nhẹ tênh, phao nhấp là biết ngay', icon: '🎣' },
+  mayRung: { id: 'mayRung', grade: 'good', gradeName: 'Tốt', gradeColor: '#6a9a4a', name: 'Cần mây rừng', desc: 'Sợi mây rừng uốn cong theo dáng cá', icon: '🎣' },
+  trangRam: { id: 'trangRam', grade: 'rare', gradeName: 'Hiếm', gradeColor: '#3c8fd0', name: 'Cần trăng rằm', desc: 'Ánh bạc như trăng soi mặt nước đêm rằm', icon: '🎣' },
+  binhMinh: { id: 'binhMinh', grade: 'rare', gradeName: 'Hiếm', gradeColor: '#3c8fd0', name: 'Cần bình minh', desc: 'Ánh hồng sớm mai, cá thức giấc dễ cắn câu', icon: '🎣' },
+  ongSau: { id: 'ongSau', grade: 'rare', gradeName: 'Hiếm', gradeColor: '#3c8fd0', name: 'Cần ông Sáu chuốt', desc: 'Tay nghề cả đời của lão ngư bên cồn', icon: '🎣' },
+  gheNgo: { id: 'gheNgo', grade: 'rare', gradeName: 'Hiếm', gradeColor: '#3c8fd0', name: 'Cần ghe ngo', desc: 'Khắc hoa văn ghe ngo, nhịp câu rộn rã', icon: '🎣' },
+  ngocBich: { id: 'ngocBich', grade: 'epic', gradeName: 'Quý', gradeColor: '#9b6bff', name: 'Cần ngọc bích', desc: 'Xanh ngọc bích trong veo, nước chảy không phai', icon: '🎣' },
+  sungTrau: { id: 'sungTrau', grade: 'epic', gradeName: 'Quý', gradeColor: '#9b6bff', name: 'Cần sừng trâu', desc: 'Đầu cần bịt sừng trâu mài bóng, bẩy cá nặng ký', icon: '🎣' },
+  domDom: { id: 'domDom', grade: 'epic', gradeName: 'Quý', gradeColor: '#9b6bff', name: 'Cần đom đóm', desc: 'Đêm xuống cả cây cần lập loè như bầy đom đóm', icon: '🎣' },
+  rongVang: { id: 'rongVang', grade: 'legend', gradeName: 'Huyền thoại', gradeColor: '#e8a020', name: 'Cần rồng vàng', desc: 'Chạm rồng vàng uốn quanh thân, cá chép thấy cũng muốn hoá rồng', icon: '🎣' },
+  thuongLuong: { id: 'thuongLuong', grade: 'legend', gradeName: 'Huyền thoại', gradeColor: '#e8a020', name: 'Cần thuồng luồng', desc: 'Vảy xanh rêu ánh vàng, nghe đồn lấy từ đáy sông sâu', icon: '🎣' },
+  haBa: { id: 'haBa', grade: 'ultimate', gradeName: 'Tối thượng', gradeColor: '#e0306a', name: 'Cần Hà Bá', desc: 'Cây cần của thần sông, cả trăm năm mới trồi lên một lần, cá nào cũng phải nể', icon: '🎣' },
+};
+
+function formatRodDuration(ms: number): string {
+  if (ms <= 0) return 'Đã hết hạn';
+  const hours = Math.floor(ms / 3600000);
+  const mins = Math.floor((ms % 3600000) / 60000);
+  if (hours > 24) {
+    const days = Math.floor(hours / 24);
+    return `${days} ngày ${hours % 24}h`;
+  }
+  if (hours > 0) {
+    return `${hours}h ${mins}m`;
+  }
+  return `${Math.max(1, mins)} phút`;
+}
 
 const FOOD_ITEMS = [
   { id: 'banhMi', name: 'Bánh mì thịt', stamina: 20, icon: '🥖', desc: 'Ăn lẹ rồi ra câu tiếp' },
@@ -47,8 +105,26 @@ const FOOD_ITEMS = [
   { id: 'cheBuoi', name: 'Chén chè bưởi', stamina: 18, icon: '🍧', desc: 'Cùi bưởi giòn sần sật' },
 ];
 
-interface RodsStoreData {
-  owned?: string[];
+const wharfCatalogItems = (
+  (wharfCatalogRaw as {
+    catalog?: Array<{ id: string; name: string; stamina?: number; icon?: string; desc?: string; kind?: string }>;
+  }).catalog || []
+).filter(
+  (c) =>
+    c.kind === 'food' ||
+    c.kind === 'pack' ||
+    c.kind === 'drink' ||
+    (typeof c.stamina === 'number' && c.stamina > 0)
+);
+
+export interface OwnedRodItem {
+  rod: string;
+  until?: number;
+  [key: string]: unknown;
+}
+
+export interface RodsStoreData {
+  owned?: (string | OwnedRodItem)[];
   using?: string | null;
   [key: string]: unknown;
 }
@@ -72,8 +148,52 @@ export function WharfPackTab({ snap }: WharfPackTabProps) {
   const pack: Record<string, number> = (benNet?.pack as Record<string, number>) || {};
   const basket = benNet?.basket || [];
   const rodsData = benNet?.rods as RodsStoreData | null | undefined;
-  const ownedRods: string[] = Array.isArray(rodsData?.owned) ? rodsData.owned : [];
+
+  // Safely parse owned special rods: can be strings or objects { rod: string, until: number }
+  const ownedRaw = (rodsData?.owned as (string | OwnedRodItem)[]) || [];
+  const ownedRods: OwnedRodItem[] = Array.isArray(ownedRaw)
+    ? ownedRaw.map((item) => {
+        if (typeof item === 'object' && item !== null && 'rod' in item) {
+          return item as OwnedRodItem;
+        }
+        return { rod: String(item) };
+      })
+    : [];
+
   const usingRod: string | null = rodsData?.using ? String(rodsData.using) : null;
+
+  const allFoodItems = useMemo(() => {
+    const knownIds = new Set(FOOD_ITEMS.map((f) => f.id));
+    const list = [...FOOD_ITEMS];
+
+    for (const item of wharfCatalogItems) {
+      if (!knownIds.has(item.id)) {
+        list.push({
+          id: item.id,
+          name: item.name,
+          stamina: item.stamina || 10,
+          icon: item.icon || '🍱',
+          desc: item.desc || 'Món ăn tiếp sức',
+        });
+        knownIds.add(item.id);
+      }
+    }
+
+    for (const [packId, count] of Object.entries(pack)) {
+      if (!knownIds.has(packId) && Number(count) > 0) {
+        list.push({
+          id: packId,
+          name: packId,
+          stamina: 10,
+          icon: '🍱',
+          desc: 'Món ăn trong túi',
+        });
+        knownIds.add(packId);
+      }
+    }
+
+    return list;
+  }, [pack]);
 
   const handleOpenGamePanel = async () => {
     await execGameAction('BEN_SET_PANEL', { panel: 'pack', bagTab: activeTab });
@@ -228,7 +348,7 @@ export function WharfPackTab({ snap }: WharfPackTabProps) {
       {/* Content for Tab 1: Food */}
       {activeTab === 'food' && (
         <div className="flex flex-col gap-2">
-          {FOOD_ITEMS.map((item) => {
+          {allFoodItems.map((item) => {
             const count = Number(pack[item.id]) || 0;
             return (
               <div
@@ -273,10 +393,13 @@ export function WharfPackTab({ snap }: WharfPackTabProps) {
             </div>
           ) : (
             displayedBasket.map((fish, idx) => {
-              const meta = fish.fish ? fishMetaMap.get(fish.fish) : null;
-              const name = meta?.name ?? fish.fish ?? 'Cá';
-              const rarity = meta?.rarity ?? 'common';
-              const color = RARITY_COLORS[rarity] || '#6a9a4a';
+              const fishId = String(fish.fish || fish.id || '');
+              const meta = fishMetaMap.get(fishId);
+              const name = meta?.name || (fish as { name?: string }).name || fishId || 'Cá bến đò';
+              const rawRarity = String((fish as { rarity?: string }).rarity || meta?.rarity || 'common');
+              const rarityKey = rawRarity.toLowerCase();
+              const rarityLabel = RARITY_NAMES[rarityKey] || 'Thường';
+              const color = RARITY_COLORS[rarityKey] || '#6a9a4a';
               const isKept = Boolean(fish.kept);
 
               return (
@@ -305,7 +428,7 @@ export function WharfPackTab({ snap }: WharfPackTabProps) {
                           className="text-[9px] px-1 py-0 font-normal border"
                           style={{ color, borderColor: color }}
                         >
-                          {rarity}
+                          {rarityLabel}
                         </Badge>
                       </div>
                       <div className="text-[11px] text-amber-800 font-mono font-medium mt-0.5">
@@ -344,7 +467,7 @@ export function WharfPackTab({ snap }: WharfPackTabProps) {
             <div className="grid grid-cols-2 gap-2">
               {STANDARD_RODS.map((rod) => {
                 const isUnlocked = rodLevel >= rod.level;
-                const isCurrent = rodLevel === rod.level;
+                const isCurrent = rodLevel === rod.level && !usingRod;
 
                 return (
                   <div
@@ -372,28 +495,57 @@ export function WharfPackTab({ snap }: WharfPackTabProps) {
 
           {/* Pulled Special Rods */}
           <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-2xs">
-            <span className="text-xs font-bold text-slate-900 block mb-2">Cần bốc tiệm chú Đực:</span>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold text-slate-900">Cần bốc tiệm chú Đực:</span>
+              <span className="text-[10px] text-slate-500 font-medium">({ownedRods.length} cây)</span>
+            </div>
+
             {ownedRods.length === 0 ? (
               <p className="text-xs text-slate-500 italic py-2">
-                Chưa sở hữu cần bốc nào. Quay mồi may mắn ở tiệm chú Đực để nhận cần xịn!
+                Chưa sở hữu cần bốc nào. Ghé tiệm chú Đực bốc cần để sở hữu cần xịn nhé! 🎣
               </p>
             ) : (
               <div className="flex flex-col gap-2">
-                {ownedRods.map((rodId) => {
+                {ownedRods.map((item, idx) => {
+                  const rodId = item.rod;
+                  const meta = SPECIAL_RODS_MAP[rodId];
+                  const rodName = meta?.name || rodId;
+                  const rodDesc = meta?.desc || 'Cần bốc may mắn từ tiệm chú Đực';
                   const isUsing = usingRod === rodId;
+                  const gradeName = meta?.gradeName || 'Hiếm';
+                  const gradeColor = meta?.gradeColor || '#3c8fd0';
+                  const timeLeft = item.until ? item.until - Date.now() : 0;
+                  const isExpired = item.until ? timeLeft <= 0 : false;
+
                   return (
                     <div
-                      key={rodId}
-                      className={`flex items-center justify-between p-2 rounded-lg border ${
+                      key={rodId || `rod_${idx}`}
+                      className={`flex items-center justify-between p-2.5 rounded-lg border transition-all ${
                         isUsing
-                          ? 'bg-indigo-50 border-indigo-300 font-semibold'
-                          : 'bg-white border-slate-200'
+                          ? 'bg-indigo-50/90 border-indigo-300 font-semibold shadow-2xs'
+                          : 'bg-white border-slate-200 hover:border-slate-300'
                       }`}
                     >
-                      <div className="flex items-center gap-2">
-                        <span className="text-base">🎣</span>
+                      <div className="flex items-center gap-2.5">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-base">
+                          🎣
+                        </span>
                         <div>
-                          <span className="text-xs font-bold text-slate-900">{rodId}</span>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-xs font-bold text-slate-900">{rodName}</span>
+                            <Badge
+                              style={{ backgroundColor: gradeColor }}
+                              className="text-white text-[9px] px-1.5 py-0 font-medium"
+                            >
+                              {gradeName}
+                            </Badge>
+                            {item.until && (
+                              <span className="text-[10px] text-slate-500 font-mono">
+                                ⏳ {isExpired ? 'Đã hết hạn' : `Còn ${formatRodDuration(timeLeft)}`}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">{rodDesc}</p>
                         </div>
                       </div>
 
@@ -401,11 +553,11 @@ export function WharfPackTab({ snap }: WharfPackTabProps) {
                         type="button"
                         size="sm"
                         variant={isUsing ? 'default' : 'outline'}
-                        disabled={isUsing}
+                        disabled={isUsing || isExpired}
                         onClick={() => handleUseRod(rodId)}
                         className={`h-7 px-3 text-xs rounded-lg cursor-pointer ${
                           isUsing
-                            ? 'bg-indigo-600 text-white font-bold cursor-default'
+                            ? 'bg-indigo-600 text-white font-bold cursor-default hover:bg-indigo-600'
                             : 'text-slate-700 hover:bg-slate-50'
                         }`}
                       >
@@ -414,6 +566,8 @@ export function WharfPackTab({ snap }: WharfPackTabProps) {
                             <Check className="h-3 w-3" />
                             <span>Đang dùng</span>
                           </span>
+                        ) : isExpired ? (
+                          'Hết hạn'
                         ) : (
                           'Trang bị'
                         )}
