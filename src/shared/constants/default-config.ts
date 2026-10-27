@@ -337,6 +337,8 @@ export const DEFAULT_CONFIG: AppConfig = {
   benPreferFood: 'lauMam',
   benAutoLuckDrink: true,
   benPreferDrink: 'duaTuoi',
+  benShowFullActions: false,
+  benDelayMs: 1000,
 
   // Ben Do Cricket Arena (Sới Dế Ông Sáu & Đặt Cửa)
   benAutoBossBout: true,

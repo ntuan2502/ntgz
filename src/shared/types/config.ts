@@ -201,6 +201,8 @@ export interface AppConfig {
   benPreferFood: string;
   benAutoLuckDrink: boolean;
   benPreferDrink: string;
+  benShowFullActions?: boolean;
+  benDelayMs?: number;
 
   // Ben Do Cricket Arena (Sới Dế Ông Sáu & Đặt Cửa)
   benAutoBossBout: boolean;

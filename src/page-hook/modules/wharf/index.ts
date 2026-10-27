@@ -133,6 +133,7 @@ let hadMyBout = false;
 let huntSpotIdx = 0;
 let lastHandledGotAwaySeq = -1;
 let lastHuntZoneChoice: string | null = null;
+let benNoticeTired = false;
 
 const ATM_NEXT_TIME_KEY = 'ntg_ben_next_atm_time';
 let nextAtmTime = (() => {
@@ -200,8 +201,9 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   const interrupted = dismissInterruptsIfNeeded(cfg);
   if (interrupted) return interrupted;
 
-  // If showFullActions is enabled and a native panel is currently being displayed for an action, keep it visible
-  if (cfg.showFullActions && bu.panel && Date.now() < keepBenPanelUntil) {
+  // Bến Đò uses its own independent showFullActions config, not affected by global settings
+  const benShowFullActions = Boolean(cfg.benShowFullActions);
+  if (benShowFullActions && bu.panel && Date.now() < keepBenPanelUntil) {
     return { acted: true, msg: keepBenPanelMsg || '👁️ Đang hiển thị giao diện thao tác...' };
   }
 
@@ -243,7 +245,13 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   if (bn.notice && typeof bn.notice.seq === 'number' && bn.notice.seq !== lastObservedNoticeSeq) {
     lastObservedNoticeSeq = bn.notice.seq;
     const err = bn.notice.error;
-    if (err === 'farAtm') {
+    if (err === 'tired') {
+      benNoticeTired = true;
+      return {
+        acted: true,
+        msg: '😮‍💨 Bến Đò: Không đủ Sức câu -> Chuẩn bị đi ăn hồi phục Sức...',
+      };
+    } else if (err === 'farAtm') {
       return {
         acted: true,
         msg: '⚠️ Cây ATM: Đứng ngay trước cây ATM mới rút tiền được nha 🏧',
@@ -315,11 +323,6 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
     sendBenWs({ t: 'soi' });
   }
 
-  // ATM state is null until requested; it can be fetched from anywhere on the map.
-  if (cfg.benAutoAtm && !bn.atm && canAct('ben_atm_init', 5000)) {
-    markActed('ben_atm_init');
-    sendBenWs({ t: 'atm' });
-  }
 
   const stamina = computeBenStamina(wallet);
   const shells = wallet.shells || 0;
@@ -334,7 +337,6 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   );
   const pack = bn.pack || {};
   const packItems = Object.keys(pack).filter((k) => (pack[k] || 0) > 0);
-  const stamMin = Number(cfg.benStaminaThreshold ?? 0);
 
   const runWithOptionalPanel = (
     actionFn: () => void,
@@ -342,7 +344,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
     panelState?: Record<string, unknown>,
     holdMs = 1500
   ) => {
-    if (cfg.showFullActions && panelState) {
+    if (benShowFullActions && panelState) {
       buStore.setState(panelState);
       keepBenPanelUntil = Date.now() + holdMs;
       keepBenPanelMsg = label;
@@ -401,7 +403,11 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   const prefFood = cfg.benPreferFood || 'lauMam';
   const targetFoodPrice = foodPrices[prefFood] || 45;
 
-  const cannotFishStamina = stamina <= Math.max(0, stamMin) || bn.notice?.error === 'tired';
+  if (stamina >= 25 && bn.notice?.error !== 'tired') {
+    benNoticeTired = false;
+  }
+  // Tự động nhận diện không đủ sức câu: liveStamina < 4, nhận notice 'tired' từ server hoặc flag benNoticeTired
+  const cannotFishStamina = stamina < 4 || bn.notice?.error === 'tired' || benNoticeTired;
   const needShellsForBait = bait <= 0 && shells < 15;
   const needShellsForFood =
     cannotFishStamina &&
@@ -921,32 +927,11 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
         }
       }
 
-      // 3. Quay vé lồng đèn Cô Bảy
+      // 3. Quay vé lồng đèn Cô Bảy (quay trực tiếp từ xa qua WS, không tự đi lại chỗ lồng đèn)
       const shouldSpin = cfg.benLanternSpinMode === 'x1' ? tickets > 0 : tickets >= 10;
       if (shouldSpin) {
-        if (cfg.showFullActions) {
-          if (bu.panel !== 'lantern' && canAct('ben_lantern_open', 2500)) {
-            return walkAndRun(
-              { x: 37, y: 28 },
-              () => {
-                const curBn = bnStore.getState();
-                const curPicks = curBn.wheel?.picks || [];
-                const ownedCloset = Array.isArray(curBn.closet) ? curBn.closet : [];
-                const unownedWheel = WHEEL_ITEM_IDS.filter((id) => !ownedCloset.includes(id));
-                const needPicks = Math.min(3, unownedWheel.length);
-                if (needPicks > 0 && curPicks.length < needPicks) {
-                  sendBenWs({ t: 'pick', items: unownedWheel.slice(0, needPicks) });
-                }
-                buStore.setState({ panel: 'lantern' });
-              },
-              `🏮 Mở Vòng quay lồng đèn Cô Bảy (hiện có ${tickets} vé 🎟️)`,
-              'ben_lantern_open',
-              { panel: 'lantern' },
-              5000
-            );
-          }
-        } else if (canAct('ben_lantern_spin_stealth', 3000)) {
-          markActed('ben_lantern_spin_stealth');
+        if (canAct('ben_lantern_spin', 3000)) {
+          markActed('ben_lantern_spin');
           const curBn = bnStore.getState();
           const curPicks = curBn.wheel?.picks || [];
           const ownedCloset = Array.isArray(curBn.closet) ? curBn.closet : [];
@@ -959,7 +944,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
           sendBenWs({ t: 'spin', n: spinCount });
           return {
             acted: true,
-            msg: `🏮 Vòng quay Cô Bảy: Quay ngầm ${spinCount} vé (còn ${tickets} vé 🎟️)...`,
+            msg: `🏮 Vòng quay Cô Bảy: Quay ${spinCount} vé (còn ${tickets} vé 🎟️)...`,
           };
         }
       } else if (tickets > 0 && cfg.benLanternSpinMode === 'x10' && canAct('ben_lantern_wait_x10', 120000)) {
@@ -1092,11 +1077,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
                   benScene.farmer.lookAt((34 + 0.5) * 16, 34 * 16);
                 }
                 sendBenWs({ t: 'atm' });
-                if (cfg.showFullActions) {
-                  buStore.setState({ panel: 'atm' });
-                } else {
-                  sendBenWs({ t: 'atmCash', shells: shellsToCash });
-                }
+                sendBenWs({ t: 'atmCash', shells: shellsToCash });
               },
               `Đi lại Cây ATM để đổi ${shellsToCash.toLocaleString('vi-VN')} vỏ sò...`,
               'ben_atm_walk'
@@ -1109,11 +1090,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
           }
           markActed('ben_atm');
           sendBenWs({ t: 'atm' });
-          if (cfg.showFullActions) {
-            buStore.setState({ panel: 'atm' });
-          } else {
-            sendBenWs({ t: 'atmCash', shells: shellsToCash });
-          }
+          sendBenWs({ t: 'atmCash', shells: shellsToCash });
           return {
             acted: true,
             msg: `🏧 Đang gửi lệnh đổi ${shellsToCash.toLocaleString('vi-VN')} vỏ sò tại Cây ATM...`,
@@ -1161,14 +1138,8 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
     }
   }
 
-  // Close panel if open (once hold duration expires, unless actively spinning lantern wheel in full action mode)
-  const shouldSpinTickets = cfg.benLanternSpinMode === 'x1' ? (wallet.tickets || 0) > 0 : (wallet.tickets || 0) >= 10;
-  const lanternActive =
-    bu.panel === 'lantern' &&
-    cfg.benAutoLantern !== false &&
-    Boolean(cfg.showFullActions) &&
-    (shouldSpinTickets || Boolean(cfg.benBuyLanternTicket && (bn.wheel?.bought || 0) < 5 && shells >= 600));
-  if (bu.panel && !lanternActive && (!cfg.showFullActions || Date.now() >= keepBenPanelUntil)) {
+  // Close panel if open (once hold duration expires)
+  if (bu.panel && (!benShowFullActions || Date.now() >= keepBenPanelUntil)) {
     buStore.setState({ panel: null });
   }
 

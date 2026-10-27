@@ -230,7 +230,7 @@ export async function stepBenDoFishing(
   setStatus: (text: string) => void,
   onCatchIncrement: () => void
 ): Promise<{ finishedArea: boolean; exhausted?: boolean }> {
-  const delayMs = Math.max(150, Number(config.taskDelayMs) || 650);
+  const delayMs = Math.max(150, Number(config.benDelayMs ?? config.taskDelayMs) || 650);
 
   if (snap.screen !== 'benDo') {
     setStatus('🛶 Đang đi ra Bến Đò...');
@@ -517,14 +517,25 @@ export async function stepBenDoFishing(
     ) as HTMLButtonElement | null;
     const btnText = (castBtn?.textContent || '').trim();
 
-    if (!config.benAutoRecoverStamina && (liveStam < 4 || btnText.includes('Đuối sức'))) {
-      setStatus('😮‍💨 Bến Đò: Hết thể lực không câu được nữa -> Chuyển khu vực tiếp theo!');
+    const isCastTired =
+      liveStam < 4 ||
+      btnText.includes('Đuối sức') ||
+      Boolean(castBtn?.classList.contains('btn-yellow')) ||
+      (bn.notice as { error?: string } | undefined)?.error === 'tired';
+
+    if (!config.benAutoRecoverStamina && isCastTired) {
+      setStatus('😮‍💨 Bến Đò: Không đủ thể lực câu cá -> Chuyển khu vực tiếp theo!');
       return { finishedArea: true, exhausted: true };
     }
 
     if (!config.benAutoBuyBait && ((bn.wallet?.bait || 0) <= 0 || btnText.includes('Hết mồi'))) {
       setStatus('🪱 Bến Đò: Đã hết mồi câu -> Chuyển khu vực tiếp theo!');
       return { finishedArea: true, exhausted: true };
+    }
+
+    if (isCastTired) {
+      setStatus('😮‍💨 Bến Đò: Không đủ Sức câu -> Đang chờ đi ăn hồi Sức...');
+      return { finishedArea: false };
     }
 
     const greenCastBtn = document.querySelector('button.ben-cast.btn-green:not(.ben-light)') as HTMLButtonElement | null;

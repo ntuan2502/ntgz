@@ -283,22 +283,12 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab }: Wh
             )}
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>🐟 Tự đem cá ra bán tại Vựa cá Anh Tư</span>
+              <span>🐟 Tự đem cá ra bán tại Vựa cá Anh Tư khi giỏ cá đầy (60/60 con)</span>
               <Switch
                 checked={Boolean(config.benAutoSell)}
                 onCheckedChange={(c) => updateField('benAutoSell', c)}
               />
             </label>
-            {config.benAutoSell && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Bán khi giỏ cá đầy:</span>
-                  <span className="font-mono font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/60 text-[10px]">
-                    60/60 con
-                  </span>
-                </div>
-              </div>
-            )}
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
               <span>💆 Tiệm Út Mười: Gội đầu massage (+50⚡ · 25🐚)</span>
@@ -309,7 +299,7 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab }: Wh
             </label>
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>🍲 Tự ăn uống hồi phục Sức câu</span>
+              <span>🍲 Tự ăn uống hồi phục khi không đủ Sức câu</span>
               <Switch
                 checked={Boolean(config.benAutoRecoverStamina)}
                 onCheckedChange={(c) => updateField('benAutoRecoverStamina', c)}
@@ -317,13 +307,6 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab }: Wh
             </label>
             {config.benAutoRecoverStamina && (
               <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Ăn khi không câu được nữa:</span>
-                  <span className="font-mono font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200/60 text-[10px]">
-                    Sức ≤ 0⚡
-                  </span>
-                </div>
-
                 <div className="flex items-center justify-between gap-2 min-w-0">
                   <span className="text-slate-600 shrink-0">Món ăn ưu tiên:</span>
                   <HudSelect
@@ -346,6 +329,16 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab }: Wh
               <Switch
                 checked={Boolean(config.benAutoLuckDrink)}
                 onCheckedChange={(c) => updateField('benAutoLuckDrink', c)}
+              />
+            </label>
+
+            <label className="flex items-center justify-between text-slate-700 cursor-pointer pt-1 border-t border-slate-100">
+              <span className="flex items-center gap-1.5">
+                <span>👁️ Hiển thị bảng thao tác Bến Đò (menu shop, bảng dế...)</span>
+              </span>
+              <Switch
+                checked={Boolean(config.benShowFullActions)}
+                onCheckedChange={(c) => updateField('benShowFullActions', c)}
               />
             </label>
             {config.benAutoLuckDrink && (
