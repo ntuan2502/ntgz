@@ -64,6 +64,15 @@ export interface BenNetWallet {
   [key: string]: unknown;
 }
 
+export interface BenNetAtmState {
+  rate?: number;
+  left?: number;
+  reopen?: number;
+  nextTime?: number;
+  day?: number;
+  [key: string]: unknown;
+}
+
 export interface BenNetState {
   status?: string;
   fishing?: 'idle' | 'cast' | 'bite' | 'fight' | 'landing' | string;
@@ -71,6 +80,7 @@ export interface BenNetState {
   basketCount?: number;
   totalBasket?: number;
   basket?: Array<{ id?: string; fish?: string; price?: number; size?: number; kept?: boolean; [key: string]: unknown }>;
+  atm?: BenNetAtmState | null;
   crickets?: {
     box?: CricketItem[];
     dex?: Array<{ species: string; count: number; best: number }>;

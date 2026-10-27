@@ -185,7 +185,7 @@ let benNoticeTired = false;
 const ATM_NEXT_TIME_KEY = 'ntg_ben_next_atm_time';
 let nextAtmTime = (() => {
   try {
-    const raw = sessionStorage.getItem(ATM_NEXT_TIME_KEY);
+    const raw = localStorage.getItem(ATM_NEXT_TIME_KEY) || sessionStorage.getItem(ATM_NEXT_TIME_KEY);
     const val = raw ? Number(raw) || 0 : 0;
     // Discard invalid / far future timestamps (> 1 hour)
     return val > Date.now() + 3600000 ? 0 : val;
@@ -196,6 +196,28 @@ let nextAtmTime = (() => {
 let lastAtmLogAt = 0;
 let lastAtmExchangeAt = 0;
 
+export function getWharfNextAtmTime(): number {
+  const now = Date.now();
+  if (nextAtmTime > 0) {
+    if (nextAtmTime < now - 3600000 || nextAtmTime > now + 3600000 * 2) {
+      nextAtmTime = 0;
+      return 0;
+    }
+    return nextAtmTime;
+  }
+  try {
+    const raw = localStorage.getItem(ATM_NEXT_TIME_KEY) || sessionStorage.getItem(ATM_NEXT_TIME_KEY);
+    const val = raw ? Number(raw) || 0 : 0;
+    if (val <= 0 || val < now - 3600000 || val > now + 3600000 * 2) {
+      return 0;
+    }
+    nextAtmTime = val;
+    return val;
+  } catch {
+    return 0;
+  }
+}
+
 function getNextHourTimestamp(now: number): number {
   return now + 3600000;
 }
@@ -203,6 +225,7 @@ function getNextHourTimestamp(now: number): number {
 function setNextAtmTime(timestamp: number): void {
   nextAtmTime = timestamp;
   try {
+    localStorage.setItem(ATM_NEXT_TIME_KEY, String(timestamp));
     sessionStorage.setItem(ATM_NEXT_TIME_KEY, String(timestamp));
   } catch {
     // Ignore storage errors

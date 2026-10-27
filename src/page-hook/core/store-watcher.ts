@@ -1,5 +1,6 @@
 import { stores, discoverStores, hookPhaserGame, phaserGame, benWs } from './engine-access';
 import { getCricketEvents } from '../modules/wharf/cricket-watchers';
+import { getWharfNextAtmTime } from '../modules/wharf';
 import { getActiveImportantAlert } from './interrupts';
 import { GameSnapshot } from '../../shared/types/game-state';
 
@@ -177,7 +178,17 @@ export function getSnapshot(): GameSnapshot {
           rods: bn.rods ?? null,
           rooms: bn.rooms ?? null,
           room: bn.room ?? null,
-          atm: bn.atm ?? null,
+          atm: (() => {
+            const nextTime = getWharfNextAtmTime();
+            if (bn.atm) {
+              const reopen = typeof bn.atm.reopen === 'number' && bn.atm.reopen > 0 ? bn.atm.reopen : nextTime;
+              return { ...bn.atm, reopen, nextTime: reopen > 0 ? reopen : nextTime };
+            }
+            if (nextTime > 0) {
+              return { nextTime, reopen: nextTime };
+            }
+            return null;
+          })(),
           cashed: bn.cashed ?? null,
           landed: bn.landed,
           notice: bn.notice,

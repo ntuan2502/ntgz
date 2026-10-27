@@ -12,11 +12,9 @@ import { SeaTabContent } from './components/SeaTabContent';
 import { FarmstayTabContent } from './components/FarmstayTabContent';
 import { HudLogEntry, getSessionLogs, clearSessionLogs } from './hud-core';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ArrowLeft } from 'lucide-react';
 import { ReleaseChangelogView } from '@/components/ReleaseChangelogView';
 import { SettingsView } from './components/SettingsView';
+import { HudSubHeader } from './components/HudSubHeader';
 import { HudMonitorWindow } from './components/HudMonitorWindow';
 import { MonitorTabId } from './components/monitor/MonitorHub';
 import { checkForUpdates } from '@/services/github-service';
@@ -345,6 +343,9 @@ export function HudApp({
         onCheckUpdate={handleCheckUpdate}
         isCheckingUpdate={isCheckingUpdate}
         onMouseDownDrag={handleMouseDownDrag}
+        onOpenSettings={() => setViewMode('settings')}
+        onToggleMonitor={handleToggleMonitor}
+        isMonitorActive={isMonitorOpen}
       />
 
       {/* Body content when not minimized */}
@@ -368,21 +369,11 @@ export function HudApp({
           />
         ) : viewMode === 'changelog' && updateInfo ? (
           <div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-white">
-            {/* Edge-to-edge Changelog Header Bar with Back button */}
-            <div className="flex items-center justify-between px-3.5 py-2 bg-slate-50 border-b border-slate-200 shrink-0 select-none">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-xs text-slate-600 hover:text-slate-900 hover:bg-slate-100 h-7 px-2 -ml-1 cursor-pointer"
-                onClick={() => setViewMode('main')}
-              >
-                <ArrowLeft className="h-3.5 w-3.5 mr-1" />
-                Quay lại bảng điều khiển
-              </Button>
-              <Badge variant="outline" className="text-[10px] font-mono text-slate-500 bg-white">
-                v{version}
-              </Badge>
-            </div>
+            <HudSubHeader
+              title="📝 Nhật ký cập nhật"
+              version={version}
+              onBack={() => setViewMode('main')}
+            />
 
             {/* Scrollable Changelog View - reused cleanly matching Popup */}
             <div className="flex-1 min-h-0 overflow-hidden">
@@ -398,15 +389,12 @@ export function HudApp({
             {/* Live Stats Bar */}
             <HudStats snap={snap} activeTab={config.activeTab} />
 
-            {/* Master Auto Controls & Sliders */}
+            {/* Master Auto Controls */}
             <HudControls
               config={config}
               activeTab={config.activeTab}
               onToggleAll={onToggleAll}
               onToggleTab={onToggleTab}
-              onOpenSettings={() => setViewMode('settings')}
-              onToggleMonitor={handleToggleMonitor}
-              isMonitorActive={isMonitorOpen}
             />
 
             {/* Current Action Status Bar (Terminal toggles separate window) */}

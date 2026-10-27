@@ -47,6 +47,80 @@ export function HudStats({ snap, activeTab }: HudStatsProps) {
     second: '2-digit',
   });
 
+  const renderWharfAtmAlert = () => {
+    const atmTargetTime = bn?.atm?.nextTime || bn?.atm?.reopen || 0;
+    const nowMs = realtime.getTime();
+
+    // 1. Target time in future or reached
+    if (atmTargetTime > 0) {
+      const diffMs = atmTargetTime - nowMs;
+      if (diffMs > 0) {
+        const diffMin = Math.floor(diffMs / 60000);
+        const diffSec = Math.floor((diffMs % 60000) / 1000);
+        const waitStr = diffMin > 0 ? `${diffMin} phút ${diffSec} giây` : `${diffSec} giây`;
+        const timeStr = new Date(atmTargetTime).toLocaleTimeString('vi-VN', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        });
+        return (
+          <div
+            className="mt-1.5 flex items-center gap-1.5 px-2 py-1 rounded-md bg-amber-100/90 border border-amber-300 text-amber-950 text-[10.5px] font-sans shadow-xs animate-in fade-in"
+            title={`Cây ATM: Mở đổi lúc ${timeStr}`}
+          >
+            <span className="shrink-0">⏳</span>
+            <span className="font-semibold truncate">
+              Cây ATM: Mở đổi lúc {timeStr} (còn {waitStr})
+            </span>
+          </div>
+        );
+      }
+
+      // Reached opening time
+      return (
+        <div
+          className="mt-1.5 flex items-center gap-1.5 px-2 py-1 rounded-md bg-emerald-100/90 border border-emerald-300 text-emerald-950 text-[10.5px] font-sans shadow-xs animate-in fade-in"
+          title="Cây ATM đã đến giờ đổi tiền"
+        >
+          <span className="shrink-0">🏧</span>
+          <span className="font-semibold truncate">
+            Cây ATM: Đã đến giờ đổi tiền! Có thể ra rút tiền ngay
+            {typeof bn?.atm?.left === 'number' && bn.atm.left > 0 ? ` (Hạn mức còn ${bn.atm.left.toLocaleString('vi-VN')}đ)` : ''}
+          </span>
+        </div>
+      );
+    }
+
+    // 2. No target time, but ATM scanned and has quota info
+    if (typeof bn?.atm?.left === 'number') {
+      if (bn.atm.left > 0) {
+        return (
+          <div
+            className="mt-1.5 flex items-center gap-1.5 px-2 py-1 rounded-md bg-emerald-100/90 border border-emerald-300 text-emerald-950 text-[10.5px] font-sans shadow-xs animate-in fade-in"
+            title="Cây ATM sẵn sàng đổi tiền mặt"
+          >
+            <span className="shrink-0">🏧</span>
+            <span className="font-semibold truncate">
+              Cây ATM: Sẵn sàng đổi tiền mặt (Hạn mức còn {bn.atm.left.toLocaleString('vi-VN')}đ)
+            </span>
+          </div>
+        );
+      } else {
+        return (
+          <div
+            className="mt-1.5 flex items-center gap-1.5 px-2 py-1 rounded-md bg-amber-100/90 border border-amber-300 text-amber-950 text-[10.5px] font-sans shadow-xs animate-in fade-in"
+            title="Cây ATM hết hạn mức"
+          >
+            <span className="shrink-0">⏳</span>
+            <span className="font-semibold truncate">Cây ATM: Hạn mức tiền giờ này đã hết, chờ giờ sau đổi tiếp</span>
+          </div>
+        );
+      }
+    }
+
+    return null;
+  };
+
   return (
     <div className="bg-slate-50 border-b border-slate-200/90 px-3 py-1.5 text-[11px] font-mono text-slate-700">
       {isWharf ? (
@@ -123,14 +197,18 @@ export function HudStats({ snap, activeTab }: HudStatsProps) {
         </div>
       )}
 
-      {snap?.recentAlert && (
-        <div
-          className="mt-1.5 flex items-center gap-1.5 px-2 py-1 rounded-md bg-amber-100/90 border border-amber-300 text-amber-950 text-[10.5px] font-sans shadow-xs animate-in fade-in"
-          title={`Thông báo quan trọng: ${snap.recentAlert.text}`}
-        >
-          <span className="shrink-0">{snap.recentAlert.icon || '📢'}</span>
-          <span className="font-semibold truncate">{snap.recentAlert.text}</span>
-        </div>
+      {isWharf ? (
+        renderWharfAtmAlert()
+      ) : (
+        snap?.recentAlert && (
+          <div
+            className="mt-1.5 flex items-center gap-1.5 px-2 py-1 rounded-md bg-amber-100/90 border border-amber-300 text-amber-950 text-[10.5px] font-sans shadow-xs animate-in fade-in"
+            title={`Thông báo quan trọng: ${snap.recentAlert.text}`}
+          >
+            <span className="shrink-0">{snap.recentAlert.icon || '📢'}</span>
+            <span className="font-semibold truncate">{snap.recentAlert.text}</span>
+          </div>
+        )
       )}
     </div>
   );

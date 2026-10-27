@@ -4,10 +4,9 @@ import { AREA_META } from '@/shared/constants/default-config';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
 import { clearSessionLogs } from '../hud-core';
+import { HudSubHeader } from './HudSubHeader';
 import {
-  ArrowLeft,
   Clock,
   Eye,
   ListOrdered,
@@ -152,24 +151,7 @@ export function SettingsView({
 
   return (
     <div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-slate-50 text-slate-800">
-      {/* Edge-to-edge Header Bar with Back Button */}
-      <div className="flex items-center justify-between px-3.5 py-2.5 bg-white border-b border-slate-200/90 shrink-0 select-none shadow-2xs">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-xs text-slate-600 hover:text-slate-900 hover:bg-slate-100 h-7.5 px-2 -ml-1 cursor-pointer font-medium"
-          onClick={onClose}
-        >
-          <ArrowLeft className="h-4 w-4 mr-1 text-slate-500" />
-          Quay lại bảng điều khiển
-        </Button>
-        <div className="flex items-center gap-2">
-          <span className="font-bold text-xs text-slate-700">⚙️ Cài đặt hệ thống</span>
-          <Badge variant="outline" className="text-[10px] font-mono text-slate-500 bg-slate-50">
-            v{version}
-          </Badge>
-        </div>
-      </div>
+      <HudSubHeader title="⚙️ Cài đặt hệ thống" version={version} onBack={onClose} />
 
       {/* Scrollable Settings Content */}
       <div className="flex-1 min-h-0 overflow-y-auto p-3 space-y-3">
