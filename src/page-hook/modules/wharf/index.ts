@@ -1163,7 +1163,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
               }
               sendBenWs({ t: 'atm' });
             },
-            `Đi lại Cây ATM để đổi ${shells.toLocaleString('vi-VN')} vỏ sò...`,
+            'Đi lại Cây ATM để đổi vỏ sò...',
             'ben_atm_walk',
             { panel: 'atm' }
           );
