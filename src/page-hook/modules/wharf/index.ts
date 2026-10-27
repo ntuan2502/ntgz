@@ -894,24 +894,79 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
       return { acted: false };
     }
 
-    // 3. Full tube: release the weakest common/uncommon cricket to make room
+    // 3. Full tube: release cricket according to smart priority rules (keep high rarity, high CP, configured species)
     if (box.length >= CRICKET_BOX_MAX) {
       if (cfg.benAutoReleaseLowCricket === false || !canAct('ben_cricket_release', 3000)) {
         return { acted: false };
       }
-      const rankOrder: Record<string, number> = { common: 1, uncommon: 2, rare: 3, epic: 4, legendary: 5 };
-      const rank = (c: CricketItem) => rankOrder[CRICKET_SPECIES_RARITY[c.species] || 'common'] || 1;
-      const lowest = [...box].sort((a, b) => rank(a) - rank(b) || cricketTotal(a) - cricketTotal(b))[0];
+
+      const keepSpecies = Array.isArray(cfg.benKeepCricketSpecies)
+        ? cfg.benKeepCricketSpecies
+        : ['deVuong', 'deMa', 'deSat', 'deNgoc', 'deLua', 'deVang'];
+      const keepRarities = Array.isArray(cfg.benKeepCricketRarities)
+        ? cfg.benKeepCricketRarities
+        : ['rare', 'epic', 'legendary'];
+
+      const rankOrder: Record<string, number> = {
+        common: 1,
+        uncommon: 2,
+        rare: 3,
+        epic: 4,
+        legendary: 5,
+      };
+
+      // Sort candidate to release to the front (index 0 is the least desirable / weakest)
+      const sortedBox = [...box].sort((a, b) => {
+        const rarityA = CRICKET_SPECIES_RARITY[a.species] || 'common';
+        const rarityB = CRICKET_SPECIES_RARITY[b.species] || 'common';
+        const rankA = rankOrder[rarityA] || 1;
+        const rankB = rankOrder[rarityB] || 1;
+
+        const wantedA = keepSpecies.includes(a.species) || keepRarities.includes(rarityA);
+        const wantedB = keepSpecies.includes(b.species) || keepRarities.includes(rarityB);
+
+        // 1. Unwanted species / rarities are released before wanted ones
+        if (wantedA !== wantedB) {
+          return wantedA ? 1 : -1;
+        }
+
+        // 2. Lower rarity crickets are released before higher rarity
+        if (rankA !== rankB) {
+          return rankA - rankB;
+        }
+
+        // 3. Lower CP crickets are released before higher CP
+        const cpA = cricketTotal(a);
+        const cpB = cricketTotal(b);
+        if (cpA !== cpB) {
+          return cpA - cpB;
+        }
+
+        // 4. Lower potential cap total released first
+        const capA = (a.caps?.power || 0) + (a.caps?.tough || 0) + (a.caps?.nerve || 0);
+        const capB = (b.caps?.power || 0) + (b.caps?.tough || 0) + (b.caps?.nerve || 0);
+        return capA - capB;
+      });
+
+      const lowest = sortedBox[0];
       const lowestRarity = CRICKET_SPECIES_RARITY[lowest.species] || 'common';
-      if (lowestRarity !== 'common' && lowestRarity !== 'uncommon') {
-        return { acted: false };
-      }
+      const lowestCp = cricketTotal(lowest);
+
       markActed('ben_cricket_release');
       sendBenWs({ t: 'release', id: lowest.id });
       const cName = CRICKET_SPECIES_NAMES[lowest.species] || 'Dế';
+      const rarityLabelMap: Record<string, string> = {
+        common: 'Thường',
+        uncommon: 'Đặc biệt',
+        rare: 'Hiếm',
+        epic: 'Sử thi',
+        legendary: 'Huyền thoại',
+      };
+      const rarityStr = rarityLabelMap[lowestRarity] || lowestRarity;
+
       return {
         acted: true,
-        msg: `🎋 Ống tre đầy (${box.length}/${CRICKET_BOX_MAX}) -> Thả ${cName} về đồng (+${CRICKET_RARITY_REFUND[lowestRarity] || 5}🐚)`,
+        msg: `🎋 Ống tre đầy (6/6) -> Thả ${cName} (CP ${lowestCp} · ${rarityStr}) về đồng (+${CRICKET_RARITY_REFUND[lowestRarity] || 5}🐚)`,
       };
     }
 
@@ -937,12 +992,18 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
       return { acted: false };
     }
 
-    // Handle gotAway: if why === 'none' (empty bush), move to next tile immediately
+    // Handle gotAway: only move to next tile when empty bush / no crickets heard ('none')
     const gotAway = bn.gotAway;
     if (gotAway && typeof gotAway.seq === 'number' && gotAway.seq !== lastHandledGotAwaySeq) {
       lastHandledGotAwaySeq = gotAway.seq;
       if (gotAway.why === 'none') {
         huntSpotIdx = (huntSpotIdx + 1) % spots.length;
+        const nextSpot = spots[huntSpotIdx % spots.length];
+        const nextMeta = BEN_HUNT_ZONES[nextSpot.zone] ?? BEN_HUNT_ZONES.field;
+        return {
+          acted: true,
+          msg: `🌾 Bụi này im re không có tiếng dế -> Di chuyển sang ${nextMeta.label} (${nextSpot.x}, ${nextSpot.y}) tìm dế...`,
+        };
       }
     }
 
@@ -976,9 +1037,6 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
         huntLightAt = Date.now();
         bnStore.setState({ hunt: { phase: 'light' } });
         sendBenWs({ t: 'light' });
-
-        // Advance to the next spot in the zone so that after this hunt finishes (or fails), farmer walks to another tile
-        huntSpotIdx = (huntSpotIdx + 1) % spots.length;
 
         return {
           acted: true,

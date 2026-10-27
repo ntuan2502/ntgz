@@ -203,6 +203,7 @@ export function getSnapshot(): GameSnapshot {
           boutDone: bn.boutDone,
           you: bn.you,
           watching: bn.watching ?? null,
+          ti: bn.ti ?? null,
           cricketEvents: getCricketEvents(),
         }
       : null,

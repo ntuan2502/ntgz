@@ -352,6 +352,8 @@ export const DEFAULT_CONFIG: AppConfig = {
   benHuntZone: 'field',
   benHuntRareOnly: false,
   benAutoReleaseLowCricket: true,
+  benKeepCricketSpecies: ['deVuong', 'deMa', 'deSat', 'deNgoc', 'deLua', 'deVang'],
+  benKeepCricketRarities: ['rare', 'epic', 'legendary'],
   benAutoFeedCricket: false,
   benPreferCricketFood: 'balanced',
 

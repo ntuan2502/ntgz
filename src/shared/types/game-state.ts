@@ -81,6 +81,7 @@ export interface BenNetState {
   totalBasket?: number;
   basket?: Array<{ id?: string; fish?: string; price?: number; size?: number; kept?: boolean; [key: string]: unknown }>;
   atm?: BenNetAtmState | null;
+  ti?: { skew?: number; [key: string]: unknown } | null;
   crickets?: {
     box?: CricketItem[];
     dex?: Array<{ species: string; count: number; best: number }>;

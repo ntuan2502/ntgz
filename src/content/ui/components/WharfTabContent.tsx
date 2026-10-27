@@ -26,6 +26,21 @@ const KEEP_RARITY_OPTIONS = [
   { id: 'common', label: 'Thường', icon: '🐟' },
 ];
 
+const CRICKET_SPECIES_OPTIONS = [
+  { id: 'deVuong', label: 'Dế Vương (Huyền thoại)', icon: '👑' },
+  { id: 'deMa', label: 'Dế Ma (Sử thi)', icon: '🔮' },
+  { id: 'deSat', label: 'Dế Sắt (Sử thi)', icon: '🛡️' },
+  { id: 'deNgoc', label: 'Dế Ngọc (Hiếm)', icon: '💎' },
+  { id: 'deLua', label: 'Dế Lửa (Hiếm)', icon: '🔥' },
+  { id: 'deVang', label: 'Dế Vàng (Hiếm)', icon: '🌟' },
+  { id: 'deCo', label: 'Dế Cồ (Đặc biệt)', icon: '🪨' },
+  { id: 'deTrui', label: 'Dế Trũi (Đặc biệt)', icon: '🕳️' },
+  { id: 'deThan', label: 'Dế Than (Đặc biệt)', icon: '🪵' },
+  { id: 'deMen', label: 'Dế Mèn (Thường)', icon: '🦗' },
+  { id: 'deCom', label: 'Dế Cơm (Thường)', icon: '🌾' },
+  { id: 'deDat', label: 'Dế Đất (Thường)', icon: '🌱' },
+];
+
 export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab }: WharfTabContentProps) {
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -427,15 +442,29 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab }: Wh
             )}
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>🎋 Ống tre đầy (6/6): Tự thả dế thường đổi vỏ sò</span>
+              <span>🎋 Ống tre đầy (6/6): Tự thả dế yếu đổi vỏ sò</span>
               <Switch
                 checked={Boolean(config.benAutoReleaseLowCricket)}
                 onCheckedChange={(c) => updateField('benAutoReleaseLowCricket', c)}
               />
             </label>
-            <p className="text-[10px] text-slate-500 pl-2 border-l-2 border-slate-200">
-              Tự động thả Dế cơm/Dế mèn/Dế đất chỉ số thấp để nhận lại vỏ sò (+5 đến +15🐚) và nhường chỗ bắt dế quý.
-            </p>
+
+            {config.benAutoReleaseLowCricket && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-2 text-[11px] min-w-0 overflow-hidden">
+                <div className="flex flex-col gap-1.5 min-w-0">
+                  <span className="text-slate-600 font-medium">Loài dế ưu tiên giữ trong ống tre:</span>
+                  <MultiSelectCombobox
+                    options={CRICKET_SPECIES_OPTIONS}
+                    value={config.benKeepCricketSpecies || ['deVuong', 'deMa', 'deSat', 'deNgoc', 'deLua', 'deVang']}
+                    onChange={(val) => updateField('benKeepCricketSpecies', val)}
+                    placeholder="Chọn các loài dế muốn giữ..."
+                  />
+                </div>
+                <p className="text-[10px] text-slate-500 leading-relaxed">
+                  💡 Ưu tiên giữ lại dế có độ hiếm cao hơn và chỉ số CP cao hơn. Khi ống tre đầy (6/6), tự động thả con có CP thấp nhất hoặc không thuộc danh sách giữ để nhận lại vỏ sò (+5 đến +400🐚).
+                </p>
+              </div>
+            )}
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
               <span>🌿 Tự mua thức ăn bồi bổ dế mạnh nhất</span>

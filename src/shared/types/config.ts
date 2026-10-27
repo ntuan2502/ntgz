@@ -216,6 +216,8 @@ export interface AppConfig {
   benHuntZone: BenHuntZoneChoice;
   benHuntRareOnly: boolean;
   benAutoReleaseLowCricket: boolean;
+  benKeepCricketSpecies?: string[];
+  benKeepCricketRarities?: string[];
   benAutoFeedCricket: boolean;
   benPreferCricketFood: 'balanced' | 'tough' | 'power' | 'nerve';
 
