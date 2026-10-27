@@ -145,12 +145,10 @@ let nextAtmTime = (() => {
 })();
 let atmTimerId: number | null = null;
 let lastAtmLogAt = 0;
+let lastAtmExchangeAt = 0;
 
 function getNextHourTimestamp(now: number): number {
-  const d = new Date(now);
-  d.setMinutes(0, 0, 0);
-  d.setHours(d.getHours() + 1);
-  return d.getTime();
+  return now + 3600000;
 }
 
 function setNextAtmTime(timestamp: number): void {
@@ -799,8 +797,9 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
       const tickets = wallet.tickets || 0;
       const boughtToday = bn.wheel?.bought || 0;
       const canBuyTicket = Boolean(cfg.benBuyLanternTicket && boughtToday < 5 && shells >= 600);
+      const shouldSpin = cfg.benLanternSpinMode === 'x1' ? tickets > 0 : tickets >= 10;
 
-      if ((tickets > 0 || canBuyTicket) && bu.panel !== 'lantern' && canAct('ben_lantern_open', 2500)) {
+      if ((shouldSpin || canBuyTicket) && bu.panel !== 'lantern' && canAct('ben_lantern_open', 2500)) {
         return walkAndRun(
           { x: 37, y: 28 },
           () => {
@@ -814,9 +813,9 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
             }
             buStore.setState({ panel: 'lantern' });
           },
-          tickets > 0
-            ? `🏮 Mở Vòng quay lồng đèn Cô Bảy (hiện có ${tickets} vé 🎟️)`
-            : `🏮 Ghé Sạp lồng đèn Cô Bảy mua vé quay (${boughtToday}/5, -600🐚)`,
+          canBuyTicket && boughtToday < 5
+            ? `🏮 Ghé Sạp lồng đèn Cô Bảy mua vé quay (${boughtToday}/5, -600🐚)`
+            : `🏮 Mở Vòng quay lồng đèn Cô Bảy (hiện có ${tickets} vé 🎟️)`,
           'ben_lantern_open',
           { panel: 'lantern' },
           5000
@@ -902,7 +901,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
         const waitStr = diffMin > 0 ? `${diffMin} phút ${diffSec} giây` : `${diffSec} giây`;
         const timeStr = new Date(reopenAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-        if (now - lastAtmLogAt > 60000 && canAct('ben_atm_wait_log', 60000)) {
+        if (now - lastAtmExchangeAt > 60000 && now - lastAtmLogAt > 300000 && canAct('ben_atm_wait_log', 300000)) {
           lastAtmLogAt = now;
           markActed('ben_atm_wait_log');
           return {
@@ -936,11 +935,21 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
         if (shellsToCash >= 100) {
           const moneyReceived = shellsToCash * rate;
           const nextHour = getNextHourTimestamp(now);
-          const nextHourStr = new Date(nextHour).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+          const nextHourStr = new Date(nextHour).toLocaleTimeString('vi-VN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          });
+
+          lastAtmExchangeAt = now;
+          lastAtmLogAt = now;
+          setNextAtmTime(nextHour);
 
           return walkAndRun(
             { x: 34, y: 35 },
             () => {
+              lastAtmExchangeAt = Date.now();
+              lastAtmLogAt = Date.now();
               setNextAtmTime(nextHour);
               sendBenWs({ t: 'atmCash', shells: shellsToCash });
             },
@@ -993,10 +1002,11 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   }
 
   // Close panel if open (once hold duration expires, unless actively spinning lantern wheel)
+  const shouldSpinTickets = cfg.benLanternSpinMode === 'x1' ? (wallet.tickets || 0) > 0 : (wallet.tickets || 0) >= 10;
   const lanternActive =
     bu.panel === 'lantern' &&
     cfg.benAutoLantern !== false &&
-    ((wallet.tickets || 0) > 0 || Boolean(cfg.benBuyLanternTicket && (bn.wheel?.bought || 0) < 5 && shells >= 600));
+    (shouldSpinTickets || Boolean(cfg.benBuyLanternTicket && (bn.wheel?.bought || 0) < 5 && shells >= 600));
   if (bu.panel && !lanternActive && (!cfg.showFullActions || Date.now() >= keepBenPanelUntil)) {
     buStore.setState({ panel: null });
   }

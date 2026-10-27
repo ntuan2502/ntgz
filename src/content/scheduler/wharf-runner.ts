@@ -109,26 +109,46 @@ function handleBenLanternWheel(
   }
 
   // 2. Sau khi đã mua hết vé hàng ngày (hoặc không đủ điều kiện mua tiếp), tiến hành quay
-  if (liveTickets > 0) {
-    const wantMulti = config.benLanternSpinMode === 'x10';
-    if (wantMulti && liveTickets >= 2 && spinMultiBtn && !spinMultiBtn.disabled) {
+  const wantMulti = config.benLanternSpinMode === 'x10';
+  if (wantMulti) {
+    if (liveTickets >= 10 && spinMultiBtn && !spinMultiBtn.disabled) {
       triggerPointerDownAndClick(spinMultiBtn);
-      const multiCount = Math.min(10, liveTickets);
-      setStatus(`🏮 Vòng quay Cô Bảy: Nhấn quay x10 hoặc tối đa (${multiCount} vé · còn ${liveTickets} vé 🎟️)...`);
+      setStatus(`🏮 Vòng quay Cô Bảy: Nhấn quay x10 (còn ${liveTickets} vé 🎟️)...`);
       lastWheelActionAt = now;
       return true;
     }
-
-    triggerPointerDownAndClick(spinOneBtn);
-    setStatus(`🏮 Vòng quay Cô Bảy: Nhấn quay 1 vé (còn ${liveTickets} vé 🎟️)...`);
-    lastWheelActionAt = now;
-    return true;
+    // Chưa đủ 10 vé để quay x10 -> Đóng bảng quay lại làm việc khác, tích lũy vé
+    if (liveTickets < 10 && closeBtn && !closeBtn.disabled) {
+      triggerPointerDownAndClick(closeBtn);
+      setStatus(
+        liveTickets > 0
+          ? `🏮 Vòng quay Cô Bảy: Có ${liveTickets}/10 vé (chờ đủ 10 vé mới quay x10) ➔ Đóng bảng quay lại làm việc khác!`
+          : '🏮 Đã quay hết vé lồng đèn Cô Bảy ➔ Đóng bảng quay lại câu cá!'
+      );
+      lastWheelActionAt = now;
+      return true;
+    }
+  } else {
+    // Chế độ quay x1: quay từng vé một cho đến khi hết
+    if (liveTickets > 0 && spinOneBtn && !spinOneBtn.disabled) {
+      triggerPointerDownAndClick(spinOneBtn);
+      setStatus(`🏮 Vòng quay Cô Bảy: Nhấn quay 1 vé (còn ${liveTickets} vé 🎟️)...`);
+      lastWheelActionAt = now;
+      return true;
+    }
+    // Đã hết vé -> Đóng bảng quay
+    if (closeBtn && !closeBtn.disabled) {
+      triggerPointerDownAndClick(closeBtn);
+      setStatus('🏮 Đã quay hết vé lồng đèn Cô Bảy ➔ Đóng bảng quay lại câu cá!');
+      lastWheelActionAt = now;
+      return true;
+    }
   }
 
-  // All tickets have been spun and confirmed -> Close wheel modal
+  // All tickets have been spun or modal should close
   if (closeBtn && !closeBtn.disabled) {
     triggerPointerDownAndClick(closeBtn);
-    setStatus('🏮 Đã quay hết vé lồng đèn Cô Bảy -> Đóng bảng quay lại câu cá!');
+    setStatus('🏮 Đóng bảng vòng quay lồng đèn Cô Bảy');
     lastWheelActionAt = now;
   }
   return true;

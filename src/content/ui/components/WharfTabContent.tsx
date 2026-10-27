@@ -484,7 +484,7 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab }: Wh
                     value={config.benLanternSpinMode || 'x10'}
                     onValueChange={(val) => updateField('benLanternSpinMode', val as AppConfig['benLanternSpinMode'])}
                     options={[
-                      { value: 'x10', label: '⚡ Quay x10 (hoặc tối đa vé còn lại)' },
+                      { value: 'x10', label: '⚡ Quay x10 (đủ 10 vé mới quay)' },
                       { value: 'x1', label: '🎟️ Quay x1 từng vé' },
                     ]}
                   />
