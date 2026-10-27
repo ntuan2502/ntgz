@@ -492,7 +492,10 @@ export function WharfPackTab({ snap }: WharfPackTabProps) {
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-bold">{rod.name}</span>
+                      <div className="flex items-center gap-1.5">
+                        <GameItemIcon itemKey="canCau" fallbackEmoji="🎣" size={18} />
+                        <span className="font-bold">{rod.name}</span>
+                      </div>
                       {isCurrent && (
                         <Badge className="bg-emerald-600 text-white text-[8px] px-1 py-0">Đang dùng</Badge>
                       )}
@@ -538,8 +541,8 @@ export function WharfPackTab({ snap }: WharfPackTabProps) {
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-base">
-                          🎣
+                        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-base shrink-0 overflow-hidden">
+                          <GameItemIcon itemKey="canCau" fallbackEmoji="🎣" size={26} />
                         </span>
                         <div>
                           <div className="flex items-center gap-1.5 flex-wrap">

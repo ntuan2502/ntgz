@@ -2,6 +2,7 @@ import React from 'react';
 import { GameSnapshot } from '@/shared/types/game-state';
 import { Badge } from '@/components/ui/badge';
 import { Milk, Syringe } from 'lucide-react';
+import { GameItemIcon } from '@/content/ui/components/GameItemIcon';
 
 interface LivestockTabProps {
   snap: GameSnapshot | null;
@@ -150,8 +151,8 @@ export function LivestockTab({ snap }: LivestockTabProps) {
       {/* Cow Herd Section */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-bold text-slate-800 flex items-center gap-1">
-            <span>🐄</span>
+          <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+            <GameItemIcon itemKey="i-cow" fallbackEmoji="🐄" size={16} />
             <span>Đàn Bò Sữa ({cows.length} con)</span>
           </span>
           {comingCows.length > 0 && (
@@ -185,7 +186,7 @@ export function LivestockTab({ snap }: LivestockTabProps) {
                     <span className="font-semibold text-slate-800 truncate" title={cowName}>
                       {cowName}
                     </span>
-                    <span className="text-sm">🐄</span>
+                    <GameItemIcon itemKey="i-cow" fallbackEmoji="🐄" size={24} />
                   </div>
 
                   <div className="mt-2 flex flex-col gap-1 text-[10px]">
@@ -219,8 +220,8 @@ export function LivestockTab({ snap }: LivestockTabProps) {
         <div className="flex flex-col justify-between p-3 rounded-xl bg-white border border-slate-200/90 shadow-2xs">
           <div>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-800 flex items-center gap-1">
-                <span>🐂</span>
+              <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                <GameItemIcon itemKey="i-cow" fallbackEmoji="🐂" size={16} />
                 <span>Trâu Bản Đôn</span>
               </span>
               <Badge
@@ -264,8 +265,8 @@ export function LivestockTab({ snap }: LivestockTabProps) {
         <div className="flex flex-col justify-between p-3 rounded-xl bg-white border border-slate-200/90 shadow-2xs">
           <div>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-800 flex items-center gap-1">
-                <span>🐔</span>
+              <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                <GameItemIcon itemKey="chicken" fallbackEmoji="🐔" size={16} />
                 <span>Chuồng Gà</span>
               </span>
               <span className="text-[10px] font-mono text-slate-400">Cấp {coopLevel}</span>
@@ -274,11 +275,12 @@ export function LivestockTab({ snap }: LivestockTabProps) {
             <div className="mt-2 flex items-center justify-between text-[11px]">
               <span className="text-slate-500">Ổ trứng vàng:</span>
               <Badge
-                className={`font-mono text-xs px-1.5 py-0 ${
+                className={`font-mono text-xs px-1.5 py-0 inline-flex items-center gap-1 ${
                   nestEggs > 0 ? 'bg-amber-500 text-white animate-bounce' : 'bg-slate-100 text-slate-600'
                 }`}
               >
-                {nestEggs} quả 🥚
+                <span>{nestEggs} quả</span>
+                <GameItemIcon itemKey="i-egg" fallbackEmoji="🥚" size={14} />
               </Badge>
             </div>
 

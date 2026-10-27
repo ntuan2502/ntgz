@@ -20,7 +20,9 @@ export function GameItemIcon({
   title,
   pixelated = true,
 }: GameItemIconProps) {
-  const dataUrl = useGameAsset(itemKey);
+  const primaryUrl = useGameAsset(itemKey);
+  const fallbackUrl = useGameAsset(!primaryUrl && fallbackEmoji ? fallbackEmoji : null);
+  const dataUrl = primaryUrl || fallbackUrl;
 
   const dimension = typeof size === 'number' ? `${size}px` : size;
 
@@ -28,7 +30,7 @@ export function GameItemIcon({
     return (
       <img
         src={dataUrl}
-        alt={alt || itemKey || ''}
+        alt={alt || itemKey || fallbackEmoji || ''}
         title={title}
         draggable={false}
         className={`inline-block shrink-0 object-contain select-none pointer-events-none ${className}`}

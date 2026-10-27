@@ -353,16 +353,15 @@ export function FishDexTab({ snap }: FishDexTabProps) {
                     >
                       <GameItemIcon
                         itemKey={
-                          cardIsKnown
-                            ? isRainbowTab
-                              ? `benfish-rainbow-${f.id}`
-                              : isOddTab
-                              ? `benfish-odd-${f.id}`
-                              : `benfish-${f.id}`
-                            : null
+                          isRainbowTab
+                            ? `benfish-rainbow-${f.id}`
+                            : isOddTab
+                            ? `benfish-odd-${f.id}`
+                            : `benfish-${f.id}`
                         }
-                        fallbackEmoji={cardIsKnown ? (f.rarity === 'junk' ? '🗑️' : '🐟') : '❓'}
+                        fallbackEmoji={f.rarity === 'junk' ? '🗑️' : '🐟'}
                         size={28}
+                        className={!cardIsKnown ? 'opacity-40 grayscale contrast-125' : ''}
                       />
                     </div>
                     <div>

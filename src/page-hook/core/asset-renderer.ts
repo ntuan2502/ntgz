@@ -142,9 +142,236 @@ export function getPixelIconComponent(): PixelIconComponent | null {
 /**
  * Generates candidate keys with appropriate prefixes for the game's drawing registry (Yw)
  */
+/**
+ * Generates candidate keys with appropriate prefixes for the game's drawing registry (Yw)
+ */
+const EMOJI_ASSET_MAP: Record<string, string> = {
+  '🏠': 'i-house',
+  '🛖': 'i-hut',
+  '🏪': 'i-shop',
+  '🛒': 'i-cart',
+  '🛍️': 'i-cart',
+  '🎁': 'i-gift',
+  '📖': 'i-book',
+  '📒': 'i-notebook',
+  '📔': 'i-grandbook',
+  '📜': 'i-scroll',
+  '📋': 'i-clipboard',
+  '🎯': 'i-target',
+  '✅': 'i-check',
+  '🔒': 'i-lock',
+  '🏆': 'i-trophy',
+  '💡': 'i-bulb',
+  '🔥': 'i-fire',
+  '❤️': 'i-heart',
+  '⚡': 'i-bolt',
+  '🔋': 'i-battery',
+  '🍞': 'i-bread',
+  '🥖': 'i-bread',
+  '🥤': 'i-drink',
+  '🧋': 'i-drink',
+  '🧃': 'i-juice',
+  '🧊': 'i-ice',
+  '☕': 'i-coffee',
+  '🥚': 'i-egg',
+  '🐣': 'i-chick',
+  '🍳': 'i-pan',
+  '🍲': 'i-soup',
+  '🍜': 'i-noodle',
+  '🍛': 'i-rice',
+  '🍚': 'i-rice',
+  '🥮': 'i-cake',
+  '🥟': 'i-dumpling',
+  '🥪': 'i-sandwich',
+  '🍑': 'i-peach',
+  '🥥': 'i-coconut',
+  '🍹': 'i-coconutDrink',
+  '🍡': 'i-iceStick',
+  '🍦': 'i-iceCone',
+  '🍨': 'i-iceCoconut',
+  '🔔': 'i-bell',
+  '🌽': 'i-corn',
+  '🤤': 'i-sandwich',
+  '💸': 'i-money',
+  '💰': 'i-moneybag',
+  '📱': 'i-phone',
+  '💬': 'i-speech',
+  '📢': 'i-loud',
+  '❗': 'i-bang',
+  '⚠️': 'i-warn',
+  '🚨': 'i-warn',
+  '❓': 'i-question',
+  '⏳': 'i-hourglass',
+  '⏰': 'i-clock',
+  '🎣': 'i-rod',
+  '🌊': 'i-wave',
+  '📍': 'i-pin',
+  '📏': 'i-ruler',
+  '🚫': 'i-no',
+  '✕': 'i-close',
+  '✔️': 'i-tick',
+  '🔄': 'i-turn',
+  '👑': 'i-crown',
+  '👴': 'i-oldman',
+  '👦': 'i-boy',
+  '👧': 'i-girl',
+  '🧑‍🌾': 'i-farmer',
+  '🚧': 'i-build',
+  '🔨': 'i-hammer',
+  '🎉': 'i-party',
+  '✨': 'i-sparkle',
+  '💨': 'i-wind',
+  '🌾': 'i-wheat',
+  '🌧️': 'i-rain',
+  '⛈️': 'i-storm',
+  '🥵': 'i-heat',
+  '🌅': 'i-sunrise',
+  '☀️': 'sun',
+  '🌙': 'moon',
+  '😷': 'i-sick',
+  '😋': 'i-yum',
+  '🤝': 'i-handshake',
+  '🎲': 'i-dice',
+  '🚶': 'i-walk',
+  '🏃': 'i-walk',
+  '💪': 'i-flex',
+  '🗺️': 'i-map',
+  '⚙️': 'i-gear',
+  '🎵': 'i-music',
+  '🔊': 'i-sound',
+  '💾': 'i-save',
+  '📷': 'i-camera',
+  '📸': 'i-camera',
+  '🔦': 'i-flashlight',
+  '📞': 'i-call',
+  '✌️': 'i-peace',
+  '💇': 'i-hair',
+  '👕': 'i-shirt',
+  '👗': 'i-dress',
+  '🎒': 'i-bag',
+  '🧢': 'i-cap',
+  '✂️': 'i-scissors',
+  '🎨': 'i-palette',
+  '💆': 'i-spa',
+  '🩳': 'i-shorts',
+  '👒': 'i-nonla',
+  '🏙️': 'i-city',
+  '🌲': 'pine',
+  '🐄': 'i-cow',
+  '🐂': 'i-cow',
+  '🏁': 'i-flag',
+  '🪱': 'i-worm',
+  '🌿': 'i-leaf',
+  '🌱': 'i-sprout',
+  '🧺': 'basket',
+  '🧪': 'i-flask',
+  '🧴': 'pesticide',
+  '🐔': 'chicken',
+  '🐟': 'fish-caNuc',
+  '🦐': 'fish-tomSu',
+  '🐢': 'fish-ruaBien',
+  '🛵': 'ebike-side',
+  '📦': 'i-box',
+  '📭': 'i-box',
+  '🪧': 'sign',
+  '🐛': 'pestBug',
+  '🗑️': 'benfish-depNhua',
+  '👞': 'benfish-depNhua',
+  '🪙': 'coin',
+  '🪨': 'i-hammer',
+  '🕳️': 'i-target',
+  '🪵': 'i-leafBrown',
+  '🔮': 'i-sparkle',
+  '🛡️': 'i-battery',
+  '💎': 'i-sparkle',
+  '🌟': 'i-sparkle',
+  '🦗': 'ongTre',
+  '🎋': 'ongTre',
+  '🎟️': 'i-turn',
+  '🥛': 'i-drink',
+  '🥕': 'crop-carrot',
+  '🥬': 'fsveg-rauMuong',
+  '🍅': 'fsveg-caChua',
+  '🥒': 'fsveg-duaLeo',
+  '🌶️': 'fsveg-ot',
+  '🍉': 'fsveg-duaHau',
+};
+
+const SPECIAL_KEY_ALIASES: Record<string, string[]> = {
+  radishSoup: ['i-soup', 'soup'],
+  boiledEgg: ['i-egg'],
+  grilledCorn: ['i-corn'],
+  carrotJuice: ['i-juice'],
+  eggBread: ['i-sandwich', 'i-bread'],
+  comTam: ['i-rice'],
+  cornCake: ['i-cake'],
+  tea: ['i-drink'],
+  traSua: ['i-drink'],
+  banhMi: ['i-bread', 'i-sandwich'],
+  bapNuong: ['i-corn'],
+
+  egg: ['i-egg'],
+  produce_egg: ['i-egg'],
+  milk: ['i-drink'],
+  produce_milk: ['i-drink'],
+  cow: ['i-cow'],
+  buffalo: ['i-cow'],
+  hen: ['chicken', 'i-chick'],
+  chicken: ['chicken', 'i-chick'],
+
+  fertilizer: ['fertilizer', 'i-flask'],
+  pesticide: ['pesticide', 'i-flask'],
+  medicine: ['i-flask'],
+  coffee: ['coffee', 'i-coffee'],
+  mysteryBag: ['mysteryBag', 'i-gift'],
+  coin: ['coin', 'i-money'],
+  gold: ['coin', 'i-money'],
+  shells: ['coin', 'i-money'],
+  bait: ['i-worm'],
+  rod: ['canCau', 'i-rod'],
+
+  deVuong: ['i-crown', 'ongTre'],
+  deMa: ['i-sparkle', 'ongTre'],
+  deSat: ['i-hammer', 'i-battery', 'ongTre'],
+  deNgoc: ['i-sparkle', 'ongTre'],
+  deLua: ['i-fire', 'ongTre'],
+  deVang: ['i-money', 'i-bell', 'ongTre'],
+  deCo: ['i-flex', 'ongTre'],
+  deTrui: ['i-target', 'ongTre'],
+  deThan: ['i-leafBrown', 'ongTre'],
+  deMen: ['i-worm', 'ongTre'],
+  deDat: ['i-wheat', 'ongTre'],
+  deCom: ['i-rice', 'ongTre'],
+
+  ongTre: ['ongTre', 'benback-ongTre-0'],
+  gui: ['gui', 'benback-gui-0'],
+  gioCa: ['gioCa', 'benback-gioCa-0'],
+  cui: ['cui', 'benback-cui-0'],
+  thuocSau: ['thuocSau', 'benback-thuocSau-0'],
+  thuocCo: ['thuocCo', 'benback-thuocCo-0'],
+  baoLua: ['baoLua', 'benback-baoLua-0'],
+  maiCheo: ['maiCheo', 'benback-maiCheo-0'],
+  canCau: ['canCau', 'benback-canCau-0'],
+  dieuGiay: ['dieuGiay', 'benback-dieuGiay-0'],
+  denOngSao: ['denOngSao', 'benback-denOngSao-0'],
+  dienDien: ['dienDien', 'benback-dienDien-0'],
+};
+
 function getPrefixCandidates(key: string): string[] {
   const clean = key.trim();
   if (!clean) return [];
+
+  const candidates: string[] = [];
+
+  // Check alias table first
+  if (SPECIAL_KEY_ALIASES[clean]) {
+    candidates.push(...SPECIAL_KEY_ALIASES[clean]);
+  }
+
+  // Check emoji map
+  if (EMOJI_ASSET_MAP[clean]) {
+    candidates.push(EMOJI_ASSET_MAP[clean]);
+  }
 
   // If already prefixed, check directly
   if (
@@ -155,36 +382,45 @@ function getPrefixCandidates(key: string): string[] {
     clean.startsWith('fsveg-') ||
     clean.startsWith('benback-') ||
     clean.startsWith('benpet-') ||
-    clean.startsWith('fur-')
+    clean.startsWith('fur-') ||
+    clean.startsWith('i-')
   ) {
-    return [clean];
+    candidates.push(clean);
+    return Array.from(new Set(candidates));
   }
 
   // Handle seed prefix variants: 'seed:radish' -> 'seed-radish'
   if (clean.startsWith('seed:')) {
     const sub = clean.slice(5);
-    return [`seed-${sub}`, clean];
+    candidates.push(`seed-${sub}`, clean);
+    return Array.from(new Set(candidates));
   }
 
   // Handle crop prefix variants: 'crop_radish' -> 'crop-radish'
   if (clean.startsWith('crop_')) {
     const sub = clean.slice(5);
-    return [`crop-${sub}`, sub];
+    candidates.push(`crop-${sub}`, sub);
+    return Array.from(new Set(candidates));
   }
 
-  return [
-    clean,                     // exact match (e.g. 'coin', 'ongTre', 'hoe', 'gui')
-    `benfish-${clean}`,        // Wharf fish / junk (e.g. 'caLoc', 'depNhua')
-    `crop-${clean}`,           // Harvested crop (e.g. 'radish')
-    `seed-${clean}`,           // Seed (e.g. 'radish')
-    `fsveg-${clean}`,          // Farmstay vegetable (e.g. 'rauMuong')
-    `benback-${clean}-0`,      // Wharf back equipment (e.g. 'ongTre', 'gui')
+  candidates.push(
+    clean, // exact match (e.g. 'coin', 'ongTre', 'hoe', 'gui')
+    `benfish-${clean}`, // Wharf fish / junk (e.g. 'caLoc', 'depNhua')
+    `crop-${clean}`, // Harvested crop (e.g. 'radish')
+    `seed-${clean}`, // Seed (e.g. 'radish')
+    `fsveg-${clean}`, // Farmstay vegetable (e.g. 'rauMuong')
+    `benback-${clean}-0`, // Wharf back equipment (e.g. 'ongTre', 'gui')
     `benback-${clean}`,
-    `crop-${clean}-3`,         // Mature crop stage
-    `fish-${clean}`,           // Sea fish
-    `fur-${clean}`,            // Furniture
-    `house-${clean}`,          // House
-  ];
+    `benpet-${clean}-0`, // Wharf pet
+    `benpet-${clean}`,
+    `i-${clean}`, // Game emoji-style pixel icon
+    `crop-${clean}-3`, // Mature crop stage
+    `fish-${clean}`, // Sea fish
+    `fur-${clean}`, // Furniture
+    `house-${clean}`, // House
+  );
+
+  return Array.from(new Set(candidates));
 }
 
 /**

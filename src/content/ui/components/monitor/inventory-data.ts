@@ -90,6 +90,8 @@ export function getInventoryAssetKey(id: string): string {
   if (id.startsWith('fsveg_')) return `fsveg-${id.slice(6)}`;
   if (id.startsWith('marine_')) return `benfish-${id.slice(7)}`;
   if (id.startsWith('dish_')) return id.slice(5);
+  if (id === 'produce_egg') return 'i-egg';
+  if (id === 'produce_milk') return 'i-drink';
   return id;
 }
 
