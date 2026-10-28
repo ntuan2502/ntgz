@@ -86,7 +86,7 @@ export function HudStats({ snap, activeTab }: HudStatsProps) {
           <span className="shrink-0">🏧</span>
           <span className="font-semibold truncate">
             Cây ATM: Đã đến giờ đổi tiền! Có thể ra rút tiền ngay
-            {typeof bn?.atm?.left === 'number' && bn.atm.left > 0 ? ` (Hạn mức còn ${bn.atm.left.toLocaleString('vi-VN')}đ)` : ''}
+            {typeof bn?.atm?.left === 'number' && bn.atm.left >= 300000 ? ` (Hạn mức còn ${bn.atm.left.toLocaleString('vi-VN')}đ)` : ''}
           </span>
         </div>
       );

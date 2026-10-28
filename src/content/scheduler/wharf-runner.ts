@@ -167,18 +167,27 @@ function handleBenAtmPanel(
     return true;
   }
 
+  // 1. If ATM modal is still loading ("Máy đang khởi động…"), wait for it!
+  const isLoading = Boolean(atmPanel.querySelector('.ben-shop-hello')?.textContent?.includes('khởi động'));
+  if (isLoading) {
+    setStatus('🏧 Đang tải thông tin Cây ATM...');
+    return true;
+  }
+
   const allBtn = Array.from(atmPanel.querySelectorAll('.ben-atm-pick button.btn')).find((b) =>
     b.textContent?.includes('Hết')
   ) as HTMLButtonElement | null;
   const goBtn = atmPanel.querySelector('.btn-green.ben-atm-go') as HTMLButtonElement | null;
   const closeBtn = atmPanel.querySelector('.ben-panel-head button.btn-brown') as HTMLButtonElement | null;
 
+  // 2. Select maximum shells ("Hết")
   if (allBtn && !allBtn.disabled && !allBtn.classList.contains('on')) {
     lastAtmActionAt = now;
     triggerPointerDownAndClick(allBtn);
     return true;
   }
 
+  // 3. Click cash out ("Rút tiền")
   if (goBtn && !goBtn.disabled && !goBtn.textContent?.includes('Giờ này nhận đủ rồi')) {
     lastAtmActionAt = now;
     triggerPointerDownAndClick(goBtn);
@@ -186,10 +195,14 @@ function handleBenAtmPanel(
     return true;
   }
 
-  if (closeBtn && !closeBtn.disabled) {
-    lastAtmActionAt = now;
-    triggerPointerDownAndClick(closeBtn);
-    return true;
+  // 4. If quota already exhausted or completed, close panel after a brief pause
+  const isQuotaExhausted = Boolean(goBtn?.textContent?.includes('Giờ này nhận đủ rồi'));
+  if (isQuotaExhausted || (goBtn && goBtn.disabled && allBtn?.classList.contains('on'))) {
+    if (closeBtn && !closeBtn.disabled && now - lastAtmActionAt > 1500) {
+      lastAtmActionAt = now;
+      triggerPointerDownAndClick(closeBtn);
+      return true;
+    }
   }
 
   return true;

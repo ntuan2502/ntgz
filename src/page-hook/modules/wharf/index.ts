@@ -187,17 +187,30 @@ let nextAtmTime = (() => {
   try {
     const raw = localStorage.getItem(ATM_NEXT_TIME_KEY) || sessionStorage.getItem(ATM_NEXT_TIME_KEY);
     const val = raw ? Number(raw) || 0 : 0;
-    // Discard invalid / far future timestamps (> 1 hour)
-    return val > Date.now() + 3600000 ? 0 : val;
+    // Discard invalid / far future timestamps (> 2 hours)
+    return val > Date.now() + 3600000 * 2 ? 0 : val;
   } catch {
     return 0;
   }
 })();
 let lastAtmLogAt = 0;
 let lastAtmExchangeAt = 0;
+let lastAtmQuerySentAt = 0;
+let lastAtmResponseReceivedAt = 0;
+let lastAtmExchangeSentAt = 0;
+let lastObservedAtmRef: unknown = null;
 
 export function getWharfNextAtmTime(): number {
   const now = Date.now();
+  const bn = stores.benNet?.getState();
+  if (typeof bn?.atm?.reopen === 'number' && bn.atm.reopen > now) {
+    const serverReopen = bn.atm.reopen + 3000;
+    if (serverReopen > nextAtmTime) {
+      setNextAtmTime(serverReopen);
+      return serverReopen;
+    }
+  }
+
   if (nextAtmTime > 0) {
     if (nextAtmTime < now - 3600000 || nextAtmTime > now + 3600000 * 2) {
       nextAtmTime = 0;
@@ -233,10 +246,29 @@ function setNextAtmTime(timestamp: number): void {
 }
 
 let hasInitializedWharfSeqs = false;
+let isSubscribedToBenNet = false;
 let isStockingBait = false;
 let lastObservedCashedSeq = -1;
 let lastObservedNoticeSeq = -1;
 let lastObservedSpunSeq = -1;
+
+function subscribeToBenNetIfNeeded(bnStore: import('../../core/engine-access').ZustandStore<BenNetState>): void {
+  if (isSubscribedToBenNet || typeof bnStore.subscribe !== 'function') return;
+  isSubscribedToBenNet = true;
+  try {
+    bnStore.subscribe((state, prevState) => {
+      if (state.atm && state.atm !== prevState?.atm) {
+        lastObservedAtmRef = state.atm;
+        lastAtmResponseReceivedAt = Date.now();
+        if (typeof state.atm.reopen === 'number' && state.atm.reopen > Date.now()) {
+          setNextAtmTime(state.atm.reopen + 3000);
+        }
+      }
+    });
+  } catch {
+    // Fallback to per-tick polling in execBenStep
+  }
+}
 
 function initWharfSeqsIfNeeded(bn: BenNetState): void {
   if (hasInitializedWharfSeqs) return;
@@ -260,6 +292,16 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   const m = mStore.getState();
   const bu = buStore.getState();
   const bn = bnStore.getState();
+
+  subscribeToBenNetIfNeeded(bnStore);
+
+  if (bn.atm && bn.atm !== lastObservedAtmRef) {
+    lastObservedAtmRef = bn.atm;
+    lastAtmResponseReceivedAt = Date.now();
+    if (typeof bn.atm.reopen === 'number' && bn.atm.reopen > Date.now()) {
+      setNextAtmTime(bn.atm.reopen + 3000);
+    }
+  }
 
   if (m.screen !== 'benDo' || bn.status !== 'in') {
     return { acted: false };
@@ -296,7 +338,9 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   if (bn.cashed && typeof bn.cashed.seq === 'number' && bn.cashed.seq !== lastObservedCashedSeq) {
     lastObservedCashedSeq = bn.cashed.seq;
     const cashed = bn.cashed;
-    const nextHour = getNextHourTimestamp(Date.now());
+    const nextHour = (typeof bn.atm?.reopen === 'number' && bn.atm.reopen > Date.now())
+      ? bn.atm.reopen + 3000
+      : getNextHourTimestamp(Date.now()) + 3000;
     const nextHourStr = new Date(nextHour).toLocaleTimeString('vi-VN', {
       hour: '2-digit',
       minute: '2-digit',
@@ -324,19 +368,27 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
         msg: '😮‍💨 Bến Đò: Không đủ Sức câu -> Chuẩn bị đi ăn hồi phục Sức...',
       };
     } else if (err === 'farAtm') {
+      lastAtmQuerySentAt = 0;
       return {
         acted: true,
         msg: '⚠️ Cây ATM: Đứng ngay trước cây ATM mới rút tiền được nha 🏧',
       };
     } else if (err === 'atmLimit') {
-      const nextHour = getNextHourTimestamp(Date.now());
+      const nextHour = (typeof bn.atm?.reopen === 'number' && bn.atm.reopen > Date.now())
+        ? bn.atm.reopen + 3000
+        : getNextHourTimestamp(Date.now()) + 3000;
       setNextAtmTime(nextHour);
       if (buStore.getState().panel === 'atm') {
         buStore.setState({ panel: null });
       }
+      const nextHourStr = new Date(nextHour).toLocaleTimeString('vi-VN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      });
       return {
         acted: true,
-        msg: '⏳ Cây ATM: Giờ này nhận chạm hạn mức tiền rồi, bớt số sò hoặc chờ chút nữa đổi tiếp nha ⏳',
+        msg: `⏳ Cây ATM: Giờ này nhận chạm hạn mức tiền rồi, bớt số sò hoặc chờ tới ${nextHourStr} đổi tiếp nha ⏳`,
       };
     } else if (err === 'atmMin') {
       return {
@@ -1204,7 +1256,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
         let reopenAt = 0;
         if (typeof bn.atm?.reopen === 'number' && bn.atm.reopen > now) {
           reopenAt = bn.atm.reopen;
-        } else if (nextAtmTime > now && lastAtmExchangeAt > 0) {
+        } else if (nextAtmTime > now) {
           reopenAt = nextAtmTime;
         }
 
@@ -1242,6 +1294,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
               if (benScene?.farmer?.lookAt) {
                 benScene.farmer.lookAt((34 + 0.5) * 16, 34 * 16);
               }
+              lastAtmQuerySentAt = Date.now();
               sendBenWs({ t: 'atm' });
             },
             'Đi lại Cây ATM để đổi vỏ sò...',
@@ -1255,18 +1308,30 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
           benScene.farmer.lookAt((34 + 0.5) * 16, 34 * 16);
         }
 
-        // 4. Nếu chưa có thông tin ATM (tỷ giá, hạn mức) hoặc đã lâu chưa refresh, gửi truy vấn tại chỗ
-        if (!bn.atm && canAct('ben_atm_query', 3000)) {
-          markActed('ben_atm_query');
-          sendBenWs({ t: 'atm' });
+        // 4. BẮT BUỘC có dữ liệu tươi mới từ server tại chỗ, không dùng dữ liệu cache cũ từ giờ trước
+        const hasFreshData =
+          lastAtmResponseReceivedAt > 0 &&
+          lastAtmResponseReceivedAt >= lastAtmQuerySentAt &&
+          now - lastAtmResponseReceivedAt < 30000;
+
+        if (!hasFreshData) {
+          if (now - lastAtmQuerySentAt > 3000 && canAct('ben_atm_query', 3000)) {
+            lastAtmQuerySentAt = now;
+            markActed('ben_atm_query');
+            sendBenWs({ t: 'atm' });
+            return {
+              acted: true,
+              msg: '🏧 Đang kiểm tra tỷ giá và hạn mức tại Cây ATM...',
+            };
+          }
           return {
             acted: true,
-            msg: '🏧 Đang kiểm tra tỷ giá và hạn mức tại Cây ATM...',
+            msg: '🏧 Đang chờ máy ATM phản hồi tỷ giá và hạn mức...',
           };
         }
 
-        // 5. Đã có dữ liệu ATM tại chỗ, tính toán đổi tiền
-        if (bn.atm && canAct('ben_atm_cash', 4000)) {
+        // 5. Đã có dữ liệu ATM tươi mới từ server tại chỗ, tính toán đổi tiền
+        if (bn.atm) {
           const bnAtm = bn.atm;
           const rate = typeof bnAtm.rate === 'number'
             ? bnAtm.rate
@@ -1279,12 +1344,19 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
           );
 
           if (moneyQuota < 100 * rate) {
-            const nextHour = getNextHourTimestamp(now);
-            setNextAtmTime(nextHour);
+            const reopenMs = (typeof bnAtm.reopen === 'number' && bnAtm.reopen > now)
+              ? bnAtm.reopen + 3000
+              : getNextHourTimestamp(now) + 3000;
+            setNextAtmTime(reopenMs);
             markActed('ben_atm_cash');
+            const reopenStr = new Date(reopenMs).toLocaleTimeString('vi-VN', {
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+            });
             return {
               acted: true,
-              msg: '⏳ Cây ATM: Giờ này hạn mức tiền đã hết, chờ giờ sau đổi tiếp!',
+              msg: `⏳ Cây ATM: Giờ này hạn mức tiền đã hết (mở đổi lúc ${reopenStr}), chờ giờ sau đổi tiếp!`,
             };
           }
 
@@ -1293,7 +1365,8 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
           shellsToCash = Math.floor(shellsToCash / 100) * 100;
 
           if (shellsToCash >= 100) {
-            if (canAct('ben_atm_cash', 4000)) {
+            if (now - lastAtmExchangeSentAt > 4000 && canAct('ben_atm_cash', 4000)) {
+              lastAtmExchangeSentAt = now;
               markActed('ben_atm_cash');
               sendBenWs({ t: 'atmCash', shells: shellsToCash });
               return {
@@ -1303,7 +1376,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
             }
             return {
               acted: true,
-              msg: `🏧 Đang chờ xác nhận đổi tiền tại Cây ATM...`,
+              msg: `🏧 Đang chờ máy ATM xác nhận đổi tiền...`,
             };
           }
         }
