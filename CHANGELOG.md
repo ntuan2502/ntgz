@@ -5,6 +5,36 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.11.0] - 2026-10-28
+
+### 🌟 Tính Năng Mới & Nâng Cấp Trải Nghiệm (Major Features & UX Enhancements)
+- **Tìm Kiếm Thời Gian Thực trong Terminal (Real-time Terminal Search & Filter)**:
+  - Bổ sung thanh tìm kiếm log trực tiếp phía trên Terminal với icon kính lúp, đếm số dòng kết quả khớp (`X/Y dòng`), và nút xóa nhanh (x).
+  - Hỗ trợ tìm kiếm tiếng Việt thông minh (accent-tolerant filter): gõ không dấu vẫn tìm được từ có dấu (ví dụ: `ben do` tìm thấy `Bến đò`).
+  - Tô sáng (highlight) từ khóa tìm kiếm trực tiếp trên từng dòng log theo thời gian thực.
+  - Sửa lỗi gõ phím khoảng trắng (Space): cô lập sự kiện bàn phím tại thanh tìm kiếm và chặn Canvas Game Engine (Phaser 3) nuốt phím space bên ngoài Shadow DOM.
+- **Nâng Cấp Bảng Vàng Trực Tuyến & Tối Ưu Hiển Thị Bến Đò (Wharf Leaderboard & Streamlined UI)**:
+  - **Bổ sung BXH Trùm Sới Dế**: Cập nhật đầy đủ bảng xếp hạng Trùm sới dế tại Bến Đò, theo dõi số cấp độ boss đã chinh phục và mốc thời gian vinh danh.
+  - **Tự động làm mới mỗi 60 giây (Auto-reload)**: Bảng vàng tự động cập nhật dữ liệu mới nhất mỗi phút, tích hợp đồng hồ đếm ngược trực quan (`⏳ Tự làm mới sau X giây`) và nút làm mới thủ công tiện lợi.
+  - **Vinh danh Top 1 - 2 - 3 nổi bật trực quan**: Thiết kế huy chương Vàng, Bạc, Đồng với viền sáng, gradient sang trọng và hiệu ứng nổi bật, nhận diện ngay người đứng đầu mà không cần đọc số thứ tự.
+  - **Tinh gọn giao diện Bến Đò & Farmstay**:
+    - Loại bỏ menu Shop và Bảng dế khỏi bảng thao tác Bến Đò, tránh trùng lặp với Xem Nhanh.
+    - Loại bỏ tính năng kéo thả sắp xếp phân khu không cần thiết ở cả Bến Đò và Farmstay.
+    - Cơ chế loại trừ lẫn nhau (Mutual Exclusion): Tự động tắt Bắt dế đêm khi bật Câu cá và ngược lại, đảm bảo bot chỉ tập trung vào một hoạt động tại một thời điểm.
+    - Khung giờ bắt dế: Chỉ cho phép bật bắt dế đêm trong khung giờ hợp lệ của game (18h00 - 05h00).
+    - Tách riêng mục "Tự ăn hồi phục thể lực": Độc lập dùng chung cho cả hoạt động câu cá và bắt dế đêm khi kiệt sức.
+    - Loại bỏ tính năng tự mua thức ăn bồi bổ dế mạnh nhất.
+- **Tối Ưu Hóa Sới Dế Ông Sáu & Tỷ Lệ Thắng Đấu Dế (Cricket Arena Optimization)**:
+  - Sửa lỗi bot không tự chạy lại vị trí Ông Sáu: Nhân vật tự động di chuyển an toàn đến trước mặt NPC Ông Sáu (`x:43, y:30`) trước khi gửi lệnh thách đấu thang Boss sới dế.
+  - Thuật toán chọn dế tối ưu: Tự động so sánh tổng chỉ số Công, Lỳ, Gan và tỷ lệ thắng để đưa ra dế mạnh nhất ra trận; tinh chỉnh nhịp khều râu dế chính xác giúp đạt tỷ lệ thắng cao nhất có thể.
+- **Giám Sát Chi Tiết Cần Câu Bến Đò (Fishing Rod Details)**:
+  - Hiển thị đầy đủ thông số kỹ thuật cần câu: Cấp độ cường hóa, Phẩm chất, Thuộc tính đặc biệt và Độ bền cần câu trực tiếp trong Túi đồ Bến Đò.
+- **Cải Tiến Lịch Trình Nông Trại & Chế Độ Ngủ Thông Minh (Smart Sleep & Scheduler)**:
+  - Hỗ trợ tùy chọn ngủ sớm lúc 19h00 hoặc ngủ muộn lúc 22h30, kết hợp tính năng đồng hồ gia tốc Turbo giúp nhân vật hồi phục thể lực nhanh chóng.
+  - Khắc phục triệt để lỗi chuyển khu luân phiên liên tục (ping-pong switching) giữa Nông Trại và Farmstay.
+- **Đồng Bộ Cấu Hình Mặc Định Ban Đầu (Canonical Default Config)**:
+  - Cập nhật bộ giá trị mặc định ban đầu theo đúng thói quen và thiết lập tối ưu của người dùng (khu vực hoạt động mặc định, hạt giống rau muống Farmstay, vị trí bãi cát biển, ngưỡng giữ vàng an toàn...).
+
 ## [1.10.0] - 2026-10-28
 
 ### 🌟 Tính Năng Mới & Nâng Cấp Đồ Họa (Major Features & Visual Enhancements)
