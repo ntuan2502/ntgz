@@ -5,6 +5,26 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.10.0] - 2026-10-28
+
+### 🌟 Tính Năng Mới & Nâng Cấp Đồ Họa (Major Features & Visual Enhancements)
+- **Đồ Họa Động Pixel Art Chuẩn In-Game cho Toàn Bộ Giám Sát Realtime (Dynamic Game Assets)**:
+  - Tích hợp trực tiếp hàm vẽ sprite nội tại của game (`drawMiniCrop`, `drawMiniEgg`, `drawMiniMilk`, `drawMiniMeat`, `drawMiniBait`, v.v.) qua Page-Hook để trích xuất hình ảnh pixel art độ phân giải cao từ bộ nhớ atlas của Phaser 3.
+  - Thay thế hoàn toàn các emoji đơn điệu bằng sprite pixel art chân thực 100% chuẩn in-game trên toàn bộ widget Giám sát thời gian thực:
+    - **Bến Đò**: Toàn bộ 103 loài cá (cá đã câu và cả bóng cá chưa câu trong Sổ Cá), 12 loài dế kèm icon dế cho từng ô trong 6 ống tre, mồi câu, vỏ sò, vé quay lồng đèn, vựa cá, cần câu.
+    - **Nông Trại**: 30+ loại nông sản (lúa nước, ngô, dưa hấu, cà chua, cà rốt, v.v.), trứng gà, sữa bò, thịt lợn, phân bón, thức ăn gia súc.
+    - **Biển Khơi & Farmstay**: Các loại cá biển, hạt giống hữu cơ, rau củ quả du lịch sinh thái.
+  - Hệ thống fallback thông minh: Tự động chuyển đổi mượt mà giữa Canvas dynamic render -> In-game sprite -> Icon dự phòng nếu asset chưa kịp nạp vào bộ nhớ.
+
+### 🐛 Sửa Lỗi & Ổn Định Hệ Thống (Bug Fixes & Stability)
+- **Khắc Phục Triệt Để Lỗi Đổi Tiền Cây ATM Bến Đò Nhảy Cooldown 2 Tiếng (Stale ATM Quota Cache Fix)**:
+  - Xử lý tận gốc lỗi đọc dữ liệu hạn mức cũ (`left = 2000đ`) từ phiên đổi trước do store lưu cache mà không gửi truy vấn mới lên máy chủ, khiến bot nhận định sai là hết hạn mức và tự phạt chờ thêm 1 tiếng mà không thực hiện đổi tiền.
+  - Bắt buộc kiểm tra tính tươi mới của dữ liệu (`hasFreshData`): Khi đứng trước cây ATM, bot gửi `{ t: 'atm' }` và chờ dữ liệu phản hồi mới nhất từ server mới thực hiện tính toán đổi tiền.
+  - Đồng bộ thời gian mở đổi từ mốc `reopen` chuẩn của server thay vì tính theo giờ máy tính cá nhân, bổ sung 3 giây buffer an toàn (`reopen + 3000ms`) để triệt tiêu hoàn toàn rủi ro lệch đồng hồ Client - Server.
+  - Cơ chế bảo vệ Cooldown: Chỉ cập nhật thời gian mở đổi tiếp theo khi máy chủ thực sự xác nhận đổi tiền thành công (`bn.cashed`) hoặc thông báo chạm trần (`atmLimit`).
+  - Tối ưu hóa DOM Runner: Chờ modal ATM tải xong dữ liệu ("Máy đang khởi động…") và chỉ đóng sau khi giao dịch rút tiền hoàn tất.
+  - Cập nhật hiển thị thanh cảnh báo ATM trên HUD: Tự động chuyển sang trạng thái sẵn sàng đổi khi hết giờ mà không hiển thị hạn mức lẻ cũ gây hiểu nhầm.
+
 ## [1.9.0] - 2026-10-28
 
 ### 🌟 Tính Năng Mới & Nâng Cấp Toàn Diện (Major Features & Enhancements)
