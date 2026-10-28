@@ -481,6 +481,11 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
     sendBenWs({ t: 'soi' });
   }
 
+  if (canAct('ben_board_bg_refresh', 60000)) {
+    markActed('ben_board_bg_refresh');
+    sendBenWs({ t: 'board' });
+  }
+
 
   const stamina = computeBenStamina(wallet);
   const shells = wallet.shells || 0;

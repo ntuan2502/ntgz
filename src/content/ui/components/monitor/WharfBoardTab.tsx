@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { GameSnapshot } from '@/shared/types/game-state';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -103,6 +103,7 @@ const BOARD_CATEGORIES: BoardCategory[] = [
 ];
 
 const TRUM_SOI_ALIASES = ['trumSoi', 'soi', 'boss', 'cricket', 'trum_soi', 'arena', 'soiBoss'];
+const AUTO_RELOAD_INTERVAL_SEC = 60;
 
 const MEDALS = ['🥇', '🥈', '🥉'];
 const WEEK_MS = 604800000;
@@ -123,6 +124,9 @@ interface WharfBoardTabProps {
 export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
   const [activeCategoryId, setActiveCategoryId] = useState<string>(initialCategoryId || 'species');
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const [autoReload, setAutoReload] = useState<boolean>(true);
+  const [countdown, setCountdown] = useState<number>(AUTO_RELOAD_INTERVAL_SEC);
+  const isRefreshingRef = useRef(false);
 
   useEffect(() => {
     if (initialCategoryId) {
@@ -210,12 +214,44 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
     await execGameAction('BEN_SET_PANEL', { panel: target });
   };
 
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
+    if (isRefreshingRef.current) return;
+    isRefreshingRef.current = true;
     setIsRefreshing(true);
-    await execGameAction('BEN_REFRESH', { kind: 'board' });
-    await execGameAction('BEN_REFRESH', { kind: 'soi' });
-    setTimeout(() => setIsRefreshing(false), 800);
-  };
+    setCountdown(AUTO_RELOAD_INTERVAL_SEC);
+
+    try {
+      await execGameAction('BEN_REFRESH', { kind: 'board' });
+      await execGameAction('BEN_REFRESH', { kind: 'soi' });
+    } finally {
+      setTimeout(() => {
+        isRefreshingRef.current = false;
+        setIsRefreshing(false);
+      }, 800);
+    }
+  }, []);
+
+  // Initial load on mount
+  useEffect(() => {
+    handleRefresh();
+  }, [handleRefresh]);
+
+  // 1-second interval for countdown & auto-refresh every 60s
+  useEffect(() => {
+    if (!autoReload) return;
+
+    const interval = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          handleRefresh();
+          return AUTO_RELOAD_INTERVAL_SEC;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [autoReload, handleRefresh]);
 
   return (
     <div className="flex flex-col gap-3 p-3 pr-4 overflow-y-auto min-h-0 select-none">
@@ -227,14 +263,42 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
               <Trophy className="h-4 w-4" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-bold text-slate-900 text-sm">Bảng vàng Bến đò</span>
                 <Badge className="bg-amber-500 text-white text-[10px] px-1.5 py-0 font-medium">
                   BXH Trực Tuyến
                 </Badge>
+                <button
+                  type="button"
+                  onClick={() => setAutoReload((prev) => !prev)}
+                  className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-mono cursor-pointer transition-all border ${
+                    autoReload
+                      ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100 shadow-2xs'
+                      : 'bg-slate-100 text-slate-500 border-slate-300 hover:bg-slate-200'
+                  }`}
+                  title={
+                    autoReload
+                      ? 'Tự động làm mới mỗi 60s đang BẬT. Bấm để tạm dừng.'
+                      : 'Tự động làm mới đang TẮT. Bấm để kích hoạt.'
+                  }
+                >
+                  <span
+                    className={`h-1.5 w-1.5 rounded-full ${
+                      autoReload ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'
+                    }`}
+                  />
+                  <span>{autoReload ? `Tự reload: ${countdown}s` : 'Tự reload: Tắt'}</span>
+                </button>
               </div>
               <p className="text-[11px] text-slate-600 mt-0.5">
-                {currentCategory.hint} · <span className="text-slate-500">cập nhật tự động</span>
+                {currentCategory.hint} ·{' '}
+                {autoReload ? (
+                  <span className="text-emerald-700 font-medium">
+                    tự động làm mới sau {countdown}s
+                  </span>
+                ) : (
+                  <span className="text-slate-500">cập nhật thủ công</span>
+                )}
               </p>
             </div>
           </div>
@@ -244,12 +308,15 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
               type="button"
               variant="outline"
               size="sm"
-              onClick={handleRefresh}
+              onClick={() => handleRefresh()}
               disabled={isRefreshing}
               className="h-7 px-2 text-xs text-slate-700 bg-white hover:bg-slate-50 rounded-lg gap-1 cursor-pointer"
+              title="Bấm để tải lại BXH ngay lập tức"
             >
-              <RefreshCw className={`h-3 w-3 ${isRefreshing ? 'animate-spin' : ''}`} />
-              <span className="text-[11px]">Cập nhật</span>
+              <RefreshCw className={`h-3 w-3 ${isRefreshing ? 'animate-spin text-amber-600' : ''}`} />
+              <span className="text-[11px] font-mono">
+                {isRefreshing ? 'Đang tải...' : `Làm mới (${countdown}s)`}
+              </span>
             </Button>
             <Button
               type="button"
