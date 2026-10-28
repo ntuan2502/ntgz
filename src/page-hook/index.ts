@@ -210,6 +210,18 @@ interface GameActionPayload {
           return { ok: false, error: 'NO_MAIN_STORE' };
         }
 
+        case 'ADVANCE_CLOCK': {
+          const st = mainStore.getState();
+          if (st.screen === 'playing' || st.screen === 'farmstay' || st.indoors) {
+            dismissInterruptsIfNeeded({ autoDismissInterrupts: true });
+            if (typeof st.advanceClock === 'function') {
+              st.advanceClock();
+              return { ok: true, minutes: mainStore.getState().minutes, day: mainStore.getState().day };
+            }
+          }
+          return { ok: false, reason: 'BUSY_OR_UNAVAILABLE' };
+        }
+
         case 'SLEEP_NOW': {
           const mainState = mainStore.getState();
           if ((mainState.fishing?.basket?.length || 0) > 0) {

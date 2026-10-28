@@ -286,12 +286,44 @@ export function FarmTabContent({ config, onUpdateConfig }: FarmTabContentProps) 
             )}
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>😴 Tự về nhà đi ngủ qua ngày mới (sau 22h30)</span>
+              <span>😴 Tự về nhà đi ngủ qua ngày mới</span>
               <Switch
                 checked={Boolean(config.autoSleep)}
                 onCheckedChange={(c) => updateField('autoSleep', c)}
               />
             </label>
+
+            {config.autoSleep && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-2 text-[11px]">
+                <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+                  <div className="flex flex-col pr-2">
+                    <span className="font-medium text-slate-700">Đi ngủ trễ lúc 22h30 (chờ Chợ Đêm)</span>
+                    <span className="text-[10px] text-slate-500">
+                      {config.sleepLate ? 'Bật: Chờ đến 22h30 để bán Chợ Đêm' : 'Tắt: Ngủ sớm lúc 19h00 ngay khi xong việc'}
+                    </span>
+                  </div>
+                  <Switch
+                    checked={Boolean(config.sleepLate)}
+                    onCheckedChange={(c) => updateField('sleepLate', c)}
+                  />
+                </label>
+
+                <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+                  <div className="flex flex-col pr-2">
+                    <span className="font-medium text-slate-700">Tua nhanh nhịp thời gian (Clock Turbo)</span>
+                    <span className="text-[10px] text-slate-500">
+                      {config.clockTurbo !== false
+                        ? 'Bật: Tự nhích nhanh đồng hồ khi xong việc để tới giờ ngủ trong 15-20s'
+                        : 'Tắt: Chờ thời gian trôi tự nhiên theo nhịp game'}
+                    </span>
+                  </div>
+                  <Switch
+                    checked={config.clockTurbo !== false}
+                    onCheckedChange={(c) => updateField('clockTurbo', c)}
+                  />
+                </label>
+              </div>
+            )}
           </div>
         );
 

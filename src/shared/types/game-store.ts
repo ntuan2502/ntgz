@@ -288,6 +288,7 @@ export interface MainGameStoreState {
   goToSleep?: () => void;
   sleepThrough?: () => void;
   nextMorning?: () => void;
+  advanceClock?: () => void;
   stopSleeping?: () => void;
 
   // House, kitchen & needs

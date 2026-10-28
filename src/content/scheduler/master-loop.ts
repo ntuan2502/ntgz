@@ -118,10 +118,12 @@ export async function tickAuto(): Promise<void> {
 
     // Check Night Sleep
     const isMidSeaCast = snap.screen === 'sea' && snap.sea && snap.sea.phase !== 'idle';
+    const targetSleepMinutes = config.sleepLate ? 1350 : 1140;
+    const targetTimeLabel = config.sleepLate ? '22:30' : '19:00';
     if (
       config.autoSleep &&
       !isMidSeaCast &&
-      (snap.minutes || 0) >= 1350
+      (snap.minutes || 0) >= targetSleepMinutes
     ) {
       setStatus(`😴 Đã ${formatClock(snap.minutes)} -> Về nhà đi ngủ qua ngày mới...`);
       await execGameAction('SLEEP_NOW');
@@ -139,11 +141,18 @@ export async function tickAuto(): Promise<void> {
       if (tab === 'farm') {
         const acted = await runFarmSubAreas(snap, config, setStatus, updateHeaderStats);
         if (!acted) {
-          setStatus('✅ Đã hoàn tất mọi việc được bật trong Nông Trại (Đang canh tự động...)');
+          if (config.autoSleep && (snap.minutes || 0) < targetSleepMinutes && config.clockTurbo !== false) {
+            setStatus(`⏩ Đang tua nhanh thời gian (${formatClock(snap.minutes)} ➔ ${targetTimeLabel}) để đi ngủ...`);
+            await execGameAction('ADVANCE_CLOCK');
+            await sleep(350);
+          } else {
+            setStatus('✅ Đã hoàn tất mọi việc được bật trong Nông Trại (Đang canh tự động...)');
+            await sleep(1500);
+          }
         }
       } else if (tab === 'benDo') {
         const res = await stepBenDoFishing(snap, config, setStatus, () => {});
-        if (res.finishedArea && config.autoSleep && config.sleepOnFishingLimit && (snap.minutes || 0) >= 1140) {
+        if (res.finishedArea && config.autoSleep && config.sleepOnFishingLimit && (snap.minutes || 0) >= targetSleepMinutes) {
           setStatus('🌙 Hết câu được ở Bến Đò buổi tối -> Về nhà đi ngủ...');
           await execGameAction('SLEEP_NOW');
           await sleep(1200);
@@ -151,7 +160,7 @@ export async function tickAuto(): Promise<void> {
       } else if (tab === 'sea') {
         const res = await stepSeaFishing(snap, config, setStatus, () => {});
         if (res.finishedArea) {
-          if (config.autoSleep && (config.sleepOnFishingLimit || res.lateNight || (snap.minutes || 0) >= 1140)) {
+          if (config.autoSleep && (config.sleepOnFishingLimit || res.lateNight || (snap.minutes || 0) >= targetSleepMinutes)) {
             setStatus('🌙 Hết câu được ở Biển -> Về nhà đi ngủ qua ngày mới...');
             await execGameAction('SLEEP_NOW');
             await sleep(1200);
@@ -217,14 +226,26 @@ export async function tickAuto(): Promise<void> {
           if (foundReadyIdx !== -1) {
             currentAreaIdx = foundReadyIdx;
           } else {
-            setStatus('🌾 Đang trực tại Nông Trại (đợi các khu khác hồi sức / qua ngày)...');
-            await sleep(1500);
+            if (config.autoSleep && (snap.minutes || 0) < targetSleepMinutes && config.clockTurbo !== false) {
+              setStatus(`⏩ Đang tua nhanh thời gian (${formatClock(snap.minutes)} ➔ ${targetTimeLabel}) để đi ngủ...`);
+              await execGameAction('ADVANCE_CLOCK');
+              await sleep(350);
+            } else {
+              setStatus('🌾 Đang trực tại Nông Trại (đợi các khu khác hồi sức / qua ngày)...');
+              await sleep(1500);
+            }
           }
         }
       } else {
         if (!acted) {
-          setStatus('🌾 Nông Trại: Đã xong việc hiện tại...');
-          await sleep(1500);
+          if (config.autoSleep && (snap.minutes || 0) < targetSleepMinutes && config.clockTurbo !== false) {
+            setStatus(`⏩ Đang tua nhanh thời gian (${formatClock(snap.minutes)} ➔ ${targetTimeLabel}) để đi ngủ...`);
+            await execGameAction('ADVANCE_CLOCK');
+            await sleep(350);
+          } else {
+            setStatus('🌾 Nông Trại: Đã xong việc hiện tại...');
+            await sleep(1500);
+          }
         }
       }
     } else if (currentArea === 'benDo') {
@@ -247,7 +268,7 @@ export async function tickAuto(): Promise<void> {
         }
         if (enabledAreas.length > 1) {
           currentAreaIdx = (currentAreaIdx + 1) % enabledAreas.length;
-        } else if (config.autoSleep && config.sleepOnFishingLimit && (snap.minutes || 0) >= 1140) {
+        } else if (config.autoSleep && config.sleepOnFishingLimit && (snap.minutes || 0) >= targetSleepMinutes) {
           setStatus('🌙 Đã hết sức câu ở Bến Đò buổi tối -> Về nhà đi ngủ...');
           await execGameAction('SLEEP_NOW');
           await sleep(1200);
@@ -271,7 +292,7 @@ export async function tickAuto(): Promise<void> {
         if (res.exhausted) {
           seaExhaustedUntil = Date.now() + 180000;
         }
-        if (config.autoSleep && (config.sleepOnFishingLimit || res.lateNight) && (snap.minutes || 0) >= 1140) {
+        if (config.autoSleep && (config.sleepOnFishingLimit || res.lateNight) && (snap.minutes || 0) >= targetSleepMinutes) {
           setStatus('🌙 Đã hết ngày ở Biển -> Về nhà đi ngủ qua ngày mới...');
           await execGameAction('SLEEP_NOW');
           currentAreaIdx = 0;

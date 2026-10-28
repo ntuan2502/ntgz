@@ -94,6 +94,8 @@ export interface AppConfig {
   autoSalonShampoo: boolean;
   autoSalonWhiten: boolean;
   autoSleep: boolean;
+  sleepLate: boolean;
+  clockTurbo: boolean;
   sleepOnFishingLimit: boolean;
 
   // 2. Crops (Tèo)

@@ -220,6 +220,8 @@ export const DEFAULT_CONFIG: AppConfig = {
   autoSalonShampoo: true,
   autoSalonWhiten: false,
   autoSleep: true,
+  sleepLate: false,
+  clockTurbo: true,
   sleepOnFishingLimit: true,
 
   // 2. Crops (Tèo)
