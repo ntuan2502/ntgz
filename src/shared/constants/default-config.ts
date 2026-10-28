@@ -129,7 +129,7 @@ export function getBenHuntSpots(choice: BenHuntZoneChoice): Array<{ x: number; y
 
 export const DEFAULT_CONFIG: AppConfig = {
   running: false,
-  runMode: 'all',
+  runMode: 'tab',
   activeTab: 'farm',
   panelVisible: true,
   panelMinimized: false,
@@ -141,7 +141,7 @@ export const DEFAULT_CONFIG: AppConfig = {
 
   // General Delay & Transition settings
   taskDelayMs: 500,
-  actionRepeatDelayMs: 100,
+  actionRepeatDelayMs: 0,
   fishingSwitchCount: 15,
   showFullActions: false,
 
@@ -150,7 +150,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   areaEnabled: {
     farm: true,
     benDo: false,
-    sea: true,
+    sea: false,
     farmstay: true,
   },
 
@@ -177,11 +177,11 @@ export const DEFAULT_CONFIG: AppConfig = {
     dairy: true,
     coop: true,
     pond: true,
-    salon: true,
+    salon: false,
     market: true,
-    nightMarket: true,
+    nightMarket: false,
     dibay: true,
-    goldShop: true,
+    goldShop: false,
   },
   farmSubCollapsed: {
     house: false,
@@ -191,33 +191,33 @@ export const DEFAULT_CONFIG: AppConfig = {
     dairy: false,
     coop: false,
     pond: false,
-    salon: false,
+    salon: true,
     market: false,
-    nightMarket: false,
+    nightMarket: true,
     dibay: false,
-    goldShop: false,
+    goldShop: true,
   },
 
   // 1. House, Kitchen, Needs & Salon
   autoDismissInterrupts: true,
-  autoCook: true,
+  autoCook: false,
   preferDish: 'auto',
   autoRecoverHunger: true,
   hungerThreshold: 10,
-  eatUntilFull: false,
-  foodSource: 'kitchen_first',
+  eatUntilFull: true,
+  foodSource: 'shop_only',
   preferFoodKitchen: 'auto',
-  preferFoodShop: 'banhMiThit',
+  preferFoodShop: 'banhMiTrung',
   autoRecoverThirst: true,
   thirstThreshold: 10,
-  drinkUntilFull: false,
-  drinkSource: 'kitchen_first',
+  drinkUntilFull: true,
+  drinkSource: 'shop_only',
   preferDrinkKitchen: 'auto',
-  preferDrinkShop: 'nuocMia',
+  preferDrinkShop: 'traDa',
   needThreshold: 45,
   autoChargeVehicle: true,
   batteryThreshold: 10,
-  autoSalonShampoo: true,
+  autoSalonShampoo: false,
   autoSalonWhiten: false,
   autoSleep: true,
   sleepLate: false,
@@ -232,13 +232,13 @@ export const DEFAULT_CONFIG: AppConfig = {
   autoBuySeeds: false,
   preferSeed: 'auto',
   autoWater: true,
-  autoFertilize: true,
+  autoFertilize: false,
   autoBuyFertilizer: false,
-  autoBuyPlots: true,
+  autoBuyPlots: false,
   autoPayHelperCrops: true,
 
   // 3. Pet (Thú cưng)
-  petAutoFeed: true,
+  petAutoFeed: false,
   petFeedMode: 'smart_diet',
   petPreferFood: 'auto',
   petAutoBuyFood: true,
@@ -258,7 +258,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   // 5. Dairy (Bò Sữa - Chị Mận)
   dairyAutoFeedCows: true,
   dairyAutoCureCows: true,
-  dairyAutoBuyMedicine: false,
+  dairyAutoBuyMedicine: true,
   dairyAutoBuyCow: true,
   dairyAutoSellMilk: true,
   dairyAutoPayHelper: true,
@@ -286,10 +286,10 @@ export const DEFAULT_CONFIG: AppConfig = {
   autoFeedPiggy: true,
   autoBreakPiggy: true,
   autoNewPiggy: true,
-  autoSavings: false,
+  autoSavings: true,
   savingsDepositAmount: 5000000,
   savingsDepositMax: true,
-  savingsTerm: 7,
+  savingsTerm: 14,
   savingsMinKeepMillion: 10,
   savingsKeepGold: 200000,
 
@@ -297,11 +297,11 @@ export const DEFAULT_CONFIG: AppConfig = {
   goldAutoBuy: false,
   goldPreferType: 'mieng',
   goldKeepCash: 500000,
-  goldAutoSell: true,
+  goldAutoSell: false,
   goldProfitPercent: 10,
 
   // 12. Night Market (Chợ Đêm 18h00 - 23h30)
-  autoSellNightMarket: true,
+  autoSellNightMarket: false,
   nightMarketMinStock: 50,
   nightMarketStrategy: 'highest_price',
   nightMarketSelectedCrop: 'radish',
@@ -310,15 +310,15 @@ export const DEFAULT_CONFIG: AppConfig = {
   benSubOrder: ['fishing', 'cricketBoss', 'cricketHunt', 'entertainment'],
   benSubEnabled: {
     fishing: true,
-    cricketBoss: true,
-    cricketHunt: true,
+    cricketBoss: false,
+    cricketHunt: false,
     entertainment: true,
   },
   benSubCollapsed: {
-    fishing: false,
-    cricketBoss: false,
-    cricketHunt: false,
-    entertainment: false,
+    fishing: true,
+    cricketBoss: true,
+    cricketHunt: true,
+    entertainment: true,
   },
   benQuickMonitorCollapsed: false,
 
@@ -365,7 +365,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   benBuyLanternTicket: false,
   benAutoLotto: false,
   benAutoBuyLotto: false,
-  benAutoAtm: false,
+  benAutoAtm: true,
   benAtmThreshold: 10000,
 
   // Area 3: Sea Fishing Settings
@@ -409,17 +409,17 @@ export const DEFAULT_CONFIG: AppConfig = {
   // 3. Organic Veg Garden (24 plots)
   farmstayAutoVeg: true,
   farmstayVegAutoPlant: true,
-  farmstayVegPreferSeed: 'auto',
+  farmstayVegPreferSeed: 'rauMuong',
   farmstayVegAutoWater: true,
-  farmstayVegAutoFeed: true,
+  farmstayVegAutoFeed: false,
   farmstayVegAutoHarvest: true,
   farmstayVegAutoBuyPlots: false,
 
   // 4. Staff & Bonds
   farmstayAutoChatStaff: true,
+  farmstayAutoGroupBooking: true,
   farmstayAutoAnswerStory: true,
 
   // 5. Orders & Tour Bookings
   farmstayAutoOrders: true,
-  farmstayAutoGroupBooking: true,
 };
