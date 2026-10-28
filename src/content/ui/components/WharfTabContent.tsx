@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { AppConfig, WharfSubAreaId } from '@/shared/types/config';
 import { WHARF_SUBAREA_META } from '@/shared/constants/default-config';
 import { Switch } from '@/components/ui/switch';
-import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronRight, ChevronUp, GripVertical } from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { HudSelect } from './HudSelect';
 import { MultiSelectCombobox } from './MultiSelectCombobox';
 import { MonitorTabId } from './monitor/MonitorHub';
@@ -41,23 +40,34 @@ const CRICKET_SPECIES_OPTIONS = [
 ];
 
 export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onOpenMonitorTab }: WharfTabContentProps) {
-  const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-  const dragSourceIndexRef = React.useRef<number | null>(null);
+  const vnDate = new Date(Date.now() + 7 * 3600 * 1000);
+  const vnHour = vnDate.getUTCHours();
+  const isNightHuntOpen = vnHour >= 18 || vnHour < 5;
 
-  const subOrder: WharfSubAreaId[] =
-    Array.isArray(config.benSubOrder) && config.benSubOrder.length > 0
-      ? config.benSubOrder
-      : ['fishing', 'cricketBoss', 'cricketHunt', 'entertainment'];
+  const subOrder: WharfSubAreaId[] = ['fishing', 'cricketBoss', 'cricketHunt', 'entertainment'];
 
   const handleToggleSubEnabled = (subId: WharfSubAreaId, checked: boolean) => {
-    onUpdateConfig((prev) => ({
-      ...prev,
-      benSubEnabled: {
+    onUpdateConfig((prev) => {
+      const nextEnabled = {
         ...(prev.benSubEnabled || {}),
         [subId]: checked,
-      },
-    }));
+      };
+
+      // Continuous task mutual exclusion: fishing vs cricket hunt
+      if (checked) {
+        if (subId === 'fishing') {
+          nextEnabled.cricketHunt = false;
+        } else if (subId === 'cricketHunt') {
+          if (!isNightHuntOpen) return prev; // Cannot enable cricket hunt during daytime
+          nextEnabled.fishing = false;
+        }
+      }
+
+      return {
+        ...prev,
+        benSubEnabled: nextEnabled,
+      };
+    });
   };
 
   const handleToggleCollapse = (subId: WharfSubAreaId) => {
@@ -68,65 +78,6 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onO
         [subId]: !prev.benSubCollapsed?.[subId],
       },
     }));
-  };
-
-  const handleMoveSub = (index: number, direction: 'up' | 'down') => {
-    onUpdateConfig((prev) => {
-      const order = [...subOrder];
-      const targetIndex = direction === 'up' ? index - 1 : index + 1;
-      if (targetIndex < 0 || targetIndex >= order.length) return prev;
-      const temp = order[index];
-      const targetItem = order[targetIndex];
-      if (temp && targetItem) {
-        order[index] = targetItem;
-        order[targetIndex] = temp;
-      }
-      return { ...prev, benSubOrder: order };
-    });
-  };
-
-  const handleDragStart = (e: React.DragEvent, index: number) => {
-    dragSourceIndexRef.current = index;
-    e.dataTransfer.setData('text/plain', String(index));
-    e.dataTransfer.effectAllowed = 'move';
-    setDraggingIndex(index);
-  };
-
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    if (dragOverIndex !== index) {
-      setDragOverIndex(index);
-    }
-  };
-
-  const handleDragLeave = () => {
-    setDragOverIndex(null);
-  };
-
-  const handleDrop = (e: React.DragEvent, targetIndex: number) => {
-    e.preventDefault();
-    const rawData = e.dataTransfer.getData('text/plain');
-    const sourceIndex = dragSourceIndexRef.current !== null ? dragSourceIndexRef.current : Number(rawData);
-    dragSourceIndexRef.current = null;
-    setDraggingIndex(null);
-    setDragOverIndex(null);
-    if (sourceIndex === null || isNaN(sourceIndex) || sourceIndex === targetIndex) return;
-
-    onUpdateConfig((prev) => {
-      const order = [...subOrder];
-      const [moved] = order.splice(sourceIndex, 1);
-      if (moved) {
-        order.splice(targetIndex, 0, moved);
-      }
-      return { ...prev, benSubOrder: order };
-    });
-  };
-
-  const handleDragEnd = () => {
-    dragSourceIndexRef.current = null;
-    setDraggingIndex(null);
-    setDragOverIndex(null);
   };
 
   const updateField = <K extends keyof AppConfig>(key: K, value: AppConfig[K]) => {
@@ -272,40 +223,6 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onO
             </label>
 
             <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>💆 Tiệm Út Mười: Gội đầu massage (+50⚡ · 25🐚)</span>
-              <Switch
-                checked={Boolean(config.benAutoGoiDau)}
-                onCheckedChange={(c) => updateField('benAutoGoiDau', c)}
-              />
-            </label>
-
-            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>🍲 Tự ăn uống hồi phục khi không đủ Sức câu</span>
-              <Switch
-                checked={Boolean(config.benAutoRecoverStamina)}
-                onCheckedChange={(c) => updateField('benAutoRecoverStamina', c)}
-              />
-            </label>
-            {config.benAutoRecoverStamina && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
-                <div className="flex items-center justify-between gap-2 min-w-0">
-                  <span className="text-slate-600 shrink-0">Món ăn ưu tiên:</span>
-                  <HudSelect
-                    value={config.benPreferFood}
-                    onValueChange={(val) => updateField('benPreferFood', val)}
-                    options={[
-                      { value: 'lauMam', label: '🍲 Lẩu cá linh (+100 Sức · 45 vỏ sò)' },
-                      { value: 'comTam', label: '🍛 Cơm tấm sườn bì (+60 Sức · 28 vỏ sò)' },
-                      { value: 'huTieu', label: '🍜 Hủ tiếu nam vang (+40 Sức · 20 vỏ sò)' },
-                      { value: 'chaoCa', label: '🥣 Cháo cá lóc (+28 Sức · 14 vỏ sò)' },
-                      { value: 'banhMi', label: '🥖 Bánh mì thịt (+20 Sức · 10 vỏ sò)' },
-                    ]}
-                  />
-                </div>
-              </div>
-            )}
-
-            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
               <span>🥤 Xe Chị Thơm: Uống nước tăng May mắn</span>
               <Switch
                 checked={Boolean(config.benAutoLuckDrink)}
@@ -400,15 +317,25 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onO
               🔦 Bắt dế đêm (18h-5h) tại đồng cỏ phía đông và bãi lau sậy. Tốn ⚡3 Sức, bẫy dế nuôi trong ống tre.
             </p>
 
-            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+            {!isNightHuntOpen && (
+              <div className="rounded-lg bg-amber-50 border border-amber-200/80 p-2 text-[11px] text-amber-800 flex items-start gap-1.5">
+                <span className="shrink-0 text-sm">☀️</span>
+                <span>
+                  Hiện tại là {vnHour}h (ban ngày). Bến Đò chỉ mở bắt dế đêm vào khung giờ <strong>18h00 – 05h00 sáng</strong>. Ban ngày dế đang ngủ nên tính năng được tạm khóa.
+                </span>
+              </div>
+            )}
+
+            <label className={`flex items-center justify-between text-slate-700 ${!isNightHuntOpen ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
               <span>🔦 Tự động rọi đèn bắt dế ban đêm (18h-5h)</span>
               <Switch
-                checked={Boolean(config.benAutoCricketHunt)}
+                disabled={!isNightHuntOpen}
+                checked={Boolean(isNightHuntOpen && config.benAutoCricketHunt)}
                 onCheckedChange={(c) => updateField('benAutoCricketHunt', c)}
               />
             </label>
 
-            {config.benAutoCricketHunt && (
+            {config.benAutoCricketHunt && isNightHuntOpen && (
               <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-2 text-[11px] min-w-0">
                 <div className="flex items-center justify-between gap-2 min-w-0">
                   <span className="text-slate-600 shrink-0">Khu vực săn dế:</span>
@@ -462,31 +389,6 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onO
                 <p className="text-[10px] text-slate-500 leading-relaxed">
                   💡 Ưu tiên giữ lại dế có độ hiếm cao hơn và chỉ số CP cao hơn. Khi ống tre đầy (6/6), tự động thả con có CP thấp nhất hoặc không thuộc danh sách giữ để nhận lại vỏ sò (+5 đến +400🐚).
                 </p>
-              </div>
-            )}
-
-            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-              <span>🌿 Tự mua thức ăn bồi bổ dế mạnh nhất</span>
-              <Switch
-                checked={Boolean(config.benAutoFeedCricket)}
-                onCheckedChange={(c) => updateField('benAutoFeedCricket', c)}
-              />
-            </label>
-            {config.benAutoFeedCricket && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0">
-                <div className="flex items-center justify-between gap-2 min-w-0">
-                  <span className="text-slate-600 shrink-0">Chỉ số ưu tiên:</span>
-                  <HudSelect
-                    value={config.benPreferCricketFood || 'balanced'}
-                    onValueChange={(val) => updateField('benPreferCricketFood', val as AppConfig['benPreferCricketFood'])}
-                    options={[
-                      { value: 'balanced', label: '✨ Tự cân bằng (bổ sung chỉ số xa trần nhất)' },
-                      { value: 'tough', label: '🌿 Lá non (+5 Lì · 25 vỏ sò)' },
-                      { value: 'power', label: '🥚 Trứng kiến (+5 Sức · 40 vỏ sò)' },
-                      { value: 'nerve', label: '🌶️ Ớt hiểm (+5 Gan · 30 vỏ sò)' },
-                    ]}
-                  />
-                </div>
               </div>
             )}
           </div>
@@ -596,86 +498,105 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onO
         />
       </div>
 
-      <div className="text-[11px] text-slate-500 px-1 flex items-center gap-1">
-        <span>↕️ Kéo thả hoặc bấm mũi tên để sắp xếp độ ưu tiên hành động:</span>
+      {/* ⚡ Hồi Phục Thể Lực Bến Đò (Dùng chung cho cả Câu Cá & Bắt Dế) */}
+      <div className="rounded-xl border border-amber-200/90 bg-amber-50/30 p-3 shadow-xs space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className="shrink-0 text-base">⚡</span>
+            <div>
+              <span className="font-semibold text-xs text-slate-800">
+                Hồi phục Thể Lực Bến Đò
+              </span>
+              <span className="block text-[10px] text-amber-700 font-medium">
+                Tự ăn uống / gội đầu khi hết Sức (áp dụng cho cả Câu cá &amp; Bắt dế)
+              </span>
+            </div>
+          </div>
+          <Switch
+            checked={Boolean(config.benAutoRecoverStamina ?? true)}
+            onCheckedChange={(c) => updateField('benAutoRecoverStamina', c)}
+            title="Bật/Tắt tự động hồi phục thể lực Bến Đò"
+          />
+        </div>
+
+        {config.benAutoRecoverStamina !== false && (
+          <div className="pt-2 border-t border-amber-200/60 space-y-2 text-[11px]">
+            <div className="flex items-center justify-between gap-2 min-w-0">
+              <span className="text-slate-600 shrink-0">Món ăn ưu tiên (Quán ăn Dì Tám):</span>
+              <HudSelect
+                value={config.benPreferFood || 'lauMam'}
+                onValueChange={(val) => updateField('benPreferFood', val)}
+                options={[
+                  { value: 'lauMam', label: '🍲 Lẩu cá linh (+100 Sức · 45 vỏ sò)' },
+                  { value: 'comTam', label: '🍛 Cơm tấm sườn bì (+60 Sức · 28 vỏ sò)' },
+                  { value: 'huTieu', label: '🍜 Hủ tiếu nam vang (+40 Sức · 20 vỏ sò)' },
+                  { value: 'chaoCa', label: '🥣 Cháo cá lóc (+28 Sức · 14 vỏ sò)' },
+                  { value: 'banhMi', label: '🥖 Bánh mì thịt (+20 Sức · 10 vỏ sò)' },
+                ]}
+              />
+            </div>
+
+            <label className="flex items-center justify-between text-slate-700 cursor-pointer pt-0.5">
+              <span>💆 Tiệm Út Mười: Gội đầu massage (+50⚡ · 25🐚)</span>
+              <Switch
+                checked={Boolean(config.benAutoGoiDau ?? true)}
+                onCheckedChange={(c) => updateField('benAutoGoiDau', c)}
+              />
+            </label>
+            <p className="text-[10px] text-slate-500 italic">
+              💡 Tự động ăn bánh mì, xôi bắp trong ba lô trước; nếu hết mới ghé Quán Dì Tám mua thức ăn hoặc tiệm Út Mười gội đầu.
+            </p>
+          </div>
+        )}
       </div>
 
-      {/* Sub-areas list with Drag & Drop */}
+      {/* Sub-areas list */}
       <div className="space-y-2 pt-0.5">
-        {subOrder.map((subId, idx) => {
+        {subOrder.map((subId) => {
           const meta = WHARF_SUBAREA_META[subId];
           const isCollapsed = Boolean(config.benSubCollapsed?.[subId]);
           const isEnabled = config.benSubEnabled?.[subId] !== false;
-          const isDragging = draggingIndex === idx;
-          const isDragOver = dragOverIndex === idx;
 
           return (
             <div
               key={subId}
-              onDragOver={(e) => handleDragOver(e, idx)}
-              onDragLeave={handleDragLeave}
-              onDrop={(e) => handleDrop(e, idx)}
-              className={`relative rounded-xl border bg-white shadow-xs transition-all shadow-sm ${
-                isDragging
-                  ? 'opacity-40 border-dashed border-blue-400'
-                  : isDragOver
-                    ? 'border-blue-500 ring-2 ring-blue-200'
-                    : isEnabled
-                      ? 'border-slate-200'
-                      : 'border-slate-200/60 opacity-60'
+              className={`rounded-xl border bg-white shadow-xs transition-all ${
+                isEnabled ? 'border-slate-200' : 'border-slate-200/60 opacity-60'
               }`}
             >
-              {/* Header (Draggable) */}
+              {/* Header */}
               <div
-                draggable
-                onDragStart={(e) => handleDragStart(e, idx)}
-                onDragEnd={handleDragEnd}
-                className="flex items-center justify-between px-3 py-2 cursor-grab active:cursor-grabbing select-none hover:bg-slate-50 rounded-t-xl"
+                className="flex items-center justify-between px-3 py-2 select-none hover:bg-slate-50 rounded-t-xl cursor-pointer"
                 onClick={() => handleToggleCollapse(subId)}
               >
                 <div className="flex items-center gap-1.5 min-w-0">
-                  <span
-                    className="text-slate-400 hover:text-slate-700 p-0.5 -ml-1"
-                    title="Kéo thả để sắp xếp độ ưu tiên"
-                  >
-                    <GripVertical className="h-3.5 w-3.5" />
-                  </span>
                   <span className="text-slate-400">
                     {isCollapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
                   </span>
                   <span className="font-semibold text-xs text-slate-800 truncate">
                     {meta?.name || subId}
                   </span>
+                  {subId === 'cricketHunt' && (
+                    <span
+                      className={`text-[10px] px-1.5 py-0.2 rounded font-medium shrink-0 ml-1 ${
+                        isNightHuntOpen
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          : 'bg-amber-50 text-amber-700 border border-amber-200'
+                      }`}
+                      title={isNightHuntOpen ? 'Giờ săn dế đêm (18h-5h)' : 'Ban ngày dế đang ngủ. Giờ săn mở lúc 18h00 tối.'}
+                    >
+                      {isNightHuntOpen ? '🌙 Đang mở (18h-5h)' : '☀️ Dế ngủ'}
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
-                  <div className="flex items-center gap-0.5">
-                    <Button
-                      variant="ghost"
-                      size="icon-xs"
-                      disabled={idx === 0}
-                      className="h-5 w-5 text-slate-400 hover:text-slate-900"
-                      onClick={() => handleMoveSub(idx, 'up')}
-                      title="Tăng độ ưu tiên"
-                    >
-                      <ChevronUp className="h-3 w-3" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon-xs"
-                      disabled={idx === subOrder.length - 1}
-                      className="h-5 w-5 text-slate-400 hover:text-slate-900"
-                      onClick={() => handleMoveSub(idx, 'down')}
-                      title="Giảm độ ưu tiên"
-                    >
-                      <ChevronDown className="h-3 w-3" />
-                    </Button>
-                  </div>
-
                   <Switch
                     size="sm"
+                    disabled={subId === 'cricketHunt' && !isNightHuntOpen}
                     checked={isEnabled}
                     onCheckedChange={(checked) => handleToggleSubEnabled(subId, checked)}
+                    title={subId === 'cricketHunt' && !isNightHuntOpen ? 'Chỉ mở bắt dế vào ban đêm (18h-5h)' : undefined}
                   />
                 </div>
               </div>

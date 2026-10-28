@@ -217,21 +217,38 @@ function watchBoutTickle(bn: BenNetState): void {
   const clashAt = bout.startAt + clashN * CLASH_INTERVAL_MS;
   // Game window is [clashAt - 650, clashAt + 150); aim early to absorb latency.
   const inWindup = now >= clashAt - 500 && now < clashAt + 30;
-  const wavering = (bout.fire?.[side] ?? 100) < 30;
+
+  const oppSide: BoutSide = side === 'red' ? 'blue' : 'red';
+  const myFire = bout.fire?.[side] ?? 100;
+  const oppFire = bout.fire?.[oppSide] ?? 100;
+
+  // 1. Critical morale recovery: rally immediately when fire drops below 45 or trailing opponent heavily
+  const wavering = myFire < 45 || (oppFire - myFire > 25 && myFire < 70);
+
+  // 2. Early clash momentum: win initial clashes (clash 0 or 1) to deal massive grit damage early
+  const earlyOpener = clashN <= 1 && left >= 2 && inWindup;
+
+  // 3. Decisive late push: ensure remaining tickles are used before bout ends (round 3+ or trailing in fire)
+  const lateRoundPush = clashN >= 3 && inWindup && (oppFire >= myFire || left >= Math.max(1, Math.floor((12 - clashN) / 2)));
 
   let key: string | null = null;
   if (wavering) {
     key = `${bout.id}:waver:${clashN}`;
+  } else if (earlyOpener) {
+    key = `${bout.id}:opener:${clashN}`;
   } else if (inWindup && left > 1) {
-    // Keep the last tickle in reserve to rally a wavering cricket.
     key = `${bout.id}:windup:${clashN}`;
+  } else if (lateRoundPush) {
+    key = `${bout.id}:late:${clashN}`;
   }
+
   if (!key || tickledKeys.has(key)) return;
   if (now < bout.startAt - 650) return;
 
   tickledKeys.add(key);
   if (tickledKeys.size > 200) tickledKeys.clear();
   sendBenWs({ t: 'tickle', id: bout.id });
+  pushEvent(`🥊 Khều râu dế (Hiệp ${clashN + 1}/12 · Khí thế: ${myFire} vs ${oppFire} · Còn ${left - 1} lần)`);
 }
 
 function watchArenaBets(bn: BenNetState, cfg: AppConfig): void {

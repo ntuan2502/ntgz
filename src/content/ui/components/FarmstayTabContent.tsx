@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { AppConfig, FarmstaySubAreaId } from '@/shared/types/config';
 import { FARMSTAY_SUBAREA_META, FARMSTAY_VEG_SEEDS } from '@/shared/constants/default-config';
 import { Switch } from '@/components/ui/switch';
-import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronRight, ChevronUp, GripVertical } from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { HudSelect } from './HudSelect';
 
 interface FarmstayTabContentProps {
@@ -13,14 +12,8 @@ interface FarmstayTabContentProps {
 
 export function FarmstayTabContent({ config, onUpdateConfig }: FarmstayTabContentProps) {
   const isFarmstayAreaEnabled = config.areaEnabled.farmstay !== false;
-  const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-  const dragSourceIndexRef = React.useRef<number | null>(null);
 
-  const subOrder: FarmstaySubAreaId[] =
-    Array.isArray(config.farmstaySubOrder) && config.farmstaySubOrder.length > 0
-      ? config.farmstaySubOrder
-      : ['operation', 'repairs', 'garden', 'staff', 'orders'];
+  const subOrder: FarmstaySubAreaId[] = ['operation', 'repairs', 'garden', 'staff', 'orders'];
 
   const handleToggleArea = (checked: boolean) => {
     onUpdateConfig((prev) => ({
@@ -50,61 +43,6 @@ export function FarmstayTabContent({ config, onUpdateConfig }: FarmstayTabConten
         [subId]: !prev.farmstaySubCollapsed?.[subId],
       },
     }));
-  };
-
-  const handleMoveSub = (index: number, direction: 'up' | 'down') => {
-    onUpdateConfig((prev) => {
-      const order = [...subOrder];
-      const targetIndex = direction === 'up' ? index - 1 : index + 1;
-      if (targetIndex < 0 || targetIndex >= order.length) return prev;
-      const temp = order[index];
-      order[index] = order[targetIndex];
-      order[targetIndex] = temp;
-      return {
-        ...prev,
-        farmstaySubOrder: order,
-      };
-    });
-  };
-
-  const handleDragStart = (index: number, e: React.DragEvent) => {
-    setDraggingIndex(index);
-    dragSourceIndexRef.current = index;
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', String(index));
-  };
-
-  const handleDragOver = (index: number, e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    if (dragOverIndex !== index) {
-      setDragOverIndex(index);
-    }
-  };
-
-  const handleDrop = (targetIndex: number, e: React.DragEvent) => {
-    e.preventDefault();
-    const sourceIdx = dragSourceIndexRef.current ?? draggingIndex;
-    if (sourceIdx !== null && sourceIdx !== targetIndex) {
-      onUpdateConfig((prev) => {
-        const order = [...subOrder];
-        const [moved] = order.splice(sourceIdx, 1);
-        order.splice(targetIndex, 0, moved);
-        return {
-          ...prev,
-          farmstaySubOrder: order,
-        };
-      });
-    }
-    setDraggingIndex(null);
-    setDragOverIndex(null);
-    dragSourceIndexRef.current = null;
-  };
-
-  const handleDragEnd = () => {
-    setDraggingIndex(null);
-    setDragOverIndex(null);
-    dragSourceIndexRef.current = null;
   };
 
   const updateField = <K extends keyof AppConfig>(key: K, value: AppConfig[K]) => {
@@ -309,78 +247,37 @@ export function FarmstayTabContent({ config, onUpdateConfig }: FarmstayTabConten
 
       {/* Sub-areas list */}
       <div className="space-y-2">
-        {subOrder.map((subId, index) => {
+        {subOrder.map((subId) => {
           const meta = FARMSTAY_SUBAREA_META[subId];
           const isEnabled = config.farmstaySubEnabled?.[subId] !== false;
           const isCollapsed = Boolean(config.farmstaySubCollapsed?.[subId]);
-          const isDragging = draggingIndex === index;
-          const isOver = dragOverIndex === index;
 
           return (
             <div
               key={subId}
-              draggable
-              onDragStart={(e) => handleDragStart(index, e)}
-              onDragOver={(e) => handleDragOver(index, e)}
-              onDrop={(e) => handleDrop(index, e)}
-              onDragEnd={handleDragEnd}
               className={`rounded-xl border transition-all duration-150 ${
-                isDragging
-                  ? 'opacity-40 border-amber-400 bg-amber-50/50 scale-[0.98]'
-                  : isOver
-                    ? 'border-amber-500 bg-amber-50/70 shadow-sm'
-                    : isEnabled
-                      ? 'border-slate-200 bg-white shadow-xs hover:border-slate-300'
-                      : 'border-slate-200/70 bg-slate-50/80 opacity-75'
+                isEnabled
+                  ? 'border-slate-200 bg-white shadow-xs hover:border-slate-300'
+                  : 'border-slate-200/70 bg-slate-50/80 opacity-75'
               }`}
             >
               {/* Header */}
               <div className="flex items-center justify-between px-3 py-2 select-none gap-2">
-                <div className="flex items-center gap-2 min-w-0 flex-1">
-                  <div
-                    className="cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-600 shrink-0"
-                    title="Kéo thả để đổi thứ tự ưu tiên"
-                  >
-                    <GripVertical className="h-4 w-4" />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleToggleCollapse(subId)}
-                    className="flex items-center gap-1.5 min-w-0 flex-1 text-left font-semibold text-xs text-slate-800 hover:text-slate-900"
-                  >
-                    <span className="shrink-0">{meta.icon}</span>
-                    <span className="truncate">{meta.name}</span>
-                    {isCollapsed ? (
-                      <ChevronRight className="h-3.5 w-3.5 text-slate-400 shrink-0 ml-0.5" />
-                    ) : (
-                      <ChevronDown className="h-3.5 w-3.5 text-slate-400 shrink-0 ml-0.5" />
-                    )}
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => handleToggleCollapse(subId)}
+                  className="flex items-center gap-1.5 min-w-0 flex-1 text-left font-semibold text-xs text-slate-800 hover:text-slate-900 cursor-pointer"
+                >
+                  <span className="shrink-0">{meta.icon}</span>
+                  <span className="truncate">{meta.name}</span>
+                  {isCollapsed ? (
+                    <ChevronRight className="h-3.5 w-3.5 text-slate-400 shrink-0 ml-0.5" />
+                  ) : (
+                    <ChevronDown className="h-3.5 w-3.5 text-slate-400 shrink-0 ml-0.5" />
+                  )}
+                </button>
 
                 <div className="flex items-center gap-1.5 shrink-0">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    disabled={index === 0}
-                    onClick={() => handleMoveSub(index, 'up')}
-                    className="h-6 w-6 p-0 text-slate-400 hover:text-slate-600 disabled:opacity-30"
-                    title="Chuyển lên trên"
-                  >
-                    <ChevronUp className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    disabled={index === subOrder.length - 1}
-                    onClick={() => handleMoveSub(index, 'down')}
-                    className="h-6 w-6 p-0 text-slate-400 hover:text-slate-600 disabled:opacity-30"
-                    title="Chuyển xuống dưới"
-                  >
-                    <ChevronDown className="h-3.5 w-3.5" />
-                  </Button>
                   <Switch
                     checked={isEnabled}
                     onCheckedChange={(checked) => handleToggleSubEnabled(subId, checked)}

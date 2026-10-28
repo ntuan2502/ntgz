@@ -160,14 +160,12 @@ export const CRICKET_SPECIES_RARITY: Record<string, string> = {
 };
 
 const BOSS_LADDER = [
-  { id: 'cuBin', name: 'Cu Bin', reward: 15, total: 60 },
-  { id: 'utMap', name: 'Út Mập', reward: 30, total: 112 },
-  { id: 'anhLuc', name: 'Anh Lực xe ôm', reward: 60, total: 138 },
-  { id: 'bacChin', name: 'Bác Chín thợ rèn', reward: 110, total: 194 },
-  { id: 'ongSau', name: 'Ông Sáu chủ sới', reward: 220, total: 242 },
+  { id: 'cuBin', aliases: ['cubin', 'bin'], name: 'Cu Bin', reward: 15, total: 60 },
+  { id: 'utMap', aliases: ['utmap', 'map'], name: 'Út Mập', reward: 30, total: 112 },
+  { id: 'anhLuc', aliases: ['anhluc', 'luc'], name: 'Anh Lực xe ôm', reward: 60, total: 138 },
+  { id: 'bacChin', aliases: ['bacchin', 'chin'], name: 'Bác Chín thợ rèn', reward: 110, total: 194 },
+  { id: 'ongSau', aliases: ['ongsau', 'sau'], name: 'Ông Sáu chủ sới', reward: 220, total: 242 },
 ];
-/** Only challenge a boss when our best cricket is at least this strong relative to it */
-const BOSS_MIN_STRENGTH_RATIO = 0.85;
 const SOI_TILE = { x: 4, y: 29 };
 const CRICKET_BOX_MAX = 6;
 const HUNT_STAMINA_COST = 3;
@@ -569,17 +567,17 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   if (stamina >= 25 && bn.notice?.error !== 'tired') {
     benNoticeTired = false;
   }
-  // Tự động nhận diện không đủ sức câu: liveStamina < 4, nhận notice 'tired' từ server hoặc flag benNoticeTired
-  const cannotFishStamina = stamina < 4 || bn.notice?.error === 'tired' || benNoticeTired;
+  // Tự động nhận diện không đủ sức: liveStamina < 4, nhận notice 'tired' từ server hoặc flag benNoticeTired
+  const isStaminaDepleted = stamina < 4 || bn.notice?.error === 'tired' || benNoticeTired;
   const needShellsForBait = bait <= 0 && shells < 15;
   const needShellsForFood =
-    cannotFishStamina &&
+    isStaminaDepleted &&
     packItems.length === 0 &&
     shells < targetFoodPrice;
 
-  // Helper: Recover Stamina (Ăn khi không câu được nữa: Sức <= 0)
+  // Helper: Recover Stamina (Dùng chung cho cả Câu cá & Bắt dế khi Sức <= 0)
   const tryRecoverStamina = (): BenStepResult | null => {
-    if (cannotFishStamina) {
+    if (isStaminaDepleted) {
       if (cfg.benAutoRecoverStamina !== false) {
         // Eat from pack
         if (packItems.length > 0 && canAct('ben_eat_pack', 3000)) {
@@ -657,7 +655,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
         }
       }
 
-      if (cannotFishStamina) {
+      if (isStaminaDepleted) {
         if (cfg.benAutoSell !== false && nonKeptCount > 0) {
           return walkAndRun(
             { x: 40, y: 10 },
@@ -674,7 +672,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
         return {
           acted: false,
           exhausted: true,
-          reason: '😮‍💨 Bến Đò: Không câu được nữa (Sức ≤ 0⚡) và không đủ vỏ sò để ăn/gội đầu -> Chuyển khu vực tiếp theo!',
+          reason: '😮‍💨 Bến Đò: Không đủ Sức (≤ 0⚡) và không đủ vỏ sò để ăn/gội đầu -> Chuyển khu vực tiếp theo!',
         };
       }
     }
@@ -874,35 +872,62 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   // Tickles and arena bets are timing-critical and run in cricket-watchers.ts.
   // ---------------------------------------------------------------------------
   const runCricketBossStep = (): BenStepResult => {
-    if (!bossEnabled || !bn.soi || !canAct('ben_boss_wait', 3000)) {
+    if (!bossEnabled) {
       return { acted: false };
     }
 
-    const npcs = bn.soi.npcs || [];
-    const nextBoss = BOSS_LADDER.find((b) => {
-      const npcState = npcs.find((n: SoiNpc) => n.id === b.id);
-      return npcState?.open && !npcState.paidToday;
-    });
-    if (!nextBoss) return { acted: false };
+    if (!bn.soi) {
+      if (canAct('ben_soi_fetch', 4000)) {
+        markActed('ben_soi_fetch');
+        sendBenWs({ t: 'soi' });
+        return { acted: true, msg: '🥊 Đang tải danh sách Boss Sới Dế Ông Sáu...' };
+      }
+      return { acted: false };
+    }
+
+    if (!canAct('ben_boss_wait', 3000)) {
+      return { acted: false };
+    }
+
+    const npcs: SoiNpc[] = bn.soi.npcs || [];
+    let targetNpcId: string | null = null;
+    let nextBossMeta: (typeof BOSS_LADDER)[number] | null = null;
+
+    for (const b of BOSS_LADDER) {
+      const npcState = npcs.find((n: SoiNpc) => {
+        const nid = String(n.id).toLowerCase();
+        return b.aliases.some((a) => nid === a || nid.includes(a));
+      });
+      if (npcState && npcState.open && !npcState.paidToday) {
+        targetNpcId = npcState.id;
+        nextBossMeta = b;
+        break;
+      }
+    }
+    if (!nextBossMeta) return { acted: false };
 
     const box: CricketItem[] = bn.soi.box?.length ? bn.soi.box : bn.crickets?.box || [];
     const nowServer = getBenServerNow(bn);
     const readyCrickets = box
       .filter((c) => (!c.restUntil || c.restUntil <= nowServer) && (!c.diesAt || c.diesAt > nowServer))
-      .sort((a, b) => cricketTotal(b) - cricketTotal(a));
+      .sort((a, b) => {
+        // Weighted combat score: Power (damage) 1.2 > Tough (grit/hp) 1.1 > Nerve (morale) 1.0
+        const combatScore = (c: CricketItem) =>
+          (c.stats?.power || 0) * 1.2 + (c.stats?.tough || 0) * 1.1 + (c.stats?.nerve || 0) * 1.0;
+        return combatScore(b) - combatScore(a);
+      });
     const bestCricket = readyCrickets[0];
     if (!bestCricket) return { acted: false };
 
+    const bossNpcId = targetNpcId || nextBossMeta.id;
     const cTotal = cricketTotal(bestCricket);
-    if (cTotal < nextBoss.total * BOSS_MIN_STRENGTH_RATIO) return { acted: false };
-
     const cName = CRICKET_SPECIES_NAMES[bestCricket.species] || 'Dế';
     return walkAndRun(
       SOI_TILE,
       () => {
-        sendBenWs({ t: 'bout', npc: nextBoss.id, cricket: bestCricket.id });
+        sendBenWs({ t: 'bout', npc: bossNpcId, cricket: bestCricket.id });
       },
-      `🥊 Thách đấu ${nextBoss.name} tại Sới Dế (+${nextBoss.reward}🐚) với ${cName} (Tổng: ${cTotal} vs ${nextBoss.total})`,
+      `🥊 Thách đấu ${nextBossMeta.name} tại Sới Dế (+${nextBossMeta.reward}🐚) với ${cName} (Tổng: ${cTotal} vs ${nextBossMeta.total})`,
       'ben_boss_bout',
       { panel: 'soi' },
       1200
@@ -919,31 +944,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
     }
     const box: CricketItem[] = bn.crickets.box || [];
 
-    // 1. Feed the highest-potential cricket (off by default, costs shells)
-    if (cfg.benAutoFeedCricket && box.length > 0 && canAct('ben_cricket_feed', 3000)) {
-      const capTotal = (c: CricketItem) => (c.caps?.power || 0) + (c.caps?.tough || 0) + (c.caps?.nerve || 0);
-      const target = [...box].sort((a, b) => capTotal(b) - capTotal(a))[0];
-      const foods = {
-        tough: { id: 'laNon', name: '🌿 Lá non', price: 25 },
-        power: { id: 'trungKien', name: '🥚 Trứng kiến', price: 40 },
-        nerve: { id: 'otHiem', name: '🌶️ Ớt hiểm', price: 30 },
-      } as const;
-      const gap = (stat: keyof typeof foods) => (target.caps?.[stat] || 0) - (target.stats?.[stat] || 0);
-      const pref = cfg.benPreferCricketFood || 'balanced';
-      const stat: keyof typeof foods | null =
-        pref === 'balanced'
-          ? (['tough', 'power', 'nerve'] as const).reduce((best, s) => (gap(s) > gap(best) ? s : best), 'tough' as keyof typeof foods)
-          : pref;
-      const food = stat && gap(stat) > 0 ? foods[stat] : null;
-      if (food && shells >= food.price) {
-        markActed('ben_cricket_feed');
-        sendBenWs({ t: 'feed', id: target.id, food: food.id });
-        const cName = CRICKET_SPECIES_NAMES[target.species] || 'Dế';
-        return { acted: true, msg: `🌿 Cho ${cName} ăn ${food.name} (-${food.price}🐚)` };
-      }
-    }
-
-    // 2. Night window check (wharf runs on real Vietnam time, 18h-5h)
+    // 1. Night window check (wharf runs on real Vietnam time, 18h-5h)
     const hour = getBenHour(bn);
     const isNight = hour >= 18 || hour < 5;
     const isRareHour = hour >= 23 || hour < 4;
