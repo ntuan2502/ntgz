@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { GameSnapshot } from '@/shared/types/game-state';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Swords, Shield, Zap, Moon, Sun, Compass, ExternalLink, Flame } from 'lucide-react';
+import { Swords, Shield, Zap, Moon, Sun, Compass, ExternalLink, Flame, Trophy } from 'lucide-react';
 import { execGameAction } from '@/content/bridge/content-bridge';
 import { GameItemIcon } from '@/content/ui/components/GameItemIcon';
 
 interface CricketDeckTabProps {
   snap: GameSnapshot | null;
+  onNavigateBoard?: (categoryId?: string) => void;
 }
 
-export function CricketDeckTab({ snap }: CricketDeckTabProps) {
+export function CricketDeckTab({ snap, onNavigateBoard }: CricketDeckTabProps) {
   const benNet = snap?.benNet;
   const wallet = benNet?.wallet;
   const shells = Number(wallet?.shells) || 0;
@@ -237,7 +238,7 @@ export function CricketDeckTab({ snap }: CricketDeckTabProps) {
           </Badge>
         </div>
 
-        <div className="flex items-center justify-between gap-2 mt-1.5">
+        <div className="flex items-center justify-between gap-2 mt-1.5 flex-wrap">
           <p className="text-[11px] text-slate-300 leading-snug">
             {isRareHour
               ? '🔥 Khung 23h00 – 04h00: Dế Vương (Huyền thoại) & Dế Ma (Sử thi) xuất hiện quanh Bến Đò.'
@@ -245,16 +246,31 @@ export function CricketDeckTab({ snap }: CricketDeckTabProps) {
               ? '🌙 Khung 18h00 – 05h00 sáng: Dế đêm xuất hiện dày đặc quanh các bụi cỏ Bến Đò.'
               : '☀️ Khung giờ săn dế đêm mở lại lúc 18h00 tối (khung dế hiếm: 23h00 – 04h00).'}
           </p>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => execGameAction('BEN_SET_PANEL', { panel: 'soi' })}
-            className="h-6 px-2 text-[11px] bg-white/10 hover:bg-white/20 text-white border-white/20 rounded-lg gap-1 shrink-0 cursor-pointer"
-          >
-            <span>Sới dế</span>
-            <ExternalLink className="h-3 w-3" />
-          </Button>
+          <div className="flex items-center gap-1.5 shrink-0 ml-auto">
+            {onNavigateBoard && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => onNavigateBoard('trumSoi')}
+                className="h-6 px-2 text-[11px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border-amber-400/30 rounded-lg gap-1 cursor-pointer font-medium"
+                title="Xem Bảng Xếp Hạng Trùm Sới tuần này"
+              >
+                <Trophy className="h-3 w-3 text-amber-300" />
+                <span>BXH Trùm sới</span>
+              </Button>
+            )}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => execGameAction('BEN_SET_PANEL', { panel: 'soi' })}
+              className="h-6 px-2 text-[11px] bg-white/10 hover:bg-white/20 text-white border-white/20 rounded-lg gap-1 shrink-0 cursor-pointer"
+            >
+              <span>Sới dế</span>
+              <ExternalLink className="h-3 w-3" />
+            </Button>
+          </div>
         </div>
 
         {/* Wharf Quick Resources - Aligned vertically with Vietnamese number formatting */}

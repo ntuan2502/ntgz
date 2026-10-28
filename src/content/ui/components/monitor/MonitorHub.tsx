@@ -47,6 +47,7 @@ export function MonitorHub({
   showHeader = true,
 }: MonitorHubProps) {
   const [activeTab, setActiveTab] = useState<MonitorTabId>(defaultTab);
+  const [boardInitialCategory, setBoardInitialCategory] = useState<string | undefined>(undefined);
   const [activeDomain, setActiveDomain] = useState<DomainId>(() => {
     return WHARF_TABS.includes(defaultTab) ? 'wharf' : 'farm';
   });
@@ -280,7 +281,13 @@ export function MonitorHub({
         )}
         {activeTab === 'crickets' && (
           <TabErrorBoundary fallbackName="Ống tre dế">
-            <CricketDeckTab snap={snap} />
+            <CricketDeckTab
+              snap={snap}
+              onNavigateBoard={(catId) => {
+                setBoardInitialCategory(catId || 'trumSoi');
+                setActiveTab('board');
+              }}
+            />
           </TabErrorBoundary>
         )}
         {activeTab === 'dex' && (
@@ -290,7 +297,7 @@ export function MonitorHub({
         )}
         {activeTab === 'board' && (
           <TabErrorBoundary fallbackName="Bảng vàng">
-            <WharfBoardTab snap={snap} />
+            <WharfBoardTab snap={snap} initialCategoryId={boardInitialCategory} />
           </TabErrorBoundary>
         )}
         {activeTab === 'closet' && (

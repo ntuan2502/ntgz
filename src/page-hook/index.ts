@@ -141,6 +141,9 @@ interface GameActionPayload {
           const kind = payload.kind as string;
           if (kind === 'board') {
             sendBenWs({ t: 'board' });
+            sendBenWs({ t: 'soi' });
+          } else if (kind === 'soi') {
+            sendBenWs({ t: 'soi' });
           } else if (kind === 'rods') {
             sendBenWs({ t: 'rods' });
           } else if (kind === 'rooms') {

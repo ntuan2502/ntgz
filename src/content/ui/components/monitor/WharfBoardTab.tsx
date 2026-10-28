@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GameSnapshot } from '@/shared/types/game-state';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +22,10 @@ interface BoardItem {
   name: string;
   value: number;
   fish?: string;
+  title?: string;
+  rank?: number;
+  cricket?: string;
+  [key: string]: unknown;
 }
 
 interface BoardData {
@@ -90,7 +94,15 @@ const BOARD_CATEGORIES: BoardCategory[] = [
     hint: 'Tổng giá trị cá câu được từ 0h thứ Hai',
     formatValue: (v) => `🐚 ${v.toLocaleString('vi-VN')}`,
   },
+  {
+    id: 'trumSoi',
+    name: '🥊 Trùm sới',
+    hint: 'Điểm thắng Boss sới dế đua BXH tuần',
+    formatValue: (v) => `${v.toLocaleString('vi-VN')} điểm`,
+  },
 ];
+
+const TRUM_SOI_ALIASES = ['trumSoi', 'soi', 'boss', 'cricket', 'trum_soi', 'arena', 'soiBoss'];
 
 const MEDALS = ['🥇', '🥈', '🥉'];
 const WEEK_MS = 604800000;
@@ -105,27 +117,103 @@ function formatWeekTimeLeft(weekStart: number, at: number): string {
 
 interface WharfBoardTabProps {
   snap: GameSnapshot | null;
+  initialCategoryId?: string;
 }
 
-export function WharfBoardTab({ snap }: WharfBoardTabProps) {
-  const [activeCategoryId, setActiveCategoryId] = useState<string>('species');
+export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
+  const [activeCategoryId, setActiveCategoryId] = useState<string>(initialCategoryId || 'species');
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (initialCategoryId) {
+      setActiveCategoryId(initialCategoryId);
+    }
+  }, [initialCategoryId]);
 
   const benNet = snap?.benNet;
   const board = benNet?.board as BoardData | null | undefined;
   const currentCategory =
     BOARD_CATEGORIES.find((c) => c.id === activeCategoryId) || BOARD_CATEGORIES[0];
 
-  const boardItems: BoardItem[] = board?.boards?.[activeCategoryId] || [];
-  const myRank = board?.me?.[activeCategoryId];
+  const isTrumSoi = activeCategoryId === 'trumSoi' || TRUM_SOI_ALIASES.includes(activeCategoryId);
 
-  const handleOpenGamePanel = async () => {
-    await execGameAction('BEN_SET_PANEL', { panel: 'board' });
+  // Extract category items supporting aliases & fallback to benNet.soi
+  const boardItems: BoardItem[] = (() => {
+    if (board?.boards?.[activeCategoryId]?.length) {
+      return board.boards[activeCategoryId];
+    }
+    if (isTrumSoi) {
+      if (board?.boards) {
+        for (const alias of TRUM_SOI_ALIASES) {
+          if (board.boards[alias]?.length) return board.boards[alias];
+        }
+      }
+      const soi = benNet?.soi as Record<string, unknown> | undefined;
+      if (soi) {
+        const candidates = [
+          soi.board,
+          (soi.boards as Record<string, unknown> | undefined)?.boss,
+          (soi.boards as Record<string, unknown> | undefined)?.soi,
+          (soi.boards as Record<string, unknown> | undefined)?.trumSoi,
+          soi.top,
+          soi.ranks,
+          soi.weekly,
+          soi.bxh,
+          soi.ladderRankings,
+        ];
+        for (const c of candidates) {
+          if (Array.isArray(c) && c.length > 0) {
+            return c.map((it: Record<string, unknown>, idx: number) => ({
+              id: (it.id as string) || `soi_${idx}`,
+              name: (it.name as string) || (it.playerName as string) || (it.user as string) || `Đấu thủ #${idx + 1}`,
+              value: Number(it.value ?? it.score ?? it.points ?? it.point ?? it.wins ?? 0),
+              title: it.title as string | undefined,
+              rank: typeof it.rank === 'number' ? it.rank : idx + 1,
+              cricket: (it.cricket as string) || (it.species as string) || undefined,
+            }));
+          }
+        }
+      }
+    }
+    return [];
+  })();
+
+  const myRank: { rank: number; value: number } | undefined = (() => {
+    if (board?.me?.[activeCategoryId]) {
+      return board.me[activeCategoryId];
+    }
+    if (isTrumSoi) {
+      if (board?.me) {
+        for (const alias of TRUM_SOI_ALIASES) {
+          if (board.me[alias]) return board.me[alias];
+        }
+      }
+      const soi = benNet?.soi as Record<string, unknown> | undefined;
+      if (soi) {
+        const soiMe = soi.me as { rank?: number; value?: number; score?: number; points?: number } | undefined;
+        if (soiMe && typeof soiMe.rank === 'number') {
+          return { rank: soiMe.rank, value: Number(soiMe.value ?? soiMe.score ?? soiMe.points ?? 0) };
+        }
+        if (typeof soi.myRank === 'number') {
+          return { rank: soi.myRank, value: Number(soi.myPoints ?? soi.myScore ?? 0) };
+        }
+        if (typeof soi.rank === 'number' && typeof soi.score === 'number') {
+          return { rank: soi.rank, value: soi.score };
+        }
+      }
+    }
+    return undefined;
+  })();
+
+  const handleOpenGamePanel = async (overridePanel?: 'board' | 'soi') => {
+    const target = overridePanel || (isTrumSoi ? 'soi' : 'board');
+    await execGameAction('BEN_SET_PANEL', { panel: target });
   };
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await execGameAction('BEN_REFRESH', { kind: 'board' });
+    await execGameAction('BEN_REFRESH', { kind: 'soi' });
     setTimeout(() => setIsRefreshing(false), 800);
   };
 
@@ -167,7 +255,7 @@ export function WharfBoardTab({ snap }: WharfBoardTabProps) {
               type="button"
               variant="default"
               size="sm"
-              onClick={handleOpenGamePanel}
+              onClick={() => handleOpenGamePanel()}
               className="h-7 px-2.5 text-xs bg-amber-600 hover:bg-amber-700 text-white rounded-lg gap-1 cursor-pointer font-medium shadow-xs"
             >
               <span>Mở trong game</span>
@@ -191,13 +279,13 @@ export function WharfBoardTab({ snap }: WharfBoardTabProps) {
       </div>
 
       {/* Week countdown & Last week winners */}
-      {activeCategoryId === 'week' && board?.weekStart && board?.at && (
+      {(activeCategoryId === 'week' || isTrumSoi) && board?.weekStart && board?.at && (
         <div className="rounded-xl border border-sky-200 bg-sky-50/80 p-2.5 flex flex-col gap-1 text-xs text-sky-900 shadow-2xs">
           <div className="flex items-center gap-1.5 font-bold">
             <Calendar className="h-3.5 w-3.5 text-sky-600" />
             <span>Còn {formatWeekTimeLeft(board.weekStart, board.at)} tới thứ Hai tính lại</span>
           </div>
-          {Array.isArray(board.lastWeek) && board.lastWeek.length > 0 && (
+          {activeCategoryId === 'week' && Array.isArray(board.lastWeek) && board.lastWeek.length > 0 && (
             <div className="text-[11px] text-sky-800/90 pt-1 border-t border-sky-200/60 flex items-center gap-1 flex-wrap">
               <span className="font-semibold">Tuần trước:</span>
               {board.lastWeek.map((w, idx) => (
@@ -208,6 +296,11 @@ export function WharfBoardTab({ snap }: WharfBoardTabProps) {
                   {idx < (board.lastWeek?.length ?? 0) - 1 && <span>·</span>}
                 </span>
               ))}
+            </div>
+          )}
+          {isTrumSoi && (
+            <div className="text-[10.5px] text-sky-800/90 pt-1 border-t border-sky-200/60 flex items-center gap-1">
+              <span>🥊 Đua điểm đánh bại Boss Sới Dế: Cu Bin ➔ Út Mập ➔ Anh Lực ➔ Bác Chín ➔ Ông Sáu</span>
             </div>
           )}
         </div>
@@ -238,16 +331,33 @@ export function WharfBoardTab({ snap }: WharfBoardTabProps) {
       <div className="flex flex-col gap-1.5">
         {boardItems.length === 0 ? (
           <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/70 p-6 text-center text-xs text-slate-500">
-            <p>Bảng còn trống hoặc đang tải dữ liệu từ máy chủ bến đò...</p>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleRefresh}
-              className="mt-2 text-xs"
-            >
-              Tải lại bảng 🔄
-            </Button>
+            <p>
+              {isTrumSoi
+                ? 'Chưa có dữ liệu BXH Trùm sới hoặc máy chủ đang tổng hợp điểm...'
+                : 'Bảng còn trống hoặc đang tải dữ liệu từ máy chủ bến đò...'}
+            </p>
+            <div className="flex items-center justify-center gap-2 mt-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleRefresh}
+                className="text-xs cursor-pointer"
+              >
+                Tải lại bảng 🔄
+              </Button>
+              {isTrumSoi && (
+                <Button
+                  type="button"
+                  variant="default"
+                  size="sm"
+                  onClick={() => handleOpenGamePanel('soi')}
+                  className="text-xs bg-amber-600 hover:bg-amber-700 text-white cursor-pointer"
+                >
+                  Mở Sới dế 🥊
+                </Button>
+              )}
+            </div>
           </div>
         ) : (
           boardItems.map((item, idx) => {
@@ -267,19 +377,29 @@ export function WharfBoardTab({ snap }: WharfBoardTabProps) {
                     : 'bg-white border-slate-200 hover:border-slate-300'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <span className="flex items-center justify-center w-6 text-center text-xs font-bold font-mono">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span className="flex items-center justify-center w-6 text-center text-xs font-bold font-mono shrink-0">
                     {medal || `#${idx + 1}`}
                   </span>
-                  <div>
-                    <span className="text-xs font-bold text-slate-900">{item.name}</span>
+                  <div className="min-w-0 flex items-center gap-1.5 flex-wrap">
+                    <span className="text-xs font-bold text-slate-900 truncate">{item.name}</span>
+                    {item.title && (
+                      <span className="text-[10px] text-amber-800 bg-amber-100/90 px-1.5 py-0.2 rounded border border-amber-300 font-medium shrink-0">
+                        {item.title}
+                      </span>
+                    )}
                   </div>
                 </div>
 
-                <div className="text-right flex items-center justify-end gap-1.5">
+                <div className="text-right flex items-center justify-end gap-1.5 shrink-0">
                   {item.fish && (
                     <div className="flex h-5 w-5 items-center justify-center shrink-0 overflow-hidden">
                       <GameItemIcon itemKey={`benfish-${item.fish}`} fallbackEmoji="🐟" size={18} />
+                    </div>
+                  )}
+                  {item.cricket && (
+                    <div className="flex h-5 w-5 items-center justify-center shrink-0 overflow-hidden" title={`Dế chiến: ${item.cricket}`}>
+                      <GameItemIcon itemKey={item.cricket} fallbackEmoji="🦗" size={18} />
                     </div>
                   )}
                   <span className="font-bold text-xs font-mono text-emerald-800">
