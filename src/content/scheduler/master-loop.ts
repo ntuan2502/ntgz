@@ -22,6 +22,7 @@ let lastFarmDoneDay = -1;
 let benExhaustedUntil = 0;
 let seaExhaustedUntil = 0;
 let seaExhaustedDay = -1;
+let farmstayCooldownUntil = 0;
 
 export function toggleAutoAll(): void {
   const config = getConfig();
@@ -34,7 +35,11 @@ export function toggleAutoAll(): void {
     setLockedTabArea(null);
     currentAreaIdx = 0;
     lastFarmDoneDay = -1;
+    benExhaustedUntil = 0;
+    seaExhaustedUntil = 0;
+    farmstayCooldownUntil = 0;
     resetFarmTiming();
+    resetFarmstayTiming();
     setStatus('▶️ Bắt đầu chạy Auto Tất Cả theo thứ tự...');
   }
   saveConfig();
@@ -51,7 +56,11 @@ export function toggleAutoTab(): void {
     config.runMode = 'tab';
     setLockedTabArea(config.activeTab);
     lastFarmDoneDay = -1;
+    benExhaustedUntil = 0;
+    seaExhaustedUntil = 0;
+    farmstayCooldownUntil = 0;
     resetFarmTiming();
+    resetFarmstayTiming();
     const areaName = AREA_META[config.activeTab]?.name || config.activeTab;
     setStatus(`🎯 Bắt đầu chỉ Auto trong Tab: ${areaName}`);
   }
@@ -63,6 +72,9 @@ export function startAuto(mode: 'all' | 'tab' = 'all'): void {
   config.running = true;
   config.runMode = mode;
   lastFarmDoneDay = -1;
+  benExhaustedUntil = 0;
+  seaExhaustedUntil = 0;
+  farmstayCooldownUntil = 0;
   resetFarmTiming();
   resetFarmstayTiming();
   if (mode === 'tab') {
@@ -110,9 +122,10 @@ export async function tickAuto(): Promise<void> {
       return;
     }
 
-    // Reset daily fishing exhaustion flags on a new day
+    // Reset daily fishing & farmstay exhaustion flags on a new day
     if (seaExhaustedDay !== (snap.day ?? 0)) {
       seaExhaustedUntil = 0;
+      farmstayCooldownUntil = 0;
       seaExhaustedDay = snap.day ?? 0;
     }
 
@@ -130,6 +143,7 @@ export async function tickAuto(): Promise<void> {
       currentAreaIdx = 0;
       benExhaustedUntil = 0;
       seaExhaustedUntil = 0;
+      farmstayCooldownUntil = 0;
       await sleep(1200);
       isBusy = false;
       return;
@@ -200,40 +214,34 @@ export async function tickAuto(): Promise<void> {
 
       if (enabledAreas.length > 1) {
         const nowMs = Date.now();
-        const nextIdx = (currentAreaIdx + 1) % enabledAreas.length;
-        const nextArea = enabledAreas[nextIdx];
+        const farmstayReady = nowMs >= farmstayCooldownUntil;
         const seaReady = nowMs >= seaExhaustedUntil && (snap.minutes || 0) < 1305;
 
-        if (
-          nextArea === 'farmstay' ||
-          (nextArea === 'sea' && seaReady) ||
-          enabledAreas.length > 2
-        ) {
-          currentAreaIdx = nextIdx;
-        } else {
-          let foundReadyIdx = -1;
-          for (let i = 1; i < enabledAreas.length; i++) {
-            const candIdx = (currentAreaIdx + i) % enabledAreas.length;
-            const candArea = enabledAreas[candIdx];
-            if (
-              candArea === 'farmstay' ||
-              (candArea === 'sea' && seaReady)
-            ) {
-              foundReadyIdx = candIdx;
-              break;
-            }
+        // Search for the next ready area among other enabled areas
+        let foundReadyIdx = -1;
+        for (let i = 1; i < enabledAreas.length; i++) {
+          const candIdx = (currentAreaIdx + i) % enabledAreas.length;
+          const candArea = enabledAreas[candIdx];
+          if (candArea === 'farmstay' && farmstayReady) {
+            foundReadyIdx = candIdx;
+            break;
+          } else if (candArea === 'sea' && seaReady) {
+            foundReadyIdx = candIdx;
+            break;
           }
-          if (foundReadyIdx !== -1) {
-            currentAreaIdx = foundReadyIdx;
+        }
+
+        if (foundReadyIdx !== -1) {
+          currentAreaIdx = foundReadyIdx;
+        } else {
+          // All other areas are in cooldown / finished. Stay at Nông Trại!
+          if (config.autoSleep && (snap.minutes || 0) < targetSleepMinutes && config.clockTurbo !== false) {
+            setStatus(`⏩ Đang tua nhanh thời gian (${formatClock(snap.minutes)} ➔ ${targetTimeLabel}) để đi ngủ...`);
+            await execGameAction('ADVANCE_CLOCK');
+            await sleep(350);
           } else {
-            if (config.autoSleep && (snap.minutes || 0) < targetSleepMinutes && config.clockTurbo !== false) {
-              setStatus(`⏩ Đang tua nhanh thời gian (${formatClock(snap.minutes)} ➔ ${targetTimeLabel}) để đi ngủ...`);
-              await execGameAction('ADVANCE_CLOCK');
-              await sleep(350);
-            } else {
-              setStatus('🌾 Đang trực tại Nông Trại (đợi các khu khác hồi sức / qua ngày)...');
-              await sleep(1500);
-            }
+            setStatus('🌾 Đang trực tại Nông Trại (đợi các khu khác hồi sức / qua ngày)...');
+            await sleep(1500);
           }
         }
       } else {
@@ -257,6 +265,7 @@ export async function tickAuto(): Promise<void> {
 
       if (Date.now() < benExhaustedUntil && enabledAreas.length > 1) {
         currentAreaIdx = (currentAreaIdx + 1) % enabledAreas.length;
+        await sleep(1000);
         isBusy = false;
         return;
       }
@@ -283,6 +292,7 @@ export async function tickAuto(): Promise<void> {
 
       if (Date.now() < seaExhaustedUntil && enabledAreas.length > 1) {
         currentAreaIdx = (currentAreaIdx + 1) % enabledAreas.length;
+        await sleep(1000);
         isBusy = false;
         return;
       }
@@ -298,6 +308,7 @@ export async function tickAuto(): Promise<void> {
           currentAreaIdx = 0;
           benExhaustedUntil = 0;
           seaExhaustedUntil = 0;
+          farmstayCooldownUntil = 0;
           await sleep(1200);
         } else if (enabledAreas.length > 1) {
           currentAreaIdx = (currentAreaIdx + 1) % enabledAreas.length;
@@ -310,13 +321,25 @@ export async function tickAuto(): Promise<void> {
         return;
       }
 
+      if (Date.now() < farmstayCooldownUntil && enabledAreas.length > 1) {
+        currentAreaIdx = (currentAreaIdx + 1) % enabledAreas.length;
+        await sleep(1000);
+        isBusy = false;
+        return;
+      }
+
       const res = await stepFarmstay(snap, config, setStatus, updateHeaderStats);
       if (res.finishedArea) {
+        farmstayCooldownUntil = Date.now() + 60000;
         if (enabledAreas.length > 1) {
           currentAreaIdx = (currentAreaIdx + 1) % enabledAreas.length;
           if (snap.screen === 'farmstay') {
             await execGameAction('NAVIGATE', { target: 'playing', indoors: false });
+            await sleep(400);
           }
+        } else {
+          setStatus('🏡 Farmstay Ông Năm: Đã xong việc hiện tại (đang canh rau chín & khách đến...)');
+          await sleep(1500);
         }
       }
     }

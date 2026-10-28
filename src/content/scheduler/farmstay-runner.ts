@@ -30,8 +30,14 @@ export async function stepFarmstay(
     await execGameAction('NAVIGATE', { target: 'farmstay' });
     await sleep(delayMs);
     const fresh = await getGameState();
-    if (fresh && fresh.ok && updateHeaderStats) {
-      updateHeaderStats(fresh);
+    if (fresh && fresh.ok) {
+      if (updateHeaderStats) {
+        updateHeaderStats(fresh);
+      }
+      if (fresh.screen !== 'farmstay') {
+        setStatus('⚠️ Không thể chuyển sang Farmstay (chưa mở khóa hoặc đang kẹt)...');
+        return { finishedArea: true, acted: false };
+      }
     }
     return { finishedArea: false, acted: true };
   }
