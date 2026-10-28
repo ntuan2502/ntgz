@@ -395,7 +395,7 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
       </div>
 
       {/* Rankings List */}
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         {boardItems.length === 0 ? (
           <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/70 p-6 text-center text-xs text-slate-500">
             <p>
@@ -408,7 +408,7 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={handleRefresh}
+                onClick={() => handleRefresh()}
                 className="text-xs cursor-pointer"
               >
                 Tải lại bảng 🔄
@@ -427,55 +427,246 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
             </div>
           </div>
         ) : (
-          boardItems.map((item, idx) => {
-            const isTop3 = idx < 3;
-            const medal = isTop3 ? MEDALS[idx] : null;
+          <>
+            {/* Top 3 Podium Cards */}
+            <div className="flex flex-col gap-2">
+              {boardItems.slice(0, 3).map((item, idx) => {
+                const isMe = myRank?.rank === idx + 1;
 
-            return (
-              <div
-                key={item.id || idx}
-                className={`flex items-center justify-between p-2.5 rounded-xl border transition-all ${
-                  idx === 0
-                    ? 'bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-300 shadow-2xs font-semibold'
-                    : idx === 1
-                    ? 'bg-gradient-to-r from-slate-50 to-gray-50 border-slate-300 shadow-2xs'
-                    : idx === 2
-                    ? 'bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200 shadow-2xs'
-                    : 'bg-white border-slate-200 hover:border-slate-300'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <span className="flex items-center justify-center w-6 text-center text-xs font-bold font-mono shrink-0">
-                    {medal || `#${idx + 1}`}
-                  </span>
-                  <div className="min-w-0 flex items-center gap-1.5 flex-wrap">
-                    <span className="text-xs font-bold text-slate-900 truncate">{item.name}</span>
-                    {item.title && (
-                      <span className="text-[10px] text-amber-800 bg-amber-100/90 px-1.5 py-0.2 rounded border border-amber-300 font-medium shrink-0">
-                        {item.title}
-                      </span>
-                    )}
+                if (idx === 0) {
+                  // TOP 1 - Gold Champion
+                  return (
+                    <div
+                      key={item.id || 'top1'}
+                      className="relative overflow-hidden rounded-xl border-2 border-amber-400 bg-gradient-to-r from-amber-200/50 via-yellow-100/60 to-amber-200/40 p-3 shadow-md ring-2 ring-amber-300/60 transition-all hover:shadow-lg"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          {/* Crown + #1 Gold Badge */}
+                          <div className="flex flex-col items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-b from-amber-300 via-amber-400 to-yellow-500 text-amber-950 font-black shadow-md ring-2 ring-amber-200/80 shrink-0">
+                            <span className="text-base leading-none">👑</span>
+                            <span className="text-[11px] font-black font-mono leading-none mt-0.5">#1</span>
+                          </div>
+
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="text-sm font-black text-amber-950 tracking-tight truncate">
+                                {item.name}
+                              </span>
+                              <span className="text-[9.5px] uppercase font-black bg-gradient-to-r from-amber-500 to-yellow-500 text-amber-950 px-1.5 py-0.5 rounded shadow-2xs leading-none">
+                                🥇 Quán quân
+                              </span>
+                              {isMe && (
+                                <span className="text-[9.5px] font-bold bg-emerald-600 text-white px-1.5 py-0.5 rounded leading-none">
+                                  Bạn
+                                </span>
+                              )}
+                            </div>
+                            {item.title && (
+                              <div className="text-[11px] text-amber-900/90 font-semibold mt-0.5 truncate">
+                                ✨ {item.title}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="text-right flex items-center justify-end gap-1.5 shrink-0">
+                          {item.fish && (
+                            <div className="flex h-6 w-6 items-center justify-center shrink-0 overflow-hidden">
+                              <GameItemIcon itemKey={`benfish-${item.fish}`} fallbackEmoji="🐟" size={22} />
+                            </div>
+                          )}
+                          {item.cricket && (
+                            <div className="flex h-6 w-6 items-center justify-center shrink-0 overflow-hidden" title={`Dế chiến: ${item.cricket}`}>
+                              <GameItemIcon itemKey={item.cricket} fallbackEmoji="🦗" size={22} />
+                            </div>
+                          )}
+                          <span className="font-black text-xs md:text-sm font-mono text-amber-950 bg-amber-300/80 px-2.5 py-1 rounded-lg border border-amber-400 shadow-2xs">
+                            {currentCategory.formatValue(item.value, item)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (idx === 1) {
+                  // TOP 2 - Silver Runner-up
+                  return (
+                    <div
+                      key={item.id || 'top2'}
+                      className="relative overflow-hidden rounded-xl border-2 border-slate-300 bg-gradient-to-r from-slate-200/70 via-gray-100/80 to-slate-200/50 p-2.5 shadow-sm ring-1 ring-slate-300/80 transition-all hover:shadow-md"
+                    >
+                      <div className="flex items-center justify-between gap-2.5">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          {/* #2 Silver Badge */}
+                          <div className="flex flex-col items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-b from-slate-100 via-slate-200 to-slate-400 text-slate-800 font-black shadow-xs ring-1 ring-slate-300/80 shrink-0">
+                            <span className="text-sm leading-none">🥈</span>
+                            <span className="text-[10.5px] font-black font-mono leading-none mt-0.5">#2</span>
+                          </div>
+
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="text-xs font-bold text-slate-900 tracking-tight truncate">
+                                {item.name}
+                              </span>
+                              <span className="text-[9px] uppercase font-bold bg-slate-300 text-slate-800 px-1.5 py-0.5 rounded shadow-2xs leading-none">
+                                🥈 Á quân
+                              </span>
+                              {isMe && (
+                                <span className="text-[9.5px] font-bold bg-emerald-600 text-white px-1.5 py-0.5 rounded leading-none">
+                                  Bạn
+                                </span>
+                              )}
+                            </div>
+                            {item.title && (
+                              <div className="text-[10px] text-slate-600 font-medium mt-0.5 truncate">
+                                {item.title}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="text-right flex items-center justify-end gap-1.5 shrink-0">
+                          {item.fish && (
+                            <div className="flex h-5 w-5 items-center justify-center shrink-0 overflow-hidden">
+                              <GameItemIcon itemKey={`benfish-${item.fish}`} fallbackEmoji="🐟" size={18} />
+                            </div>
+                          )}
+                          {item.cricket && (
+                            <div className="flex h-5 w-5 items-center justify-center shrink-0 overflow-hidden" title={`Dế chiến: ${item.cricket}`}>
+                              <GameItemIcon itemKey={item.cricket} fallbackEmoji="🦗" size={18} />
+                            </div>
+                          )}
+                          <span className="font-bold text-xs font-mono text-slate-900 bg-white/95 px-2.5 py-1 rounded-lg border border-slate-300 shadow-2xs">
+                            {currentCategory.formatValue(item.value, item)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
+                // TOP 3 - Bronze
+                return (
+                  <div
+                    key={item.id || 'top3'}
+                    className="relative overflow-hidden rounded-xl border-2 border-amber-600/40 bg-gradient-to-r from-amber-700/10 via-orange-100/70 to-amber-700/10 p-2.5 shadow-sm ring-1 ring-amber-500/40 transition-all hover:shadow-md"
+                  >
+                    <div className="flex items-center justify-between gap-2.5">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        {/* #3 Bronze Badge */}
+                        <div className="flex flex-col items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-b from-amber-500 via-amber-600 to-orange-700 text-white font-black shadow-xs ring-1 ring-amber-400/80 shrink-0">
+                          <span className="text-sm leading-none">🥉</span>
+                          <span className="text-[10.5px] font-black font-mono leading-none mt-0.5">#3</span>
+                        </div>
+
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-xs font-bold text-amber-950 tracking-tight truncate">
+                              {item.name}
+                            </span>
+                            <span className="text-[9px] uppercase font-bold bg-amber-600/20 text-amber-900 px-1.5 py-0.5 rounded shadow-2xs leading-none">
+                              🥉 Hạng 3
+                            </span>
+                            {isMe && (
+                              <span className="text-[9.5px] font-bold bg-emerald-600 text-white px-1.5 py-0.5 rounded leading-none">
+                                Bạn
+                              </span>
+                            )}
+                          </div>
+                          {item.title && (
+                            <div className="text-[10px] text-amber-800 font-medium mt-0.5 truncate">
+                              {item.title}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="text-right flex items-center justify-end gap-1.5 shrink-0">
+                        {item.fish && (
+                          <div className="flex h-5 w-5 items-center justify-center shrink-0 overflow-hidden">
+                            <GameItemIcon itemKey={`benfish-${item.fish}`} fallbackEmoji="🐟" size={18} />
+                          </div>
+                        )}
+                        {item.cricket && (
+                          <div className="flex h-5 w-5 items-center justify-center shrink-0 overflow-hidden" title={`Dế chiến: ${item.cricket}`}>
+                            <GameItemIcon itemKey={item.cricket} fallbackEmoji="🦗" size={18} />
+                          </div>
+                        )}
+                        <span className="font-bold text-xs font-mono text-amber-950 bg-white/95 px-2.5 py-1 rounded-lg border border-amber-300 shadow-2xs">
+                          {currentCategory.formatValue(item.value, item)}
+                        </span>
+                      </div>
+                    </div>
                   </div>
+                );
+              })}
+            </div>
+
+            {/* Other Ranks Divider & List (#4+) */}
+            {boardItems.length > 3 && (
+              <div className="pt-2 flex flex-col gap-1.5">
+                <div className="flex items-center justify-between text-[11px] text-slate-500 font-semibold px-1 pb-0.5 border-b border-slate-200">
+                  <span>Thứ hạng khác (Hạng 4 – {boardItems.length})</span>
+                  <span className="text-[10px] text-slate-400 font-normal">cập nhật trực tiếp</span>
                 </div>
 
-                <div className="text-right flex items-center justify-end gap-1.5 shrink-0">
-                  {item.fish && (
-                    <div className="flex h-5 w-5 items-center justify-center shrink-0 overflow-hidden">
-                      <GameItemIcon itemKey={`benfish-${item.fish}`} fallbackEmoji="🐟" size={18} />
+                {boardItems.slice(3).map((item, i) => {
+                  const rankNum = i + 4;
+                  const isMe = myRank?.rank === rankNum;
+
+                  return (
+                    <div
+                      key={item.id || `rank_${rankNum}`}
+                      className={`flex items-center justify-between p-2 rounded-xl border transition-all ${
+                        isMe
+                          ? 'bg-emerald-50/80 border-emerald-300 shadow-2xs ring-1 ring-emerald-200'
+                          : 'bg-white border-slate-200 hover:border-slate-300'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="flex items-center justify-center w-7 text-center text-xs font-bold font-mono text-slate-500 shrink-0">
+                          #{rankNum}
+                        </span>
+                        <div className="min-w-0 flex items-center gap-1.5 flex-wrap">
+                          <span className={`text-xs truncate ${isMe ? 'font-bold text-emerald-950' : 'font-medium text-slate-800'}`}>
+                            {item.name}
+                          </span>
+                          {isMe && (
+                            <span className="text-[9px] font-bold bg-emerald-600 text-white px-1 py-0.2 rounded">
+                              Bạn
+                            </span>
+                          )}
+                          {item.title && (
+                            <span className="text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200 font-normal shrink-0">
+                              {item.title}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="text-right flex items-center justify-end gap-1.5 shrink-0">
+                        {item.fish && (
+                          <div className="flex h-5 w-5 items-center justify-center shrink-0 overflow-hidden">
+                            <GameItemIcon itemKey={`benfish-${item.fish}`} fallbackEmoji="🐟" size={18} />
+                          </div>
+                        )}
+                        {item.cricket && (
+                          <div className="flex h-5 w-5 items-center justify-center shrink-0 overflow-hidden" title={`Dế chiến: ${item.cricket}`}>
+                            <GameItemIcon itemKey={item.cricket} fallbackEmoji="🦗" size={18} />
+                          </div>
+                        )}
+                        <span className="font-mono text-xs font-bold text-emerald-800">
+                          {currentCategory.formatValue(item.value, item)}
+                        </span>
+                      </div>
                     </div>
-                  )}
-                  {item.cricket && (
-                    <div className="flex h-5 w-5 items-center justify-center shrink-0 overflow-hidden" title={`Dế chiến: ${item.cricket}`}>
-                      <GameItemIcon itemKey={item.cricket} fallbackEmoji="🦗" size={18} />
-                    </div>
-                  )}
-                  <span className="font-bold text-xs font-mono text-emerald-800">
-                    {currentCategory.formatValue(item.value, item)}
-                  </span>
-                </div>
+                  );
+                })}
               </div>
-            );
-          })
+            )}
+          </>
         )}
       </div>
     </div>
