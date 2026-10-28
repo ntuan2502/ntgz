@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { GameSnapshot } from '@/shared/types/game-state';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Backpack, Star, ExternalLink, RefreshCw, Zap, Check } from 'lucide-react';
+import { Backpack, Star, ExternalLink, RefreshCw, Zap, Check, Sparkles, BookOpen, ChevronDown, ChevronUp } from 'lucide-react';
 import { execGameAction } from '@/content/bridge/content-bridge';
 import fishDexRaw from '@/shared/constants/fish-dex-data.json';
 import wharfCatalogRaw from '@/shared/constants/wharf-catalog-data.json';
@@ -45,12 +45,124 @@ const RARITY_COLORS: Record<string, string> = {
   rac: '#8a8070',
 };
 
-const STANDARD_RODS = [
-  { level: 1, name: 'Cần tre', desc: 'Cần tre cơ bản, câu ven bờ', icon: '🎣' },
-  { level: 2, name: 'Cần sợi thuỷ tinh', desc: 'Dẻo dai, nhạy phao hơn, dễ dính cá hiếm', icon: '🎣' },
-  { level: 3, name: 'Cần carbon', desc: 'Nhẹ và chắc, cá huyền thoại cũng phải nể', icon: '🎣' },
-  { level: 4, name: 'Cần nano', desc: 'Đỉnh cao kỹ thuật, bắt cá thần thoại', icon: '🎣' },
+export const STANDARD_RODS = [
+  {
+    level: 1,
+    name: 'Cần tre',
+    desc: 'Cần tre cơ bản, câu ven bờ',
+    stats: 'Độ căng dây: 35',
+    icon: '🎣',
+  },
+  {
+    level: 2,
+    name: 'Cần sợi thuỷ tinh',
+    desc: 'Dẻo dai, nhạy phao hơn, dễ dính cá hiếm',
+    stats: 'Cắn +150ms · Giật +120ms · Căng: 30',
+    icon: '🎣',
+  },
+  {
+    level: 3,
+    name: 'Cần carbon',
+    desc: 'Nhẹ và chắc, cá huyền thoại cũng phải nể',
+    stats: 'Cắn +300ms · Giật +240ms · Căng: 25',
+    icon: '🎣',
+  },
+  {
+    level: 4,
+    name: 'Cần nano',
+    desc: 'Đỉnh cao kỹ thuật, bắt cá thần thoại',
+    stats: 'Cắn +340ms · Giật +270ms · Căng: 23',
+    icon: '🎣',
+  },
 ];
+
+export interface RodTraitMeta {
+  id: string;
+  icon: string;
+  name: string;
+  desc: string;
+  statBadge?: string;
+}
+
+export const ROD_TRAITS_MAP: Record<string, RodTraitMeta> = {
+  nhay: {
+    id: 'nhay',
+    icon: '🎯',
+    name: 'Nhạy phao',
+    desc: 'Phao chìm lâu hơn mới chạy, dễ canh giật',
+    statBadge: '+250ms giật',
+  },
+  day: {
+    id: 'day',
+    icon: '🧵',
+    name: 'Dây chắc',
+    desc: 'Ghìm cần dư thời gian hơn, vuốt sai dây ít căng',
+    statBadge: '+100ms ghìm, -7 căng',
+  },
+  to: {
+    id: 'to',
+    icon: '📏',
+    name: 'Cá to',
+    desc: 'Cá câu lên hay to hơn (tăng tỉ lệ cá khủng & kỷ lục)',
+    statBadge: 'Cỡ x1.3',
+  },
+  tinh: {
+    id: 'tinh',
+    icon: '✨',
+    name: 'Mắt tinh',
+    desc: 'Dễ ra cá lạ và hiếm hơn',
+    statBadge: 'Cá lạ x1.6',
+  },
+  cauVong: {
+    id: 'cauVong',
+    icon: '🌈',
+    name: 'Cầu vồng',
+    desc: 'Tăng mạnh tỉ lệ xuất hiện cá cầu vồng',
+    statBadge: 'Cầu vồng x2',
+  },
+  nhe: {
+    id: 'nhe',
+    icon: '💪',
+    name: 'Nhẹ tay',
+    desc: 'Mỗi lần quăng tốn 3 Sức thay vì 4',
+    statBadge: '-1 Sức (3⚡/lần)',
+  },
+  moi: {
+    id: 'moi',
+    icon: '🪱',
+    name: 'Giữ mồi',
+    desc: 'Ba lần quăng thì chừng một lần không mất mồi',
+    statBadge: '33% giữ mồi',
+  },
+  dem: {
+    id: 'dem',
+    icon: '🌙',
+    name: 'Cần đêm',
+    desc: 'Thêm may mắn khi câu từ 18h tới 6h sáng',
+    statBadge: '+2 May (18h-6h)',
+  },
+  som: {
+    id: 'som',
+    icon: '🌅',
+    name: 'Cần sớm chiều',
+    desc: 'Thêm may mắn từ 5h–9h sáng và 16h–19h chiều',
+    statBadge: '+2 May (5-9h & 16-19h)',
+  },
+  hai: {
+    id: 'hai',
+    icon: '🐟',
+    name: 'Hai lưỡi',
+    desc: '1/10 tỉ lệ cá lên bờ dính thêm một con nữa',
+    statBadge: '10% câu kép',
+  },
+  gia: {
+    id: 'gia',
+    icon: '💰',
+    name: 'Được giá',
+    desc: 'Cá câu bằng cần này bán được thêm 15% tiền',
+    statBadge: '+15% tiền bán',
+  },
+};
 
 export interface SpecialRodMeta {
   id: string;
@@ -59,25 +171,154 @@ export interface SpecialRodMeta {
   gradeColor: string;
   name: string;
   desc: string;
+  traits: string[];
   icon?: string;
 }
 
 export const SPECIAL_RODS_MAP: Record<string, SpecialRodMeta> = {
-  tamVong: { id: 'tamVong', grade: 'good', gradeName: 'Tốt', gradeColor: '#6a9a4a', name: 'Cần tầm vông', desc: 'Thân tre tầm vông dẻo dai bên bờ kênh', icon: '🎣' },
-  trucDen: { id: 'trucDen', grade: 'good', gradeName: 'Tốt', gradeColor: '#6a9a4a', name: 'Cần trúc đen', desc: 'Đốt trúc đen óng, cá quẫy không gãy', icon: '🎣' },
-  sayDong: { id: 'sayDong', grade: 'good', gradeName: 'Tốt', gradeColor: '#6a9a4a', name: 'Cần sậy đồng', desc: 'Nhẹ tênh, phao nhấp là biết ngay', icon: '🎣' },
-  mayRung: { id: 'mayRung', grade: 'good', gradeName: 'Tốt', gradeColor: '#6a9a4a', name: 'Cần mây rừng', desc: 'Sợi mây rừng uốn cong theo dáng cá', icon: '🎣' },
-  trangRam: { id: 'trangRam', grade: 'rare', gradeName: 'Hiếm', gradeColor: '#3c8fd0', name: 'Cần trăng rằm', desc: 'Ánh bạc như trăng soi mặt nước đêm rằm', icon: '🎣' },
-  binhMinh: { id: 'binhMinh', grade: 'rare', gradeName: 'Hiếm', gradeColor: '#3c8fd0', name: 'Cần bình minh', desc: 'Ánh hồng sớm mai, cá thức giấc dễ cắn câu', icon: '🎣' },
-  ongSau: { id: 'ongSau', grade: 'rare', gradeName: 'Hiếm', gradeColor: '#3c8fd0', name: 'Cần ông Sáu chuốt', desc: 'Tay nghề cả đời của lão ngư bên cồn', icon: '🎣' },
-  gheNgo: { id: 'gheNgo', grade: 'rare', gradeName: 'Hiếm', gradeColor: '#3c8fd0', name: 'Cần ghe ngo', desc: 'Khắc hoa văn ghe ngo, nhịp câu rộn rã', icon: '🎣' },
-  ngocBich: { id: 'ngocBich', grade: 'epic', gradeName: 'Quý', gradeColor: '#9b6bff', name: 'Cần ngọc bích', desc: 'Xanh ngọc bích trong veo, nước chảy không phai', icon: '🎣' },
-  sungTrau: { id: 'sungTrau', grade: 'epic', gradeName: 'Quý', gradeColor: '#9b6bff', name: 'Cần sừng trâu', desc: 'Đầu cần bịt sừng trâu mài bóng, bẩy cá nặng ký', icon: '🎣' },
-  domDom: { id: 'domDom', grade: 'epic', gradeName: 'Quý', gradeColor: '#9b6bff', name: 'Cần đom đóm', desc: 'Đêm xuống cả cây cần lập loè như bầy đom đóm', icon: '🎣' },
-  rongVang: { id: 'rongVang', grade: 'legend', gradeName: 'Huyền thoại', gradeColor: '#e8a020', name: 'Cần rồng vàng', desc: 'Chạm rồng vàng uốn quanh thân, cá chép thấy cũng muốn hoá rồng', icon: '🎣' },
-  thuongLuong: { id: 'thuongLuong', grade: 'legend', gradeName: 'Huyền thoại', gradeColor: '#e8a020', name: 'Cần thuồng luồng', desc: 'Vảy xanh rêu ánh vàng, nghe đồn lấy từ đáy sông sâu', icon: '🎣' },
-  haBa: { id: 'haBa', grade: 'ultimate', gradeName: 'Tối thượng', gradeColor: '#e0306a', name: 'Cần Hà Bá', desc: 'Cây cần của thần sông, cả trăm năm mới trồi lên một lần, cá nào cũng phải nể', icon: '🎣' },
+  tamVong: {
+    id: 'tamVong',
+    grade: 'good',
+    gradeName: 'Tốt',
+    gradeColor: '#6a9a4a',
+    name: 'Cần tầm vông',
+    desc: 'Tầm vông phơi khô ba nắng, đầu cần rung là biết cá rỉa',
+    traits: ['nhay'],
+    icon: '🎣',
+  },
+  trucDen: {
+    id: 'trucDen',
+    grade: 'good',
+    gradeName: 'Tốt',
+    gradeColor: '#6a9a4a',
+    name: 'Cần trúc đen',
+    desc: 'Trúc đen hun khói bếp, dẻo mà không gãy',
+    traits: ['day'],
+    icon: '🎣',
+  },
+  sayDong: {
+    id: 'sayDong',
+    grade: 'good',
+    gradeName: 'Tốt',
+    gradeColor: '#6a9a4a',
+    name: 'Cần sậy đồng',
+    desc: 'Lưỡi ông Sáu uốn khéo, cá rỉa hoài không sổng mồi',
+    traits: ['moi'],
+    icon: '🎣',
+  },
+  mayRung: {
+    id: 'mayRung',
+    grade: 'good',
+    gradeName: 'Tốt',
+    gradeColor: '#6a9a4a',
+    name: 'Cần mây rừng',
+    desc: 'Mây rừng nhẹ hều, quăng cả buổi không mỏi tay',
+    traits: ['nhe'],
+    icon: '🎣',
+  },
+  trangRam: {
+    id: 'trangRam',
+    grade: 'rare',
+    gradeName: 'Hiếm',
+    gradeColor: '#3c8fd0',
+    name: 'Cần trăng rằm',
+    desc: 'Sơn trắng ánh trăng, đêm rằm cá kéo nhau lên cắn',
+    traits: ['dem', 'nhay'],
+    icon: '🎣',
+  },
+  binhMinh: {
+    id: 'binhMinh',
+    grade: 'rare',
+    gradeName: 'Hiếm',
+    gradeColor: '#3c8fd0',
+    name: 'Cần bình minh',
+    desc: 'Màu nắng sớm, gà gáy là phao bắt đầu nhúc nhích',
+    traits: ['som', 'day'],
+    icon: '🎣',
+  },
+  ongSau: {
+    id: 'ongSau',
+    grade: 'rare',
+    gradeName: 'Hiếm',
+    gradeColor: '#3c8fd0',
+    name: 'Cần ông Sáu chuốt',
+    desc: 'Cây ruột của ông Sáu, chuốt tay cả tháng trời',
+    traits: ['to', 'moi'],
+    icon: '🎣',
+  },
+  gheNgo: {
+    id: 'gheNgo',
+    grade: 'rare',
+    gradeName: 'Hiếm',
+    gradeColor: '#3c8fd0',
+    name: 'Cần ghe ngo',
+    desc: 'Đỏ vàng như ghe ngo đua, thương lái thấy là trả giá cao',
+    traits: ['gia', 'nhe'],
+    icon: '🎣',
+  },
+  ngocBich: {
+    id: 'ngocBich',
+    grade: 'epic',
+    gradeName: 'Quý',
+    gradeColor: '#9b6bff',
+    name: 'Cần ngọc bích',
+    desc: 'Xanh trong như ngọc, cá lạ cá cầu vồng hay ghé',
+    traits: ['tinh', 'nhay', 'cauVong'],
+    icon: '🎣',
+  },
+  sungTrau: {
+    id: 'sungTrau',
+    grade: 'epic',
+    gradeName: 'Quý',
+    gradeColor: '#9b6bff',
+    name: 'Cần sừng trâu',
+    desc: 'Cán sừng trâu đen bóng, cá to cỡ nào cũng ghìm nổi',
+    traits: ['to', 'day', 'gia'],
+    icon: '🎣',
+  },
+  domDom: {
+    id: 'domDom',
+    grade: 'epic',
+    gradeName: 'Quý',
+    gradeColor: '#9b6bff',
+    name: 'Cần đom đóm',
+    desc: 'Đêm xuống cả cây cần lập loè như bầy đom đóm',
+    traits: ['dem', 'tinh', 'moi'],
+    icon: '🎣',
+  },
+  rongVang: {
+    id: 'rongVang',
+    grade: 'legend',
+    gradeName: 'Huyền thoại',
+    gradeColor: '#e8a020',
+    name: 'Cần rồng vàng',
+    desc: 'Chạm rồng vàng uốn quanh thân, cá chép thấy cũng muốn hoá rồng',
+    traits: ['to', 'tinh', 'day', 'hai'],
+    icon: '🎣',
+  },
+  thuongLuong: {
+    id: 'thuongLuong',
+    grade: 'legend',
+    gradeName: 'Huyền thoại',
+    gradeColor: '#e8a020',
+    name: 'Cần thuồng luồng',
+    desc: 'Vảy xanh rêu ánh vàng, nghe đồn lấy từ đáy sông sâu',
+    traits: ['dem', 'cauVong', 'nhe', 'hai'],
+    icon: '🎣',
+  },
+  haBa: {
+    id: 'haBa',
+    grade: 'ultimate',
+    gradeName: 'Tối thượng',
+    gradeColor: '#e0306a',
+    name: 'Cần Hà Bá',
+    desc: 'Cây cần của thần sông, cả trăm năm mới trồi lên một lần, cá nào cũng phải nể',
+    traits: ['nhay', 'day', 'to', 'tinh', 'cauVong', 'hai'],
+    icon: '🎣',
+  },
 };
+
+export const ALL_SPECIAL_RODS = Object.values(SPECIAL_RODS_MAP);
 
 function formatRodDuration(ms: number): string {
   if (ms <= 0) return 'Đã hết hạn';
@@ -138,6 +379,7 @@ export function WharfPackTab({ snap }: WharfPackTabProps) {
   const [activeTab, setActiveTab] = useState<'food' | 'fish' | 'rods'>('food');
   const [fishFilter, setFishFilter] = useState<'all' | 'kept'>('all');
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const [showCatalog, setShowCatalog] = useState<boolean>(false);
 
   const benNet = snap?.benNet;
   const wallet = benNet?.wallet;
@@ -471,10 +713,13 @@ export function WharfPackTab({ snap }: WharfPackTabProps) {
 
       {/* Content for Tab 3: Rods */}
       {activeTab === 'rods' && (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2.5">
           {/* Standard Rod Level */}
           <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-2xs">
-            <span className="text-xs font-bold text-slate-900 block mb-2">Cần câu chuẩn:</span>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold text-slate-900">Cần câu chuẩn:</span>
+              <span className="text-[10px] text-slate-500 font-medium">Cấp {rodLevel} / 4</span>
+            </div>
             <div className="grid grid-cols-2 gap-2">
               {STANDARD_RODS.map((rod) => {
                 const isUnlocked = rodLevel >= rod.level;
@@ -483,24 +728,33 @@ export function WharfPackTab({ snap }: WharfPackTabProps) {
                 return (
                   <div
                     key={rod.level}
-                    className={`p-2 rounded-lg border text-xs flex flex-col justify-between ${
+                    className={`p-2.5 rounded-lg border text-xs flex flex-col justify-between transition-all ${
                       isCurrent
-                        ? 'bg-emerald-50 border-emerald-300 font-bold text-emerald-900 shadow-2xs'
+                        ? 'bg-emerald-50/90 border-emerald-300 font-bold text-emerald-900 shadow-2xs'
                         : isUnlocked
                         ? 'bg-white border-slate-200 text-slate-800'
                         : 'bg-slate-50 border-dashed border-slate-200 text-slate-400 opacity-70'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5">
-                        <GameItemIcon itemKey="canCau" fallbackEmoji="🎣" size={18} />
-                        <span className="font-bold">{rod.name}</span>
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-1.5">
+                          <GameItemIcon itemKey="canCau" fallbackEmoji="🎣" size={18} />
+                          <span className="font-bold">{rod.name}</span>
+                        </div>
+                        {isCurrent && (
+                          <Badge className="bg-emerald-600 text-white text-[8px] px-1 py-0">Đang dùng</Badge>
+                        )}
                       </div>
-                      {isCurrent && (
-                        <Badge className="bg-emerald-600 text-white text-[8px] px-1 py-0">Đang dùng</Badge>
-                      )}
+                      <p className="text-[10px] text-slate-500 leading-tight">{rod.desc}</p>
                     </div>
-                    <span className="text-[10px] text-slate-500 mt-1 line-clamp-1">{rod.desc}</span>
+                    {rod.stats && (
+                      <div className="mt-1.5 pt-1.5 border-t border-slate-100">
+                        <span className="text-[9.5px] font-mono text-slate-600 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200/60 block">
+                          ⚡ {rod.stats}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -509,10 +763,78 @@ export function WharfPackTab({ snap }: WharfPackTabProps) {
 
           {/* Pulled Special Rods */}
           <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-2xs">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-bold text-slate-900">Cần bốc tiệm chú Đực:</span>
-              <span className="text-[10px] text-slate-500 font-medium">({ownedRods.length} cây)</span>
+            <div className="flex items-center justify-between mb-2.5 flex-wrap gap-1">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-bold text-slate-900">Cần bốc tiệm chú Đực:</span>
+                <span className="text-[10px] text-slate-500 font-medium">({ownedRods.length} cây)</span>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowCatalog((prev) => !prev)}
+                className="h-6 px-2 text-[10.5px] text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 font-semibold flex items-center gap-1 cursor-pointer"
+              >
+                <BookOpen className="h-3 w-3" />
+                <span>{showCatalog ? 'Thu gọn tra cứu' : 'Tra cứu 14 cần & tính năng'}</span>
+                {showCatalog ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+              </Button>
             </div>
+
+            {/* Collapsible 14 Special Rods Reference Catalog */}
+            {showCatalog && (
+              <div className="mb-3 p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs">
+                <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-slate-200">
+                  <span className="font-bold text-slate-800 flex items-center gap-1">
+                    <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+                    <span>Bảng tra cứu cần bốc may mắn & tính năng</span>
+                  </span>
+                  <span className="text-[10px] text-slate-500">14 loại cần</span>
+                </div>
+                <div className="flex flex-col gap-2 max-h-[360px] overflow-y-auto pr-1">
+                  {ALL_SPECIAL_RODS.map((rod) => (
+                    <div
+                      key={rod.id}
+                      className="p-2 rounded-lg bg-white border border-slate-200 shadow-2xs flex flex-col gap-1.5"
+                    >
+                      <div className="flex items-center justify-between flex-wrap gap-1">
+                        <div className="flex items-center gap-1.5">
+                          <GameItemIcon itemKey="canCau" fallbackEmoji="🎣" size={18} />
+                          <span className="font-bold text-slate-900 text-xs">{rod.name}</span>
+                          <Badge
+                            style={{ backgroundColor: rod.gradeColor }}
+                            className="text-white text-[9px] px-1.5 py-0 font-medium"
+                          >
+                            {rod.gradeName}
+                          </Badge>
+                        </div>
+                        <span className="text-[10px] text-slate-500">
+                          {rod.grade === 'good' ? '⚡ Bằng cần carbon' : '⚡ Mạnh hơn cần carbon'}
+                        </span>
+                      </div>
+                      <p className="text-[10.5px] text-slate-500 italic leading-snug">{rod.desc}</p>
+                      <div className="flex flex-wrap gap-1">
+                        {rod.traits.map((tId) => {
+                          const tMeta = ROD_TRAITS_MAP[tId];
+                          if (!tMeta) return null;
+                          return (
+                            <span
+                              key={tId}
+                              title={tMeta.desc}
+                              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-900 border border-amber-200/70"
+                            >
+                              <span>{tMeta.icon}</span>
+                              <span className="font-semibold">{tMeta.name}:</span>
+                              <span className="text-amber-800">{tMeta.desc}</span>
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {ownedRods.length === 0 ? (
               <p className="text-xs text-slate-500 italic py-2">
@@ -530,62 +852,117 @@ export function WharfPackTab({ snap }: WharfPackTabProps) {
                   const gradeColor = meta?.gradeColor || '#3c8fd0';
                   const timeLeft = item.until ? item.until - Date.now() : 0;
                   const isExpired = item.until ? timeLeft <= 0 : false;
+                  const traits =
+                    Array.isArray(item.traits) && item.traits.length > 0
+                      ? (item.traits as string[])
+                      : meta?.traits || [];
 
                   return (
                     <div
                       key={rodId || `rod_${idx}`}
-                      className={`flex items-center justify-between p-2.5 rounded-lg border transition-all ${
+                      className={`p-3 rounded-lg border transition-all ${
                         isUsing
                           ? 'bg-indigo-50/90 border-indigo-300 font-semibold shadow-2xs'
                           : 'bg-white border-slate-200 hover:border-slate-300'
                       }`}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-base shrink-0 overflow-hidden">
-                          <GameItemIcon itemKey="canCau" fallbackEmoji="🎣" size={26} />
-                        </span>
-                        <div>
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className="text-xs font-bold text-slate-900">{rodName}</span>
-                            <Badge
-                              style={{ backgroundColor: gradeColor }}
-                              className="text-white text-[9px] px-1.5 py-0 font-medium"
-                            >
-                              {gradeName}
-                            </Badge>
-                            {item.until && (
-                              <span className="text-[10px] text-slate-500 font-mono">
-                                ⏳ {isExpired ? 'Đã hết hạn' : `Còn ${formatRodDuration(timeLeft)}`}
-                              </span>
-                            )}
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-start gap-2.5 min-w-0">
+                          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 text-base shrink-0 overflow-hidden border border-indigo-100 mt-0.5">
+                            <GameItemIcon itemKey="canCau" fallbackEmoji="🎣" size={26} />
+                          </span>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="text-xs font-bold text-slate-900">{rodName}</span>
+                              <Badge
+                                style={{ backgroundColor: gradeColor }}
+                                className="text-white text-[9px] px-1.5 py-0 font-medium"
+                              >
+                                {gradeName}
+                              </Badge>
+                              {item.until && (
+                                <span
+                                  className={`text-[10px] font-mono px-1.5 py-0.2 rounded border ${
+                                    isExpired
+                                      ? 'bg-rose-50 text-rose-600 border-rose-200'
+                                      : 'bg-slate-100 text-slate-600 border-slate-200'
+                                  }`}
+                                >
+                                  ⏳ {isExpired ? 'Đã hết hạn' : `Còn ${formatRodDuration(timeLeft)}`}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-[11px] text-slate-500 italic mt-0.5 leading-snug">{rodDesc}</p>
                           </div>
-                          <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">{rodDesc}</p>
                         </div>
+
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={isUsing ? 'default' : 'outline'}
+                          disabled={isUsing || isExpired}
+                          onClick={() => handleUseRod(rodId)}
+                          className={`h-7 px-3 text-xs rounded-lg shrink-0 cursor-pointer ${
+                            isUsing
+                              ? 'bg-indigo-600 text-white font-bold cursor-default hover:bg-indigo-600'
+                              : 'text-slate-700 hover:bg-slate-50'
+                          }`}
+                        >
+                          {isUsing ? (
+                            <span className="flex items-center gap-1">
+                              <Check className="h-3 w-3" />
+                              <span>Đang dùng</span>
+                            </span>
+                          ) : isExpired ? (
+                            'Hết hạn'
+                          ) : (
+                            'Trang bị'
+                          )}
+                        </Button>
                       </div>
 
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant={isUsing ? 'default' : 'outline'}
-                        disabled={isUsing || isExpired}
-                        onClick={() => handleUseRod(rodId)}
-                        className={`h-7 px-3 text-xs rounded-lg cursor-pointer ${
-                          isUsing
-                            ? 'bg-indigo-600 text-white font-bold cursor-default hover:bg-indigo-600'
-                            : 'text-slate-700 hover:bg-slate-50'
-                        }`}
-                      >
-                        {isUsing ? (
-                          <span className="flex items-center gap-1">
-                            <Check className="h-3 w-3" />
-                            <span>Đang dùng</span>
+                      {/* Base power note */}
+                      <div className="mt-2 text-[10.5px] text-slate-600 bg-slate-50 px-2 py-1 rounded-md border border-slate-200/60 flex items-center gap-1.5">
+                        <span className="text-xs">⚡</span>
+                        <span>
+                          {meta?.grade === 'good'
+                            ? 'Sức cần tương đương cần carbon (Cấp 3)'
+                            : 'Mạnh hơn cần carbon: cá hiếm cắn nhiều hơn, phao chìm lâu hơn'}
+                        </span>
+                      </div>
+
+                      {/* Special Traits list */}
+                      {traits.length > 0 && (
+                        <div className="mt-2 pt-2 border-t border-slate-100 flex flex-col gap-1.5">
+                          <span className="text-[10px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+                            <Sparkles className="h-3 w-3 text-amber-500" />
+                            <span>Tính năng đặc biệt ({traits.length}):</span>
                           </span>
-                        ) : isExpired ? (
-                          'Hết hạn'
-                        ) : (
-                          'Trang bị'
-                        )}
-                      </Button>
+                          <div className="grid grid-cols-1 gap-1">
+                            {traits.map((tId) => {
+                              const tMeta = ROD_TRAITS_MAP[tId];
+                              if (!tMeta) return null;
+                              return (
+                                <div
+                                  key={tId}
+                                  className="flex items-center justify-between bg-amber-50/70 border border-amber-200/60 rounded-md px-2 py-1 text-[11px]"
+                                >
+                                  <div className="flex items-center gap-1.5 min-w-0">
+                                    <span className="text-xs shrink-0">{tMeta.icon}</span>
+                                    <span className="font-bold text-amber-950 shrink-0">{tMeta.name}:</span>
+                                    <span className="text-amber-900/90 truncate">{tMeta.desc}</span>
+                                  </div>
+                                  {tMeta.statBadge && (
+                                    <span className="shrink-0 bg-amber-100 text-amber-900 font-semibold text-[9.5px] px-1.5 py-0.2 rounded border border-amber-200/80 ml-1.5">
+                                      {tMeta.statBadge}
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
