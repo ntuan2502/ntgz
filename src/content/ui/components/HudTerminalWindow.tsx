@@ -116,7 +116,10 @@ export function HudTerminalWindow({
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
         e.preventDefault();
         setIsSearchOpen(true);
-        setTimeout(() => searchInputRef.current?.focus(), 50);
+        setTimeout(() => {
+          searchInputRef.current?.focus();
+          searchInputRef.current?.select();
+        }, 50);
       } else if (e.key === 'Escape' && isSearchOpen) {
         if (searchQuery) {
           setSearchQuery('');
@@ -129,6 +132,23 @@ export function HudTerminalWindow({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, isSearchOpen, searchQuery]);
+
+  // Isolate keyboard events on search input to prevent page/game engine from intercepting Space/typing
+  useEffect(() => {
+    const el = searchInputRef.current;
+    if (!el || !isSearchOpen) return;
+    const stopPropagation = (e: KeyboardEvent) => {
+      e.stopPropagation();
+    };
+    el.addEventListener('keydown', stopPropagation);
+    el.addEventListener('keyup', stopPropagation);
+    el.addEventListener('keypress', stopPropagation);
+    return () => {
+      el.removeEventListener('keydown', stopPropagation);
+      el.removeEventListener('keyup', stopPropagation);
+      el.removeEventListener('keypress', stopPropagation);
+    };
+  }, [isSearchOpen]);
 
   // Auto-scroll handler
   const handleScroll = () => {
@@ -411,8 +431,8 @@ export function HudTerminalWindow({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => {
+                e.stopPropagation();
                 if (e.key === 'Escape') {
-                  e.stopPropagation();
                   if (searchQuery) {
                     setSearchQuery('');
                   } else {
@@ -420,8 +440,10 @@ export function HudTerminalWindow({
                   }
                 }
               }}
+              onKeyUp={(e) => e.stopPropagation()}
+              onKeyPress={(e) => e.stopPropagation()}
               placeholder="Tìm kiếm log... (Esc để đóng)"
-              className="w-full pl-7 pr-6 py-1 bg-slate-950 border border-slate-700/80 rounded-md text-[11px] font-mono text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50"
+              className="w-full pl-7 pr-6 py-1 bg-slate-950 border border-slate-700/80 rounded-md text-[11px] font-mono text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50 select-text"
             />
             {searchQuery && (
               <button

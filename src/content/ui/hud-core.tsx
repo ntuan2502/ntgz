@@ -284,6 +284,26 @@ export function createHud(): void {
   const shadow = host.attachShadow({ mode: 'open' });
   hudRoot = shadow;
 
+  // Prevent any keyboard events inside HUD inputs/textareas from bubbling out to Phaser / page game engine
+  // so typing Space, WASD, or hotkeys in search/config inputs doesn't trigger game actions or preventDefault
+  const stopInputKeyboardPropagation = (e: Event) => {
+    const path = e.composedPath ? e.composedPath() : [];
+    const isInput = path.some(
+      (el) =>
+        el instanceof HTMLInputElement ||
+        el instanceof HTMLTextAreaElement ||
+        (el as HTMLElement)?.tagName === 'INPUT' ||
+        (el as HTMLElement)?.tagName === 'TEXTAREA' ||
+        (el as HTMLElement)?.isContentEditable
+    );
+    if (isInput) {
+      e.stopPropagation();
+    }
+  };
+  shadow.addEventListener('keydown', stopInputKeyboardPropagation);
+  shadow.addEventListener('keyup', stopInputKeyboardPropagation);
+  shadow.addEventListener('keypress', stopInputKeyboardPropagation);
+
   // Inject compiled Tailwind stylesheet directly into Shadow DOM
   const style = document.createElement('style');
   style.textContent = tailwindStyles;
