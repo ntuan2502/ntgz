@@ -1,6 +1,57 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Terminal, Trash2, X, ArrowDown, Copy, Check } from 'lucide-react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
+import { Terminal, Trash2, X, ArrowDown, Copy, Check, Search } from 'lucide-react';
 import { HudLogEntry } from '../hud-core';
+
+function removeAccents(str: string): string {
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D');
+}
+
+function highlightMatch(text: string, query: string): React.ReactNode {
+  const trimmed = query.trim();
+  if (!trimmed) return text;
+
+  try {
+    const escaped = trimmed.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const directRegex = new RegExp(`(${escaped})`, 'gi');
+    if (directRegex.test(text)) {
+      const parts = text.split(directRegex);
+      return parts.map((part, i) =>
+        directRegex.test(part) ? (
+          <mark key={i} className="bg-amber-400 text-slate-950 font-bold px-0.5 rounded">
+            {part}
+          </mark>
+        ) : (
+          part
+        )
+      );
+    }
+
+    const normText = removeAccents(text).toLowerCase();
+    const normQuery = removeAccents(trimmed).toLowerCase();
+    const idx = normText.indexOf(normQuery);
+    if (idx !== -1) {
+      const before = text.slice(0, idx);
+      const match = text.slice(idx, idx + normQuery.length);
+      const after = text.slice(idx + normQuery.length);
+      return (
+        <>
+          {before}
+          <mark className="bg-amber-400 text-slate-950 font-bold px-0.5 rounded">
+            {match}
+          </mark>
+          {after}
+        </>
+      );
+    }
+  } catch {
+    // Return original text if regex throws
+  }
+  return text;
+}
 
 export interface HudTerminalWindowProps {
   isOpen: boolean;
@@ -35,6 +86,49 @@ export function HudTerminalWindow({
   const stickToBottomRef = useRef<boolean>(true);
   const [isAutoScroll, setIsAutoScroll] = useState<boolean>(true);
   const [copied, setCopied] = useState<boolean>(false);
+  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Filter logs based on search query (case-insensitive & accent-insensitive)
+  const filteredLogs = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return logs;
+    const qNorm = removeAccents(q);
+    return logs.filter((entry) => {
+      const textNorm = removeAccents(entry.text.toLowerCase());
+      const timeNorm = entry.time.toLowerCase();
+      const gameTimeNorm = (entry.gameTime || '').toLowerCase();
+      return (
+        textNorm.includes(qNorm) ||
+        timeNorm.includes(q) ||
+        gameTimeNorm.includes(q)
+      );
+    });
+  }, [logs, searchQuery]);
+
+  const displayLogs = searchQuery.trim() ? filteredLogs : logs;
+
+  // Shortcut listener for Ctrl+F / Cmd+F and Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
+        e.preventDefault();
+        setIsSearchOpen(true);
+        setTimeout(() => searchInputRef.current?.focus(), 50);
+      } else if (e.key === 'Escape' && isSearchOpen) {
+        if (searchQuery) {
+          setSearchQuery('');
+        } else {
+          setIsSearchOpen(false);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, isSearchOpen, searchQuery]);
 
   // Auto-scroll handler
   const handleScroll = () => {
@@ -62,10 +156,10 @@ export function HudTerminalWindow({
 
   useEffect(() => {
     const el = scrollRef.current;
-    if (el && stickToBottomRef.current) {
+    if (el && stickToBottomRef.current && !searchQuery.trim()) {
       el.scrollTop = el.scrollHeight;
     }
-  }, [logs]);
+  }, [logs, searchQuery]);
 
   const scrollToBottom = () => {
     const el = scrollRef.current;
@@ -77,8 +171,8 @@ export function HudTerminalWindow({
   };
 
   const handleCopyLogs = () => {
-    if (logs.length === 0) return;
-    const text = logs
+    if (displayLogs.length === 0) return;
+    const text = displayLogs
       .map((l) => `[${l.time}] ${l.gameTime ? `[${l.gameTime}] ` : ''}${l.text}`)
       .join('\n');
     navigator.clipboard.writeText(text);
@@ -242,6 +336,27 @@ export function HudTerminalWindow({
         <div className="flex items-center gap-1 shrink-0" onMouseDown={(e) => e.stopPropagation()}>
           <button
             type="button"
+            onClick={() => {
+              setIsSearchOpen((prev) => {
+                const next = !prev;
+                if (next) {
+                  setTimeout(() => searchInputRef.current?.focus(), 50);
+                }
+                return next;
+              });
+            }}
+            className={`flex items-center justify-center h-6 w-6 rounded-md transition-colors cursor-pointer ${
+              isSearchOpen || searchQuery
+                ? 'text-amber-400 bg-amber-950/60 border border-amber-800/80'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+            }`}
+            title="Tìm kiếm log (Ctrl+F)"
+          >
+            <Search className="h-3.5 w-3.5" />
+          </button>
+
+          <button
+            type="button"
             onClick={scrollToBottom}
             className={`flex items-center justify-center h-6 w-6 rounded-md transition-colors cursor-pointer ${
               isAutoScroll
@@ -257,7 +372,7 @@ export function HudTerminalWindow({
             type="button"
             onClick={handleCopyLogs}
             className="flex items-center justify-center h-6 w-6 rounded-md text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors cursor-pointer"
-            title="Sao chép toàn bộ log vào bộ nhớ tạm"
+            title={searchQuery.trim() ? 'Sao chép kết quả tìm kiếm vào bộ nhớ tạm' : 'Sao chép toàn bộ log vào bộ nhớ tạm'}
           >
             {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
           </button>
@@ -282,6 +397,73 @@ export function HudTerminalWindow({
         </div>
       </div>
 
+      {/* Search Bar Toolbar */}
+      {isSearchOpen && (
+        <div
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 border-b border-slate-800 text-xs shrink-0 select-none animate-in fade-in-0 duration-100"
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          <div className="relative flex-1 flex items-center">
+            <Search className="absolute left-2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  e.stopPropagation();
+                  if (searchQuery) {
+                    setSearchQuery('');
+                  } else {
+                    setIsSearchOpen(false);
+                  }
+                }
+              }}
+              placeholder="Tìm kiếm log... (Esc để đóng)"
+              className="w-full pl-7 pr-6 py-1 bg-slate-950 border border-slate-700/80 rounded-md text-[11px] font-mono text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  searchInputRef.current?.focus();
+                }}
+                className="absolute right-1.5 p-0.5 text-slate-400 hover:text-slate-200 cursor-pointer"
+                title="Xoá từ khoá"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            )}
+          </div>
+
+          {searchQuery.trim() && (
+            <span
+              className={`text-[10px] font-mono px-1.5 py-0.5 rounded border shrink-0 ${
+                filteredLogs.length > 0
+                  ? 'bg-emerald-950/80 text-emerald-300 border-emerald-800/80'
+                  : 'bg-rose-950/80 text-rose-300 border-rose-800/80'
+              }`}
+            >
+              {filteredLogs.length} kết quả
+            </span>
+          )}
+
+          <button
+            type="button"
+            onClick={() => {
+              setIsSearchOpen(false);
+              setSearchQuery('');
+            }}
+            className="p-1 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded transition-colors cursor-pointer shrink-0"
+            title="Đóng tìm kiếm (Esc)"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
       {/* Terminal Log Output (Scrollable Body) */}
       <div
         ref={scrollRef}
@@ -294,9 +476,15 @@ export function HudTerminalWindow({
             <span>Chưa có lịch sử hoạt động trong phiên này...</span>
             <span className="text-[10px] text-slate-600 mt-1">Các hành động auto sẽ được ghi chi tiết tại đây.</span>
           </div>
+        ) : displayLogs.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-slate-500 italic py-10 font-sans text-xs">
+            <Search className="h-8 w-8 text-slate-700 mb-2 stroke-[1.2]" />
+            <span>Không tìm thấy log nào khớp với "{searchQuery}"</span>
+            <span className="text-[10px] text-slate-600 mt-1">Thử từ khoá khác hoặc bấm X để xoá tìm kiếm.</span>
+          </div>
         ) : (
-          logs.map((entry, idx) => {
-            const isLatest = idx === logs.length - 1;
+          displayLogs.map((entry, idx) => {
+            const isLatest = idx === displayLogs.length - 1 && !searchQuery.trim();
             return (
               <div
                 key={entry.id}
@@ -306,13 +494,13 @@ export function HudTerminalWindow({
                     : 'text-slate-300 hover:bg-slate-900/60'
                 }`}
               >
-                <span className="text-slate-500">[{entry.time}]</span>{' '}
+                <span className="text-slate-500">[{highlightMatch(entry.time, searchQuery)}]</span>{' '}
                 {entry.gameTime && (
                   <>
-                    <span className="text-amber-400/90 font-mono">[{entry.gameTime}]</span>{' '}
+                    <span className="text-amber-400/90 font-mono">[{highlightMatch(entry.gameTime, searchQuery)}]</span>{' '}
                   </>
                 )}
-                <span>{entry.text}</span>
+                <span>{highlightMatch(entry.text, searchQuery)}</span>
               </div>
             );
           })
@@ -322,10 +510,21 @@ export function HudTerminalWindow({
       {/* Terminal Footer Status Bar */}
       <div className="flex items-center justify-between px-3 py-1 bg-slate-900/90 border-t border-slate-800/80 text-[10px] text-slate-400 shrink-0 select-none">
         <div className="flex items-center gap-1.5 truncate mr-2">
-          <span className="text-emerald-500 font-semibold shrink-0">Live:</span>
-          <span className="truncate text-slate-300" title={lastAction}>
-            {lastAction}
-          </span>
+          {searchQuery.trim() ? (
+            <>
+              <span className="text-amber-400 font-semibold shrink-0">Lọc:</span>
+              <span className="text-slate-200 font-mono text-[9.5px]">
+                {filteredLogs.length}/{logs.length} dòng
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="text-emerald-500 font-semibold shrink-0">Live:</span>
+              <span className="truncate text-slate-300" title={lastAction}>
+                {lastAction}
+              </span>
+            </>
+          )}
         </div>
         <span className="text-slate-500 font-mono text-[9px] shrink-0">
           {terminalWidth}×{sharedHeight}px
