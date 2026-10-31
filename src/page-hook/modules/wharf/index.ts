@@ -249,6 +249,10 @@ let isStockingBait = false;
 let lastObservedCashedSeq = -1;
 let lastObservedNoticeSeq = -1;
 let lastObservedSpunSeq = -1;
+let lastObservedHlwToastSeq = -1;
+let lastHlwQueryAt = 0;
+let lastHtxQueryAt = 0;
+let lastHtxClaimAt = 0;
 
 function subscribeToBenNetIfNeeded(bnStore: import('../../core/engine-access').ZustandStore<BenNetState>): void {
   if (isSubscribedToBenNet || typeof bnStore.subscribe !== 'function') return;
@@ -274,6 +278,7 @@ function initWharfSeqsIfNeeded(bn: BenNetState): void {
   lastObservedCashedSeq = typeof bn.cashed?.seq === 'number' ? bn.cashed.seq : 0;
   lastObservedNoticeSeq = typeof bn.notice?.seq === 'number' ? bn.notice.seq : 0;
   lastObservedSpunSeq = typeof bn.spun?.seq === 'number' ? bn.spun.seq : 0;
+  lastObservedHlwToastSeq = typeof bn.hlwToast?.seq === 'number' ? bn.hlwToast.seq : 0;
 }
 
 const cricketTotal = (c: { stats?: { power?: number; tough?: number; nerve?: number } }) =>
@@ -326,6 +331,13 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
       tile?: { x: number; y: number };
       running?: boolean;
       lookAt?: (x: number, y: number) => void;
+      x?: number;
+      y?: number;
+    };
+    boss?: {
+      visible?: boolean;
+      x?: number;
+      y?: number;
     };
   } | null;
 
@@ -428,6 +440,47 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
       acted: true,
       msg,
     };
+  }
+
+  // Watch for Halloween event toasts / announcements from server
+  if (bn.hlwToast && typeof bn.hlwToast.seq === 'number' && bn.hlwToast.seq !== lastObservedHlwToastSeq) {
+    lastObservedHlwToastSeq = bn.hlwToast.seq;
+    return {
+      acted: true,
+      msg: `🎃 Sự kiện: ${bn.hlwToast.text}`,
+    };
+  }
+
+  // =========================================================================
+  // 0. WORLD BOSS HUNTER: Tự động bám theo Boss Bí Ngô khi xuất hiện (Mỗi 30p, chạy 3p)
+  // =========================================================================
+  if (cfg.benAutoBossHunt !== false) {
+    const isBossVisible = Boolean(benScene?.boss?.visible);
+    const hasBossState = Boolean(bn.hlwBoss);
+    if ((isBossVisible || hasBossState) && benScene?.boss && benScene.farmer) {
+      const bossPixelX = benScene.boss.x ?? 0;
+      const bossPixelY = benScene.boss.y ?? 0;
+      const bossTileX = Math.round(bossPixelX / 16);
+      const bossTileY = Math.round(bossPixelY / 16);
+      const farmerTile = benScene.farmer.tile || {
+        x: Math.round((benScene.farmer.x ?? 0) / 16),
+        y: Math.round((benScene.farmer.y ?? 0) / 16),
+      };
+
+      const dist = Math.hypot(bossTileX - farmerTile.x, bossTileY - farmerTile.y);
+      if (dist > 1.5 && canAct('ben_boss_hunt', 400)) {
+        markActed('ben_boss_hunt');
+        benScene.goFarmer?.({ x: bossTileX, y: bossTileY });
+        return {
+          acted: true,
+          msg: `👑 Boss Bí Ngô đang chạy tại (${bossTileX}, ${bossTileY}) · Đang bám theo nhặt bí ngô 🎃`,
+        };
+      }
+      return {
+        acted: true,
+        msg: `👑 Đang đứng cạnh Boss Bí Ngô (${bossTileX}, ${bossTileY}) · Hứng bí ngô rắc rơi 🎃`,
+      };
+    }
   }
 
   const huntEnabled = cfg.benSubEnabled?.cricketHunt !== false && cfg.benAutoCricketHunt !== false;
@@ -1386,6 +1439,89 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
             };
           }
         }
+      }
+    }
+
+    // D. Sạp Bà Tư Bí ({ x: 29, y: 18 }): Đổi Xương cá ma + Bí ngô con lấy Hộp quà Đêm Bí Ngô
+    if (cfg.benAutoHlwExchange !== false) {
+      const now = Date.now();
+      if (!bn.hlw && now - lastHlwQueryAt > 60000 && canAct('ben_hlw_query', 60000)) {
+        lastHlwQueryAt = now;
+        markActed('ben_hlw_query');
+        sendBenWs({ t: 'hlw' });
+      }
+
+      const hlw = bn.hlw;
+      const bag = Array.isArray(hlw?.bag) ? hlw.bag : [];
+      const boneItem = bag.find((i: { item: string }) => i.item === 'hlwBone');
+      const pumpkinItem = bag.find((i: { item: string }) => i.item === 'hlwPumpkin');
+      const boxItem = bag.find((i: { item: string }) => i.item === 'hlwBox');
+
+      const bones = boneItem?.qty || 0;
+      const pumpkins = pumpkinItem?.qty || 0;
+      const boxes = boxItem?.qty || 0;
+
+      const maxExchanges = Math.min(Math.floor(bones / 10), Math.floor(pumpkins / 5));
+      if (maxExchanges > 0 && canAct('ben_hlw_exchange', 4000)) {
+        const curTile = benScene?.farmer?.tile;
+        const isAtBaTuSpot = Boolean(curTile && curTile.x === 29 && curTile.y === 18);
+
+        if (!isAtBaTuSpot) {
+          return walkAndRun(
+            { x: 29, y: 18 },
+            () => {
+              if (benScene?.farmer?.lookAt) {
+                benScene.farmer.lookAt((30 + 0.5) * 16, 17 * 16);
+              }
+              sendBenWs({ t: 'hlwExchange', n: maxExchanges });
+            },
+            `Đi lại Sạp Bà Tư Bí để đổi ${maxExchanges} phần quà (-${maxExchanges * 10}🦴, -${maxExchanges * 5}🎃)...`,
+            'ben_hlw_walk',
+            { panel: 'hlw' },
+            1500
+          );
+        }
+
+        // Đã đứng tại sạp Bà Tư Bí { x: 29, y: 18 }
+        if (benScene?.farmer?.lookAt) {
+          benScene.farmer.lookAt((30 + 0.5) * 16, 17 * 16);
+        }
+        markActed('ben_hlw_exchange');
+        sendBenWs({ t: 'hlwExchange', n: maxExchanges });
+        return {
+          acted: true,
+          msg: `🎃 Đã đổi ${maxExchanges} phần quà tại Sạp Bà Tư Bí (-${maxExchanges * 10}🦴, -${maxExchanges * 5}🎃) ➔ Nhận ${maxExchanges} Hộp quà Đêm Bí Ngô 🎁`,
+        };
+      }
+
+      // Tự mở Hộp quà Đêm Bí Ngô
+      if (cfg.benAutoHlwOpenBox !== false && boxes > 0 && canAct('ben_hlw_open', 3000)) {
+        markActed('ben_hlw_open');
+        sendBenWs({ t: 'hlwOpen', n: boxes });
+        return {
+          acted: true,
+          msg: `🎁 Đang mở ${boxes} Hộp quà Đêm Bí Ngô...`,
+        };
+      }
+    }
+
+    // E. Hợp Tác Xã Cô Tư: Tự động điểm danh hàng ngày nhận quà
+    if (cfg.benAutoHtxClaim !== false) {
+      const now = Date.now();
+      if (!bn.htx && now - lastHtxQueryAt > 180000 && canAct('ben_htx_query', 180000)) {
+        lastHtxQueryAt = now;
+        markActed('ben_htx_query');
+        sendBenWs({ t: 'htx' });
+      }
+
+      if (bn.htx && !bn.htx.claimed && now - lastHtxClaimAt > 60000 && canAct('ben_htx_claim', 60000)) {
+        lastHtxClaimAt = now;
+        markActed('ben_htx_claim');
+        sendBenWs({ t: 'htxClaim' });
+        return {
+          acted: true,
+          msg: '🧺 Đang gửi lệnh lĩnh phần hàng ngày tại Hợp Tác Xã Cô Tư...',
+        };
       }
     }
 

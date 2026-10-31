@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { GameSnapshot } from '@/shared/types/game-state';
-import { InventoryTab } from './InventoryTab';
-import { CropsRadarTab } from './CropsRadarTab';
-import { WealthPortfolioTab } from './WealthPortfolioTab';
-import { LivestockTab } from './LivestockTab';
 import { CricketDeckTab } from './CricketDeckTab';
 import { FishDexTab } from './FishDexTab';
 import { WharfBoardTab } from './WharfBoardTab';
@@ -18,18 +14,12 @@ import { preloadGameAssets } from '@/content/bridge/game-assets';
 import fishDexRaw from '@/shared/constants/fish-dex-data.json';
 
 export type MonitorTabId =
-  | 'inventory'
-  | 'crops'
-  | 'wealth'
-  | 'livestock'
   | 'crickets'
   | 'dex'
   | 'board'
   | 'closet'
   | 'friends'
   | 'pack';
-
-type DomainId = 'farm' | 'wharf' | 'all';
 
 interface MonitorHubProps {
   snap: GameSnapshot | null;
@@ -38,24 +28,27 @@ interface MonitorHubProps {
   showHeader?: boolean;
 }
 
-const WHARF_TABS: MonitorTabId[] = ['crickets', 'dex', 'board', 'closet', 'friends', 'pack'];
+const WHARF_TABS: Array<{ id: MonitorTabId; label: string; icon: string }> = [
+  { id: 'pack', label: 'Túi đồ', icon: '🎒' },
+  { id: 'crickets', label: 'Ống tre dế', icon: '🦗' },
+  { id: 'dex', label: 'Sổ cá', icon: '📖' },
+  { id: 'board', label: 'Bảng vàng', icon: '🏆' },
+  { id: 'closet', label: 'Tủ đồ', icon: '👕' },
+  { id: 'friends', label: 'Bạn bè', icon: '👥' },
+];
 
 export function MonitorHub({
   snap,
   onClose,
-  defaultTab = 'inventory',
+  defaultTab = 'pack',
   showHeader = true,
 }: MonitorHubProps) {
   const [activeTab, setActiveTab] = useState<MonitorTabId>(defaultTab);
   const [boardInitialCategory, setBoardInitialCategory] = useState<string | undefined>(undefined);
-  const [activeDomain, setActiveDomain] = useState<DomainId>(() => {
-    return WHARF_TABS.includes(defaultTab) ? 'wharf' : 'farm';
-  });
 
   useEffect(() => {
     if (defaultTab) {
       setActiveTab(defaultTab);
-      setActiveDomain(WHARF_TABS.includes(defaultTab) ? 'wharf' : 'farm');
     }
   }, [defaultTab]);
 
@@ -130,35 +123,9 @@ export function MonitorHub({
     void preloadGameAssets(commonKeys);
   }, []);
 
-  const allTabs: Array<{ id: MonitorTabId; label: string; icon: string; domain: 'farm' | 'wharf' }> = [
-    // Nông trại
-    { id: 'inventory', label: 'Kho đồ', icon: '🎒', domain: 'farm' },
-    { id: 'crops', label: 'Mùa vụ', icon: '🌱', domain: 'farm' },
-    { id: 'wealth', label: 'Tiết kiệm', icon: '🏦', domain: 'farm' },
-    { id: 'livestock', label: 'Gia súc', icon: '🐾', domain: 'farm' },
-    // Bến đò
-    { id: 'crickets', label: 'Ống tre dế', icon: '🦗', domain: 'wharf' },
-    { id: 'dex', label: 'Sổ cá', icon: '📖', domain: 'wharf' },
-    { id: 'board', label: 'Bảng vàng', icon: '🏆', domain: 'wharf' },
-    { id: 'closet', label: 'Tủ đồ', icon: '👕', domain: 'wharf' },
-    { id: 'friends', label: 'Bạn bè', icon: '👥', domain: 'wharf' },
-    { id: 'pack', label: 'Túi đồ', icon: '🎒', domain: 'wharf' },
-  ];
-
-  const visibleTabs = allTabs.filter((t) => (activeDomain === 'all' ? true : t.domain === activeDomain));
-
-  const handleDomainChange = (domain: DomainId) => {
-    setActiveDomain(domain);
-    if (domain === 'farm' && !allTabs.find((t) => t.domain === 'farm' && t.id === activeTab)) {
-      setActiveTab('inventory');
-    } else if (domain === 'wharf' && !allTabs.find((t) => t.domain === 'wharf' && t.id === activeTab)) {
-      setActiveTab('crickets');
-    }
-  };
-
   return (
     <div className="flex flex-col flex-1 min-h-0 bg-slate-50 overflow-hidden select-none">
-      {/* Top Header Bar (Optional, used if standalone full-panel) */}
+      {/* Top Header Bar */}
       {showHeader && (
         <div className="flex items-center justify-between px-3 py-2 bg-white border-b border-slate-200/90 shrink-0">
           <div className="flex items-center gap-2">
@@ -175,7 +142,7 @@ export function MonitorHub({
             </Button>
             <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
               <span>🎒</span>
-              <span>Giám Sát Realtime</span>
+              <span>Giám Sát Bến Đò Realtime</span>
             </span>
           </div>
 
@@ -193,53 +160,10 @@ export function MonitorHub({
         </div>
       )}
 
-      {/* Domain Switcher Bar (Nông trại vs Bến đò vs Tất cả) */}
-      <div className="px-3 py-1 bg-white border-b border-slate-200/60 shrink-0 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg text-xs font-medium">
-          <button
-            type="button"
-            onClick={() => handleDomainChange('farm')}
-            className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
-              activeDomain === 'farm'
-                ? 'bg-white text-emerald-800 font-bold shadow-2xs'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            🌾 Nông Trại
-          </button>
-          <button
-            type="button"
-            onClick={() => handleDomainChange('wharf')}
-            className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
-              activeDomain === 'wharf'
-                ? 'bg-white text-emerald-800 font-bold shadow-2xs'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            🛶 Bến Đò
-          </button>
-          <button
-            type="button"
-            onClick={() => handleDomainChange('all')}
-            className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
-              activeDomain === 'all'
-                ? 'bg-white text-emerald-800 font-bold shadow-2xs'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            ✨ Tất cả
-          </button>
-        </div>
-
-        <span className="text-[11px] text-slate-500 font-medium pr-1">
-          {activeDomain === 'farm' ? '4 mục nông trại' : activeDomain === 'wharf' ? '6 mục bến đò' : '10 mục giám sát'}
-        </span>
-      </div>
-
-      {/* Tab Navigation Pills with horizontal scroll & generous right margin */}
+      {/* Tab Navigation Pills with horizontal scroll */}
       <div className="px-3 py-1.5 bg-slate-100/95 border-b border-slate-200/90 shrink-0 overflow-x-auto scrollbar-thin">
         <div className="flex items-center gap-1.5 min-w-max pr-8">
-          {visibleTabs.map((tab) => (
+          {WHARF_TABS.map((tab) => (
             <button
               key={tab.id}
               type="button"
@@ -259,24 +183,9 @@ export function MonitorHub({
 
       {/* Main Tab Content Area */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 bg-slate-50/50">
-        {activeTab === 'inventory' && (
-          <TabErrorBoundary fallbackName="Kho đồ">
-            <InventoryTab snap={snap} />
-          </TabErrorBoundary>
-        )}
-        {activeTab === 'crops' && (
-          <TabErrorBoundary fallbackName="Mùa vụ">
-            <CropsRadarTab snap={snap} />
-          </TabErrorBoundary>
-        )}
-        {activeTab === 'wealth' && (
-          <TabErrorBoundary fallbackName="Tiết kiệm">
-            <WealthPortfolioTab snap={snap} />
-          </TabErrorBoundary>
-        )}
-        {activeTab === 'livestock' && (
-          <TabErrorBoundary fallbackName="Gia súc">
-            <LivestockTab snap={snap} />
+        {activeTab === 'pack' && (
+          <TabErrorBoundary fallbackName="Túi đồ">
+            <WharfPackTab snap={snap} />
           </TabErrorBoundary>
         )}
         {activeTab === 'crickets' && (
@@ -308,11 +217,6 @@ export function MonitorHub({
         {activeTab === 'friends' && (
           <TabErrorBoundary fallbackName="Bạn bè">
             <FriendsTab snap={snap} />
-          </TabErrorBoundary>
-        )}
-        {activeTab === 'pack' && (
-          <TabErrorBoundary fallbackName="Túi đồ">
-            <WharfPackTab snap={snap} />
           </TabErrorBoundary>
         )}
       </div>

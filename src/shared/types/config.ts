@@ -232,6 +232,12 @@ export interface AppConfig {
   benAutoAtm: boolean;
   benAtmThreshold: number;
 
+  // Ben Do Events & Cooperatives (Sự kiện Boss, Sạp Bà Tư & HTX)
+  benAutoBossHunt: boolean;
+  benAutoHlwExchange: boolean;
+  benAutoHlwOpenBox: boolean;
+  benAutoHtxClaim: boolean;
+
   // Area 3: Sea Fishing Settings
   seaAutoSpot: boolean;
   seaSpot: 'pier' | 'rocks' | 'beach';

@@ -477,6 +477,51 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onO
                 </p>
               </div>
             )}
+
+            {/* Boss Bí Ngô */}
+            <label className="flex items-center justify-between text-slate-700 cursor-pointer pt-1 border-t border-slate-200/60">
+              <span className="flex items-center gap-1.5 font-medium">
+                <span>👑 Săn Boss Bí Ngô (bám theo nhặt quà mỗi 30p)</span>
+              </span>
+              <Switch
+                checked={Boolean(config.benAutoBossHunt ?? true)}
+                onCheckedChange={(c) => updateField('benAutoBossHunt', c)}
+              />
+            </label>
+
+            {/* Sạp Bà Tư Bí */}
+            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+              <span className="flex items-center gap-1.5 font-medium">
+                <span>🎃 Sạp Bà Tư Bí: Tự đổi quà (10 xương + 5 bí)</span>
+              </span>
+              <Switch
+                checked={Boolean(config.benAutoHlwExchange ?? true)}
+                onCheckedChange={(c) => updateField('benAutoHlwExchange', c)}
+              />
+            </label>
+            {config.benAutoHlwExchange !== false && (
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]">
+                <label className="flex items-center justify-between text-slate-600 cursor-pointer">
+                  <span>🎁 Tự động mở Hộp quà Đêm Bí Ngô (hlwBox)</span>
+                  <Switch
+                    size="sm"
+                    checked={Boolean(config.benAutoHlwOpenBox ?? true)}
+                    onCheckedChange={(c) => updateField('benAutoHlwOpenBox', c)}
+                  />
+                </label>
+              </div>
+            )}
+
+            {/* Hợp Tác Xã Cô Tư */}
+            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+              <span className="flex items-center gap-1.5 font-medium">
+                <span>🧺 Hợp Tác Xã Cô Tư: Tự điểm danh nhận quà hàng ngày</span>
+              </span>
+              <Switch
+                checked={Boolean(config.benAutoHtxClaim ?? true)}
+                onCheckedChange={(c) => updateField('benAutoHtxClaim', c)}
+              />
+            </label>
           </div>
         );
 

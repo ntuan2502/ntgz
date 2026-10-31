@@ -616,6 +616,31 @@ export interface BenNetState {
     log?: unknown[];
     [key: string]: unknown;
   } | null;
+  hlw?: {
+    state?: unknown;
+    bag?: Array<{ item: string; qty: number }>;
+    board?: unknown;
+    [key: string]: unknown;
+  } | null;
+  hlwBoss?: {
+    start?: number;
+    seed?: number;
+    [key: string]: unknown;
+  } | null;
+  hlwLive?: unknown;
+  hlwToast?: { text: string; seq: number } | null;
+  htx?: {
+    claimed?: boolean;
+    card?: unknown;
+    until?: number;
+    [key: string]: unknown;
+  } | null;
+  htxDone?: {
+    bought?: boolean;
+    week?: boolean;
+    seq?: number;
+    [key: string]: unknown;
+  } | null;
   cashed?: {
     shells: number;
     money: number;

@@ -368,6 +368,12 @@ export const DEFAULT_CONFIG: AppConfig = {
   benAutoAtm: true,
   benAtmThreshold: 10000,
 
+  // Ben Do Events & Cooperatives (Sự kiện Boss, Sạp Bà Tư & HTX)
+  benAutoBossHunt: true,
+  benAutoHlwExchange: true,
+  benAutoHlwOpenBox: true,
+  benAutoHtxClaim: true,
+
   // Area 3: Sea Fishing Settings
   seaAutoSpot: true,
   seaSpot: 'beach',

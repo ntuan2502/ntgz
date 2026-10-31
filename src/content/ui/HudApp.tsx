@@ -51,7 +51,7 @@ export function HudApp({
   // Monitor Window State (Side window opening horizontally)
   const [monitorWidth, setMonitorWidth] = useState<number>(420);
   const [isMonitorOpen, setIsMonitorOpen] = useState<boolean>(false);
-  const [monitorTab, setMonitorTab] = useState<MonitorTabId>('inventory');
+  const [monitorTab, setMonitorTab] = useState<MonitorTabId>('pack');
 
   const handleOpenMonitorTab = (tab: MonitorTabId) => {
     setMonitorTab(tab);
