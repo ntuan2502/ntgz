@@ -184,8 +184,8 @@ const FISHING_SPOTS: Record<string, FishingSpotMeta> = {
     label: 'Cầu tàu lớn (Đầu mũi)',
     tiles: [
       { x: 31, y: 3 },
-      { x: 31, y: 4 },
       { x: 30, y: 3 },
+      { x: 32, y: 3 },
     ],
   },
   bamboo: {
@@ -196,6 +196,7 @@ const FISHING_SPOTS: Record<string, FishingSpotMeta> = {
       { x: 7, y: 6 },
       { x: 7, y: 7 },
       { x: 8, y: 6 },
+      { x: 8, y: 7 },
     ],
   },
   bridge: {
@@ -205,7 +206,7 @@ const FISHING_SPOTS: Record<string, FishingSpotMeta> = {
     tiles: [
       { x: 46, y: 15 },
       { x: 47, y: 15 },
-      { x: 45, y: 15 },
+      { x: 48, y: 15 },
     ],
   },
 };
@@ -1046,7 +1047,11 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
         ? curTile.x === targetTile.x && curTile.y === targetTile.y
         : bu.spot === spotMeta.kind;
 
-      if (!isAtTargetTile && (spotChoice as string) !== 'any') {
+      // Always walk to edge if character is not at a valid fishing spot (bu.spot is null/false)
+      // or if not at user's chosen target spot tile
+      const needsWalkToSpot = !bu.spot || (!isAtTargetTile && (spotChoice as string) !== 'any');
+
+      if (needsWalkToSpot) {
         if (benScene && typeof benScene.goFarmer === 'function') {
           const goFarmer = benScene.goFarmer.bind(benScene);
           return {
@@ -1061,7 +1066,7 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
                 : '';
               return {
                 acted: true,
-                msg: `🚶 Đang đi ra ${spotMeta.label} (${targetTile.x}, ${targetTile.y}) câu cá ${progressMsg}...`,
+                msg: `🚶 Đang đi ra sát mép nước ${spotMeta.label} (${targetTile.x}, ${targetTile.y}) câu cá ${progressMsg}...`,
               };
             },
           };
@@ -1070,7 +1075,9 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
 
       // Occasionally glance towards water when idle at spot
       if (benScene?.farmer?.lookAt && Math.random() < 0.04) {
-        const lookDir = spotMeta.kind === 'bank' ? { dx: 0, dy: -24 } : { dx: 24, dy: 0 };
+        const lookDir = spotMeta.kind === 'bank' || spotKey === 'dock'
+          ? { dx: 0, dy: -24 }
+          : { dx: 24, dy: 0 };
         benScene.farmer.lookAt(
           (benScene.farmer.x ?? 0) + lookDir.dx,
           (benScene.farmer.y ?? 0) + lookDir.dy

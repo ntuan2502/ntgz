@@ -2,14 +2,13 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { GameSnapshot } from '@/shared/types/game-state';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, RefreshCw, ExternalLink, Calendar, Search } from 'lucide-react';
+import { Trophy, RefreshCw, ExternalLink, Calendar } from 'lucide-react';
 import { execGameAction } from '@/content/bridge/content-bridge';
 import fishDexRaw from '@/shared/constants/fish-dex-data.json';
 
 interface FishEntry {
   id: string;
   name: string;
-  rarity?: string;
   [key: string]: unknown;
 }
 
@@ -25,7 +24,6 @@ interface BoardItem {
   title?: string;
   rank?: number;
   cricket?: string;
-  isMine?: boolean;
   [key: string]: unknown;
 }
 
@@ -43,9 +41,13 @@ interface BoardCategory {
   id: string;
   name: string;
   hint: string;
-  formatValue: (val: number, item?: { fish?: string; title?: string }) => string;
+  formatValue: (val: number, item?: { fish?: string }) => string;
 }
 
+/**
+ * 8 Official Bến Đò Leaderboard Categories
+ * Exactly matches `f7` from tools/play.formatted.js
+ */
 const BOARD_CATEGORIES: BoardCategory[] = [
   {
     id: 'species',
@@ -56,7 +58,7 @@ const BOARD_CATEGORIES: BoardCategory[] = [
   {
     id: 'size',
     name: '📏 Cá to',
-    hint: 'Con cá to nhất từng câu lên trên bến',
+    hint: 'Con cá to nhất từng câu lên',
     formatValue: (v, item) => `${v} cm${item?.fish ? ` · ${fishMap.get(item.fish) ?? item.fish}` : ''}`,
   },
   {
@@ -73,59 +75,36 @@ const BOARD_CATEGORIES: BoardCategory[] = [
   },
   {
     id: 'mythic',
-    name: '🐉 Thần thoại',
+    name: '🐉 Săn thần thoại',
     hint: 'Câu nhiều cá Thần thoại nhất (chỉ cần bốc từ hạng Quý mới dính)',
     formatValue: (v) => `${v.toLocaleString('vi-VN')} con`,
   },
   {
     id: 'junk',
     name: '♻️ Ve chai',
-    hint: 'Vớt rác nhiều nhất bến (dép, chai, lon, bao...)',
+    hint: 'Vớt rác nhiều nhất bến: dép, chai, lon, bao ni lông… sông sạch nhờ bạn',
     formatValue: (v) => `${v.toLocaleString('vi-VN')} món`,
   },
   {
     id: 'records',
     name: '📏 Giữ kỷ lục',
-    hint: 'Người giữ nhiều kỷ lục nhất: loài nào cũng có một người câu con to nhất cả bến',
+    hint: 'Giữ nhiều kỷ lục nhất: loài nào cũng có một người câu con to nhất cả bến (coi trong Sổ cá)',
     formatValue: (v) => `${v} loài`,
   },
   {
     id: 'week',
     name: '📅 Vua câu tuần',
-    hint: 'Cộng giá cá câu được từ 0h thứ Hai. Top 3 đeo huy chương suốt tuần',
+    hint: 'Cộng giá cá câu được từ 0h thứ Hai. Top 3 đeo huy chương trước danh hiệu suốt tuần sau',
     formatValue: (v) => `🐚 ${v.toLocaleString('vi-VN')}`,
-  },
-  {
-    id: 'lastWeek',
-    name: '👑 Tuần trước',
-    hint: 'Top 3 vua câu tuần trước được trao huy chương 🥇🥈🥉 đeo trước danh hiệu suốt tuần này',
-    formatValue: (v) => `🐚 ${v.toLocaleString('vi-VN')}`,
-  },
-  {
-    id: 'fishRecords',
-    name: '🏆 Kỷ lục 89 loài',
-    hint: 'Kỷ lục kích thước từng loài cá trên bến và người câu kỷ lục (từ Sổ cá bến đò)',
-    formatValue: (v) => `${v} cm`,
-  },
-  {
-    id: 'trumSoi',
-    name: '🥊 Trùm sới',
-    hint: 'Điểm thắng Boss sới dế đua BXH tuần (Cu Bin, Út Mập, Anh Lực, Bác Chín, Ông Sáu)',
-    formatValue: (v) => `${v.toLocaleString('vi-VN')} điểm`,
-  },
-  {
-    id: 'farmAll',
-    name: '🌍 Lão nông',
-    hint: 'Top 10 Lão nông cứng cựa cả làng theo số ngày làm nông và tài sản',
-    formatValue: (v) => `🪙 ${v.toLocaleString('vi-VN')} vàng`,
-  },
-  {
-    id: 'farmHomes',
-    name: '🏠 Nhà đẹp',
-    hint: 'Top 10 Nông trại được bà con ghé thăm và khen ngợi nhiều nhất',
-    formatValue: (v) => `👍 ${v.toLocaleString('vi-VN')} khen`,
   },
 ];
+
+const TRUM_SOI_CATEGORY: BoardCategory = {
+  id: 'trumSoi',
+  name: '🥊 Trùm sới',
+  hint: 'Điểm thắng Boss sới dế đua BXH tuần (Cu Bin, Út Mập, Anh Lực, Bác Chín, Ông Sáu)',
+  formatValue: (v) => `${v.toLocaleString('vi-VN')} điểm`,
+};
 
 const TRUM_SOI_ALIASES = ['trumSoi', 'soi', 'boss', 'cricket', 'trum_soi', 'arena', 'soiBoss'];
 const AUTO_RELOAD_INTERVAL_SEC = 60;
@@ -139,20 +118,6 @@ function formatWeekTimeLeft(weekStart: number, at: number): string {
   return `${Math.max(1, diffHours)} giờ`;
 }
 
-function getFarmLeaderboardData(): {
-  top?: Array<{ name: string; day: number; gold: number; ref?: string }>;
-  homes?: Array<{ name: string; praise: number; ref?: string }>;
-} | null {
-  try {
-    if (typeof window === 'undefined' || !window.localStorage) return null;
-    const raw = window.localStorage.getItem('farm-game/leaderboard');
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-
 interface WharfBoardTabProps {
   snap: GameSnapshot | null;
   initialCategoryId?: string;
@@ -163,7 +128,6 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [autoReload, setAutoReload] = useState<boolean>(true);
   const [countdown, setCountdown] = useState<number>(AUTO_RELOAD_INTERVAL_SEC);
-  const [fishSearch, setFishSearch] = useState<string>('');
   const isRefreshingRef = useRef(false);
 
   useEffect(() => {
@@ -174,71 +138,20 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
 
   const benNet = snap?.benNet;
   const board = benNet?.board as BoardData | null | undefined;
-  const currentCategory =
-    BOARD_CATEGORIES.find((c) => c.id === activeCategoryId) || BOARD_CATEGORIES[0];
 
   const isTrumSoi = activeCategoryId === 'trumSoi' || TRUM_SOI_ALIASES.includes(activeCategoryId);
+  const currentCategory = isTrumSoi
+    ? TRUM_SOI_CATEGORY
+    : BOARD_CATEGORIES.find((c) => c.id === activeCategoryId) || BOARD_CATEGORIES[0];
 
-  // Extract category items supporting all wharf boards, lastWeek, fishRecords, and farm leaderboards
+  // Extract category items
   const boardItems: BoardItem[] = (() => {
-    // 1. Standard server-provided boards (species, size, caught, earned, mythic, junk, records, week)
+    // Standard boards from server packet (species, size, caught, earned, mythic, junk, records, week)
     if (board?.boards?.[activeCategoryId]?.length) {
       return board.boards[activeCategoryId];
     }
 
-    // 2. lastWeek winners
-    if (activeCategoryId === 'lastWeek') {
-      if (Array.isArray(board?.lastWeek) && board.lastWeek.length > 0) {
-        return board.lastWeek.map((w, idx) => ({
-          id: `last_${idx}_${w.name}`,
-          name: w.name,
-          value: w.value,
-          rank: idx + 1,
-          title: idx === 0 ? '👑 Quán quân tuần' : idx === 1 ? '🥈 Á quân tuần' : '🥉 Hạng ba tuần',
-        }));
-      }
-    }
-
-    // 3. fishRecords (Kỷ lục kích thước từng loài cá từ board.records)
-    if (activeCategoryId === 'fishRecords') {
-      const records = board?.records || {};
-      const dex = (benNet?.dex as Record<string, { best?: number }>) || {};
-      const entries: BoardItem[] = [];
-
-      (fishDexRaw as FishEntry[]).forEach((f) => {
-        const rec = records[f.id];
-        if (rec) {
-          const isMine = typeof dex[f.id]?.best === 'number' && Number(dex[f.id]?.best) >= rec.size;
-          entries.push({
-            id: f.id,
-            name: rec.name,
-            value: rec.size,
-            fish: f.id,
-            title: f.name,
-            isMine,
-          });
-        }
-      });
-
-      // Filter by search keyword
-      let filtered = entries;
-      if (fishSearch.trim()) {
-        const q = fishSearch.trim().toLowerCase();
-        filtered = entries.filter(
-          (e) =>
-            e.name.toLowerCase().includes(q) ||
-            (e.title && e.title.toLowerCase().includes(q)) ||
-            e.id.toLowerCase().includes(q)
-        );
-      }
-
-      return filtered.map((item, idx) => ({
-        ...item,
-        rank: idx + 1,
-      }));
-    }
-
-    // 4. Trùm sới (Sới dế Boss leaderboard)
+    // Trùm sới dế boss leaderboard fallback
     if (isTrumSoi) {
       if (board?.boards) {
         for (const alias of TRUM_SOI_ALIASES) {
@@ -270,34 +183,6 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
             }));
           }
         }
-      }
-    }
-
-    // 5. Farm all (Lão nông cứng cựa)
-    if (activeCategoryId === 'farmAll') {
-      const farmData = getFarmLeaderboardData();
-      if (farmData && Array.isArray(farmData.top)) {
-        return farmData.top.map((it, idx) => ({
-          id: `farm_${idx}_${it.name}`,
-          name: it.name,
-          value: it.gold,
-          rank: idx + 1,
-          title: `Ngày ${it.day}`,
-        }));
-      }
-    }
-
-    // 6. Farm homes (Nhà đẹp)
-    if (activeCategoryId === 'farmHomes') {
-      const farmData = getFarmLeaderboardData();
-      if (farmData && Array.isArray(farmData.homes)) {
-        return farmData.homes.map((it, idx) => ({
-          id: `home_${idx}_${it.name}`,
-          name: it.name,
-          value: it.praise,
-          rank: idx + 1,
-          title: 'Nhà đẹp',
-        }));
       }
     }
 
@@ -374,6 +259,11 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
 
     return () => clearInterval(interval);
   }, [autoReload, handleRefresh]);
+
+  // Render tab button list (8 game categories + optional trumSoi if selected from cricket tab)
+  const renderedCategories = isTrumSoi && !BOARD_CATEGORIES.some((c) => c.id === 'trumSoi')
+    ? [...BOARD_CATEGORIES, TRUM_SOI_CATEGORY]
+    : BOARD_CATEGORIES;
 
   return (
     <div className="flex flex-col gap-3 p-3 pr-4 overflow-y-auto min-h-0 select-none">
@@ -453,30 +343,36 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
           </div>
         </div>
 
-        {/* My Current Rank Badge */}
-        {myRank && (
-          <div className="mt-2.5 flex items-center justify-between bg-white/80 rounded-lg px-2.5 py-1.5 border border-amber-200/70 text-xs">
-            <span className="text-slate-700 font-medium flex items-center gap-1">
-              <span>Hạng của bạn:</span>
-              <b className="text-amber-800 font-mono">#{myRank.rank}</b>
+        {/* My Current Rank Badge (matching game style) */}
+        <div className="mt-2.5 flex items-center justify-between bg-white/80 rounded-lg px-2.5 py-1.5 border border-amber-200/70 text-xs">
+          {myRank ? (
+            <>
+              <span className="text-slate-700 font-medium flex items-center gap-1">
+                <span>Hạng của bạn:</span>
+                <b className="text-amber-800 font-mono">#{myRank.rank}</b>
+              </span>
+              <span className="text-slate-600 font-medium">
+                Thành tích: <b className="text-slate-900">{currentCategory.formatValue(myRank.value)}</b>
+              </span>
+            </>
+          ) : (
+            <span className="text-slate-500 text-[11px] italic">
+              Bạn chưa có tên ở bảng này, ráng câu nha 💪
             </span>
-            <span className="text-slate-600 font-medium">
-              Thành tích: <b className="text-slate-900">{currentCategory.formatValue(myRank.value)}</b>
-            </span>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
-      {/* Week countdown & Last week winners */}
-      {(activeCategoryId === 'week' || activeCategoryId === 'lastWeek' || isTrumSoi) && board?.weekStart && board?.at && (
+      {/* Week Countdown & Last Week Winners (In-Game style: displayed inside tab 'week') */}
+      {activeCategoryId === 'week' && board?.weekStart && board?.at && (
         <div className="rounded-xl border border-sky-200 bg-sky-50/80 p-2.5 flex flex-col gap-1 text-xs text-sky-900 shadow-2xs">
           <div className="flex items-center gap-1.5 font-bold">
             <Calendar className="h-3.5 w-3.5 text-sky-600" />
-            <span>Còn {formatWeekTimeLeft(board.weekStart, board.at)} tới thứ Hai tính lại</span>
+            <span>⏳ Còn {formatWeekTimeLeft(board.weekStart, board.at)} tới thứ Hai tính lại</span>
           </div>
           {Array.isArray(board.lastWeek) && board.lastWeek.length > 0 && (
             <div className="text-[11px] text-sky-800/90 pt-1 border-t border-sky-200/60 flex items-center gap-1 flex-wrap">
-              <span className="font-semibold">Top 3 tuần trước:</span>
+              <span className="font-semibold">Tuần trước:</span>
               {board.lastWeek.map((w, idx) => (
                 <span key={idx} className="inline-flex items-center gap-0.5">
                   <span>{idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉'}</span>
@@ -487,17 +383,19 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
               ))}
             </div>
           )}
-          {isTrumSoi && (
-            <div className="text-[10.5px] text-sky-800/90 pt-1 border-t border-sky-200/60 flex items-center gap-1">
-              <span>🥊 Đua điểm đánh bại Boss Sới Dế: Cu Bin ➔ Út Mập ➔ Anh Lực ➔ Bác Chín ➔ Ông Sáu</span>
-            </div>
-          )}
         </div>
       )}
 
-      {/* Categories Tabs */}
+      {/* Trùm sới dế notice */}
+      {isTrumSoi && (
+        <div className="rounded-xl border border-sky-200 bg-sky-50/80 p-2.5 text-xs text-sky-900 shadow-2xs">
+          <span>🥊 Đua điểm đánh bại Boss Sới Dế: Cu Bin ➔ Út Mập ➔ Anh Lực ➔ Bác Chín ➔ Ông Sáu</span>
+        </div>
+      )}
+
+      {/* Categories Tabs (Official 8 Game Tabs) */}
       <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-thin pb-1">
-        {BOARD_CATEGORIES.map((cat) => {
+        {renderedCategories.map((cat) => {
           const isSelected = activeCategoryId === cat.id;
           return (
             <button
@@ -516,20 +414,6 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
         })}
       </div>
 
-      {/* Search Bar for Fish Records */}
-      {activeCategoryId === 'fishRecords' && (
-        <div className="relative">
-          <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-400" />
-          <input
-            type="text"
-            value={fishSearch}
-            onChange={(e) => setFishSearch(e.target.value)}
-            placeholder="Tìm tên cá hoặc tên cần thủ giữ kỷ lục..."
-            className="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500"
-          />
-        </div>
-      )}
-
       {/* Rankings List */}
       <div className="flex flex-col gap-1.5">
         {boardItems.length === 0 ? (
@@ -537,11 +421,7 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
             <p>
               {isTrumSoi
                 ? 'Chưa có dữ liệu BXH Trùm sới hoặc máy chủ đang tổng hợp điểm...'
-                : activeCategoryId === 'lastWeek'
-                ? 'Chưa có thông tin top vua câu tuần trước.'
-                : activeCategoryId === 'fishRecords'
-                ? 'Không tìm thấy kỷ lục loài cá nào phù hợp.'
-                : 'Bảng còn trống hoặc đang tải dữ liệu từ máy chủ bến đò...'}
+                : 'Bảng còn trống, câu con đầu tiên là có tên liền 🎣'}
             </p>
             <div className="flex items-center justify-center gap-2 mt-2">
               <Button
@@ -572,7 +452,7 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
             const isTop1 = rankNum === 1;
             const isTop2 = rankNum === 2;
             const isTop3 = rankNum === 3;
-            const isMe = Boolean(item.isMine) || myRank?.rank === rankNum;
+            const isMe = myRank?.rank === rankNum;
 
             let rowStyle = 'bg-white border-slate-200 hover:border-slate-300';
             if (isMe) {
