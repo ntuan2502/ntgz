@@ -2,14 +2,14 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { GameSnapshot } from '@/shared/types/game-state';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, RefreshCw, ExternalLink, Calendar } from 'lucide-react';
+import { Trophy, RefreshCw, ExternalLink, Calendar, Search } from 'lucide-react';
 import { execGameAction } from '@/content/bridge/content-bridge';
 import fishDexRaw from '@/shared/constants/fish-dex-data.json';
-import { GameItemIcon } from '@/content/ui/components/GameItemIcon';
 
 interface FishEntry {
   id: string;
   name: string;
+  rarity?: string;
   [key: string]: unknown;
 }
 
@@ -25,6 +25,7 @@ interface BoardItem {
   title?: string;
   rank?: number;
   cricket?: string;
+  isMine?: boolean;
   [key: string]: unknown;
 }
 
@@ -42,7 +43,7 @@ interface BoardCategory {
   id: string;
   name: string;
   hint: string;
-  formatValue: (val: number, item?: { fish?: string }) => string;
+  formatValue: (val: number, item?: { fish?: string; title?: string }) => string;
 }
 
 const BOARD_CATEGORIES: BoardCategory[] = [
@@ -56,7 +57,7 @@ const BOARD_CATEGORIES: BoardCategory[] = [
     id: 'size',
     name: '📏 Cá to',
     hint: 'Con cá to nhất từng câu lên trên bến',
-    formatValue: (v, item) => `${v} cm${item?.fish ? ` (${fishMap.get(item.fish) ?? item.fish})` : ''}`,
+    formatValue: (v, item) => `${v} cm${item?.fish ? ` · ${fishMap.get(item.fish) ?? item.fish}` : ''}`,
   },
   {
     id: 'caught',
@@ -67,13 +68,13 @@ const BOARD_CATEGORIES: BoardCategory[] = [
   {
     id: 'earned',
     name: '🐚 Giàu vỏ sò',
-    hint: 'Kiếm nhiều vỏ sò nhất từ trước tới giờ',
+    hint: 'Kiếm nhiều vỏ sò nhất từ trước tới giờ (tiêu không bị trừ)',
     formatValue: (v) => `🐚 ${v.toLocaleString('vi-VN')}`,
   },
   {
     id: 'mythic',
-    name: '🐉 Săn thần thoại',
-    hint: 'Câu nhiều cá Thần thoại nhất bến',
+    name: '🐉 Thần thoại',
+    hint: 'Câu nhiều cá Thần thoại nhất (chỉ cần bốc từ hạng Quý mới dính)',
     formatValue: (v) => `${v.toLocaleString('vi-VN')} con`,
   },
   {
@@ -85,27 +86,49 @@ const BOARD_CATEGORIES: BoardCategory[] = [
   {
     id: 'records',
     name: '📏 Giữ kỷ lục',
-    hint: 'Người giữ nhiều kỷ lục cá to nhất các loài',
+    hint: 'Người giữ nhiều kỷ lục nhất: loài nào cũng có một người câu con to nhất cả bến',
     formatValue: (v) => `${v} loài`,
   },
   {
     id: 'week',
     name: '📅 Vua câu tuần',
-    hint: 'Tổng giá trị cá câu được từ 0h thứ Hai',
+    hint: 'Cộng giá cá câu được từ 0h thứ Hai. Top 3 đeo huy chương suốt tuần',
     formatValue: (v) => `🐚 ${v.toLocaleString('vi-VN')}`,
+  },
+  {
+    id: 'lastWeek',
+    name: '👑 Tuần trước',
+    hint: 'Top 3 vua câu tuần trước được trao huy chương 🥇🥈🥉 đeo trước danh hiệu suốt tuần này',
+    formatValue: (v) => `🐚 ${v.toLocaleString('vi-VN')}`,
+  },
+  {
+    id: 'fishRecords',
+    name: '🏆 Kỷ lục 89 loài',
+    hint: 'Kỷ lục kích thước từng loài cá trên bến và người câu kỷ lục (từ Sổ cá bến đò)',
+    formatValue: (v) => `${v} cm`,
   },
   {
     id: 'trumSoi',
     name: '🥊 Trùm sới',
-    hint: 'Điểm thắng Boss sới dế đua BXH tuần',
+    hint: 'Điểm thắng Boss sới dế đua BXH tuần (Cu Bin, Út Mập, Anh Lực, Bác Chín, Ông Sáu)',
     formatValue: (v) => `${v.toLocaleString('vi-VN')} điểm`,
+  },
+  {
+    id: 'farmAll',
+    name: '🌍 Lão nông',
+    hint: 'Top 10 Lão nông cứng cựa cả làng theo số ngày làm nông và tài sản',
+    formatValue: (v) => `🪙 ${v.toLocaleString('vi-VN')} vàng`,
+  },
+  {
+    id: 'farmHomes',
+    name: '🏠 Nhà đẹp',
+    hint: 'Top 10 Nông trại được bà con ghé thăm và khen ngợi nhiều nhất',
+    formatValue: (v) => `👍 ${v.toLocaleString('vi-VN')} khen`,
   },
 ];
 
 const TRUM_SOI_ALIASES = ['trumSoi', 'soi', 'boss', 'cricket', 'trum_soi', 'arena', 'soiBoss'];
 const AUTO_RELOAD_INTERVAL_SEC = 60;
-
-const MEDALS = ['🥇', '🥈', '🥉'];
 const WEEK_MS = 604800000;
 
 function formatWeekTimeLeft(weekStart: number, at: number): string {
@@ -114,6 +137,20 @@ function formatWeekTimeLeft(weekStart: number, at: number): string {
     return `${Math.floor(diffHours / 24)} ngày ${diffHours % 24} giờ`;
   }
   return `${Math.max(1, diffHours)} giờ`;
+}
+
+function getFarmLeaderboardData(): {
+  top?: Array<{ name: string; day: number; gold: number; ref?: string }>;
+  homes?: Array<{ name: string; praise: number; ref?: string }>;
+} | null {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) return null;
+    const raw = window.localStorage.getItem('farm-game/leaderboard');
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
 }
 
 interface WharfBoardTabProps {
@@ -126,6 +163,7 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [autoReload, setAutoReload] = useState<boolean>(true);
   const [countdown, setCountdown] = useState<number>(AUTO_RELOAD_INTERVAL_SEC);
+  const [fishSearch, setFishSearch] = useState<string>('');
   const isRefreshingRef = useRef(false);
 
   useEffect(() => {
@@ -141,11 +179,66 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
 
   const isTrumSoi = activeCategoryId === 'trumSoi' || TRUM_SOI_ALIASES.includes(activeCategoryId);
 
-  // Extract category items supporting aliases & fallback to benNet.soi
+  // Extract category items supporting all wharf boards, lastWeek, fishRecords, and farm leaderboards
   const boardItems: BoardItem[] = (() => {
+    // 1. Standard server-provided boards (species, size, caught, earned, mythic, junk, records, week)
     if (board?.boards?.[activeCategoryId]?.length) {
       return board.boards[activeCategoryId];
     }
+
+    // 2. lastWeek winners
+    if (activeCategoryId === 'lastWeek') {
+      if (Array.isArray(board?.lastWeek) && board.lastWeek.length > 0) {
+        return board.lastWeek.map((w, idx) => ({
+          id: `last_${idx}_${w.name}`,
+          name: w.name,
+          value: w.value,
+          rank: idx + 1,
+          title: idx === 0 ? '👑 Quán quân tuần' : idx === 1 ? '🥈 Á quân tuần' : '🥉 Hạng ba tuần',
+        }));
+      }
+    }
+
+    // 3. fishRecords (Kỷ lục kích thước từng loài cá từ board.records)
+    if (activeCategoryId === 'fishRecords') {
+      const records = board?.records || {};
+      const dex = (benNet?.dex as Record<string, { best?: number }>) || {};
+      const entries: BoardItem[] = [];
+
+      (fishDexRaw as FishEntry[]).forEach((f) => {
+        const rec = records[f.id];
+        if (rec) {
+          const isMine = typeof dex[f.id]?.best === 'number' && Number(dex[f.id]?.best) >= rec.size;
+          entries.push({
+            id: f.id,
+            name: rec.name,
+            value: rec.size,
+            fish: f.id,
+            title: f.name,
+            isMine,
+          });
+        }
+      });
+
+      // Filter by search keyword
+      let filtered = entries;
+      if (fishSearch.trim()) {
+        const q = fishSearch.trim().toLowerCase();
+        filtered = entries.filter(
+          (e) =>
+            e.name.toLowerCase().includes(q) ||
+            (e.title && e.title.toLowerCase().includes(q)) ||
+            e.id.toLowerCase().includes(q)
+        );
+      }
+
+      return filtered.map((item, idx) => ({
+        ...item,
+        rank: idx + 1,
+      }));
+    }
+
+    // 4. Trùm sới (Sới dế Boss leaderboard)
     if (isTrumSoi) {
       if (board?.boards) {
         for (const alias of TRUM_SOI_ALIASES) {
@@ -179,6 +272,35 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
         }
       }
     }
+
+    // 5. Farm all (Lão nông cứng cựa)
+    if (activeCategoryId === 'farmAll') {
+      const farmData = getFarmLeaderboardData();
+      if (farmData && Array.isArray(farmData.top)) {
+        return farmData.top.map((it, idx) => ({
+          id: `farm_${idx}_${it.name}`,
+          name: it.name,
+          value: it.gold,
+          rank: idx + 1,
+          title: `Ngày ${it.day}`,
+        }));
+      }
+    }
+
+    // 6. Farm homes (Nhà đẹp)
+    if (activeCategoryId === 'farmHomes') {
+      const farmData = getFarmLeaderboardData();
+      if (farmData && Array.isArray(farmData.homes)) {
+        return farmData.homes.map((it, idx) => ({
+          id: `home_${idx}_${it.name}`,
+          name: it.name,
+          value: it.praise,
+          rank: idx + 1,
+          title: 'Nhà đẹp',
+        }));
+      }
+    }
+
     return [];
   })();
 
@@ -346,18 +468,18 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
       </div>
 
       {/* Week countdown & Last week winners */}
-      {(activeCategoryId === 'week' || isTrumSoi) && board?.weekStart && board?.at && (
+      {(activeCategoryId === 'week' || activeCategoryId === 'lastWeek' || isTrumSoi) && board?.weekStart && board?.at && (
         <div className="rounded-xl border border-sky-200 bg-sky-50/80 p-2.5 flex flex-col gap-1 text-xs text-sky-900 shadow-2xs">
           <div className="flex items-center gap-1.5 font-bold">
             <Calendar className="h-3.5 w-3.5 text-sky-600" />
             <span>Còn {formatWeekTimeLeft(board.weekStart, board.at)} tới thứ Hai tính lại</span>
           </div>
-          {activeCategoryId === 'week' && Array.isArray(board.lastWeek) && board.lastWeek.length > 0 && (
+          {Array.isArray(board.lastWeek) && board.lastWeek.length > 0 && (
             <div className="text-[11px] text-sky-800/90 pt-1 border-t border-sky-200/60 flex items-center gap-1 flex-wrap">
-              <span className="font-semibold">Tuần trước:</span>
+              <span className="font-semibold">Top 3 tuần trước:</span>
               {board.lastWeek.map((w, idx) => (
                 <span key={idx} className="inline-flex items-center gap-0.5">
-                  <span>{MEDALS[idx]}</span>
+                  <span>{idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉'}</span>
                   <b>{w.name}</b>
                   <span className="text-slate-600 font-mono">(🐚 {w.value.toLocaleString('vi-VN')})</span>
                   {idx < (board.lastWeek?.length ?? 0) - 1 && <span>·</span>}
@@ -394,13 +516,31 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
         })}
       </div>
 
+      {/* Search Bar for Fish Records */}
+      {activeCategoryId === 'fishRecords' && (
+        <div className="relative">
+          <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-400" />
+          <input
+            type="text"
+            value={fishSearch}
+            onChange={(e) => setFishSearch(e.target.value)}
+            placeholder="Tìm tên cá hoặc tên cần thủ giữ kỷ lục..."
+            className="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500"
+          />
+        </div>
+      )}
+
       {/* Rankings List */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1.5">
         {boardItems.length === 0 ? (
           <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/70 p-6 text-center text-xs text-slate-500">
             <p>
               {isTrumSoi
                 ? 'Chưa có dữ liệu BXH Trùm sới hoặc máy chủ đang tổng hợp điểm...'
+                : activeCategoryId === 'lastWeek'
+                ? 'Chưa có thông tin top vua câu tuần trước.'
+                : activeCategoryId === 'fishRecords'
+                ? 'Không tìm thấy kỷ lục loài cá nào phù hợp.'
                 : 'Bảng còn trống hoặc đang tải dữ liệu từ máy chủ bến đò...'}
             </p>
             <div className="flex items-center justify-center gap-2 mt-2">
@@ -427,246 +567,97 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
             </div>
           </div>
         ) : (
-          <>
-            {/* Top 3 Podium Cards */}
-            <div className="flex flex-col gap-2">
-              {boardItems.slice(0, 3).map((item, idx) => {
-                const isMe = myRank?.rank === idx + 1;
+          boardItems.map((item, idx) => {
+            const rankNum = item.rank ?? idx + 1;
+            const isTop1 = rankNum === 1;
+            const isTop2 = rankNum === 2;
+            const isTop3 = rankNum === 3;
+            const isMe = Boolean(item.isMine) || myRank?.rank === rankNum;
 
-                if (idx === 0) {
-                  // TOP 1 - Gold Champion
-                  return (
-                    <div
-                      key={item.id || 'top1'}
-                      className="relative overflow-hidden rounded-xl border-2 border-amber-400 bg-gradient-to-r from-amber-200/50 via-yellow-100/60 to-amber-200/40 p-3 shadow-md ring-2 ring-amber-300/60 transition-all hover:shadow-lg"
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
-                          {/* Crown + #1 Gold Badge */}
-                          <div className="flex flex-col items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-b from-amber-300 via-amber-400 to-yellow-500 text-amber-950 font-black shadow-md ring-2 ring-amber-200/80 shrink-0">
-                            <span className="text-base leading-none">👑</span>
-                            <span className="text-[11px] font-black font-mono leading-none mt-0.5">#1</span>
-                          </div>
+            let rowStyle = 'bg-white border-slate-200 hover:border-slate-300';
+            if (isMe) {
+              rowStyle = 'bg-emerald-50/80 border-emerald-300 shadow-2xs ring-1 ring-emerald-200';
+            } else if (isTop1) {
+              rowStyle = 'bg-amber-50/70 border-amber-300 hover:border-amber-400 shadow-2xs';
+            } else if (isTop2) {
+              rowStyle = 'bg-slate-100/70 border-slate-300 hover:border-slate-400';
+            } else if (isTop3) {
+              rowStyle = 'bg-orange-50/50 border-orange-200 hover:border-orange-300';
+            }
 
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-sm font-black text-amber-950 tracking-tight truncate">
-                                {item.name}
-                              </span>
-                              <span className="text-[9.5px] uppercase font-black bg-gradient-to-r from-amber-500 to-yellow-500 text-amber-950 px-1.5 py-0.5 rounded shadow-2xs leading-none">
-                                🥇 Quán quân
-                              </span>
-                              {isMe && (
-                                <span className="text-[9.5px] font-bold bg-emerald-600 text-white px-1.5 py-0.5 rounded leading-none">
-                                  Bạn
-                                </span>
-                              )}
-                            </div>
-                            {item.title && (
-                              <div className="text-[11px] text-amber-900/90 font-semibold mt-0.5 truncate">
-                                ✨ {item.title}
-                              </div>
-                            )}
-                          </div>
-                        </div>
+            return (
+              <div
+                key={item.id || `rank_${rankNum}_${idx}`}
+                className={`flex items-center justify-between p-2 rounded-xl border transition-all ${rowStyle}`}
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span className="flex items-center justify-center w-7 text-center text-xs font-bold font-mono shrink-0">
+                    {rankNum === 1 ? (
+                      <span className="text-sm leading-none" title="Quán quân #1">
+                        🥇
+                      </span>
+                    ) : rankNum === 2 ? (
+                      <span className="text-sm leading-none" title="Á quân #2">
+                        🥈
+                      </span>
+                    ) : rankNum === 3 ? (
+                      <span className="text-sm leading-none" title="Hạng ba #3">
+                        🥉
+                      </span>
+                    ) : (
+                      <span className="text-slate-500">#{rankNum}</span>
+                    )}
+                  </span>
 
-                        <div className="text-right flex items-center justify-end gap-1.5 shrink-0">
-                          {item.fish && (
-                            <div className="flex h-6 w-6 items-center justify-center shrink-0 overflow-hidden">
-                              <GameItemIcon itemKey={`benfish-${item.fish}`} fallbackEmoji="🐟" size={22} />
-                            </div>
-                          )}
-                          {item.cricket && (
-                            <div className="flex h-6 w-6 items-center justify-center shrink-0 overflow-hidden" title={`Dế chiến: ${item.cricket}`}>
-                              <GameItemIcon itemKey={item.cricket} fallbackEmoji="🦗" size={22} />
-                            </div>
-                          )}
-                          <span className="font-black text-xs md:text-sm font-mono text-amber-950 bg-amber-300/80 px-2.5 py-1 rounded-lg border border-amber-400 shadow-2xs">
-                            {currentCategory.formatValue(item.value, item)}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                }
-
-                if (idx === 1) {
-                  // TOP 2 - Silver Runner-up
-                  return (
-                    <div
-                      key={item.id || 'top2'}
-                      className="relative overflow-hidden rounded-xl border-2 border-slate-300 bg-gradient-to-r from-slate-200/70 via-gray-100/80 to-slate-200/50 p-2.5 shadow-sm ring-1 ring-slate-300/80 transition-all hover:shadow-md"
-                    >
-                      <div className="flex items-center justify-between gap-2.5">
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          {/* #2 Silver Badge */}
-                          <div className="flex flex-col items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-b from-slate-100 via-slate-200 to-slate-400 text-slate-800 font-black shadow-xs ring-1 ring-slate-300/80 shrink-0">
-                            <span className="text-sm leading-none">🥈</span>
-                            <span className="text-[10.5px] font-black font-mono leading-none mt-0.5">#2</span>
-                          </div>
-
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-xs font-bold text-slate-900 tracking-tight truncate">
-                                {item.name}
-                              </span>
-                              <span className="text-[9px] uppercase font-bold bg-slate-300 text-slate-800 px-1.5 py-0.5 rounded shadow-2xs leading-none">
-                                🥈 Á quân
-                              </span>
-                              {isMe && (
-                                <span className="text-[9.5px] font-bold bg-emerald-600 text-white px-1.5 py-0.5 rounded leading-none">
-                                  Bạn
-                                </span>
-                              )}
-                            </div>
-                            {item.title && (
-                              <div className="text-[10px] text-slate-600 font-medium mt-0.5 truncate">
-                                {item.title}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="text-right flex items-center justify-end gap-1.5 shrink-0">
-                          {item.fish && (
-                            <div className="flex h-5 w-5 items-center justify-center shrink-0 overflow-hidden">
-                              <GameItemIcon itemKey={`benfish-${item.fish}`} fallbackEmoji="🐟" size={18} />
-                            </div>
-                          )}
-                          {item.cricket && (
-                            <div className="flex h-5 w-5 items-center justify-center shrink-0 overflow-hidden" title={`Dế chiến: ${item.cricket}`}>
-                              <GameItemIcon itemKey={item.cricket} fallbackEmoji="🦗" size={18} />
-                            </div>
-                          )}
-                          <span className="font-bold text-xs font-mono text-slate-900 bg-white/95 px-2.5 py-1 rounded-lg border border-slate-300 shadow-2xs">
-                            {currentCategory.formatValue(item.value, item)}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                }
-
-                // TOP 3 - Bronze
-                return (
-                  <div
-                    key={item.id || 'top3'}
-                    className="relative overflow-hidden rounded-xl border-2 border-amber-600/40 bg-gradient-to-r from-amber-700/10 via-orange-100/70 to-amber-700/10 p-2.5 shadow-sm ring-1 ring-amber-500/40 transition-all hover:shadow-md"
-                  >
-                    <div className="flex items-center justify-between gap-2.5">
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        {/* #3 Bronze Badge */}
-                        <div className="flex flex-col items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-b from-amber-500 via-amber-600 to-orange-700 text-white font-black shadow-xs ring-1 ring-amber-400/80 shrink-0">
-                          <span className="text-sm leading-none">🥉</span>
-                          <span className="text-[10.5px] font-black font-mono leading-none mt-0.5">#3</span>
-                        </div>
-
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className="text-xs font-bold text-amber-950 tracking-tight truncate">
-                              {item.name}
-                            </span>
-                            <span className="text-[9px] uppercase font-bold bg-amber-600/20 text-amber-900 px-1.5 py-0.5 rounded shadow-2xs leading-none">
-                              🥉 Hạng 3
-                            </span>
-                            {isMe && (
-                              <span className="text-[9.5px] font-bold bg-emerald-600 text-white px-1.5 py-0.5 rounded leading-none">
-                                Bạn
-                              </span>
-                            )}
-                          </div>
-                          {item.title && (
-                            <div className="text-[10px] text-amber-800 font-medium mt-0.5 truncate">
-                              {item.title}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="text-right flex items-center justify-end gap-1.5 shrink-0">
-                        {item.fish && (
-                          <div className="flex h-5 w-5 items-center justify-center shrink-0 overflow-hidden">
-                            <GameItemIcon itemKey={`benfish-${item.fish}`} fallbackEmoji="🐟" size={18} />
-                          </div>
-                        )}
-                        {item.cricket && (
-                          <div className="flex h-5 w-5 items-center justify-center shrink-0 overflow-hidden" title={`Dế chiến: ${item.cricket}`}>
-                            <GameItemIcon itemKey={item.cricket} fallbackEmoji="🦗" size={18} />
-                          </div>
-                        )}
-                        <span className="font-bold text-xs font-mono text-amber-950 bg-white/95 px-2.5 py-1 rounded-lg border border-amber-300 shadow-2xs">
-                          {currentCategory.formatValue(item.value, item)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Other Ranks Divider & List (#4+) */}
-            {boardItems.length > 3 && (
-              <div className="pt-2 flex flex-col gap-1.5">
-                <div className="flex items-center justify-between text-[11px] text-slate-500 font-semibold px-1 pb-0.5 border-b border-slate-200">
-                  <span>Thứ hạng khác (Hạng 4 – {boardItems.length})</span>
-                  <span className="text-[10px] text-slate-400 font-normal">cập nhật trực tiếp</span>
-                </div>
-
-                {boardItems.slice(3).map((item, i) => {
-                  const rankNum = i + 4;
-                  const isMe = myRank?.rank === rankNum;
-
-                  return (
-                    <div
-                      key={item.id || `rank_${rankNum}`}
-                      className={`flex items-center justify-between p-2 rounded-xl border transition-all ${
+                  <div className="min-w-0 flex items-center gap-1.5 flex-wrap">
+                    <span
+                      className={`text-xs truncate ${
                         isMe
-                          ? 'bg-emerald-50/80 border-emerald-300 shadow-2xs ring-1 ring-emerald-200'
-                          : 'bg-white border-slate-200 hover:border-slate-300'
+                          ? 'font-bold text-emerald-950'
+                          : isTop1
+                          ? 'font-bold text-amber-950'
+                          : isTop2
+                          ? 'font-bold text-slate-900'
+                          : isTop3
+                          ? 'font-bold text-orange-950'
+                          : 'font-medium text-slate-800'
                       }`}
                     >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="flex items-center justify-center w-7 text-center text-xs font-bold font-mono text-slate-500 shrink-0">
-                          #{rankNum}
-                        </span>
-                        <div className="min-w-0 flex items-center gap-1.5 flex-wrap">
-                          <span className={`text-xs truncate ${isMe ? 'font-bold text-emerald-950' : 'font-medium text-slate-800'}`}>
-                            {item.name}
-                          </span>
-                          {isMe && (
-                            <span className="text-[9px] font-bold bg-emerald-600 text-white px-1 py-0.2 rounded">
-                              Bạn
-                            </span>
-                          )}
-                          {item.title && (
-                            <span className="text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200 font-normal shrink-0">
-                              {item.title}
-                            </span>
-                          )}
-                        </div>
-                      </div>
+                      {item.name}
+                    </span>
+                    {isMe && (
+                      <span className="text-[9px] font-bold bg-emerald-600 text-white px-1.5 py-0.2 rounded leading-none">
+                        Bạn
+                      </span>
+                    )}
+                    {item.title && (
+                      <span className="text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200 font-normal shrink-0 truncate max-w-[150px]">
+                        {item.title}
+                      </span>
+                    )}
+                  </div>
+                </div>
 
-                      <div className="text-right flex items-center justify-end gap-1.5 shrink-0">
-                        {item.fish && (
-                          <div className="flex h-5 w-5 items-center justify-center shrink-0 overflow-hidden">
-                            <GameItemIcon itemKey={`benfish-${item.fish}`} fallbackEmoji="🐟" size={18} />
-                          </div>
-                        )}
-                        {item.cricket && (
-                          <div className="flex h-5 w-5 items-center justify-center shrink-0 overflow-hidden" title={`Dế chiến: ${item.cricket}`}>
-                            <GameItemIcon itemKey={item.cricket} fallbackEmoji="🦗" size={18} />
-                          </div>
-                        )}
-                        <span className="font-mono text-xs font-bold text-emerald-800">
-                          {currentCategory.formatValue(item.value, item)}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
+                <div className="text-right flex items-center justify-end gap-1.5 shrink-0 ml-2">
+                  <span
+                    className={`font-mono text-xs font-bold ${
+                      isMe
+                        ? 'text-emerald-800'
+                        : isTop1
+                        ? 'text-amber-900 bg-amber-100/70 px-2 py-0.5 rounded border border-amber-200'
+                        : isTop2
+                        ? 'text-slate-800 bg-slate-200/60 px-2 py-0.5 rounded border border-slate-300'
+                        : isTop3
+                        ? 'text-orange-900 bg-orange-100/60 px-2 py-0.5 rounded border border-orange-200'
+                        : 'text-slate-700'
+                    }`}
+                  >
+                    {currentCategory.formatValue(item.value, item)}
+                  </span>
+                </div>
               </div>
-            )}
-          </>
+            );
+          })
         )}
       </div>
     </div>
