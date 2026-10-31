@@ -188,7 +188,10 @@ export interface AppConfig {
 
   // Ben Do Fishing Settings
   benAutoSpot: boolean;
-  benSpot: 'dock' | 'bamboo' | 'bank' | 'bridge';
+  benSpot: 'dock' | 'bamboo' | 'bank' | 'bridge' | 'rotate' | 'random';
+  benSpotSwitchMode?: 'count' | 'time';
+  benSpotSwitchValue?: number;
+  benHumanJitter?: boolean;
   benAutoBuyBait: boolean;
   benPreferBait: 'moi20' | 'moi60' | 'moi150' | 'xinMoi';
   benBaitMaxCount?: number;

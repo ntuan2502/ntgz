@@ -160,6 +160,58 @@ export const CRICKET_SPECIES_RARITY: Record<string, string> = {
   deVuong: 'legendary',
 };
 
+interface FishingSpotMeta {
+  key: string;
+  kind: string;
+  label: string;
+  tiles: Array<{ x: number; y: number }>;
+}
+
+const FISHING_SPOTS: Record<string, FishingSpotMeta> = {
+  bank: {
+    key: 'bank',
+    kind: 'bank',
+    label: 'Bờ sông bến giữa',
+    tiles: [
+      { x: 24, y: 10 },
+      { x: 23, y: 10 },
+      { x: 25, y: 10 },
+    ],
+  },
+  dock: {
+    key: 'dock',
+    kind: 'dock',
+    label: 'Cầu tàu lớn (Đầu mũi)',
+    tiles: [
+      { x: 31, y: 3 },
+      { x: 31, y: 4 },
+      { x: 30, y: 3 },
+    ],
+  },
+  bamboo: {
+    key: 'bamboo',
+    kind: 'dock',
+    label: 'Cầu tre lắt lẻo',
+    tiles: [
+      { x: 7, y: 6 },
+      { x: 7, y: 7 },
+      { x: 8, y: 6 },
+    ],
+  },
+  bridge: {
+    key: 'bridge',
+    kind: 'dock',
+    label: 'Cầu ván qua lạch',
+    tiles: [
+      { x: 46, y: 15 },
+      { x: 47, y: 15 },
+      { x: 45, y: 15 },
+    ],
+  },
+};
+
+const SPOT_KEYS = ['bank', 'dock', 'bamboo', 'bridge'];
+
 const BOSS_LADDER = [
   { id: 'cuBin', aliases: ['cubin', 'bin'], name: 'Cu Bin', reward: 15, total: 60 },
   { id: 'utMap', aliases: ['utmap', 'map'], name: 'Út Mập', reward: 30, total: 112 },
@@ -258,6 +310,12 @@ let lastBossPxX = 0;
 let lastBossPxY = 0;
 let lastBossTime = 0;
 let lastDispatchedBossTile = { x: -1, y: -1 };
+let activeSpotIdx = 0;
+let activeTileIdx = 0;
+let spotSessionStartedAt = Date.now();
+let spotFishCount = 0;
+let lastBasketCountForSpot = -1;
+let lastJitterCatchCount = 0;
 
 function subscribeToBenNetIfNeeded(bnStore: import('../../core/engine-access').ZustandStore<BenNetState>): void {
   if (isSubscribedToBenNet || typeof bnStore.subscribe !== 'function') return;
@@ -594,6 +652,12 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
     ? bn.basket.filter((x: { kept?: boolean; price?: number }) => !x.kept)
     : [];
   const nonKeptCount = nonKeptFish.length;
+  const curBasketLen = Array.isArray(bn.basket) ? bn.basket.length : 0;
+  if (lastBasketCountForSpot >= 0 && curBasketLen > lastBasketCountForSpot) {
+    const gained = curBasketLen - lastBasketCountForSpot;
+    spotFishCount += gained;
+  }
+  lastBasketCountForSpot = curBasketLen;
   const totalSellShells = nonKeptFish.reduce(
     (sum: number, x: { price?: number }) => sum + (Number(x.price) || 0),
     0
@@ -939,30 +1003,78 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
     // 5. Walk to fishing spot, then let the content runner cast (deferred so ready bounded tasks go first)
     if (cfg.benAutoSpot !== false) {
       const spotChoice = cfg.benSpot || 'bank';
-      const spotTargets: Record<string, { x: number; y: number; kind: string; label: string }> = {
-        dock: { x: 31, y: 3, kind: 'dock', label: 'Cầu tàu lớn (Đầu mũi)' },
-        bamboo: { x: 7, y: 6, kind: 'dock', label: 'Cầu tre lắt lẻo' },
-        bank: { x: 24, y: 10, kind: 'bank', label: 'Bờ sông bến giữa' },
-        bridge: { x: 46, y: 15, kind: 'dock', label: 'Cầu ván qua lạch' },
-      };
-      const target = spotTargets[spotChoice] || spotTargets.bank;
-      const curTile = benScene?.farmer?.tile;
-      const atSpot = curTile
-        ? curTile.x === target.x && curTile.y === target.y
-        : bu.spot === target.kind;
+      const isDynamicSpot = spotChoice === 'rotate' || spotChoice === 'random';
 
-      if (!atSpot && (spotChoice as string) !== 'any') {
+      // Check if dynamic spot condition is met to switch to next spot
+      if (isDynamicSpot) {
+        const switchMode = cfg.benSpotSwitchMode || 'count';
+        const switchVal = Math.max(1, Number(cfg.benSpotSwitchValue) || 15);
+        const shouldSwitch =
+          switchMode === 'time'
+            ? Date.now() - spotSessionStartedAt >= switchVal * 60000
+            : spotFishCount >= switchVal;
+
+        if (shouldSwitch) {
+          if (spotChoice === 'random') {
+            const nextIdx = Math.floor(Math.random() * SPOT_KEYS.length);
+            activeSpotIdx = nextIdx === activeSpotIdx ? (nextIdx + 1) % SPOT_KEYS.length : nextIdx;
+          } else {
+            activeSpotIdx = (activeSpotIdx + 1) % SPOT_KEYS.length;
+          }
+          activeTileIdx = 0;
+          spotFishCount = 0;
+          spotSessionStartedAt = Date.now();
+          lastJitterCatchCount = 0;
+        }
+      }
+
+      // If user selected fixed spot, ensure activeSpotIdx matches that spot
+      const spotKey = isDynamicSpot ? SPOT_KEYS[activeSpotIdx % SPOT_KEYS.length] : spotChoice;
+      const spotMeta = FISHING_SPOTS[spotKey] || FISHING_SPOTS.bank;
+
+      // Jitter tile: if benHumanJitter enabled and caught 5-8 fish at current spot, randomly shift to adjacent tile
+      if (cfg.benHumanJitter !== false && spotFishCount - lastJitterCatchCount >= 6) {
+        lastJitterCatchCount = spotFishCount;
+        activeTileIdx = (activeTileIdx + 1) % spotMeta.tiles.length;
+      }
+
+      const candidateTiles = spotMeta.tiles;
+      const targetTile = candidateTiles[activeTileIdx % candidateTiles.length] || candidateTiles[0];
+
+      const curTile = benScene?.farmer?.tile;
+      const isAtTargetTile = curTile
+        ? curTile.x === targetTile.x && curTile.y === targetTile.y
+        : bu.spot === spotMeta.kind;
+
+      if (!isAtTargetTile && (spotChoice as string) !== 'any') {
         if (benScene && typeof benScene.goFarmer === 'function') {
           const goFarmer = benScene.goFarmer.bind(benScene);
           return {
             acted: false,
             deferred: () => {
               if (benScene.farmer?.running) return { acted: true, msg: '🚶 Đang di chuyển...' };
-              goFarmer({ x: target.x, y: target.y });
-              return { acted: true, msg: `🚶 Đang đi ra ${target.label} (${target.x}, ${target.y}) câu cá...` };
+              goFarmer(targetTile);
+              const progressMsg = isDynamicSpot
+                ? (cfg.benSpotSwitchMode === 'time'
+                    ? `[${Math.floor((Date.now() - spotSessionStartedAt) / 60000)}/${cfg.benSpotSwitchValue || 15}p]`
+                    : `[${spotFishCount}/${cfg.benSpotSwitchValue || 15} cá]`)
+                : '';
+              return {
+                acted: true,
+                msg: `🚶 Đang đi ra ${spotMeta.label} (${targetTile.x}, ${targetTile.y}) câu cá ${progressMsg}...`,
+              };
             },
           };
         }
+      }
+
+      // Occasionally glance towards water when idle at spot
+      if (benScene?.farmer?.lookAt && Math.random() < 0.04) {
+        const lookDir = spotMeta.kind === 'bank' ? { dx: 0, dy: -24 } : { dx: 24, dy: 0 };
+        benScene.farmer.lookAt(
+          (benScene.farmer.x ?? 0) + lookDir.dx,
+          (benScene.farmer.y ?? 0) + lookDir.dy
+        );
       }
     }
 

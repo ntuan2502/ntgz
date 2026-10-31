@@ -104,7 +104,7 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onO
               />
             </label>
             {config.benAutoSpot && (
-              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px] min-w-0 overflow-hidden">
+              <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-2 text-[11px] min-w-0 overflow-hidden">
                 <div className="flex items-center justify-between gap-2 min-w-0">
                   <span className="text-slate-600 shrink-0">Vị trí ngồi câu:</span>
                   <HudSelect
@@ -115,9 +115,58 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onO
                       { value: 'dock', label: '🌉 Cầu tàu lớn (Đầu mũi)' },
                       { value: 'bamboo', label: '🎋 Cầu tre lắt lẻo' },
                       { value: 'bridge', label: '🪵 Cầu ván qua lạch' },
+                      { value: 'rotate', label: '🔄 Tự luân phiên các điểm câu' },
+                      { value: 'random', label: '🎲 Đổi ngẫu nhiên các điểm câu' },
                     ]}
                   />
                 </div>
+
+                {(config.benSpot === 'rotate' || config.benSpot === 'random') && (
+                  <div className="rounded-lg bg-slate-50/80 p-2 border border-slate-100 space-y-1.5">
+                    <div className="flex items-center justify-between gap-2 min-w-0">
+                      <span className="text-slate-600 shrink-0">Tiêu chí đổi điểm câu:</span>
+                      <HudSelect
+                        value={config.benSpotSwitchMode || 'count'}
+                        onValueChange={(val) => updateField('benSpotSwitchMode', val as AppConfig['benSpotSwitchMode'])}
+                        options={[
+                          { value: 'count', label: '🐟 Theo số lượng cá câu được' },
+                          { value: 'time', label: '⏳ Theo thời gian ngồi câu' },
+                        ]}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-600">Đổi điểm sau mỗi:</span>
+                      <div className="flex items-center gap-1.5">
+                        <input
+                          type="number"
+                          min={config.benSpotSwitchMode === 'time' ? 1 : 5}
+                          max={config.benSpotSwitchMode === 'time' ? 180 : 100}
+                          step={config.benSpotSwitchMode === 'time' ? 5 : 5}
+                          value={config.benSpotSwitchValue ?? 15}
+                          onChange={(e) => updateField('benSpotSwitchValue', Math.max(1, Number(e.target.value) || 1))}
+                          className="w-16 h-8 min-h-8 rounded-lg bg-white px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                        />
+                        <span className="text-slate-500 text-[10px]">
+                          {config.benSpotSwitchMode === 'time' ? 'phút' : 'con cá'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <label className="flex items-center justify-between text-slate-700 cursor-pointer pt-1 border-t border-slate-100">
+                  <span className="pr-2 leading-tight">
+                    <span className="font-medium text-slate-800">🛡️ Nhịp quăng ngẫu nhiên &amp; nghỉ tay</span>
+                    <span className="block text-[10px] text-slate-500">
+                      Độ trễ biến thiên (+0.2s - 1.0s) &amp; thỉnh thoảng giải lao vài giây như người thật
+                    </span>
+                  </span>
+                  <Switch
+                    size="sm"
+                    checked={Boolean(config.benHumanJitter ?? true)}
+                    onCheckedChange={(c) => updateField('benHumanJitter', c)}
+                  />
+                </label>
               </div>
             )}
 

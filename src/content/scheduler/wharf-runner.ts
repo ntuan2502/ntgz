@@ -13,6 +13,8 @@ let lastCricketCatchAt = 0;
 let lastBoutCloseAt = 0;
 let lastCricketEventSeq = -1;
 let lastGotAwaySeq = -1;
+let nextCastDelayMs = 0;
+let microBreakUntil = 0;
 
 function handleBenLanternWheel(
   wheelEl: HTMLElement,
@@ -402,6 +404,16 @@ export async function stepBenDoFishing(
         }
         lastModalClickAt = now;
         onCatchIncrement();
+        if (config.benHumanJitter !== false) {
+          // ~6% chance to take a short micro-break (3 - 5.5s) like a human player
+          if (Math.random() < 0.06) {
+            const breakDur = Math.floor(Math.random() * 2500) + 3000;
+            microBreakUntil = now + breakDur;
+          }
+          nextCastDelayMs = delayMs + Math.floor(Math.random() * 700) + 150;
+        } else {
+          nextCastDelayMs = delayMs;
+        }
       }
     }
     return { finishedArea: false };
@@ -579,17 +591,29 @@ export async function stepBenDoFishing(
       return { finishedArea: false };
     }
 
+    if (now < microBreakUntil) {
+      const remainingSec = Math.ceil((microBreakUntil - now) / 1000);
+      setStatus(`☕ Bến Đò: Đang nghỉ tay thư giãn (${remainingSec}s)...`);
+      return { finishedArea: false };
+    }
+
     const greenCastBtn = document.querySelector('button.ben-cast.btn-green:not(.ben-light)') as HTMLButtonElement | null;
     const allowCast = Boolean(prep?.ok && prep.allowCast);
+    const targetCastDelay = Math.max(600, nextCastDelayMs || delayMs);
     if (
       allowCast &&
       greenCastBtn &&
       isVisible(greenCastBtn) &&
       !greenCastBtn.disabled &&
-      now - lastCastAt > Math.max(600, delayMs)
+      now - lastCastAt > targetCastDelay
     ) {
       triggerPointerDownAndClick(greenCastBtn);
       lastCastAt = now;
+      if (config.benHumanJitter !== false) {
+        nextCastDelayMs = delayMs + Math.floor(Math.random() * 700) + 150;
+      } else {
+        nextCastDelayMs = delayMs;
+      }
       setStatus(`🎣 Bến Đò: Quăng câu (🪱 ${bn.wallet?.bait ?? 0} · ⚡ ${bn.wallet?.liveStamina ?? 0})`);
     } else if (allowCast && !bu?.spot) {
       setStatus('📍 Hãy đứng sát mép nước (hoặc bật Tự ra vị trí câu)');
