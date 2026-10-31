@@ -29,10 +29,10 @@ interface MonitorHubProps {
 }
 
 const WHARF_TABS: Array<{ id: MonitorTabId; label: string; icon: string }> = [
+  { id: 'board', label: 'Bảng vàng', icon: '🏆' },
   { id: 'pack', label: 'Túi đồ', icon: '🎒' },
   { id: 'crickets', label: 'Ống tre dế', icon: '🦗' },
   { id: 'dex', label: 'Sổ cá', icon: '📖' },
-  { id: 'board', label: 'Bảng vàng', icon: '🏆' },
   { id: 'closet', label: 'Tủ đồ', icon: '👕' },
   { id: 'friends', label: 'Bạn bè', icon: '👥' },
 ];
@@ -40,7 +40,7 @@ const WHARF_TABS: Array<{ id: MonitorTabId; label: string; icon: string }> = [
 export function MonitorHub({
   snap,
   onClose,
-  defaultTab = 'pack',
+  defaultTab = 'board',
   showHeader = true,
 }: MonitorHubProps) {
   const [activeTab, setActiveTab] = useState<MonitorTabId>(defaultTab);

@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { GameSnapshot } from '@/shared/types/game-state';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Trophy, RefreshCw, ExternalLink, Calendar } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { execGameAction } from '@/content/bridge/content-bridge';
 import fishDexRaw from '@/shared/constants/fish-dex-data.json';
 
@@ -203,9 +202,6 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
     initialCategoryObj?.group === 'phusa' ? 'phusa' : 'ben'
   );
   const [activeCategoryId, setActiveCategoryId] = useState<string>(resolvedInitialCat || 'fame');
-  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-  const [autoReload, setAutoReload] = useState<boolean>(true);
-  const [countdown, setCountdown] = useState<number>(AUTO_RELOAD_INTERVAL_SEC);
   const isRefreshingRef = useRef(false);
 
   useEffect(() => {
@@ -310,8 +306,6 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
   const handleRefresh = useCallback(async () => {
     if (isRefreshingRef.current) return;
     isRefreshingRef.current = true;
-    setIsRefreshing(true);
-    setCountdown(AUTO_RELOAD_INTERVAL_SEC);
 
     try {
       await execGameAction('BEN_REFRESH', { kind: 'board' });
@@ -319,32 +313,16 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
     } finally {
       setTimeout(() => {
         isRefreshingRef.current = false;
-        setIsRefreshing(false);
       }, 800);
     }
   }, []);
 
-  // Initial load on mount
+  // Initial load on mount & periodic auto-refresh every 60s
   useEffect(() => {
     handleRefresh();
-  }, [handleRefresh]);
-
-  // 1-second interval for countdown & auto-refresh every 60s
-  useEffect(() => {
-    if (!autoReload) return;
-
-    const interval = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          handleRefresh();
-          return AUTO_RELOAD_INTERVAL_SEC;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
+    const interval = setInterval(handleRefresh, AUTO_RELOAD_INTERVAL_SEC * 1000);
     return () => clearInterval(interval);
-  }, [autoReload, handleRefresh]);
+  }, [handleRefresh]);
 
   // Categories filtered by currently selected area (Bến đò vs Bãi Phù Sa)
   const areaCategories = BOARD_CATEGORIES.filter((c) => c.group === selectedArea);
@@ -358,136 +336,8 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
   };
 
   return (
-    <div className="flex flex-col gap-3 p-3 pr-4 overflow-y-auto min-h-0 select-none">
-      {/* Header Banner */}
-      <div className="rounded-xl border border-amber-200 bg-gradient-to-r from-amber-50 via-yellow-50 to-orange-50 p-3 shadow-xs">
-        <div className="flex items-center justify-between gap-2 flex-wrap">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500 text-white shadow-xs">
-              <Trophy className="h-4 w-4" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-bold text-slate-900 text-sm">
-                  {selectedArea === 'ben' ? 'Bảng vàng Bến đò' : 'Bảng vàng Bãi Phù Sa'}
-                </span>
-                <Badge className="bg-amber-500 text-white text-[10px] px-1.5 py-0 font-medium">
-                  BXH Trực Tuyến
-                </Badge>
-                <button
-                  type="button"
-                  onClick={() => setAutoReload((prev) => !prev)}
-                  className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-mono cursor-pointer transition-all border ${
-                    autoReload
-                      ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100 shadow-2xs'
-                      : 'bg-slate-100 text-slate-500 border-slate-300 hover:bg-slate-200'
-                  }`}
-                  title={
-                    autoReload
-                      ? 'Tự động làm mới mỗi 60s đang BẬT. Bấm để tạm dừng.'
-                      : 'Tự động làm mới đang TẮT. Bấm để kích hoạt.'
-                  }
-                >
-                  <span
-                    className={`h-1.5 w-1.5 rounded-full ${
-                      autoReload ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'
-                    }`}
-                  />
-                  <span>{autoReload ? `Tự reload: ${countdown}s` : 'Tự reload: Tắt'}</span>
-                </button>
-              </div>
-              <p className="text-[11px] text-slate-600 mt-0.5">
-                {currentCategory.hint} ·{' '}
-                {autoReload ? (
-                  <span className="text-emerald-700 font-medium">
-                    tự động làm mới sau {countdown}s
-                  </span>
-                ) : (
-                  <span className="text-slate-500">cập nhật thủ công</span>
-                )}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-1.5 ml-auto">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => handleRefresh()}
-              disabled={isRefreshing}
-              className="h-7 px-2 text-xs text-slate-700 bg-white hover:bg-slate-50 rounded-lg gap-1 cursor-pointer"
-              title="Bấm để tải lại BXH ngay lập tức"
-            >
-              <RefreshCw className={`h-3 w-3 ${isRefreshing ? 'animate-spin text-amber-600' : ''}`} />
-              <span className="text-[11px] font-mono">
-                {isRefreshing ? 'Đang tải...' : `Làm mới (${countdown}s)`}
-              </span>
-            </Button>
-            <Button
-              type="button"
-              variant="default"
-              size="sm"
-              onClick={() => handleOpenGamePanel()}
-              className="h-7 px-2.5 text-xs bg-amber-600 hover:bg-amber-700 text-white rounded-lg gap-1 cursor-pointer font-medium shadow-xs"
-            >
-              <span>Mở trong game</span>
-              <ExternalLink className="h-3 w-3" />
-            </Button>
-          </div>
-        </div>
-
-        {/* My Current Rank Badge (matching game style) */}
-        <div className="mt-2.5 flex items-center justify-between bg-white/80 rounded-lg px-2.5 py-1.5 border border-amber-200/70 text-xs">
-          {myRank ? (
-            <>
-              <span className="text-slate-700 font-medium flex items-center gap-1">
-                <span>Hạng của bạn:</span>
-                <b className="text-amber-800 font-mono">#{myRank.rank}</b>
-              </span>
-              <span className="text-slate-600 font-medium">
-                Thành tích: <b className="text-slate-900">{currentCategory.formatValue(myRank.value)}</b>
-              </span>
-            </>
-          ) : (
-            <span className="text-slate-500 text-[11px] italic">
-              {currentCategory.emptyHint || 'Bạn chưa có tên ở bảng này, ráng câu nha 💪'}
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Week & Cricket Arena Reset Countdown (In-Game style: displayed inside tab 'week' and 'soi') */}
-      {(activeCategoryId === 'week' || isTrumSoi) && board?.weekStart && board?.at && (
-        <div className="rounded-xl border border-sky-200 bg-sky-50/80 p-2.5 flex flex-col gap-1 text-xs text-sky-900 shadow-2xs">
-          <div className="flex items-center gap-1.5 font-bold">
-            <Calendar className="h-3.5 w-3.5 text-sky-600" />
-            <span>⏳ Còn {formatWeekTimeLeft(board.weekStart, board.at)} tới thứ Hai tính lại</span>
-          </div>
-          {activeCategoryId === 'week' && Array.isArray(board.lastWeek) && board.lastWeek.length > 0 && (
-            <div className="text-[11px] text-sky-800/90 pt-1 border-t border-sky-200/60 flex items-center gap-1 flex-wrap">
-              <span className="font-semibold">Tuần trước:</span>
-              {board.lastWeek.map((w, idx) => (
-                <span key={idx} className="inline-flex items-center gap-0.5">
-                  <span>{idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉'}</span>
-                  <b>{w.name}</b>
-                  <span className="text-slate-600 font-mono">(🐚 {w.value.toLocaleString('vi-VN')})</span>
-                  {idx < (board.lastWeek?.length ?? 0) - 1 && <span>·</span>}
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Trùm sới dế notice */}
-      {isTrumSoi && (
-        <div className="rounded-xl border border-sky-200 bg-sky-50/80 p-2.5 text-xs text-sky-900 shadow-2xs">
-          <span>🦗 Bảng vàng Trùm sới tính điểm từ 0h thứ Hai: thắng khách quen lần đầu trong ngày +1 điểm, thắng người +3 điểm (mỗi đối thủ 1 lần/ngày).</span>
-        </div>
-      )}
-
-      {/* Area Switcher (Bến đò 10 tabs vs Bãi Phù Sa 5 tabs) */}
+    <div className="flex flex-col gap-2.5 p-3 pr-4 overflow-y-auto min-h-0 select-none">
+      {/* 1. Group Bến đò / Bãi Phù Sa */}
       <div className="flex items-center justify-between gap-2 border-b border-slate-200 pb-2">
         <div className="inline-flex rounded-lg bg-slate-100 p-0.5 border border-slate-200">
           <button
@@ -519,7 +369,7 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
         </span>
       </div>
 
-      {/* Categories Tabs */}
+      {/* 2. Chọn BXH */}
       <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-thin pb-1">
         {areaCategories.map((cat) => {
           const isSelected = (isTrumSoi && cat.id === 'soi') || activeCategoryId === cat.id;
@@ -540,7 +390,55 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
         })}
       </div>
 
-      {/* Rankings List */}
+      {/* 3. Thông báo còn xx giờ... */}
+      {(activeCategoryId === 'week' || isTrumSoi) && board?.weekStart && board?.at && (
+        <div className="rounded-xl border border-sky-200 bg-sky-50/80 p-2.5 flex flex-col gap-1 text-xs text-sky-900 shadow-2xs">
+          <div className="flex items-center gap-1.5 font-bold">
+            <Calendar className="h-3.5 w-3.5 text-sky-600" />
+            <span>⏳ Còn {formatWeekTimeLeft(board.weekStart, board.at)} tới thứ Hai tính lại</span>
+          </div>
+          {activeCategoryId === 'week' && Array.isArray(board.lastWeek) && board.lastWeek.length > 0 && (
+            <div className="text-[11px] text-sky-800/90 pt-1 border-t border-sky-200/60 flex items-center gap-1 flex-wrap">
+              <span className="font-semibold">Tuần trước:</span>
+              {board.lastWeek.map((w, idx) => (
+                <span key={idx} className="inline-flex items-center gap-0.5">
+                  <span>{idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉'}</span>
+                  <b>{w.name}</b>
+                  <span className="text-slate-600 font-mono">(🐚 {w.value.toLocaleString('vi-VN')})</span>
+                  {idx < (board.lastWeek?.length ?? 0) - 1 && <span>·</span>}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {isTrumSoi && (
+        <div className="rounded-xl border border-sky-200 bg-sky-50/80 p-2 text-[11px] text-sky-900 shadow-2xs">
+          <span>🦗 Bảng vàng Trùm sới tính điểm từ 0h thứ Hai: thắng khách quen lần đầu trong ngày +1 điểm, thắng người +3 điểm (mỗi đối thủ 1 lần/ngày).</span>
+        </div>
+      )}
+
+      {/* 4. Hạng của bạn (chỉ giữ lại duy nhất phần hạng của bạn) */}
+      <div className="flex items-center justify-between bg-gradient-to-r from-amber-50/90 via-yellow-50/90 to-orange-50/90 rounded-xl px-3 py-2 border border-amber-200 text-xs shadow-2xs">
+        {myRank ? (
+          <>
+            <span className="text-slate-700 font-medium flex items-center gap-1.5">
+              <span>Hạng của bạn:</span>
+              <b className="text-amber-800 font-mono text-sm">#{myRank.rank}</b>
+            </span>
+            <span className="text-slate-600 font-medium">
+              Thành tích: <b className="text-slate-900 font-mono">{currentCategory.formatValue(myRank.value)}</b>
+            </span>
+          </>
+        ) : (
+          <span className="text-slate-500 text-[11px] italic">
+            {currentCategory.emptyHint || 'Bạn chưa có tên ở bảng này, ráng câu nha 💪'}
+          </span>
+        )}
+      </div>
+
+      {/* 5. Dưới cùng là Bảng xếp hạng */}
       <div className="flex flex-col gap-1.5">
         {boardItems.length === 0 ? (
           <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/70 p-6 text-center text-xs text-slate-500">
