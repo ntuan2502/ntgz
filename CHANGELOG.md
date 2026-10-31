@@ -5,6 +5,38 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.12.0] - 2026-11-01
+
+### 🌟 Tính Năng Mới & Nâng Cấp Bến Đò Toàn Diện (Wharf Overhaul & Anti-Detection)
+- **Nâng Cấp Toàn Diện Bảng Vàng Bến Đò Chuẩn In-Game (Complete Wharf & Alluvial Land Leaderboards)**:
+  - Khôi phục và cập nhật đầy đủ **10 bảng xếp hạng chính thức tại Bến đò** đúng theo game live: `⭐ Nổi tiếng`, `📖 Nhiều loài`, `📏 Cá to`, `🎣 Chăm câu`, `🐚 Giàu vỏ sò`, `🐉 Săn thần thoại`, `♻️ Ve chai`, `📏 Giữ kỷ lục`, `📅 Vua câu tuần`, và `🦗 Trùm sới`.
+  - Bổ sung bộ lọc chuyển đổi khu vực: **⚓ Bến đò (10)** và **🌾 Bãi Phù Sa (5)** (`🌾 Nông dân`, `🏠 Nhà đẹp`, `❤️ Nhiều like`, `👗 Thời trang`, `💰 Đại gia`), tách biệt rõ ràng và loại bỏ các bảng nông trại offline cũ (`farmAll`, `farmHomes`).
+  - Sắp xếp lại thứ tự hiển thị trực quan theo yêu cầu người dùng:
+    1. Đưa tab **🏆 Bảng vàng** lên vị trí số 1 trên thanh điều hướng Giám Sát và làm tab mặc định khi mở.
+    2. Bộ chuyển đổi khu vực Bến đò / Bãi Phù Sa.
+    3. Thanh cuộn chọn BXH chi tiết.
+    4. Thông báo đếm ngược thời gian reset tuần vào 0h thứ Hai (`⏳ Còn ... tới thứ Hai tính lại`) cho cả Vua câu tuần và Trùm sới dế.
+    5. Thanh thông tin tinh gọn hiển thị duy nhất **Hạng của bạn** và **Thành tích** (lược bỏ toàn bộ banner, tiêu đề và các nút thừa).
+    6. Bảng xếp hạng người chơi với Top 1-2-3 nhỏ gọn dạng dòng đơn, huy chương `🥇`, `🥈`, `🥉`, loại bỏ hình ảnh cá.
+  - Tự động đồng bộ ngầm mỗi 60 giây và hỗ trợ mở thẳng bảng Trùm sới từ Sới dế (`CricketDeckTab`).
+
+- **Cơ Chế Chống Phát Hiện Bot & Hành Vi Người Thật (Humanized Stealth & Spot Rotation)**:
+  - **Tự động đổi điểm câu sau X phút**: Thêm tính năng tự động di chuyển ngẫu nhiên giữa các điểm câu hợp lệ (Cầu tàu, Cầu tre, Bờ sông, Bụi trúc) sau mỗi chu kỳ cấu hình (mặc định 5-15 phút) nhằm tránh bị nghi ngờ hành vi bot câu cố định.
+  - **Rung giật tọa độ thả cần (Humanized Casting Jitter)**: Mô phỏng người chơi thật bằng cách ngẫu nhiên lệch nhẹ vị trí click và thời gian vung cần.
+  - **Nghỉ giải lao ngẫu nhiên (Micro-breaks)**: Tự động chèn các khoảng nghỉ ngơi ngắn ngẫu nhiên giữa các lần câu tương tự như người chơi tạm dừng quan sát.
+  - **Sửa lỗi tọa độ mép nước**: Trích xuất ranh giới bờ sông chính xác từ game engine, loại bỏ các ô cạn/trong bờ (`dock: 31,4`, `bridge: 45,15`) và bổ sung cơ chế tự động tìm mép nước gần nhất đảm bảo 100% vung cần trúng nước.
+
+- **Tối Ưu Hóa Săn Boss Bí Ngô & Quái Sự Kiện (Boss Pursuit & Priority)**:
+  - Tối ưu hóa phản xạ nhận diện Boss sự kiện xuất hiện tức thì, ưu tiên ngắt câu cá để săn Boss và tự động tiếp tục câu sau khi tiêu diệt xong Boss.
+  - Nâng cấp thuật toán tìm đường (Pathfinding) bám sát mục tiêu Boss di động theo thời gian thực với độ trễ tối thiểu.
+
+- **Giao Diện & Trải Nghiệm Người Dùng (UI/UX)**:
+  - **Thu gọn Menu Hồi phục thể lực Bến đò**: Cho phép bấm thu nhỏ/mở rộng cụm hồi phục thể lực giúp giao diện tab Bến Đò gọn gàng hơn.
+  - **Tối ưu HUD thu nhỏ**: Thanh điều khiển mini 2 nút siêu gọn gàng, tiết kiệm diện tích màn hình.
+  - **Tập trung giám sát Bến đò**: Tinh giản màn hình Giám sát theo định hướng khu vực Bến đò trực tuyến.
+
+---
+
 ## [1.11.0] - 2026-10-28
 
 ### 🌟 Tính Năng Mới & Nâng Cấp Trải Nghiệm (Major Features & UX Enhancements)
