@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { AppConfig, AreaId } from '@/shared/types/config';
 import { GameSnapshot } from '@/shared/types/game-state';
 import { HudHeader } from './components/HudHeader';
+import { HudMinimizedBar } from './components/HudMinimizedBar';
 import { HudStats } from './components/HudStats';
 import { HudControls } from './components/HudControls';
 import { HudStatusBar } from './components/HudStatusBar';
@@ -39,8 +40,9 @@ export function HudApp({
   const [snap, setSnap] = useState<GameSnapshot | null>(null);
   const [lastAction, setLastAction] = useState<string>('Đang chờ lệnh...');
   const [logs, setLogs] = useState<HudLogEntry[]>(() => getSessionLogs());
-  const [isMinimized, setIsMinimized] = useState<boolean>(false);
+  const [isMinimized, setIsMinimized] = useState<boolean>(() => Boolean(initialConfig.panelMinimized));
   const [version, setVersion] = useState<string>('1.0.0');
+  const hudRef = useRef<HTMLDivElement | null>(null);
 
   // Terminal Window State
   const [terminalWidth, setTerminalWidth] = useState<number>(() => initialConfig.terminalWidth || 380);
@@ -158,10 +160,12 @@ export function HudApp({
 
     const handleMouseMove = (moveEvent: MouseEvent) => {
       if (!isDraggingRef.current) return;
+      const currentW = hudRef.current?.offsetWidth || (isMinimized ? 220 : size.width);
+      const currentH = hudRef.current?.offsetHeight || (isMinimized ? 40 : size.height);
       const minX = 10;
-      const maxX = Math.max(minX, window.innerWidth - size.width - 10);
+      const maxX = Math.max(minX, window.innerWidth - currentW - 10);
       const minY = 10;
-      const maxY = Math.max(minY, window.innerHeight - size.height - 10);
+      const maxY = Math.max(minY, window.innerHeight - currentH - 10);
 
       const newX = Math.min(
         Math.max(minX, moveEvent.clientX - dragOffsetRef.current.x),
@@ -182,6 +186,37 @@ export function HudApp({
 
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleToggleMinimize = () => {
+    setIsMinimized((prev) => {
+      const next = !prev;
+      handleUpdateConfig((c) => ({ ...c, panelMinimized: next }));
+      if (!next) {
+        // When expanding back to full HUD, clamp position so it stays within viewport
+        setPosition((pos) => {
+          const maxX = Math.max(10, window.innerWidth - size.width - 10);
+          const maxY = Math.max(10, window.innerHeight - size.height - 10);
+          return {
+            x: Math.min(Math.max(10, pos.x), maxX),
+            y: Math.min(Math.max(10, pos.y), maxY),
+          };
+        });
+      }
+      return next;
+    });
+  };
+
+  const handleToggleTabAuto = () => {
+    if (config.running) {
+      if (config.runMode === 'tab') {
+        onToggleTab();
+      } else {
+        onToggleAll();
+      }
+    } else {
+      onToggleTab();
+    }
   };
 
   // Resizing handlers (edges & corners)
@@ -327,138 +362,152 @@ export function HudApp({
   return (
     <>
       <div
+        ref={hudRef}
         style={{
           transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
-          width: `${size.width}px`,
+          width: isMinimized ? 'auto' : `${size.width}px`,
           height: isMinimized ? 'auto' : `${Math.min(size.height, Math.max(MIN_HEIGHT, window.innerHeight - position.y - 10))}px`,
           pointerEvents: 'auto',
         }}
-        className="fixed left-0 top-0 z-[2147483600] flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 shadow-2xl bg-white/98 text-slate-800 backdrop-blur-xl font-sans select-none ring-1 ring-black/5"
+        className={
+          isMinimized
+            ? "fixed left-0 top-0 z-[2147483600] flex items-center rounded-2xl border border-slate-200/90 shadow-2xl bg-white/95 text-slate-800 backdrop-blur-xl font-sans select-none ring-1 ring-black/5 cursor-move"
+            : "fixed left-0 top-0 z-[2147483600] flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 shadow-2xl bg-white/98 text-slate-800 backdrop-blur-xl font-sans select-none ring-1 ring-black/5"
+        }
+        onMouseDown={isMinimized ? handleMouseDownDrag : undefined}
       >
-      {/* macOS Styled Header with Traffic Light Buttons */}
-      <HudHeader
-        isMinimized={isMinimized}
-        onToggleMinimize={() => setIsMinimized(!isMinimized)}
-        onHide={handleHide}
-        onCheckUpdate={handleCheckUpdate}
-        isCheckingUpdate={isCheckingUpdate}
-        onMouseDownDrag={handleMouseDownDrag}
-        onOpenSettings={() => setViewMode('settings')}
-        onToggleMonitor={handleToggleMonitor}
-        isMonitorActive={isMonitorOpen}
-      />
-
-      {/* Body content when not minimized */}
-      {!isMinimized && (
-        viewMode === 'settings' ? (
-          <SettingsView
+        {isMinimized ? (
+          <HudMinimizedBar
             config={config}
-            version={version}
-            onUpdateConfig={handleUpdateConfig}
-            onClose={() => setViewMode('main')}
-            onResetSize={handleResetSize}
-            hudSize={size}
-            onApplySize={(w, h) => {
-              setSize({ width: w, height: h });
-              handleUpdateConfig((prev) => ({
-                ...prev,
-                hudWidth: w,
-                hudHeight: h,
-              }));
-            }}
+            onToggleTabAuto={handleToggleTabAuto}
+            onExpand={handleToggleMinimize}
           />
-        ) : viewMode === 'changelog' && updateInfo ? (
-          <div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-white">
-            <HudSubHeader
-              title="📝 Nhật ký cập nhật"
-              version={version}
-              onBack={() => setViewMode('main')}
-            />
-
-            {/* Scrollable Changelog View - reused cleanly matching Popup */}
-            <div className="flex-1 min-h-0 overflow-hidden">
-              <ReleaseChangelogView
-                updateInfo={updateInfo}
-                showHeader={false}
-                onClose={() => setViewMode('main')}
-              />
-            </div>
-          </div>
         ) : (
-          <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-            {/* Live Stats Bar */}
-            <HudStats snap={snap} activeTab={config.activeTab} />
-
-            {/* Master Auto Controls */}
-            <HudControls
-              config={config}
-              activeTab={config.activeTab}
-              onToggleAll={onToggleAll}
-              onToggleTab={onToggleTab}
+          <>
+            {/* macOS Styled Header with Traffic Light Buttons */}
+            <HudHeader
+              isMinimized={false}
+              onToggleMinimize={handleToggleMinimize}
+              onHide={handleHide}
+              onCheckUpdate={handleCheckUpdate}
+              isCheckingUpdate={isCheckingUpdate}
+              onMouseDownDrag={handleMouseDownDrag}
+              onOpenSettings={() => setViewMode('settings')}
+              onToggleMonitor={handleToggleMonitor}
+              isMonitorActive={isMonitorOpen}
             />
 
-            {/* Current Action Status Bar (Terminal toggles separate window) */}
-            <HudStatusBar
-              lastAction={lastAction}
-              logsCount={logs.length}
-              isTerminalOpen={isTerminalOpen}
-              onToggleTerminal={handleToggleTerminal}
-            />
+            {/* Body content when not minimized */}
+            {viewMode === 'settings' ? (
+              <SettingsView
+                config={config}
+                version={version}
+                onUpdateConfig={handleUpdateConfig}
+                onClose={() => setViewMode('main')}
+                onResetSize={handleResetSize}
+                hudSize={size}
+                onApplySize={(w, h) => {
+                  setSize({ width: w, height: h });
+                  handleUpdateConfig((prev) => ({
+                    ...prev,
+                    hudWidth: w,
+                    hudHeight: h,
+                  }));
+                }}
+              />
+            ) : viewMode === 'changelog' && updateInfo ? (
+              <div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-white">
+                <HudSubHeader
+                  title="📝 Nhật ký cập nhật"
+                  version={version}
+                  onBack={() => setViewMode('main')}
+                />
 
-            {/* Navigation Tabs */}
-            <Tabs value={config.activeTab} onValueChange={handleTabChange} className="w-full flex-1 flex flex-col min-h-0 p-2.5 overflow-hidden">
-              <TabsList className="grid w-full grid-cols-4 h-8 text-[11px] rounded-xl p-1 bg-slate-100 border border-slate-200/80 text-slate-600 shrink-0">
-                <TabsTrigger
-                  value="farm"
-                  className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
-                >
-                  🌾 Nông trại
-                </TabsTrigger>
-                <TabsTrigger
-                  value="benDo"
-                  className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
-                >
-                  🛶 Bến đò
-                </TabsTrigger>
-                <TabsTrigger
-                  value="sea"
-                  className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
-                >
-                  🏖️ Biển
-                </TabsTrigger>
-                <TabsTrigger
-                  value="farmstay"
-                  className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
-                >
-                  🏡 Farmstay
-                </TabsTrigger>
-              </TabsList>
-
-              <div className="mt-2.5 flex-1 overflow-y-auto overflow-x-hidden pr-1 min-h-0">
-                <TabsContent value="farm" className="m-0">
-                  <FarmTabContent config={config} onUpdateConfig={handleUpdateConfig} />
-                </TabsContent>
-
-                <TabsContent value="benDo" className="m-0">
-                  <WharfTabContent
-                    config={config}
-                    onUpdateConfig={handleUpdateConfig}
-                    onOpenMonitorTab={handleOpenMonitorTab}
+                {/* Scrollable Changelog View - reused cleanly matching Popup */}
+                <div className="flex-1 min-h-0 overflow-hidden">
+                  <ReleaseChangelogView
+                    updateInfo={updateInfo}
+                    showHeader={false}
+                    onClose={() => setViewMode('main')}
                   />
-                </TabsContent>
-
-                <TabsContent value="sea" className="m-0">
-                  <SeaTabContent config={config} onUpdateConfig={handleUpdateConfig} />
-                </TabsContent>
-
-                <TabsContent value="farmstay" className="m-0">
-                  <FarmstayTabContent config={config} onUpdateConfig={handleUpdateConfig} />
-                </TabsContent>
+                </div>
               </div>
-            </Tabs>
-          </div>
-        )
-      )}
+            ) : (
+              <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+                {/* Live Stats Bar */}
+                <HudStats snap={snap} activeTab={config.activeTab} />
+
+                {/* Master Auto Controls */}
+                <HudControls
+                  config={config}
+                  activeTab={config.activeTab}
+                  onToggleAll={onToggleAll}
+                  onToggleTab={onToggleTab}
+                />
+
+                {/* Current Action Status Bar (Terminal toggles separate window) */}
+                <HudStatusBar
+                  lastAction={lastAction}
+                  logsCount={logs.length}
+                  isTerminalOpen={isTerminalOpen}
+                  onToggleTerminal={handleToggleTerminal}
+                />
+
+                {/* Navigation Tabs */}
+                <Tabs value={config.activeTab} onValueChange={handleTabChange} className="w-full flex-1 flex flex-col min-h-0 p-2.5 overflow-hidden">
+                  <TabsList className="grid w-full grid-cols-4 h-8 text-[11px] rounded-xl p-1 bg-slate-100 border border-slate-200/80 text-slate-600 shrink-0">
+                    <TabsTrigger
+                      value="farm"
+                      className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
+                    >
+                      🌾 Nông trại
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="benDo"
+                      className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
+                    >
+                      🛶 Bến đò
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="sea"
+                      className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
+                    >
+                      🏖️ Biển
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="farmstay"
+                      className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
+                    >
+                      🏡 Farmstay
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <div className="mt-2.5 flex-1 overflow-y-auto overflow-x-hidden pr-1 min-h-0">
+                    <TabsContent value="farm" className="m-0">
+                      <FarmTabContent config={config} onUpdateConfig={handleUpdateConfig} />
+                    </TabsContent>
+
+                    <TabsContent value="benDo" className="m-0">
+                      <WharfTabContent
+                        config={config}
+                        onUpdateConfig={handleUpdateConfig}
+                        onOpenMonitorTab={handleOpenMonitorTab}
+                      />
+                    </TabsContent>
+
+                    <TabsContent value="sea" className="m-0">
+                      <SeaTabContent config={config} onUpdateConfig={handleUpdateConfig} />
+                    </TabsContent>
+
+                    <TabsContent value="farmstay" className="m-0">
+                      <FarmstayTabContent config={config} onUpdateConfig={handleUpdateConfig} />
+                    </TabsContent>
+                  </div>
+                </Tabs>
+              </div>
+            )}
+          </>
+        )}
 
       {/* Resize Handles (Edges & Corners) */}
       {!isMinimized && (
