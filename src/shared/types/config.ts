@@ -200,6 +200,7 @@ export interface AppConfig {
   benAutoSellDuplicateKept?: boolean;
   benAutoGoiDau: boolean;
   benAutoRecoverStamina: boolean;
+  benStaminaCollapsed?: boolean;
   benStaminaThreshold: number;
   benPreferFood: string;
   benAutoLuckDrink: boolean;

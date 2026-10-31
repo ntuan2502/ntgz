@@ -336,6 +336,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   benAutoSellDuplicateKept: true,
   benAutoGoiDau: false,
   benAutoRecoverStamina: true,
+  benStaminaCollapsed: false,
   benStaminaThreshold: 0,
   benPreferFood: 'lauMam',
   benAutoLuckDrink: true,

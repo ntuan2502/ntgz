@@ -544,56 +544,90 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onO
       </div>
 
       {/* ⚡ Hồi Phục Thể Lực Bến Đò (Dùng chung cho cả Câu Cá & Bắt Dế) */}
-      <div className="rounded-xl border border-amber-200/90 bg-amber-50/30 p-3 shadow-xs space-y-2">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-1.5 min-w-0">
-            <span className="shrink-0 text-base">⚡</span>
-            <div>
-              <span className="font-semibold text-xs text-slate-800">
-                Hồi phục Thể Lực Bến Đò
-              </span>
-              <span className="block text-[10px] text-amber-700 font-medium">
-                Tự ăn uống / gội đầu khi hết Sức (áp dụng cho cả Câu cá &amp; Bắt dế)
-              </span>
-            </div>
-          </div>
-          <Switch
-            checked={Boolean(config.benAutoRecoverStamina ?? true)}
-            onCheckedChange={(c) => updateField('benAutoRecoverStamina', c)}
-            title="Bật/Tắt tự động hồi phục thể lực Bến Đò"
-          />
-        </div>
+      {(() => {
+        const isStaminaCollapsed = Boolean(config.benStaminaCollapsed);
+        const isStaminaEnabled = config.benAutoRecoverStamina !== false;
 
-        {config.benAutoRecoverStamina !== false && (
-          <div className="pt-2 border-t border-amber-200/60 space-y-2 text-[11px]">
-            <div className="flex items-center justify-between gap-2 min-w-0">
-              <span className="text-slate-600 shrink-0">Món ăn ưu tiên (Quán ăn Dì Tám):</span>
-              <HudSelect
-                value={config.benPreferFood || 'lauMam'}
-                onValueChange={(val) => updateField('benPreferFood', val)}
-                options={[
-                  { value: 'lauMam', label: '🍲 Lẩu cá linh (+100 Sức · 45 vỏ sò)' },
-                  { value: 'comTam', label: '🍛 Cơm tấm sườn bì (+60 Sức · 28 vỏ sò)' },
-                  { value: 'huTieu', label: '🍜 Hủ tiếu nam vang (+40 Sức · 20 vỏ sò)' },
-                  { value: 'chaoCa', label: '🥣 Cháo cá lóc (+28 Sức · 14 vỏ sò)' },
-                  { value: 'banhMi', label: '🥖 Bánh mì thịt (+20 Sức · 10 vỏ sò)' },
-                ]}
-              />
+        return (
+          <div
+            className={`rounded-xl border bg-white shadow-xs transition-all ${
+              isStaminaEnabled ? 'border-amber-200/90' : 'border-slate-200/60 opacity-60'
+            }`}
+          >
+            {/* Header */}
+            <div
+              className={`flex items-center justify-between px-3 py-2 select-none hover:bg-amber-50/50 cursor-pointer ${
+                isStaminaCollapsed ? 'rounded-xl' : 'rounded-t-xl'
+              }`}
+              onClick={() => updateField('benStaminaCollapsed', !isStaminaCollapsed)}
+            >
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="text-amber-500">
+                  {isStaminaCollapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+                </span>
+                <span className="shrink-0 text-sm">⚡</span>
+                <div className="min-w-0">
+                  <span className="font-semibold text-xs text-slate-800 block truncate">
+                    Hồi phục Thể Lực Bến Đò
+                  </span>
+                  <span className="block text-[10px] text-amber-700 font-medium truncate">
+                    Tự ăn uống / gội đầu khi hết Sức
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
+                <Switch
+                  size="sm"
+                  checked={isStaminaEnabled}
+                  onCheckedChange={(c) => updateField('benAutoRecoverStamina', c)}
+                  title="Bật/Tắt tự động hồi phục thể lực Bến Đò"
+                />
+              </div>
             </div>
 
-            <label className="flex items-center justify-between text-slate-700 cursor-pointer pt-0.5">
-              <span>💆 Tiệm Út Mười: Gội đầu massage (+50⚡ · 25🐚)</span>
-              <Switch
-                checked={Boolean(config.benAutoGoiDau ?? true)}
-                onCheckedChange={(c) => updateField('benAutoGoiDau', c)}
-              />
-            </label>
-            <p className="text-[10px] text-slate-500 italic">
-              💡 Tự động ăn bánh mì, xôi bắp trong ba lô trước; nếu hết mới ghé Quán Dì Tám mua thức ăn hoặc tiệm Út Mười gội đầu.
-            </p>
+            {/* Body */}
+            {!isStaminaCollapsed && (
+              <div className="p-3 border-t border-amber-100 bg-amber-50/20 rounded-b-xl space-y-2 text-[11px]">
+                {isStaminaEnabled ? (
+                  <>
+                    <div className="flex items-center justify-between gap-2 min-w-0">
+                      <span className="text-slate-600 shrink-0">Món ăn ưu tiên (Quán ăn Dì Tám):</span>
+                      <HudSelect
+                        value={config.benPreferFood || 'lauMam'}
+                        onValueChange={(val) => updateField('benPreferFood', val)}
+                        options={[
+                          { value: 'lauMam', label: '🍲 Lẩu cá linh (+100 Sức · 45 vỏ sò)' },
+                          { value: 'comTam', label: '🍛 Cơm tấm sườn bì (+60 Sức · 28 vỏ sò)' },
+                          { value: 'huTieu', label: '🍜 Hủ tiếu nam vang (+40 Sức · 20 vỏ sò)' },
+                          { value: 'chaoCa', label: '🥣 Cháo cá lóc (+28 Sức · 14 vỏ sò)' },
+                          { value: 'banhMi', label: '🥖 Bánh mì thịt (+20 Sức · 10 vỏ sò)' },
+                        ]}
+                      />
+                    </div>
+
+                    <label className="flex items-center justify-between text-slate-700 cursor-pointer pt-0.5">
+                      <span>💆 Tiệm Út Mười: Gội đầu massage (+50⚡ · 25🐚)</span>
+                      <Switch
+                        size="sm"
+                        checked={Boolean(config.benAutoGoiDau ?? true)}
+                        onCheckedChange={(c) => updateField('benAutoGoiDau', c)}
+                      />
+                    </label>
+                    <p className="text-[10px] text-slate-500 italic">
+                      💡 Tự động ăn bánh mì, xôi bắp trong ba lô trước; nếu hết mới ghé Quán Dì Tám mua thức ăn hoặc tiệm Út Mười gội đầu.
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-[10px] text-slate-400 italic">
+                    Đang tắt tự động hồi phục thể lực. Nhân vật sẽ dừng hoạt động khi hết sức.
+                  </p>
+                )}
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        );
+      })()}
 
       {/* Sub-areas list */}
       <div className="space-y-2 pt-0.5">
