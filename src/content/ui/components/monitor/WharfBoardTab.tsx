@@ -41,70 +41,141 @@ interface BoardCategory {
   id: string;
   name: string;
   hint: string;
-  formatValue: (val: number, item?: { fish?: string }) => string;
+  emptyHint?: string;
+  group: 'ben' | 'phusa';
+  formatValue: (val: number, item?: { fish?: string; shells?: number; [key: string]: unknown }) => string;
 }
 
 /**
- * 8 Official Bến Đò Leaderboard Categories
- * Exactly matches `f7` from tools/play.formatted.js
+ * 15 Official In-Game Leaderboard Categories (from live game bundle `play-DvTO7mqQ.js`)
+ * - Bến Đò (10 categories): fame, species, size, caught, earned, mythic, junk, records, week, soi
+ * - Bãi Phù Sa (5 categories): harvest, home, likes, fashion, rich
  */
 const BOARD_CATEGORIES: BoardCategory[] = [
+  // --- Bến đò (Wharf) Official Categories ---
+  {
+    id: 'fame',
+    name: '⭐ Nổi tiếng',
+    hint: 'Độ nổi tiếng nhận từ quà người khác tặng (bó bông, trà sữa, bánh kem…) và tự bắn pháo hoa, cộng dồn mãi không reset',
+    emptyHint: 'Chưa ai tặng quà cho bạn ⭐ Chạm vào bạn bè ở bến để tặng nhau nha',
+    group: 'ben',
+    formatValue: (v) => `⭐ ${v.toLocaleString('vi-VN')}`,
+  },
   {
     id: 'species',
     name: '📖 Nhiều loài',
     hint: 'Sổ cá đủ loài nhất bến',
+    emptyHint: 'Bảng còn trống, câu con đầu tiên là có tên liền 🎣',
+    group: 'ben',
     formatValue: (v) => `${v}/89 loài`,
   },
   {
     id: 'size',
     name: '📏 Cá to',
     hint: 'Con cá to nhất từng câu lên',
+    emptyHint: 'Bảng còn trống, câu con đầu tiên là có tên liền 🎣',
+    group: 'ben',
     formatValue: (v, item) => `${v} cm${item?.fish ? ` · ${fishMap.get(item.fish) ?? item.fish}` : ''}`,
   },
   {
     id: 'caught',
     name: '🎣 Chăm câu',
     hint: 'Câu được nhiều con nhất (không tính rác)',
+    emptyHint: 'Bảng còn trống, câu con đầu tiên là có tên liền 🎣',
+    group: 'ben',
     formatValue: (v) => `${v.toLocaleString('vi-VN')} con`,
   },
   {
     id: 'earned',
     name: '🐚 Giàu vỏ sò',
     hint: 'Kiếm nhiều vỏ sò nhất từ trước tới giờ (tiêu không bị trừ)',
+    emptyHint: 'Bảng còn trống 🐚',
+    group: 'ben',
     formatValue: (v) => `🐚 ${v.toLocaleString('vi-VN')}`,
   },
   {
     id: 'mythic',
     name: '🐉 Săn thần thoại',
     hint: 'Câu nhiều cá Thần thoại nhất (chỉ cần bốc từ hạng Quý mới dính)',
+    emptyHint: 'Bảng còn trống, câu con đầu tiên là có tên liền 🎣',
+    group: 'ben',
     formatValue: (v) => `${v.toLocaleString('vi-VN')} con`,
   },
   {
     id: 'junk',
     name: '♻️ Ve chai',
     hint: 'Vớt rác nhiều nhất bến: dép, chai, lon, bao ni lông… sông sạch nhờ bạn',
+    emptyHint: 'Bảng còn trống, vớt món rác đầu tiên là có tên liền ♻️',
+    group: 'ben',
     formatValue: (v) => `${v.toLocaleString('vi-VN')} món`,
   },
   {
     id: 'records',
     name: '📏 Giữ kỷ lục',
     hint: 'Giữ nhiều kỷ lục nhất: loài nào cũng có một người câu con to nhất cả bến (coi trong Sổ cá)',
+    emptyHint: 'Bảng còn trống, câu con kỷ lục là có tên liền 📏',
+    group: 'ben',
     formatValue: (v) => `${v} loài`,
   },
   {
     id: 'week',
     name: '📅 Vua câu tuần',
     hint: 'Cộng giá cá câu được từ 0h thứ Hai. Top 3 đeo huy chương trước danh hiệu suốt tuần sau',
+    emptyHint: 'Bảng còn trống, câu con cá đầu tuần là có tên liền 🎣',
+    group: 'ben',
+    formatValue: (v) => `🐚 ${v.toLocaleString('vi-VN')}`,
+  },
+  {
+    id: 'soi',
+    name: '🦗 Trùm sới',
+    hint: 'Điểm chọi dế từ 0h thứ Hai: thắng khách quen ở sới lần đầu trong ngày 1 điểm, thắng người 3 điểm (mỗi đối thủ một lần / ngày)',
+    emptyHint: 'Bảng còn trống, thắng khách quen đầu tiên ở sới dế là có tên liền 🦗',
+    group: 'ben',
+    formatValue: (v) => `${v} điểm`,
+  },
+
+  // --- Bãi Phù Sa (Alluvial Land) Official Categories ---
+  {
+    id: 'harvest',
+    name: '🌾 Nông dân',
+    hint: 'Nông dân chăm nhất: thu hoạch nhiều luống nhất trên đất Bãi Phù Sa, bằng luống thì ai nhiều vỏ sò hơn đứng trên',
+    emptyHint: 'Bạn chưa thu hoạch luống nào trên đất Bãi 🌾',
+    group: 'phusa',
+    formatValue: (v, item) => `${v.toLocaleString('vi-VN')} luống${item?.shells === undefined ? '' : ` · 🐚 ${Number(item.shells).toLocaleString('vi-VN')}`}`,
+  },
+  {
+    id: 'home',
+    name: '🏠 Nhà đẹp',
+    hint: 'Mỗi loại đồ đang bày trong nhà cộng điểm theo giá (món trùng tính một lần, đồ ngọc trai điểm cao), cất về kho là mất điểm',
+    emptyHint: 'Nhà bạn chưa bày món đồ nào 🏠 Mua ở Dì Chín / anh Tèo rồi về bấm 🛋️ Bày đồ nha',
+    group: 'phusa',
+    formatValue: (v) => `🏠 ${v.toLocaleString('vi-VN')} điểm`,
+  },
+  {
+    id: 'likes',
+    name: '❤️ Nhiều like',
+    hint: 'Được nhiều người thả tim nhà nhất (mỗi người mỗi nhà chỉ một lần)',
+    emptyHint: 'Nhà bạn chưa ai thả tim ❤️ Bày đồ cho đẹp rồi rủ bạn bè ghé chơi nha',
+    group: 'phusa',
+    formatValue: (v) => `❤️ ${v.toLocaleString('vi-VN')}`,
+  },
+  {
+    id: 'fashion',
+    name: '👗 Thời trang',
+    hint: 'Mỗi món đồ + thú cưng nhà nông đang có cộng điểm bằng cấp của nó (món trùng tính một lần), dòng Thời trang ngẫu nhiên được thêm +1 tới +6',
+    emptyHint: 'Bạn chưa có món đồ / thú cưng nhà nông nào 👗',
+    group: 'phusa',
+    formatValue: (v) => `👗 ${v.toLocaleString('vi-VN')} điểm`,
+  },
+  {
+    id: 'rich',
+    name: '💰 Đại gia',
+    hint: 'Đang giữ nhiều vỏ sò nhất trong ví (tiêu là tụt hạng)',
+    emptyHint: 'Bảng còn trống 🐚',
+    group: 'phusa',
     formatValue: (v) => `🐚 ${v.toLocaleString('vi-VN')}`,
   },
 ];
-
-const TRUM_SOI_CATEGORY: BoardCategory = {
-  id: 'trumSoi',
-  name: '🥊 Trùm sới',
-  hint: 'Điểm thắng Boss sới dế đua BXH tuần (Cu Bin, Út Mập, Anh Lực, Bác Chín, Ông Sáu)',
-  formatValue: (v) => `${v.toLocaleString('vi-VN')} điểm`,
-};
 
 const TRUM_SOI_ALIASES = ['trumSoi', 'soi', 'boss', 'cricket', 'trum_soi', 'arena', 'soiBoss'];
 const AUTO_RELOAD_INTERVAL_SEC = 60;
@@ -124,7 +195,14 @@ interface WharfBoardTabProps {
 }
 
 export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
-  const [activeCategoryId, setActiveCategoryId] = useState<string>(initialCategoryId || 'species');
+  // Normalize initialCategoryId ('trumSoi' -> 'soi')
+  const resolvedInitialCat = initialCategoryId === 'trumSoi' ? 'soi' : initialCategoryId;
+  const initialCategoryObj = BOARD_CATEGORIES.find((c) => c.id === resolvedInitialCat);
+
+  const [selectedArea, setSelectedArea] = useState<'ben' | 'phusa'>(
+    initialCategoryObj?.group === 'phusa' ? 'phusa' : 'ben'
+  );
+  const [activeCategoryId, setActiveCategoryId] = useState<string>(resolvedInitialCat || 'fame');
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [autoReload, setAutoReload] = useState<boolean>(true);
   const [countdown, setCountdown] = useState<number>(AUTO_RELOAD_INTERVAL_SEC);
@@ -132,23 +210,30 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
 
   useEffect(() => {
     if (initialCategoryId) {
-      setActiveCategoryId(initialCategoryId);
+      const norm = initialCategoryId === 'trumSoi' ? 'soi' : initialCategoryId;
+      setActiveCategoryId(norm);
+      const cat = BOARD_CATEGORIES.find((c) => c.id === norm);
+      if (cat) {
+        setSelectedArea(cat.group);
+      }
     }
   }, [initialCategoryId]);
 
   const benNet = snap?.benNet;
   const board = benNet?.board as BoardData | null | undefined;
 
-  const isTrumSoi = activeCategoryId === 'trumSoi' || TRUM_SOI_ALIASES.includes(activeCategoryId);
-  const currentCategory = isTrumSoi
-    ? TRUM_SOI_CATEGORY
-    : BOARD_CATEGORIES.find((c) => c.id === activeCategoryId) || BOARD_CATEGORIES[0];
+  const isTrumSoi = activeCategoryId === 'soi' || TRUM_SOI_ALIASES.includes(activeCategoryId);
+  const currentCategory =
+    BOARD_CATEGORIES.find((c) => c.id === (isTrumSoi ? 'soi' : activeCategoryId)) ||
+    BOARD_CATEGORIES[0];
 
   // Extract category items
   const boardItems: BoardItem[] = (() => {
-    // Standard boards from server packet (species, size, caught, earned, mythic, junk, records, week)
-    if (board?.boards?.[activeCategoryId]?.length) {
-      return board.boards[activeCategoryId];
+    const targetCatId = isTrumSoi ? 'soi' : activeCategoryId;
+
+    // Standard boards from server packet (species, size, caught, earned, mythic, junk, records, week, soi, fame, etc.)
+    if (board?.boards?.[targetCatId]?.length) {
+      return board.boards[targetCatId];
     }
 
     // Trùm sới dế boss leaderboard fallback
@@ -190,8 +275,9 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
   })();
 
   const myRank: { rank: number; value: number } | undefined = (() => {
-    if (board?.me?.[activeCategoryId]) {
-      return board.me[activeCategoryId];
+    const targetCatId = isTrumSoi ? 'soi' : activeCategoryId;
+    if (board?.me?.[targetCatId]) {
+      return board.me[targetCatId];
     }
     if (isTrumSoi) {
       if (board?.me) {
@@ -260,10 +346,16 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
     return () => clearInterval(interval);
   }, [autoReload, handleRefresh]);
 
-  // Render tab button list (8 game categories + optional trumSoi if selected from cricket tab)
-  const renderedCategories = isTrumSoi && !BOARD_CATEGORIES.some((c) => c.id === 'trumSoi')
-    ? [...BOARD_CATEGORIES, TRUM_SOI_CATEGORY]
-    : BOARD_CATEGORIES;
+  // Categories filtered by currently selected area (Bến đò vs Bãi Phù Sa)
+  const areaCategories = BOARD_CATEGORIES.filter((c) => c.group === selectedArea);
+
+  const handleSelectArea = (area: 'ben' | 'phusa') => {
+    setSelectedArea(area);
+    const firstCat = BOARD_CATEGORIES.find((c) => c.group === area);
+    if (firstCat && !BOARD_CATEGORIES.some((c) => c.id === activeCategoryId && c.group === area)) {
+      setActiveCategoryId(firstCat.id);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-3 p-3 pr-4 overflow-y-auto min-h-0 select-none">
@@ -276,7 +368,9 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-bold text-slate-900 text-sm">Bảng vàng Bến đò</span>
+                <span className="font-bold text-slate-900 text-sm">
+                  {selectedArea === 'ben' ? 'Bảng vàng Bến đò' : 'Bảng vàng Bãi Phù Sa'}
+                </span>
                 <Badge className="bg-amber-500 text-white text-[10px] px-1.5 py-0 font-medium">
                   BXH Trực Tuyến
                 </Badge>
@@ -357,20 +451,20 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
             </>
           ) : (
             <span className="text-slate-500 text-[11px] italic">
-              Bạn chưa có tên ở bảng này, ráng câu nha 💪
+              {currentCategory.emptyHint || 'Bạn chưa có tên ở bảng này, ráng câu nha 💪'}
             </span>
           )}
         </div>
       </div>
 
-      {/* Week Countdown & Last Week Winners (In-Game style: displayed inside tab 'week') */}
-      {activeCategoryId === 'week' && board?.weekStart && board?.at && (
+      {/* Week & Cricket Arena Reset Countdown (In-Game style: displayed inside tab 'week' and 'soi') */}
+      {(activeCategoryId === 'week' || isTrumSoi) && board?.weekStart && board?.at && (
         <div className="rounded-xl border border-sky-200 bg-sky-50/80 p-2.5 flex flex-col gap-1 text-xs text-sky-900 shadow-2xs">
           <div className="flex items-center gap-1.5 font-bold">
             <Calendar className="h-3.5 w-3.5 text-sky-600" />
             <span>⏳ Còn {formatWeekTimeLeft(board.weekStart, board.at)} tới thứ Hai tính lại</span>
           </div>
-          {Array.isArray(board.lastWeek) && board.lastWeek.length > 0 && (
+          {activeCategoryId === 'week' && Array.isArray(board.lastWeek) && board.lastWeek.length > 0 && (
             <div className="text-[11px] text-sky-800/90 pt-1 border-t border-sky-200/60 flex items-center gap-1 flex-wrap">
               <span className="font-semibold">Tuần trước:</span>
               {board.lastWeek.map((w, idx) => (
@@ -389,14 +483,46 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
       {/* Trùm sới dế notice */}
       {isTrumSoi && (
         <div className="rounded-xl border border-sky-200 bg-sky-50/80 p-2.5 text-xs text-sky-900 shadow-2xs">
-          <span>🥊 Đua điểm đánh bại Boss Sới Dế: Cu Bin ➔ Út Mập ➔ Anh Lực ➔ Bác Chín ➔ Ông Sáu</span>
+          <span>🦗 Bảng vàng Trùm sới tính điểm từ 0h thứ Hai: thắng khách quen lần đầu trong ngày +1 điểm, thắng người +3 điểm (mỗi đối thủ 1 lần/ngày).</span>
         </div>
       )}
 
-      {/* Categories Tabs (Official 8 Game Tabs) */}
+      {/* Area Switcher (Bến đò 10 tabs vs Bãi Phù Sa 5 tabs) */}
+      <div className="flex items-center justify-between gap-2 border-b border-slate-200 pb-2">
+        <div className="inline-flex rounded-lg bg-slate-100 p-0.5 border border-slate-200">
+          <button
+            type="button"
+            onClick={() => handleSelectArea('ben')}
+            className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+              selectedArea === 'ben'
+                ? 'bg-white text-amber-900 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            ⚓ Bến đò (10)
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSelectArea('phusa')}
+            className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+              selectedArea === 'phusa'
+                ? 'bg-white text-emerald-900 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            🌾 Bãi Phù Sa (5)
+          </button>
+        </div>
+
+        <span className="text-[11px] text-slate-500 font-mono hidden sm:inline">
+          {selectedArea === 'ben' ? '10 bảng bến đò trực tuyến' : '5 bảng bãi phù sa'}
+        </span>
+      </div>
+
+      {/* Categories Tabs */}
       <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-thin pb-1">
-        {renderedCategories.map((cat) => {
-          const isSelected = activeCategoryId === cat.id;
+        {areaCategories.map((cat) => {
+          const isSelected = (isTrumSoi && cat.id === 'soi') || activeCategoryId === cat.id;
           return (
             <button
               key={cat.id}
@@ -421,7 +547,7 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
             <p>
               {isTrumSoi
                 ? 'Chưa có dữ liệu BXH Trùm sới hoặc máy chủ đang tổng hợp điểm...'
-                : 'Bảng còn trống, câu con đầu tiên là có tên liền 🎣'}
+                : currentCategory.emptyHint || 'Bảng còn trống, câu con đầu tiên là có tên liền 🎣'}
             </p>
             <div className="flex items-center justify-center gap-2 mt-2">
               <Button
