@@ -503,7 +503,25 @@ export async function stepBenDoFishing(
   }
 
   // 5. Waiting for fish
+  const isBossActive = Boolean(
+    config.benAutoBossHunt !== false &&
+    (bn.hlwBoss || (bn as Record<string, unknown>).hlwLive || document.querySelector('.hlw-boss'))
+  );
+
   if (bn.fishing === 'wait' || bn.fishing === 'nibble' || bn.fishing === 'casting') {
+    if (isBossActive) {
+      // Boss Bí Ngô xuất hiện: Thu cần ngay lập tức để chuyển sang bám theo săn Boss
+      const pullBtn = document.querySelector('button.ben-cast.btn-brown') as HTMLButtonElement | null;
+      if (pullBtn && isVisible(pullBtn)) {
+        triggerPointerDownOnly(pullBtn);
+      } else {
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true }));
+      }
+      setStatus('👑 Phát hiện Boss Bí Ngô xuất hiện! Đang thu cần gấp để bám theo săn Boss 🎃');
+      await sleep(150);
+      return { finishedArea: false };
+    }
+
     setStatus(
       bn.fishing === 'nibble'
         ? '🐟 Cá đang rỉa mồi... đợi phao chìm hẳn!'
@@ -513,7 +531,7 @@ export async function stepBenDoFishing(
   }
 
   // 6. Walking
-  if (bu?.walking) {
+  if (bu?.walking && !isBossActive) {
     setStatus('🚶 Đang đi bộ ở Bến Đò...');
     return { finishedArea: false };
   }
@@ -523,7 +541,8 @@ export async function stepBenDoFishing(
     const prep = await execGameAction('BEN_STEP', { config });
     if (prep && prep.ok && prep.acted) {
       setStatus(prep.msg || '🛶 Đang chuẩn bị tại Bến Đò...');
-      await sleep(delayMs);
+      const stepDelay = prep.isBossHunt ? 120 : delayMs;
+      await sleep(stepDelay);
       return { finishedArea: false };
     }
 

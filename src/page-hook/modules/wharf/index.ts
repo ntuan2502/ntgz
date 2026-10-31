@@ -14,6 +14,7 @@ interface BenStepResult {
   msg?: string;
   exhausted?: boolean;
   reason?: string;
+  isBossHunt?: boolean;
   /** Content runner may click the cast button (fishing owns the continuous slot and stands at the spot) */
   allowCast?: boolean;
   /** Continuous activity (fishing / hunting) to run only if no bounded task is ready */
@@ -253,6 +254,10 @@ let lastObservedHlwToastSeq = -1;
 let lastHlwQueryAt = 0;
 let lastHtxQueryAt = 0;
 let lastHtxClaimAt = 0;
+let lastBossPxX = 0;
+let lastBossPxY = 0;
+let lastBossTime = 0;
+let lastDispatchedBossTile = { x: -1, y: -1 };
 
 function subscribeToBenNetIfNeeded(bnStore: import('../../core/engine-access').ZustandStore<BenNetState>): void {
   if (isSubscribedToBenNet || typeof bnStore.subscribe !== 'function') return;
@@ -311,7 +316,10 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   }
   initWharfSeqsIfNeeded(bn);
   refreshCricketWatchers(cfg);
-  if (bu.walking || bn.fishing !== 'idle') {
+  const isBossActive = Boolean(
+    cfg.benAutoBossHunt !== false && (bn.hlwBoss || (bn as Record<string, unknown>).hlwLive)
+  );
+  if (!isBossActive && (bu.walking || bn.fishing !== 'idle')) {
     return { acted: false };
   }
 
@@ -458,28 +466,69 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
     const isBossVisible = Boolean(benScene?.boss?.visible);
     const hasBossState = Boolean(bn.hlwBoss);
     if ((isBossVisible || hasBossState) && benScene?.boss && benScene.farmer) {
-      const bossPixelX = benScene.boss.x ?? 0;
-      const bossPixelY = benScene.boss.y ?? 0;
-      const bossTileX = Math.round(bossPixelX / 16);
-      const bossTileY = Math.round(bossPixelY / 16);
-      const farmerTile = benScene.farmer.tile || {
-        x: Math.round((benScene.farmer.x ?? 0) / 16),
-        y: Math.round((benScene.farmer.y ?? 0) / 16),
-      };
+      const bossPxX = benScene.boss.x ?? 0;
+      const bossPxY = benScene.boss.y ?? 0;
+      if (bossPxX > 0 || bossPxY > 0) {
+        const bossTileX = Math.round(bossPxX / 16);
+        const bossTileY = Math.round(bossPxY / 16);
 
-      const dist = Math.hypot(bossTileX - farmerTile.x, bossTileY - farmerTile.y);
-      if (dist > 1.5 && canAct('ben_boss_hunt', 400)) {
-        markActed('ben_boss_hunt');
-        benScene.goFarmer?.({ x: bossTileX, y: bossTileY });
+        const farmerPxX = benScene.farmer.x ?? bossPxX;
+        const farmerPxY = benScene.farmer.y ?? bossPxY;
+        const farmerTile = benScene.farmer.tile || {
+          x: Math.round(farmerPxX / 16),
+          y: Math.round(farmerPxY / 16),
+        };
+
+        const now = performance.now();
+        const dt = lastBossTime > 0 ? Math.max(30, now - lastBossTime) : 100;
+        const vx = lastBossTime > 0 ? (bossPxX - lastBossPxX) / dt : 0;
+        const vy = lastBossTime > 0 ? (bossPxY - lastBossPxY) / dt : 0;
+        const speed = Math.hypot(vx, vy);
+
+        lastBossPxX = bossPxX;
+        lastBossPxY = bossPxY;
+        lastBossTime = now;
+
+        // Predict lead target if boss is moving (lead by ~260ms in movement direction)
+        let targetTileX = bossTileX;
+        let targetTileY = bossTileY;
+        if (speed > 0.02) {
+          const leadPx = Math.min(28, speed * 260);
+          const angle = Math.atan2(vy, vx);
+          targetTileX = Math.round((bossPxX + Math.cos(angle) * leadPx) / 16);
+          targetTileY = Math.round((bossPxY + Math.sin(angle) * leadPx) / 16);
+        }
+
+        const distTiles = Math.hypot(bossTileX - farmerTile.x, bossTileY - farmerTile.y);
+        const targetDistFromDispatched = Math.hypot(
+          targetTileX - lastDispatchedBossTile.x,
+          targetTileY - lastDispatchedBossTile.y
+        );
+
+        const needMove = distTiles > 1.2;
+        const cooldownElapsed = canAct('ben_boss_hunt', 200);
+
+        if (needMove && (targetDistFromDispatched >= 1 || cooldownElapsed)) {
+          markActed('ben_boss_hunt');
+          lastDispatchedBossTile = { x: targetTileX, y: targetTileY };
+          benScene.goFarmer?.({ x: targetTileX, y: targetTileY });
+          return {
+            acted: true,
+            isBossHunt: true,
+            msg: `👑 Bám sát Boss Bí Ngô tại (${targetTileX}, ${targetTileY}) · Cách ${distTiles.toFixed(1)} ô 🎃`,
+          };
+        }
+
+        if (benScene.farmer.lookAt) {
+          benScene.farmer.lookAt(bossPxX, bossPxY);
+        }
+
         return {
           acted: true,
-          msg: `👑 Boss Bí Ngô đang chạy tại (${bossTileX}, ${bossTileY}) · Đang bám theo nhặt bí ngô 🎃`,
+          isBossHunt: true,
+          msg: `👑 Đang áp sát Boss Bí Ngô (${bossTileX}, ${bossTileY}) · Hứng bí ngô rắc rơi 🎃`,
         };
       }
-      return {
-        acted: true,
-        msg: `👑 Đang đứng cạnh Boss Bí Ngô (${bossTileX}, ${bossTileY}) · Hứng bí ngô rắc rơi 🎃`,
-      };
     }
   }
 
