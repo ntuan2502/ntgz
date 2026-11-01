@@ -1,6 +1,6 @@
 import React from 'react';
 import { AppConfig, WharfSubAreaId } from '@/shared/types/config';
-import { WHARF_SUBAREA_META } from '@/shared/constants/default-config';
+import { WHARF_SUBAREA_META, BAI_CROPS_META } from '@/shared/constants/default-config';
 import { Switch } from '@/components/ui/switch';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { HudSelect } from './HudSelect';
@@ -44,7 +44,7 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onO
   const vnHour = vnDate.getUTCHours();
   const isNightHuntOpen = vnHour >= 18 || vnHour < 5;
 
-  const subOrder: WharfSubAreaId[] = ['fishing', 'cricketBoss', 'cricketHunt', 'entertainment'];
+  const subOrder: WharfSubAreaId[] = ['fishing', 'cricketBoss', 'cricketHunt', 'entertainment', 'alluvialLand'];
 
   const handleToggleSubEnabled = (subId: WharfSubAreaId, checked: boolean) => {
     onUpdateConfig((prev) => {
@@ -573,6 +573,105 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onO
             </label>
           </div>
         );
+
+      case 'alluvialLand': {
+        const cropOptions = BAI_CROPS_META.map((c) => ({
+          value: c.id,
+          label: `${c.name} (${c.minutes}p · ${c.pearl ? `${c.pearlSeed}🦪` : `${c.seed}🐚`} · Thu ${c.yield} ${c.unit})`,
+        }));
+
+        return (
+          <div className="space-y-2.5 text-xs">
+            <p className="text-[11px] text-slate-500 italic">
+              🌾 Tự động đi đò sang Bãi Phù Sa chăm sóc đất, luống rau và vườn dừa khi có việc (chín/trống), xong việc tự về câu cá tiếp.
+            </p>
+
+            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+              <div>
+                <span className="font-medium">⛵ Tự đi đò qua chăm sóc đất bãi khi có việc</span>
+                <p className="text-[10px] text-slate-400">
+                  Chỉ qua sông khi rau chín, đất trống hoặc dừa chín cần hái; xong việc lập tức về Bến Đò.
+                </p>
+              </div>
+              <Switch
+                size="sm"
+                checked={Boolean(config.benAutoBaiFerry ?? true)}
+                onCheckedChange={(c) => updateField('benAutoBaiFerry', c)}
+              />
+            </label>
+
+            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+              <div>
+                <span className="font-medium">📜 Tự mua giấy tay đất bãi (100.000 🐚)</span>
+                <p className="text-[10px] text-slate-400">
+                  Tự động mua một mảnh đất bãi của Ông Tám khi ví có đủ 100k vỏ sò nếu chưa có đất.
+                </p>
+              </div>
+              <Switch
+                size="sm"
+                checked={Boolean(config.benAutoBuyLand ?? true)}
+                onCheckedChange={(c) => updateField('benAutoBuyLand', c)}
+              />
+            </label>
+
+            <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+              <div>
+                <span className="font-medium">🧺 Tự thu hoạch, tưới nước & bón phân rau màu</span>
+                <p className="text-[10px] text-slate-400">
+                  Tự gặt rau chín (thu Bí Ngô Con 🎃), bắt sâu, tưới luống khô và bón phân (nếu có).
+                </p>
+              </div>
+              <Switch
+                size="sm"
+                checked={Boolean(config.benAutoBaiCrops ?? true)}
+                onCheckedChange={(c) => updateField('benAutoBaiCrops', c)}
+              />
+            </label>
+
+            <div className="space-y-1 pt-0.5">
+              <span className="text-slate-700 font-medium">🌱 Hạt giống ưu tiên gieo trồng (Cô Sáu):</span>
+              <HudSelect
+                value={config.benBaiPreferCrop || 'rauMuong'}
+                onValueChange={(val) => updateField('benBaiPreferCrop', val)}
+                options={cropOptions}
+              />
+              <p className="text-[10px] text-slate-400 italic">
+                💡 Nếu hết hạt giống trong kho, bot tự ghé sạp Cô Sáu ở Chợ Bãi mua đủ số lượng để gieo.
+              </p>
+            </div>
+
+            <div className="border-t border-slate-200/80 pt-2 space-y-2">
+              <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+                <div>
+                  <span className="font-medium">🥥 Tự hái dừa xiêm khi chín</span>
+                  <p className="text-[10px] text-slate-400">
+                    Tự hái dừa khi trái chín & tự trồng dừa con vào chỗ trống mé sông (nếu có cây con).
+                  </p>
+                </div>
+                <Switch
+                  size="sm"
+                  checked={Boolean(config.benAutoCocoPick ?? true)}
+                  onCheckedChange={(c) => updateField('benAutoCocoPick', c)}
+                />
+              </label>
+
+              <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+                <div>
+                  <span className="font-medium">🏪 Tự bán dừa xiêm hái được ở Chợ Bãi</span>
+                  <p className="text-[10px] text-slate-400">
+                    Bán dừa xiêm cho quán cà phê chòi lấy vỏ sò (nếu tắt, dừa sẽ tích lũy để nấu kẹo dừa).
+                  </p>
+                </div>
+                <Switch
+                  size="sm"
+                  checked={Boolean(config.benAutoCocoSell ?? false)}
+                  onCheckedChange={(c) => updateField('benAutoCocoSell', c)}
+                />
+              </label>
+            </div>
+          </div>
+        );
+      }
 
       default:
         return null;

@@ -666,6 +666,66 @@ export interface BenNetState {
   [key: string]: unknown;
 }
 
+export interface BaiPlotData {
+  plot: number;
+  crop: string | null;
+  state: 'empty' | 'dry' | 'growing' | 'ripe' | string;
+  readyAt?: number;
+  pestAt?: number | null;
+  fert?: boolean;
+}
+
+export interface BaiCoconutData {
+  slot: number;
+  readyAt?: number;
+  state?: string;
+}
+
+export interface BaiFarmData {
+  plots: BaiPlotData[];
+  coconuts: BaiCoconutData[];
+  coop?: number;
+  birds?: unknown[];
+  net?: boolean;
+  netFish?: unknown[];
+  home?: unknown[];
+  parcels?: number;
+  [key: string]: unknown;
+}
+
+export interface BaiInfoData {
+  shells?: number;
+  pearls?: number;
+  harvests?: number;
+  land?: boolean;
+  price?: number;
+  baiOpen?: boolean;
+  items?: Record<string, number>;
+  crops?: Array<{ id: string; name: string; unit: string; price?: number; seedPrice?: number; growSec?: number }>;
+  guards?: Record<string, { name?: string; price?: number; have?: boolean }>;
+  luckSticks?: number;
+  sold?: number;
+  rate?: number;
+  [key: string]: unknown;
+}
+
+export interface BaiStoreState {
+  kind: 'ben' | 'bai' | 'farm' | 'home' | string;
+  owner: { me?: boolean; id?: string; name?: string; level?: number } | null;
+  farm: BaiFarmData | null;
+  info: BaiInfoData | null;
+  list: {
+    mine?: unknown;
+    friends?: Array<{ h: string; name: string; ripe: number }>;
+    strangers?: Array<{ h: string; name: string; ripe: number }>;
+  } | null;
+  steals?: unknown[] | null;
+  seed?: string | null;
+  tool?: string;
+  yardEdit?: boolean;
+  [key: string]: unknown;
+}
+
 export interface FriendUser {
   code: string;
   name: string;

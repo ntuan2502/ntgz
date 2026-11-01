@@ -3,6 +3,7 @@ import { getCricketEvents } from '../modules/wharf/cricket-watchers';
 import { getWharfNextAtmTime } from '../modules/wharf';
 import { getActiveImportantAlert } from './interrupts';
 import { GameSnapshot } from '../../shared/types/game-state';
+import { getBaiSnapshot } from '../modules/wharf/alluvial-manager';
 
 // Ref: play.formatted.js:14793 (_e = ge.filter((e) => !I[e].story)) -> lúa (rice) không nằm trong Trend.
 const _TREND_CROPS = ['radish', 'carrot', 'corn'];
@@ -209,5 +210,6 @@ export function getSnapshot(): GameSnapshot {
       : null,
     friends: stores.friends ? stores.friends.getState() : null,
     farmstay: m.farmstay ?? null,
+    baiState: getBaiSnapshot(),
   };
 }

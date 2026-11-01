@@ -39,7 +39,35 @@ export const WHARF_SUBAREA_META: Record<WharfSubAreaId, WharfSubAreaMeta> = {
   cricketBoss: { id: 'cricketBoss', icon: '🥊', name: 'Sới Dế & Đấu Boss Ông Sáu' },
   cricketHunt: { id: 'cricketHunt', icon: '🔦', name: 'Bắt Dế Đêm & Ống Tre Nuôi Dế' },
   entertainment: { id: 'entertainment', icon: '🏮', name: 'Tiện Ích & Giải Trí Bến Đò' },
+  alluvialLand: { id: 'alluvialLand', icon: '🌾', name: 'Đất Bãi Phù Sa & Chợ Bãi' },
 };
+
+export interface BaiCropMeta {
+  id: string;
+  name: string;
+  minutes: number;
+  seed: number;
+  yield: number;
+  price: number;
+  unit: string;
+  pearl?: boolean;
+  pearlSeed?: number;
+}
+
+export const BAI_CROPS_META: BaiCropMeta[] = [
+  { id: 'rauMuong', name: 'Rau muống', minutes: 60, seed: 40, yield: 18, price: 5, unit: 'bó' },
+  { id: 'rauDen', name: 'Rau dền', minutes: 90, seed: 60, yield: 20, price: 6, unit: 'bó' },
+  { id: 'caiNgot', name: 'Cải ngọt', minutes: 120, seed: 80, yield: 20, price: 8, unit: 'bó' },
+  { id: 'mongToi', name: 'Mồng tơi', minutes: 150, seed: 90, yield: 22, price: 8, unit: 'bó' },
+  { id: 'hanhLa', name: 'Hành lá', minutes: 180, seed: 110, yield: 24, price: 9, unit: 'bó' },
+  { id: 'hungQue', name: 'Húng quế', minutes: 210, seed: 130, yield: 24, price: 10, unit: 'bó' },
+  { id: 'ngoGai', name: 'Ngò gai', minutes: 240, seed: 150, yield: 25, price: 11, unit: 'bó' },
+  { id: 'otHiem', name: 'Ớt hiểm', minutes: 240, seed: 180, yield: 20, price: 15, unit: 'bó' },
+  { id: 'lua', name: 'Lúa', minutes: 270, seed: 100, yield: 22, price: 6, unit: 'bó' },
+  { id: 'nepCam', name: 'Nếp cẩm', minutes: 240, seed: 0, yield: 16, price: 28, unit: 'bó', pearl: true, pearlSeed: 4 },
+  { id: 'duaHau', name: 'Dưa hấu', minutes: 300, seed: 0, yield: 3, price: 183, unit: 'trái', pearl: true, pearlSeed: 5 },
+  { id: 'thanhLong', name: 'Thanh long ruột đỏ', minutes: 360, seed: 0, yield: 4, price: 165, unit: 'trái', pearl: true, pearlSeed: 6 },
+];
 
 export const FARMSTAY_SUBAREA_META: Record<FarmstaySubAreaId, FarmstaySubAreaMeta> = {
   operation: { id: 'operation', icon: '🏢', name: 'Vận Hành & Đón Khách' },
@@ -307,18 +335,20 @@ export const DEFAULT_CONFIG: AppConfig = {
   nightMarketSelectedCrop: 'radish',
 
   // Area 2: Ben Do Settings & Sub-Area Priorities
-  benSubOrder: ['fishing', 'cricketBoss', 'cricketHunt', 'entertainment'],
+  benSubOrder: ['fishing', 'cricketBoss', 'cricketHunt', 'entertainment', 'alluvialLand'],
   benSubEnabled: {
     fishing: true,
     cricketBoss: false,
     cricketHunt: false,
     entertainment: true,
+    alluvialLand: true,
   },
   benSubCollapsed: {
     fishing: false,
     cricketBoss: true,
     cricketHunt: true,
     entertainment: false,
+    alluvialLand: false,
   },
   benQuickMonitorCollapsed: false,
 
@@ -377,6 +407,14 @@ export const DEFAULT_CONFIG: AppConfig = {
   benAutoHlwExchange: true,
   benAutoHlwOpenBox: true,
   benAutoHtxClaim: true,
+
+  // Ben Do Alluvial Land & Market (Bãi Phù Sa & Chợ Bãi - Phase 1)
+  benAutoBaiFerry: true,
+  benAutoBuyLand: true,
+  benAutoBaiCrops: true,
+  benBaiPreferCrop: 'rauMuong',
+  benAutoCocoPick: true,
+  benAutoCocoSell: false,
 
   // Area 3: Sea Fishing Settings
   seaAutoSpot: true,

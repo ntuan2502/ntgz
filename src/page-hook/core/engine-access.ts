@@ -6,6 +6,7 @@ import {
   BenUIStoreState,
   BenNetState,
   FriendsStoreState,
+  BaiStoreState,
 } from '../../shared/types/game-store';
 
 export interface ZustandStore<T> {
@@ -20,6 +21,7 @@ export interface StoreRegistry {
   benUI: ZustandStore<BenUIStoreState> | null;
   benNet: ZustandStore<BenNetState> | null;
   friends: ZustandStore<FriendsStoreState> | null;
+  bai: ZustandStore<BaiStoreState> | null;
 }
 
 export interface PhaserSceneInstance {
@@ -46,6 +48,7 @@ export const stores: StoreRegistry = {
   benUI: null,
   benNet: null,
   friends: null,
+  bai: null,
 };
 
 export function getMainStore(): ZustandStore<MainGameStoreState> | null {
@@ -75,6 +78,13 @@ export function setLastXinMoi(at: number, day: number): void {
   lastXinMoiDay = day;
 }
 
+export type BenWsMessageListener = (msg: Record<string, unknown>) => void;
+const wsListeners = new Set<BenWsMessageListener>();
+export function addBenWsMessageListener(fn: BenWsMessageListener): () => void {
+  wsListeners.add(fn);
+  return () => wsListeners.delete(fn);
+}
+
 // 1. Intercept WebSocket.prototype.send to capture Ben Do WebSocket
 try {
   const origSend = WebSocket.prototype.send;
@@ -84,6 +94,28 @@ try {
       if (socket && typeof socket.url === 'string' && socket.url.includes('/ws/ben-do')) {
         benWs = socket;
         (window as unknown as Record<string, unknown>).__ntg_benWs = socket;
+        const sockRecord = socket as unknown as Record<string, unknown>;
+        if (!sockRecord.__ntg_hooked) {
+          sockRecord.__ntg_hooked = true;
+          socket.addEventListener('message', (ev: MessageEvent) => {
+            try {
+              if (typeof ev.data === 'string') {
+                const msg = JSON.parse(ev.data);
+                if (msg && typeof msg === 'object') {
+                  for (const listener of wsListeners) {
+                    try {
+                      listener(msg);
+                    } catch {
+                      // ignore
+                    }
+                  }
+                }
+              }
+            } catch {
+              // ignore
+            }
+          });
+        }
       }
     } catch {
       // ignore
@@ -189,6 +221,8 @@ function classifyStore(candidate: unknown) {
     stores.benNet = store as unknown as ZustandStore<BenNetState>;
   } else if ('visitsOff' in st && 'giftsLeft' in st && 'friends' in st) {
     stores.friends = store as unknown as ZustandStore<FriendsStoreState>;
+  } else if ('kind' in st && 'yardEdit' in st && ('houseTab' in st || 'plotSel' in st || 'tool' in st)) {
+    stores.bai = store as unknown as ZustandStore<BaiStoreState>;
   }
 }
 

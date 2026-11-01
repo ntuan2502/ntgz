@@ -6,6 +6,8 @@ import {
   CricketCaughtState,
   FarmstayState,
   FriendsStoreState,
+  BaiFarmData,
+  BaiInfoData,
 } from './game-store';
 
 export interface VehicleState {
@@ -122,6 +124,19 @@ export interface ImportantAlert {
   time?: string;
 }
 
+export interface BaiSnapshotState {
+  kind: 'ben' | 'bai' | 'farm' | 'home' | string;
+  hasLand: boolean;
+  landPrice: number;
+  shells: number;
+  pearls: number;
+  items: Record<string, number>;
+  farm: BaiFarmData | null;
+  info: BaiInfoData | null;
+  owner: { me?: boolean; id?: string; name?: string } | null;
+  nextReadyAt: number;
+}
+
 export interface GameSnapshot {
   ok: boolean;
   recentAlert?: ImportantAlert | null;
@@ -148,6 +163,7 @@ export interface GameSnapshot {
   sea?: SeaState | null;
   benUI?: BenUIState | null;
   benNet?: BenNetState | null;
+  baiState?: BaiSnapshotState | null;
   friends?: FriendsStoreState | null;
   benWallet?: BenNetWallet | null;
   benNonKeptCount?: number;

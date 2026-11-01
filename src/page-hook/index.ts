@@ -204,6 +204,61 @@ interface GameActionPayload {
           return { ok: false, error: 'NO_ROOM_ID' };
         }
 
+        case 'BAI_FERRY': {
+          sendBenWs({ t: 'ferry' });
+          return { ok: true };
+        }
+
+        case 'BAI_BUY_LAND': {
+          sendBenWs({ t: 'land' });
+          return { ok: true };
+        }
+
+        case 'BAI_FARM_GO': {
+          sendBenWs({ t: 'farmGo', to: (payload.to as string) || 'me' });
+          return { ok: true };
+        }
+
+        case 'BAI_FARM_EXIT': {
+          sendBenWs({ t: 'farmExit' });
+          return { ok: true };
+        }
+
+        case 'BAI_PLOT_BATCH': {
+          sendBenWs({
+            t: 'plotBatch',
+            act: payload.act,
+            plots: payload.plots,
+            crop: payload.crop,
+          });
+          return { ok: true };
+        }
+
+        case 'BAI_SEED_BUY': {
+          sendBenWs({ t: 'seedBuy', crop: payload.crop, qty: payload.qty });
+          return { ok: true };
+        }
+
+        case 'BAI_COCO_PICK': {
+          sendBenWs({ t: 'cocoPick', slot: payload.slot });
+          return { ok: true };
+        }
+
+        case 'BAI_COCO_PLANT': {
+          sendBenWs({ t: 'cocoPlant', slot: payload.slot });
+          return { ok: true };
+        }
+
+        case 'BAI_COCO_SELL': {
+          sendBenWs({ t: 'cocoSell', pick: payload.pick || {} });
+          return { ok: true };
+        }
+
+        case 'BAI_REFRESH_INFO': {
+          sendBenWs({ t: 'farmInfo' });
+          return { ok: true };
+        }
+
         case 'SET_PANEL': {
           if (!stores.main) discoverStores();
           if (stores.main) {

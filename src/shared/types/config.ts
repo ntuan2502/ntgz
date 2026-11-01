@@ -14,7 +14,7 @@ export type FarmSubAreaId =
   | 'dibay'
   | 'goldShop';
 
-export type WharfSubAreaId = 'fishing' | 'cricketBoss' | 'cricketHunt' | 'entertainment';
+export type WharfSubAreaId = 'fishing' | 'cricketBoss' | 'cricketHunt' | 'entertainment' | 'alluvialLand';
 /** Cricket hunting zones on the wharf map (matches the game's fg() zone ids) + rotate-all */
 export type BenHuntZone = 'field' | 'reeds' | 'rice' | 'grass' | 'garden';
 export type BenHuntZoneChoice = BenHuntZone | 'rotate';
@@ -241,6 +241,14 @@ export interface AppConfig {
   benAutoHlwExchange: boolean;
   benAutoHlwOpenBox: boolean;
   benAutoHtxClaim: boolean;
+
+  // Ben Do Alluvial Land & Market (Bãi Phù Sa & Chợ Bãi - Phase 1)
+  benAutoBaiFerry: boolean;
+  benAutoBuyLand: boolean;
+  benAutoBaiCrops: boolean;
+  benBaiPreferCrop: string;
+  benAutoCocoPick: boolean;
+  benAutoCocoSell: boolean;
 
   // Area 3: Sea Fishing Settings
   seaAutoSpot: boolean;

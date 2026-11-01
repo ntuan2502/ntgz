@@ -6,8 +6,9 @@ import { AppConfig, WharfSubAreaId } from '../../../shared/types/config';
 import { CricketItem, SoiNpc, BenNetState } from '../../../shared/types/game-store';
 import { getBenHuntSpots, BEN_HUNT_ZONES } from '../../../shared/constants/default-config';
 import { refreshCricketWatchers, getBenServerNow, getBenHour, getMyBout, markHuntLightSent } from './cricket-watchers';
+import { stepAlluvial } from './alluvial-manager';
 
-export { refreshCricketWatchers };
+export { refreshCricketWatchers, stepAlluvial };
 
 interface BenStepResult {
   acted: boolean;
@@ -1696,6 +1697,14 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
     return { acted: false };
   };
 
+  const runAlluvialLandStep = (): BenStepResult => {
+    const res = stepAlluvial(cfg);
+    if (res && res.acted) {
+      return { acted: true, msg: res.msg, allowCast: Boolean(res.allowCast) };
+    }
+    return { acted: false };
+  };
+
   // ---------------------------------------------------------------------------
   // DISPATCHER: EXECUTE SUB-AREAS IN ORDER DEFINED BY benSubOrder
   // Bounded tasks (boss, entertainment, maintenance) run as soon as they are ready,
@@ -1708,13 +1717,14 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
     cricketBoss: runCricketBossStep,
     cricketHunt: runCricketHuntStep,
     entertainment: runEntertainmentStep,
+    alluvialLand: runAlluvialLandStep,
   };
   const continuousSubs = new Set<WharfSubAreaId>(['fishing', 'cricketHunt']);
 
   const activeOrder: WharfSubAreaId[] =
     Array.isArray(cfg.benSubOrder) && cfg.benSubOrder.length > 0
       ? cfg.benSubOrder
-      : ['fishing', 'cricketBoss', 'cricketHunt', 'entertainment'];
+      : ['fishing', 'cricketBoss', 'cricketHunt', 'entertainment', 'alluvialLand'];
 
   let deferred: (() => BenStepResult) | null = null;
   let exhaustedResult: BenStepResult | null = null;
