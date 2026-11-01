@@ -681,13 +681,73 @@ export interface BaiCoconutData {
   state?: string;
 }
 
+export interface BaiDryRackData {
+  slot: number;
+  readyAt: number;
+  fish: string;
+  size?: number;
+  price?: number;
+  [key: string]: unknown;
+}
+
+export interface BaiBirdData {
+  kind: 'hen' | 'duck' | string;
+  eggs: number;
+  diesAt: number | null;
+  [key: string]: unknown;
+}
+
+export interface BaiNetFishData {
+  kind: string;
+  readyAt: number;
+  hungry?: boolean;
+  diesAt?: number | null;
+  [key: string]: unknown;
+}
+
+export interface BaiDryDexItem {
+  id?: string;
+  fish: string;
+  size: number;
+  price?: number;
+}
+
+export interface BaiDryDexData {
+  owner: { me?: boolean; id?: string; name?: string } | null;
+  items: BaiDryDexItem[];
+  total: number;
+}
+
+export interface BaiCandyRecipeData {
+  coco: number;
+  sugar: number;
+  out: number;
+  price: number;
+}
+
+export interface BaiSpecialtyData {
+  candy?: number;
+  dried?: number;
+  driedValue?: number;
+  driedPrices?: number[];
+  driedList?: Array<{ id: string; fish: string; size: number; price: number; [key: string]: unknown }>;
+  [key: string]: unknown;
+}
+
 export interface BaiFarmData {
   plots: BaiPlotData[];
   coconuts: BaiCoconutData[];
+  candyReadyAt?: number | null;
+  candyLv?: number;
+  candyPans?: number;
+  racks?: BaiDryRackData[];
+  dryLv?: number;
   coop?: number;
-  birds?: unknown[];
-  net?: boolean;
-  netFish?: unknown[];
+  birds?: BaiBirdData[];
+  net?: number | boolean;
+  netFish?: BaiNetFishData[];
+  netFedUntil?: number | null;
+  netBoostNo?: number | null;
   home?: unknown[];
   parcels?: number;
   [key: string]: unknown;
@@ -701,7 +761,28 @@ export interface BaiInfoData {
   price?: number;
   baiOpen?: boolean;
   items?: Record<string, number>;
-  crops?: Array<{ id: string; name: string; unit: string; price?: number; seedPrice?: number; growSec?: number }>;
+  crops?: Array<{ id: string; name: string; unit: string; price?: number; seedPrice?: number; growSec?: number; pearl?: boolean }>;
+  candyRecipe?: BaiCandyRecipeData;
+  specialty?: BaiSpecialtyData;
+  dryMult?: number;
+  coop?: {
+    level?: number;
+    nest?: number;
+    cap?: number;
+    birds?: Record<string, { everyMs: number }>;
+    names?: string[];
+    next?: { price: number; name: string; birds: number };
+    [key: string]: unknown;
+  };
+  net?: {
+    level?: number;
+    cap?: number;
+    feedFish?: number;
+    names?: string[];
+    fish?: Record<string, { name: string; price: number }>;
+    next?: { price: number; name: string; fish: number };
+    [key: string]: unknown;
+  };
   guards?: Record<string, { name?: string; price?: number; have?: boolean }>;
   luckSticks?: number;
   sold?: number;
@@ -714,6 +795,7 @@ export interface BaiStoreState {
   owner: { me?: boolean; id?: string; name?: string; level?: number } | null;
   farm: BaiFarmData | null;
   info: BaiInfoData | null;
+  dryDex?: BaiDryDexData | null;
   list: {
     mine?: unknown;
     friends?: Array<{ h: string; name: string; ripe: number }>;

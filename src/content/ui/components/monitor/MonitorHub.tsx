@@ -6,6 +6,7 @@ import { WharfBoardTab } from './WharfBoardTab';
 import { WharfClosetTab } from './WharfClosetTab';
 import { FriendsTab } from './FriendsTab';
 import { WharfPackTab } from './WharfPackTab';
+import { AlluvialMonitorTab } from './AlluvialMonitorTab';
 import { TabErrorBoundary } from './TabErrorBoundary';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -19,7 +20,8 @@ export type MonitorTabId =
   | 'board'
   | 'closet'
   | 'friends'
-  | 'pack';
+  | 'pack'
+  | 'alluvial';
 
 interface MonitorHubProps {
   snap: GameSnapshot | null;
@@ -31,6 +33,7 @@ interface MonitorHubProps {
 const WHARF_TABS: Array<{ id: MonitorTabId; label: string; icon: string }> = [
   { id: 'board', label: 'Bảng vàng', icon: '🏆' },
   { id: 'pack', label: 'Túi đồ', icon: '🎒' },
+  { id: 'alluvial', label: 'Đất bãi', icon: '🌾' },
   { id: 'crickets', label: 'Ống tre dế', icon: '🦗' },
   { id: 'dex', label: 'Sổ cá', icon: '📖' },
   { id: 'closet', label: 'Tủ đồ', icon: '👕' },
@@ -186,6 +189,11 @@ export function MonitorHub({
         {activeTab === 'pack' && (
           <TabErrorBoundary fallbackName="Túi đồ">
             <WharfPackTab snap={snap} />
+          </TabErrorBoundary>
+        )}
+        {activeTab === 'alluvial' && (
+          <TabErrorBoundary fallbackName="Đất bãi">
+            <AlluvialMonitorTab snap={snap} />
           </TabErrorBoundary>
         )}
         {activeTab === 'crickets' && (

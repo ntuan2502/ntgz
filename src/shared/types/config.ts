@@ -242,13 +242,30 @@ export interface AppConfig {
   benAutoHlwOpenBox: boolean;
   benAutoHtxClaim: boolean;
 
-  // Ben Do Alluvial Land & Market (Bãi Phù Sa & Chợ Bãi - Phase 1)
+  // Ben Do Alluvial Land & Market (Bãi Phù Sa & Chợ Bãi - Phase 1, 2, 3)
   benAutoBaiFerry: boolean;
   benAutoBuyLand: boolean;
   benAutoBaiCrops: boolean;
   benBaiPreferCrop: string;
+  benAutoBaiSellCrops: boolean;
   benAutoCocoPick: boolean;
   benAutoCocoSell: boolean;
+
+  // Phase 2: Candy & Dried Fish
+  benAutoCandy: boolean;
+  benAutoBuySugar: boolean;
+  benAutoCandySell: boolean;
+  benAutoDryFish: boolean;
+  benAutoDryDexPut: boolean;
+  benAutoDryFishSell: boolean;
+
+  // Phase 3: Coop & Net Fish
+  benAutoCoop: boolean;
+  benAutoCureBirds: boolean;
+  benAutoEggSell: boolean;
+  benAutoNet: boolean;
+  benAutoFeedNet: boolean;
+  benAutoNetSell: boolean;
 
   // Area 3: Sea Fishing Settings
   seaAutoSpot: boolean;

@@ -408,13 +408,30 @@ export const DEFAULT_CONFIG: AppConfig = {
   benAutoHlwOpenBox: true,
   benAutoHtxClaim: true,
 
-  // Ben Do Alluvial Land & Market (Bãi Phù Sa & Chợ Bãi - Phase 1)
+  // Ben Do Alluvial Land & Market (Bãi Phù Sa & Chợ Bãi - Phase 1, 2, 3)
   benAutoBaiFerry: true,
   benAutoBuyLand: true,
   benAutoBaiCrops: true,
   benBaiPreferCrop: 'rauMuong',
+  benAutoBaiSellCrops: true,
   benAutoCocoPick: true,
   benAutoCocoSell: false,
+
+  // Phase 2: Candy & Dried Fish
+  benAutoCandy: true,
+  benAutoBuySugar: true,
+  benAutoCandySell: true,
+  benAutoDryFish: true,
+  benAutoDryDexPut: true,
+  benAutoDryFishSell: true,
+
+  // Phase 3: Coop & Net Fish
+  benAutoCoop: true,
+  benAutoCureBirds: true,
+  benAutoEggSell: true,
+  benAutoNet: true,
+  benAutoFeedNet: true,
+  benAutoNetSell: true,
 
   // Area 3: Sea Fishing Settings
   seaAutoSpot: true,

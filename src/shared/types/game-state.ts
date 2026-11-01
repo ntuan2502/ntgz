@@ -8,6 +8,7 @@ import {
   FriendsStoreState,
   BaiFarmData,
   BaiInfoData,
+  BaiDryDexData,
 } from './game-store';
 
 export interface VehicleState {
@@ -133,6 +134,7 @@ export interface BaiSnapshotState {
   items: Record<string, number>;
   farm: BaiFarmData | null;
   info: BaiInfoData | null;
+  dryDex?: BaiDryDexData | null;
   owner: { me?: boolean; id?: string; name?: string } | null;
   nextReadyAt: number;
 }
