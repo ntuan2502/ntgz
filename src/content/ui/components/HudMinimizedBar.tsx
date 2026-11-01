@@ -19,7 +19,19 @@ export function HudMinimizedBar({
 
   return (
     <div className="flex items-center gap-1.5 p-1 select-none">
-      {/* Nút 1: Pause / Play Auto Tab Này */}
+      {/* Nút 1: Mở Rộng Lại Tool */}
+      <button
+        type="button"
+        onMouseDown={(e) => e.stopPropagation()}
+        onClick={onExpand}
+        title="Mở rộng bảng điều khiển"
+        className="flex h-8 items-center gap-1.5 px-2.5 rounded-xl font-medium text-xs bg-slate-100 hover:bg-slate-200 active:scale-[0.97] text-slate-700 border border-slate-200/90 transition-all cursor-pointer shadow-2xs whitespace-nowrap"
+      >
+        <Maximize2 className="h-3.5 w-3.5 text-slate-600 shrink-0" />
+        <span>Mở rộng</span>
+      </button>
+
+      {/* Nút 2: Pause / Play Auto Tab Này */}
       <button
         type="button"
         onMouseDown={(e) => e.stopPropagation()}
@@ -46,18 +58,6 @@ export function HudMinimizedBar({
             <span className="whitespace-nowrap">Chạy {currentArea}</span>
           </>
         )}
-      </button>
-
-      {/* Nút 2: Mở Rộng Lại Tool */}
-      <button
-        type="button"
-        onMouseDown={(e) => e.stopPropagation()}
-        onClick={onExpand}
-        title="Mở rộng bảng điều khiển"
-        className="flex h-8 items-center gap-1.5 px-2.5 rounded-xl font-medium text-xs bg-slate-100 hover:bg-slate-200 active:scale-[0.97] text-slate-700 border border-slate-200/90 transition-all cursor-pointer shadow-2xs whitespace-nowrap"
-      >
-        <Maximize2 className="h-3.5 w-3.5 text-slate-600 shrink-0" />
-        <span>Mở rộng</span>
       </button>
     </div>
   );
