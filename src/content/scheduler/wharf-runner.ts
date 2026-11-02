@@ -71,7 +71,9 @@ export async function stepBenDoFishing(
   }
 
   // Dedicated Nông Trại Online mode: only step Alluvial Land without casting fishing rod or catching crickets
-  const isOnlyAlluvial = config.runMode === 'tab' && config.activeTab === 'alluvialLand';
+  const isOnlyAlluvial =
+    (config.runMode === 'tab' && config.activeTab === 'alluvialLand') ||
+    (config.runMode === 'all' && config.areaEnabled.alluvialLand !== false && config.areaEnabled.benDo === false);
   if (isOnlyAlluvial) {
     const prep = await execGameAction('BEN_STEP', { config, onlyAlluvial: true });
     if (prep && prep.ok && prep.msg) {

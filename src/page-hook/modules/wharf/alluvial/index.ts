@@ -129,6 +129,18 @@ export function stepAlluvial(cfg: AppConfig): AlluvialStepResult | null {
         (baiState.hasLand || baiState.lastInfoAt === 0) &&
         (baiState.lastFarmSurveyAt === 0 ||
           (baiState.nextReadyAt > 0 && serverNowMs >= baiState.nextReadyAt));
+      const hasLand = baiState.hasLand || Boolean(stores.bai?.getState()?.info?.land);
+      if (needsFarmVisit && hasLand) {
+        sendBenWs({ t: 'farmQuick' });
+        transitState = 'enter_farm';
+        transitStartedAt = now;
+        resetBaiWalkTracker();
+        return {
+          acted: true,
+          msg: '🌾 Chợ Bãi: Đang chuyển nhanh về Đất Của Mình...',
+          allowCast: false,
+        };
+      }
       transitState = needsFarmVisit ? 'take_ferry_to_bai' : 'at_bai_market';
       transitStartedAt = now;
       resetBaiWalkTracker();
@@ -172,6 +184,18 @@ export function stepAlluvial(cfg: AppConfig): AlluvialStepResult | null {
 
       if (shouldTransit) {
         transitReasonText = transitReason;
+        const hasLand = baiState.hasLand || Boolean(stores.bai?.getState()?.info?.land);
+        if (hasLand) {
+          sendBenWs({ t: 'farmQuick' });
+          transitState = 'enter_farm';
+          transitStartedAt = now;
+          resetBaiWalkTracker();
+          return {
+            acted: true,
+            msg: `🌾 Nông Trại Online: ${transitReason} ➔ Chuyển nhanh về Đất Của Mình...`,
+            allowCast: false,
+          };
+        }
         transitState = 'walk_to_ben_ferry';
         transitStartedAt = now;
         ferryInfoWaitStartedAt = 0;
@@ -273,6 +297,18 @@ export function stepAlluvial(cfg: AppConfig): AlluvialStepResult | null {
       transitStartedAt = now;
       resetBaiWalkTracker();
     } else if (baiState.kind === 'bai') {
+      const hasLand = baiState.hasLand || Boolean(stores.bai?.getState()?.info?.land);
+      if (hasLand) {
+        sendBenWs({ t: 'farmQuick' });
+        transitState = 'enter_farm';
+        transitStartedAt = now;
+        resetBaiWalkTracker();
+        return {
+          acted: true,
+          msg: '🌾 Chợ Bãi: Đang chuyển nhanh về Đất Của Mình...',
+          allowCast: false,
+        };
+      }
       const walk = ensureAtSceneTile(
         'BaiScene',
         'bai',
@@ -387,6 +423,18 @@ export function stepAlluvial(cfg: AppConfig): AlluvialStepResult | null {
       if (finishedMarket) {
         if (baiState.boughtSuppliesForFarm) {
           baiState.boughtSuppliesForFarm = false;
+          const hasLand = baiState.hasLand || Boolean(stores.bai?.getState()?.info?.land);
+          if (hasLand) {
+            sendBenWs({ t: 'farmQuick' });
+            transitState = 'enter_farm';
+            transitStartedAt = now;
+            resetBaiWalkTracker();
+            return {
+              acted: true,
+              msg: '🌾 Chợ Bãi: Đã mua vật tư, đang chuyển nhanh về Đất Của Mình...',
+              allowCast: false,
+            };
+          }
           transitState = 'take_ferry_to_bai';
         } else {
           transitState = 'walk_to_bai_ferry';

@@ -209,6 +209,11 @@ interface GameActionPayload {
           return { ok: true };
         }
 
+        case 'BAI_FARM_QUICK': {
+          sendBenWs({ t: 'farmQuick' });
+          return { ok: true };
+        }
+
         case 'BAI_REFRESH_INFO': {
           sendBenWs({ t: 'farmInfo' });
           sendBenWs({ t: 'dryDex' });

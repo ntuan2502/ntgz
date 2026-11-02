@@ -1,3 +1,4 @@
+import { AppConfig } from '../../shared/types/config';
 import { AREA_META } from '../../shared/constants/default-config';
 import { getGameState, execGameAction } from '../bridge/content-bridge';
 import { sleep, formatClock } from './dom-helpers';
@@ -25,9 +26,10 @@ let farmstayCooldownUntil = 0;
 
 export function toggleAutoAll(): void {
   const config = getConfig();
+  const isOnline = config.activeTab === 'benDo' || config.activeTab === 'alluvialLand';
   if (config.running && config.runMode === 'all') {
     config.running = false;
-    setStatus('⏸️ Đã dừng Auto Tất Cả');
+    setStatus(`⏸️ Đã dừng Auto Tất Cả ${isOnline ? 'Online' : 'Offline'}`);
   } else {
     config.running = true;
     config.runMode = 'all';
@@ -38,7 +40,7 @@ export function toggleAutoAll(): void {
     farmstayCooldownUntil = 0;
     resetFarmTiming();
     resetFarmstayTiming();
-    setStatus('▶️ Bắt đầu chạy Auto Tất Cả theo thứ tự...');
+    setStatus(`▶️ Bắt đầu chạy Auto Tất Cả ${isOnline ? 'Online (Trực Tuyến)' : 'Offline (Ngoại Tuyến)'}...`);
   }
   saveConfig();
 }
@@ -189,9 +191,59 @@ export async function tickAuto(): Promise<void> {
     }
 
     // MODE B: "▶️ AUTO TẤT CẢ"
-    const enabledAreas = config.areaOrder.filter((a) => a !== 'benDo' && config.areaEnabled[a]);
+    const isOnline = config.activeTab === 'benDo' || config.activeTab === 'alluvialLand';
+
+    if (isOnline) {
+      const benDoEnabled = config.areaEnabled.benDo !== false;
+      const alluvialEnabled = config.areaEnabled.alluvialLand !== false;
+
+      if (!benDoEnabled && !alluvialEnabled) {
+        setStatus('⚠️ Chưa bật Khu vực Online nào (Bến Đò / Nông Trại Online) trong Cài đặt!');
+        isBusy = false;
+        return;
+      }
+
+      // If only alluvialLand is enabled, execute alluvial steps without fishing or cricket catching
+      if (alluvialEnabled && !benDoEnabled) {
+        await stepBenDoFishing(snap, config, setStatus, () => {});
+        isBusy = false;
+        return;
+      }
+
+      // If only benDo is enabled, pass config with benSubEnabled.alluvialLand = false
+      if (!alluvialEnabled && benDoEnabled) {
+        const benOnlyConfig: AppConfig = {
+          ...config,
+          benSubEnabled: {
+            ...config.benSubEnabled,
+            alluvialLand: false,
+          },
+        };
+        const res = await stepBenDoFishing(snap, benOnlyConfig, setStatus, () => {});
+        if (res.finishedArea && config.autoSleep && config.sleepOnFishingLimit && (snap.minutes || 0) >= targetSleepMinutes) {
+          setStatus('🌙 Hết câu được ở Bến Đò buổi tối -> Về nhà đi ngủ...');
+          await execGameAction('SLEEP_NOW');
+          await sleep(1200);
+        }
+        isBusy = false;
+        return;
+      }
+
+      // Both benDo & alluvialLand are enabled
+      const res = await stepBenDoFishing(snap, config, setStatus, () => {});
+      if (res.finishedArea && config.autoSleep && config.sleepOnFishingLimit && (snap.minutes || 0) >= targetSleepMinutes) {
+        setStatus('🌙 Hết câu được ở Bến Đò buổi tối -> Về nhà đi ngủ...');
+        await execGameAction('SLEEP_NOW');
+        await sleep(1200);
+      }
+      isBusy = false;
+      return;
+    }
+
+    // OFFLINE MODE:
+    const enabledAreas = config.areaOrder.filter((a) => a !== 'benDo' && a !== 'alluvialLand' && config.areaEnabled[a]);
     if (enabledAreas.length === 0) {
-      setStatus('⚠️ Chưa bật Khu vực nào trong danh sách Auto Tất Cả!');
+      setStatus('⚠️ Chưa bật Khu vực Offline nào trong danh sách Auto Tất Cả!');
       isBusy = false;
       return;
     }

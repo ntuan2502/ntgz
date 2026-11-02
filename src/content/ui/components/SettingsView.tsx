@@ -16,6 +16,7 @@ import {
   ChevronDown,
   ShieldCheck,
   Sliders,
+  Globe,
 } from 'lucide-react';
 
 interface SettingsViewProps {
@@ -257,42 +258,117 @@ export function SettingsView({
           </div>
         </div>
 
-        {/* 3. Thứ tự & Điều phối Đa khu vực */}
+        {/* 3. Cài Đặt Khu Vực Trực Tuyến (Online) */}
+        <div className="rounded-xl border border-slate-200/90 bg-white p-3 space-y-2.5 shadow-2xs">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 min-w-0">
+              <Globe className="h-4 w-4 text-emerald-600 shrink-0" />
+              <span className="truncate">Khu vực Trực Tuyến (Online)</span>
+            </div>
+            <span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2 py-0.5 rounded-full font-medium shrink-0">
+              ⚡ Real-time
+            </span>
+          </div>
+
+          <p className="text-[11px] text-slate-500 leading-relaxed">
+            Bật/tắt các khu vực tham gia khi chạy chế độ <strong>▶️ TẤT CẢ ONLINE</strong>. Bot sẽ tự động sang Đất Bãi làm ruộng vườn, thu hoạch, chăm dừa/gia cầm rồi về Bến Đò câu cá & săn dế:
+          </p>
+
+          <div className="space-y-1.5">
+            {/* Bến Đò */}
+            <div className="flex items-center justify-between rounded-lg bg-slate-50 px-2.5 py-2 border border-slate-200/80 text-[11px] hover:bg-slate-100/70 transition-colors">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-base shrink-0 leading-none">🛶</span>
+                <div className="min-w-0">
+                  <div className={`text-xs font-semibold truncate ${config.areaEnabled.benDo !== false ? 'text-slate-800' : 'text-slate-400 line-through'}`}>
+                    Bến Đò (Sông Vàm Nao)
+                  </div>
+                  <div className="text-[10px] text-slate-500 truncate">
+                    Câu cá sông, sới dế, bắt dế đêm, quay đèn, ATM, săn Boss...
+                  </div>
+                </div>
+              </div>
+              <Switch
+                size="sm"
+                checked={config.areaEnabled.benDo !== false}
+                onCheckedChange={(checked) => handleToggleAreaEnabled('benDo', checked)}
+                title={config.areaEnabled.benDo !== false ? 'Bến Đò đang được bật Auto' : 'Bến Đò đã bị tắt'}
+                className="shrink-0 ml-2"
+              />
+            </div>
+
+            {/* Nông Trại Online */}
+            <div className="flex items-center justify-between rounded-lg bg-slate-50 px-2.5 py-2 border border-slate-200/80 text-[11px] hover:bg-slate-100/70 transition-colors">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-base shrink-0 leading-none">🌾</span>
+                <div className="min-w-0">
+                  <div className={`text-xs font-semibold truncate ${config.areaEnabled.alluvialLand !== false ? 'text-slate-800' : 'text-slate-400 line-through'}`}>
+                    Nông Trại Online (Đất Bãi Phù Sa)
+                  </div>
+                  <div className="text-[10px] text-slate-500 truncate">
+                    Đất bãi, vườn dừa, lò kẹo, sân cá khô, chuồng gà, khúc sông quây...
+                  </div>
+                </div>
+              </div>
+              <Switch
+                size="sm"
+                checked={config.areaEnabled.alluvialLand !== false}
+                onCheckedChange={(checked) => handleToggleAreaEnabled('alluvialLand', checked)}
+                title={config.areaEnabled.alluvialLand !== false ? 'Nông Trại Online đang được bật Auto' : 'Nông Trại Online đã bị tắt'}
+                className="shrink-0 ml-2"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* 4. Thứ tự & Khu Vực Ngoại Tuyến (Offline) */}
         <div className="rounded-xl border border-slate-200/90 bg-white p-3 space-y-2.5 shadow-2xs">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 min-w-0">
               <ListOrdered className="h-4 w-4 text-amber-600 shrink-0" />
-              <span className="truncate">Thứ tự điều phối các khu</span>
+              <span className="truncate">Thứ tự & Khu vực Ngoại Tuyến (Offline)</span>
             </div>
-            <span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2 py-0.5 rounded-full font-medium shrink-0">
+            <span className="text-[10px] text-amber-700 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-full font-medium shrink-0">
               ✨ Đổi thông minh
             </span>
           </div>
 
           <p className="text-[11px] text-slate-500 leading-relaxed">
-            Thứ tự ưu tiên chạy từ trên xuống dưới khi bật chế độ <strong>▶️ TẤT CẢ (Alt+A)</strong>. Hệ thống tự động chuyển khu tiếp theo ngay khi xong việc:
+            Thứ tự ưu tiên chạy từ trên xuống dưới khi bật chế độ <strong>▶️ TẤT CẢ OFFLINE (Alt+A)</strong>. Hệ thống tự động chuyển khu tiếp theo ngay khi xong việc hoặc hết sức:
           </p>
 
           <div className="space-y-1.5">
             {activeAreaOrder.map((areaId, idx) => {
               const meta = AREA_META[areaId];
               const isEnabled = config.areaEnabled[areaId] !== false;
+              const subDesc =
+                areaId === 'farm'
+                  ? 'Ruộng rau củ, chăn nuôi gia súc, thú cưng, chợ Na...'
+                  : areaId === 'sea'
+                  ? 'Bến tàu câu cá biển, sinh vật biển, bán cá...'
+                  : 'Nghỉ dưỡng Ông Năm, vườn rau organic, sửa chữa, khách...';
+
               return (
                 <div
                   key={areaId}
-                  className="flex items-center justify-between rounded-lg bg-slate-50 px-2.5 py-1.5 border border-slate-200/80 text-[11px] hover:bg-slate-100/70 transition-colors h-9"
+                  className="flex items-center justify-between rounded-lg bg-slate-50 px-2.5 py-1.5 border border-slate-200/80 text-[11px] hover:bg-slate-100/70 transition-colors min-h-10"
                 >
                   <div className="flex items-center gap-2 min-w-0">
                     <span className="font-mono text-[10px] text-slate-400 font-bold w-4.5 shrink-0 text-center">
                       #{idx + 1}
                     </span>
-                    <span className="text-sm shrink-0 leading-none">{meta?.icon || '📍'}</span>
-                    <span className={`text-xs truncate ${isEnabled ? 'text-slate-800 font-medium' : 'text-slate-400 line-through'}`}>
-                      {meta?.name || areaId}
-                    </span>
+                    <span className="text-base shrink-0 leading-none">{meta?.icon || '📍'}</span>
+                    <div className="min-w-0">
+                      <div className={`text-xs font-medium truncate ${isEnabled ? 'text-slate-800' : 'text-slate-400 line-through'}`}>
+                        {meta?.name || areaId}
+                      </div>
+                      <div className="text-[10px] text-slate-400 truncate">
+                        {subDesc}
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0 ml-2">
                     <div className="flex items-center gap-0.5">
                       <Button
                         variant="ghost"
@@ -329,7 +405,7 @@ export function SettingsView({
           </div>
         </div>
 
-        {/* 4. Kích thước & Tiện ích HUD */}
+        {/* 5. Kích thước & Tiện ích HUD */}
         <div className="rounded-xl border border-slate-200/90 bg-white p-3 space-y-3 shadow-2xs">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">

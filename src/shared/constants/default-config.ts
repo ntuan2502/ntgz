@@ -176,8 +176,8 @@ export const DEFAULT_CONFIG: AppConfig = {
   areaOrder: ['farm', 'sea', 'farmstay'],
   areaEnabled: {
     farm: true,
-    benDo: false,
-    alluvialLand: false,
+    benDo: true,
+    alluvialLand: true,
     sea: false,
     farmstay: true,
   },
