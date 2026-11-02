@@ -1,5 +1,6 @@
 import { AppConfig } from '../../../../shared/types/config';
-import { stores, sendBenWs } from '../../../core/engine-access';
+import { stores, sendBenWs, getActiveScene } from '../../../core/engine-access';
+import { getFishDisplayName } from '../../../../shared/constants/wharf-catalog';
 import {
   baiState,
   toTimestampMs,
@@ -15,14 +16,19 @@ const COOP_TILE = { x: 40, y: 8 };
 const NET_TILE = { x: 39, y: 3 };
 
 /**
- * Trả về ô đường đi bộ ngay phía trước thửa ruộng `parcelIdx` (0..8).
- * Trong BaiScene (farm), mỗi thửa `PZ(parcelIdx)` chiếm 6x4 ô không đi vào được,
- * lối đi bộ hợp lệ nằm ngay cạnh dưới `y = py + 4`.
+ * Hướng mặt nhân vật về phía thửa ruộng `parcelIdx` (0..8) trong BaiScene (farm).
+ * Thao tác trên luống rau có thể thực hiện từ xa ở bất cứ đâu trong khuôn viên nông trại,
+ * mô phỏng chính xác phương thức `toolTap` của game (chỉ quay mặt về thửa rồi gửi batch).
  */
-function getParcelWorkTile(parcelIdx: number): { x: number; y: number } {
-  const px = 3 + (parcelIdx % 3) * 7;
-  const py = 6 + Math.floor(parcelIdx / 3) * 5;
-  return { x: px + 2, y: py + 4 };
+function lookAtParcel(parcelIdx: number): void {
+  const sc = getActiveScene('BaiScene') as unknown as {
+    farmer?: { lookAt?: (x: number, y: number) => void };
+  } | null;
+  if (sc?.farmer?.lookAt) {
+    const px = 3 + (parcelIdx % 3) * 7 + 3;
+    const py = 6 + Math.floor(parcelIdx / 3) * 5 + 2;
+    sc.farmer.lookAt(px * 16, py * 16);
+  }
 }
 
 export interface AlluvialStepResult {
@@ -65,9 +71,9 @@ export function runBaiFarmWorkStep(
   const coconuts = farm.coconuts || [];
   let step = currentWorkStep;
 
-  // Step 0: Harvest ripe plots (parcel by parcel, walking to each parcel)
+  // Step 0: Harvest ripe plots (remote execution inside farm, faces parcel)
   if (step === 0) {
-    if (cfg.benAutoBaiCrops !== false) {
+    if (cfg.benAutoBaiCrops !== false && cfg.benAutoBaiHarvest !== false) {
       const ripePlots = plots.filter(
         (p) =>
           p.state === 'ripe' ||
@@ -76,18 +82,8 @@ export function runBaiFarmWorkStep(
       if (ripePlots.length > 0) {
         const parcelIdx = Math.floor(ripePlots[0].plot / 6);
         const parcelPlots = ripePlots.filter((p) => Math.floor(p.plot / 6) === parcelIdx);
-        const targetTile = getParcelWorkTile(parcelIdx);
-        const walk = ensureAtSceneTile(
-          'BaiScene',
-          'farm',
-          targetTile,
-          `🚶 Đất Bãi: Đang đi lại thửa số ${parcelIdx + 1} (${targetTile.x}, ${targetTile.y}) thu hoạch ${parcelPlots.length} luống chín...`,
-          { onOpen: () => stores.bai?.setState({ tool: 'harvest' }) },
-          250
-        );
-        if (!walk.ready) {
-          return { nextWorkStep: 0, result: { acted: true, msg: walk.msg, allowCast: false } };
-        }
+        lookAtParcel(parcelIdx);
+        stores.bai?.setState({ tool: 'harvest' });
         sendBenWs({ t: 'plotBatch', act: 'harvest', plots: parcelPlots.map((p) => p.plot) });
         for (const p of parcelPlots) {
           p.state = 'empty';
@@ -107,27 +103,17 @@ export function runBaiFarmWorkStep(
     step = 1;
   }
 
-  // Step 1: Spray pests (parcel by parcel)
+  // Step 1: Spray pests (remote execution inside farm, faces parcel)
   if (step === 1) {
-    if (cfg.benAutoBaiCrops !== false) {
+    if (cfg.benAutoBaiCrops !== false && cfg.benAutoBaiSpray !== false) {
       const pestPlots = plots.filter(
         (p) => Boolean(p.crop) && typeof p.pestAt === 'number' && toTimestampMs(p.pestAt) <= nowMs
       );
       if (pestPlots.length > 0) {
         const parcelIdx = Math.floor(pestPlots[0].plot / 6);
         const parcelPlots = pestPlots.filter((p) => Math.floor(p.plot / 6) === parcelIdx);
-        const targetTile = getParcelWorkTile(parcelIdx);
-        const walk = ensureAtSceneTile(
-          'BaiScene',
-          'farm',
-          targetTile,
-          `🚶 Đất Bãi: Đang đi lại thửa số ${parcelIdx + 1} (${targetTile.x}, ${targetTile.y}) bắt sâu ${parcelPlots.length} luống...`,
-          { onOpen: () => stores.bai?.setState({ tool: 'spray' }) },
-          250
-        );
-        if (!walk.ready) {
-          return { nextWorkStep: 1, result: { acted: true, msg: walk.msg, allowCast: false } };
-        }
+        lookAtParcel(parcelIdx);
+        stores.bai?.setState({ tool: 'spray' });
         sendBenWs({ t: 'plotBatch', act: 'spray', plots: parcelPlots.map((p) => p.plot) });
         for (const p of parcelPlots) {
           p.pestAt = null;
@@ -227,9 +213,9 @@ export function runBaiFarmWorkStep(
     step = 4;
   }
 
-  // Step 4: Plant empty plots (parcel by parcel; if missing seeds, record in pendingSupplies to buy at Vựa giống Cô Sáu in Chợ Bãi)
+  // Step 4: Plant empty plots (remote execution inside farm, faces parcel; if missing seeds, record in pendingSupplies)
   if (step === 4) {
-    if (cfg.benAutoBaiCrops !== false) {
+    if (cfg.benAutoBaiCrops !== false && cfg.benAutoBaiPlant !== false) {
       const emptyPlots = plots.filter((p) => p.state === 'empty');
       if (emptyPlots.length > 0) {
         const preferCrop = cfg.benBaiPreferCrop || 'rauMuong';
@@ -245,18 +231,8 @@ export function runBaiFarmWorkStep(
           const plotsToPlant = emptyPlots.slice(0, currentSeeds);
           const parcelIdx = Math.floor(plotsToPlant[0].plot / 6);
           const parcelPlots = plotsToPlant.filter((p) => Math.floor(p.plot / 6) === parcelIdx);
-          const targetTile = getParcelWorkTile(parcelIdx);
-          const walk = ensureAtSceneTile(
-            'BaiScene',
-            'farm',
-            targetTile,
-            `🚶 Đất Bãi: Đang đi lại thửa số ${parcelIdx + 1} (${targetTile.x}, ${targetTile.y}) gieo ${parcelPlots.length} luống...`,
-            { onOpen: () => stores.bai?.setState({ tool: 'plant', seed: preferCrop }) },
-            250
-          );
-          if (!walk.ready) {
-            return { nextWorkStep: 4, result: { acted: true, msg: walk.msg, allowCast: false } };
-          }
+          lookAtParcel(parcelIdx);
+          stores.bai?.setState({ tool: 'plant', seed: preferCrop });
 
           sendBenWs({
             t: 'plotBatch',
@@ -284,25 +260,15 @@ export function runBaiFarmWorkStep(
     step = 5;
   }
 
-  // Step 5: Water dry plots (parcel by parcel)
+  // Step 5: Water dry plots (remote execution inside farm, faces parcel)
   if (step === 5) {
-    if (cfg.benAutoBaiCrops !== false) {
+    if (cfg.benAutoBaiCrops !== false && cfg.benAutoBaiWater !== false) {
       const dryPlots = plots.filter((p) => p.state === 'dry');
       if (dryPlots.length > 0) {
         const parcelIdx = Math.floor(dryPlots[0].plot / 6);
         const parcelPlots = dryPlots.filter((p) => Math.floor(p.plot / 6) === parcelIdx);
-        const targetTile = getParcelWorkTile(parcelIdx);
-        const walk = ensureAtSceneTile(
-          'BaiScene',
-          'farm',
-          targetTile,
-          `🚶 Đất Bãi: Đang đi lại thửa số ${parcelIdx + 1} (${targetTile.x}, ${targetTile.y}) tưới ${parcelPlots.length} luống rau...`,
-          { onOpen: () => stores.bai?.setState({ tool: 'water' }) },
-          250
-        );
-        if (!walk.ready) {
-          return { nextWorkStep: 5, result: { acted: true, msg: walk.msg, allowCast: false } };
-        }
+        lookAtParcel(parcelIdx);
+        stores.bai?.setState({ tool: 'water' });
 
         sendBenWs({ t: 'plotBatch', act: 'water', plots: parcelPlots.map((p) => p.plot) });
         for (const p of parcelPlots) {
@@ -322,42 +288,34 @@ export function runBaiFarmWorkStep(
     step = 6;
   }
 
-  // Step 6: Fertilize plots (parcel by parcel)
+  // Step 6: Fertilize plots (remote execution inside farm, faces parcel)
   if (step === 6) {
-    const fertCount = (baiState.items['fert'] || 0) + (baiState.items['fertBio'] || 0);
-    if (fertCount > 0) {
-      const unfertilized = plots.filter(
-        (p) => !p.fert && Boolean(p.crop) && (p.state === 'dry' || p.state === 'growing')
-      );
-      if (unfertilized.length > 0) {
-        const parcelIdx = Math.floor(unfertilized[0].plot / 6);
-        const parcelPlots = unfertilized.filter((p) => Math.floor(p.plot / 6) === parcelIdx);
-        const targetTile = getParcelWorkTile(parcelIdx);
-        const walk = ensureAtSceneTile(
-          'BaiScene',
-          'farm',
-          targetTile,
-          `🚶 Đất Bãi: Đang đi lại thửa số ${parcelIdx + 1} (${targetTile.x}, ${targetTile.y}) bón phân ${parcelPlots.length} luống...`,
-          { onOpen: () => stores.bai?.setState({ tool: 'fert' }) },
-          250
+    if (cfg.benAutoBaiCrops !== false && cfg.benAutoBaiFertilize !== false) {
+      const fertCount = (baiState.items['fert'] || 0) + (baiState.items['fertBio'] || 0);
+      if (fertCount > 0) {
+        const unfertilized = plots.filter(
+          (p) => !p.fert && Boolean(p.crop) && (p.state === 'dry' || p.state === 'growing')
         );
-        if (!walk.ready) {
-          return { nextWorkStep: 6, result: { acted: true, msg: walk.msg, allowCast: false } };
-        }
+        if (unfertilized.length > 0) {
+          const parcelIdx = Math.floor(unfertilized[0].plot / 6);
+          const parcelPlots = unfertilized.filter((p) => Math.floor(p.plot / 6) === parcelIdx);
+          lookAtParcel(parcelIdx);
+          stores.bai?.setState({ tool: 'fert' });
 
-        sendBenWs({ t: 'plotBatch', act: 'fert', plots: parcelPlots.map((p) => p.plot) });
-        for (const p of parcelPlots) {
-          p.fert = true;
+          sendBenWs({ t: 'plotBatch', act: 'fert', plots: parcelPlots.map((p) => p.plot) });
+          for (const p of parcelPlots) {
+            p.fert = true;
+          }
+          const hasMoreParcels = unfertilized.length > parcelPlots.length;
+          return {
+            nextWorkStep: hasMoreParcels ? 6 : 7,
+            result: {
+              acted: true,
+              msg: `🌿 Đất Bãi: Đã bón phân ${parcelPlots.length} luống rau tại thửa số ${parcelIdx + 1}!`,
+              allowCast: false,
+            },
+          };
         }
-        const hasMoreParcels = unfertilized.length > parcelPlots.length;
-        return {
-          nextWorkStep: hasMoreParcels ? 6 : 7,
-          result: {
-            acted: true,
-            msg: `🌿 Đất Bãi: Đã bón phân ${parcelPlots.length} luống rau tại thửa số ${parcelIdx + 1}!`,
-            allowCast: false,
-          },
-        };
       }
     }
     step = 7;
@@ -493,13 +451,14 @@ export function runBaiFarmWorkStep(
             return { nextWorkStep: 8, result: { acted: true, msg: walk.msg, allowCast: false } };
           }
 
+          const fishName = getFishDisplayName(candidateDex.fish);
           sendBenWs({ t: 'dryDexPut', id: candidateDex.id });
           baiState.info.specialty.driedList = driedList.filter((d) => d.id !== candidateDex.id);
           return {
             nextWorkStep: 8,
             result: {
               acted: true,
-              msg: `📜 Sổ Khô Cá: Đã cất khô cá ${candidateDex.fish} (${candidateDex.size}cm) vào bộ sưu tập (+⭐ Nổi tiếng)!`,
+              msg: `📜 Sổ Khô Cá: Đã cất khô cá ${fishName} (${candidateDex.size}cm) vào bộ sưu tập (+⭐ Nổi tiếng)!`,
               allowCast: false,
             },
           };
@@ -529,13 +488,14 @@ export function runBaiFarmWorkStep(
         }
 
         const fishToDry = dryableCandidates[0];
+        const fishName = getFishDisplayName(fishToDry.fish || fishToDry.id);
         sendBenWs({ t: 'dryPut', fish: fishToDry.id });
         closeBaiPanel();
         return {
           nextWorkStep: 9,
           result: {
             acted: true,
-            msg: `🐟 Sân Phơi Khô Cá: Đã đưa cá ${fishToDry.fish || 'câu bến'} lên nong phơi!`,
+            msg: `🐟 Sân Phơi Khô Cá: Đã đưa cá ${fishName} lên nong phơi!`,
             allowCast: false,
           },
         };
@@ -617,13 +577,23 @@ export function runBaiFarmWorkStep(
       }
 
       // C. Put newly bought poultry into coop
-      const boughtPoultryCount = (baiState.items['hen'] || 0) + (baiState.items['duck'] || 0);
-      if (boughtPoultryCount > 0) {
+      const henCount = baiState.items['hen'] || 0;
+      const duckCount = baiState.items['duck'] || 0;
+      const boughtPoultryCount = henCount + duckCount;
+      const maxCoopCap = baiState.info?.coop?.cap ?? (farm.coop ? farm.coop * 5 : 5);
+      const currentBirdsCount = birds.length;
+      const coopSpaceLeft = Math.max(0, maxCoopCap - currentBirdsCount);
+
+      if (boughtPoultryCount > 0 && coopSpaceLeft > 0) {
+        const henPut = Math.min(coopSpaceLeft, henCount);
+        const duckPut = Math.min(coopSpaceLeft - henPut, duckCount);
+        const actualPut = henPut + duckPut;
+
         const walk = ensureAtSceneTile(
           'BaiScene',
           'farm',
           COOP_TILE,
-          '🚶 Đất Bãi: Đang đi vào Chuồng Gà Vịt (40, 8) để thả giống...',
+          `🚶 Đất Bãi: Đang đi vào Chuồng Gà Vịt (40, 8) để thả ${actualPut} con giống...`,
           { panel: 'coop' },
           500
         );
@@ -632,14 +602,18 @@ export function runBaiFarmWorkStep(
         }
 
         sendBenWs({ t: 'birdPut' });
-        baiState.items['hen'] = 0;
-        baiState.items['duck'] = 0;
+        baiState.items['hen'] = Math.max(0, henCount - henPut);
+        baiState.items['duck'] = Math.max(0, duckCount - duckPut);
         closeBaiPanel();
+        const details = [
+          henPut > 0 ? `${henPut} gà mái` : '',
+          duckPut > 0 ? `${duckPut} vịt mái` : '',
+        ].filter(Boolean).join(' + ');
         return {
           nextWorkStep: 10,
           result: {
             acted: true,
-            msg: '🐔 Chuồng Gà Vịt: Đã thả gia cầm mới vào chuồng nuôi!',
+            msg: `🐔 Chuồng Gà Vịt: Đã thả ${details} (tổng ${actualPut} con) vào chuồng (${currentBirdsCount + actualPut}/${maxCoopCap})!`,
             allowCast: false,
           },
         };
@@ -722,12 +696,18 @@ export function runBaiFarmWorkStep(
       const fryKeys = Object.keys(baiState.items).filter(
         (k) => k.startsWith('fry:') && baiState.items[k] > 0
       );
-      if (fryKeys.length > 0) {
+      const totalFryInBag = fryKeys.reduce((acc, k) => acc + (baiState.items[k] || 0), 0);
+      const maxNetCap = baiState.info?.net?.cap ?? (farm.net ? 20 : 10);
+      const currentNetCount = netFish.length;
+      const netSpaceLeft = Math.max(0, maxNetCap - currentNetCount);
+
+      if (totalFryInBag > 0 && netSpaceLeft > 0) {
+        const actualFryPut = Math.min(totalFryInBag, netSpaceLeft);
         const walk = ensureAtSceneTile(
           'BaiScene',
           'farm',
           NET_TILE,
-          '🚶 Đất Bãi: Đang đi ra Lưới Quây Cá Sông (39, 3) để thả cá giống...',
+          `🚶 Đất Bãi: Đang đi ra Lưới Quây Cá Sông (39, 3) để thả ${actualFryPut} cá giống...`,
           { panel: 'net' },
           500
         );
@@ -736,15 +716,25 @@ export function runBaiFarmWorkStep(
         }
 
         sendBenWs({ t: 'netPut' });
+        let remainingToDeduct = actualFryPut;
+        const putDetails: string[] = [];
         for (const k of fryKeys) {
-          baiState.items[k] = 0;
+          if (remainingToDeduct <= 0) break;
+          const fishKind = k.replace(/^fry:/, '');
+          const fishName =
+            baiState.info?.net?.fish?.[fishKind]?.name || getFishDisplayName(fishKind);
+          const count = baiState.items[k] || 0;
+          const take = Math.min(count, remainingToDeduct);
+          baiState.items[k] = count - take;
+          remainingToDeduct -= take;
+          putDetails.push(`${take} ${fishName}`);
         }
         closeBaiPanel();
         return {
           nextWorkStep: 11,
           result: {
             acted: true,
-            msg: '🐟 Lưới Quây Nuôi Cá: Đã thả cá giống vào khúc sông quây lưới!',
+            msg: `🐟 Lưới Quây Nuôi Cá: Đã thả ${putDetails.join(' + ')} (tổng ${actualFryPut} con) vào lưới (${currentNetCount + actualFryPut}/${maxNetCap})!`,
             allowCast: false,
           },
         };

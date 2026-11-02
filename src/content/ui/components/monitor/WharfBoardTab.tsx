@@ -3,17 +3,12 @@ import { GameSnapshot } from '@/shared/types/game-state';
 import { Button } from '@/components/ui/button';
 import { Calendar } from 'lucide-react';
 import { execGameAction } from '@/content/bridge/content-bridge';
-import fishDexRaw from '@/shared/constants/fish-dex-data.json';
+import {
+  FISH_NAME_MAP,
+  TOTAL_CATCHABLE_SPECIES_COUNT,
+} from '@/shared/constants/wharf-catalog';
 
-interface FishEntry {
-  id: string;
-  name: string;
-  [key: string]: unknown;
-}
-
-const fishMap = new Map<string, string>(
-  (fishDexRaw as FishEntry[]).map((f) => [f.id, f.name])
-);
+const fishMap = FISH_NAME_MAP;
 
 interface BoardItem {
   id: string;
@@ -66,7 +61,7 @@ const BOARD_CATEGORIES: BoardCategory[] = [
     hint: 'Sổ cá đủ loài nhất bến',
     emptyHint: 'Bảng còn trống, câu con đầu tiên là có tên liền 🎣',
     group: 'ben',
-    formatValue: (v) => `${v}/89 loài`,
+    formatValue: (v) => `${v}/${TOTAL_CATCHABLE_SPECIES_COUNT} loài`,
   },
   {
     id: 'size',

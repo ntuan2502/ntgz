@@ -239,6 +239,11 @@ export interface AppConfig {
   benAutoBaiFerry: boolean;
   benAutoBuyLand: boolean;
   benAutoBaiCrops: boolean;
+  benAutoBaiHarvest?: boolean;
+  benAutoBaiPlant?: boolean;
+  benAutoBaiWater?: boolean;
+  benAutoBaiFertilize?: boolean;
+  benAutoBaiSpray?: boolean;
   benBaiPreferCrop: string;
   benAutoBaiSellCrops: boolean;
   benAutoCocoPick: boolean;

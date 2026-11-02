@@ -38,6 +38,38 @@ export async function stepBenDoFishing(
   // Keep the page-hook cricket watchers (trap / tickle / bet timing) alive
   void execGameAction('BEN_WATCH', { config });
 
+  // =========================================================================
+  // 👑 HIGHEST PRIORITY #1: PUMPKIN BOSS (SĂN BOSS BÍ NGÔ & CHỜ 10S GIỮA MAP)
+  // Luôn luôn ưu tiên việc này trước tiên, bất kể đang ở khu nào hay làm gì!
+  // =========================================================================
+  const { isBossActive, isBossImpending, secondsToNextBoss } = computeWharfBossStatus(
+    bn,
+    config.benAutoBossHunt !== false
+  );
+
+  if (isBossActive || isBossImpending) {
+    // Thu cần câu ngay lập tức nếu đang câu cá / cắn câu / giằng co
+    const pullBtn = document.querySelector('button.ben-cast.btn-brown') as HTMLButtonElement | null;
+    if (pullBtn && isVisible(pullBtn)) {
+      triggerPointerDownOnly(pullBtn);
+    } else if (bn.fishing !== 'idle') {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true }));
+    }
+
+    const prep = await execGameAction('BEN_STEP', { config });
+    if (prep && prep.ok && prep.msg) {
+      setStatus(prep.msg);
+    } else {
+      setStatus(
+        isBossActive
+          ? '👑 Phát hiện Boss Bí Ngô xuất hiện! Đang áp sát săn Boss 🎃'
+          : `👑 Boss Bí Ngô đếm ngược còn ${secondsToNextBoss}s ➔ Thu cần và ra giữa map chờ sẵn 🎃`
+      );
+    }
+    await sleep(prep?.isBossHunt ? 120 : 250);
+    return { finishedArea: false };
+  }
+
   // Strict Area Isolation: If currently across the river at Chợ Bãi ('bai') or Đất Của Mình ('farm'),
   // step the Alluvial Land state machine directly instead of running Bến Đò fishing checks.
   const currentKind = snap.baiState?.kind || 'ben';
@@ -132,11 +164,6 @@ export async function stepBenDoFishing(
   }
 
   // 5. Waiting for fish
-  const { isBossActive, isBossImpending, secondsToNextBoss } = computeWharfBossStatus(
-    bn,
-    config.benAutoBossHunt !== false
-  );
-
   if (bn.fishing === 'wait' || bn.fishing === 'nibble' || bn.fishing === 'casting') {
     if (isBossActive || isBossImpending) {
       const pullBtn = document.querySelector('button.ben-cast.btn-brown') as HTMLButtonElement | null;

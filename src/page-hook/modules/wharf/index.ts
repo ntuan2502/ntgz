@@ -1,4 +1,4 @@
-import { stores, getActiveScene } from '../../core/engine-access';
+import { stores, getActiveScene, sendBenWs } from '../../core/engine-access';
 import { canAct, markActed } from '../../core/cooldown';
 import { computeBenStamina } from '../../core/store-watcher';
 import { dismissInterruptsIfNeeded } from '../../core/interrupts';
@@ -61,6 +61,74 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   );
   const isBossImpending = bossStatus.isBossImpending;
   const secondsToNextBoss = bossStatus.secondsToNextBoss;
+
+  // =========================================================================
+  // 👑 HIGHEST PRIORITY #1: WORLD BOSS BÍ NGÔ (SĂN BOSS & ĐÓN LÕNG 10S GIỮA MAP)
+  // Luôn luôn ưu tiên việc này trước tiên, bất kể đang ở khu nào hay làm gì!
+  // =========================================================================
+  if (isBossActive || isBossImpending) {
+    const baiSnap = getBaiSnapshot();
+    const currentKind = baiSnap?.kind || 'ben';
+
+    // Nếu đang ở bên Chợ Bãi / Farm, gấp rút qua đò về lại Bến Đò ngay
+    if (currentKind !== 'ben') {
+      const alluvialRes = stepAlluvial(cfg);
+      if (alluvialRes && alluvialRes.acted) {
+        return {
+          acted: true,
+          msg: `👑 Boss Bí Ngô sắp xuất hiện (còn ${secondsToNextBoss}s)! Đang gấp rút về Bến Đò 🎃`,
+          allowCast: false,
+        };
+      }
+    }
+
+    // Tại Bến Đò: Đóng toàn bộ bảng panel nếu đang mở, ngắt câu/săn dế
+    if (bu.panel) {
+      buStore.setState({ panel: null });
+    }
+    keepBenPanelUntil = 0;
+
+    if (bn.fishing !== 'idle') {
+      sendBenWs({ t: 'hook' });
+    }
+    if (bn.hunt) {
+      bnStore.setState({ hunt: null });
+    }
+
+    const dummyCtx: BenExecutionContext = {
+      cfg,
+      m,
+      bu,
+      bn,
+      buStore,
+      bnStore,
+      benScene,
+      wallet: bn.wallet || { shells: 0, bait: 0, liveStamina: 100 },
+      stamina: computeBenStamina(bn.wallet || { shells: 0, bait: 0 }),
+      shells: bn.wallet?.shells || 0,
+      bait: bn.wallet?.bait || 0,
+      nonKeptCount: 0,
+      totalSellShells: 0,
+      packItems: [],
+      isStaminaDepleted: false,
+      needShellsForBait: false,
+      needShellsForFood: false,
+      targetFoodPrice: 45,
+      prefFood: 'lauMam',
+      benShowFullActions: true,
+      isBossActive,
+      isBossImpending,
+      secondsToNextBoss,
+      huntEnabled: false,
+      bossEnabled: false,
+      arenaEnabled: false,
+      runWithOptionalPanel: () => {},
+      walkAndRun: () => ({ acted: false }),
+    };
+
+    const bossRes = runBossHuntOrImpendingStep(dummyCtx);
+    if (bossRes) return bossRes;
+  }
 
   const interrupted = dismissInterruptsIfNeeded(cfg);
   if (interrupted) return interrupted;

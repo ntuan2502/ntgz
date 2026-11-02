@@ -4,56 +4,96 @@
     "name": "Dép nhựa lạc trôi",
     "rarity": "junk",
     "price": 1,
-    "desc": "Một chiếc dép đi lạc, chiếc kia chắc đang ở bến khác"
+    "desc": "Một chiếc dép đi lạc, chiếc kia chắc đang ở bến khác",
+    "shape": {
+      "kind": "sandal",
+      "color": "#3c8fd0",
+      "dark": "#2a6aa0"
+    }
   },
   {
     "id": "chaiNhua",
     "name": "Chai nhựa",
     "rarity": "junk",
     "price": 1,
-    "desc": "Vớt lên bỏ thùng rác giùm sông nha"
+    "desc": "Vớt lên bỏ thùng rác giùm sông nha",
+    "shape": {
+      "kind": "bottle",
+      "color": "#bfe3f2",
+      "dark": "#7fb2c8"
+    }
   },
   {
     "id": "lonRi",
     "name": "Lon rỉ sét",
     "rarity": "junk",
     "price": 1,
-    "desc": "Chắc rớt từ hồi ông nội còn trẻ"
+    "desc": "Chắc rớt từ hồi ông nội còn trẻ",
+    "shape": {
+      "kind": "can",
+      "color": "#c8473d",
+      "dark": "#8a2f28"
+    }
   },
   {
     "id": "baoNiLong",
     "name": "Bao ni lông",
     "rarity": "junk",
     "price": 1,
-    "desc": "Cá tưởng sứa nên né từ xa"
+    "desc": "Cá tưởng sứa nên né từ xa",
+    "shape": {
+      "kind": "bag",
+      "color": "#f2f2f2",
+      "dark": "#c8c8c8"
+    }
   },
   {
     "id": "gaoDua",
     "name": "Gáo dừa",
     "rarity": "junk",
     "price": 2,
-    "desc": "Đem về múc nước tưới cây cũng được"
+    "desc": "Đem về múc nước tưới cây cũng được",
+    "shape": {
+      "kind": "shell",
+      "color": "#8a5a2b",
+      "dark": "#5a3a1a"
+    }
   },
   {
     "id": "nonRach",
     "name": "Nón lá rách",
     "rarity": "junk",
     "price": 2,
-    "desc": "Ai đi đò lỡ tay làm bay mất"
+    "desc": "Ai đi đò lỡ tay làm bay mất",
+    "shape": {
+      "kind": "hat",
+      "color": "#e8d38a",
+      "dark": "#b8a050"
+    }
   },
   {
     "id": "cuiKho",
     "name": "Cành củi khô",
     "rarity": "junk",
     "price": 1,
-    "desc": "Nhóm lửa nướng cá thì hợp"
+    "desc": "Nhóm lửa nướng cá thì hợp",
+    "shape": {
+      "kind": "stick",
+      "color": "#8a6a44",
+      "dark": "#5e442a"
+    }
   },
   {
     "id": "lucBinh",
     "name": "Cụm lục bình",
     "rarity": "junk",
     "price": 1,
-    "desc": "Trôi lững lờ, có bông tím xinh xinh"
+    "desc": "Trôi lững lờ, có bông tím xinh xinh",
+    "shape": {
+      "kind": "weed",
+      "color": "#4f9440",
+      "dark": "#b58ad8"
+    }
   },
   {
     "id": "roDong",
@@ -64,7 +104,16 @@
       8,
       18
     ],
-    "desc": "Gan lì số một, mắc câu rồi còn ráng quẫy"
+    "desc": "Gan lì số một, mắc câu rồi còn ráng quẫy",
+    "look": {
+      "body": "#7a7a4a",
+      "belly": "#c8c08a",
+      "fin": "#5e5e36",
+      "rx": 5.5,
+      "ry": 3,
+      "spikes": true,
+      "back": "#5e5e36"
+    }
   },
   {
     "id": "roPhi",
@@ -75,7 +124,16 @@
       10,
       25
     ],
-    "desc": "Ở đâu cũng sống được, dễ nuôi như cây xương rồng"
+    "desc": "Ở đâu cũng sống được, dễ nuôi như cây xương rồng",
+    "look": {
+      "body": "#8a9aa0",
+      "belly": "#d8dde0",
+      "fin": "#6a7a80",
+      "rx": 6,
+      "ry": 3.4,
+      "bars": "#6a7a80",
+      "tail": "round"
+    }
   },
   {
     "id": "sacRan",
@@ -86,7 +144,15 @@
       8,
       16
     ],
-    "desc": "Phơi khô chiên giòn là cả nhà giành nhau"
+    "desc": "Phơi khô chiên giòn là cả nhà giành nhau",
+    "look": {
+      "body": "#8a8a5a",
+      "belly": "#d0caa0",
+      "fin": "#6a6a3e",
+      "rx": 5.5,
+      "ry": 3,
+      "stripes": "#4a4a2a"
+    }
   },
   {
     "id": "sacBuom",
@@ -97,7 +163,16 @@
       5,
       10
     ],
-    "desc": "Có hai đốm đen như đôi mắt bướm"
+    "desc": "Có hai đốm đen như đôi mắt bướm",
+    "look": {
+      "body": "#9ab0c0",
+      "belly": "#e0e8ee",
+      "fin": "#7a90a0",
+      "rx": 4.5,
+      "ry": 2.8,
+      "spots": "#2b2b33",
+      "tail": "round"
+    }
   },
   {
     "id": "treVang",
@@ -109,6 +184,15 @@
       30
     ],
     "desc": "Râu dài như ông cụ, trốn trong bùn cả ngày",
+    "look": {
+      "body": "#b08a4a",
+      "belly": "#e8d0a0",
+      "fin": "#8a6a34",
+      "rx": 7,
+      "ry": 2.2,
+      "whiskers": true,
+      "tail": "round"
+    },
     "spot": "bank"
   },
   {
@@ -120,7 +204,16 @@
       15,
       35
     ],
-    "desc": "Nấu cháo cá chép là món ruột của bà"
+    "desc": "Nấu cháo cá chép là món ruột của bà",
+    "look": {
+      "body": "#b8a060",
+      "belly": "#e8dcae",
+      "fin": "#c87a3a",
+      "rx": 6.5,
+      "ry": 3.4,
+      "whiskers": true,
+      "back": "#8a7840"
+    }
   },
   {
     "id": "diec",
@@ -131,7 +224,15 @@
       8,
       15
     ],
-    "desc": "Nhỏ mà xương nhiều, kho tiêu thì đưa cơm"
+    "desc": "Nhỏ mà xương nhiều, kho tiêu thì đưa cơm",
+    "look": {
+      "body": "#b8c0c0",
+      "belly": "#eef0f0",
+      "fin": "#98a0a0",
+      "rx": 5,
+      "ry": 3,
+      "back": "#7a8a8a"
+    }
   },
   {
     "id": "muong",
@@ -142,7 +243,16 @@
       8,
       14
     ],
-    "desc": "Bơi theo đàn sát mặt nước, lẹ như chớp"
+    "desc": "Bơi theo đàn sát mặt nước, lẹ như chớp",
+    "look": {
+      "body": "#c8d0d8",
+      "belly": "#f4f6f8",
+      "fin": "#a8b0b8",
+      "rx": 5.5,
+      "ry": 1.8,
+      "band": "#9aa8b8",
+      "tail": "fork"
+    }
   },
   {
     "id": "thieu",
@@ -153,7 +263,15 @@
       10,
       20
     ],
-    "desc": "Dẹt mỏng như tờ lịch, nướng than là thơm"
+    "desc": "Dẹt mỏng như tờ lịch, nướng than là thơm",
+    "look": {
+      "body": "#c0c8d0",
+      "belly": "#f0f2f4",
+      "fin": "#e0a060",
+      "rx": 6,
+      "ry": 2.2,
+      "tail": "fork"
+    }
   },
   {
     "id": "longTong",
@@ -164,7 +282,16 @@
       3,
       7
     ],
-    "desc": "Bé xíu, cả đàn rỉa mồi mà không con nào dính"
+    "desc": "Bé xíu, cả đàn rỉa mồi mà không con nào dính",
+    "look": {
+      "body": "#d0d8e0",
+      "belly": "#f6f8fa",
+      "fin": "#e0c060",
+      "rx": 4,
+      "ry": 1.4,
+      "band": "#2b2b33",
+      "tail": "fork"
+    }
   },
   {
     "id": "bongKeo",
@@ -176,6 +303,15 @@
       16
     ],
     "desc": "Nằm im dưới bùn, nướng muối ớt là bá cháy",
+    "look": {
+      "body": "#a89070",
+      "belly": "#e0d4b8",
+      "fin": "#806848",
+      "rx": 6,
+      "ry": 2,
+      "spots": "#6a5438",
+      "tail": "round"
+    },
     "spot": "bank"
   },
   {
@@ -187,7 +323,16 @@
       12,
       22
     ],
-    "desc": "Vảy bạc lấp lánh, vây đỏ như son"
+    "desc": "Vảy bạc lấp lánh, vây đỏ như son",
+    "look": {
+      "body": "#c8ccd0",
+      "belly": "#f4f4f6",
+      "fin": "#d84a3a",
+      "rx": 6,
+      "ry": 3.2,
+      "tail": "fork",
+      "hump": true
+    }
   },
   {
     "id": "chot",
@@ -198,7 +343,16 @@
       8,
       15
     ],
-    "desc": "Có ngạnh đâm đau điếng, cầm nhẹ tay nha"
+    "desc": "Có ngạnh đâm đau điếng, cầm nhẹ tay nha",
+    "look": {
+      "body": "#b8a070",
+      "belly": "#e8dcb8",
+      "fin": "#98804e",
+      "rx": 5.5,
+      "ry": 2,
+      "whiskers": true,
+      "tail": "fork"
+    }
   },
   {
     "id": "chay",
@@ -209,7 +363,16 @@
       12,
       25
     ],
-    "desc": "Mắt đỏ hoe như mới coi phim buồn"
+    "desc": "Mắt đỏ hoe như mới coi phim buồn",
+    "look": {
+      "body": "#a8b0b8",
+      "belly": "#e8ecf0",
+      "fin": "#c05a4a",
+      "rx": 6.5,
+      "ry": 2.2,
+      "tail": "fork",
+      "back": "#7a8590"
+    }
   },
   {
     "id": "troi",
@@ -220,7 +383,16 @@
       15,
       35
     ],
-    "desc": "Bơi lờ đờ như ngủ chưa đủ giấc"
+    "desc": "Bơi lờ đờ như ngủ chưa đủ giấc",
+    "look": {
+      "body": "#9aa4ac",
+      "belly": "#e4e8ec",
+      "fin": "#7a848c",
+      "rx": 7,
+      "ry": 2.8,
+      "back": "#6a747c",
+      "tail": "fork"
+    }
   },
   {
     "id": "meTrang",
@@ -231,7 +403,16 @@
       20,
       40
     ],
-    "desc": "Hay nhảy vọt khỏi mặt nước làm giật mình"
+    "desc": "Hay nhảy vọt khỏi mặt nước làm giật mình",
+    "look": {
+      "body": "#d0d4d8",
+      "belly": "#f6f6f8",
+      "fin": "#b0b4b8",
+      "rx": 7,
+      "ry": 3.2,
+      "tail": "fork",
+      "bigEye": true
+    }
   },
   {
     "id": "tramCo",
@@ -242,7 +423,15 @@
       25,
       50
     ],
-    "desc": "Ăn cỏ mà mập ú, khoẻ re"
+    "desc": "Ăn cỏ mà mập ú, khoẻ re",
+    "look": {
+      "body": "#8a9a6a",
+      "belly": "#d8dcc0",
+      "fin": "#6a7a4a",
+      "rx": 8,
+      "ry": 2.8,
+      "back": "#5e6e40"
+    }
   },
   {
     "id": "keo",
@@ -254,6 +443,15 @@
       20
     ],
     "desc": "Lẩu cá kèo lá giang là hết sảy",
+    "look": {
+      "body": "#9a9a80",
+      "belly": "#e0e0cc",
+      "fin": "#7a7a60",
+      "rx": 7,
+      "ry": 1.6,
+      "spots": "#5a5a40",
+      "tail": "point"
+    },
     "spot": "bank",
     "time": "night"
   },
@@ -266,7 +464,16 @@
       15,
       30
     ],
-    "desc": "Làm chả cá thác lác dai giòn sần sật"
+    "desc": "Làm chả cá thác lác dai giòn sần sật",
+    "look": {
+      "body": "#b0b8c0",
+      "belly": "#eef0f2",
+      "fin": "#909aa4",
+      "rx": 7.5,
+      "ry": 2.4,
+      "tail": "point",
+      "hump": true
+    }
   },
   {
     "id": "doiSong",
@@ -278,6 +485,15 @@
       30
     ],
     "desc": "Đầu dẹt bụng tròn, ăn rong rêu sát bờ",
+    "look": {
+      "body": "#8a98a8",
+      "belly": "#e8ecf0",
+      "fin": "#6a7888",
+      "rx": 7,
+      "ry": 2.4,
+      "band": "#b8c4d0",
+      "tail": "fork"
+    },
     "time": "dawn"
   },
   {
@@ -289,7 +505,16 @@
       3,
       7
     ],
-    "desc": "Trong veo thấy cả ruột, kho tộ là ngon"
+    "desc": "Trong veo thấy cả ruột, kho tộ là ngon",
+    "look": {
+      "body": "#e0e8ee",
+      "belly": "#f8fafc",
+      "fin": "#c8d4dc",
+      "rx": 4,
+      "ry": 1.2,
+      "band": "#c0ccd8",
+      "tail": "fork"
+    }
   },
   {
     "id": "chimTrang",
@@ -300,7 +525,16 @@
       15,
       30
     ],
-    "desc": "Tròn như đĩa, răng như người, hơi ghê ghê"
+    "desc": "Tròn như đĩa, răng như người, hơi ghê ghê",
+    "look": {
+      "body": "#c8ccd0",
+      "belly": "#f2f4f6",
+      "fin": "#e07060",
+      "rx": 5,
+      "ry": 4,
+      "tail": "fork",
+      "hump": true
+    }
   },
   {
     "id": "linh",
@@ -312,6 +546,15 @@
       12
     ],
     "desc": "Mùa nước nổi kéo về từng đàn, nấu canh bông điên điển",
+    "look": {
+      "body": "#d4dce4",
+      "belly": "#f6f8fa",
+      "fin": "#b4bec8",
+      "rx": 4.5,
+      "ry": 2,
+      "tail": "fork",
+      "shine": false
+    },
     "time": "dawn"
   },
   {
@@ -323,7 +566,12 @@
       2,
       5
     ],
-    "desc": "Rang khế chua chua là đưa cơm hết biết"
+    "desc": "Rang khế chua chua là đưa cơm hết biết",
+    "shape": {
+      "kind": "shrimp",
+      "color": "#c8b890",
+      "dark": "#8a7a58"
+    }
   },
   {
     "id": "cuaDong",
@@ -335,6 +583,11 @@
       8
     ],
     "desc": "Riêu cua mồng tơi trưa hè là mát ruột",
+    "shape": {
+      "kind": "crab",
+      "color": "#7a6a4a",
+      "dark": "#4a3e2a"
+    },
     "spot": "bank"
   },
   {
@@ -347,6 +600,11 @@
       8
     ],
     "desc": "Hấp sả chấm nước mắm gừng là hết ý",
+    "shape": {
+      "kind": "snail",
+      "color": "#6a5a3a",
+      "dark": "#3e3424"
+    },
     "spot": "bank"
   },
   {
@@ -358,7 +616,12 @@
       2,
       4
     ],
-    "desc": "Cơm hến xứ Huế cay xé lưỡi"
+    "desc": "Cơm hến xứ Huế cay xé lưỡi",
+    "shape": {
+      "kind": "clam",
+      "color": "#7a7060",
+      "dark": "#4a4438"
+    }
   },
   {
     "id": "echDong",
@@ -370,6 +633,11 @@
       15
     ],
     "desc": "Nhảy cái phốc lên bờ, chụp không kịp",
+    "shape": {
+      "kind": "frog",
+      "color": "#6a9a3a",
+      "dark": "#3e6a24"
+    },
     "spot": "bank",
     "time": "night"
   },
@@ -383,6 +651,641 @@
       40
     ],
     "desc": "Râu tua tủa, ngạnh có độc, cẩn thận nha",
+    "look": {
+      "body": "#5a5048",
+      "belly": "#a89888",
+      "fin": "#3e3630",
+      "rx": 7.5,
+      "ry": 2.2,
+      "whiskers": true,
+      "tail": "point"
+    },
+    "time": "night"
+  },
+  {
+    "id": "dieuHong",
+    "name": "Cá điêu hồng",
+    "rarity": "common",
+    "price": 8,
+    "size": [
+      15,
+      30
+    ],
+    "desc": "Hồng hồng như má em bé, hấp hành là cả nhà gật gù",
+    "look": {
+      "body": "#e88a7a",
+      "belly": "#f8d4c8",
+      "fin": "#d0604e",
+      "rx": 6,
+      "ry": 3.4,
+      "tail": "round",
+      "back": "#c86a5a"
+    }
+  },
+  {
+    "id": "danh",
+    "name": "Cá dảnh",
+    "rarity": "common",
+    "price": 6,
+    "size": [
+      10,
+      20
+    ],
+    "desc": "Bạc trắng mình thon, bơi theo đàn rần rần",
+    "look": {
+      "body": "#c4ccd4",
+      "belly": "#f2f4f6",
+      "fin": "#e0b060",
+      "rx": 6,
+      "ry": 2.4,
+      "tail": "fork"
+    }
+  },
+  {
+    "id": "meHoi",
+    "name": "Cá mè hôi",
+    "rarity": "common",
+    "price": 5,
+    "size": [
+      10,
+      18
+    ],
+    "desc": "Tên nghe hơi kỳ chứ kho mắm là ngon nhức nách",
+    "look": {
+      "body": "#a8b0a0",
+      "belly": "#e8ece0",
+      "fin": "#888f80",
+      "rx": 6,
+      "ry": 3,
+      "tail": "fork",
+      "hump": true
+    }
+  },
+  {
+    "id": "liaThia",
+    "name": "Cá lia thia",
+    "rarity": "common",
+    "price": 7,
+    "size": [
+      4,
+      7
+    ],
+    "desc": "Nhỏ xíu mà máu chiến, gặp nhau là xù vây đòi đá",
+    "look": {
+      "body": "#c83a4a",
+      "belly": "#e88a90",
+      "fin": "#3a5ad0",
+      "rx": 4,
+      "ry": 2.4,
+      "tail": "round",
+      "tallFin": true
+    },
+    "time": "day"
+  },
+  {
+    "id": "bongCat",
+    "name": "Cá bống cát",
+    "rarity": "common",
+    "price": 6,
+    "size": [
+      6,
+      12
+    ],
+    "desc": "Màu y chang cát, nằm im là không ai thấy",
+    "look": {
+      "body": "#d8c8a0",
+      "belly": "#f2ead4",
+      "fin": "#b8a880",
+      "rx": 5.5,
+      "ry": 1.8,
+      "spots": "#a89068",
+      "tail": "round"
+    },
+    "spot": "bank"
+  },
+  {
+    "id": "bongDua",
+    "name": "Cá bống dừa",
+    "rarity": "common",
+    "price": 7,
+    "size": [
+      8,
+      15
+    ],
+    "desc": "Hay núp gốc dừa nước, kho tiêu cay xè",
+    "look": {
+      "body": "#6a5a40",
+      "belly": "#c8b890",
+      "fin": "#4e4028",
+      "rx": 6,
+      "ry": 2.2,
+      "bars": "#3e3020",
+      "tail": "round",
+      "bigEye": true
+    },
+    "spot": "bank",
+    "time": "night"
+  },
+  {
+    "id": "trenBau",
+    "name": "Cá trèn bầu",
+    "rarity": "common",
+    "price": 8,
+    "size": [
+      12,
+      22
+    ],
+    "desc": "Bụng bầu bầu, da trơn, bơi uốn éo như múa",
+    "look": {
+      "body": "#c8c0b0",
+      "belly": "#f4f0e8",
+      "fin": "#a8a090",
+      "rx": 6.5,
+      "ry": 2.4,
+      "spots": "#5a5448",
+      "whiskers": true,
+      "tail": "fork"
+    }
+  },
+  {
+    "id": "roi",
+    "name": "Cá rói",
+    "rarity": "common",
+    "price": 6,
+    "size": [
+      8,
+      14
+    ],
+    "desc": "Lưng gù, vảy nhỏ, mắc câu là giãy đành đạch",
+    "look": {
+      "body": "#b0b8a0",
+      "belly": "#ecf0e0",
+      "fin": "#e0a050",
+      "rx": 5,
+      "ry": 3,
+      "hump": true,
+      "tail": "fork"
+    }
+  },
+  {
+    "id": "lep",
+    "name": "Cá lẹp",
+    "rarity": "common",
+    "price": 4,
+    "size": [
+      6,
+      12
+    ],
+    "desc": "Mỏng lét, xương mềm, chiên giòn ăn nguyên con",
+    "look": {
+      "body": "#e0e4e8",
+      "belly": "#fafbfc",
+      "fin": "#c8ccd0",
+      "rx": 5.5,
+      "ry": 1.6,
+      "band": "#c0c8d4",
+      "tail": "fork"
+    },
+    "time": "dusk"
+  },
+  {
+    "id": "moi",
+    "name": "Cá mòi",
+    "rarity": "common",
+    "price": 6,
+    "size": [
+      10,
+      18
+    ],
+    "desc": "Ngược sông lúc sáng sớm, có chấm đen sau mang",
+    "look": {
+      "body": "#9aa8b8",
+      "belly": "#eef2f6",
+      "fin": "#7a8898",
+      "rx": 6,
+      "ry": 2.2,
+      "spots": "#2b2b33",
+      "tail": "fork",
+      "back": "#6a7888"
+    },
+    "time": "dawn"
+  },
+  {
+    "id": "nhai",
+    "name": "Cá nhái",
+    "rarity": "common",
+    "price": 7,
+    "size": [
+      15,
+      35
+    ],
+    "desc": "Mỏ dài như cây kim may, cắn mồi lẹ như chớp",
+    "look": {
+      "body": "#7ab0a0",
+      "belly": "#e0f0ea",
+      "fin": "#5a9080",
+      "rx": 8.5,
+      "ry": 1.2,
+      "band": "#4a8070",
+      "tail": "fork"
+    }
+  },
+  {
+    "id": "kim",
+    "name": "Cá kìm",
+    "rarity": "common",
+    "price": 6,
+    "size": [
+      8,
+      16
+    ],
+    "desc": "Hàm dưới chìa ra như cái kìm, nhìn vừa ngộ vừa ngầu",
+    "look": {
+      "body": "#b8c8b0",
+      "belly": "#f0f6ea",
+      "fin": "#e07050",
+      "rx": 7,
+      "ry": 1.3,
+      "band": "#90a888",
+      "tail": "round"
+    },
+    "time": "day"
+  },
+  {
+    "id": "phen",
+    "name": "Cá phèn",
+    "rarity": "common",
+    "price": 6,
+    "size": [
+      8,
+      15
+    ],
+    "desc": "Có hai sợi râu dưới cằm, đỏ hồng như son",
+    "look": {
+      "body": "#e8a890",
+      "belly": "#fae4d8",
+      "fin": "#d07a60",
+      "rx": 5.5,
+      "ry": 2.2,
+      "whiskers": true,
+      "band": "#f2c23a",
+      "tail": "fork"
+    }
+  },
+  {
+    "id": "nau",
+    "name": "Cá nâu",
+    "rarity": "common",
+    "price": 8,
+    "size": [
+      10,
+      20
+    ],
+    "desc": "Tròn vo chấm bi, vây lưng có gai chích đau",
+    "look": {
+      "body": "#8a7a50",
+      "belly": "#d8ccaa",
+      "fin": "#6a5a34",
+      "rx": 5,
+      "ry": 3.6,
+      "spots": "#3e3420",
+      "spikes": true,
+      "tail": "fork"
+    },
+    "time": "day"
+  },
+  {
+    "id": "thoiLoi",
+    "name": "Cá thòi lòi",
+    "rarity": "common",
+    "price": 6,
+    "size": [
+      8,
+      15
+    ],
+    "desc": "Biết leo lên bùn đứng ngó, mắt lồi như trái nhãn",
+    "look": {
+      "body": "#7a7058",
+      "belly": "#c8c0a4",
+      "fin": "#5a5040",
+      "rx": 5.5,
+      "ry": 2,
+      "spots": "#3a7ad0",
+      "bigEye": true,
+      "tail": "round",
+      "tallFin": true
+    },
+    "spot": "bank",
+    "time": "day"
+  },
+  {
+    "id": "baiTrau",
+    "name": "Cá bãi trầu",
+    "rarity": "common",
+    "price": 5,
+    "size": [
+      3,
+      6
+    ],
+    "desc": "Bé tẹo, vây đỏ như vừa ăn trầu xong",
+    "look": {
+      "body": "#d8b8a0",
+      "belly": "#f6eadf",
+      "fin": "#d04a3a",
+      "rx": 3.8,
+      "ry": 1.6,
+      "band": "#2b2b33",
+      "tail": "fork"
+    }
+  },
+  {
+    "id": "chachDong",
+    "name": "Cá chạch đồng",
+    "rarity": "common",
+    "price": 7,
+    "size": [
+      10,
+      20
+    ],
+    "desc": "Trơn như mỡ, chui rúc dưới bùn ruộng",
+    "look": {
+      "body": "#a08a5a",
+      "belly": "#e0d4b0",
+      "fin": "#806a40",
+      "rx": 7.5,
+      "ry": 1.4,
+      "spots": "#5a4a2a",
+      "tail": "round",
+      "whiskers": true
+    },
+    "spot": "bank"
+  },
+  {
+    "id": "dongDong",
+    "name": "Cá đòng đong",
+    "rarity": "common",
+    "price": 4,
+    "size": [
+      4,
+      8
+    ],
+    "desc": "Sọc đen dọc hông, con nít câu chơi cả buổi",
+    "look": {
+      "body": "#d8c890",
+      "belly": "#f6f0d8",
+      "fin": "#e07a40",
+      "rx": 4.2,
+      "ry": 2,
+      "band": "#2b2b33",
+      "tail": "fork"
+    }
+  },
+  {
+    "id": "bayTrau",
+    "name": "Cá bảy trầu",
+    "rarity": "common",
+    "price": 6,
+    "size": [
+      5,
+      10
+    ],
+    "desc": "Vảy ánh tím ánh đỏ như vệt trầu bà ăn",
+    "look": {
+      "body": "#b07090",
+      "belly": "#ecd0dc",
+      "fin": "#904a70",
+      "rx": 4.6,
+      "ry": 2.4,
+      "stripes": "#e0a0c0",
+      "tail": "round"
+    }
+  },
+  {
+    "id": "lauKieng",
+    "name": "Cá lau kiếng",
+    "rarity": "common",
+    "price": 5,
+    "size": [
+      15,
+      30
+    ],
+    "desc": "Miệng hút như cái giác, đi tới đâu sạch rêu tới đó",
+    "look": {
+      "body": "#5a5048",
+      "belly": "#a8988a",
+      "fin": "#3e3630",
+      "rx": 7,
+      "ry": 2.4,
+      "spots": "#c8b890",
+      "lips": true,
+      "sail": true,
+      "tail": "fork"
+    },
+    "spot": "bank"
+  },
+  {
+    "id": "linhOng",
+    "name": "Cá linh ống",
+    "rarity": "common",
+    "price": 6,
+    "size": [
+      6,
+      12
+    ],
+    "desc": "Linh ống thon dài, nước nổi về là nhảy lăng xăng",
+    "look": {
+      "body": "#d8e0e8",
+      "belly": "#f8fafc",
+      "fin": "#c0ccd8",
+      "rx": 5,
+      "ry": 1.8,
+      "tail": "fork",
+      "back": "#a8b8c8"
+    },
+    "time": "dawn"
+  },
+  {
+    "id": "bongCau",
+    "name": "Cá bống cau",
+    "rarity": "common",
+    "price": 7,
+    "size": [
+      6,
+      12
+    ],
+    "desc": "Đốm nâu như vỏ cau, núp sát chân cầu",
+    "look": {
+      "body": "#9a8060",
+      "belly": "#e4d6bc",
+      "fin": "#7a6040",
+      "rx": 5.5,
+      "ry": 2,
+      "spots": "#5a4024",
+      "tail": "round",
+      "bigEye": true
+    },
+    "spot": "bank"
+  },
+  {
+    "id": "sonXiem",
+    "name": "Cá sơn xiêm",
+    "rarity": "common",
+    "price": 5,
+    "size": [
+      4,
+      8
+    ],
+    "desc": "Trong suốt thấy cả xương, bơi lờ lững như thuỷ tinh",
+    "look": {
+      "body": "#d8e8e0",
+      "belly": "#f4faf6",
+      "fin": "#e8d080",
+      "rx": 4.2,
+      "ry": 2.6,
+      "tallFin": true,
+      "tail": "fork",
+      "shine": true
+    }
+  },
+  {
+    "id": "huong",
+    "name": "Cá hường",
+    "rarity": "common",
+    "price": 7,
+    "size": [
+      10,
+      20
+    ],
+    "desc": "Môi chu chu như đang thơm, nhìn mắc cười",
+    "look": {
+      "body": "#c8d0b8",
+      "belly": "#f0f4e8",
+      "fin": "#a8b098",
+      "rx": 5.5,
+      "ry": 3.2,
+      "lips": true,
+      "tail": "round"
+    }
+  },
+  {
+    "id": "tomDat",
+    "name": "Tôm đất",
+    "rarity": "common",
+    "price": 6,
+    "size": [
+      4,
+      8
+    ],
+    "desc": "Vỏ nâu đất, lột vỏ rim mặn ngọt là đưa cơm",
+    "shape": {
+      "kind": "shrimp",
+      "color": "#a8704a",
+      "dark": "#6a4428"
+    },
+    "spot": "bank"
+  },
+  {
+    "id": "tepBac",
+    "name": "Tép bạc",
+    "rarity": "common",
+    "price": 4,
+    "size": [
+      2,
+      4
+    ],
+    "desc": "Trong veo ánh bạc, làm mắm tép chua thì hết ý",
+    "shape": {
+      "kind": "shrimp",
+      "color": "#e0e4e8",
+      "dark": "#a8b0b8"
+    },
+    "time": "dawn"
+  },
+  {
+    "id": "ocLac",
+    "name": "Ốc lác",
+    "rarity": "common",
+    "price": 5,
+    "size": [
+      3,
+      6
+    ],
+    "desc": "Vỏ mỏng, nướng tiêu xanh thơm nức mũi",
+    "shape": {
+      "kind": "snail",
+      "color": "#8a7a58",
+      "dark": "#5a4e38"
+    },
+    "spot": "bank"
+  },
+  {
+    "id": "ocMit",
+    "name": "Ốc mít",
+    "rarity": "common",
+    "price": 4,
+    "size": [
+      2,
+      4
+    ],
+    "desc": "Vỏ sần như trái mít non, luộc sả khều cả buổi",
+    "shape": {
+      "kind": "snail",
+      "color": "#6a6a48",
+      "dark": "#3e3e2a"
+    },
+    "spot": "bank",
+    "time": "night"
+  },
+  {
+    "id": "cay",
+    "name": "Con cáy",
+    "rarity": "common",
+    "price": 6,
+    "size": [
+      3,
+      6
+    ],
+    "desc": "Chạy ngang lẹ hơn mình chạy thẳng, làm mắm cáy là ngon",
+    "shape": {
+      "kind": "crab",
+      "color": "#6a5a3a",
+      "dark": "#3e3420"
+    },
+    "spot": "bank",
+    "time": "dusk"
+  },
+  {
+    "id": "traiSong",
+    "name": "Trai sông",
+    "rarity": "common",
+    "price": 5,
+    "size": [
+      5,
+      10
+    ],
+    "desc": "Hai mảnh vỏ đen nhánh, nấu canh chua ngọt nước",
+    "shape": {
+      "kind": "clam",
+      "color": "#3e4038",
+      "dark": "#22241e"
+    }
+  },
+  {
+    "id": "nhaiBen",
+    "name": "Nhái bén",
+    "rarity": "common",
+    "price": 6,
+    "size": [
+      3,
+      6
+    ],
+    "desc": "Xanh lè bé tí, đêm mưa kêu ẹc ẹc cả xóm",
+    "shape": {
+      "kind": "frog",
+      "color": "#7ac04a",
+      "dark": "#4a8a2a"
+    },
+    "spot": "bank",
     "time": "night"
   },
   {
@@ -394,7 +1297,17 @@
       25,
       50
     ],
-    "desc": "Nướng trui cuốn bánh tráng rau sống, nghe đã thèm"
+    "desc": "Nướng trui cuốn bánh tráng rau sống, nghe đã thèm",
+    "look": {
+      "body": "#4a5040",
+      "belly": "#a8a890",
+      "fin": "#3a3e30",
+      "rx": 8,
+      "ry": 2.6,
+      "spots": "#2b2b20",
+      "back": "#3a3e30",
+      "tail": "round"
+    }
   },
   {
     "id": "locBong",
@@ -406,6 +1319,15 @@
       60
     ],
     "desc": "Bông vằn như áo rằn ri, rượt mồi dữ dằn",
+    "look": {
+      "body": "#6a6a50",
+      "belly": "#c8c4a8",
+      "fin": "#4a4a38",
+      "rx": 8.5,
+      "ry": 2.8,
+      "bars": "#2b2b20",
+      "tail": "round"
+    },
     "time": "dusk"
   },
   {
@@ -417,7 +1339,16 @@
       30,
       60
     ],
-    "desc": "Không vảy, trơn bóng, kho tộ là số một"
+    "desc": "Không vảy, trơn bóng, kho tộ là số một",
+    "look": {
+      "body": "#7a8a9a",
+      "belly": "#dce4ea",
+      "fin": "#5a6a7a",
+      "rx": 8,
+      "ry": 2.6,
+      "whiskers": true,
+      "tail": "fork"
+    }
   },
   {
     "id": "basa",
@@ -428,7 +1359,16 @@
       30,
       55
     ],
-    "desc": "Bụng béo núc ních, chiên giòn chấm mắm"
+    "desc": "Bụng béo núc ních, chiên giòn chấm mắm",
+    "look": {
+      "body": "#8a98a4",
+      "belly": "#eef2f4",
+      "fin": "#6a7884",
+      "rx": 7.5,
+      "ry": 3,
+      "whiskers": true,
+      "tail": "fork"
+    }
   },
   {
     "id": "bongLau",
@@ -440,6 +1380,15 @@
       60
     ],
     "desc": "Nấu canh chua bông so đũa là đặc sản miền Tây",
+    "look": {
+      "body": "#9aa8b4",
+      "belly": "#eef2f4",
+      "fin": "#d8a050",
+      "rx": 8,
+      "ry": 2.6,
+      "whiskers": true,
+      "tail": "fork"
+    },
     "time": "dusk"
   },
   {
@@ -451,7 +1400,17 @@
       25,
       50
     ],
-    "desc": "Bị kéo lên là kêu \"hú hú\" thiệt luôn"
+    "desc": "Bị kéo lên là kêu \"hú hú\" thiệt luôn",
+    "look": {
+      "body": "#6a7a8a",
+      "belly": "#d8e0e6",
+      "fin": "#4a5a6a",
+      "rx": 7.5,
+      "ry": 2.4,
+      "whiskers": true,
+      "tail": "fork",
+      "back": "#4a5a6a"
+    }
   },
   {
     "id": "ket",
@@ -462,7 +1421,16 @@
       15,
       30
     ],
-    "desc": "Trắng muốt, thịt ngọt, mùa nước nổi mới có"
+    "desc": "Trắng muốt, thịt ngọt, mùa nước nổi mới có",
+    "look": {
+      "body": "#d8d0c0",
+      "belly": "#f6f2ea",
+      "fin": "#b8b0a0",
+      "rx": 6.5,
+      "ry": 2.2,
+      "whiskers": true,
+      "tail": "fork"
+    }
   },
   {
     "id": "leo",
@@ -474,6 +1442,15 @@
       70
     ],
     "desc": "Mình dài thượt, đuôi mảnh, ăn khoẻ như hổ",
+    "look": {
+      "body": "#a8a090",
+      "belly": "#ece8de",
+      "fin": "#888070",
+      "rx": 8.5,
+      "ry": 2,
+      "whiskers": true,
+      "tail": "point"
+    },
     "time": "night"
   },
   {
@@ -485,7 +1462,17 @@
       30,
       60
     ],
-    "desc": "Lẩu cá lăng măng chua, ai ăn cũng gật gù"
+    "desc": "Lẩu cá lăng măng chua, ai ăn cũng gật gù",
+    "look": {
+      "body": "#8a8478",
+      "belly": "#e0dcd2",
+      "fin": "#6a6458",
+      "rx": 8,
+      "ry": 2.4,
+      "whiskers": true,
+      "tail": "fork",
+      "tallFin": true
+    }
   },
   {
     "id": "etMoi",
@@ -496,7 +1483,16 @@
       15,
       30
     ],
-    "desc": "Môi dày cộm, hay rỉa rong đá"
+    "desc": "Môi dày cộm, hay rỉa rong đá",
+    "look": {
+      "body": "#9a8070",
+      "belly": "#e0d2c4",
+      "fin": "#7a6050",
+      "rx": 7,
+      "ry": 2.6,
+      "lips": true,
+      "band": "#5a4030"
+    }
   },
   {
     "id": "chai",
@@ -508,6 +1504,15 @@
       30
     ],
     "desc": "Vảy to như đồng xu, lấp loá dưới nắng",
+    "look": {
+      "body": "#c0b890",
+      "belly": "#f0ecd8",
+      "fin": "#a09870",
+      "rx": 7,
+      "ry": 2.8,
+      "back": "#8a8460",
+      "tail": "fork"
+    },
     "time": "day"
   },
   {
@@ -520,6 +1525,15 @@
       30
     ],
     "desc": "Vàng óng như thỏi vàng, vây đỏ rực",
+    "look": {
+      "body": "#d8b850",
+      "belly": "#f6eab8",
+      "fin": "#d04a3a",
+      "rx": 6,
+      "ry": 3.2,
+      "tail": "fork",
+      "hump": true
+    },
     "time": "day"
   },
   {
@@ -531,7 +1545,16 @@
       30,
       60
     ],
-    "desc": "Đầu to chà bá, nấu lẩu đầu cá là đỉnh"
+    "desc": "Đầu to chà bá, nấu lẩu đầu cá là đỉnh",
+    "look": {
+      "body": "#7a8478",
+      "belly": "#d8dcd0",
+      "fin": "#5a6458",
+      "rx": 8,
+      "ry": 3.2,
+      "spots": "#3a4438",
+      "bigEye": true
+    }
   },
   {
     "id": "tramDen",
@@ -542,7 +1565,14 @@
       40,
       80
     ],
-    "desc": "Đen bóng như cục than, ăn ốc rốp rốp"
+    "desc": "Đen bóng như cục than, ăn ốc rốp rốp",
+    "look": {
+      "body": "#3a3e44",
+      "belly": "#8a8e94",
+      "fin": "#2a2e34",
+      "rx": 8.5,
+      "ry": 2.8
+    }
   },
   {
     "id": "bongTuong",
@@ -554,6 +1584,16 @@
       35
     ],
     "desc": "To như cục gạch mà nằm im ru, hấp xì dầu hết sẩy",
+    "look": {
+      "body": "#7a6a50",
+      "belly": "#d8ccb0",
+      "fin": "#5a4a34",
+      "rx": 7,
+      "ry": 3,
+      "spots": "#3e3424",
+      "tail": "round",
+      "bigEye": true
+    },
     "spot": "bank"
   },
   {
@@ -566,6 +1606,11 @@
       60
     ],
     "desc": "Trơn tuột, xào sả ớt hay cháo lươn đều ngon",
+    "shape": {
+      "kind": "eel",
+      "color": "#8a6a2a",
+      "dark": "#5a4418"
+    },
     "spot": "bank",
     "time": "night"
   },
@@ -579,6 +1624,11 @@
       25
     ],
     "desc": "Càng xanh lè dài ngoằng, nướng muối ớt là ghiền",
+    "shape": {
+      "kind": "shrimp",
+      "color": "#3c7ad0",
+      "dark": "#244e90"
+    },
     "time": "night"
   },
   {
@@ -590,7 +1640,17 @@
       20,
       40
     ],
-    "desc": "Có hàng chấm như chuỗi cườm dọc hông"
+    "desc": "Có hàng chấm như chuỗi cườm dọc hông",
+    "look": {
+      "body": "#a8b0b8",
+      "belly": "#eef0f2",
+      "fin": "#888f98",
+      "rx": 7.5,
+      "ry": 2.6,
+      "spots": "#2b2b33",
+      "tail": "point",
+      "hump": true
+    }
   },
   {
     "id": "chachLau",
@@ -602,6 +1662,15 @@
       45
     ],
     "desc": "Mình rắn rỏi, mõm nhọn như cây kim",
+    "look": {
+      "body": "#8a6a40",
+      "belly": "#e0c890",
+      "fin": "#6a4a28",
+      "rx": 8.5,
+      "ry": 1.8,
+      "spots": "#3e2a14",
+      "tail": "round"
+    },
     "spot": "bank"
   },
   {
@@ -614,6 +1683,16 @@
       40
     ],
     "desc": "Hay theo con nước lớn vô sông",
+    "look": {
+      "body": "#9aa0a8",
+      "belly": "#eceef0",
+      "fin": "#7a8088",
+      "rx": 7,
+      "ry": 2.6,
+      "whiskers": true,
+      "tail": "fork",
+      "back": "#6a7078"
+    },
     "time": "dusk"
   },
   {
@@ -625,7 +1704,17 @@
       15,
       30
     ],
-    "desc": "Ba cái ngạnh nhọn hoắt, gỡ câu phải có nghề"
+    "desc": "Ba cái ngạnh nhọn hoắt, gỡ câu phải có nghề",
+    "look": {
+      "body": "#a89070",
+      "belly": "#ece0c8",
+      "fin": "#88704e",
+      "rx": 6.5,
+      "ry": 2.2,
+      "whiskers": true,
+      "spikes": true,
+      "tail": "fork"
+    }
   },
   {
     "id": "chotGiay",
@@ -637,6 +1726,15 @@
       18
     ],
     "desc": "Mỏng tang như tờ giấy, bơi ngược dòng giỏi",
+    "look": {
+      "body": "#d0c8a8",
+      "belly": "#f6f2e2",
+      "fin": "#b0a888",
+      "rx": 6,
+      "ry": 1.8,
+      "whiskers": true,
+      "tail": "fork"
+    },
     "time": "dawn"
   },
   {
@@ -648,7 +1746,17 @@
       15,
       25
     ],
-    "desc": "Rô đầu vuông to bằng bàn tay, chiên giòn là phê"
+    "desc": "Rô đầu vuông to bằng bàn tay, chiên giòn là phê",
+    "look": {
+      "body": "#6a6a3a",
+      "belly": "#c8c080",
+      "fin": "#4e4e2a",
+      "rx": 6,
+      "ry": 3.4,
+      "spikes": true,
+      "back": "#4e4e2a",
+      "bigEye": true
+    }
   },
   {
     "id": "sacGam",
@@ -660,6 +1768,15 @@
       9
     ],
     "desc": "Sọc xanh đỏ lấp lánh như áo gấm ngày Tết",
+    "look": {
+      "body": "#3c8fd0",
+      "belly": "#e8a080",
+      "fin": "#d04a3a",
+      "rx": 4.5,
+      "ry": 2.6,
+      "stripes": "#d04a3a",
+      "tail": "round"
+    },
     "time": "day"
   },
   {
@@ -672,6 +1789,15 @@
       40
     ],
     "desc": "Hiếm hơn trê vàng, mình trắng như sữa",
+    "look": {
+      "body": "#d8d4cc",
+      "belly": "#f6f4f0",
+      "fin": "#b8b4ac",
+      "rx": 7.5,
+      "ry": 2.2,
+      "whiskers": true,
+      "tail": "round"
+    },
     "spot": "bank",
     "time": "night"
   },
@@ -685,8 +1811,613 @@
       4
     ],
     "desc": "Nhỏ như hạt gạo, luộc lá chanh khều ăn cả buổi",
+    "shape": {
+      "kind": "snail",
+      "color": "#c8b878",
+      "dark": "#8a7a48"
+    },
     "spot": "bank",
     "time": "dawn"
+  },
+  {
+    "id": "trenRang",
+    "name": "Cá trèn răng",
+    "rarity": "uncommon",
+    "price": 26,
+    "size": [
+      20,
+      40
+    ],
+    "desc": "Hàm răng lởm chởm, gỡ câu nhớ cẩn thận ngón tay",
+    "look": {
+      "body": "#a8b0b8",
+      "belly": "#eceff2",
+      "fin": "#88909a",
+      "rx": 7.5,
+      "ry": 2.4,
+      "whiskers": true,
+      "tail": "fork",
+      "bigEye": true
+    },
+    "time": "night"
+  },
+  {
+    "id": "duong",
+    "name": "Cá duồng",
+    "rarity": "uncommon",
+    "price": 28,
+    "size": [
+      20,
+      40
+    ],
+    "desc": "Môi dày, vảy to, bơi ngược thác như chơi",
+    "look": {
+      "body": "#8a9078",
+      "belly": "#dcdfcc",
+      "fin": "#c87a4a",
+      "rx": 7.5,
+      "ry": 3,
+      "lips": true,
+      "tail": "fork",
+      "back": "#6a7058"
+    },
+    "spot": "dock"
+  },
+  {
+    "id": "meLui",
+    "name": "Cá mè lúi",
+    "rarity": "uncommon",
+    "price": 20,
+    "size": [
+      12,
+      25
+    ],
+    "desc": "Lúi húi kiếm ăn dưới rễ cây, vảy ánh vàng",
+    "look": {
+      "body": "#c8b880",
+      "belly": "#f2ecd0",
+      "fin": "#e0a040",
+      "rx": 6,
+      "ry": 2.8,
+      "tail": "fork",
+      "hump": true
+    }
+  },
+  {
+    "id": "heDo",
+    "name": "Cá he đỏ",
+    "rarity": "uncommon",
+    "price": 28,
+    "size": [
+      15,
+      30
+    ],
+    "desc": "Đuôi đỏ chót như cờ bay, đẹp tới mức tiếc không bán",
+    "look": {
+      "body": "#c8ccd0",
+      "belly": "#f4f4f6",
+      "fin": "#e03a2a",
+      "rx": 6,
+      "ry": 3.2,
+      "band": "#2b2b33",
+      "tail": "fork",
+      "hump": true
+    },
+    "time": "day"
+  },
+  {
+    "id": "chem",
+    "name": "Cá chẽm",
+    "rarity": "uncommon",
+    "price": 32,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Từ cửa biển ngược vô sông, hấp gừng là đỉnh",
+    "look": {
+      "body": "#8a98a0",
+      "belly": "#e8eef0",
+      "fin": "#6a7880",
+      "rx": 8,
+      "ry": 3,
+      "spikes": true,
+      "bigEye": true,
+      "tail": "round"
+    },
+    "time": "dusk"
+  },
+  {
+    "id": "mang",
+    "name": "Cá măng",
+    "rarity": "uncommon",
+    "price": 30,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Bạc láng như gương, kéo lên nghe xé gió vù vù",
+    "look": {
+      "body": "#b8c8d8",
+      "belly": "#f2f6fa",
+      "fin": "#98a8b8",
+      "rx": 8,
+      "ry": 2.4,
+      "tail": "fork",
+      "shine": true
+    },
+    "time": "dawn"
+  },
+  {
+    "id": "dua",
+    "name": "Cá dứa",
+    "rarity": "uncommon",
+    "price": 30,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Khô cá dứa một nắng chiên giòn là đặc sản Cần Giờ",
+    "look": {
+      "body": "#8a9aa8",
+      "belly": "#e8eef2",
+      "fin": "#6a7a88",
+      "rx": 8,
+      "ry": 2.6,
+      "whiskers": true,
+      "tail": "fork",
+      "back": "#5a6a78"
+    },
+    "time": "night"
+  },
+  {
+    "id": "bongTrung",
+    "name": "Cá bống trứng",
+    "rarity": "uncommon",
+    "price": 22,
+    "size": [
+      6,
+      12
+    ],
+    "desc": "Bụng căng đầy trứng vàng, kho rim là béo ngậy",
+    "look": {
+      "body": "#c8a880",
+      "belly": "#f8d890",
+      "fin": "#a88860",
+      "rx": 5,
+      "ry": 2.4,
+      "spots": "#7a5838",
+      "tail": "round"
+    },
+    "spot": "bank"
+  },
+  {
+    "id": "bonCat",
+    "name": "Cá bơn cát",
+    "rarity": "uncommon",
+    "price": 26,
+    "size": [
+      15,
+      30
+    ],
+    "desc": "Dẹp lép nằm dưới đáy, hai mắt dồn về một bên",
+    "shape": {
+      "kind": "ray",
+      "color": "#c8b890",
+      "dark": "#8a7a58"
+    },
+    "spot": "dock"
+  },
+  {
+    "id": "locMoiTre",
+    "name": "Cá lóc môi trề",
+    "rarity": "uncommon",
+    "price": 30,
+    "size": [
+      25,
+      50
+    ],
+    "desc": "Môi trề ra như đang hờn, đớp mồi thì không hờn chút nào",
+    "look": {
+      "body": "#5a5a48",
+      "belly": "#b0ac94",
+      "fin": "#3e3e30",
+      "rx": 8,
+      "ry": 2.6,
+      "lips": true,
+      "spots": "#2b2b20",
+      "tail": "round"
+    },
+    "time": "dusk"
+  },
+  {
+    "id": "roCo",
+    "name": "Cá rô cờ",
+    "rarity": "uncommon",
+    "price": 22,
+    "size": [
+      5,
+      9
+    ],
+    "desc": "Vây dài phất phơ như lá cờ, sọc xanh đỏ rực rỡ",
+    "look": {
+      "body": "#3a6ab0",
+      "belly": "#e8706a",
+      "fin": "#d84a3a",
+      "rx": 4.5,
+      "ry": 2.4,
+      "stripes": "#e04a3a",
+      "tallFin": true,
+      "tail": "point"
+    },
+    "time": "day"
+  },
+  {
+    "id": "thatLat",
+    "name": "Cá thát lát",
+    "rarity": "uncommon",
+    "price": 24,
+    "size": [
+      15,
+      30
+    ],
+    "desc": "Anh em với thát lát cườm, thịt dai làm chả là số một",
+    "look": {
+      "body": "#b8bcc0",
+      "belly": "#f0f2f4",
+      "fin": "#989ca0",
+      "rx": 7.5,
+      "ry": 2.4,
+      "tail": "point",
+      "hump": true
+    }
+  },
+  {
+    "id": "chepKinh",
+    "name": "Cá chép kính",
+    "rarity": "uncommon",
+    "price": 26,
+    "size": [
+      20,
+      40
+    ],
+    "desc": "Vảy to lơ thơ như mảnh kính dán lên mình",
+    "look": {
+      "body": "#b89a5a",
+      "belly": "#ecdcb0",
+      "fin": "#c87a3a",
+      "rx": 6.5,
+      "ry": 3.4,
+      "whiskers": true,
+      "spots": "#e8d8a8",
+      "shine": true
+    }
+  },
+  {
+    "id": "bongMatTre",
+    "name": "Cá bống mắt tre",
+    "rarity": "uncommon",
+    "price": 24,
+    "size": [
+      8,
+      15
+    ],
+    "desc": "Mắt xanh như đốt tre non, nằm im canh mồi",
+    "look": {
+      "body": "#8a7a5a",
+      "belly": "#dcd0b4",
+      "fin": "#6a5a3e",
+      "rx": 5.5,
+      "ry": 2.2,
+      "spots": "#4a3e28",
+      "bigEye": true,
+      "tail": "round"
+    },
+    "spot": "bank",
+    "time": "dawn"
+  },
+  {
+    "id": "doiMuc",
+    "name": "Cá đối mục",
+    "rarity": "uncommon",
+    "price": 26,
+    "size": [
+      25,
+      45
+    ],
+    "desc": "Đối mà to con, sáng sớm hay nhảy lên khỏi mặt nước",
+    "look": {
+      "body": "#7a8a9a",
+      "belly": "#e4eaf0",
+      "fin": "#5a6a7a",
+      "rx": 7.5,
+      "ry": 2.6,
+      "band": "#a8b8c8",
+      "tail": "fork"
+    },
+    "time": "dawn"
+  },
+  {
+    "id": "langNha",
+    "name": "Cá lăng nha",
+    "rarity": "uncommon",
+    "price": 32,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Có vệt đen trên vây lưng như ai lỡ tay quẹt mực",
+    "look": {
+      "body": "#8a8478",
+      "belly": "#e0dcd2",
+      "fin": "#2b2b28",
+      "rx": 8,
+      "ry": 2.4,
+      "whiskers": true,
+      "tallFin": true,
+      "tail": "fork"
+    },
+    "spot": "dock"
+  },
+  {
+    "id": "treDen",
+    "name": "Cá trê đen",
+    "rarity": "uncommon",
+    "price": 22,
+    "size": [
+      20,
+      40
+    ],
+    "desc": "Đen thui từ đầu tới đuôi, ban đêm mới chịu ra",
+    "look": {
+      "body": "#2e2e30",
+      "belly": "#7a7a80",
+      "fin": "#1e1e20",
+      "rx": 7.5,
+      "ry": 2.2,
+      "whiskers": true,
+      "tail": "round"
+    },
+    "spot": "bank",
+    "time": "night"
+  },
+  {
+    "id": "mangRo",
+    "name": "Cá mang rỗ",
+    "rarity": "uncommon",
+    "price": 28,
+    "size": [
+      10,
+      20
+    ],
+    "desc": "Phun nước bắn rớt con cào cào trên lá, tài thiệt",
+    "look": {
+      "body": "#d8d4b0",
+      "belly": "#f6f4e2",
+      "fin": "#b8b490",
+      "rx": 5.5,
+      "ry": 3,
+      "spots": "#2b2b28",
+      "tail": "round",
+      "bigEye": true
+    },
+    "time": "day"
+  },
+  {
+    "id": "nocSong",
+    "name": "Cá nóc sông",
+    "rarity": "uncommon",
+    "price": 20,
+    "size": [
+      8,
+      15
+    ],
+    "desc": "Bị chọc là phình bụng như trái banh, thả về giùm nha",
+    "look": {
+      "body": "#8a9a6a",
+      "belly": "#f2f4e2",
+      "fin": "#6a7a4a",
+      "rx": 5,
+      "ry": 4,
+      "spots": "#2b3a20",
+      "bigEye": true,
+      "tail": "round"
+    }
+  },
+  {
+    "id": "bongSao",
+    "name": "Cá bống sao",
+    "rarity": "uncommon",
+    "price": 24,
+    "size": [
+      8,
+      15
+    ],
+    "desc": "Lốm đốm như sao trời, lặn ngụp dưới bãi bùn",
+    "look": {
+      "body": "#5a6a7a",
+      "belly": "#c8d0d8",
+      "fin": "#3e4e5e",
+      "rx": 6,
+      "ry": 2,
+      "spots": "#e8f0ff",
+      "tail": "round",
+      "bigEye": true
+    },
+    "spot": "bank",
+    "time": "night"
+  },
+  {
+    "id": "chachRan",
+    "name": "Cá chạch rằn",
+    "rarity": "uncommon",
+    "price": 26,
+    "size": [
+      15,
+      30
+    ],
+    "desc": "Rằn ri như áo lính, uốn mình lách qua đá giỏi",
+    "look": {
+      "body": "#c8a860",
+      "belly": "#f0e0b0",
+      "fin": "#8a6a30",
+      "rx": 8,
+      "ry": 1.6,
+      "bars": "#3e2a14",
+      "tail": "round"
+    },
+    "spot": "bank"
+  },
+  {
+    "id": "linhRia",
+    "name": "Cá linh rìa",
+    "rarity": "uncommon",
+    "price": 20,
+    "size": [
+      10,
+      18
+    ],
+    "desc": "Linh mà có rìa vây vàng, nước nổi lớn mới gặp",
+    "look": {
+      "body": "#d0d8e0",
+      "belly": "#f6f8fa",
+      "fin": "#f2c23a",
+      "rx": 5,
+      "ry": 2.2,
+      "tail": "fork",
+      "band": "#b8c4d0"
+    },
+    "time": "dawn"
+  },
+  {
+    "id": "bongDen",
+    "name": "Cá bống đen",
+    "rarity": "uncommon",
+    "price": 22,
+    "size": [
+      10,
+      20
+    ],
+    "desc": "Đen trũi như cục than, kho tộ là thơm cả xóm",
+    "look": {
+      "body": "#3a3630",
+      "belly": "#8a8478",
+      "fin": "#26221e",
+      "rx": 6,
+      "ry": 2.4,
+      "spots": "#5a5448",
+      "tail": "round",
+      "bigEye": true
+    },
+    "spot": "bank"
+  },
+  {
+    "id": "xacBau",
+    "name": "Cá xác bầu",
+    "rarity": "uncommon",
+    "price": 24,
+    "size": [
+      15,
+      30
+    ],
+    "desc": "Tên lạ hoắc, thịt ngọt, dân miệt thứ mới biết",
+    "look": {
+      "body": "#a8a070",
+      "belly": "#ece8d0",
+      "fin": "#888050",
+      "rx": 6.5,
+      "ry": 2.8,
+      "whiskers": true,
+      "tail": "fork",
+      "back": "#7a7248"
+    },
+    "time": "dusk"
+  },
+  {
+    "id": "ram",
+    "name": "Con rạm",
+    "rarity": "uncommon",
+    "price": 20,
+    "size": [
+      4,
+      8
+    ],
+    "desc": "Cua nhỏ mùa nước nổi, rang me chua chua ngọt ngọt",
+    "shape": {
+      "kind": "crab",
+      "color": "#a8603a",
+      "dark": "#6a3a20"
+    },
+    "spot": "bank",
+    "time": "dawn"
+  },
+  {
+    "id": "tomThe",
+    "name": "Tôm thẻ",
+    "rarity": "uncommon",
+    "price": 24,
+    "size": [
+      10,
+      18
+    ],
+    "desc": "Thân trong, đuôi xanh, nướng lên đỏ au",
+    "shape": {
+      "kind": "shrimp",
+      "color": "#c8d0c0",
+      "dark": "#5a8a6a"
+    },
+    "time": "dawn"
+  },
+  {
+    "id": "ocLen",
+    "name": "Ốc len",
+    "rarity": "uncommon",
+    "price": 18,
+    "size": [
+      3,
+      6
+    ],
+    "desc": "Hút chụt chụt một phát là ra, xào dừa béo ngậy",
+    "shape": {
+      "kind": "snail",
+      "color": "#5a4a3a",
+      "dark": "#3a2e22"
+    },
+    "spot": "bank"
+  },
+  {
+    "id": "chinhMun",
+    "name": "Cá chình mun",
+    "rarity": "uncommon",
+    "price": 34,
+    "size": [
+      40,
+      80
+    ],
+    "desc": "Đen bóng như gỗ mun, trườn lẹ như rắn",
+    "shape": {
+      "kind": "eel",
+      "color": "#2e2a26",
+      "dark": "#141210"
+    },
+    "time": "night"
+  },
+  {
+    "id": "traiNgoc",
+    "name": "Trai ngọc",
+    "rarity": "uncommon",
+    "price": 30,
+    "size": [
+      6,
+      12
+    ],
+    "desc": "Tách vỏ ra có khi thấy hạt ngọc nhỏ xíu lóng lánh",
+    "shape": {
+      "kind": "clam",
+      "color": "#6a7a8a",
+      "dark": "#e8eef6"
+    },
+    "spot": "dock"
   },
   {
     "id": "chien",
@@ -698,6 +2429,16 @@
       80
     ],
     "desc": "Một trong \"ngũ quý\" cá sông, ăn một lần nhớ cả năm",
+    "look": {
+      "body": "#5a4a3a",
+      "belly": "#b8a890",
+      "fin": "#3e3226",
+      "rx": 8.5,
+      "ry": 2.6,
+      "spots": "#2b2218",
+      "whiskers": true,
+      "tail": "fork"
+    },
     "time": "night"
   },
   {
@@ -710,6 +2451,15 @@
       50
     ],
     "desc": "Ngày xưa chỉ dành tiến vua, môi dày như cái giác hút",
+    "look": {
+      "body": "#6a6a5a",
+      "belly": "#c8c8b0",
+      "fin": "#c87a5a",
+      "rx": 7.5,
+      "ry": 2.8,
+      "lips": true,
+      "back": "#4a4a3a"
+    },
     "spot": "dock",
     "time": "dawn"
   },
@@ -723,6 +2473,16 @@
       90
     ],
     "desc": "Lóc khổng lồ bông vằn, đớp mồi một phát mất tăm",
+    "look": {
+      "body": "#5a5a40",
+      "belly": "#c0bca0",
+      "fin": "#3e3e2a",
+      "rx": 8.5,
+      "ry": 3,
+      "bars": "#2b2b18",
+      "spots": "#e8d8a0",
+      "tail": "round"
+    },
     "time": "dusk"
   },
   {
@@ -735,6 +2495,17 @@
       100
     ],
     "desc": "Chấm đen khắp mình, vây lưng cao vút",
+    "look": {
+      "body": "#8a8a80",
+      "belly": "#e0e0d8",
+      "fin": "#6a6a60",
+      "rx": 8.5,
+      "ry": 2.6,
+      "spots": "#2b2b28",
+      "whiskers": true,
+      "tallFin": true,
+      "tail": "fork"
+    },
     "spot": "dock"
   },
   {
@@ -746,7 +2517,17 @@
       30,
       60
     ],
-    "desc": "Lưng gù gù như ông già, hông có chấm tròn như mắt"
+    "desc": "Lưng gù gù như ông già, hông có chấm tròn như mắt",
+    "look": {
+      "body": "#b8bcc0",
+      "belly": "#eef0f2",
+      "fin": "#989ca0",
+      "rx": 8,
+      "ry": 2.8,
+      "spots": "#2b2b33",
+      "hump": true,
+      "tail": "point"
+    }
   },
   {
     "id": "chachBong",
@@ -758,6 +2539,16 @@
       60
     ],
     "desc": "Hoa văn như gấm, trườn trong rễ cây ven bờ",
+    "look": {
+      "body": "#7a6a40",
+      "belly": "#e8d8a0",
+      "fin": "#5a4a28",
+      "rx": 8.5,
+      "ry": 1.8,
+      "spots": "#e8d8a0",
+      "stripes": "#3e3018",
+      "tail": "round"
+    },
     "spot": "bank",
     "time": "night"
   },
@@ -770,7 +2561,16 @@
       30,
       60
     ],
-    "desc": "Mõm bè bè như mõm trâu, ăn chậm nhai kỹ"
+    "desc": "Mõm bè bè như mõm trâu, ăn chậm nhai kỹ",
+    "look": {
+      "body": "#8a7a6a",
+      "belly": "#dcd2c4",
+      "fin": "#6a5a4a",
+      "rx": 8,
+      "ry": 3,
+      "lips": true,
+      "whiskers": true
+    }
   },
   {
     "id": "voDem",
@@ -782,6 +2582,16 @@
       80
     ],
     "desc": "Bụng béo ngậy, hay đi tìm trái cây rụng ven sông",
+    "look": {
+      "body": "#7a8a98",
+      "belly": "#e4eaee",
+      "fin": "#5a6a78",
+      "rx": 8.5,
+      "ry": 3,
+      "whiskers": true,
+      "tail": "fork",
+      "back": "#4a5a68"
+    },
     "time": "dusk"
   },
   {
@@ -793,7 +2603,17 @@
       20,
       40
     ],
-    "desc": "Sọc đen chạy dài từ đầu tới đuôi, nhìn sang chảnh"
+    "desc": "Sọc đen chạy dài từ đầu tới đuôi, nhìn sang chảnh",
+    "look": {
+      "body": "#c8c4b8",
+      "belly": "#f2f0ea",
+      "fin": "#a8a498",
+      "rx": 7.5,
+      "ry": 2.4,
+      "band": "#2b2b28",
+      "whiskers": true,
+      "tail": "fork"
+    }
   },
   {
     "id": "baBa",
@@ -805,6 +2625,11 @@
       40
     ],
     "desc": "Mai mềm, cổ dài, cắn là không chịu nhả",
+    "shape": {
+      "kind": "turtle",
+      "color": "#6a7a4a",
+      "dark": "#3e4a28"
+    },
     "spot": "bank"
   },
   {
@@ -817,6 +2642,15 @@
       100
     ],
     "desc": "Râu như cọng ăng-ten, quẫy một phát là ướt hết",
+    "look": {
+      "body": "#4a4a48",
+      "belly": "#a8a8a0",
+      "fin": "#2e2e2c",
+      "rx": 8.5,
+      "ry": 2.6,
+      "whiskers": true,
+      "tail": "round"
+    },
     "time": "night"
   },
   {
@@ -828,7 +2662,15 @@
       60,
       110
     ],
-    "desc": "Trắm cỏ ăn tới mức không ai nhận ra nữa"
+    "desc": "Trắm cỏ ăn tới mức không ai nhận ra nữa",
+    "look": {
+      "body": "#7a8a5a",
+      "belly": "#d0d4b8",
+      "fin": "#5a6a3a",
+      "rx": 8.5,
+      "ry": 3.4,
+      "back": "#4a5a2a"
+    }
   },
   {
     "id": "tomCangKhung",
@@ -840,6 +2682,11 @@
       40
     ],
     "desc": "Càng to hơn cả bàn tay, kẹp là thấy ông bà",
+    "shape": {
+      "kind": "shrimp",
+      "color": "#2a5ab0",
+      "dark": "#1a3a78"
+    },
     "spot": "dock",
     "time": "night"
   },
@@ -853,6 +2700,15 @@
       25
     ],
     "desc": "Rô đi lạc từ xứ khác tới, ai cũng tò mò",
+    "look": {
+      "body": "#8a5a3a",
+      "belly": "#e0b890",
+      "fin": "#6a3e24",
+      "rx": 6,
+      "ry": 3.4,
+      "spikes": true,
+      "stripes": "#4a2a14"
+    },
     "weekend": true
   },
   {
@@ -865,6 +2721,15 @@
       20
     ],
     "desc": "Xanh trong như viên ngọc, hiếm khi trồi lên",
+    "look": {
+      "body": "#3fa7a0",
+      "belly": "#c8f0e8",
+      "fin": "#2a8078",
+      "rx": 5.5,
+      "ry": 2.6,
+      "shine": true,
+      "tail": "fork"
+    },
     "time": "dawn",
     "spot": "dock"
   },
@@ -878,6 +2743,11 @@
       14
     ],
     "desc": "Gạch đỏ au, nấu bún riêu là cả xóm kéo tới",
+    "shape": {
+      "kind": "crab",
+      "color": "#c8473d",
+      "dark": "#8a2f28"
+    },
     "spot": "bank",
     "weekend": true
   },
@@ -891,6 +2761,11 @@
       30
     ],
     "desc": "Loài cần bảo vệ, ghi sổ rồi thả về sông nha",
+    "shape": {
+      "kind": "turtle",
+      "color": "#d8a84a",
+      "dark": "#8a6a24"
+    },
     "release": true
   },
   {
@@ -903,8 +2778,515 @@
       18
     ],
     "desc": "Giống con kỳ nhông, quý hiếm lắm, thả về liền",
+    "shape": {
+      "kind": "frog",
+      "color": "#3a3430",
+      "dark": "#e07a3a"
+    },
     "release": true,
     "time": "night"
+  },
+  {
+    "id": "traSoc",
+    "name": "Cá trà sóc",
+    "rarity": "rare",
+    "price": 110,
+    "size": [
+      50,
+      100
+    ],
+    "desc": "Vảy to bằng đồng xu, mình có sọc dọc chạy dài",
+    "look": {
+      "body": "#c8b880",
+      "belly": "#f2ecd0",
+      "fin": "#a89860",
+      "rx": 8.5,
+      "ry": 3,
+      "stripes": "#6a5a30",
+      "lips": true,
+      "tail": "fork"
+    },
+    "spot": "dock"
+  },
+  {
+    "id": "hongVi",
+    "name": "Cá hồng vĩ",
+    "rarity": "rare",
+    "price": 100,
+    "size": [
+      40,
+      80
+    ],
+    "desc": "Đuôi đỏ như than hồng, râu dài rẽ nước",
+    "look": {
+      "body": "#3e3a36",
+      "belly": "#e8e0d0",
+      "fin": "#e04a2a",
+      "rx": 8.5,
+      "ry": 3,
+      "whiskers": true,
+      "tail": "round",
+      "back": "#2a2622"
+    },
+    "time": "night"
+  },
+  {
+    "id": "chinhHoa",
+    "name": "Cá chình hoa",
+    "rarity": "rare",
+    "price": 110,
+    "size": [
+      60,
+      120
+    ],
+    "desc": "Da hoa văn lốm đốm, ở hang sâu dưới chân kè",
+    "shape": {
+      "kind": "eel",
+      "color": "#b8a060",
+      "dark": "#4a3a1e"
+    },
+    "spot": "dock",
+    "time": "night"
+  },
+  {
+    "id": "langVang",
+    "name": "Cá lăng vàng",
+    "rarity": "rare",
+    "price": 95,
+    "size": [
+      40,
+      80
+    ],
+    "desc": "Lăng mà vàng ươm như nghệ, nấu lẩu là sang",
+    "look": {
+      "body": "#d8b050",
+      "belly": "#f6e6b0",
+      "fin": "#b08a30",
+      "rx": 8.5,
+      "ry": 2.6,
+      "whiskers": true,
+      "tallFin": true,
+      "tail": "fork"
+    },
+    "spot": "dock"
+  },
+  {
+    "id": "trenMo",
+    "name": "Cá trèn mỡ",
+    "rarity": "rare",
+    "price": 80,
+    "size": [
+      20,
+      40
+    ],
+    "desc": "Béo núc ních, chiên lên mỡ chảy xèo xèo",
+    "look": {
+      "body": "#e0d0b0",
+      "belly": "#fbf4e4",
+      "fin": "#c8b890",
+      "rx": 7,
+      "ry": 2.8,
+      "whiskers": true,
+      "tail": "fork",
+      "shine": true
+    },
+    "time": "night"
+  },
+  {
+    "id": "voCho",
+    "name": "Cá vồ chó",
+    "rarity": "rare",
+    "price": 90,
+    "size": [
+      50,
+      100
+    ],
+    "desc": "Mõm to như mõm chó, đớp mồi cái bụp",
+    "look": {
+      "body": "#6a7a88",
+      "belly": "#dce4ea",
+      "fin": "#4a5a68",
+      "rx": 8.5,
+      "ry": 3.2,
+      "whiskers": true,
+      "lips": true,
+      "tail": "fork"
+    },
+    "time": "dusk"
+  },
+  {
+    "id": "traBan",
+    "name": "Cá tra bần",
+    "rarity": "rare",
+    "price": 85,
+    "size": [
+      50,
+      100
+    ],
+    "desc": "Hay núp dưới gốc bần ven sông, khôn lắm",
+    "look": {
+      "body": "#5a6a78",
+      "belly": "#d0dae2",
+      "fin": "#3e4e5c",
+      "rx": 8.5,
+      "ry": 2.8,
+      "whiskers": true,
+      "tail": "fork",
+      "back": "#3a4a58"
+    },
+    "time": "night"
+  },
+  {
+    "id": "nguaXam",
+    "name": "Cá ngựa xám",
+    "rarity": "rare",
+    "price": 90,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Phóng như ngựa đua, giật cần muốn tuột tay",
+    "look": {
+      "body": "#9aa0a4",
+      "belly": "#eceeef",
+      "fin": "#d84a3a",
+      "rx": 8,
+      "ry": 2.8,
+      "bars": "#5a6064",
+      "tail": "fork"
+    },
+    "time": "day"
+  },
+  {
+    "id": "chayDat",
+    "name": "Cá chày đất",
+    "rarity": "rare",
+    "price": 70,
+    "size": [
+      25,
+      45
+    ],
+    "desc": "Màu đất phù sa, mắt đỏ như chày mà to con hơn",
+    "look": {
+      "body": "#a8906a",
+      "belly": "#e8dcc4",
+      "fin": "#c05a3a",
+      "rx": 7.5,
+      "ry": 2.4,
+      "tail": "fork",
+      "back": "#806a48"
+    }
+  },
+  {
+    "id": "sacDiep",
+    "name": "Cá sặc điệp",
+    "rarity": "rare",
+    "price": 75,
+    "size": [
+      10,
+      20
+    ],
+    "desc": "Vảy lấp lánh như vỏ điệp, hiếm khi thấy ngoài đồng",
+    "look": {
+      "body": "#c8b8e0",
+      "belly": "#f0eaf8",
+      "fin": "#9a80c0",
+      "rx": 5,
+      "ry": 3,
+      "stripes": "#f2c23a",
+      "shine": true,
+      "tail": "round"
+    },
+    "time": "dawn"
+  },
+  {
+    "id": "bongTuongHoa",
+    "name": "Cá bống tượng hoa",
+    "rarity": "rare",
+    "price": 105,
+    "size": [
+      20,
+      40
+    ],
+    "desc": "Bống tượng mà hoa văn như vải gấm, nằm im như tượng",
+    "look": {
+      "body": "#8a7050",
+      "belly": "#e0d0b0",
+      "fin": "#6a5034",
+      "rx": 7,
+      "ry": 3,
+      "spots": "#e8c870",
+      "bars": "#3e2a18",
+      "tail": "round",
+      "bigEye": true
+    },
+    "spot": "bank",
+    "time": "night"
+  },
+  {
+    "id": "chemVang",
+    "name": "Cá chẽm vàng",
+    "rarity": "rare",
+    "price": 100,
+    "size": [
+      40,
+      80
+    ],
+    "desc": "Chẽm ánh vàng như hoàng hôn, câu được là nhớ hoài",
+    "look": {
+      "body": "#c8a860",
+      "belly": "#f4e6c0",
+      "fin": "#a88840",
+      "rx": 8,
+      "ry": 3,
+      "spikes": true,
+      "bigEye": true,
+      "tail": "round",
+      "shine": true
+    },
+    "time": "dusk"
+  },
+  {
+    "id": "caDay",
+    "name": "Cá dầy",
+    "rarity": "rare",
+    "price": 95,
+    "size": [
+      20,
+      40
+    ],
+    "desc": "Loài quý của miền sông nước, mình dày như tấm ván",
+    "look": {
+      "body": "#7a8468",
+      "belly": "#d8dccc",
+      "fin": "#5a6448",
+      "rx": 7,
+      "ry": 3.6,
+      "back": "#4e583c",
+      "tail": "fork",
+      "hump": true
+    },
+    "weekend": true
+  },
+  {
+    "id": "ramXanh",
+    "name": "Cá rầm xanh",
+    "rarity": "rare",
+    "price": 85,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Xanh rêu như đá suối, mõm có mụn sần sần",
+    "look": {
+      "body": "#4a6a5a",
+      "belly": "#c0d4c8",
+      "fin": "#2e4a3e",
+      "rx": 8,
+      "ry": 2.8,
+      "lips": true,
+      "tail": "fork"
+    },
+    "spot": "dock",
+    "time": "dawn"
+  },
+  {
+    "id": "mat",
+    "name": "Cá mát",
+    "rarity": "rare",
+    "price": 80,
+    "size": [
+      20,
+      40
+    ],
+    "desc": "Vảy mát rượi như nước suối đầu nguồn",
+    "look": {
+      "body": "#a8b8b0",
+      "belly": "#ecf2ee",
+      "fin": "#88a090",
+      "rx": 7,
+      "ry": 2.6,
+      "tail": "fork",
+      "back": "#6a8070"
+    },
+    "time": "dawn"
+  },
+  {
+    "id": "sinh",
+    "name": "Cá sỉnh",
+    "rarity": "rare",
+    "price": 90,
+    "size": [
+      20,
+      40
+    ],
+    "desc": "Vây hồng hồng, thịt thơm, dân sông quý như vàng",
+    "look": {
+      "body": "#b8b0a0",
+      "belly": "#f0ece2",
+      "fin": "#e08a7a",
+      "rx": 7,
+      "ry": 2.8,
+      "tail": "fork",
+      "hump": true
+    },
+    "spot": "dock"
+  },
+  {
+    "id": "chienSuoi",
+    "name": "Cá chiên suối",
+    "rarity": "rare",
+    "price": 110,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Chiên mà sống khe đá, da vằn như da hổ",
+    "look": {
+      "body": "#8a6a3a",
+      "belly": "#dcc8a0",
+      "fin": "#5a4420",
+      "rx": 8,
+      "ry": 2.6,
+      "bars": "#2b1e10",
+      "whiskers": true,
+      "tail": "fork"
+    },
+    "time": "night"
+  },
+  {
+    "id": "du",
+    "name": "Cá đù",
+    "rarity": "rare",
+    "price": 70,
+    "size": [
+      20,
+      40
+    ],
+    "desc": "Bị kéo lên là kêu \"ục ục\" như ếch, nghe mắc cười",
+    "look": {
+      "body": "#c8b898",
+      "belly": "#f2ecde",
+      "fin": "#a89878",
+      "rx": 7,
+      "ry": 2.8,
+      "tail": "point",
+      "hump": true,
+      "bigEye": true
+    },
+    "time": "dusk"
+  },
+  {
+    "id": "ucCham",
+    "name": "Cá úc chấm",
+    "rarity": "rare",
+    "price": 85,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Úc mà chấm bi đen khắp mình, theo con nước lớn vô",
+    "look": {
+      "body": "#9aa0a8",
+      "belly": "#eceef0",
+      "fin": "#7a8088",
+      "rx": 7.5,
+      "ry": 2.6,
+      "spots": "#2b2b33",
+      "whiskers": true,
+      "tail": "fork"
+    },
+    "time": "dusk"
+  },
+  {
+    "id": "ruaHop",
+    "name": "Rùa hộp lưng đen",
+    "rarity": "rare",
+    "price": 0,
+    "size": [
+      12,
+      22
+    ],
+    "desc": "Rụt cổ đóng mai kín như cái hộp, quý lắm, thả về nha",
+    "shape": {
+      "kind": "turtle",
+      "color": "#3a3a30",
+      "dark": "#e8c84a"
+    },
+    "release": true,
+    "spot": "bank"
+  },
+  {
+    "id": "cuaDinh",
+    "name": "Cua đinh",
+    "rarity": "rare",
+    "price": 95,
+    "size": [
+      25,
+      45
+    ],
+    "desc": "Họ hàng ba ba, mai có mấy cái nốt như đầu đinh",
+    "shape": {
+      "kind": "turtle",
+      "color": "#5a6a3a",
+      "dark": "#2e3a1e"
+    },
+    "spot": "bank",
+    "time": "night"
+  },
+  {
+    "id": "tomCangGai",
+    "name": "Tôm càng gai",
+    "rarity": "rare",
+    "price": 85,
+    "size": [
+      20,
+      35
+    ],
+    "desc": "Càng đầy gai nhọn, kẹp một phát là la làng",
+    "shape": {
+      "kind": "shrimp",
+      "color": "#4a6a8a",
+      "dark": "#e04a3a"
+    },
+    "spot": "dock",
+    "time": "night"
+  },
+  {
+    "id": "chauChang",
+    "name": "Chẫu chàng",
+    "rarity": "rare",
+    "price": 65,
+    "size": [
+      6,
+      12
+    ],
+    "desc": "Ngón chân có giác dính, nhảy từ lá này qua lá kia",
+    "shape": {
+      "kind": "frog",
+      "color": "#a8b04a",
+      "dark": "#5a6a20"
+    },
+    "spot": "bank",
+    "time": "night"
+  },
+  {
+    "id": "traiCoc",
+    "name": "Trai cóc",
+    "rarity": "rare",
+    "price": 80,
+    "size": [
+      10,
+      18
+    ],
+    "desc": "Vỏ sần sùi như lưng cóc, ruột trắng như ngọc",
+    "shape": {
+      "kind": "clam",
+      "color": "#5a5040",
+      "dark": "#f0e8d8"
+    },
+    "spot": "dock",
+    "weekend": true
   },
   {
     "id": "chepVang",
@@ -915,7 +3297,16 @@
       30,
       60
     ],
-    "desc": "Vàng rực như dát vàng, câu được là hên cả tháng"
+    "desc": "Vàng rực như dát vàng, câu được là hên cả tháng",
+    "look": {
+      "body": "#e8b030",
+      "belly": "#f8e4a0",
+      "fin": "#e07a2a",
+      "rx": 7,
+      "ry": 3.4,
+      "whiskers": true,
+      "shine": true
+    }
   },
   {
     "id": "locKhung",
@@ -927,6 +3318,16 @@
       120
     ],
     "desc": "To bằng bắp đùi, kéo muốn sái tay",
+    "look": {
+      "body": "#4a4a34",
+      "belly": "#b0ac90",
+      "fin": "#323222",
+      "rx": 8.5,
+      "ry": 3.2,
+      "bars": "#1e1e14",
+      "spots": "#d8c890",
+      "tail": "round"
+    },
     "time": "dusk"
   },
   {
@@ -939,6 +3340,16 @@
       110
     ],
     "desc": "Đuôi đỏ như ngọn lửa, kéo lên là nghe tiếng vỗ tay",
+    "look": {
+      "body": "#6a6a68",
+      "belly": "#d8d8d0",
+      "fin": "#e04a2a",
+      "rx": 8.5,
+      "ry": 2.8,
+      "whiskers": true,
+      "tallFin": true,
+      "tail": "fork"
+    },
     "spot": "dock"
   },
   {
@@ -951,6 +3362,17 @@
       140
     ],
     "desc": "Chúa tể ghềnh đá, ít ai thấy tận mắt",
+    "look": {
+      "body": "#4a3a2a",
+      "belly": "#a89880",
+      "fin": "#2e2418",
+      "rx": 8.5,
+      "ry": 3,
+      "spots": "#1e160e",
+      "whiskers": true,
+      "tail": "fork",
+      "hump": true
+    },
     "time": "night",
     "spot": "dock"
   },
@@ -964,6 +3386,15 @@
       60
     ],
     "desc": "Anh vũ mà đỏ au, nghe nói trăm năm mới có một con",
+    "look": {
+      "body": "#b8473a",
+      "belly": "#f0b8a0",
+      "fin": "#8a2f24",
+      "rx": 7.5,
+      "ry": 2.8,
+      "lips": true,
+      "shine": true
+    },
     "time": "dawn"
   },
   {
@@ -975,7 +3406,17 @@
       50,
       90
     ],
-    "desc": "Mới là cá hô \"con\" thôi mà đã nặng trĩu tay"
+    "desc": "Mới là cá hô \"con\" thôi mà đã nặng trĩu tay",
+    "look": {
+      "body": "#8a9298",
+      "belly": "#e0e6ea",
+      "fin": "#6a7278",
+      "rx": 8.5,
+      "ry": 3.6,
+      "bigEye": true,
+      "tail": "fork",
+      "hump": true
+    }
   },
   {
     "id": "sauVang",
@@ -987,6 +3428,15 @@
       70
     ],
     "desc": "Không phải cá sấu đâu, là cá có mõm dài như cá sấu",
+    "look": {
+      "body": "#c8a050",
+      "belly": "#f0e0b0",
+      "fin": "#a07a30",
+      "rx": 8.5,
+      "ry": 1.8,
+      "spots": "#6a4a18",
+      "tail": "round"
+    },
     "weekend": true
   },
   {
@@ -999,6 +3449,11 @@
       110
     ],
     "desc": "Dài như sợi dây phơi, mình lốm đốm hoa",
+    "shape": {
+      "kind": "eel",
+      "color": "#c8a040",
+      "dark": "#5a4418"
+    },
     "time": "night"
   },
   {
@@ -1011,6 +3466,15 @@
       25
     ],
     "desc": "Rô đồng mà trắng sáng như bạch kim, lạ đời",
+    "look": {
+      "body": "#e8eef2",
+      "belly": "#ffffff",
+      "fin": "#c0ccd4",
+      "rx": 6,
+      "ry": 3.4,
+      "spikes": true,
+      "shine": true
+    },
     "weekend": true,
     "time": "day"
   },
@@ -1024,8 +3488,381 @@
       60
     ],
     "desc": "Da hoa văn như da báo, quẫy mạnh khủng khiếp",
+    "look": {
+      "body": "#c8a868",
+      "belly": "#f0e4c4",
+      "fin": "#8a6a34",
+      "rx": 8,
+      "ry": 2.4,
+      "spots": "#3e2a14",
+      "whiskers": true,
+      "tail": "round"
+    },
     "spot": "bank",
     "time": "night"
+  },
+  {
+    "id": "langNhaKhung",
+    "name": "Cá lăng nha khổng lồ",
+    "rarity": "epic",
+    "price": 330,
+    "size": [
+      80,
+      140
+    ],
+    "desc": "Vệt mực trên lưng to bằng bàn tay, kéo muốn gãy cần",
+    "look": {
+      "body": "#6a6458",
+      "belly": "#d8d4c8",
+      "fin": "#2b2b28",
+      "rx": 8.5,
+      "ry": 2.8,
+      "whiskers": true,
+      "tallFin": true,
+      "tail": "fork",
+      "hump": true
+    },
+    "spot": "dock",
+    "time": "night"
+  },
+  {
+    "id": "hongViKhung",
+    "name": "Cá hồng vĩ khổng lồ",
+    "rarity": "epic",
+    "price": 300,
+    "size": [
+      80,
+      130
+    ],
+    "desc": "Đuôi đỏ như ngọn đuốc, quẫy một phát nước văng lên bờ",
+    "look": {
+      "body": "#2e2a26",
+      "belly": "#ece4d4",
+      "fin": "#ff4a1a",
+      "rx": 8.5,
+      "ry": 3.4,
+      "whiskers": true,
+      "tail": "round",
+      "shine": true
+    },
+    "time": "night"
+  },
+  {
+    "id": "rongHuyet",
+    "name": "Cá rồng huyết",
+    "rarity": "epic",
+    "price": 380,
+    "size": [
+      40,
+      80
+    ],
+    "desc": "Vảy đỏ như ngọc huyết, râu cằm vểnh như râu rồng",
+    "look": {
+      "body": "#c83a2a",
+      "belly": "#f8b090",
+      "fin": "#8a1e14",
+      "rx": 8.5,
+      "ry": 2.6,
+      "whiskers": true,
+      "shine": true,
+      "tail": "round",
+      "sail": true
+    },
+    "time": "dawn",
+    "spot": "dock"
+  },
+  {
+    "id": "traSocKhung",
+    "name": "Cá trà sóc khổng lồ",
+    "rarity": "epic",
+    "price": 340,
+    "size": [
+      90,
+      150
+    ],
+    "desc": "Vảy to bằng cái chén, mấy ông câu lâu năm còn trầm trồ",
+    "look": {
+      "body": "#c0b078",
+      "belly": "#f2ead0",
+      "fin": "#a08a50",
+      "rx": 8.5,
+      "ry": 3.4,
+      "stripes": "#5a4a24",
+      "lips": true,
+      "tail": "fork",
+      "hump": true
+    },
+    "spot": "dock"
+  },
+  {
+    "id": "chinhKhung",
+    "name": "Cá chình khổng lồ",
+    "rarity": "epic",
+    "price": 320,
+    "size": [
+      100,
+      180
+    ],
+    "desc": "Dài hơn cây sào, mình trơn tuột ôm không nổi",
+    "shape": {
+      "kind": "eel",
+      "color": "#4a4a30",
+      "dark": "#c8b870"
+    },
+    "time": "night",
+    "spot": "dock"
+  },
+  {
+    "id": "bongLauVang",
+    "name": "Cá bông lau vàng",
+    "rarity": "epic",
+    "price": 280,
+    "size": [
+      50,
+      90
+    ],
+    "desc": "Bông lau mà vàng óng, nấu canh chua ăn là nhớ mãi",
+    "look": {
+      "body": "#d8b060",
+      "belly": "#f8ead0",
+      "fin": "#e08a30",
+      "rx": 8,
+      "ry": 2.6,
+      "whiskers": true,
+      "tail": "fork",
+      "shine": true
+    },
+    "time": "dusk"
+  },
+  {
+    "id": "etDo",
+    "name": "Cá ét đỏ",
+    "rarity": "epic",
+    "price": 260,
+    "size": [
+      25,
+      45
+    ],
+    "desc": "Môi dày đỏ như son, vảy ánh hồng dưới nắng",
+    "look": {
+      "body": "#c86a5a",
+      "belly": "#f6d0c4",
+      "fin": "#a04a3a",
+      "rx": 7,
+      "ry": 2.8,
+      "lips": true,
+      "band": "#7a2a1e",
+      "shine": true
+    },
+    "time": "day"
+  },
+  {
+    "id": "chepTia",
+    "name": "Cá chép tía",
+    "rarity": "epic",
+    "price": 300,
+    "size": [
+      40,
+      70
+    ],
+    "desc": "Tía như áo thổ cẩm, ông bà nói gặp là có lộc",
+    "look": {
+      "body": "#8a3a7a",
+      "belly": "#e8b8d8",
+      "fin": "#f2a040",
+      "rx": 7,
+      "ry": 3.4,
+      "whiskers": true,
+      "shine": true
+    },
+    "time": "dawn"
+  },
+  {
+    "id": "traTrang",
+    "name": "Cá tra trắng",
+    "rarity": "epic",
+    "price": 260,
+    "size": [
+      60,
+      110
+    ],
+    "desc": "Tra mà trắng toát như bạch tạng, cả bến xúm lại coi",
+    "look": {
+      "body": "#e8ecf0",
+      "belly": "#ffffff",
+      "fin": "#c8d0d8",
+      "rx": 8.5,
+      "ry": 2.8,
+      "whiskers": true,
+      "tail": "fork",
+      "shine": true
+    },
+    "weekend": true
+  },
+  {
+    "id": "locVayRong",
+    "name": "Cá lóc vảy rồng",
+    "rarity": "epic",
+    "price": 320,
+    "size": [
+      60,
+      110
+    ],
+    "desc": "Vảy lóc mà xếp như vảy rồng, ánh xanh lục",
+    "look": {
+      "body": "#2e4a3a",
+      "belly": "#a8c8b0",
+      "fin": "#1e3428",
+      "rx": 8.5,
+      "ry": 3,
+      "spots": "#7ad0a0",
+      "bars": "#14241c",
+      "tail": "round",
+      "shine": true
+    },
+    "time": "dusk"
+  },
+  {
+    "id": "thatLatKhung",
+    "name": "Cá thát lát khổng lồ",
+    "rarity": "epic",
+    "price": 250,
+    "size": [
+      60,
+      100
+    ],
+    "desc": "Lưng gù như cái cầu khỉ, quẫy là nghe ầm ầm",
+    "look": {
+      "body": "#a8acb0",
+      "belly": "#eceef0",
+      "fin": "#888c90",
+      "rx": 8.5,
+      "ry": 3,
+      "spots": "#2b2b33",
+      "tail": "point",
+      "hump": true
+    }
+  },
+  {
+    "id": "ngatKhung",
+    "name": "Cá ngát khổng lồ",
+    "rarity": "epic",
+    "price": 270,
+    "size": [
+      60,
+      110
+    ],
+    "desc": "Râu tua tủa dài cả gang tay, ngạnh độc chích là sưng",
+    "look": {
+      "body": "#3e3630",
+      "belly": "#a09080",
+      "fin": "#2a2420",
+      "rx": 8.5,
+      "ry": 2.6,
+      "whiskers": true,
+      "tail": "point",
+      "bigEye": true
+    },
+    "time": "night"
+  },
+  {
+    "id": "voDemKhung",
+    "name": "Cá vồ đém khổng lồ",
+    "rarity": "epic",
+    "price": 310,
+    "size": [
+      80,
+      140
+    ],
+    "desc": "Ăn trái cây rụng tới mập ú, bụng to như cái lu",
+    "look": {
+      "body": "#6a7a88",
+      "belly": "#e4eaee",
+      "fin": "#4a5a68",
+      "rx": 8.5,
+      "ry": 3.8,
+      "whiskers": true,
+      "tail": "fork",
+      "hump": true
+    },
+    "time": "dusk"
+  },
+  {
+    "id": "chimVayVang",
+    "name": "Cá chim vây vàng",
+    "rarity": "epic",
+    "price": 290,
+    "size": [
+      25,
+      45
+    ],
+    "desc": "Tròn như cái dĩa, vây vàng chói như dát kim",
+    "look": {
+      "body": "#d8d4c8",
+      "belly": "#f8f6f0",
+      "fin": "#f2c23a",
+      "rx": 5.5,
+      "ry": 4.4,
+      "tail": "fork",
+      "hump": true,
+      "shine": true
+    },
+    "time": "day"
+  },
+  {
+    "id": "baBaGai",
+    "name": "Ba ba gai",
+    "rarity": "epic",
+    "price": 0,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Mai có hàng gai mềm, loài quý cần giữ, ghi sổ rồi thả",
+    "shape": {
+      "kind": "turtle",
+      "color": "#5a6a3a",
+      "dark": "#c8b060"
+    },
+    "release": true,
+    "spot": "bank",
+    "time": "night"
+  },
+  {
+    "id": "cuaXanhKhung",
+    "name": "Cua xanh khổng lồ",
+    "rarity": "epic",
+    "price": 260,
+    "size": [
+      15,
+      25
+    ],
+    "desc": "Càng to như nắm tay, từ rừng đước lạc vô sông",
+    "shape": {
+      "kind": "crab",
+      "color": "#3a6a5a",
+      "dark": "#1e3a30"
+    },
+    "spot": "dock",
+    "time": "dusk"
+  },
+  {
+    "id": "tomCangVang",
+    "name": "Tôm càng vàng",
+    "rarity": "epic",
+    "price": 280,
+    "size": [
+      25,
+      40
+    ],
+    "desc": "Càng vàng óng như mạ vàng, cả trăm con mới có một",
+    "shape": {
+      "kind": "shrimp",
+      "color": "#e8b830",
+      "dark": "#8a6a14"
+    },
+    "time": "night",
+    "weekend": true
   },
   {
     "id": "hoKhung",
@@ -1037,6 +3874,17 @@
       300
     ],
     "desc": "Vua của sông, nặng cả trăm ký, kéo cả buổi mới lên",
+    "look": {
+      "body": "#8a9298",
+      "belly": "#e0e6ea",
+      "fin": "#6a7278",
+      "rx": 8.5,
+      "ry": 4,
+      "bigEye": true,
+      "tail": "fork",
+      "hump": true,
+      "shine": true
+    },
     "spot": "dock"
   },
   {
@@ -1049,6 +3897,16 @@
       300
     ],
     "desc": "Cá tra to như chiếc xuồng, cả đời người chưa chắc thấy",
+    "look": {
+      "body": "#6a7a8a",
+      "belly": "#d8e0e6",
+      "fin": "#4a5a6a",
+      "rx": 8.5,
+      "ry": 3.4,
+      "whiskers": true,
+      "tail": "fork",
+      "shine": true
+    },
     "time": "night"
   },
   {
@@ -1061,6 +3919,16 @@
       100
     ],
     "desc": "Vượt vũ môn xong rồi, vảy đỏ ánh vàng, câu được là đổi đời",
+    "look": {
+      "body": "#d8402a",
+      "belly": "#f8c860",
+      "fin": "#f2c23a",
+      "rx": 8,
+      "ry": 3.4,
+      "whiskers": true,
+      "shine": true,
+      "sail": true
+    },
     "time": "dawn"
   },
   {
@@ -1073,6 +3941,11 @@
       250
     ],
     "desc": "To như cái nong phơi lúa, nằm im dưới đáy sông sâu",
+    "shape": {
+      "kind": "ray",
+      "color": "#7a6a58",
+      "dark": "#4a3e30"
+    },
     "spot": "dock"
   },
   {
@@ -1085,7 +3958,349 @@
       200
     ],
     "desc": "Vây lưng cao như lá cờ, mỗi năm chỉ trồi lên vài lần",
+    "look": {
+      "body": "#7a8a9a",
+      "belly": "#e0e6ec",
+      "fin": "#c8473d",
+      "rx": 8.5,
+      "ry": 3,
+      "whiskers": true,
+      "sail": true,
+      "tail": "fork",
+      "shine": true
+    },
     "weekend": true
+  },
+  {
+    "id": "rongVang",
+    "name": "Cá rồng vàng",
+    "rarity": "legendary",
+    "price": 2000,
+    "size": [
+      70,
+      110
+    ],
+    "desc": "Vảy vàng ròng xếp như áo giáp, bơi tới đâu nước sáng tới đó",
+    "look": {
+      "body": "#e8b830",
+      "belly": "#fff0b0",
+      "fin": "#c88a14",
+      "rx": 8.5,
+      "ry": 2.8,
+      "whiskers": true,
+      "shine": true,
+      "sail": true,
+      "tail": "round"
+    },
+    "time": "dawn",
+    "spot": "dock"
+  },
+  {
+    "id": "traSocVuong",
+    "name": "Cá trà sóc vương",
+    "rarity": "legendary",
+    "price": 1700,
+    "size": [
+      150,
+      250
+    ],
+    "desc": "Trà sóc to như con heo, dân sông kể ba đời mới thấy một lần",
+    "look": {
+      "body": "#b8a870",
+      "belly": "#f2ead0",
+      "fin": "#e0a040",
+      "rx": 8.5,
+      "ry": 3.8,
+      "stripes": "#5a4a24",
+      "lips": true,
+      "hump": true,
+      "shine": true,
+      "tail": "fork"
+    },
+    "spot": "dock",
+    "weekend": true
+  },
+  {
+    "id": "chepNgoc",
+    "name": "Cá chép bạch ngọc",
+    "rarity": "legendary",
+    "price": 1800,
+    "size": [
+      60,
+      100
+    ],
+    "desc": "Trắng muốt như ngọc, vảy viền vàng, câu được là may cả năm",
+    "look": {
+      "body": "#f4f6f8",
+      "belly": "#ffffff",
+      "fin": "#f2c23a",
+      "rx": 8,
+      "ry": 3.6,
+      "whiskers": true,
+      "shine": true,
+      "spots": "#f2d880"
+    },
+    "weekend": true,
+    "time": "day"
+  },
+  {
+    "id": "langGhenh",
+    "name": "Cá lăng ghềnh đá",
+    "rarity": "legendary",
+    "price": 1500,
+    "size": [
+      150,
+      250
+    ],
+    "desc": "Nằm dưới ghềnh sâu cả chục năm, râu dài cả thước",
+    "look": {
+      "body": "#4a4640",
+      "belly": "#c8c2b8",
+      "fin": "#2e2a26",
+      "rx": 8.5,
+      "ry": 3,
+      "whiskers": true,
+      "tallFin": true,
+      "tail": "fork",
+      "hump": true,
+      "shine": true
+    },
+    "spot": "dock",
+    "time": "night"
+  },
+  {
+    "id": "hongViLua",
+    "name": "Cá hồng vĩ lửa",
+    "rarity": "legendary",
+    "price": 1600,
+    "size": [
+      120,
+      200
+    ],
+    "desc": "Đuôi cháy rực như ngọn lửa, đêm xuống sáng cả khúc sông",
+    "look": {
+      "body": "#1e1a18",
+      "belly": "#f0e0c8",
+      "fin": "#ff6a1a",
+      "rx": 8.5,
+      "ry": 3.4,
+      "whiskers": true,
+      "tail": "round",
+      "shine": true,
+      "sail": true
+    },
+    "time": "night"
+  },
+  {
+    "id": "voDemVang",
+    "name": "Cá vồ đém vàng",
+    "rarity": "legendary",
+    "price": 1500,
+    "size": [
+      100,
+      180
+    ],
+    "desc": "Vồ đém vàng như trái chín, ăn trái rụng nên thịt thơm mùi trái cây",
+    "look": {
+      "body": "#d8a840",
+      "belly": "#fbe8b0",
+      "fin": "#a87a20",
+      "rx": 8.5,
+      "ry": 3.6,
+      "whiskers": true,
+      "tail": "fork",
+      "hump": true,
+      "shine": true
+    },
+    "time": "dusk"
+  },
+  {
+    "id": "heVangRong",
+    "name": "Cá he vàng ròng",
+    "rarity": "legendary",
+    "price": 1400,
+    "size": [
+      40,
+      70
+    ],
+    "desc": "He mà vàng ròng từ đầu tới đuôi, nặng trĩu như thỏi vàng",
+    "look": {
+      "body": "#f2c23a",
+      "belly": "#fff2c0",
+      "fin": "#e03a2a",
+      "rx": 6.5,
+      "ry": 3.6,
+      "tail": "fork",
+      "hump": true,
+      "shine": true
+    },
+    "time": "day",
+    "weekend": true
+  },
+  {
+    "id": "thatLatKim",
+    "name": "Cá thát lát hoàng kim",
+    "rarity": "legendary",
+    "price": 1500,
+    "size": [
+      60,
+      100
+    ],
+    "desc": "Hàng chấm cườm dọc hông lấp lánh như chuỗi hạt vàng",
+    "look": {
+      "body": "#d8c070",
+      "belly": "#fbf2d0",
+      "fin": "#b89a40",
+      "rx": 8.5,
+      "ry": 3,
+      "spots": "#fff0a0",
+      "tail": "point",
+      "hump": true,
+      "shine": true
+    },
+    "weekend": true
+  },
+  {
+    "id": "giaiKhung",
+    "name": "Giải khổng lồ",
+    "rarity": "legendary",
+    "price": 0,
+    "size": [
+      100,
+      180
+    ],
+    "desc": "Rùa giải to như cái bàn, sống cả trăm năm, quý lắm thả về liền",
+    "shape": {
+      "kind": "turtle",
+      "color": "#5a6a4a",
+      "dark": "#d8c070"
+    },
+    "release": true,
+    "spot": "dock"
+  },
+  {
+    "id": "chinhTramTuoi",
+    "name": "Chình hoa trăm tuổi",
+    "rarity": "legendary",
+    "price": 1900,
+    "size": [
+      180,
+      300
+    ],
+    "desc": "Ông bà nói con chình này ở dưới chân cầu từ hồi chưa có cầu",
+    "shape": {
+      "kind": "eel",
+      "color": "#8a7a40",
+      "dark": "#2a2410"
+    },
+    "time": "night",
+    "weekend": true
+  },
+  {
+    "id": "roHon",
+    "name": "Cá rô hồn",
+    "rarity": "uncommon",
+    "price": 35,
+    "size": [
+      10,
+      20
+    ],
+    "desc": "Rô đồng mà trong veo thấy cả xương, bơi lờ đờ như đang mơ",
+    "look": {
+      "body": "#9ab8c8",
+      "belly": "#e8f4fa",
+      "fin": "#6a8a9a",
+      "rx": 6,
+      "ry": 3.4,
+      "spikes": true,
+      "shine": true
+    },
+    "ghost": true
+  },
+  {
+    "id": "locMa",
+    "name": "Cá lóc ma",
+    "rarity": "rare",
+    "price": 120,
+    "size": [
+      40,
+      80
+    ],
+    "desc": "Đen tuyền, mắt đỏ lựng, đớp mồi không một tiếng động",
+    "look": {
+      "body": "#1e1a24",
+      "belly": "#4a4258",
+      "fin": "#120e18",
+      "rx": 8.5,
+      "ry": 2.8,
+      "bars": "#3a1a2a",
+      "bigEye": true
+    },
+    "ghost": true
+  },
+  {
+    "id": "treBong",
+    "name": "Cá trê bóng đêm",
+    "rarity": "rare",
+    "price": 110,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Râu dài lập loè xanh như đốm ma trơi",
+    "look": {
+      "body": "#2a3a3a",
+      "belly": "#6a8a80",
+      "fin": "#1a2a2a",
+      "rx": 8,
+      "ry": 2.4,
+      "spots": "#7affd0",
+      "whiskers": true
+    },
+    "ghost": true
+  },
+  {
+    "id": "chepXuong",
+    "name": "Cá chép xương",
+    "rarity": "epic",
+    "price": 340,
+    "size": [
+      30,
+      60
+    ],
+    "desc": "Vảy rụng gần hết, lộ bộ xương trắng mà vẫn quẫy khoẻ re",
+    "look": {
+      "body": "#d8d4c8",
+      "belly": "#f4f0e8",
+      "fin": "#8a8478",
+      "rx": 7,
+      "ry": 3.4,
+      "bars": "#6a6458",
+      "whiskers": true
+    },
+    "ghost": true
+  },
+  {
+    "id": "bongBiNgo",
+    "name": "Cá bống bí ngô",
+    "rarity": "legendary",
+    "price": 1700,
+    "size": [
+      20,
+      40
+    ],
+    "desc": "Cam rực như trái bí, đêm rằm tháng Mười mới trồi lên một lần",
+    "look": {
+      "body": "#ff8a1a",
+      "belly": "#ffd080",
+      "fin": "#5a2a7a",
+      "rx": 6.5,
+      "ry": 3.6,
+      "spots": "#3a1a40",
+      "shine": true,
+      "bigEye": true
+    },
+    "ghost": true
   },
   {
     "id": "thuongLuong",
@@ -1097,6 +4312,11 @@
       400
     ],
     "desc": "Ông bà kể dưới sông có thuồng luồng, giờ mới tin là thật",
+    "shape": {
+      "kind": "eel",
+      "color": "#3a6a5a",
+      "dark": "#f2c23a"
+    },
     "time": "night",
     "weekend": true
   },
@@ -1110,6 +4330,17 @@
       90
     ],
     "desc": "Con chép chở ông Táo về trời, vảy đỏ như lửa bếp",
+    "look": {
+      "body": "#e03a2a",
+      "belly": "#ffd27a",
+      "fin": "#ffb030",
+      "rx": 8,
+      "ry": 3.6,
+      "whiskers": true,
+      "shine": true,
+      "sail": true,
+      "tail": "fork"
+    },
     "time": "dawn",
     "minRod": 2
   },
@@ -1123,6 +4354,16 @@
       35
     ],
     "desc": "Cá linh mà vàng óng như bông điên điển, nước nổi mới về",
+    "look": {
+      "body": "#f2c23a",
+      "belly": "#fff2b0",
+      "fin": "#e89a20",
+      "rx": 6,
+      "ry": 2.8,
+      "shine": true,
+      "bigEye": true,
+      "tail": "fork"
+    },
     "time": "dusk",
     "minRod": 2
   },
@@ -1136,6 +4377,17 @@
       220
     ],
     "desc": "Cá rồng trắng, vảy như ngọc trai, đêm xuống sáng cả khúc sông",
+    "look": {
+      "body": "#f4f6fa",
+      "belly": "#ffffff",
+      "fin": "#a8d8ff",
+      "rx": 8.5,
+      "ry": 3,
+      "whiskers": true,
+      "sail": true,
+      "shine": true,
+      "tail": "point"
+    },
     "time": "night",
     "minRod": 3
   },
@@ -1149,6 +4401,17 @@
       400
     ],
     "desc": "Chúa của loài cá hô, nằm dưới chân cầu tre cả trăm năm",
+    "look": {
+      "body": "#6a7480",
+      "belly": "#dfe6ea",
+      "fin": "#c8a040",
+      "rx": 8.5,
+      "ry": 4.2,
+      "bigEye": true,
+      "hump": true,
+      "shine": true,
+      "tail": "fork"
+    },
     "spot": "dock",
     "minRod": 3
   },
@@ -1162,6 +4425,16 @@
       110
     ],
     "desc": "Tròn vành vạnh như trăng, chỉ nổi lên đêm cuối tuần",
+    "look": {
+      "body": "#f0e6b0",
+      "belly": "#fffbe0",
+      "fin": "#d8c070",
+      "rx": 7,
+      "ry": 4.6,
+      "spots": "#e0d090",
+      "shine": true,
+      "tail": "round"
+    },
     "time": "night",
     "weekend": true,
     "minRod": 3
@@ -1176,6 +4449,11 @@
       700
     ],
     "desc": "Thuồng luồng già nhất sông, chỉ chịu thua Cần Hà Bá",
+    "shape": {
+      "kind": "eel",
+      "color": "#1e4a3e",
+      "dark": "#f2c23a"
+    },
     "time": "night",
     "weekend": true,
     "minRod": 4

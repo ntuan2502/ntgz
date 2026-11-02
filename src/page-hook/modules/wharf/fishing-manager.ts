@@ -1,16 +1,37 @@
 import { sendBenWs, lastXinMoiAt, lastXinMoiDay, setLastXinMoi } from '../../core/engine-access';
 import { canAct, markActed } from '../../core/cooldown';
-import { BEN_BAIT_NAMES, BEN_DRINK_NAMES } from '../../../shared/constants/wharf-catalog';
+import {
+  BEN_BAIT_NAMES,
+  BEN_DRINK_NAMES,
+  getFishDisplayName,
+} from '../../../shared/constants/wharf-catalog';
 import { BenExecutionContext, BenStepResult, FISHING_SPOTS, SPOT_KEYS } from './types';
 import { tryRecoverBenStamina } from './stamina-recovery';
 
 let isStockingBait = false;
-let activeSpotIdx = 0;
+let activeSpotIdx = -1;
 let activeTileIdx = 0;
 let spotSessionStartedAt = Date.now();
 let spotFishCount = 0;
 let lastBasketCountForSpot = -1;
 let lastJitterCatchCount = 0;
+let lastRunning = false;
+let lastSpotChoice: string | null = null;
+
+export function randomizeFishingSpot(avoidIdx = -1): void {
+  const pool =
+    avoidIdx >= 0
+      ? SPOT_KEYS.map((_, i) => i).filter((i) => i !== avoidIdx)
+      : SPOT_KEYS.map((_, i) => i);
+  const picked =
+    pool[Math.floor(Math.random() * pool.length)] ?? Math.floor(Math.random() * SPOT_KEYS.length);
+  activeSpotIdx = picked;
+  const spotMeta = FISHING_SPOTS[SPOT_KEYS[activeSpotIdx]];
+  activeTileIdx = Math.floor(Math.random() * (spotMeta?.tiles.length || 1));
+  spotFishCount = 0;
+  spotSessionStartedAt = Date.now();
+  lastJitterCatchCount = 0;
+}
 
 export function updateSpotFishCounter(curBasketLen: number): void {
   if (lastBasketCountForSpot >= 0 && curBasketLen > lastBasketCountForSpot) {
@@ -63,7 +84,7 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
         for (const dup of list.slice(1)) {
           if (dup.id && canAct(`ben_unkeep_${dup.id}`, 1000)) {
             markActed(`ben_unkeep_${dup.id}`);
-            const fishName = (dup as { name?: string }).name || dup.fish || 'Cá';
+            const fishName = getFishDisplayName(dup.fish, (dup as { name?: string }).name);
             const unkeepMsg = `🔄 Bỏ giữ cá trùng: ${fishName} (${Number(dup.price || 0).toLocaleString('vi-VN')}🐚) để bán (ưu tiên giữ con ${Number(list[0].price || 0).toLocaleString('vi-VN')}🐚)`;
             runWithOptionalPanel(
               () => {
@@ -211,7 +232,22 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
     const spotChoice = cfg.benSpot || 'bank';
     const isDynamicSpot = spotChoice === 'rotate' || spotChoice === 'random';
 
-    if (isDynamicSpot) {
+    // Khi người dùng bấm Bắt đầu (running từ false -> true) hoặc đổi sang chế độ random/rotate:
+    const isSessionStart = (cfg.running && !lastRunning) || spotChoice !== lastSpotChoice;
+    lastRunning = Boolean(cfg.running);
+    lastSpotChoice = spotChoice;
+
+    if (spotChoice === 'random' && (isSessionStart || activeSpotIdx < 0)) {
+      randomizeFishingSpot();
+    } else if (spotChoice === 'rotate' && activeSpotIdx < 0) {
+      activeSpotIdx = 0;
+      activeTileIdx = 0;
+      spotFishCount = 0;
+      spotSessionStartedAt = Date.now();
+      lastJitterCatchCount = 0;
+    }
+
+    if (isDynamicSpot && activeSpotIdx >= 0) {
       const switchMode = cfg.benSpotSwitchMode || 'count';
       const switchVal = Math.max(1, Number(cfg.benSpotSwitchValue) || 15);
       const shouldSwitch =
@@ -221,19 +257,20 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
 
       if (shouldSwitch) {
         if (spotChoice === 'random') {
-          const nextIdx = Math.floor(Math.random() * SPOT_KEYS.length);
-          activeSpotIdx = nextIdx === activeSpotIdx ? (nextIdx + 1) % SPOT_KEYS.length : nextIdx;
+          randomizeFishingSpot(activeSpotIdx);
         } else {
           activeSpotIdx = (activeSpotIdx + 1) % SPOT_KEYS.length;
+          activeTileIdx = 0;
+          spotFishCount = 0;
+          spotSessionStartedAt = Date.now();
+          lastJitterCatchCount = 0;
         }
-        activeTileIdx = 0;
-        spotFishCount = 0;
-        spotSessionStartedAt = Date.now();
-        lastJitterCatchCount = 0;
       }
     }
 
-    const spotKey = isDynamicSpot ? SPOT_KEYS[activeSpotIdx % SPOT_KEYS.length] : spotChoice;
+    const spotKey = isDynamicSpot
+      ? SPOT_KEYS[Math.max(0, activeSpotIdx) % SPOT_KEYS.length]
+      : spotChoice;
     const spotMeta = FISHING_SPOTS[spotKey] || FISHING_SPOTS.bank;
 
     if (cfg.benHumanJitter !== false && spotFishCount - lastJitterCatchCount >= 6) {

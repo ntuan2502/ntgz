@@ -1,5 +1,6 @@
 import { AppConfig } from '../../../../shared/types/config';
 import { stores, sendBenWs } from '../../../core/engine-access';
+import { computeWharfBossStatus } from '../../../../shared/constants/wharf-catalog';
 import {
   baiState,
   initAlluvialManager,
@@ -50,6 +51,25 @@ export function stepAlluvial(cfg: AppConfig): AlluvialStepResult | null {
 
   const now = Date.now();
   const serverNowMs = getBaiServerNowMs();
+
+  // Priority #1: If Boss Bí Ngô is impending (<= 10s) or active, rush back to Bến Đò immediately!
+  const bn = stores.benNet?.getState();
+  const bossStatus = computeWharfBossStatus(bn, cfg.benAutoBossHunt !== false);
+  if (bossStatus.isBossActive || bossStatus.isBossImpending) {
+    if (baiState.kind === 'ben') {
+      transitState = 'idle';
+      return null;
+    }
+    if (baiState.kind === 'farm' && transitState !== 'exit_farm') {
+      transitState = 'exit_farm';
+      transitStartedAt = now;
+      resetBaiWalkTracker();
+    } else if (baiState.kind === 'bai' && transitState !== 'walk_to_bai_ferry') {
+      transitState = 'walk_to_bai_ferry';
+      transitStartedAt = now;
+      resetBaiWalkTracker();
+    }
+  }
 
   // If Alluvial Land sub-area is disabled:
   // - If at Bến Đò ('ben'), stay idle.

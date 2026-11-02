@@ -3,6 +3,52 @@
  * Gom tập trung từ các module page-hook và content UI để tránh khai báo trùng lặp.
  */
 
+import fishDexRaw from './fish-dex-data.json';
+
+export interface FishCatalogEntry {
+  id: string;
+  name: string;
+  rarity: 'junk' | 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythic';
+  price: number;
+  size?: [number, number];
+  desc?: string;
+  spot?: 'bank' | 'dock';
+  time?: 'dawn' | 'day' | 'dusk' | 'night';
+  weekend?: boolean;
+  minRod?: number;
+  ghost?: boolean;
+  release?: boolean;
+  look?: unknown;
+  shape?: unknown;
+}
+
+export const ALL_FISH_CATALOG: FishCatalogEntry[] = fishDexRaw as FishCatalogEntry[];
+
+/**
+ * Bản đồ tra cứu tên tiếng Việt của toàn bộ cá và rác trong Bến Đò.
+ */
+export const FISH_NAME_MAP: Map<string, string> = new Map(
+  ALL_FISH_CATALOG.map((f) => [f.id, f.name])
+);
+
+/**
+ * Lấy tên hiển thị của cá theo id, ưu tiên tên từ từ điển game, fallback qua id.
+ */
+export function getFishDisplayName(fishId?: string | null, fallbackName?: string | null): string {
+  if (!fishId && !fallbackName) return 'Cá';
+  if (fallbackName && fallbackName.trim() && fallbackName !== fishId) return fallbackName;
+  if (fishId && FISH_NAME_MAP.has(fishId)) return FISH_NAME_MAP.get(fishId)!;
+  return fallbackName || fishId || 'Cá';
+}
+
+/**
+ * Tổng số loài cá hợp lệ để tính cho Bảng vàng Sổ cá nhiều loài (không tính rác, không tính thần thoại, không tính ghost).
+ * Tính động từ từ điển `fish-dex-data.json`, khớp 100% với biến `a_` trong mã nguồn game `n_.filter(i_).length`.
+ */
+export const TOTAL_CATCHABLE_SPECIES_COUNT: number = ALL_FISH_CATALOG.filter(
+  (f) => f.rarity !== 'junk' && f.rarity !== 'mythic' && !f.ghost
+).length;
+
 export const BEN_FOOD_NAMES: Record<string, string> = {
   banhMi: '🥖 Bánh mì thịt (+20⚡)',
   chaoCa: '🥣 Cháo cá lóc (+28⚡)',
@@ -174,20 +220,35 @@ export function computeWharfBossStatus(
 ): WharfBossStatus {
   const serverNow = Date.now() + (bn?.ti?.skew ?? 0);
   const hlwLive = bn?.hlwLive;
+  const hasBossCountdownDom =
+    typeof document !== 'undefined' && Boolean(document.querySelector('.hlw-boss-countdown'));
+  const hasCountdownSoonInDom =
+    typeof document !== 'undefined' && Boolean(document.querySelector('.hlw-boss-countdown.soon'));
+  const hasBossDom = typeof document !== 'undefined' && Boolean(document.querySelector('.hlw-boss'));
+
   const isHlwLive = Boolean(
-    hlwLive?.on && (hlwLive.endsAt === null || hlwLive.endsAt === undefined || Date.now() < hlwLive.endsAt)
+    (hlwLive?.on && (hlwLive.endsAt === null || hlwLive.endsAt === undefined || Date.now() < hlwLive.endsAt)) ||
+    hasBossCountdownDom ||
+    hasCountdownSoonInDom ||
+    hasBossDom
   );
   const bossStart = typeof bn?.hlwBoss?.start === 'number' ? bn.hlwBoss.start : 0;
   const isBossAliveTime = Boolean(bossStart > 0 && serverNow >= bossStart && serverNow < bossStart + 180000);
-  const hasBossDom = typeof document !== 'undefined' && Boolean(document.querySelector('.hlw-boss'));
   const isBossActive = Boolean(
     autoBossHuntEnabled && (isBossAliveTime || bn?.hlwBoss || hasBossDom)
   );
 
-  const msToNextBoss = Math.ceil(serverNow / 1800000) * 1800000 - serverNow;
-  const secondsToNextBoss = Math.ceil(msToNextBoss / 1000);
-  const hasCountdownSoonInDom =
-    typeof document !== 'undefined' && Boolean(document.querySelector('.hlw-boss-countdown.soon'));
+  let msToNextBoss = Math.ceil(serverNow / 1800000) * 1800000 - serverNow;
+  let secondsToNextBoss = Math.ceil(msToNextBoss / 1000);
+
+  if (typeof document !== 'undefined' && hasBossCountdownDom) {
+    const text = document.querySelector('.hlw-boss-countdown')?.textContent || '';
+    const m = text.match(/(\d+)\s*s/);
+    if (m) {
+      secondsToNextBoss = parseInt(m[1], 10);
+      msToNextBoss = secondsToNextBoss * 1000;
+    }
+  }
 
   const isBossImpending = Boolean(
     autoBossHuntEnabled &&

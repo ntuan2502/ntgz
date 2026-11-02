@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { BookOpen, ExternalLink, RefreshCw, Search } from 'lucide-react';
 import fishDexRaw from '@/shared/constants/fish-dex-data.json';
+import { TOTAL_CATCHABLE_SPECIES_COUNT } from '@/shared/constants/wharf-catalog';
 import { execGameAction } from '@/content/bridge/content-bridge';
 import { GameItemIcon } from '@/content/ui/components/GameItemIcon';
 
@@ -18,6 +19,8 @@ interface FishEntry {
   time?: 'dawn' | 'day' | 'dusk' | 'night';
   weekend?: boolean;
   minRod?: number;
+  ghost?: boolean;
+  release?: boolean;
 }
 
 const fishCatalog: FishEntry[] = fishDexRaw as FishEntry[];
@@ -44,6 +47,8 @@ const TITLE_MILESTONES = [
   { at: 50, title: 'Thần câu', icon: '⭐' },
   { at: 70, title: 'Huyền thoại bến đò', icon: '🏆' },
   { at: 89, title: 'Vua bến đò', icon: '👑' },
+  { at: 140, title: 'Lão ngư sông Hậu', icon: '🎏' },
+  { at: TOTAL_CATCHABLE_SPECIES_COUNT, title: 'Chúa tể sông nước', icon: '💎' },
 ];
 
 const SPOT_NAMES: Record<string, string> = { bank: 'bờ sông', dock: 'cầu tre' };
@@ -82,9 +87,9 @@ export function FishDexTab({ snap }: FishDexTabProps) {
     ((benNet?.board as { records?: Record<string, { name: string; size: number }> } | undefined)?.records) || {};
   const currentTitle: string | null = benNet?.title ? String(benNet.title) : null;
 
-  // Species count (non-junk, non-mythic)
+  // Species count (non-junk, non-mythic, non-ghost)
   const speciesList = useMemo(
-    () => fishCatalog.filter((f) => f.rarity !== 'junk' && f.rarity !== 'mythic'),
+    () => fishCatalog.filter((f) => f.rarity !== 'junk' && f.rarity !== 'mythic' && !f.ghost),
     []
   );
   const caughtSpeciesCount = useMemo(
@@ -117,6 +122,8 @@ export function FishDexTab({ snap }: FishDexTabProps) {
       list = fishCatalog.filter((f) => f.rarity !== 'junk');
     } else if (activeTab === 'odd') {
       list = fishCatalog.filter((f) => f.rarity !== 'junk');
+    } else if (activeTab === 'ghost') {
+      list = fishCatalog.filter((f) => Boolean(f.ghost));
     } else if (activeTab !== 'guide') {
       list = fishCatalog.filter((f) => f.rarity === activeTab);
     }
@@ -251,6 +258,18 @@ export function FishDexTab({ snap }: FishDexTabProps) {
             }`}
           >
             <span>✨ Cá lạ</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('ghost')}
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium shrink-0 transition-all cursor-pointer border ${
+              activeTab === 'ghost'
+                ? 'bg-indigo-50 border-indigo-300 text-indigo-900 font-bold shadow-xs'
+                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+            }`}
+          >
+            <span>👻 Cá ma ({fishCatalog.filter((f) => f.ghost && dex[f.id]).length}/{fishCatalog.filter((f) => f.ghost).length})</span>
           </button>
 
           <button

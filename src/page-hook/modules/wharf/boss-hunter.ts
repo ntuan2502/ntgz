@@ -108,11 +108,15 @@ export function runBossHuntOrImpendingStep(ctx: BenExecutionContext): BenStepRes
       };
     }
 
+    if (benScene?.farmer?.lookAt) {
+      benScene.farmer.lookAt(BEN_MAP_CENTER_TILE.x * 16, (BEN_MAP_CENTER_TILE.y + 2) * 16);
+    }
+
     return {
       acted: true,
       isBossHunt: true,
       allowCast: false,
-      msg: `👑 Đã đứng giữa map chờ Boss Bí Ngô xuất hiện (còn ${secondsToNextBoss}s) 🎃`,
+      msg: `👑 Đã đứng giữa map (${BEN_MAP_CENTER_TILE.x}, ${BEN_MAP_CENTER_TILE.y}) chờ Boss Bí Ngô xuất hiện (còn ${secondsToNextBoss}s) 🎃`,
     };
   }
 

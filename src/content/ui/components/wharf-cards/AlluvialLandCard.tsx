@@ -88,44 +88,102 @@ export function AlluvialLandCard({ config, updateField, onUpdateConfig }: Alluvi
       <div className="border-t border-slate-200/80 pt-2 space-y-2">
         <span className="font-semibold text-emerald-800 block text-[11px]">🌱 Luống Rau &amp; Canh Tác Phù Sa</span>
 
-        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-          <div>
-            <span className="font-medium">🧺 Tự thu hoạch, tưới nước &amp; bón phân rau màu</span>
-            <p className="text-[10px] text-slate-400">
-              Tự gặt rau chín (thu Bí Ngô Con 🎃), bắt sâu, tưới luống khô và bón phân.
-            </p>
-          </div>
-          <Switch
-            size="sm"
-            checked={Boolean(config.benAutoBaiCrops ?? true)}
-            onCheckedChange={(c) => updateField('benAutoBaiCrops', c)}
-          />
-        </label>
+        {/* Switch Cha: Tự động canh tác rau màu bãi */}
+        <div className="rounded-lg border border-emerald-200/80 bg-emerald-50/40 p-2.5 space-y-2">
+          <label className="flex items-center justify-between text-slate-800 cursor-pointer">
+            <div>
+              <span className="font-semibold text-emerald-900">🧺 Tự động canh tác rau màu bãi phù sa</span>
+              <p className="text-[10px] text-slate-500">
+                Thao tác từ xa trên toàn bộ luống rau (thu hoạch, gieo trồng, tưới nước, bón phân, bắt sâu).
+              </p>
+            </div>
+            <Switch
+              size="sm"
+              checked={Boolean(config.benAutoBaiCrops ?? true)}
+              onCheckedChange={(c) => updateField('benAutoBaiCrops', c)}
+            />
+          </label>
 
-        <div className="space-y-1">
-          <span className="text-slate-700 font-medium">Hạt giống ưu tiên gieo trồng (Cô Sáu):</span>
-          <HudSelect
-            value={config.benBaiPreferCrop || 'rauMuong'}
-            onValueChange={(val) => updateField('benBaiPreferCrop', val)}
-            options={cropOptions}
-          />
+          {config.benAutoBaiCrops !== false && (
+            <div className="pt-2 border-t border-emerald-200/60 space-y-2 pl-1">
+              <span className="text-[10px] font-semibold text-emerald-800 uppercase tracking-wider block">
+                Tùy chọn từng công việc trên luống rau:
+              </span>
+
+              <div className="grid grid-cols-1 gap-1.5 bg-white/90 p-2 rounded-lg border border-emerald-200/70">
+                <label className="flex items-center justify-between text-slate-700 cursor-pointer py-0.5">
+                  <span className="text-[11px]">🧺 Tự thu hoạch rau chín (thu Bí Ngô Con 🎃)</span>
+                  <Switch
+                    size="sm"
+                    checked={Boolean(config.benAutoBaiHarvest ?? true)}
+                    onCheckedChange={(c) => updateField('benAutoBaiHarvest', c)}
+                  />
+                </label>
+
+                <label className="flex items-center justify-between text-slate-700 cursor-pointer py-0.5">
+                  <span className="text-[11px]">🌱 Tự gieo hạt giống vào luống trống</span>
+                  <Switch
+                    size="sm"
+                    checked={Boolean(config.benAutoBaiPlant ?? true)}
+                    onCheckedChange={(c) => updateField('benAutoBaiPlant', c)}
+                  />
+                </label>
+
+                <label className="flex items-center justify-between text-slate-700 cursor-pointer py-0.5">
+                  <span className="text-[11px]">💧 Tự tưới nước cho các luống rau bị khô</span>
+                  <Switch
+                    size="sm"
+                    checked={Boolean(config.benAutoBaiWater ?? true)}
+                    onCheckedChange={(c) => updateField('benAutoBaiWater', c)}
+                  />
+                </label>
+
+                <label className="flex items-center justify-between text-slate-700 cursor-pointer py-0.5">
+                  <span className="text-[11px]">🌿 Tự bón phân (bón lót / phân hữu cơ)</span>
+                  <Switch
+                    size="sm"
+                    checked={Boolean(config.benAutoBaiFertilize ?? true)}
+                    onCheckedChange={(c) => updateField('benAutoBaiFertilize', c)}
+                  />
+                </label>
+
+                <label className="flex items-center justify-between text-slate-700 cursor-pointer py-0.5">
+                  <span className="text-[11px]">🐛 Tự bắt sâu / phun thuốc sâu khi có sâu</span>
+                  <Switch
+                    size="sm"
+                    checked={Boolean(config.benAutoBaiSpray ?? true)}
+                    onCheckedChange={(c) => updateField('benAutoBaiSpray', c)}
+                  />
+                </label>
+              </div>
+
+              <div className="space-y-1 pt-1">
+                <span className="text-slate-700 font-medium">Hạt giống ưu tiên gieo trồng (Cô Sáu):</span>
+                <HudSelect
+                  value={config.benBaiPreferCrop || 'rauMuong'}
+                  onValueChange={(val) => updateField('benBaiPreferCrop', val)}
+                  options={cropOptions}
+                />
+              </div>
+
+              <label className="flex items-center justify-between text-slate-700 cursor-pointer pt-1">
+                <div>
+                  <span className="font-medium">🛶 Tự bán rau tươi cho Ghe Lái Tư</span>
+                  <p className="text-[10px] text-slate-400">
+                    Bán toàn bộ rau củ thu hoạch cho thương lái ở Chợ Bãi lấy vỏ sò.
+                  </p>
+                </div>
+                <Switch
+                  size="sm"
+                  checked={Boolean(config.benAutoBaiSellCrops ?? true)}
+                  onCheckedChange={(c) => updateField('benAutoBaiSellCrops', c)}
+                />
+              </label>
+            </div>
+          )}
         </div>
 
-        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-          <div>
-            <span className="font-medium">🛶 Tự bán rau tươi cho Ghe Lái Tư</span>
-            <p className="text-[10px] text-slate-400">
-              Bán toàn bộ rau củ thu hoạch cho thương lái ở Chợ Bãi lấy vỏ sò.
-            </p>
-          </div>
-          <Switch
-            size="sm"
-            checked={Boolean(config.benAutoBaiSellCrops ?? true)}
-            onCheckedChange={(c) => updateField('benAutoBaiSellCrops', c)}
-          />
-        </label>
-
-        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+        <label className="flex items-center justify-between text-slate-700 cursor-pointer pt-1">
           <div>
             <span className="font-medium">🥥 Tự hái dừa xiêm &amp; trồng dừa con</span>
             <p className="text-[10px] text-slate-400">
