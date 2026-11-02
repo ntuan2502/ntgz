@@ -1,15 +1,20 @@
 import {
-  CricketItem,
-  SoiState,
-  BoutState,
-  CricketHuntState,
-  CricketCaughtState,
   FarmstayState,
   FriendsStoreState,
-  BaiFarmData,
-  BaiInfoData,
-  BaiDryDexData,
+  BenNetWallet,
+  BenNetAtmState,
+  BenNetState,
+  BenUIState,
+  BaiSnapshotState,
 } from './game-store';
+
+export type {
+  BenNetWallet,
+  BenNetAtmState,
+  BenNetState,
+  BenUIState,
+  BaiSnapshotState,
+};
 
 export interface VehicleState {
   id?: string;
@@ -58,102 +63,12 @@ export interface SeaState {
   [key: string]: unknown;
 }
 
-export interface BenNetWallet {
-  shells?: number;
-  bait?: number;
-  stamina?: number;
-  liveStamina?: number;
-  tickets?: number;
-  [key: string]: unknown;
-}
-
-export interface BenNetAtmState {
-  rate?: number;
-  left?: number;
-  reopen?: number;
-  nextTime?: number;
-  day?: number;
-  [key: string]: unknown;
-}
-
-export interface BenNetState {
-  status?: string;
-  fishing?: 'idle' | 'cast' | 'bite' | 'fight' | 'landing' | string;
-  wallet?: BenNetWallet | null;
-  basketCount?: number;
-  totalBasket?: number;
-  basket?: Array<{ id?: string; fish?: string; price?: number; size?: number; kept?: boolean; [key: string]: unknown }>;
-  atm?: BenNetAtmState | null;
-  ti?: { skew?: number; [key: string]: unknown } | null;
-  crickets?: {
-    box?: CricketItem[];
-    dex?: Array<{ species: string; count: number; best: number }>;
-  } | null;
-  soi?: SoiState | null;
-  bouts?: Record<string, BoutState>;
-  hunt?: CricketHuntState | null;
-  gotAway?: { why: string; seq: number } | null;
-  cricketEvents?: Array<{ seq: number; text: string }>;
-  caught?: CricketCaughtState;
-  boutDone?: {
-    won?: boolean;
-    reward?: number;
-    points?: number;
-  };
-  wheel?: {
-    bought?: number;
-    picks?: string[];
-    [key: string]: unknown;
-  };
-  hlw?: {
-    state?: unknown;
-    bag?: Array<{ item: string; qty: number }>;
-    board?: unknown;
-    [key: string]: unknown;
-  } | null;
-  hlwBoss?: {
-    start?: number;
-    seed?: number;
-    [key: string]: unknown;
-  } | null;
-  hlwLive?: {
-    on?: boolean;
-    endsAt?: number | null;
-    [key: string]: unknown;
-  } | null;
-  hlwToast?: { text: string; seq: number } | null;
-  [key: string]: unknown;
-}
-
-export interface BenUIState {
-  inSeat?: boolean;
-  hasBite?: boolean;
-  fightActive?: boolean;
-  spot?: string;
-  field?: string | null;
-  [key: string]: unknown;
-}
-
 export interface ImportantAlert {
   id: string;
   text: string;
   icon?: string;
   day?: number;
   time?: string;
-}
-
-export interface BaiSnapshotState {
-  kind: 'ben' | 'bai' | 'farm' | 'home' | string;
-  hasLand: boolean;
-  landPrice: number;
-  shells: number;
-  pearls: number;
-  items: Record<string, number>;
-  farm: BaiFarmData | null;
-  info: BaiInfoData | null;
-  dryDex?: BaiDryDexData | null;
-  owner: { me?: boolean; id?: string; name?: string } | null;
-  nextReadyAt: number;
 }
 
 export interface GameSnapshot {

@@ -51,7 +51,6 @@ export interface AppConfig {
   activeTab: AreaId;
   panelVisible: boolean;
   panelMinimized: boolean;
-  showOrderDrawer: boolean;
   hudWidth: number;
   hudHeight: number;
   terminalWidth?: number;
@@ -60,7 +59,6 @@ export interface AppConfig {
   // General Delay & Transition settings
   taskDelayMs: number;
   actionRepeatDelayMs?: number;
-  fishingSwitchCount: number;
   showFullActions: boolean;
 
   // Main Area Order & Enable/Disable toggles
@@ -184,7 +182,6 @@ export interface AppConfig {
   benSubOrder: WharfSubAreaId[];
   benSubEnabled: Record<WharfSubAreaId, boolean>;
   benSubCollapsed: Record<WharfSubAreaId, boolean>;
-  benQuickMonitorCollapsed?: boolean;
 
   // Ben Do Fishing Settings
   benAutoSpot: boolean;
@@ -197,14 +194,12 @@ export interface AppConfig {
   benBaitMaxCount?: number;
   benBaitMinShells?: number;
   benAutoSell: boolean;
-  benSellThreshold: number;
   benAutoKeepRare: boolean;
   benKeepRarities?: string[];
   benAutoSellDuplicateKept?: boolean;
   benAutoGoiDau: boolean;
   benAutoRecoverStamina: boolean;
   benStaminaCollapsed?: boolean;
-  benStaminaThreshold: number;
   benPreferFood: string;
   benAutoLuckDrink: boolean;
   benPreferDrink: string;
@@ -224,8 +219,6 @@ export interface AppConfig {
   benAutoReleaseLowCricket: boolean;
   benKeepCricketSpecies?: string[];
   benKeepCricketRarities?: string[];
-  benAutoFeedCricket: boolean;
-  benPreferCricketFood: 'balanced' | 'tough' | 'power' | 'nerve';
 
   // Ben Do Entertainment & Utilities
   benAutoLantern: boolean;
@@ -249,6 +242,8 @@ export interface AppConfig {
   benBaiPreferCrop: string;
   benAutoBaiSellCrops: boolean;
   benAutoCocoPick: boolean;
+  benAutoCocoProcess?: boolean;
+  benCocoMode?: 'candy' | 'sell';
   benAutoCocoSell: boolean;
 
   // Phase 2: Candy & Dried Fish
@@ -277,7 +272,6 @@ export interface AppConfig {
   seaSellThreshold: number;
   seaAutoClaimDex: boolean;
   seaAutoEat: boolean;
-  seaStaminaThreshold: number;
 
   // Area 4: Farmstay Settings
   farmstaySubOrder: FarmstaySubAreaId[];

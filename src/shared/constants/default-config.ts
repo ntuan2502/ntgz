@@ -161,7 +161,6 @@ export const DEFAULT_CONFIG: AppConfig = {
   activeTab: 'benDo',
   panelVisible: true,
   panelMinimized: false,
-  showOrderDrawer: true,
   hudWidth: 400,
   hudHeight: 800,
   terminalWidth: 380,
@@ -170,7 +169,6 @@ export const DEFAULT_CONFIG: AppConfig = {
   // General Delay & Transition settings
   taskDelayMs: 500,
   actionRepeatDelayMs: 0,
-  fishingSwitchCount: 15,
   showFullActions: false,
 
   // Main Area Order & Enable/Disable toggles
@@ -350,7 +348,6 @@ export const DEFAULT_CONFIG: AppConfig = {
     entertainment: false,
     alluvialLand: false,
   },
-  benQuickMonitorCollapsed: false,
 
   // Ben Do Fishing Settings
   benAutoSpot: true,
@@ -363,14 +360,12 @@ export const DEFAULT_CONFIG: AppConfig = {
   benBaitMaxCount: 10000,
   benBaitMinShells: 10000,
   benAutoSell: true,
-  benSellThreshold: 60,
   benAutoKeepRare: true,
   benKeepRarities: ['mythic', 'rainbow'],
   benAutoSellDuplicateKept: true,
   benAutoGoiDau: false,
   benAutoRecoverStamina: true,
   benStaminaCollapsed: false,
-  benStaminaThreshold: 0,
   benPreferFood: 'lauMam',
   benAutoLuckDrink: true,
   benPreferDrink: 'duaTuoi',
@@ -390,8 +385,6 @@ export const DEFAULT_CONFIG: AppConfig = {
   benAutoReleaseLowCricket: true,
   benKeepCricketSpecies: ['deVuong', 'deMa', 'deSat'],
   benKeepCricketRarities: ['rare', 'epic', 'legendary'],
-  benAutoFeedCricket: false,
-  benPreferCricketFood: 'balanced',
 
   // Ben Do Entertainment & Utilities
   benAutoLantern: false,
@@ -415,6 +408,8 @@ export const DEFAULT_CONFIG: AppConfig = {
   benBaiPreferCrop: 'rauMuong',
   benAutoBaiSellCrops: true,
   benAutoCocoPick: true,
+  benAutoCocoProcess: true,
+  benCocoMode: 'candy',
   benAutoCocoSell: false,
 
   // Phase 2: Candy & Dried Fish
@@ -443,7 +438,6 @@ export const DEFAULT_CONFIG: AppConfig = {
   seaSellThreshold: 100,
   seaAutoClaimDex: true,
   seaAutoEat: false,
-  seaStaminaThreshold: 20,
 
   // Area 4: Farmstay Settings
   farmstaySubOrder: ['operation', 'repairs', 'garden', 'staff', 'orders'],

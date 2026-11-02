@@ -9,9 +9,14 @@ interface AlluvialMonitorTabProps {
   snap: GameSnapshot | null;
 }
 
-function formatRemainingTime(targetTimestampSec: number): string {
-  const nowSec = Math.floor(Date.now() / 1000);
-  const diffSec = targetTimestampSec - nowSec;
+function toMs(val: number | null | undefined): number {
+  if (typeof val !== 'number' || val <= 0) return 0;
+  return val < 1e11 ? val * 1000 : val;
+}
+
+function formatRemainingTime(targetRawTimestamp: number): string {
+  const targetMs = toMs(targetRawTimestamp);
+  const diffSec = Math.floor((targetMs - Date.now()) / 1000);
   if (diffSec <= 0) return 'Sẵn sàng';
   const hours = Math.floor(diffSec / 3600);
   const minutes = Math.floor((diffSec % 3600) / 60);
@@ -31,36 +36,38 @@ export function AlluvialMonitorTab({ snap }: AlluvialMonitorTabProps) {
   const birds = farm?.birds || [];
   const netFish = farm?.netFish || [];
 
-  const nowSec = Math.floor(Date.now() / 1000);
+  const nowMs = Date.now();
 
   // 1. Plots summary
   const ripePlots = plots.filter(
-    (p) => p.state === 'ripe' || (p.state === 'growing' && typeof p.readyAt === 'number' && p.readyAt <= nowSec)
+    (p) => p.state === 'ripe' || (p.state === 'growing' && typeof p.readyAt === 'number' && toMs(p.readyAt) <= nowMs)
   );
-  const growingPlots = plots.filter((p) => p.state === 'growing' && typeof p.readyAt === 'number' && p.readyAt > nowSec);
+  const growingPlots = plots.filter(
+    (p) => p.state === 'growing' && typeof p.readyAt === 'number' && toMs(p.readyAt) > nowMs
+  );
   const dryPlots = plots.filter((p) => p.state === 'dry');
   const emptyPlots = plots.filter((p) => p.state === 'empty');
 
   // 2. Coconuts summary
-  const ripeCocos = coconuts.filter((c) => typeof c.readyAt === 'number' && c.readyAt <= nowSec);
-  const growingCocos = coconuts.filter((c) => typeof c.readyAt === 'number' && c.readyAt > nowSec);
+  const ripeCocos = coconuts.filter((c) => typeof c.readyAt === 'number' && toMs(c.readyAt) <= nowMs);
+  const growingCocos = coconuts.filter((c) => typeof c.readyAt === 'number' && toMs(c.readyAt) > nowMs);
 
   // 3. Candy Kiln summary
   const candyReadyAt = farm?.candyReadyAt ?? null;
-  const isCandyCooking = typeof candyReadyAt === 'number' && candyReadyAt > nowSec;
-  const isCandyReady = typeof candyReadyAt === 'number' && candyReadyAt <= nowSec;
+  const isCandyCooking = typeof candyReadyAt === 'number' && toMs(candyReadyAt) > nowMs;
+  const isCandyReady = typeof candyReadyAt === 'number' && toMs(candyReadyAt) <= nowMs;
 
   // 4. Dried Fish Racks summary
   const maxRacks = 6 + ((farm?.dryLv || 1) - 1) * 2;
-  const readyRacks = racks.filter((r) => r.readyAt <= nowSec);
-  const dryingRacks = racks.filter((r) => r.readyAt > nowSec);
+  const readyRacks = racks.filter((r) => toMs(r.readyAt) <= nowMs);
+  const dryingRacks = racks.filter((r) => toMs(r.readyAt) > nowMs);
 
   // 5. Poultry summary
   const totalEggs = birds.reduce((s, b) => s + (b.eggs || 0), 0);
   const sickBirds = birds.filter((b) => b.diesAt !== null);
 
   // 6. River Net Fish summary
-  const adultFish = netFish.filter((f) => f.readyAt <= nowSec);
+  const adultFish = netFish.filter((f) => toMs(f.readyAt) <= nowMs);
   const isFishHungry = netFish.some((f) => f.hungry);
 
   const handleRefresh = () => {
@@ -171,7 +178,7 @@ export function AlluvialMonitorTab({ snap }: AlluvialMonitorTabProps) {
             <p>
               ⏱️ Trái gần nhất: <b>
                 {growingCocos.length > 0
-                  ? formatRemainingTime(Math.min(...growingCocos.map((c) => c.readyAt || nowSec)))
+                  ? formatRemainingTime(Math.min(...growingCocos.map((c) => toMs(c.readyAt) || nowMs)))
                   : 'Không có'}
               </b>
             </p>
@@ -232,7 +239,7 @@ export function AlluvialMonitorTab({ snap }: AlluvialMonitorTabProps) {
             <p>
               ⏱️ Khô gần nhất: <b>
                 {dryingRacks.length > 0
-                  ? formatRemainingTime(Math.min(...dryingRacks.map((r) => r.readyAt)))
+                  ? formatRemainingTime(Math.min(...dryingRacks.map((r) => toMs(r.readyAt))))
                   : 'Trống nong'}
               </b>
             </p>
@@ -295,7 +302,7 @@ export function AlluvialMonitorTab({ snap }: AlluvialMonitorTabProps) {
             <p>
               ⏱️ Cá lớn sớm nhất: <b>
                 {netFish.length > 0
-                  ? formatRemainingTime(Math.min(...netFish.map((f) => f.readyAt)))
+                  ? formatRemainingTime(Math.min(...netFish.map((f) => toMs(f.readyAt))))
                   : 'Lưới trống'}
               </b>
             </p>

@@ -1,252 +1,17 @@
 import { AppConfig } from '../../shared/types/config';
 import { GameSnapshot } from '../../shared/types/game-state';
+import { computeWharfBossStatus } from '../../shared/constants/wharf-catalog';
 import { execGameAction } from '../bridge/content-bridge';
 import { isVisible, triggerPointerDownAndClick, triggerPointerDownOnly, sleep } from './dom-helpers';
 import { handleFightMinigame } from './minigame';
+import { handleBenCatchModal, handleBenOverlayModals } from './wharf-modals';
 
-let lastModalClickAt = 0;
 let lastHookAt = 0;
 let lastCastAt = 0;
-let lastWheelActionAt = 0;
-let lastAtmActionAt = 0;
-let lastCricketCatchAt = 0;
-let lastBoutCloseAt = 0;
 let lastCricketEventSeq = -1;
 let lastGotAwaySeq = -1;
 let nextCastDelayMs = 0;
 let microBreakUntil = 0;
-
-function handleBenLanternWheel(
-  wheelEl: HTMLElement,
-  snap: GameSnapshot,
-  config: AppConfig,
-  setStatus: (text: string) => void,
-  delayMs: number
-): boolean {
-  const now = performance.now();
-  if (now - lastWheelActionAt < Math.max(350, delayMs * 0.7)) {
-    return true;
-  }
-
-  // A. Spin Result Modal (.ben-wheel-card.result) -> Log what was won & click confirm ("Nhận" / "Chọn món mới")
-  const resultCard = wheelEl.querySelector('.ben-wheel-card.result') as HTMLElement | null;
-  if (resultCard) {
-    const tierText = resultCard.querySelector('.ben-wheel-tier')?.textContent?.trim() || 'Vỏ sò an ủi';
-    const wonItemName = resultCard.querySelector('b')?.textContent?.trim() || '';
-    const shellsText = resultCard.querySelector('.ben-wheel-shells')?.textContent?.trim() || '';
-    const confirmBtn = resultCard.querySelector('button.btn-green') as HTMLButtonElement | null;
-    const confirmLabel = confirmBtn?.textContent?.trim() || 'Nhận';
-
-    const resultLog = wonItemName
-      ? `🏮 Vòng quay Cô Bảy: 🎉 TRÚNG "${wonItemName}" (${tierText})${shellsText ? ` · ${shellsText}` : ''} -> Đã nhấn "${confirmLabel}"!`
-      : `🏮 Vòng quay Cô Bảy: Quay được ${shellsText || tierText} (${tierText}) -> Đã nhấn "${confirmLabel}"!`;
-
-    setStatus(resultLog);
-    if (confirmBtn && !confirmBtn.disabled) {
-      triggerPointerDownAndClick(confirmBtn);
-    }
-    lastWheelActionAt = now;
-    return true;
-  }
-
-  // B. Pick 3 Items Modal (.ben-wheel-card:not(.result)) -> Auto pick items & click "Lên vòng"
-  const pickCard = wheelEl.querySelector('.ben-wheel-card:not(.result)') as HTMLElement | null;
-  if (pickCard) {
-    const confirmPickBtn = pickCard.querySelector('.ben-wheel-row button.btn-green') as HTMLButtonElement | null;
-    if (confirmPickBtn && !confirmPickBtn.disabled) {
-      triggerPointerDownAndClick(confirmPickBtn);
-      setStatus('🏮 Vòng quay Cô Bảy: Đã chọn đủ món muốn săn -> Nhấn "Lên vòng"!');
-      lastWheelActionAt = now;
-      return true;
-    }
-
-    const unpickedBtn = pickCard.querySelector('.ben-wheel-pick:not(.on)') as HTMLButtonElement | null;
-    if (unpickedBtn) {
-      const itemName = unpickedBtn.querySelector('span')?.textContent?.trim() || 'vật phẩm';
-      triggerPointerDownAndClick(unpickedBtn);
-      setStatus(`🏮 Vòng quay Cô Bảy: Đang chọn món "${itemName}" lên vòng quay...`);
-      lastWheelActionAt = now;
-      return true;
-    }
-  }
-
-  // C. Main Wheel Panel Controls
-  const btns = Array.from(wheelEl.querySelectorAll('.ben-wheel-btns button')) as HTMLButtonElement[];
-  const spinOneBtn = btns.find((b) => (b.textContent || '').includes('Quay 1 ·'));
-  const spinMultiBtn = btns.find((b) => {
-    const text = b.textContent || '';
-    return text.includes('Quay ') && !text.includes('Quay 1 ·');
-  });
-  const buyTicketBtn = btns.find((b) => (b.textContent || '').includes('Mua vé'));
-  const closeBtn = wheelEl.querySelector('.ben-panel-head button.btn-brown') as HTMLButtonElement | null;
-
-  if (!config.benAutoLantern) {
-    if (closeBtn && !closeBtn.disabled) {
-      triggerPointerDownAndClick(closeBtn);
-      lastWheelActionAt = now;
-    }
-    return true;
-  }
-
-  // If spinOneBtn is disabled, the wheel is currently spinning (3.1s animation) or loading wheel data
-  if (!spinOneBtn || spinOneBtn.disabled) {
-    setStatus('🏮 Vòng quay lồng đèn Cô Bảy đang quay... chờ kết quả!');
-    return true;
-  }
-
-  // Read live ticket & shell counts from the wheel header chip ("🎟️ X · 🐚 Y") or snapshot fallback
-  const chipText = wheelEl.querySelector('.ben-wheel-top .ben-chip')?.textContent || '';
-  const ticketMatch = chipText.match(/🎟️\s*(\d+)/);
-  const liveTickets = ticketMatch ? Number(ticketMatch[1]) : (snap.benNet?.wallet?.tickets ?? 0);
-
-  const boughtMatch = (buyTicketBtn?.textContent || '').match(/\((\d+)\/5\)/);
-  const boughtCount = boughtMatch ? Number(boughtMatch[1]) : (snap.benNet?.wheel?.bought ?? 0);
-  const shells = snap.benNet?.wallet?.shells ?? 0;
-
-  // 1. Ưu tiên mua hết 5 vé hàng ngày trước
-  if (config.benBuyLanternTicket && boughtCount < 5 && shells >= 600 && buyTicketBtn && !buyTicketBtn.disabled) {
-    triggerPointerDownAndClick(buyTicketBtn);
-    setStatus(`🎟️ Mua vé Vòng quay lồng đèn Cô Bảy (${boughtCount + 1}/5 · -600 vỏ sò 🐚)`);
-    lastWheelActionAt = now;
-    return true;
-  }
-
-  // 2. Sau khi đã mua hết vé hàng ngày (hoặc không đủ điều kiện mua tiếp), tiến hành quay
-  const wantMulti = config.benLanternSpinMode === 'x10';
-  if (wantMulti) {
-    if (liveTickets >= 10 && spinMultiBtn && !spinMultiBtn.disabled) {
-      triggerPointerDownAndClick(spinMultiBtn);
-      setStatus(`🏮 Vòng quay Cô Bảy: Nhấn quay x10 (còn ${liveTickets} vé 🎟️)...`);
-      lastWheelActionAt = now;
-      return true;
-    }
-    // Chưa đủ 10 vé để quay x10 -> Đóng bảng quay lại làm việc khác, tích lũy vé
-    if (liveTickets < 10 && closeBtn && !closeBtn.disabled) {
-      triggerPointerDownAndClick(closeBtn);
-      setStatus(
-        liveTickets > 0
-          ? `🏮 Vòng quay Cô Bảy: Có ${liveTickets}/10 vé (chờ đủ 10 vé mới quay x10) ➔ Đóng bảng quay lại làm việc khác!`
-          : '🏮 Đã quay hết vé lồng đèn Cô Bảy ➔ Đóng bảng quay lại câu cá!'
-      );
-      lastWheelActionAt = now;
-      return true;
-    }
-  } else {
-    // Chế độ quay x1: quay từng vé một cho đến khi hết
-    if (liveTickets > 0 && spinOneBtn && !spinOneBtn.disabled) {
-      triggerPointerDownAndClick(spinOneBtn);
-      setStatus(`🏮 Vòng quay Cô Bảy: Nhấn quay 1 vé (còn ${liveTickets} vé 🎟️)...`);
-      lastWheelActionAt = now;
-      return true;
-    }
-    // Đã hết vé -> Đóng bảng quay
-    if (closeBtn && !closeBtn.disabled) {
-      triggerPointerDownAndClick(closeBtn);
-      setStatus('🏮 Đã quay hết vé lồng đèn Cô Bảy ➔ Đóng bảng quay lại câu cá!');
-      lastWheelActionAt = now;
-      return true;
-    }
-  }
-
-  // All tickets have been spun or modal should close
-  if (closeBtn && !closeBtn.disabled) {
-    triggerPointerDownAndClick(closeBtn);
-    setStatus('🏮 Đóng bảng vòng quay lồng đèn Cô Bảy');
-    lastWheelActionAt = now;
-  }
-  return true;
-}
-
-function handleBenAtmPanel(
-  atmPanel: HTMLElement,
-  _snap: GameSnapshot,
-  _config: AppConfig,
-  setStatus: (text: string) => void,
-  delayMs: number
-): boolean {
-  const now = performance.now();
-  if (now - lastAtmActionAt < Math.max(400, delayMs * 0.7)) {
-    return true;
-  }
-
-  // 1. If ATM modal is still loading ("Máy đang khởi động…"), wait for it!
-  const isLoading = Boolean(atmPanel.querySelector('.ben-shop-hello')?.textContent?.includes('khởi động'));
-  if (isLoading) {
-    setStatus('🏧 Đang tải thông tin Cây ATM...');
-    return true;
-  }
-
-  const allBtn = Array.from(atmPanel.querySelectorAll('.ben-atm-pick button.btn')).find((b) =>
-    b.textContent?.includes('Hết')
-  ) as HTMLButtonElement | null;
-  const goBtn = atmPanel.querySelector('.btn-green.ben-atm-go') as HTMLButtonElement | null;
-  const closeBtn = atmPanel.querySelector('.ben-panel-head button.btn-brown') as HTMLButtonElement | null;
-
-  // 2. Select maximum shells ("Hết")
-  if (allBtn && !allBtn.disabled && !allBtn.classList.contains('on')) {
-    lastAtmActionAt = now;
-    triggerPointerDownAndClick(allBtn);
-    return true;
-  }
-
-  // 3. Click cash out ("Rút tiền")
-  if (goBtn && !goBtn.disabled && !goBtn.textContent?.includes('Giờ này nhận đủ rồi')) {
-    lastAtmActionAt = now;
-    triggerPointerDownAndClick(goBtn);
-    setStatus('🏧 Đang bấm nút Rút tiền tại Cây ATM...');
-    return true;
-  }
-
-  // 4. If quota already exhausted or completed, close panel after a brief pause
-  const isQuotaExhausted = Boolean(goBtn?.textContent?.includes('Giờ này nhận đủ rồi'));
-  if (isQuotaExhausted || (goBtn && goBtn.disabled && allBtn?.classList.contains('on'))) {
-    if (closeBtn && !closeBtn.disabled && now - lastAtmActionAt > 1500) {
-      lastAtmActionAt = now;
-      triggerPointerDownAndClick(closeBtn);
-      return true;
-    }
-  }
-
-  return true;
-}
-
-function formatBenCatchSummary(card: HTMLElement, kept: boolean): string {
-  const fishName = card.querySelector('h3')?.textContent?.trim() || 'Cá';
-  const rarityText = card.querySelector('h3')?.nextElementSibling?.textContent?.trim() || 'Thường';
-  const isRainbow = Boolean(card.querySelector('.catch-tag.rainbow'));
-  const isOdd = Boolean(card.querySelector('.catch-tag.odd'));
-  const isRecord = Boolean(card.querySelector('.catch-tag.record'));
-
-  const variantTag = isRainbow ? ' · 🌈 Cầu vồng' : isOdd ? ' · ✨ Cá lạ' : '';
-  const recordTag = isRecord ? ' · 📏 Kỷ lục' : '';
-  const typeLabel = `${rarityText}${variantTag}${recordTag}`;
-
-  const fullText = card.textContent || '';
-  const sizeMatch = fullText.match(/Dài\s+([\d.,]+)\s*cm/i);
-  const sizePart = sizeMatch ? `Dài ${sizeMatch[1]} cm` : '';
-
-  const priceRaw = card.querySelector('.ben-catch-price')?.textContent?.trim() || '';
-  const sellMatch = priceRaw.match(/🐚\s*([\d.,]+)\s*vỏ sò/i);
-  const releaseMatch = priceRaw.match(/thưởng\s*🐚\s*\+?([\d.,]+)/i);
-  const pricePart = sellMatch
-    ? `Bán ${sellMatch[1]} vỏ sò 🐚`
-    : releaseMatch
-      ? `Thả sông +${releaseMatch[1]} vỏ sò 🐚`
-      : priceRaw;
-
-  const ticketMatch = fullText.match(/có\s+(\d+)\s*tấm vé quay/i);
-  const hasTicket = ticketMatch
-    ? ` · 🎟️ +${ticketMatch[1]} vé quay`
-    : fullText.includes('tấm vé quay')
-      ? ' · 🎟️ +1 vé quay'
-      : '';
-
-  const prefix = kept ? '⭐ Giữ lại' : '🐟 Câu được';
-  const parts = [`${prefix}: ${fishName} (${typeLabel})`];
-  if (sizePart) parts.push(sizePart);
-  if (pricePart) parts.push(pricePart);
-  return parts.join(' · ') + hasTicket;
-}
 
 export async function stepBenDoFishing(
   snap: GameSnapshot,
@@ -303,186 +68,20 @@ export async function stepBenDoFishing(
   const now = performance.now();
 
   // 2. Handle Catch Result Modal
-  if (bn.fishing === 'landing' || document.querySelector('.catch-card.ben-catch')) {
-    if (now - lastModalClickAt > Math.max(350, delayMs * 0.7)) {
-      const card = document.querySelector('.catch-card.ben-catch') as HTMLElement | null;
-      if (card) {
-        const landed = bn.landed as {
-          id?: string;
-          fish?: string;
-          rarity?: string;
-          price?: number;
-          size?: number;
-          odd?: boolean;
-          rainbow?: boolean;
-          [key: string]: unknown;
-        } | null | undefined;
-
-        // 1. Determine rarity and special flags
-        let rawRarity = (landed?.rarity || '').toLowerCase();
-        if (!rawRarity) {
-          if (card.classList.contains('mythic')) {
-            rawRarity = 'mythic';
-          } else {
-            const h3Next = card.querySelector('h3')?.nextElementSibling?.textContent?.trim()?.toLowerCase() || '';
-            if (h3Next.includes('thần thoại')) rawRarity = 'mythic';
-            else if (h3Next.includes('huyền thoại')) rawRarity = 'legendary';
-            else if (h3Next.includes('rất hiếm') || h3Next.includes('quý')) rawRarity = 'epic';
-            else if (h3Next.includes('hiếm')) rawRarity = 'rare';
-            else if (h3Next.includes('hơi hiếm')) rawRarity = 'uncommon';
-            else if (h3Next.includes('thường')) rawRarity = 'common';
-          }
-        }
-        if (rawRarity === 'myth') rawRarity = 'mythic';
-        if (rawRarity === 'legend') rawRarity = 'legendary';
-
-        const isRainbow = Boolean(landed?.rainbow || card.querySelector('.catch-tag.rainbow'));
-        const isOdd = Boolean(landed?.odd || card.querySelector('.catch-tag.odd'));
-
-        const allowedRarities = Array.isArray(config.benKeepRarities)
-          ? config.benKeepRarities
-          : ['mythic', 'legendary', 'rainbow', 'odd'];
-
-        const shouldKeep =
-          Boolean(config.benAutoKeepRare) &&
-          ((isRainbow && allowedRarities.includes('rainbow')) ||
-            (isOdd && allowedRarities.includes('odd')) ||
-            allowedRarities.includes(rawRarity));
-
-        const keepBtn = card.querySelector('.ben-catch-btns button.btn-yellow') as HTMLButtonElement | null;
-        const bagBtn = card.querySelector('.ben-catch-btns button.btn-green') as HTMLButtonElement | null;
-
-        // 2. Duplicate kept fish resolution: prioritize keeping higher-priced fish
-        let shouldKeepFinal = shouldKeep;
-        let oldKeptIdToUnkeep: string | null = null;
-        let duplicateNote = '';
-
-        if (shouldKeep && config.benAutoSellDuplicateKept !== false && Array.isArray(bn.basket)) {
-          const fishSpecies = landed?.fish || card.querySelector('h3')?.textContent?.trim() || '';
-          const fishPrice =
-            Number(landed?.price) ||
-            (() => {
-              const priceText = card.querySelector('.ben-catch-price')?.textContent || '';
-              const m = priceText.match(/([\d.,]+)\s*vỏ sò/i);
-              return m ? Number(m[1].replace(/[.,]/g, '')) : 0;
-            })();
-
-          const existingKept = bn.basket.filter(
-            (f: { kept?: boolean; fish?: string; name?: string; price?: number; id?: string }) =>
-              Boolean(f.kept) && (f.fish === fishSpecies || f.name === fishSpecies)
-          );
-
-          if (existingKept.length > 0) {
-            existingKept.sort(
-              (a: { price?: number }, b: { price?: number }) => (Number(b.price) || 0) - (Number(a.price) || 0)
-            );
-            const bestOld = existingKept[0];
-            const bestOldPrice = Number(bestOld.price) || 0;
-
-            if (fishPrice > bestOldPrice) {
-              shouldKeepFinal = true;
-              oldKeptIdToUnkeep = bestOld.id || null;
-              duplicateNote = ` (Đắt hơn con ${bestOldPrice.toLocaleString('vi-VN')}🐚 cũ, bỏ giữ con cũ để bán)`;
-            } else {
-              shouldKeepFinal = false;
-              duplicateNote = ` (Trùng loại, rẻ hơn con đã giữ ${bestOldPrice.toLocaleString('vi-VN')}🐚 -> Bỏ vô giỏ để bán)`;
-            }
-          }
-        }
-
-        if (shouldKeepFinal && keepBtn && !keepBtn.disabled) {
-          const msg = `${formatBenCatchSummary(card, true)}${duplicateNote}`;
-          triggerPointerDownAndClick(keepBtn);
-          setStatus(msg);
-          if (oldKeptIdToUnkeep) {
-            execGameAction('BEN_KEEP_FISH', { id: oldKeptIdToUnkeep, on: false });
-          }
-        } else if (bagBtn) {
-          const msg = `${formatBenCatchSummary(card, false)}${duplicateNote}`;
-          triggerPointerDownAndClick(bagBtn);
-          setStatus(msg);
-        }
-        lastModalClickAt = now;
-        onCatchIncrement();
-        if (config.benHumanJitter !== false) {
-          // ~6% chance to take a short micro-break (3 - 5.5s) like a human player
-          if (Math.random() < 0.06) {
-            const breakDur = Math.floor(Math.random() * 2500) + 3000;
-            microBreakUntil = now + breakDur;
-          }
-          nextCastDelayMs = delayMs + Math.floor(Math.random() * 700) + 150;
-        } else {
-          nextCastDelayMs = delayMs;
-        }
-      }
+  const catchResult = handleBenCatchModal(snap, config, setStatus, onCatchIncrement, delayMs);
+  if (catchResult.handled) {
+    if (catchResult.microBreakMs && catchResult.microBreakMs > 0) {
+      microBreakUntil = now + catchResult.microBreakMs;
+    }
+    if (typeof catchResult.nextCastDelayMs === 'number') {
+      nextCastDelayMs = catchResult.nextCastDelayMs;
     }
     return { finishedArea: false };
   }
 
-  // 3. Handle Gift Modal
-  const giftBtn = document.querySelector('.ben-gift-card button.btn-green') as HTMLButtonElement | null;
-  if (giftBtn && isVisible(giftBtn) && now - lastModalClickAt > 500) {
-    triggerPointerDownAndClick(giftBtn);
-    lastModalClickAt = now;
+  // 3. Handle Gift / Lantern Wheel / ATM / Caught Cricket / Bout Modals
+  if (handleBenOverlayModals(snap, config, setStatus, delayMs)) {
     return { finishedArea: false };
-  }
-
-  // 3b. Handle Lantern Wheel Modal (.ben-wheel) interactively: spin -> log result -> click confirm -> spin next
-  const wheelEl = document.querySelector('.ben-wheel') as HTMLElement | null;
-  if (wheelEl && isVisible(wheelEl)) {
-    handleBenLanternWheel(wheelEl, snap, config, setStatus, delayMs);
-    return { finishedArea: false };
-  }
-
-  // 3b-2. Handle ATM Modal (.panel.ben-panel.ben-atm)
-  const atmPanel = document.querySelector('.panel.ben-panel.ben-shop.ben-atm') as HTMLElement | null;
-  if (atmPanel && isVisible(atmPanel)) {
-    handleBenAtmPanel(atmPanel, snap, config, setStatus, delayMs);
-    return { finishedArea: false };
-  }
-
-  // 3c. Handle Caught Cricket Modal (.panel.ben-cr-caught)
-  const caughtCard = document.querySelector('.panel.ben-cr-caught') as HTMLElement | null;
-  if (caughtCard && isVisible(caughtCard) && now - lastCricketCatchAt > 600) {
-    const cName = caughtCard.querySelector('h3')?.textContent?.trim() || 'Dế';
-    const cRarity = caughtCard.querySelector('.ben-cr-rarity')?.textContent?.trim() || '';
-    const isNew = Boolean(caughtCard.querySelector('.ben-cr-new'));
-    const tubeBtn = caughtCard.querySelector('.ben-bye-actions button.btn-green') as HTMLButtonElement | null;
-    const releaseBtn = caughtCard.querySelector('.ben-bye-actions button.btn-brown') as HTMLButtonElement | null;
-
-    if (tubeBtn && !tubeBtn.disabled) {
-      triggerPointerDownAndClick(tubeBtn);
-      setStatus(`🦗 Bắt được ${cName} (${cRarity})${isNew ? ' ✨ Loài mới trong sổ!' : ''} -> Đã bỏ vô ống tre!`);
-    } else if (releaseBtn && !releaseBtn.disabled) {
-      triggerPointerDownAndClick(releaseBtn);
-      setStatus(`🦗 Bắt được ${cName} (${cRarity}) -> Đã thả về đồng lấy vỏ sò 🐚`);
-    }
-    lastCricketCatchAt = now;
-    return { finishedArea: false };
-  }
-
-  // 3d. Handle Cricket Arena Bout Modal (.panel.ben-bout). Tickles are timed by the page-hook watcher.
-  const boutPanel = document.querySelector('.panel.ben-bout') as HTMLElement | null;
-  if (boutPanel && isVisible(boutPanel)) {
-    const endLine = boutPanel.querySelector('.ben-bout-line.end');
-    const closeBtn = boutPanel.querySelector('.ben-panel-head button.btn-brown') as HTMLButtonElement | null;
-
-    if (endLine) {
-      if (closeBtn && !closeBtn.disabled && now - lastBoutCloseAt > 1500) {
-        const lineText = endLine.textContent?.trim() || 'Trận đấu kết thúc';
-        triggerPointerDownAndClick(closeBtn);
-        setStatus(`🥊 Sới Dế: ${lineText} -> Đóng bảng đấu`);
-        lastBoutCloseAt = now;
-      }
-      return { finishedArea: false };
-    }
-
-    const tickleBtn = boutPanel.querySelector('button.ben-bout-tickle') as HTMLButtonElement | null;
-    if (tickleBtn) {
-      const left = tickleBtn.textContent?.match(/còn\s*(\d+)/)?.[1] ?? '?';
-      setStatus(`🥊 Sới Dế: Đang thi đấu${config.benAutoTickle ? ' · tự khều râu đúng nhịp' : ''} (còn ${left} lần khều)`);
-      return { finishedArea: false };
-    }
   }
 
   // 3e. Cricket hunt in progress: the page-hook watcher traps at the right moment
@@ -515,31 +114,13 @@ export async function stepBenDoFishing(
   }
 
   // 5. Waiting for fish
-  const serverNow = snap.benNet?.ti?.skew ? Date.now() + snap.benNet.ti.skew : Date.now();
-  const hlwLive = bn.hlwLive as { on?: boolean; endsAt?: number | null } | null | undefined;
-  const isHlwLive = Boolean(
-    hlwLive?.on && (hlwLive.endsAt === null || hlwLive.endsAt === undefined || Date.now() < hlwLive.endsAt)
-  );
-  const bossStart = typeof bn.hlwBoss?.start === 'number' ? bn.hlwBoss.start : 0;
-  const isBossAliveTime = Boolean(bossStart > 0 && serverNow >= bossStart && serverNow < bossStart + 180000);
-  const isBossActive = Boolean(
-    config.benAutoBossHunt !== false &&
-    (isBossAliveTime || bn.hlwBoss || document.querySelector('.hlw-boss'))
-  );
-
-  const msToNextBoss = Math.ceil(serverNow / 1800000) * 1800000 - serverNow;
-  const secondsToNextBoss = Math.ceil(msToNextBoss / 1000);
-  const hasCountdownSoonInDom = Boolean(document.querySelector('.hlw-boss-countdown.soon'));
-  const isBossImpending = Boolean(
-    config.benAutoBossHunt !== false &&
-    isHlwLive &&
-    !isBossActive &&
-    ((secondsToNextBoss <= 10 && secondsToNextBoss > 0) || hasCountdownSoonInDom)
+  const { isBossActive, isBossImpending, secondsToNextBoss } = computeWharfBossStatus(
+    bn,
+    config.benAutoBossHunt !== false
   );
 
   if (bn.fishing === 'wait' || bn.fishing === 'nibble' || bn.fishing === 'casting') {
     if (isBossActive || isBossImpending) {
-      // Boss Bí Ngô xuất hiện hoặc sắp xuất hiện (<= 10s): Thu cần ngay lập tức để chuyển sang đón / bám Boss
       const pullBtn = document.querySelector('button.ben-cast.btn-brown') as HTMLButtonElement | null;
       if (pullBtn && isVisible(pullBtn)) {
         triggerPointerDownOnly(pullBtn);
@@ -590,7 +171,10 @@ export async function stepBenDoFishing(
     }
 
     if (prep && prep.exhausted) {
-      const reasonMsg = typeof prep.reason === 'string' ? prep.reason : '🛶 Bến Đò: Đã hết Sức câu / mồi -> Chuyển sang khu vực tiếp theo!';
+      const reasonMsg =
+        typeof prep.reason === 'string'
+          ? prep.reason
+          : '🛶 Bến Đò: Đã hết Sức câu / mồi -> Chuyển sang khu vực tiếp theo!';
       setStatus(reasonMsg);
       return { finishedArea: true, exhausted: true };
     }

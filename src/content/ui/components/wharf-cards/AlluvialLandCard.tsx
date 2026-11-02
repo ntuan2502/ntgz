@@ -1,0 +1,348 @@
+import React from 'react';
+import { AppConfig } from '@/shared/types/config';
+import { BAI_CROPS_META } from '@/shared/constants/default-config';
+import { Switch } from '@/components/ui/switch';
+import { HudSelect } from '../HudSelect';
+
+interface AlluvialLandCardProps {
+  config: AppConfig;
+  updateField: <K extends keyof AppConfig>(key: K, value: AppConfig[K]) => void;
+  onUpdateConfig: (updater: (prev: AppConfig) => AppConfig) => void;
+}
+
+export function AlluvialLandCard({ config, updateField, onUpdateConfig }: AlluvialLandCardProps) {
+  const cropOptions = BAI_CROPS_META.map((c) => ({
+    value: c.id,
+    label: `${c.name} (${c.minutes}p · ${c.pearl ? `${c.pearlSeed}🦪` : `${c.seed}🐚`} · Thu ${c.yield} ${c.unit})`,
+  }));
+
+  const isCocoProcessOn =
+    config.benAutoCocoProcess !== undefined
+      ? Boolean(config.benAutoCocoProcess)
+      : config.benAutoCandy !== false || Boolean(config.benAutoCocoSell);
+
+  const cocoMode: 'candy' | 'sell' =
+    config.benCocoMode ?? (config.benAutoCocoSell && config.benAutoCandy === false ? 'sell' : 'candy');
+
+  const handleToggleCocoParent = (checked: boolean) => {
+    onUpdateConfig((prev) => {
+      const currentMode: 'candy' | 'sell' = prev.benCocoMode ?? 'candy';
+      return {
+        ...prev,
+        benAutoCocoProcess: checked,
+        benCocoMode: currentMode,
+        benAutoCandy: checked && currentMode === 'candy',
+        benAutoCocoSell: checked && currentMode === 'sell',
+      };
+    });
+  };
+
+  const handleSelectCocoMode = (nextMode: 'candy' | 'sell') => {
+    onUpdateConfig((prev) => ({
+      ...prev,
+      benAutoCocoProcess: true,
+      benCocoMode: nextMode,
+      benAutoCandy: nextMode === 'candy',
+      benAutoCocoSell: nextMode === 'sell',
+    }));
+  };
+
+  return (
+    <div className="space-y-3 text-xs">
+      <p className="text-[11px] text-slate-500 italic">
+        🌾 Vận hành trọn gói hệ sinh thái Chợ Bãi &amp; Đất Của Mình: Luống rau, Lò kẹo dừa, Sân phơi khô cá, Chuồng gà vịt và Lưới cá sông.
+      </p>
+
+      {/* Mục 1: Đi đò & Đất bãi */}
+      <div className="space-y-2">
+        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+          <div>
+            <span className="font-medium text-slate-800">⛵ Tự đi đò qua chăm sóc đất bãi khi có việc</span>
+            <p className="text-[10px] text-slate-400">
+              Chỉ qua sông khi rau chín, đất trống, kẹo xong, dừa/cá chín; xong việc lập tức về Bến Đò câu cá tiếp.
+            </p>
+          </div>
+          <Switch
+            size="sm"
+            checked={Boolean(config.benAutoBaiFerry ?? true)}
+            onCheckedChange={(c) => updateField('benAutoBaiFerry', c)}
+          />
+        </label>
+
+        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+          <div>
+            <span className="font-medium">📜 Tự mua giấy tay đất bãi (100.000 🐚)</span>
+            <p className="text-[10px] text-slate-400">
+              Tự động mua một mảnh đất bãi của Ông Tám khi ví có đủ 100k vỏ sò nếu chưa có đất.
+            </p>
+          </div>
+          <Switch
+            size="sm"
+            checked={Boolean(config.benAutoBuyLand ?? true)}
+            onCheckedChange={(c) => updateField('benAutoBuyLand', c)}
+          />
+        </label>
+      </div>
+
+      {/* Mục 2: Luống rau bãi phù sa */}
+      <div className="border-t border-slate-200/80 pt-2 space-y-2">
+        <span className="font-semibold text-emerald-800 block text-[11px]">🌱 Luống Rau &amp; Canh Tác Phù Sa</span>
+
+        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+          <div>
+            <span className="font-medium">🧺 Tự thu hoạch, tưới nước &amp; bón phân rau màu</span>
+            <p className="text-[10px] text-slate-400">
+              Tự gặt rau chín (thu Bí Ngô Con 🎃), bắt sâu, tưới luống khô và bón phân.
+            </p>
+          </div>
+          <Switch
+            size="sm"
+            checked={Boolean(config.benAutoBaiCrops ?? true)}
+            onCheckedChange={(c) => updateField('benAutoBaiCrops', c)}
+          />
+        </label>
+
+        <div className="space-y-1">
+          <span className="text-slate-700 font-medium">Hạt giống ưu tiên gieo trồng (Cô Sáu):</span>
+          <HudSelect
+            value={config.benBaiPreferCrop || 'rauMuong'}
+            onValueChange={(val) => updateField('benBaiPreferCrop', val)}
+            options={cropOptions}
+          />
+        </div>
+
+        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+          <div>
+            <span className="font-medium">🛶 Tự bán rau tươi cho Ghe Lái Tư</span>
+            <p className="text-[10px] text-slate-400">
+              Bán toàn bộ rau củ thu hoạch cho thương lái ở Chợ Bãi lấy vỏ sò.
+            </p>
+          </div>
+          <Switch
+            size="sm"
+            checked={Boolean(config.benAutoBaiSellCrops ?? true)}
+            onCheckedChange={(c) => updateField('benAutoBaiSellCrops', c)}
+          />
+        </label>
+
+        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+          <div>
+            <span className="font-medium">🥥 Tự hái dừa xiêm &amp; trồng dừa con</span>
+            <p className="text-[10px] text-slate-400">
+              Hái dừa xiêm ngọt lịm khi chín &amp; tự mua cây dừa con trồng vào mé sông còn trống.
+            </p>
+          </div>
+          <Switch
+            size="sm"
+            checked={Boolean(config.benAutoCocoPick ?? true)}
+            onCheckedChange={(c) => updateField('benAutoCocoPick', c)}
+          />
+        </label>
+      </div>
+
+      {/* Mục 3: Chuỗi Chế Biến Đặc Sản & Xử lý Dừa */}
+      <div className="border-t border-slate-200/80 pt-2 space-y-2">
+        <span className="font-semibold text-amber-800 block text-[11px]">🍬 Xử Lý Dừa Xiêm &amp; Chế Biến Đặc Sản</span>
+
+        {/* Switch Cha: Xử lý dừa xiêm (Làm kẹo vs Bán dừa) */}
+        <div className="rounded-lg border border-amber-200/80 bg-amber-50/40 p-2.5 space-y-2">
+          <label className="flex items-center justify-between text-slate-800 cursor-pointer">
+            <div>
+              <span className="font-semibold text-amber-900">🥥 Tự động xử lý dừa xiêm sau thu hoạch</span>
+              <p className="text-[10px] text-slate-500">
+                Bật/Tắt thao tác xử lý dừa (chuyển đổi giữa Làm kẹo dừa hoặc Bán dừa tươi).
+              </p>
+            </div>
+            <Switch
+              size="sm"
+              checked={isCocoProcessOn}
+              onCheckedChange={handleToggleCocoParent}
+            />
+          </label>
+
+          {isCocoProcessOn && (
+            <div className="pt-1.5 border-t border-amber-200/60 space-y-2">
+              <div className="grid grid-cols-2 gap-1.5 bg-white/90 p-1 rounded-lg border border-amber-200/80">
+                <button
+                  type="button"
+                  onClick={() => handleSelectCocoMode('candy')}
+                  className={`py-1.5 px-2 rounded-md text-[11px] font-semibold transition-all cursor-pointer flex items-center justify-center gap-1 ${
+                    cocoMode === 'candy'
+                      ? 'bg-amber-500 text-white shadow-2xs'
+                      : 'text-slate-600 hover:bg-amber-50'
+                  }`}
+                >
+                  <span>🍬</span>
+                  <span>Làm kẹo dừa</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectCocoMode('sell')}
+                  className={`py-1.5 px-2 rounded-md text-[11px] font-semibold transition-all cursor-pointer flex items-center justify-center gap-1 ${
+                    cocoMode === 'sell'
+                      ? 'bg-emerald-600 text-white shadow-2xs'
+                      : 'text-slate-600 hover:bg-emerald-50'
+                  }`}
+                >
+                  <span>🥥</span>
+                  <span>Bán dừa tươi</span>
+                </button>
+              </div>
+
+              {cocoMode === 'candy' ? (
+                <div className="space-y-1.5 pl-1">
+                  <p className="text-[10px] text-amber-800">
+                    🔥 Tự nhóm lửa nấu dừa + đường mía (2h/mẻ) khi lò trống và thu hoạch kẹo dừa khi ra lò.
+                  </p>
+                  <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+                    <span className="text-[11px] font-medium">🛒 Tự mua đường mía khi thiếu để nấu kẹo</span>
+                    <Switch
+                      size="sm"
+                      checked={Boolean(config.benAutoBuySugar ?? true)}
+                      onCheckedChange={(c) => updateField('benAutoBuySugar', c)}
+                    />
+                  </label>
+                </div>
+              ) : (
+                <p className="text-[10px] text-emerald-800 pl-1">
+                  💰 Tự động đem toàn bộ dừa tươi thu hoạch ra Chợ Bãi bán trực tiếp cho Chú Bảy Dừa lấy vỏ sò (không nấu kẹo).
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+
+        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+          <div>
+            <span className="font-medium">🐟 Tự phơi cá bến đò lên nong &amp; thu khô cá</span>
+            <p className="text-[10px] text-slate-400">
+              Lọc cá thường câu được ở Bến Đò đem lên các nong tre phơi khô (giá trị gấp nhiều lần cá tươi).
+            </p>
+          </div>
+          <Switch
+            size="sm"
+            checked={Boolean(config.benAutoDryFish ?? true)}
+            onCheckedChange={(c) => updateField('benAutoDryFish', c)}
+          />
+        </label>
+
+        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+          <div>
+            <span className="font-medium">📜 Tự cất khô cá vào Sổ khô cá (+⭐ Nổi tiếng)</span>
+            <p className="text-[10px] text-slate-400">
+              Ưu tiên cất loài khô cá mới hoặc kích thước lớn hơn vào bộ sưu tập DryDex.
+            </p>
+          </div>
+          <Switch
+            size="sm"
+            checked={Boolean(config.benAutoDryDexPut ?? true)}
+            onCheckedChange={(c) => updateField('benAutoDryDexPut', c)}
+          />
+        </label>
+
+        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+          <div>
+            <span className="font-medium">🏪 Tự bán kẹo dừa &amp; khô cá cho Cô Hai</span>
+            <p className="text-[10px] text-slate-400">
+              Ghé Tiệm đặc sản Cô Hai ở Chợ Bãi bán thanh kẹo dừa và khô cá thừa lấy vỏ sò.
+            </p>
+          </div>
+          <Switch
+            size="sm"
+            checked={Boolean(config.benAutoCandySell ?? true)}
+            onCheckedChange={(c) => updateField('benAutoCandySell', c)}
+          />
+        </label>
+      </div>
+
+      {/* Mục 4: Chăn Nuôi & Thủy Sản Bãi Bồi */}
+      <div className="border-t border-slate-200/80 pt-2 space-y-2">
+        <span className="font-semibold text-blue-800 block text-[11px]">🐔 Chăn Nuôi Gia Cầm &amp; Lưới Quây Cá Sông</span>
+
+        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+          <div>
+            <span className="font-medium">🥚 Tự nhặt trứng gà, trứng vịt trong ổ rơm</span>
+            <p className="text-[10px] text-slate-400">
+              Tự gom trứng gà vịt trong chuồng tránh để đầy ổ gà vịt ngừng đẻ.
+            </p>
+          </div>
+          <Switch
+            size="sm"
+            checked={Boolean(config.benAutoCoop ?? true)}
+            onCheckedChange={(c) => updateField('benAutoCoop', c)}
+          />
+        </label>
+
+        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+          <div>
+            <span className="font-medium">💊 Tự mua thuốc &amp; chữa bệnh cho gà vịt</span>
+            <p className="text-[10px] text-slate-400">
+              Phát hiện gia cầm bị ủ rũ, tự mua thuốc thú y Bà Bảy cho uống tránh chết gia cầm.
+            </p>
+          </div>
+          <Switch
+            size="sm"
+            checked={Boolean(config.benAutoCureBirds ?? true)}
+            onCheckedChange={(c) => updateField('benAutoCureBirds', c)}
+          />
+        </label>
+
+        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+          <div>
+            <span className="font-medium">🥚 Tự bán trứng gia cầm cho Chú Năm</span>
+            <p className="text-[10px] text-slate-400">
+              Ghé sạp Chú Năm ở Chợ Bãi bán trứng gà và trứng vịt lấy vỏ sò.
+            </p>
+          </div>
+          <Switch
+            size="sm"
+            checked={Boolean(config.benAutoEggSell ?? true)}
+            onCheckedChange={(c) => updateField('benAutoEggSell', c)}
+          />
+        </label>
+
+        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+          <div>
+            <span className="font-medium">🎣 Tự kéo lưới thu hoạch cá sông trưởng thành</span>
+            <p className="text-[10px] text-slate-400">
+              Tự kéo lưới quây mé sông thu hoạch cá lớn đem vào kho.
+            </p>
+          </div>
+          <Switch
+            size="sm"
+            checked={Boolean(config.benAutoNet ?? true)}
+            onCheckedChange={(c) => updateField('benAutoNet', c)}
+          />
+        </label>
+
+        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+          <div>
+            <span className="font-medium">🌾 Tự mua cám &amp; rải cám nuôi cá sông</span>
+            <p className="text-[10px] text-slate-400">
+              Tự mua bao cám từ ghe Anh Mười rải cho cá ăn khi đói giúp cá lớn nhanh.
+            </p>
+          </div>
+          <Switch
+            size="sm"
+            checked={Boolean(config.benAutoFeedNet ?? true)}
+            onCheckedChange={(c) => updateField('benAutoFeedNet', c)}
+          />
+        </label>
+
+        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+          <div>
+            <span className="font-medium">🐟 Tự bán cá nuôi cho Ghe Anh Mười</span>
+            <p className="text-[10px] text-slate-400">
+              Bán cá kéo lưới cho ghe Anh Mười ở Chợ Bãi thu vỏ sò.
+            </p>
+          </div>
+          <Switch
+            size="sm"
+            checked={Boolean(config.benAutoNetSell ?? true)}
+            onCheckedChange={(c) => updateField('benAutoNetSell', c)}
+          />
+        </label>
+      </div>
+    </div>
+  );
+}

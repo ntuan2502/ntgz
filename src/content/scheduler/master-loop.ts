@@ -19,7 +19,6 @@ import {
 let isBusy = false;
 let currentAreaIdx = 0;
 let lastFarmDoneDay = -1;
-let benExhaustedUntil = 0;
 let seaExhaustedUntil = 0;
 let seaExhaustedDay = -1;
 let farmstayCooldownUntil = 0;
@@ -35,7 +34,6 @@ export function toggleAutoAll(): void {
     setLockedTabArea(null);
     currentAreaIdx = 0;
     lastFarmDoneDay = -1;
-    benExhaustedUntil = 0;
     seaExhaustedUntil = 0;
     farmstayCooldownUntil = 0;
     resetFarmTiming();
@@ -56,7 +54,6 @@ export function toggleAutoTab(): void {
     config.runMode = 'tab';
     setLockedTabArea(config.activeTab);
     lastFarmDoneDay = -1;
-    benExhaustedUntil = 0;
     seaExhaustedUntil = 0;
     farmstayCooldownUntil = 0;
     resetFarmTiming();
@@ -72,7 +69,6 @@ export function startAuto(mode: 'all' | 'tab' = 'all'): void {
   config.running = true;
   config.runMode = mode;
   lastFarmDoneDay = -1;
-  benExhaustedUntil = 0;
   seaExhaustedUntil = 0;
   farmstayCooldownUntil = 0;
   resetFarmTiming();
@@ -141,7 +137,6 @@ export async function tickAuto(): Promise<void> {
       setStatus(`😴 Đã ${formatClock(snap.minutes)} -> Về nhà đi ngủ qua ngày mới...`);
       await execGameAction('SLEEP_NOW');
       currentAreaIdx = 0;
-      benExhaustedUntil = 0;
       seaExhaustedUntil = 0;
       farmstayCooldownUntil = 0;
       await sleep(1200);
@@ -256,33 +251,6 @@ export async function tickAuto(): Promise<void> {
           }
         }
       }
-    } else if (currentArea === 'benDo') {
-      if (enabledAreas.includes('farm') && lastFarmDoneDay !== snap.day) {
-        currentAreaIdx = enabledAreas.indexOf('farm');
-        isBusy = false;
-        return;
-      }
-
-      if (Date.now() < benExhaustedUntil && enabledAreas.length > 1) {
-        currentAreaIdx = (currentAreaIdx + 1) % enabledAreas.length;
-        await sleep(1000);
-        isBusy = false;
-        return;
-      }
-
-      const res = await stepBenDoFishing(snap, config, setStatus, () => {});
-      if (res.finishedArea) {
-        if (res.exhausted) {
-          benExhaustedUntil = Date.now() + 180000;
-        }
-        if (enabledAreas.length > 1) {
-          currentAreaIdx = (currentAreaIdx + 1) % enabledAreas.length;
-        } else if (config.autoSleep && config.sleepOnFishingLimit && (snap.minutes || 0) >= targetSleepMinutes) {
-          setStatus('🌙 Đã hết sức câu ở Bến Đò buổi tối -> Về nhà đi ngủ...');
-          await execGameAction('SLEEP_NOW');
-          await sleep(1200);
-        }
-      }
     } else if (currentArea === 'sea') {
       if (enabledAreas.includes('farm') && lastFarmDoneDay !== snap.day) {
         currentAreaIdx = enabledAreas.indexOf('farm');
@@ -306,7 +274,6 @@ export async function tickAuto(): Promise<void> {
           setStatus('🌙 Đã hết ngày ở Biển -> Về nhà đi ngủ qua ngày mới...');
           await execGameAction('SLEEP_NOW');
           currentAreaIdx = 0;
-          benExhaustedUntil = 0;
           seaExhaustedUntil = 0;
           farmstayCooldownUntil = 0;
           await sleep(1200);
