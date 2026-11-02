@@ -5,6 +5,53 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.13.0] - 2026-11-02
+
+### 🌾 Tự Động Hóa Toàn Diện Đất Bãi Phù Sa & Chợ Bãi (Alluvial Land & Market Automation)
+- **Chu Trình Đi Đò & Kiểm Tra Ruộng Đất Bãi Tự Nhiên (Natural Ferry Transit & Routine)**:
+  - Tự động đi đò ngang Ông Tám sang Chợ Bãi, bước vào cổng "Đường vô đất" và kiểm tra mảnh ruộng của mình theo chu kỳ hoặc khi có cơ sở vật chất sẵn sàng thu hoạch.
+  - Tách biệt khu vực nghiêm ngặt (`ben` ➔ `bai` ➔ `farm`), không gửi lệnh vượt vùng, tránh kiểm tra vị trí của máy chủ game.
+- **Tự Động Hóa 100% Các Cơ Sở Vật Chất Đất Bãi (Phases 1-4 Facilities)**:
+  - **Vườn rau bãi bồi**: Tự động thu hoạch rau chín, bắt sâu bệnh, xới đất và gieo hạt theo giống ưu tiên, tưới nước luống khô, bón phân hữu cơ/sinh học. Mô phỏng phương thức `toolTap` hướng mặt về thửa đất thao tác từ xa an toàn.
+  - **Gốc dừa xiêm & Trồng dừa con**: Tự động hái dừa xiêm chín tại 6 gốc dừa và tự động trồng dừa giống vào các hố đất trống.
+  - **Lò kẹo dừa thơm ngon**: Tự động nấu kẹo dừa theo công thức và thu hoạch kẹo thành phẩm vào kho đồ.
+  - **Sân phơi khô cá & Sổ khô cá**:
+    - Ưu tiên phơi các con cá có giá trị cao nhất trước (`price` giảm dần, `size` giảm dần) và lấp đầy các nong phơi trống.
+    - Tự động cất khô cá đạt chuẩn vào bộ sưu tập Sổ khô cá để nhận Sao Nổi tiếng (`⭐ Nổi tiếng`).
+    - Hỗ trợ công tắc cho phép/chặn xếp cả cá đã ghim giữ (`kept: true`) lên nong phơi.
+  - **Chuồng gà vịt**:
+    - Nhặt trứng gà, trứng vịt từ các ổ rơm rạ khi có trứng.
+    - Tự động phát hiện gia cầm bị bệnh ủ rũ và cho uống thuốc kịp thời trước khi chết.
+    - Thả gà mái tơ / vịt mái tơ giống vào chuồng theo sức chứa thực tế, kiểm tra dung lượng để tránh tình trạng spam bấm nút khi đã đầy chuồng.
+  - **Lưới quây nuôi cá sông**:
+    - Kéo lưới thu hoạch cá trưởng thành.
+    - Tự động rải cám cho đàn cá sông ăn no khi đói, tận dụng bonus con nước lớn để cá lớn nhanh.
+    - Thả cá giống vào khúc sông quây lưới, kiểm tra sức chứa lưới quây trước khi thả.
+  - **Bãi bùn mò cua bắt ốc khi Nước ròng**:
+    - Tự động kiểm tra chu kỳ thủy triều, chỉ lội bùn khi con nước rút cạn (`phase === 'rong'`).
+    - Dò tìm chính xác các ổ sủi bọt khí (`farm.mudHints`) để mò bắt cua đồng và ốc bươu (tốn ⚡2/ổ), lội bùn liên tục cho đến khi sạch ổ hoặc hết thể lực.
+    - Cập nhật thông báo chi tiết lý do kết thúc việc vườn (nước ngập, đã mò hết 8/8 ổ, hoặc kiệt sức) thay vì rời vườn âm thầm.
+- **Tự Động Giao Thương & Dịch Vụ Tại Chợ Bãi (Market Automation & Supplies)**:
+  - Tự động bán nông sản, bán dừa tươi tại Cà phê chòi Chị Út (tùy chọn chuyển đổi linh hoạt: chỉ bán dừa hoặc nấu kẹo dừa).
+  - Tự động bán đặc sản kẹo dừa và cá khô tại tiệm Cô Hai; bán trứng gà/vịt cho Chú Năm; bán cá lưới sông cho Anh Mười.
+  - Tự động bổ sung nguyên liệu còn thiếu: mua dừa giống tại Vựa Cô Sáu, mua gia cầm & thuốc chữa bệnh tại Sạp Bà Bảy, mua cá giống & cám tại Ghe Anh Mười, mua hạt giống tại Sạp Chị Ba.
+  - Điểm danh nhận phần hỗ trợ HTX Cô Tư hàng ngày tại Chợ Bãi.
+  - Bốc thăm may mắn que tre tại Sạp Thím Hên (tùy chọn hộp quà lưng hoặc thú cưng).
+- **Tùy Chọn Bật/Tắt Độc Lập Toàn Bộ Tính Năng (Granular Modular Toggles)**:
+  - Cho phép người dùng bật/tắt thủ công từng hạng mục nhỏ: gieo trồng, tưới nước, bắt sâu, bón phân, thu hoạch dừa, lò kẹo, sân phơi cá, cất sổ khô, chuồng gà vịt, lưới quây cá, mò bùn nước ròng, bán đặc sản, điểm danh HTX, bốc thăm may mắn.
+  - Bảo vệ cá quý: Tự động bảo vệ top 6 con cá giá trị cao nhất trong giỏ cá không bị bán nhầm tại Vựa Anh Tư.
+
+### 🎃 Tối Ưu Hóa Săn Boss Bí Ngô & Điểm Câu Bến Đò
+- **Ưu tiên #1 săn Boss Bí Ngô**: Tự động ngắt câu cá và di chuyển nhân vật về vị trí trung tâm bến tàu trước 10 giây khi Boss sự kiện chuẩn bị xuất hiện, luôn ưu tiên diệt Boss trước tiên.
+- **Phân bổ điểm câu ngẫu nhiên thật sự**: Áp dụng thuật toán random đa điểm câu (Cầu tàu lớn, Cầu tre, Bờ sông, Bụi trúc) mỗi khi bắt đầu phiên câu, không còn bị dồn cố định về Cầu tàu lớn.
+- **Bảng vàng 200 loài cá**: Cập nhật bộ đếm danh mục cá động theo dữ liệu server thay vì hardcode 89 loài cá cũ.
+
+### 🔋 Chế Độ Tiết Kiệm & Hiệu Năng Thông Minh (Smart Performance)
+- **Smart Sleep Mode**: Tự động kéo dài thời gian nghỉ và giảm tần suất polling khi tất cả cơ sở vật chất nông trại đang trong thời gian chờ lớn.
+- **Tự dọn dẹp giỏ cá khi gần đầy**: Tự động ghé Vựa Anh Tư bán cá khi giỏ cá đạt ngưỡng tùy chỉnh (mặc định 90%) để tránh tràn giỏ làm gián đoạn câu cá.
+
+---
+
 ## [1.12.0] - 2026-11-01
 
 ### 🌟 Tính Năng Mới & Nâng Cấp Bến Đò Toàn Diện (Wharf Overhaul & Anti-Detection)
