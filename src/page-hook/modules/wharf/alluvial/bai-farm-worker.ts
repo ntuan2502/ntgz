@@ -465,14 +465,20 @@ export function runBaiFarmWorkStep(
         }
       }
 
-      // C. Put fish from basket onto empty racks
+      // C. Put fish from basket onto empty racks (ưu tiên cá có giá trị cao nhất trước)
       const maxRacks = 6 + ((farm.dryLv || 1) - 1) * 2;
       const emptyRackCount = Math.max(0, maxRacks - racks.length);
       const basket = stores.benNet?.getState().basket || [];
-      const dryableCandidates = basket.filter(
-        (f: { id?: string; kept?: boolean; odd?: boolean; rainbow?: boolean }) =>
-          Boolean(f.id && !f.kept && !f.odd && !f.rainbow)
-      );
+      const dryableCandidates = basket
+        .filter(
+          (f: { id?: string; kept?: boolean; odd?: boolean; rainbow?: boolean; price?: number; size?: number; fish?: string }) =>
+            Boolean(f.id && !f.kept && !f.odd && !f.rainbow)
+        )
+        .sort((a, b) => {
+          const priceDiff = (Number(b.price) || 0) - (Number(a.price) || 0);
+          if (priceDiff !== 0) return priceDiff;
+          return (Number(b.size) || 0) - (Number(a.size) || 0);
+        });
 
       if (emptyRackCount > 0 && dryableCandidates.length > 0) {
         const walk = ensureAtSceneTile(
@@ -489,13 +495,40 @@ export function runBaiFarmWorkStep(
 
         const fishToDry = dryableCandidates[0];
         const fishName = getFishDisplayName(fishToDry.fish || fishToDry.id);
+        const fishPrice = Number(fishToDry.price) || 0;
         sendBenWs({ t: 'dryPut', fish: fishToDry.id });
-        closeBaiPanel();
+
+        // Optimistically record the rack being used and remove from basket
+        farm.racks = [
+          ...(farm.racks || []),
+          {
+            slot: racks.length,
+            fish: fishToDry.fish || '',
+            size: fishToDry.size,
+            price: fishPrice,
+            readyAt: Math.floor(nowMs / 1000) + 6 * 3600,
+          },
+        ];
+        if (stores.benNet) {
+          const curBasket = stores.benNet.getState().basket || [];
+          stores.benNet.setState({
+            basket: curBasket.filter((f: { id?: string }) => f.id !== fishToDry.id),
+          });
+        }
+
+        const remainingEmptyRacks = Math.max(0, maxRacks - farm.racks.length);
+        const remainingCandidates = dryableCandidates.slice(1);
+        const hasMoreToDry = remainingEmptyRacks > 0 && remainingCandidates.length > 0;
+
+        if (!hasMoreToDry) {
+          closeBaiPanel();
+        }
+
         return {
-          nextWorkStep: 9,
+          nextWorkStep: hasMoreToDry ? 8 : 9,
           result: {
             acted: true,
-            msg: `🐟 Sân Phơi Khô Cá: Đã đưa cá ${fishName} lên nong phơi!`,
+            msg: `🐟 Sân Phơi Khô Cá: Đã đưa cá giá trị cao ${fishName} (${fishPrice.toLocaleString('vi-VN')}🐚, ${fishToDry.size || 0}cm) lên nong phơi (${farm.racks.length}/${maxRacks})!`,
             allowCast: false,
           },
         };

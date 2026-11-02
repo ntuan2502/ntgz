@@ -274,7 +274,7 @@ export function AlluvialLandCard({ config, updateField, onUpdateConfig }: Alluvi
           <div>
             <span className="font-medium">🐟 Tự phơi cá bến đò lên nong &amp; thu khô cá</span>
             <p className="text-[10px] text-slate-400">
-              Lọc cá thường câu được ở Bến Đò đem lên các nong tre phơi khô (giá trị gấp nhiều lần cá tươi).
+              Ưu tiên lọc cá có giá trị cao nhất câu được ở Bến Đò đem lên các nong tre phơi khô (giá trị khô gấp đôi cá tươi).
             </p>
           </div>
           <Switch
