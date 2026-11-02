@@ -11,6 +11,7 @@ const TRADER_STALL_TILE = { x: 5, y: 5 };
 const SEEDS_STALL_TILE = { x: 19, y: 10 };
 const TOOLS_STALL_TILE = { x: 10, y: 12 };
 const HTX_STALL_TILE = { x: 29, y: 10 };
+const LUCK_STALL_TILE = { x: 42, y: 24 };
 
 /**
  * Thực thi các giao dịch bán nông sản, đặc sản, trứng và cá lưới tại Chợ Bãi (state.kind === 'bai').
@@ -440,7 +441,42 @@ export function runBaiMarketWorkStep(cfg: AppConfig): {
     }
   }
 
-  // 11. Đã hoàn tất giao thương tại Chợ Bãi
+  // 11. Bốc thăm may mắn tại Sạp Thím Hên (42, 24) khi có que thăm HTX
+  if (cfg.benAutoLuckDraw !== false) {
+    const bn = stores.benNet?.getState();
+    const sticks = (bn?.wallet as { sticks?: number } | undefined)?.sticks ?? 0;
+    if (sticks > 0) {
+      const walk = ensureAtSceneTile(
+        'BaiScene',
+        'bai',
+        LUCK_STALL_TILE,
+        `🚶 Chợ Bãi: Đang đi bộ tới Sạp Thím Hên (42, 24) để bốc thăm (${sticks} que thăm)...`,
+        { panel: 'luck' },
+        800
+      );
+      if (!walk.ready) {
+        return {
+          finishedMarket: false,
+          result: { acted: true, msg: walk.msg, allowCast: false },
+        };
+      }
+
+      const drawN = Math.min(sticks, 10);
+      const pool = cfg.benLuckDrawPool || 'back';
+      sendBenWs({ t: 'luckDraw', pool, n: drawN, pay: 'sticks' });
+      closeBaiPanel();
+      return {
+        finishedMarket: false,
+        result: {
+          acted: true,
+          msg: `🎋 Sạp Thím Hên: Đã lắc ống bốc ${drawN} que thăm (${pool === 'back' ? 'Đồ đeo lưng' : 'Thú cưng'})!`,
+          allowCast: false,
+        },
+      };
+    }
+  }
+
+  // 12. Đã hoàn tất giao thương tại Chợ Bãi
   closeBaiPanel();
   return {
     finishedMarket: true,

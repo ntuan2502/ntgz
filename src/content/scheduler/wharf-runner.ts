@@ -247,12 +247,18 @@ export async function stepBenDoFishing(
 
     if (isCastTired) {
       setStatus('😮‍💨 Bến Đò: Không đủ Sức câu -> Đang chờ đi ăn hồi Sức...');
+      if (config.benSmartSleepMode !== false) {
+        await sleep(1000);
+      }
       return { finishedArea: false };
     }
 
     if (now < microBreakUntil) {
       const remainingSec = Math.ceil((microBreakUntil - now) / 1000);
       setStatus(`☕ Bến Đò: Đang nghỉ tay thư giãn (${remainingSec}s)...`);
+      if (config.benSmartSleepMode !== false) {
+        await sleep(Math.min(remainingSec * 1000, 1500));
+      }
       return { finishedArea: false };
     }
 
@@ -265,6 +271,9 @@ export async function stepBenDoFishing(
     if (isRodHeld) {
       const waitSec = Math.max(1, Math.ceil((holdUntil - Date.now()) / 1000));
       setStatus(`🪖 Dân quân đang giữ cần câu (còn ${waitSec}s) -> Tạm dừng quăng câu...`);
+      if (config.benSmartSleepMode !== false) {
+        await sleep(Math.min(waitSec * 1000, 1500));
+      }
       return { finishedArea: false };
     }
 
@@ -289,6 +298,9 @@ export async function stepBenDoFishing(
       setStatus('📍 Hãy đứng sát mép nước (hoặc bật Tự ra vị trí câu)');
     } else if (!allowCast) {
       setStatus('✅ Bến Đò: Đã xong các việc được bật (đang canh tự động...)');
+      if (config.benSmartSleepMode !== false) {
+        await sleep(1500);
+      }
     }
   }
 

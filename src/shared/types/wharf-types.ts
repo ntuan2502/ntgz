@@ -360,6 +360,8 @@ export interface BaiFarmData {
   netFish?: BaiNetFishData[];
   netFedUntil?: number | null;
   netBoostNo?: number | null;
+  mudLeft?: number;
+  mudDug?: Array<{ x: number; y: number }>;
   home?: unknown[];
   parcels?: number;
   [key: string]: unknown;

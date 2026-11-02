@@ -49,6 +49,65 @@ export const TOTAL_CATCHABLE_SPECIES_COUNT: number = ALL_FISH_CATALOG.filter(
   (f) => f.rarity !== 'junk' && f.rarity !== 'mythic' && !f.ghost
 ).length;
 
+/**
+ * Hằng số chu kỳ thủy triều chính thức từ game engine (Bến Đò & Bãi Phù Sa).
+ */
+const TIDE_CYCLE_MS = 447e5; // 12.416666 giờ chu kỳ con nước
+const TIDE_EPOCH_MS = Date.parse('2026-10-01T06:00:00+07:00');
+const TIDE_HIGH_DURATION_MS = 108e5; // 3 giờ nước lớn
+
+export interface TideStatus {
+  phase: 'lon' | 'xuong' | 'rong' | 'len';
+  phaseName: string;
+  cycleNo: number;
+  endsAt: number;
+  nextHigh: number;
+  nextLow: number;
+  isLowTide: boolean;
+}
+
+export function computeTideStatus(nowMs: number): TideStatus {
+  const cycleIndex = Math.floor((nowMs - TIDE_EPOCH_MS) / TIDE_CYCLE_MS);
+  const cycleStart = TIDE_EPOCH_MS + cycleIndex * TIDE_CYCLE_MS;
+  const elapsed = nowMs - cycleStart;
+  const halfCycle = TIDE_CYCLE_MS / 2;
+  const phase: 'lon' | 'xuong' | 'rong' | 'len' =
+    elapsed < TIDE_HIGH_DURATION_MS
+      ? 'lon'
+      : elapsed < halfCycle
+        ? 'xuong'
+        : elapsed < 3315e4
+          ? 'rong'
+          : 'len';
+
+  const phaseNames: Record<string, string> = {
+    lon: 'Nước lớn (Cá ăn khoẻ 🌊)',
+    xuong: 'Nước xuống (Rút dần ↘️)',
+    rong: 'Nước ròng (Mò ốc bãi bùn 🟤)',
+    len: 'Nước lên (Nước dâng ↗️)',
+  };
+
+  const endsAt =
+    cycleStart +
+    (phase === 'lon'
+      ? TIDE_HIGH_DURATION_MS
+      : phase === 'xuong'
+        ? halfCycle
+        : phase === 'rong'
+          ? 3315e4
+          : TIDE_CYCLE_MS);
+
+  return {
+    phase,
+    phaseName: phaseNames[phase] || phase,
+    cycleNo: cycleIndex,
+    endsAt,
+    nextHigh: elapsed < TIDE_HIGH_DURATION_MS ? cycleStart : cycleStart + TIDE_CYCLE_MS,
+    nextLow: elapsed < 3315e4 ? cycleStart + halfCycle : cycleStart + TIDE_CYCLE_MS + halfCycle,
+    isLowTide: phase === 'rong',
+  };
+}
+
 export const BEN_FOOD_NAMES: Record<string, string> = {
   banhMi: '🥖 Bánh mì thịt (+20⚡)',
   chaoCa: '🥣 Cháo cá lóc (+28⚡)',

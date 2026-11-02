@@ -11,6 +11,17 @@ interface EntertainmentCardProps {
 export function EntertainmentCard({ config, updateField }: EntertainmentCardProps) {
   return (
     <div className="space-y-2.5 text-xs">
+      {/* Điểm danh Bến Đò */}
+      <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+        <span className="flex items-center gap-1.5 font-medium">
+          <span>📅 Điểm danh Bến Đò hàng ngày (Nhận sò, ngọc trai &amp; cần câu)</span>
+        </span>
+        <Switch
+          checked={Boolean(config.benAutoCheckin ?? true)}
+          onCheckedChange={(c) => updateField('benAutoCheckin', c)}
+        />
+      </label>
+
       <label className="flex items-center justify-between text-slate-700 cursor-pointer">
         <span>🏮 Lồng đèn Cô Bảy: Tự quay khi có vé</span>
         <Switch
@@ -102,8 +113,20 @@ export function EntertainmentCard({ config, updateField }: EntertainmentCardProp
           onCheckedChange={(c) => updateField('benAutoBossHunt', c)}
         />
       </label>
+      {config.benAutoBossHunt !== false && (
+        <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1 text-[11px]">
+          <label className="flex items-center justify-between text-slate-600 cursor-pointer">
+            <span>🏃 Bám sát bước chân Boss khi di chuyển để nhặt quà</span>
+            <Switch
+              size="sm"
+              checked={Boolean(config.benBossTracking ?? true)}
+              onCheckedChange={(c) => updateField('benBossTracking', c)}
+            />
+          </label>
+        </div>
+      )}
 
-      {/* Sạp Bà Tư Bí */}
+      {/* Sạp Bà Tư Bí & Pháo Hoa Halloween */}
       <label className="flex items-center justify-between text-slate-700 cursor-pointer">
         <span className="flex items-center gap-1.5 font-medium">
           <span>🎃 Sạp Bà Tư Bí: Tự đổi quà (10 xương + 5 bí)</span>
@@ -123,6 +146,14 @@ export function EntertainmentCard({ config, updateField }: EntertainmentCardProp
               onCheckedChange={(c) => updateField('benAutoHlwOpenBox', c)}
             />
           </label>
+          <label className="flex items-center justify-between text-slate-600 cursor-pointer">
+            <span>🎆 Tự bắn pháo hoa Bí Ngô tích lũy (+50⭐ Nổi tiếng)</span>
+            <Switch
+              size="sm"
+              checked={Boolean(config.benAutoHlwFire ?? true)}
+              onCheckedChange={(c) => updateField('benAutoHlwFire', c)}
+            />
+          </label>
         </div>
       )}
 
@@ -134,6 +165,17 @@ export function EntertainmentCard({ config, updateField }: EntertainmentCardProp
         <Switch
           checked={Boolean(config.benAutoHtxClaim ?? true)}
           onCheckedChange={(c) => updateField('benAutoHtxClaim', c)}
+        />
+      </label>
+
+      {/* Chế độ ngủ thông minh tiết kiệm năng lượng */}
+      <label className="flex items-center justify-between text-slate-700 cursor-pointer pt-1 border-t border-slate-200/60">
+        <span className="flex items-center gap-1.5 font-medium">
+          <span>🌙 Chế độ ngủ thông minh tiết kiệm pin &amp; CPU</span>
+        </span>
+        <Switch
+          checked={Boolean(config.benSmartSleepMode ?? true)}
+          onCheckedChange={(c) => updateField('benSmartSleepMode', c)}
         />
       </label>
     </div>

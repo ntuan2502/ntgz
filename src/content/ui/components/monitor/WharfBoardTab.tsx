@@ -6,6 +6,7 @@ import { execGameAction } from '@/content/bridge/content-bridge';
 import {
   FISH_NAME_MAP,
   TOTAL_CATCHABLE_SPECIES_COUNT,
+  computeTideStatus,
 } from '@/shared/constants/wharf-catalog';
 
 const fishMap = FISH_NAME_MAP;
@@ -363,6 +364,26 @@ export function WharfBoardTab({ snap, initialCategoryId }: WharfBoardTabProps) {
           {selectedArea === 'ben' ? '10 bảng bến đò trực tuyến' : '5 bảng bãi phù sa'}
         </span>
       </div>
+
+      {/* Thông tin Con nước Bãi Phù Sa */}
+      {selectedArea === 'phusa' && (() => {
+        const tide = computeTideStatus(Date.now());
+        const leftSec = Math.max(0, Math.floor((tide.endsAt - Date.now()) / 1000));
+        const hours = Math.floor(leftSec / 3600);
+        const mins = Math.floor((leftSec % 3600) / 60);
+        const timeStr = hours > 0 ? `${hours}h ${mins}p` : `${mins}p`;
+        return (
+          <div className="rounded-xl border border-teal-200 bg-teal-50/70 p-2.5 flex items-center justify-between text-xs text-teal-900 shadow-2xs">
+            <div className="flex items-center gap-1.5 font-semibold">
+              <span>🌊 Con nước Bãi Phù Sa:</span>
+              <span className="font-bold text-teal-800">{tide.phaseName}</span>
+            </div>
+            <span className="text-[11px] font-mono text-teal-700 bg-teal-100/80 px-2 py-0.5 rounded-md">
+              Chuyển sau: {timeStr}
+            </span>
+          </div>
+        );
+      })()}
 
       {/* 2. Chọn BXH */}
       <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-thin pb-1">

@@ -231,9 +231,18 @@ export interface AppConfig {
 
   // Ben Do Events & Cooperatives (Sự kiện Boss, Sạp Bà Tư & HTX)
   benAutoBossHunt: boolean;
+  benBossTracking?: boolean;
+  benAutoCheckin?: boolean;
   benAutoHlwExchange: boolean;
   benAutoHlwOpenBox: boolean;
+  benAutoHlwFire?: boolean;
   benAutoHtxClaim: boolean;
+  benAutoLuckDraw?: boolean;
+  benLuckDrawPool?: 'back' | 'pet';
+  benAutoMudDig?: boolean;
+  benAutoClearBasketNearFull?: boolean;
+  benBasketNearFullThreshold?: number;
+  benSmartSleepMode?: boolean;
 
   // Ben Do Alluvial Land & Market (Bãi Phù Sa & Chợ Bãi - Phase 1, 2, 3)
   benAutoBaiFerry: boolean;

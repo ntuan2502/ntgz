@@ -104,19 +104,33 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
     }
   }
 
-  // 1. Sell basket at Vựa cá Anh Tư khi giỏ cá đầy (60 con) hoặc khi thiếu sò mua mồi/ăn uống
-  const isBasketFull = nonKeptCount >= 60 || bn.notice?.error === 'basketFull';
+  // 1. Sell basket at Vựa cá Anh Tư khi giỏ cá đầy (hoặc đạt ngưỡng dọn sớm) hoặc khi thiếu sò mua mồi/ăn uống
+  const clearThreshold =
+    cfg.benAutoClearBasketNearFull !== false && typeof cfg.benBasketNearFullThreshold === 'number'
+      ? Math.max(10, Math.min(60, cfg.benBasketNearFullThreshold))
+      : 60;
+  const isBasketFull =
+    nonKeptCount >= 60 ||
+    nonKeptCount >= clearThreshold ||
+    bn.notice?.error === 'basketFull';
+
   if (
     cfg.benAutoSell !== false &&
     nonKeptCount > 0 &&
     (isBasketFull || needShellsForBait || needShellsForFood)
   ) {
+    const reasonText =
+      nonKeptCount >= 60 || bn.notice?.error === 'basketFull'
+        ? ' (Giỏ đã đầy 60/60)'
+        : nonKeptCount >= clearThreshold
+          ? ` (Đạt ngưỡng dọn sớm ${nonKeptCount}/${clearThreshold})`
+          : '';
     return walkAndRun(
       { x: 40, y: 10 },
       () => {
         sendBenWs({ t: 'sell' });
       },
-      `🐟 Bán ${nonKeptCount} con cá tại Vựa Anh Tư (+${totalSellShells.toLocaleString('vi-VN')} vỏ sò 🐚)${isBasketFull ? ' (Giỏ đã đầy 60/60)' : ''}`,
+      `🐟 Bán ${nonKeptCount} con cá tại Vựa Anh Tư (+${totalSellShells.toLocaleString('vi-VN')} vỏ sò 🐚)${reasonText}`,
       'ben_sell',
       { panel: 'sell' },
       1400

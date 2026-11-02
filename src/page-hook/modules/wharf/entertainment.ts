@@ -10,6 +10,30 @@ import { atmRuntime, setNextAtmTime } from './ws-watchers';
 export function runEntertainmentStep(ctx: BenExecutionContext): BenStepResult {
   const { cfg, bu, bn, benScene, wallet, shells, walkAndRun } = ctx;
 
+  // 0. Điểm danh hàng ngày ở Bến Đò
+  if (cfg.benAutoCheckin !== false) {
+    const checkin = bn.checkin as { today?: number; claimed?: number[] } | undefined;
+    if (!checkin && canAct('ben_checkin_query', 60000)) {
+      markActed('ben_checkin_query');
+      sendBenWs({ t: 'checkin' });
+    } else if (
+      checkin &&
+      Array.isArray(checkin.claimed) &&
+      typeof checkin.today === 'number'
+    ) {
+      const alreadyClaimed = checkin.claimed.includes(checkin.today);
+      if (!alreadyClaimed && canAct('ben_checkin_claim', 10000)) {
+        markActed('ben_checkin_claim');
+        sendBenWs({ t: 'checkinClaim' });
+        checkin.claimed.push(checkin.today);
+        return {
+          acted: true,
+          msg: `📅 Điểm Danh Bến Đò: Đã nhận quà điểm danh Ngày ${checkin.today} (+vỏ sò/ngọc trai)!`,
+        };
+      }
+    }
+  }
+
   // A. Sạp lồng đèn Cô Bảy ({ x: 37, y: 28 })
   if (cfg.benAutoLantern !== false) {
     const tickets = wallet.tickets || 0;
@@ -201,6 +225,25 @@ export function runEntertainmentStep(ctx: BenExecutionContext): BenStepResult {
         { panel: 'hlw' },
         1500
       );
+    }
+
+    // E. Bắn pháo hoa Đêm Bí Ngô (+50⭐ Nổi tiếng / quả)
+    if (cfg.benAutoHlwFire !== false) {
+      const fireworkItem = bag.find(
+        (i: { item: string; qty?: number }) => i.item === 'hlwFirework' || i.item === 'firework'
+      );
+      const fireworks = fireworkItem?.qty || 0;
+      if (fireworks > 0 && canAct('ben_hlw_fire', 8000)) {
+        markActed('ben_hlw_fire');
+        sendBenWs({ t: 'hlwFire' });
+        if (fireworkItem && typeof fireworkItem.qty === 'number') {
+          fireworkItem.qty = Math.max(0, fireworkItem.qty - 1);
+        }
+        return {
+          acted: true,
+          msg: `🎆 Đêm Bí Ngô: Đã bắn 1 quả pháo hoa bí ngô (+50⭐ Nổi tiếng)! (Kho còn ${Math.max(0, fireworks - 1)} quả)`,
+        };
+      }
     }
   }
 

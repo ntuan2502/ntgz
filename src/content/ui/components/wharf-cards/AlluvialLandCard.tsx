@@ -401,6 +401,55 @@ export function AlluvialLandCard({ config, updateField, onUpdateConfig }: Alluvi
           />
         </label>
       </div>
+
+      {/* Mục 5: Bãi Bùn Phù Sa & Sạp Bốc Thăm Thím Hên */}
+      <div className="border-t border-slate-200/80 pt-2 space-y-2">
+        <span className="font-semibold text-amber-800 block text-[11px]">🌊 Bãi Bùn Phù Sa &amp; Sạp Thím Hên</span>
+
+        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+          <div>
+            <span className="font-medium text-slate-800">🫳 Mò ốc &amp; bắt cua bãi bùn khi nước ròng</span>
+            <p className="text-[10px] text-slate-400">
+              Lội bãi bùn cào bắt ốc bươu, sò huyết, cua bùn khi con nước rút cạn (tốn 2 thể lực/ổ).
+            </p>
+          </div>
+          <Switch
+            size="sm"
+            checked={Boolean(config.benAutoMudDig ?? true)}
+            onCheckedChange={(c) => updateField('benAutoMudDig', c)}
+          />
+        </label>
+
+        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+          <div>
+            <span className="font-medium text-slate-800">🎋 Bốc thăm may mắn tại Sạp Thím Hên</span>
+            <p className="text-[10px] text-slate-400">
+              Tự mang que thăm HTX đến Sạp Thím Hên ở Chợ Bãi để lắc ống thăm nhận quà xịn.
+            </p>
+          </div>
+          <Switch
+            size="sm"
+            checked={Boolean(config.benAutoLuckDraw ?? true)}
+            onCheckedChange={(c) => updateField('benAutoLuckDraw', c)}
+          />
+        </label>
+
+        {config.benAutoLuckDraw !== false && (
+          <div className="ml-2 pl-2.5 border-l-2 border-amber-200 space-y-1.5 text-[11px]">
+            <div className="flex items-center justify-between gap-2 min-w-0">
+              <span className="text-slate-600 shrink-0">Ưu tiên ống thăm:</span>
+              <HudSelect
+                value={config.benLuckDrawPool || 'back'}
+                onValueChange={(val) => updateField('benLuckDrawPool', val as AppConfig['benLuckDrawPool'])}
+                options={[
+                  { value: 'back', label: '🪽 Ống đồ đeo lưng (Ba lô/Cánh/Áo)' },
+                  { value: 'pet', label: '🐾 Ống thú cưng đồng hành' },
+                ]}
+              />
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

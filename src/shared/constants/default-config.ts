@@ -397,9 +397,18 @@ export const DEFAULT_CONFIG: AppConfig = {
 
   // Ben Do Events & Cooperatives (Sự kiện Boss, Sạp Bà Tư & HTX)
   benAutoBossHunt: true,
+  benBossTracking: true,
+  benAutoCheckin: true,
   benAutoHlwExchange: true,
   benAutoHlwOpenBox: true,
+  benAutoHlwFire: true,
   benAutoHtxClaim: true,
+  benAutoLuckDraw: true,
+  benLuckDrawPool: 'back',
+  benAutoMudDig: true,
+  benAutoClearBasketNearFull: true,
+  benBasketNearFullThreshold: 50,
+  benSmartSleepMode: false,
 
   // Ben Do Alluvial Land & Market (Bãi Phù Sa & Chợ Bãi - Phase 1, 2, 3)
   benAutoBaiFerry: true,

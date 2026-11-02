@@ -1,6 +1,9 @@
 import { AppConfig } from '../../../../shared/types/config';
 import { stores, sendBenWs, getActiveScene } from '../../../core/engine-access';
-import { getFishDisplayName } from '../../../../shared/constants/wharf-catalog';
+import {
+  getFishDisplayName,
+  computeTideStatus,
+} from '../../../../shared/constants/wharf-catalog';
 import {
   baiState,
   toTimestampMs,
@@ -61,7 +64,7 @@ export function runBaiFarmWorkStep(
   const farm = baiState.farm;
   if (!farm) {
     return {
-      nextWorkStep: 11,
+      nextWorkStep: 12,
       result: { acted: true, msg: '🌾 Rời vườn...', allowCast: false, doneFarm: true },
     };
   }
@@ -773,11 +776,62 @@ export function runBaiFarmWorkStep(
         };
       }
     }
+    step = 11;
+  }
+
+  // Step 11: Mud Digging (Bắt ốc, cua bãi bùn khi Nước ròng)
+  if (step === 11) {
+    if (cfg.benAutoMudDig !== false) {
+      const tide = computeTideStatus(nowMs);
+      const mudLeft = farm.mudLeft ?? 0;
+      const stamina = stores.benNet?.getState().wallet?.stamina ?? 100;
+
+      if (tide.phase === 'rong' && mudLeft > 0 && stamina >= 2) {
+        const mudDugSet = new Set((farm.mudDug || []).map((d) => `${d.x},${d.y}`));
+        let candidateTile: { x: number; y: number } | null = null;
+        for (let y = 0; y <= 2; y++) {
+          for (let x = 0; x <= 24; x++) {
+            if (!mudDugSet.has(`${x},${y}`)) {
+              candidateTile = { x, y };
+              break;
+            }
+          }
+          if (candidateTile) break;
+        }
+
+        if (candidateTile) {
+          const walk = ensureAtSceneTile(
+            'BaiScene',
+            'farm',
+            candidateTile,
+            `🚶 Đất Bãi: Đang lội ra bãi bùn nước ròng (${candidateTile.x}, ${candidateTile.y}) mò ốc, cua...`,
+            undefined,
+            400
+          );
+          if (!walk.ready) {
+            return { nextWorkStep: 11, result: { acted: true, msg: walk.msg, allowCast: false } };
+          }
+
+          sendBenWs({ t: 'mudDig', x: candidateTile.x, y: candidateTile.y });
+          farm.mudDug = [...(farm.mudDug || []), candidateTile];
+          farm.mudLeft = Math.max(0, mudLeft - 1);
+          const hasMoreMud = farm.mudLeft > 0 && stamina - 2 >= 2;
+          return {
+            nextWorkStep: hasMoreMud ? 11 : 12,
+            result: {
+              acted: true,
+              msg: `🫳 Bãi Bùn Nước Ròng: Đã mò được ốc/cua tại ô (${candidateTile.x}, ${candidateTile.y})! (Bãi còn ${farm.mudLeft} ổ, ⚡-2)`,
+              allowCast: false,
+            },
+          };
+        }
+      }
+    }
   }
 
   closeBaiPanel();
   return {
-    nextWorkStep: 11,
+    nextWorkStep: 12,
     result: {
       acted: true,
       msg: '🌾 Đất Bãi: Đã hoàn tất việc vườn, chuẩn bị đi ra cổng về Chợ Bãi...',

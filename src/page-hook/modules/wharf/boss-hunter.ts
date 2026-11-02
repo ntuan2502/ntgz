@@ -57,7 +57,8 @@ export function runBossHuntOrImpendingStep(ctx: BenExecutionContext): BenStepRes
           targetTileY - lastDispatchedBossTile.y
         );
 
-        const needMove = distTiles > 1.2;
+        const allowTrackingMove = cfg.benBossTracking !== false;
+        const needMove = allowTrackingMove && distTiles > 1.2;
         const cooldownElapsed = canAct('ben_boss_hunt', 200);
 
         if (needMove && (targetDistFromDispatched >= 1 || cooldownElapsed)) {
@@ -78,7 +79,7 @@ export function runBossHuntOrImpendingStep(ctx: BenExecutionContext): BenStepRes
         return {
           acted: true,
           isBossHunt: true,
-          msg: `👑 Đang áp sát Boss Bí Ngô (${bossTileX}, ${bossTileY}) · Hứng bí ngô rắc rơi 🎃`,
+          msg: `👑 ${allowTrackingMove ? 'Đang áp sát' : 'Đang hướng nhìn'} Boss Bí Ngô (${bossTileX}, ${bossTileY}) · Hứng bí ngô rắc rơi 🎃`,
         };
       }
     }

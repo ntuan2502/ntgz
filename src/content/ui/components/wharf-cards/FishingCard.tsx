@@ -195,12 +195,41 @@ export function FishingCard({ config, updateField }: FishingCardProps) {
       )}
 
       <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-        <span>🐟 Tự đem cá ra bán tại Vựa cá Anh Tư khi giỏ cá đầy (60/60 con)</span>
+        <span>🐟 Tự đem cá ra bán tại Vựa cá Anh Tư khi giỏ cá đầy</span>
         <Switch
           checked={Boolean(config.benAutoSell)}
           onCheckedChange={(c) => updateField('benAutoSell', c)}
         />
       </label>
+      {config.benAutoSell && (
+        <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
+          <label className="flex items-center justify-between text-slate-600 cursor-pointer">
+            <span>⚡ Dọn giỏ cá sớm trước khi nghẽn (Tránh kẹt cần 60/60)</span>
+            <Switch
+              size="sm"
+              checked={Boolean(config.benAutoClearBasketNearFull ?? true)}
+              onCheckedChange={(c) => updateField('benAutoClearBasketNearFull', c)}
+            />
+          </label>
+          {config.benAutoClearBasketNearFull !== false && (
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500">Ngưỡng dọn cá sớm:</span>
+              <div className="flex items-center gap-1.5">
+                <input
+                  type="number"
+                  min={10}
+                  max={59}
+                  step={5}
+                  value={config.benBasketNearFullThreshold ?? 50}
+                  onChange={(e) => updateField('benBasketNearFullThreshold', Math.max(10, Math.min(59, Number(e.target.value) || 50)))}
+                  className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                />
+                <span className="text-slate-500 text-[10px]">con cá</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <label className="flex items-center justify-between text-slate-700 cursor-pointer">
         <span>🥤 Xe Chị Thơm: Uống nước tăng May mắn</span>
