@@ -78,11 +78,11 @@ export function SettingsView({
     onUpdateConfig((prev) => ({ ...prev, actionRepeatDelayMs: val }));
   };
 
-  const activeAreaOrder = config.areaOrder.filter((a) => a !== 'benDo');
+  const activeAreaOrder = config.areaOrder.filter((a) => a !== 'benDo' && a !== 'alluvialLand');
 
   const handleMoveArea = (index: number, direction: 'up' | 'down') => {
     onUpdateConfig((prev) => {
-      const order = prev.areaOrder.filter((a) => a !== 'benDo');
+      const order = prev.areaOrder.filter((a) => a !== 'benDo' && a !== 'alluvialLand');
       const targetIndex = direction === 'up' ? index - 1 : index + 1;
       if (targetIndex < 0 || targetIndex >= order.length) return prev;
       const temp = order[index];

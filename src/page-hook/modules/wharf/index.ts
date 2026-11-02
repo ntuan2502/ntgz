@@ -32,7 +32,7 @@ let keepBenPanelUntil = 0;
 let keepBenPanelMsg = '';
 let hadMyBout = false;
 
-export function execBenStep(cfg: AppConfig): BenStepResult {
+export function execBenStep(cfg: AppConfig, onlyAlluvial?: boolean): BenStepResult {
   const mStore = stores.main;
   const buStore = stores.benUI;
   const bnStore = stores.benNet;
@@ -171,6 +171,19 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   }
 
   if (!isBossActive && !isBossImpending && (bu.walking || bn.fishing !== 'idle')) {
+    return { acted: false };
+  }
+
+  // Dedicated Nông Trại Online mode: only execute alluvial steps, skip fishing and crickets
+  if (onlyAlluvial || cfg.activeTab === 'alluvialLand') {
+    const alluvialRes = stepAlluvial(cfg);
+    if (alluvialRes && alluvialRes.acted) {
+      return {
+        acted: true,
+        msg: alluvialRes.msg,
+        allowCast: Boolean(alluvialRes.allowCast),
+      };
+    }
     return { acted: false };
   }
 

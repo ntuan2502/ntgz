@@ -19,7 +19,7 @@ export function HudStats({ snap, activeTab }: HudStatsProps) {
   }, []);
 
   // 1. Nông Trại / Biển / Farmstay stats
-  const isWharf = activeTab === 'benDo';
+  const isWharf = activeTab === 'benDo' || activeTab === 'alluvialLand';
 
   const day = snap?.day ?? 1;
   const timeStr = typeof snap?.minutes === 'number' ? formatClock(snap.minutes) : '--:--';

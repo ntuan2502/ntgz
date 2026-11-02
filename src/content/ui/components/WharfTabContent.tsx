@@ -22,7 +22,7 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onO
   const vnHour = vnDate.getUTCHours();
   const isNightHuntOpen = vnHour >= 18 || vnHour < 5;
 
-  const subOrder: WharfSubAreaId[] = ['fishing', 'cricketBoss', 'cricketHunt', 'entertainment', 'alluvialLand'];
+  const subOrder: WharfSubAreaId[] = ['fishing', 'cricketBoss', 'cricketHunt', 'entertainment'];
 
   const handleToggleSubEnabled = (subId: WharfSubAreaId, checked: boolean) => {
     onUpdateConfig((prev) => {

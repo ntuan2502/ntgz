@@ -15,6 +15,7 @@ import {
 export const AREA_META: Record<AreaId, AreaMeta> = {
   farm: { id: 'farm', icon: '🌾', name: 'Nông Trại' },
   benDo: { id: 'benDo', icon: '🛶', name: 'Bến Đò' },
+  alluvialLand: { id: 'alluvialLand', icon: '🌾', name: 'Nông Trại Online' },
   sea: { id: 'sea', icon: '🏖️', name: 'Biển' },
   farmstay: { id: 'farmstay', icon: '🏡', name: 'Farmstay' },
 };
@@ -176,6 +177,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   areaEnabled: {
     farm: true,
     benDo: false,
+    alluvialLand: false,
     sea: false,
     farmstay: true,
   },

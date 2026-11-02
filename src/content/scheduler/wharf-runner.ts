@@ -70,6 +70,26 @@ export async function stepBenDoFishing(
     return { finishedArea: false };
   }
 
+  // Dedicated Nông Trại Online mode: only step Alluvial Land without casting fishing rod or catching crickets
+  const isOnlyAlluvial = config.runMode === 'tab' && config.activeTab === 'alluvialLand';
+  if (isOnlyAlluvial) {
+    const prep = await execGameAction('BEN_STEP', { config, onlyAlluvial: true });
+    if (prep && prep.ok && prep.msg) {
+      setStatus(prep.msg);
+    } else {
+      const baiKind = snap.baiState?.kind || 'ben';
+      if (baiKind === 'farm') {
+        setStatus('🌱 Nông Trại Online: Đang kiểm tra & canh tác tại Đất Của Mình...');
+      } else if (baiKind === 'bai') {
+        setStatus('🏪 Nông Trại Online: Đang giao dịch tại Chợ Bãi...');
+      } else {
+        setStatus('🌾 Nông Trại Online: Ruộng vườn đang chờ chín/lớn, chuẩn bị kiểm tra đợt tiếp theo...');
+      }
+    }
+    await sleep(delayMs);
+    return { finishedArea: false };
+  }
+
   // Strict Area Isolation: If currently across the river at Chợ Bãi ('bai') or Đất Của Mình ('farm'),
   // step the Alluvial Land state machine directly instead of running Bến Đò fishing checks.
   const currentKind = snap.baiState?.kind || 'ben';

@@ -71,10 +71,10 @@ export function stepAlluvial(cfg: AppConfig): AlluvialStepResult | null {
     }
   }
 
-  // If Alluvial Land sub-area is disabled:
+  // If Alluvial Land sub-area is disabled (and not currently running dedicated alluvialLand tab):
   // - If at Bến Đò ('ben'), stay idle.
   // - If currently inside 'farm' or 'bai', safely walk out and take the ferry back to 'ben'!
-  if (cfg.benSubEnabled?.alluvialLand === false) {
+  if (cfg.activeTab !== 'alluvialLand' && cfg.benSubEnabled?.alluvialLand === false) {
     if (baiState.kind === 'ben') {
       transitState = 'idle';
       return null;
@@ -152,7 +152,7 @@ export function stepAlluvial(cfg: AppConfig): AlluvialStepResult | null {
       }
     } else {
       // B. Either we haven't checked Ông Tám yet (lastInfoAt === 0) OR we own land (hasLand === true)
-      if (!cfg.benAutoBaiFerry && baiState.lastInfoAt > 0) {
+      if (cfg.activeTab !== 'alluvialLand' && !cfg.benAutoBaiFerry && baiState.lastInfoAt > 0) {
         return null;
       }
 

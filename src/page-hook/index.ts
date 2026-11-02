@@ -108,7 +108,7 @@ interface GameActionPayload {
 
         case 'BEN_STEP': {
           if (!payload.config) return { ok: false, error: 'NO_CONFIG' };
-          const res = execBenStep(payload.config);
+          const res = execBenStep(payload.config, Boolean((payload as { onlyAlluvial?: boolean }).onlyAlluvial));
           return { ok: true, ...res };
         }
 

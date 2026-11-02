@@ -11,6 +11,7 @@ import { FarmTabContent } from './components/FarmTabContent';
 import { WharfTabContent } from './components/WharfTabContent';
 import { SeaTabContent } from './components/SeaTabContent';
 import { FarmstayTabContent } from './components/FarmstayTabContent';
+import { OnlineFarmTabContent } from './components/OnlineFarmTabContent';
 import { HudLogEntry, getSessionLogs, clearSessionLogs } from './hud-core';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ReleaseChangelogView } from '@/components/ReleaseChangelogView';
@@ -351,8 +352,48 @@ export function HudApp({
     handleUpdateConfig((prev) => ({ ...prev, panelVisible: false }));
   };
 
+  const isOnlineTab = (tab: AreaId) => tab === 'benDo' || tab === 'alluvialLand';
+  const [uiMode, setUiMode] = useState<'online' | 'offline'>(() =>
+    isOnlineTab(initialConfig.activeTab) ? 'online' : 'offline'
+  );
+  const [lastOnlineTab, setLastOnlineTab] = useState<AreaId>(() =>
+    isOnlineTab(initialConfig.activeTab) ? initialConfig.activeTab : 'benDo'
+  );
+  const [lastOfflineTab, setLastOfflineTab] = useState<AreaId>(() =>
+    !isOnlineTab(initialConfig.activeTab) ? initialConfig.activeTab : 'farm'
+  );
+
+  useEffect(() => {
+    if (isOnlineTab(config.activeTab)) {
+      setUiMode('online');
+      setLastOnlineTab(config.activeTab);
+    } else {
+      setUiMode('offline');
+      setLastOfflineTab(config.activeTab);
+    }
+  }, [config.activeTab]);
+
+  const handleModeSelect = (mode: 'online' | 'offline') => {
+    setUiMode(mode);
+    if (mode === 'online') {
+      const target = isOnlineTab(config.activeTab) ? config.activeTab : lastOnlineTab;
+      handleTabChange(target);
+    } else {
+      const target = !isOnlineTab(config.activeTab) ? config.activeTab : lastOfflineTab;
+      handleTabChange(target);
+    }
+  };
+
   const handleTabChange = (val: string) => {
-    handleUpdateConfig((prev) => ({ ...prev, activeTab: val as AreaId }));
+    const nextTab = val as AreaId;
+    if (isOnlineTab(nextTab)) {
+      setLastOnlineTab(nextTab);
+      setUiMode('online');
+    } else {
+      setLastOfflineTab(nextTab);
+      setUiMode('offline');
+    }
+    handleUpdateConfig((prev) => ({ ...prev, activeTab: nextTab }));
   };
 
   if (!config.panelVisible) {
@@ -453,42 +494,94 @@ export function HudApp({
                   onToggleTerminal={handleToggleTerminal}
                 />
 
-                {/* Navigation Tabs */}
-                <Tabs value={config.activeTab} onValueChange={handleTabChange} className="w-full flex-1 flex flex-col min-h-0 p-2.5 overflow-hidden">
-                  <TabsList className="grid w-full grid-cols-4 h-8 text-[11px] rounded-xl p-1 bg-slate-100 border border-slate-200/80 text-slate-600 shrink-0">
-                    <TabsTrigger
-                      value="farm"
-                      className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
+                {/* Mode Selector: Online vs Offline */}
+                <div className="px-2.5 pt-2 shrink-0">
+                  <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-200/75 rounded-xl text-xs font-semibold shadow-inner">
+                    <button
+                      type="button"
+                      onClick={() => handleModeSelect('online')}
+                      className={`flex items-center justify-center gap-1.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+                        uiMode === 'online'
+                          ? 'bg-white text-emerald-800 shadow-xs font-bold border border-slate-200/70'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/50'
+                      }`}
                     >
-                      🌾 Nông trại
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="benDo"
-                      className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                      </span>
+                      <span>🌐 Online (Trực Tuyến)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleModeSelect('offline')}
+                      className={`flex items-center justify-center gap-1.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+                        uiMode === 'offline'
+                          ? 'bg-white text-amber-800 shadow-xs font-bold border border-slate-200/70'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/50'
+                      }`}
                     >
-                      🛶 Bến đò
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="sea"
-                      className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
-                    >
-                      🏖️ Biển
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="farmstay"
-                      className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium"
-                    >
-                      🏡 Farmstay
-                    </TabsTrigger>
-                  </TabsList>
+                      <span>🏡</span>
+                      <span>Offline (Ngoại Tuyến)</span>
+                    </button>
+                  </div>
+                </div>
 
-                  <div className="mt-2.5 flex-1 overflow-y-auto overflow-x-hidden pr-1 min-h-0">
+                {/* Navigation Tabs */}
+                <Tabs value={config.activeTab} onValueChange={handleTabChange} className="w-full flex-1 flex flex-col min-h-0 px-2.5 pb-2.5 pt-1.5 overflow-hidden">
+                  {uiMode === 'online' ? (
+                    <TabsList className="grid w-full grid-cols-2 h-8 text-[11px] rounded-xl p-1 bg-slate-100 border border-slate-200/80 text-slate-600 shrink-0">
+                      <TabsTrigger
+                        value="benDo"
+                        className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium cursor-pointer"
+                      >
+                        🛶 Bến Đò
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="alluvialLand"
+                        className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium cursor-pointer"
+                      >
+                        🌾 Nông Trại Online
+                      </TabsTrigger>
+                    </TabsList>
+                  ) : (
+                    <TabsList className="grid w-full grid-cols-3 h-8 text-[11px] rounded-xl p-1 bg-slate-100 border border-slate-200/80 text-slate-600 shrink-0">
+                      <TabsTrigger
+                        value="farm"
+                        className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-amber-800 data-[state=active]:shadow-xs font-medium cursor-pointer"
+                      >
+                        🌾 Nông Trại
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="sea"
+                        className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-amber-800 data-[state=active]:shadow-xs font-medium cursor-pointer"
+                      >
+                        🏖️ Biển
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="farmstay"
+                        className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-amber-800 data-[state=active]:shadow-xs font-medium cursor-pointer"
+                      >
+                        🏡 Farmstay
+                      </TabsTrigger>
+                    </TabsList>
+                  )}
+
+                  <div className="mt-2 flex-1 overflow-y-auto overflow-x-hidden pr-1 min-h-0">
                     <TabsContent value="farm" className="m-0">
                       <FarmTabContent config={config} onUpdateConfig={handleUpdateConfig} />
                     </TabsContent>
 
                     <TabsContent value="benDo" className="m-0">
                       <WharfTabContent
+                        config={config}
+                        onUpdateConfig={handleUpdateConfig}
+                        onOpenMonitorTab={handleOpenMonitorTab}
+                      />
+                    </TabsContent>
+
+                    <TabsContent value="alluvialLand" className="m-0">
+                      <OnlineFarmTabContent
                         config={config}
                         onUpdateConfig={handleUpdateConfig}
                         onOpenMonitorTab={handleOpenMonitorTab}

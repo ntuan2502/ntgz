@@ -1,4 +1,4 @@
-export type AreaId = 'farm' | 'benDo' | 'sea' | 'farmstay';
+export type AreaId = 'farm' | 'benDo' | 'alluvialLand' | 'sea' | 'farmstay';
 
 export type FarmSubAreaId =
   | 'house'

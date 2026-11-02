@@ -159,9 +159,9 @@ export async function tickAuto(): Promise<void> {
             await sleep(1500);
           }
         }
-      } else if (tab === 'benDo') {
+      } else if (tab === 'benDo' || tab === 'alluvialLand') {
         const res = await stepBenDoFishing(snap, config, setStatus, () => {});
-        if (res.finishedArea && config.autoSleep && config.sleepOnFishingLimit && (snap.minutes || 0) >= targetSleepMinutes) {
+        if (tab === 'benDo' && res.finishedArea && config.autoSleep && config.sleepOnFishingLimit && (snap.minutes || 0) >= targetSleepMinutes) {
           setStatus('🌙 Hết câu được ở Bến Đò buổi tối -> Về nhà đi ngủ...');
           await execGameAction('SLEEP_NOW');
           await sleep(1200);
