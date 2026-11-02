@@ -79,7 +79,27 @@ interface GameActionPayload {
           } else if (target === 'benDo' || target === 'ben') {
             if (cur.screen !== 'benDo') {
               if (cur.indoors) cur.leaveHouse?.();
+              cur.showWorldMap?.();
               mainStore.setState({ screen: 'benDo', panel: null, shop: null, vendor: null, indoors: false });
+            } else {
+              const baiKind = stores.bai?.getState()?.kind;
+              if (baiKind === 'farm') {
+                sendBenWs({ t: 'farmExit' });
+                sendBenWs({ t: 'ferry' });
+              } else if (baiKind === 'bai') {
+                sendBenWs({ t: 'ferry' });
+              }
+            }
+          } else if (target === 'alluvialLand' || target === 'bai' || target === 'farm') {
+            if (cur.screen !== 'benDo') {
+              if (cur.indoors) cur.leaveHouse?.();
+              cur.showWorldMap?.();
+              mainStore.setState({ screen: 'benDo', panel: null, shop: null, vendor: null, indoors: false });
+              setTimeout(() => {
+                sendBenWs({ t: 'farmQuick' });
+              }, 300);
+            } else {
+              sendBenWs({ t: 'farmQuick' });
             }
           } else if (target === 'farmstay') {
             if (cur.screen !== 'farmstay') {

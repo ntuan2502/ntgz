@@ -23,8 +23,13 @@ export async function stepBenDoFishing(
   const delayMs = Math.max(150, Number(config.benDelayMs ?? config.taskDelayMs) || 650);
 
   if (snap.screen !== 'benDo') {
-    setStatus('🛶 Đang đi ra Bến Đò...');
-    await execGameAction('NAVIGATE', { target: 'benDo' });
+    if (onlineTarget === 'alluvialLand') {
+      setStatus('🌾 Đang chuyển nhanh vào Nông Trại Online...');
+      await execGameAction('NAVIGATE', { target: 'alluvialLand' });
+    } else {
+      setStatus('🛶 Đang đi ra Bến Đò...');
+      await execGameAction('NAVIGATE', { target: 'benDo' });
+    }
     await sleep(delayMs + 400);
     return { finishedArea: false };
   }
