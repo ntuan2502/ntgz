@@ -440,6 +440,24 @@ export function initAlluvialManager(): void {
           break;
         }
 
+        case 'mudDone': {
+          if (msg.items && typeof msg.items === 'object') {
+            baiState.items = { ...(msg.items as Record<string, number>) };
+          }
+          if (typeof msg.left === 'number' && baiState.farm) {
+            baiState.farm.mudLeft = msg.left;
+          }
+          if (typeof msg.stamina === 'number') {
+            const currentWallet = stores.benNet?.getState()?.wallet;
+            if (currentWallet) {
+              stores.benNet?.setState({
+                wallet: { ...currentWallet, stamina: msg.stamina, liveStamina: msg.stamina },
+              });
+            }
+          }
+          break;
+        }
+
         case 'cropSold':
         case 'eggSold':
         case 'specialtySold':

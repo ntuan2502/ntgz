@@ -362,6 +362,7 @@ export interface BaiFarmData {
   netBoostNo?: number | null;
   mudLeft?: number;
   mudDug?: Array<{ x: number; y: number }>;
+  mudHints?: Array<{ x: number; y: number }>;
   home?: unknown[];
   parcels?: number;
   [key: string]: unknown;

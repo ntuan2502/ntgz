@@ -61,7 +61,8 @@ export function runBaiFarmWorkStep(
     };
   }
 
-  const farm = baiState.farm;
+  const storeFarm = stores.bai?.getState()?.farm;
+  const farm = storeFarm || baiState.farm;
   if (!farm) {
     return {
       nextWorkStep: 12,
@@ -799,20 +800,34 @@ export function runBaiFarmWorkStep(
   if (step === 11) {
     if (cfg.benAutoMudDig !== false) {
       const tide = computeTideStatus(nowMs);
-      const mudLeft = farm.mudLeft ?? 0;
-      const stamina = stores.benNet?.getState().wallet?.stamina ?? 100;
+      const mudDug = farm.mudDug || [];
+      const mudDugSet = new Set(mudDug.map((d) => `${d.x},${d.y}`));
+      const mudHints = (farm.mudHints || []).filter((h) => !mudDugSet.has(`${h.x},${h.y}`));
+      const mudLeft =
+        typeof farm.mudLeft === 'number'
+          ? farm.mudLeft
+          : farm.mudHints
+            ? mudHints.length
+            : Math.max(0, 8 - mudDug.length);
+
+      const wallet = stores.benNet?.getState().wallet;
+      const stamina = typeof wallet?.liveStamina === 'number' ? wallet.liveStamina : (wallet?.stamina ?? 100);
 
       if (tide.phase === 'rong' && mudLeft > 0 && stamina >= 2) {
-        const mudDugSet = new Set((farm.mudDug || []).map((d) => `${d.x},${d.y}`));
         let candidateTile: { x: number; y: number } | null = null;
-        for (let y = 0; y <= 2; y++) {
-          for (let x = 0; x <= 24; x++) {
-            if (!mudDugSet.has(`${x},${y}`)) {
-              candidateTile = { x, y };
-              break;
+        if (mudHints.length > 0) {
+          candidateTile = mudHints[0];
+        } else {
+          // Bãi bùn wZ = { x: 0..24, y: 0..2 }, ưu tiên các ô giữa an toàn không cấn biên
+          for (let y = 1; y <= 2; y++) {
+            for (let x = 2; x <= 22; x++) {
+              if (!mudDugSet.has(`${x},${y}`)) {
+                candidateTile = { x, y };
+                break;
+              }
             }
+            if (candidateTile) break;
           }
-          if (candidateTile) break;
         }
 
         if (candidateTile) {
@@ -829,14 +844,17 @@ export function runBaiFarmWorkStep(
           }
 
           sendBenWs({ t: 'mudDig', x: candidateTile.x, y: candidateTile.y });
-          farm.mudDug = [...(farm.mudDug || []), candidateTile];
+          farm.mudDug = [...mudDug, candidateTile];
           farm.mudLeft = Math.max(0, mudLeft - 1);
+          if (farm.mudHints) {
+            farm.mudHints = farm.mudHints.filter((h) => !(h.x === candidateTile.x && h.y === candidateTile.y));
+          }
           const hasMoreMud = farm.mudLeft > 0 && stamina - 2 >= 2;
           return {
             nextWorkStep: hasMoreMud ? 11 : 12,
             result: {
               acted: true,
-              msg: `🫳 Bãi Bùn Nước Ròng: Đã mò được ốc/cua tại ô (${candidateTile.x}, ${candidateTile.y})! (Bãi còn ${farm.mudLeft} ổ, ⚡-2)`,
+              msg: `🫳 Bãi Bùn Nước Ròng: Đang mò ốc, cua tại ổ (${candidateTile.x}, ${candidateTile.y})! (Bãi còn ~${farm.mudLeft} ổ, ⚡-2)`,
               allowCast: false,
             },
           };
@@ -846,11 +864,34 @@ export function runBaiFarmWorkStep(
   }
 
   closeBaiPanel();
+
+  let mudNote = '';
+  if (cfg.benAutoMudDig !== false) {
+    const tide = computeTideStatus(nowMs);
+    const mudDug = farm.mudDug || [];
+    const mudLeft =
+      typeof farm.mudLeft === 'number'
+        ? farm.mudLeft
+        : farm.mudHints
+          ? Math.max(0, farm.mudHints.length - mudDug.length)
+          : Math.max(0, 8 - mudDug.length);
+    const wallet = stores.benNet?.getState().wallet;
+    const stamina = typeof wallet?.liveStamina === 'number' ? wallet.liveStamina : (wallet?.stamina ?? 100);
+
+    if (tide.phase !== 'rong') {
+      mudNote = ` (Bãi bùn đang ngập - triều ${tide.phaseName})`;
+    } else if (mudLeft <= 0) {
+      mudNote = ' (Đã mò hết 8/8 ổ bùn con nước này)';
+    } else if (stamina < 2) {
+      mudNote = ` (Hết thể lực mò ốc ⚡${stamina}/2)`;
+    }
+  }
+
   return {
     nextWorkStep: 12,
     result: {
       acted: true,
-      msg: '🌾 Đất Bãi: Đã hoàn tất việc vườn, chuẩn bị đi ra cổng về Chợ Bãi...',
+      msg: `🌾 Đất Bãi: Đã hoàn tất việc vườn${mudNote}, chuẩn bị đi ra cổng về Chợ Bãi...`,
       allowCast: false,
       doneFarm: true,
     },
