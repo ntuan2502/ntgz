@@ -5,6 +5,45 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.14.0] - 2026-11-02
+
+### 🌐 Tách Biệt Chế Độ Online & Offline Toàn Diện (Online & Offline UI & Runtime Separation)
+- **Giao diện HUD phân đôi Online/Offline**:
+  - **Nhóm Trực Tuyến (Online)**: Quản lý tập trung Bến Đò và Nông Trại Online (Đất Bãi Phù Sa). Nút điều khiển thông minh tự nhận diện ngữ cảnh: `▶️ TẤT CẢ ONLINE` và `🎯 CHỈ BẾN ĐÒ` / `🎯 CHỈ NÔNG TRẠI ONLINE`.
+  - **Nhóm Ngoại Tuyến (Offline)**: Quản lý Nông Trại, Biển và Farmstay Ông Năm với nút `▶️ TẤT CẢ OFFLINE` và `🎯 CHỈ TAB NÀY`.
+- **Cài đặt độc lập từng phân vùng (Granular Area Settings)**:
+  - Bổ sung nhóm cài đặt riêng biệt cho Khu vực Online và Khu vực Offline trong Settings.
+  - Cho phép người dùng bật/tắt độc lập từng khu vực tham gia khi chạy chế độ Tất Cả (`benDo`, `alluvialLand`, `farm`, `sea`, `farmstay`).
+- **Khóa tác vụ Tab thông minh (Locked Tab Task Isolation)**:
+  - Khi bật chế độ chạy "Chỉ Tab Này", người chơi chuyển qua lại các tab khác nhau trên HUD thì bot vẫn khóa chặt và tiếp tục thực hiện công việc ở tab ban đầu, không bị chuyển mục tiêu đột ngột.
+
+### ⚡ Chuyển Map Nhanh & Tối Ưu Hóa Tuyến Đường (Direct Farm Transit & Bypass Chợ Bãi)
+- **Tận dụng nút Về Đất Của Mình (`farmQuick`)**:
+  - Chuyển thẳng về mảnh đất riêng từ Bến Đò hoặc Bản đồ chính bằng phương thức `farmQuick`, loại bỏ hoàn toàn việc phải đi bộ vòng qua chỗ đò ngang Ông Tám tại Bến Đò.
+- **Bỏ qua Chợ Bãi khi không có nhu cầu giao dịch**:
+  - Sau khi hoàn thành xong các công việc tại vườn riêng, hệ thống tự động kiểm tra xem có nông sản/đặc sản cần bán hoặc vật tư cần mua tại Chợ Bãi hay không. Nếu không có việc, bot lập tức lên đò quay thẳng về Bến Đò câu cá, không ghé Chợ Bãi tránh mất thời gian.
+  - Xóa bỏ việc đi bộ ra mép nước `(26, 5)` gây nghẽn tại Chợ Bãi, gửi lệnh chuyển cảnh trực tiếp.
+
+### 🐟 Khắc Phục Menu Nhận Cá & Giao Diện Sân Phơi Khô Cá
+- **Ưu tiên #0 xử lý bảng nhận cá câu được**:
+  - Tự động nhận diện và giải phóng ngay bảng kết quả nhận cá câu được (`.catch-card.ben-catch` / `bn.fishing === 'landing'`), ghim giữ cá quý (nếu bật) và đóng modal lập tức, không để menu nhận cá treo cản trở việc chuyển cảnh sang Nông Trại Online hay các thao tác khác.
+- **Sửa đúng giao diện Sân phơi khô cá**:
+  - Mở chính xác giao diện nong phơi cá (`{ panel: 'lot', lotSel: 'dryFish' }`) thay vì mở nhầm Sổ khô cá (`dryDex`), đảm bảo thực hiện mượt mà cả 3 công đoạn: thu hoạch khô cá chín ➔ cất cá to vào bộ sưu tập DryDex nhận ⭐ Nổi tiếng ➔ đưa cá giá trị cao từ giỏ lên nong phơi.
+
+### 🛡️ Hoàn Thiện & Ổn Định Máy Trạng Thái (State Machine Hardening)
+- **Khắc phục lỗi lặp vô tận khi đứng tại ruộng**:
+  - Nhận diện chính xác mốc thời gian nông sản/vật nuôi kế tiếp sẵn sàng (`nextReadyAt`), cho bot nghỉ ngơi hoặc quay về Bến Đò câu cá thay vì liên tục khởi động lại chu kỳ làm vườn từ bước 0.
+- **Khắc phục kẹt luồng khi tài khoản chưa sở hữu Đất Bãi**:
+  - Tự động phát hiện trạng thái sở hữu đất (`hasLand`) và số vỏ sò của người chơi, tránh việc bot liên tục đòi sang bãi khi chưa mua được đất.
+- **Khắc phục cờ quăng cần sớm**:
+  - Đảm bảo nhân vật đã thực sự cập bến Bến Đò mới kích hoạt cờ cho phép quăng cần câu (`allowCast`), tránh quăng cần khi đang đi đò ngang.
+- **Dọn dẹp bảng giao diện (Panel Cleanup)**:
+  - Tự động đóng modal sau mỗi phân khu (lò kẹo, sân phơi cá, chuồng gà vịt, lưới nuôi cá, bãi bùn mò ốc cua).
+- **Bảo hiểm chống trễ đồng bộ dữ liệu ruộng vườn (`yardDone`)**:
+  - Cho phép chờ tối đa 4 giây để đồng bộ dữ liệu nông trại qua WebSocket khi vừa bước qua cổng đất, ngăn tình trạng ngắt đột ngột.
+
+---
+
 ## [1.13.0] - 2026-11-02
 
 ### 🌾 Tự Động Hóa Toàn Diện Đất Bãi Phù Sa & Chợ Bãi (Alluvial Land & Market Automation)
