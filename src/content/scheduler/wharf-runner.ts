@@ -17,7 +17,8 @@ export async function stepBenDoFishing(
   snap: GameSnapshot,
   config: AppConfig,
   setStatus: (text: string) => void,
-  onCatchIncrement: () => void
+  onCatchIncrement: () => void,
+  onlineTarget: 'all' | 'benDo' | 'alluvialLand' = 'all'
 ): Promise<{ finishedArea: boolean; exhausted?: boolean }> {
   const delayMs = Math.max(150, Number(config.benDelayMs ?? config.taskDelayMs) || 650);
 
@@ -56,7 +57,7 @@ export async function stepBenDoFishing(
       window.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true }));
     }
 
-    const prep = await execGameAction('BEN_STEP', { config });
+    const prep = await execGameAction('BEN_STEP', { config, onlineTarget });
     if (prep && prep.ok && prep.msg) {
       setStatus(prep.msg);
     } else {
@@ -70,19 +71,17 @@ export async function stepBenDoFishing(
     return { finishedArea: false };
   }
 
-  // Dedicated Nông Trại Online mode: only step Alluvial Land without casting fishing rod or catching crickets
-  const isOnlyAlluvial =
-    (config.runMode === 'tab' && config.activeTab === 'alluvialLand') ||
-    (config.runMode === 'all' && config.areaEnabled.alluvialLand !== false && config.areaEnabled.benDo === false);
-  if (isOnlyAlluvial) {
-    const prep = await execGameAction('BEN_STEP', { config, onlyAlluvial: true });
+  const currentKind = snap.baiState?.kind || 'ben';
+
+  // 1. DEDICATED NÔNG TRẠI ONLINE MODE:
+  if (onlineTarget === 'alluvialLand') {
+    const prep = await execGameAction('BEN_STEP', { config, onlineTarget: 'alluvialLand' });
     if (prep && prep.ok && prep.msg) {
       setStatus(prep.msg);
     } else {
-      const baiKind = snap.baiState?.kind || 'ben';
-      if (baiKind === 'farm') {
+      if (currentKind === 'farm') {
         setStatus('🌱 Nông Trại Online: Đang kiểm tra & canh tác tại Đất Của Mình...');
-      } else if (baiKind === 'bai') {
+      } else if (currentKind === 'bai') {
         setStatus('🏪 Nông Trại Online: Đang giao dịch tại Chợ Bãi...');
       } else {
         setStatus('🌾 Nông Trại Online: Ruộng vườn đang chờ chín/lớn, chuẩn bị kiểm tra đợt tiếp theo...');
@@ -92,22 +91,72 @@ export async function stepBenDoFishing(
     return { finishedArea: false };
   }
 
-  // Strict Area Isolation: If currently across the river at Chợ Bãi ('bai') or Đất Của Mình ('farm'),
-  // step the Alluvial Land state machine directly instead of running Bến Đò fishing checks.
-  const currentKind = snap.baiState?.kind || 'ben';
-  if (currentKind !== 'ben') {
-    const prep = await execGameAction('BEN_STEP', { config });
-    if (prep && prep.ok && prep.msg) {
-      setStatus(prep.msg);
-    } else {
-      setStatus(
-        currentKind === 'farm'
-          ? '🌱 Đang kiểm tra & canh tác tại Đất Của Mình (Bãi Phù Sa)...'
-          : '🏪 Đang giao dịch tại Chợ Bãi (Bãi Phù Sa)...'
-      );
+  // 2. DEDICATED BẾN ĐÒ MODE:
+  if (onlineTarget === 'benDo') {
+    // If character is across the river at Đất Bãi ('farm') or Chợ Bãi ('bai'), return to Bến Đò!
+    if (currentKind !== 'ben') {
+      const prep = await execGameAction('BEN_STEP', { config, onlineTarget: 'benDo' });
+      if (prep && prep.ok && prep.msg) {
+        setStatus(prep.msg);
+      } else {
+        setStatus('🛶 Bến Đò: Đang di chuyển quay về Bến Đò để tiếp tục câu cá...');
+      }
+      await sleep(delayMs);
+      return { finishedArea: false };
     }
-    await sleep(delayMs);
-    return { finishedArea: false };
+  }
+
+  // 3. UNIFIED ALL ONLINE MODE:
+  if (onlineTarget === 'all') {
+    // If currently across the river doing Alluvial tasks, continue them until finished and ferry back
+    if (currentKind !== 'ben') {
+      const prep = await execGameAction('BEN_STEP', { config, onlineTarget: 'all' });
+      if (prep && prep.ok && prep.msg) {
+        setStatus(prep.msg);
+      } else {
+        setStatus(
+          currentKind === 'farm'
+            ? '🌱 Nông Trại Online: Đang canh tác tại Đất Của Mình...'
+            : '🏪 Nông Trại Online: Đang giao dịch tại Chợ Bãi...'
+        );
+      }
+      await sleep(delayMs);
+      return { finishedArea: false };
+    }
+
+    // At Bến Đò: Check if Nông Trại Online needs a visit (first survey, ready crop/candy/egg/fish, or 5-min check)
+    const serverNowMs = Date.now() + (snap.benNet?.ti?.skew ?? 0);
+    const bai = snap.baiState;
+    const needsAlluvialVisit =
+      config.areaEnabled.alluvialLand !== false &&
+      (bai?.lastFarmSurveyAt === 0 ||
+        !bai?.lastFarmSurveyAt ||
+        (bai?.nextReadyAt > 0 && serverNowMs >= bai.nextReadyAt) ||
+        Date.now() - (bai?.lastFarmSurveyAt || 0) > 5 * 60 * 1000);
+
+    if (needsAlluvialVisit) {
+      // If currently fishing, reel in first before departing
+      if (bn.fishing !== 'idle') {
+        const pullBtn = document.querySelector('button.ben-cast.btn-brown') as HTMLButtonElement | null;
+        if (pullBtn && isVisible(pullBtn)) {
+          triggerPointerDownOnly(pullBtn);
+        } else {
+          window.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true }));
+        }
+        setStatus('🌾 Nông Trại Online: Đến giờ kiểm tra ruộng vườn ➔ Đang thu cần để sang Đất Bãi...');
+        await sleep(350);
+        return { finishedArea: false };
+      }
+
+      const prep = await execGameAction('BEN_STEP', { config, onlineTarget: 'all' });
+      if (prep && prep.ok && prep.msg) {
+        setStatus(prep.msg);
+      } else {
+        setStatus('🌾 Nông Trại Online: Đang chuyển nhanh về Đất Của Mình...');
+      }
+      await sleep(delayMs);
+      return { finishedArea: false };
+    }
   }
 
   // 0. Live status updates from page-hook cricket watchers (trapping / misses / tickles)
@@ -203,10 +252,15 @@ export async function stepBenDoFishing(
       return { finishedArea: false };
     }
 
+    let waitingSuffix = '';
+    if (onlineTarget === 'all' && snap.baiState?.nextReadyAt && snap.baiState.nextReadyAt > Date.now()) {
+      const timeStr = new Date(snap.baiState.nextReadyAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+      waitingSuffix = ` · đợt nông sản kế tiếp: ${timeStr}`;
+    }
     setStatus(
       bn.fishing === 'nibble'
-        ? '🐟 Cá đang rỉa mồi... đợi phao chìm hẳn!'
-        : '🌊 Đang canh phao ở Bến Đò...'
+        ? `🐟 Cá đang rỉa mồi... đợi phao chìm hẳn!${waitingSuffix}`
+        : `🌊 Đang canh phao ở Bến Đò...${waitingSuffix}`
     );
     return { finishedArea: false };
   }
@@ -214,7 +268,7 @@ export async function stepBenDoFishing(
   // 6. Idle phase & Alluvial / Sub-area actions
   if (bn.fishing === 'idle') {
     if (isBossImpending) {
-      const prep = await execGameAction('BEN_STEP', { config });
+      const prep = await execGameAction('BEN_STEP', { config, onlineTarget });
       if (prep && prep.ok && prep.msg) {
         setStatus(prep.msg);
       } else {
@@ -223,7 +277,7 @@ export async function stepBenDoFishing(
       await sleep(150);
       return { finishedArea: false };
     }
-    const prep = await execGameAction('BEN_STEP', { config });
+    const prep = await execGameAction('BEN_STEP', { config, onlineTarget });
     if (prep && prep.ok && prep.acted) {
       setStatus(prep.msg || '🛶 Đang chuẩn bị tại Bến Đò...');
       const stepDelay = prep.isBossHunt ? 120 : delayMs;

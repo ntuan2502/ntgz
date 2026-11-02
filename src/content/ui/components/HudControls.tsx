@@ -3,6 +3,7 @@ import { AppConfig, AreaId } from '@/shared/types/config';
 import { Button } from '@/components/ui/button';
 import { AREA_META } from '@/shared/constants/default-config';
 import { Play, Square } from 'lucide-react';
+import { getLockedAllMode, getLockedTabArea } from '../hud-core';
 
 interface HudControlsProps {
   config: AppConfig;
@@ -17,17 +18,34 @@ export function HudControls({
   onToggleAll,
   onToggleTab,
 }: HudControlsProps) {
-  const isOnline = activeTab === 'benDo' || activeTab === 'alluvialLand';
+  const lockedAll = getLockedAllMode();
+  const lockedTab = getLockedTabArea();
+
+  const isTabOnline = activeTab === 'benDo' || activeTab === 'alluvialLand';
   const isRunningAll = config.running && config.runMode === 'all';
   const isRunningTab = config.running && config.runMode === 'tab';
 
+  const isRunningAllOnline = lockedAll ? lockedAll === 'online' : isTabOnline;
+
   const allButtonLabel = isRunningAll
-    ? isOnline
+    ? isRunningAllOnline
       ? 'DỪNG TẤT CẢ ONLINE'
       : 'DỪNG TẤT CẢ OFFLINE'
-    : isOnline
+    : isTabOnline
     ? '▶️ TẤT CẢ ONLINE (Alt+A)'
     : '▶️ TẤT CẢ OFFLINE (Alt+A)';
+
+  const tabButtonRunningLabel = isRunningTab
+    ? lockedTab
+      ? `DỪNG ${AREA_META[lockedTab]?.name?.toUpperCase() || 'TAB NÀY'}`
+      : 'DỪNG TAB NÀY'
+    : `🎯 CHỈ ${AREA_META[activeTab]?.name?.toUpperCase() || 'TAB NÀY'}`;
+
+  const allBtnColor = isRunningAll
+    ? 'bg-red-600 hover:bg-red-700'
+    : isTabOnline
+    ? 'bg-emerald-600 hover:bg-emerald-700'
+    : 'bg-amber-600 hover:bg-amber-700';
 
   return (
     <div className="border-b border-slate-200/90 bg-slate-50/70 p-2 text-xs transition-colors">
@@ -36,13 +54,7 @@ export function HudControls({
         <Button
           variant={isRunningAll ? 'destructive' : 'default'}
           size="sm"
-          className={`w-full justify-center font-bold text-[11px] rounded-xl h-8.5 shadow-xs active:scale-[0.98] text-white cursor-pointer ${
-            isRunningAll
-              ? 'bg-red-600 hover:bg-red-700'
-              : isOnline
-              ? 'bg-emerald-600 hover:bg-emerald-700'
-              : 'bg-amber-600 hover:bg-amber-700'
-          }`}
+          className={`w-full justify-center font-bold text-[11px] rounded-xl h-8.5 shadow-xs active:scale-[0.98] text-white cursor-pointer ${allBtnColor}`}
           onClick={onToggleAll}
         >
           {isRunningAll ? (
@@ -71,12 +83,12 @@ export function HudControls({
           {isRunningTab ? (
             <>
               <Square className="h-3.5 w-3.5 fill-current mr-1.5" />
-              DỪNG TAB NÀY
+              {tabButtonRunningLabel}
             </>
           ) : (
             <>
-              <Play className={`h-3.5 w-3.5 fill-current mr-1.5 ${isOnline ? 'text-emerald-600' : 'text-amber-600'}`} />
-              🎯 CHỈ {AREA_META[activeTab]?.name?.toUpperCase() || 'TAB NÀY'}
+              <Play className={`h-3.5 w-3.5 fill-current mr-1.5 ${isTabOnline ? 'text-emerald-600' : 'text-amber-600'}`} />
+              {tabButtonRunningLabel}
             </>
           )}
         </Button>

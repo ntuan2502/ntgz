@@ -43,7 +43,21 @@ export function isAlluvialInTransit(): boolean {
   return transitState !== 'idle' || (baiState.kind !== 'ben' && Boolean(baiState.kind));
 }
 
-export function stepAlluvial(cfg: AppConfig): AlluvialStepResult | null {
+export function isAlluvialReadyForVisit(): boolean {
+  const serverNowMs = getBaiServerNowMs();
+  const now = Date.now();
+  return (
+    baiState.lastFarmSurveyAt === 0 ||
+    baiState.lastInfoAt === 0 ||
+    (baiState.nextReadyAt > 0 && serverNowMs >= baiState.nextReadyAt) ||
+    now - baiState.lastFarmSurveyAt > 5 * 60 * 1000
+  );
+}
+
+export function stepAlluvial(
+  cfg: AppConfig,
+  onlineTarget: 'all' | 'benDo' | 'alluvialLand' = 'all'
+): AlluvialStepResult | null {
   initAlluvialManager();
 
   // Sync latest store data
@@ -51,6 +65,23 @@ export function stepAlluvial(cfg: AppConfig): AlluvialStepResult | null {
 
   const now = Date.now();
   const serverNowMs = getBaiServerNowMs();
+
+  // If onlineTarget is strictly 'benDo': character must return to and stay at Bến Đò!
+  if (onlineTarget === 'benDo') {
+    if (baiState.kind === 'ben') {
+      transitState = 'idle';
+      return null;
+    }
+    if (baiState.kind === 'farm' && transitState !== 'exit_farm') {
+      transitState = 'exit_farm';
+      transitStartedAt = now;
+      resetBaiWalkTracker();
+    } else if (baiState.kind === 'bai' && transitState !== 'walk_to_bai_ferry') {
+      transitState = 'walk_to_bai_ferry';
+      transitStartedAt = now;
+      resetBaiWalkTracker();
+    }
+  }
 
   // Priority #1: If Boss Bí Ngô is impending (<= 10s) or active, rush back to Bến Đò immediately!
   const bn = stores.benNet?.getState();
@@ -71,10 +102,8 @@ export function stepAlluvial(cfg: AppConfig): AlluvialStepResult | null {
     }
   }
 
-  // If Alluvial Land sub-area is disabled (and not currently running dedicated alluvialLand tab):
-  // - If at Bến Đò ('ben'), stay idle.
-  // - If currently inside 'farm' or 'bai', safely walk out and take the ferry back to 'ben'!
-  if (cfg.activeTab !== 'alluvialLand' && cfg.benSubEnabled?.alluvialLand === false) {
+  // If Alluvial Land is disabled in settings (and not forced via onlineTarget === 'alluvialLand'):
+  if (onlineTarget !== 'alluvialLand' && cfg.areaEnabled?.alluvialLand === false) {
     if (baiState.kind === 'ben') {
       transitState = 'idle';
       return null;
@@ -163,23 +192,27 @@ export function stepAlluvial(cfg: AppConfig): AlluvialStepResult | null {
         return null;
       }
     } else {
-      // B. Either we haven't checked Ông Tám yet (lastInfoAt === 0) OR we own land (hasLand === true)
-      if (cfg.activeTab !== 'alluvialLand' && !cfg.benAutoBaiFerry && baiState.lastInfoAt > 0) {
+      if (onlineTarget === 'benDo') {
         return null;
       }
 
       let shouldTransit = false;
       let transitReason = '';
 
-      if (baiState.lastInfoAt === 0 || baiState.lastFarmSurveyAt === 0) {
+      if (onlineTarget === 'alluvialLand') {
         shouldTransit = true;
-        transitReason = 'Qua đò Ông Tám sang Chợ Bãi & vào ruộng kiểm tra';
-      } else if (baiState.nextReadyAt > 0 && serverNowMs >= baiState.nextReadyAt) {
-        shouldTransit = true;
-        transitReason = 'Nông sản, kẹo, cá hoặc dừa bên đất bãi đã đến giờ chín!';
-      } else if (now - baiState.lastFarmSurveyAt > 15 * 60 * 1000) {
-        shouldTransit = true;
-        transitReason = 'Qua đò kiểm tra chu kỳ định kỳ đất bãi';
+        transitReason = 'Chuyển sang Nông Trại Online chăm sóc ruộng vườn';
+      } else {
+        if (baiState.lastInfoAt === 0 || baiState.lastFarmSurveyAt === 0) {
+          shouldTransit = true;
+          transitReason = 'Vào Đất Bãi kiểm tra đợt đầu';
+        } else if (baiState.nextReadyAt > 0 && serverNowMs >= baiState.nextReadyAt) {
+          shouldTransit = true;
+          transitReason = 'Nông sản, kẹo, cá hoặc dừa bên đất bãi đã đến giờ chín!';
+        } else if (now - baiState.lastFarmSurveyAt > 5 * 60 * 1000) {
+          shouldTransit = true;
+          transitReason = 'Kiểm tra chu kỳ định kỳ đất bãi (5 phút)';
+        }
       }
 
       if (shouldTransit) {
@@ -437,6 +470,14 @@ export function stepAlluvial(cfg: AppConfig): AlluvialStepResult | null {
           }
           transitState = 'take_ferry_to_bai';
         } else {
+          if (onlineTarget === 'alluvialLand') {
+            transitState = 'idle';
+            return {
+              acted: true,
+              msg: '🌾 Nông Trại Online: Đã hoàn tất mọi việc, đang chờ chu kỳ nông sản / vật nuôi tiếp theo...',
+              allowCast: false,
+            };
+          }
           transitState = 'walk_to_bai_ferry';
         }
         resetBaiWalkTracker();

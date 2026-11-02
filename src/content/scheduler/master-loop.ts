@@ -1,4 +1,3 @@
-import { AppConfig } from '../../shared/types/config';
 import { AREA_META } from '../../shared/constants/default-config';
 import { getGameState, execGameAction } from '../bridge/content-bridge';
 import { sleep, formatClock } from './dom-helpers';
@@ -15,6 +14,8 @@ import {
   setLastGameSnap,
   getLockedTabArea,
   setLockedTabArea,
+  getLockedAllMode,
+  setLockedAllMode,
 } from '../ui/hud-core';
 
 let isBusy = false;
@@ -29,11 +30,13 @@ export function toggleAutoAll(): void {
   const isOnline = config.activeTab === 'benDo' || config.activeTab === 'alluvialLand';
   if (config.running && config.runMode === 'all') {
     config.running = false;
+    setLockedAllMode(null);
     setStatus(`⏸️ Đã dừng Auto Tất Cả ${isOnline ? 'Online' : 'Offline'}`);
   } else {
     config.running = true;
     config.runMode = 'all';
     setLockedTabArea(null);
+    setLockedAllMode(isOnline ? 'online' : 'offline');
     currentAreaIdx = 0;
     lastFarmDoneDay = -1;
     seaExhaustedUntil = 0;
@@ -77,8 +80,10 @@ export function startAuto(mode: 'all' | 'tab' = 'all'): void {
   resetFarmstayTiming();
   if (mode === 'tab') {
     setLockedTabArea(config.activeTab);
+    setLockedAllMode(null);
   } else {
     setLockedTabArea(null);
+    setLockedAllMode(config.activeTab === 'benDo' || config.activeTab === 'alluvialLand' ? 'online' : 'offline');
   }
   saveConfig();
 }
@@ -86,6 +91,8 @@ export function startAuto(mode: 'all' | 'tab' = 'all'): void {
 export function stopAuto(): void {
   const config = getConfig();
   config.running = false;
+  setLockedAllMode(null);
+  setLockedTabArea(null);
   setStatus('⏸️ Đã tạm dừng Auto');
   saveConfig();
 }
@@ -161,13 +168,15 @@ export async function tickAuto(): Promise<void> {
             await sleep(1500);
           }
         }
-      } else if (tab === 'benDo' || tab === 'alluvialLand') {
-        const res = await stepBenDoFishing(snap, config, setStatus, () => {});
-        if (tab === 'benDo' && res.finishedArea && config.autoSleep && config.sleepOnFishingLimit && (snap.minutes || 0) >= targetSleepMinutes) {
+      } else if (tab === 'benDo') {
+        const res = await stepBenDoFishing(snap, config, setStatus, () => {}, 'benDo');
+        if (res.finishedArea && config.autoSleep && config.sleepOnFishingLimit && (snap.minutes || 0) >= targetSleepMinutes) {
           setStatus('🌙 Hết câu được ở Bến Đò buổi tối -> Về nhà đi ngủ...');
           await execGameAction('SLEEP_NOW');
           await sleep(1200);
         }
+      } else if (tab === 'alluvialLand') {
+        await stepBenDoFishing(snap, config, setStatus, () => {}, 'alluvialLand');
       } else if (tab === 'sea') {
         const res = await stepSeaFishing(snap, config, setStatus, () => {});
         if (res.finishedArea) {
@@ -191,9 +200,9 @@ export async function tickAuto(): Promise<void> {
     }
 
     // MODE B: "▶️ AUTO TẤT CẢ"
-    const isOnline = config.activeTab === 'benDo' || config.activeTab === 'alluvialLand';
+    const allMode = getLockedAllMode() || (config.activeTab === 'benDo' || config.activeTab === 'alluvialLand' ? 'online' : 'offline');
 
-    if (isOnline) {
+    if (allMode === 'online') {
       const benDoEnabled = config.areaEnabled.benDo !== false;
       const alluvialEnabled = config.areaEnabled.alluvialLand !== false;
 
@@ -203,34 +212,16 @@ export async function tickAuto(): Promise<void> {
         return;
       }
 
-      // If only alluvialLand is enabled, execute alluvial steps without fishing or cricket catching
+      let onlineTarget: 'all' | 'benDo' | 'alluvialLand' = 'all';
       if (alluvialEnabled && !benDoEnabled) {
-        await stepBenDoFishing(snap, config, setStatus, () => {});
-        isBusy = false;
-        return;
+        onlineTarget = 'alluvialLand';
+      } else if (!alluvialEnabled && benDoEnabled) {
+        onlineTarget = 'benDo';
+      } else {
+        onlineTarget = 'all';
       }
 
-      // If only benDo is enabled, pass config with benSubEnabled.alluvialLand = false
-      if (!alluvialEnabled && benDoEnabled) {
-        const benOnlyConfig: AppConfig = {
-          ...config,
-          benSubEnabled: {
-            ...config.benSubEnabled,
-            alluvialLand: false,
-          },
-        };
-        const res = await stepBenDoFishing(snap, benOnlyConfig, setStatus, () => {});
-        if (res.finishedArea && config.autoSleep && config.sleepOnFishingLimit && (snap.minutes || 0) >= targetSleepMinutes) {
-          setStatus('🌙 Hết câu được ở Bến Đò buổi tối -> Về nhà đi ngủ...');
-          await execGameAction('SLEEP_NOW');
-          await sleep(1200);
-        }
-        isBusy = false;
-        return;
-      }
-
-      // Both benDo & alluvialLand are enabled
-      const res = await stepBenDoFishing(snap, config, setStatus, () => {});
+      const res = await stepBenDoFishing(snap, config, setStatus, () => {}, onlineTarget);
       if (res.finishedArea && config.autoSleep && config.sleepOnFishingLimit && (snap.minutes || 0) >= targetSleepMinutes) {
         setStatus('🌙 Hết câu được ở Bến Đò buổi tối -> Về nhà đi ngủ...');
         await execGameAction('SLEEP_NOW');

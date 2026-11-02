@@ -435,4 +435,5 @@ export interface BaiSnapshotState {
   dryDex?: BaiDryDexData | null;
   owner: { me?: boolean; id?: string; name?: string } | null;
   nextReadyAt: number;
+  lastFarmSurveyAt?: number;
 }

@@ -19,6 +19,7 @@ let reactRoot: Root | null = null;
 let lastActionText = 'Đang chờ lệnh...';
 let lastGameSnap: GameSnapshot | null = null;
 let lockedTabArea: AreaId | null = null;
+let lockedAllMode: 'online' | 'offline' | null = null;
 let logSeq = 0;
 let sessionLogs: HudLogEntry[] = [];
 
@@ -48,6 +49,14 @@ export function getLockedTabArea(): AreaId | null {
 
 export function setLockedTabArea(area: AreaId | null): void {
   lockedTabArea = area;
+}
+
+export function getLockedAllMode(): 'online' | 'offline' | null {
+  return lockedAllMode;
+}
+
+export function setLockedAllMode(mode: 'online' | 'offline' | null): void {
+  lockedAllMode = mode;
 }
 
 export function getLastActionText(): string {

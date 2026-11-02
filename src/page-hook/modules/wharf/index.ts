@@ -32,7 +32,10 @@ let keepBenPanelUntil = 0;
 let keepBenPanelMsg = '';
 let hadMyBout = false;
 
-export function execBenStep(cfg: AppConfig, onlyAlluvial?: boolean): BenStepResult {
+export function execBenStep(
+  cfg: AppConfig,
+  onlineTarget: 'all' | 'benDo' | 'alluvialLand' = 'all'
+): BenStepResult {
   const mStore = stores.main;
   const buStore = stores.benUI;
   const bnStore = stores.benNet;
@@ -72,7 +75,7 @@ export function execBenStep(cfg: AppConfig, onlyAlluvial?: boolean): BenStepResu
 
     // Nếu đang ở bên Chợ Bãi / Farm, gấp rút qua đò về lại Bến Đò ngay
     if (currentKind !== 'ben') {
-      const alluvialRes = stepAlluvial(cfg);
+      const alluvialRes = stepAlluvial(cfg, onlineTarget);
       if (alluvialRes && alluvialRes.acted) {
         return {
           acted: true,
@@ -139,7 +142,7 @@ export function execBenStep(cfg: AppConfig, onlyAlluvial?: boolean): BenStepResu
   // Strict Area Isolation: When across the river at Chợ Bãi ('bai') or Đất Của Mình ('farm'),
   // ONLY run the Alluvial state machine. Never fall through to Bến Đò tasks.
   if (currentKind !== 'ben') {
-    const alluvialRes = stepAlluvial(cfg);
+    const alluvialRes = stepAlluvial(cfg, onlineTarget);
     if (alluvialRes && alluvialRes.acted) {
       return {
         acted: true,
@@ -157,10 +160,9 @@ export function execBenStep(cfg: AppConfig, onlyAlluvial?: boolean): BenStepResu
     };
   }
 
-  // Priority at Bến Đò: If currently walking to Ông Tám to board the ferry,
-  // continue the Alluvial state machine before checking `bu.walking` or Bến Đò fishing tasks.
-  if (!isBossActive && !isBossImpending && isAlluvialInTransit()) {
-    const alluvialTransitRes = stepAlluvial(cfg);
+  // Priority at Bến Đò: If currently in transit across the river, continue Alluvial machine
+  if (!isBossActive && !isBossImpending && onlineTarget !== 'benDo' && isAlluvialInTransit()) {
+    const alluvialTransitRes = stepAlluvial(cfg, onlineTarget);
     if (alluvialTransitRes && alluvialTransitRes.acted) {
       return {
         acted: true,
@@ -175,8 +177,8 @@ export function execBenStep(cfg: AppConfig, onlyAlluvial?: boolean): BenStepResu
   }
 
   // Dedicated Nông Trại Online mode: only execute alluvial steps, skip fishing and crickets
-  if (onlyAlluvial || cfg.activeTab === 'alluvialLand') {
-    const alluvialRes = stepAlluvial(cfg);
+  if (onlineTarget === 'alluvialLand') {
+    const alluvialRes = stepAlluvial(cfg, 'alluvialLand');
     if (alluvialRes && alluvialRes.acted) {
       return {
         acted: true,
@@ -366,44 +368,41 @@ export function execBenStep(cfg: AppConfig, onlyAlluvial?: boolean): BenStepResu
 
   // 5. Sub-area dispatcher
   const subAreaRunners: Record<WharfSubAreaId, () => BenStepResult> = {
-    fishing: () => runFishingStep(ctx),
-    cricketBoss: () => runCricketBossStep(ctx),
-    cricketHunt: () => runCricketHuntStep(ctx),
-    entertainment: () => runEntertainmentStep(ctx),
     alluvialLand: () => {
-      const res = stepAlluvial(cfg);
+      if (onlineTarget === 'benDo' || cfg.areaEnabled?.alluvialLand === false) {
+        return { acted: false };
+      }
+      const res = stepAlluvial(cfg, onlineTarget);
       if (res && res.acted) {
         return { acted: true, msg: res.msg, allowCast: Boolean(res.allowCast) };
       }
       return { acted: false };
     },
+    cricketBoss: () => runCricketBossStep(ctx),
+    cricketHunt: () => runCricketHuntStep(ctx),
+    entertainment: () => runEntertainmentStep(ctx),
+    fishing: () => runFishingStep(ctx),
   };
   const continuousSubs = new Set<WharfSubAreaId>(['fishing', 'cricketHunt']);
 
-  const defaultOrder: WharfSubAreaId[] = [
-    'alluvialLand',
-    'cricketBoss',
-    'entertainment',
-    'fishing',
-    'cricketHunt',
-  ];
   const savedOrder: WharfSubAreaId[] =
     Array.isArray(cfg.benSubOrder) && cfg.benSubOrder.length > 0 ? [...cfg.benSubOrder] : [];
-  for (const id of defaultOrder) {
-    if (!savedOrder.includes(id)) {
-      savedOrder.push(id);
-    }
-  }
-  // Ensure bounded periodic tasks (alluvialLand) are checked before continuous fishing/cricketHunt
+
+  // Always ensure bounded periodic alluvialLand is evaluated first in activeOrder
   const activeOrder: WharfSubAreaId[] = [
-    ...savedOrder.filter((id) => !continuousSubs.has(id)),
-    ...savedOrder.filter((id) => continuousSubs.has(id)),
+    'alluvialLand',
+    ...savedOrder.filter((id) => id !== 'alluvialLand' && !continuousSubs.has(id)),
+    ...savedOrder.filter((id) => id !== 'alluvialLand' && continuousSubs.has(id)),
   ];
 
   let deferred: (() => BenStepResult) | null = null;
   let exhaustedResult: BenStepResult | null = null;
   for (const subId of activeOrder) {
-    if (cfg.benSubEnabled?.[subId] === false) continue;
+    if (subId === 'alluvialLand') {
+      if (onlineTarget === 'benDo' || cfg.areaEnabled?.alluvialLand === false) continue;
+    } else {
+      if (cfg.benSubEnabled?.[subId] === false) continue;
+    }
     if (deferred && continuousSubs.has(subId)) continue;
     const runner = subAreaRunners[subId];
     if (!runner) continue;
