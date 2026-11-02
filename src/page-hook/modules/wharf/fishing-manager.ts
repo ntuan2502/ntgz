@@ -119,6 +119,23 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
     nonKeptCount > 0 &&
     (isBasketFull || needShellsForBait || needShellsForFood)
   ) {
+    // Nếu bật tự phơi cá, giữ lại tối đa 6 con cá giá trị cao nhất trong giỏ để đem qua bãi phơi thay vì bán tươi
+    if (cfg.benAutoDryFish !== false && Array.isArray(bn.basket)) {
+      const dryCandidates = bn.basket
+        .filter(
+          (f: { id?: string; kept?: boolean; odd?: boolean; rainbow?: boolean; price?: number; fish?: string }) =>
+            Boolean(f.id && !f.kept && !f.odd && !f.rainbow && f.fish !== 'rac' && !f.fish?.startsWith('junk'))
+        )
+        .sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0));
+
+      for (const f of dryCandidates.slice(0, 6)) {
+        if (f.id) {
+          sendBenWs({ t: 'keep', id: f.id, on: true });
+          f.kept = true;
+        }
+      }
+    }
+
     const reasonText =
       nonKeptCount >= 60 || bn.notice?.error === 'basketFull'
         ? ' (Giỏ đã đầy 60/60)'

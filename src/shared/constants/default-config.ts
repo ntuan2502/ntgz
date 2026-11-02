@@ -431,6 +431,8 @@ export const DEFAULT_CONFIG: AppConfig = {
   benAutoBuySugar: true,
   benAutoCandySell: true,
   benAutoDryFish: true,
+  benDryIncludeKept: true,
+  benAutoDryCollect: true,
   benAutoDryDexPut: true,
   benAutoDryFishSell: true,
 

@@ -270,33 +270,67 @@ export function AlluvialLandCard({ config, updateField, onUpdateConfig }: Alluvi
           )}
         </div>
 
-        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-          <div>
-            <span className="font-medium">🐟 Tự phơi cá bến đò lên nong &amp; thu khô cá</span>
-            <p className="text-[10px] text-slate-400">
-              Ưu tiên lọc cá có giá trị cao nhất câu được ở Bến Đò đem lên các nong tre phơi khô (giá trị khô gấp đôi cá tươi).
-            </p>
-          </div>
-          <Switch
-            size="sm"
-            checked={Boolean(config.benAutoDryFish ?? true)}
-            onCheckedChange={(c) => updateField('benAutoDryFish', c)}
-          />
-        </label>
+        {/* Khối Sân Phơi Khô Cá & Bộ Sưu Tập */}
+        <div className="rounded-lg border border-sky-200/80 bg-sky-50/40 p-2.5 space-y-2">
+          <span className="font-semibold text-sky-900 block text-[11px]">🐟 Sân Phơi Khô Cá &amp; Sổ Khô Cá</span>
 
-        <label className="flex items-center justify-between text-slate-700 cursor-pointer">
-          <div>
-            <span className="font-medium">📜 Tự cất khô cá vào Sổ khô cá (+⭐ Nổi tiếng)</span>
-            <p className="text-[10px] text-slate-400">
-              Ưu tiên cất loài khô cá mới hoặc kích thước lớn hơn vào bộ sưu tập DryDex.
-            </p>
-          </div>
-          <Switch
-            size="sm"
-            checked={Boolean(config.benAutoDryDexPut ?? true)}
-            onCheckedChange={(c) => updateField('benAutoDryDexPut', c)}
-          />
-        </label>
+          {/* Phơi cá lên nong */}
+          <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+            <div>
+              <span className="font-medium text-slate-800">☀️ Tự phơi cá lên nong (Ưu tiên con đắt nhất)</span>
+              <p className="text-[10px] text-slate-400">
+                Xếp cá câu được ở Bến Đò lên nong tre (khô cá bán gấp đôi giá cá tươi hoặc cất lấy danh tiếng).
+              </p>
+            </div>
+            <Switch
+              size="sm"
+              checked={Boolean(config.benAutoDryFish ?? true)}
+              onCheckedChange={(c) => updateField('benAutoDryFish', c)}
+            />
+          </label>
+          {config.benAutoDryFish !== false && (
+            <div className="ml-2 pl-2.5 border-l-2 border-sky-200 space-y-1 text-[11px]">
+              <label className="flex items-center justify-between text-slate-600 cursor-pointer">
+                <span>🔓 Cho phép tự mở khoá cá đang giữ để phơi con đắt nhất</span>
+                <Switch
+                  size="sm"
+                  checked={Boolean(config.benDryIncludeKept ?? true)}
+                  onCheckedChange={(c) => updateField('benDryIncludeKept', c)}
+                />
+              </label>
+            </div>
+          )}
+
+          {/* Thu hoạch cá khô */}
+          <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+            <div>
+              <span className="font-medium text-slate-800">🧺 Tự thu hoạch cá đã phơi khô</span>
+              <p className="text-[10px] text-slate-400">
+                Thu khô cá từ các nong đã phơi đủ thời gian cất vào kho để chuẩn bị cất sổ hoặc bán.
+              </p>
+            </div>
+            <Switch
+              size="sm"
+              checked={Boolean(config.benAutoDryCollect ?? true)}
+              onCheckedChange={(c) => updateField('benAutoDryCollect', c)}
+            />
+          </label>
+
+          {/* Cất vào sổ bộ sưu tập */}
+          <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+            <div>
+              <span className="font-medium text-slate-800">📜 Tự cất khô cá vào Sổ bộ sưu tập (+⭐ Nổi tiếng)</span>
+              <p className="text-[10px] text-slate-400">
+                Ưu tiên cất khô cá loài mới hoặc có kích thước lớn hơn vào Sổ Khô Cá DryDex leo bảng vàng.
+              </p>
+            </div>
+            <Switch
+              size="sm"
+              checked={Boolean(config.benAutoDryDexPut ?? true)}
+              onCheckedChange={(c) => updateField('benAutoDryDexPut', c)}
+            />
+          </label>
+        </div>
 
         <label className="flex items-center justify-between text-slate-700 cursor-pointer">
           <div>

@@ -265,6 +265,8 @@ export interface AppConfig {
   benAutoBuySugar: boolean;
   benAutoCandySell: boolean;
   benAutoDryFish: boolean;
+  benDryIncludeKept?: boolean;
+  benAutoDryCollect?: boolean;
   benAutoDryDexPut: boolean;
   benAutoDryFishSell: boolean;
 
