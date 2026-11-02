@@ -515,21 +515,42 @@ export async function stepBenDoFishing(
   }
 
   // 5. Waiting for fish
+  const serverNow = snap.benNet?.ti?.skew ? Date.now() + snap.benNet.ti.skew : Date.now();
+  const hlwLive = bn.hlwLive as { on?: boolean; endsAt?: number | null } | null | undefined;
+  const isHlwLive = Boolean(
+    hlwLive?.on && (hlwLive.endsAt === null || hlwLive.endsAt === undefined || Date.now() < hlwLive.endsAt)
+  );
+  const bossStart = typeof bn.hlwBoss?.start === 'number' ? bn.hlwBoss.start : 0;
+  const isBossAliveTime = Boolean(bossStart > 0 && serverNow >= bossStart && serverNow < bossStart + 180000);
   const isBossActive = Boolean(
     config.benAutoBossHunt !== false &&
-    (bn.hlwBoss || (bn as Record<string, unknown>).hlwLive || document.querySelector('.hlw-boss'))
+    (isBossAliveTime || bn.hlwBoss || document.querySelector('.hlw-boss'))
+  );
+
+  const msToNextBoss = Math.ceil(serverNow / 1800000) * 1800000 - serverNow;
+  const secondsToNextBoss = Math.ceil(msToNextBoss / 1000);
+  const hasCountdownSoonInDom = Boolean(document.querySelector('.hlw-boss-countdown.soon'));
+  const isBossImpending = Boolean(
+    config.benAutoBossHunt !== false &&
+    isHlwLive &&
+    !isBossActive &&
+    ((secondsToNextBoss <= 10 && secondsToNextBoss > 0) || hasCountdownSoonInDom)
   );
 
   if (bn.fishing === 'wait' || bn.fishing === 'nibble' || bn.fishing === 'casting') {
-    if (isBossActive) {
-      // Boss Bí Ngô xuất hiện: Thu cần ngay lập tức để chuyển sang bám theo săn Boss
+    if (isBossActive || isBossImpending) {
+      // Boss Bí Ngô xuất hiện hoặc sắp xuất hiện (<= 10s): Thu cần ngay lập tức để chuyển sang đón / bám Boss
       const pullBtn = document.querySelector('button.ben-cast.btn-brown') as HTMLButtonElement | null;
       if (pullBtn && isVisible(pullBtn)) {
         triggerPointerDownOnly(pullBtn);
       } else {
         window.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true }));
       }
-      setStatus('👑 Phát hiện Boss Bí Ngô xuất hiện! Đang thu cần gấp để bám theo săn Boss 🎃');
+      setStatus(
+        isBossImpending
+          ? `👑 Boss Bí Ngô đếm ngược còn ${secondsToNextBoss}s! Thu cần ngay để ra giữa map chờ 🎃`
+          : '👑 Phát hiện Boss Bí Ngô xuất hiện! Đang thu cần gấp để bám theo săn Boss 🎃'
+      );
       await sleep(150);
       return { finishedArea: false };
     }
@@ -543,13 +564,23 @@ export async function stepBenDoFishing(
   }
 
   // 6. Walking
-  if (bu?.walking && !isBossActive) {
+  if (bu?.walking && !isBossActive && !isBossImpending) {
     setStatus('🚶 Đang đi bộ ở Bến Đò...');
     return { finishedArea: false };
   }
 
   // 7. Idle phase
   if (bn.fishing === 'idle') {
+    if (isBossImpending) {
+      const prep = await execGameAction('BEN_STEP', { config });
+      if (prep && prep.ok && prep.msg) {
+        setStatus(prep.msg);
+      } else {
+        setStatus(`👑 Boss Bí Ngô đếm ngược còn ${secondsToNextBoss}s ➔ Thu cần và ra giữa map chờ, không câu cố 🎃`);
+      }
+      await sleep(150);
+      return { finishedArea: false };
+    }
     const prep = await execGameAction('BEN_STEP', { config });
     if (prep && prep.ok && prep.acted) {
       setStatus(prep.msg || '🛶 Đang chuẩn bị tại Bến Đò...');

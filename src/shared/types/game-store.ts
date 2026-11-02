@@ -627,7 +627,11 @@ export interface BenNetState {
     seed?: number;
     [key: string]: unknown;
   } | null;
-  hlwLive?: unknown;
+  hlwLive?: {
+    on?: boolean;
+    endsAt?: number | null;
+    [key: string]: unknown;
+  } | null;
   hlwToast?: { text: string; seq: number } | null;
   htx?: {
     claimed?: boolean;

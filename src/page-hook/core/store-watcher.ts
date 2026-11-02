@@ -205,6 +205,10 @@ export function getSnapshot(): GameSnapshot {
           you: bn.you,
           watching: bn.watching ?? null,
           ti: bn.ti ?? null,
+          hlw: bn.hlw ?? null,
+          hlwBoss: bn.hlwBoss ?? null,
+          hlwLive: bn.hlwLive ?? null,
+          hlwToast: bn.hlwToast ?? null,
           cricketEvents: getCricketEvents(),
         }
       : null,

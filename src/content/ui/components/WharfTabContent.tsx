@@ -530,7 +530,7 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onO
             {/* Boss Bí Ngô */}
             <label className="flex items-center justify-between text-slate-700 cursor-pointer pt-1 border-t border-slate-200/60">
               <span className="flex items-center gap-1.5 font-medium">
-                <span>👑 Săn Boss Bí Ngô (bám theo nhặt quà mỗi 30p)</span>
+                <span>👑 Săn Boss Bí Ngô (đếm ngược 10s thu cần ra giữa map & bám nhặt quà)</span>
               </span>
               <Switch
                 checked={Boolean(config.benAutoBossHunt ?? true)}

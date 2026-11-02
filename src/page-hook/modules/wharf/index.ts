@@ -222,6 +222,8 @@ const BOSS_LADDER = [
   { id: 'ongSau', aliases: ['ongsau', 'sau'], name: 'Ông Sáu chủ sới', reward: 220, total: 242 },
 ];
 const SOI_TILE = { x: 4, y: 29 };
+/** Central courtyard of Bến Đò village (middle of map & boss roaming bounds ZY: { x0: 4, x1: 40, y0: 14, y1: 35 }) */
+export const BEN_MAP_CENTER_TILE = { x: 24, y: 23 };
 const CRICKET_BOX_MAX = 6;
 const HUNT_STAMINA_COST = 3;
 const HUNT_LIGHT_STALE_MS = 8000;
@@ -376,21 +378,6 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   }
   initWharfSeqsIfNeeded(bn);
   refreshCricketWatchers(cfg);
-  const isBossActive = Boolean(
-    cfg.benAutoBossHunt !== false && (bn.hlwBoss || (bn as Record<string, unknown>).hlwLive)
-  );
-  if (!isBossActive && (bu.walking || bn.fishing !== 'idle')) {
-    return { acted: false };
-  }
-
-  const interrupted = dismissInterruptsIfNeeded(cfg);
-  if (interrupted) return interrupted;
-
-  // Bến Đò uses its own independent showFullActions config, not affected by global settings
-  const benShowFullActions = Boolean(cfg.benShowFullActions);
-  if (benShowFullActions && bu.panel && Date.now() < keepBenPanelUntil) {
-    return { acted: true, msg: keepBenPanelMsg || '👁️ Đang hiển thị giao diện thao tác...' };
-  }
 
   const rawScene = getActiveScene('BenDoScene');
   const benScene = rawScene as unknown as {
@@ -408,6 +395,41 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
       y?: number;
     };
   } | null;
+
+  const serverNow = getBenServerNow(bn);
+  const isBossVisible = Boolean(benScene?.boss?.visible);
+  const bossStart = typeof bn.hlwBoss?.start === 'number' ? bn.hlwBoss.start : 0;
+  const isBossAliveTime = Boolean(bossStart > 0 && serverNow >= bossStart && serverNow < bossStart + 180000);
+  const isBossActive = Boolean(
+    cfg.benAutoBossHunt !== false && (isBossVisible || isBossAliveTime || bn.hlwBoss)
+  );
+
+  const hlwLive = bn.hlwLive as { on?: boolean; endsAt?: number | null } | null | undefined;
+  const isHlwLive = Boolean(
+    hlwLive?.on && (hlwLive.endsAt === null || hlwLive.endsAt === undefined || Date.now() < hlwLive.endsAt)
+  );
+  const msToNextBoss = Math.ceil(serverNow / 1800000) * 1800000 - serverNow;
+  const secondsToNextBoss = Math.ceil(msToNextBoss / 1000);
+  const isBossImpending = Boolean(
+    cfg.benAutoBossHunt !== false &&
+    isHlwLive &&
+    !isBossActive &&
+    secondsToNextBoss <= 10 &&
+    secondsToNextBoss > 0
+  );
+
+  if (!isBossActive && !isBossImpending && (bu.walking || bn.fishing !== 'idle')) {
+    return { acted: false };
+  }
+
+  const interrupted = dismissInterruptsIfNeeded(cfg);
+  if (interrupted) return interrupted;
+
+  // Bến Đò uses its own independent showFullActions config, not affected by global settings
+  const benShowFullActions = Boolean(cfg.benShowFullActions);
+  if (benShowFullActions && bu.panel && Date.now() < keepBenPanelUntil) {
+    return { acted: true, msg: keepBenPanelMsg || '👁️ Đang hiển thị giao diện thao tác...' };
+  }
 
   const wallet = bn.wallet;
   if (!wallet) return { acted: false };
@@ -590,6 +612,37 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
         };
       }
     }
+  }
+
+  // =========================================================================
+  // 0b. IMPENDING BOSS WAIT: Khi đếm ngược còn <= 10s, thu cần và ra giữa map chờ sẵn
+  // =========================================================================
+  if (isBossImpending) {
+    if (bn.fishing !== 'idle') {
+      sendBenWs({ t: 'hook' });
+    }
+
+    const curTile = benScene?.farmer?.tile;
+    const isAtCenter = curTile && Math.abs(curTile.x - BEN_MAP_CENTER_TILE.x) <= 1 && Math.abs(curTile.y - BEN_MAP_CENTER_TILE.y) <= 1;
+
+    if (!isAtCenter && benScene && typeof benScene.goFarmer === 'function') {
+      if (!benScene.farmer?.running) {
+        benScene.goFarmer(BEN_MAP_CENTER_TILE);
+      }
+      return {
+        acted: true,
+        isBossHunt: true,
+        allowCast: false,
+        msg: `👑 Boss Bí Ngô sắp xuất hiện (còn ${secondsToNextBoss}s) ➔ Đang chạy ra giữa map (${BEN_MAP_CENTER_TILE.x}, ${BEN_MAP_CENTER_TILE.y}) chờ sẵn 🎃`,
+      };
+    }
+
+    return {
+      acted: true,
+      isBossHunt: true,
+      allowCast: false,
+      msg: `👑 Đã đứng giữa map chờ Boss Bí Ngô xuất hiện (còn ${secondsToNextBoss}s) 🎃`,
+    };
   }
 
   const huntEnabled = cfg.benSubEnabled?.cricketHunt !== false && cfg.benAutoCricketHunt !== false;
@@ -1084,6 +1137,10 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
           (benScene.farmer.y ?? 0) + lookDir.dy
         );
       }
+    }
+
+    if (isBossImpending) {
+      return { acted: false, allowCast: false };
     }
 
     return { acted: false, deferred: () => ({ acted: false, allowCast: true }) };

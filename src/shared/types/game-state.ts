@@ -105,6 +105,23 @@ export interface BenNetState {
     picks?: string[];
     [key: string]: unknown;
   };
+  hlw?: {
+    state?: unknown;
+    bag?: Array<{ item: string; qty: number }>;
+    board?: unknown;
+    [key: string]: unknown;
+  } | null;
+  hlwBoss?: {
+    start?: number;
+    seed?: number;
+    [key: string]: unknown;
+  } | null;
+  hlwLive?: {
+    on?: boolean;
+    endsAt?: number | null;
+    [key: string]: unknown;
+  } | null;
+  hlwToast?: { text: string; seq: number } | null;
   [key: string]: unknown;
 }
 
