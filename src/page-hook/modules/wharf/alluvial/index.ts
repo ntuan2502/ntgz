@@ -191,11 +191,57 @@ export function stepAlluvial(
   // Handle starting Auto when player is already inside Farm or Chợ Bãi
   if (transitState === 'idle') {
     if (baiState.kind === 'farm') {
-      baiState.lastFarmSurveyAt = now;
-      transitState = 'work_farm';
-      workStep = 0;
-      transitStartedAt = now;
-      resetBaiWalkTracker();
+      const needsFarmWork =
+        baiState.lastFarmSurveyAt === 0 ||
+        (baiState.nextReadyAt > 0 && serverNowMs >= baiState.nextReadyAt) ||
+        now - baiState.lastFarmSurveyAt > 5 * 60 * 1000;
+      if (needsFarmWork) {
+        baiState.lastFarmSurveyAt = now;
+        transitState = 'work_farm';
+        workStep = 0;
+        transitStartedAt = now;
+        resetBaiWalkTracker();
+      } else {
+        if (onlineTarget === 'all' || onlineTarget === 'benDo') {
+          if (!hasMarketWork(cfg)) {
+            closeBaiPanel();
+            sendBenWs({ t: 'farmExit' });
+            sendBenWs({ t: 'ferry' });
+            transitState = 'wait_back_to_ben';
+            transitStartedAt = now;
+            resetBaiWalkTracker();
+            return {
+              acted: true,
+              msg: '🌾 Nông Trại Online: Đã xong việc ruộng, quay về Bến Đò câu cá (bỏ qua Chợ Bãi vì không có đồ bán/mua)...',
+              allowCast: false,
+            };
+          } else {
+            closeBaiPanel();
+            sendBenWs({ t: 'farmExit' });
+            transitState = 'at_bai_market';
+            transitStartedAt = now;
+            resetBaiWalkTracker();
+            return {
+              acted: true,
+              msg: '🚪 Đất Bãi: Đang ra Chợ Bãi giao thương nông sản / mua vật tư...',
+              allowCast: false,
+            };
+          }
+        }
+        // onlineTarget === 'alluvialLand': stay idle and wait for crops/animals
+        const nextTimeStr =
+          baiState.nextReadyAt > 0
+            ? new Date(baiState.nextReadyAt).toLocaleTimeString('vi-VN', {
+                hour: '2-digit',
+                minute: '2-digit',
+              })
+            : 'đang tính';
+        return {
+          acted: false,
+          msg: `🌾 Nông Trại Online: Ruộng vườn đang phát triển, chu kỳ kế tiếp lúc ${nextTimeStr}...`,
+          allowCast: false,
+        };
+      }
     } else if (baiState.kind === 'bai') {
       const needsFarmVisit =
         (baiState.hasLand || baiState.lastInfoAt === 0) &&
@@ -213,9 +259,33 @@ export function stepAlluvial(
           allowCast: false,
         };
       }
-      transitState = needsFarmVisit ? 'take_ferry_to_bai' : 'at_bai_market';
-      transitStartedAt = now;
-      resetBaiWalkTracker();
+      if (hasMarketWork(cfg)) {
+        transitState = 'at_bai_market';
+        transitStartedAt = now;
+        resetBaiWalkTracker();
+      } else {
+        if (onlineTarget === 'alluvialLand') {
+          sendBenWs({ t: 'farmQuick' });
+          transitState = 'enter_farm';
+          transitStartedAt = now;
+          resetBaiWalkTracker();
+          return {
+            acted: true,
+            msg: '🌾 Chợ Bãi: Đang vào Đất Của Mình...',
+            allowCast: false,
+          };
+        } else {
+          sendBenWs({ t: 'ferry' });
+          transitState = 'wait_back_to_ben';
+          transitStartedAt = now;
+          resetBaiWalkTracker();
+          return {
+            acted: true,
+            msg: '⛵ Chợ Bãi: Không có đồ giao dịch, lên đò quay về Bến Đò...',
+            allowCast: false,
+          };
+        }
+      }
     }
   }
 
@@ -501,7 +571,7 @@ export function stepAlluvial(
         return {
           acted: true,
           msg: '🌾 Nông Trại Online: Đã xong việc ruộng, quay về Bến Đò câu cá (bỏ qua Chợ Bãi vì không có đồ bán/mua)...',
-          allowCast: true,
+          allowCast: false,
         };
       }
 

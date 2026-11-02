@@ -18,6 +18,8 @@ const DRYFISH_LOT_TILE = { x: 41, y: 20 };
 const COOP_TILE = { x: 40, y: 8 };
 const NET_TILE = { x: 39, y: 3 };
 
+let farmSyncWaitStartedAt = 0;
+
 /**
  * Hướng mặt nhân vật về phía thửa ruộng `parcelIdx` (0..8) trong BaiScene (farm).
  * Thao tác trên luống rau có thể thực hiện từ xa ở bất cứ đâu trong khuôn viên nông trại,
@@ -64,11 +66,27 @@ export function runBaiFarmWorkStep(
   const storeFarm = stores.bai?.getState()?.farm;
   const farm = storeFarm || baiState.farm;
   if (!farm) {
+    if (farmSyncWaitStartedAt === 0) {
+      farmSyncWaitStartedAt = Date.now();
+      sendBenWs({ t: 'yardDone' });
+    }
+    if (Date.now() - farmSyncWaitStartedAt < 4000) {
+      return {
+        nextWorkStep: currentWorkStep,
+        result: {
+          acted: true,
+          msg: '⏳ Đất Bãi: Đang đồng bộ dữ liệu ruộng vườn...',
+          allowCast: false,
+        },
+      };
+    }
+    farmSyncWaitStartedAt = 0;
     return {
       nextWorkStep: 12,
       result: { acted: true, msg: '🌾 Rời vườn...', allowCast: false, doneFarm: true },
     };
   }
+  farmSyncWaitStartedAt = 0;
 
   const nowMs = getBaiServerNowMs();
   const plots = farm.plots || [];
@@ -400,6 +418,7 @@ export function runBaiFarmWorkStep(
         }
       }
     }
+    closeBaiPanel();
     step = 8;
   }
 
@@ -673,6 +692,7 @@ export function runBaiFarmWorkStep(
         };
       }
     }
+    closeBaiPanel();
     step = 10;
   }
 
@@ -794,6 +814,7 @@ export function runBaiFarmWorkStep(
         };
       }
     }
+    closeBaiPanel();
     step = 11;
   }
 

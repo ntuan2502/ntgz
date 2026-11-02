@@ -436,4 +436,5 @@ export interface BaiSnapshotState {
   owner: { me?: boolean; id?: string; name?: string } | null;
   nextReadyAt: number;
   lastFarmSurveyAt?: number;
+  lastInfoAt?: number;
 }

@@ -525,5 +525,6 @@ export function getBaiSnapshot(): BaiSnapshotState | null {
     owner: baiState.owner,
     nextReadyAt: baiState.nextReadyAt,
     lastFarmSurveyAt: baiState.lastFarmSurveyAt,
+    lastInfoAt: baiState.lastInfoAt,
   };
 }

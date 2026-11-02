@@ -155,8 +155,19 @@ export async function stepBenDoFishing(
     // At Bến Đò: Check if Nông Trại Online needs a visit (first survey, ready crop/candy/egg/fish, or 5-min check)
     const serverNowMs = Date.now() + (snap.benNet?.ti?.skew ?? 0);
     const bai = snap.baiState;
+    const hasKnownNoLand = bai?.lastInfoAt
+      ? bai.lastInfoAt > 0 && !bai.hasLand
+      : bai?.info
+        ? !bai.hasLand
+        : false;
+    const canBuyLand = Boolean(
+      config.benAutoBuyLand && (bai?.shells ?? 0) >= (bai?.landPrice ?? 100000)
+    );
+    const isLandAvailable = !hasKnownNoLand || canBuyLand;
+
     const needsAlluvialVisit =
       config.areaEnabled.alluvialLand !== false &&
+      isLandAvailable &&
       (bai?.lastFarmSurveyAt === 0 ||
         !bai?.lastFarmSurveyAt ||
         (bai?.nextReadyAt > 0 && serverNowMs >= bai.nextReadyAt) ||
