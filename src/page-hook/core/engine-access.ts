@@ -190,7 +190,7 @@ export function getActiveScene(key: string): PhaserSceneInstance | null {
   try {
     const sc = game.scene.getScene(key);
     if (sc && sc.sys && sc.sys.isActive()) return sc;
-    return sc || null;
+    return null;
   } catch {
     return null;
   }

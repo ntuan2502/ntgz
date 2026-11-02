@@ -245,8 +245,23 @@ export interface BenNetState {
   notice?: {
     error?: string;
     seq?: number;
+    until?: number;
     [key: string]: unknown;
   };
+  check?: {
+    kinds?: string[];
+    options?: number[];
+    ms?: number;
+    until?: number;
+    [key: string]: unknown;
+  } | null;
+  checkDone?: {
+    ok?: boolean;
+    result?: string;
+    seq?: number;
+    holdUntil?: number;
+    [key: string]: unknown;
+  } | null;
   landed?: {
     id?: string;
     fish?: string;
@@ -272,6 +287,8 @@ export interface BaiPlotData {
 
 export interface BaiCoconutData {
   slot: number;
+  matureAt?: number;
+  ready?: number;
   readyAt?: number;
   state?: string;
 }

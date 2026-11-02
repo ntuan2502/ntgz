@@ -178,6 +178,7 @@ export function mergeConfig(saved: Partial<AppConfig> | null | undefined): AppCo
     hudWidth: (typeof saved.hudWidth === 'number' && saved.hudWidth >= 340 ? saved.hudWidth : DEFAULT_CONFIG.hudWidth),
     hudHeight: (typeof saved.hudHeight === 'number' && saved.hudHeight >= 360 ? saved.hudHeight : DEFAULT_CONFIG.hudHeight),
     showFullActions: Boolean(saved.showFullActions ?? DEFAULT_CONFIG.showFullActions),
+    benShowFullActions: true,
     benHuntZone: (saved.benHuntZone ?? DEFAULT_CONFIG.benHuntZone) as AppConfig['benHuntZone'],
     benBaitMaxCount: (typeof saved.benBaitMaxCount === 'number' ? saved.benBaitMaxCount : DEFAULT_CONFIG.benBaitMaxCount) as number,
     benBaitMinShells: (typeof saved.benBaitMinShells === 'number' ? saved.benBaitMinShells : DEFAULT_CONFIG.benBaitMinShells) as number,

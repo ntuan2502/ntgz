@@ -94,17 +94,6 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onO
 
   return (
     <div className="space-y-2.5 text-xs font-sans text-slate-800">
-      {/* Hiển thị bảng thao tác Bến Đò */}
-      <div className="flex items-center justify-between rounded-xl bg-white border border-slate-200/90 px-3.5 py-2 text-slate-800 shadow-2xs">
-        <span className="font-semibold text-xs flex items-center gap-1.5">
-          <span>👁️ Hiển thị bảng thao tác Bến Đò</span>
-        </span>
-        <Switch
-          checked={Boolean(config.benShowFullActions)}
-          onCheckedChange={(c) => updateField('benShowFullActions', c)}
-        />
-      </div>
-
       {/* ⚡ Hồi Phục Thể Lực Bến Đò (Dùng chung cho cả Câu Cá & Bắt Dế) */}
       <div
         className={`rounded-xl border bg-white shadow-xs transition-all ${

@@ -40,9 +40,16 @@ export function runCricketBossStep(ctx: BenExecutionContext): BenStepResult {
 
   if (!bn.soi) {
     if (canAct('ben_soi_fetch', 4000)) {
-      markActed('ben_soi_fetch');
-      sendBenWs({ t: 'soi' });
-      return { acted: true, msg: '🥊 Đang tải danh sách Boss Sới Dế Ông Sáu...' };
+      return walkAndRun(
+        SOI_TILE,
+        () => {
+          sendBenWs({ t: 'soi' });
+        },
+        '🥊 Đi lại Sới Dế Ông Sáu để xem danh sách Boss...',
+        'ben_soi_fetch',
+        { panel: 'soi' },
+        1200
+      );
     }
     return { acted: false };
   }
@@ -99,9 +106,24 @@ export function runCricketBossStep(ctx: BenExecutionContext): BenStepResult {
  * SUB-AREA RUNNER 3: CRICKET HUNT & TUBE CARE (Bắt dế đêm & Nuôi dế ống tre)
  */
 export function runCricketHuntStep(ctx: BenExecutionContext): BenStepResult {
-  const { cfg, bn, bnStore, benScene, stamina, huntEnabled } = ctx;
+  const { cfg, bn, bnStore, benScene, stamina, huntEnabled, runWithOptionalPanel } = ctx;
 
-  if (!huntEnabled || !bn.crickets) {
+  if (!huntEnabled) {
+    return { acted: false };
+  }
+  if (!bn.crickets) {
+    if (canAct('ben_crickets_open', 4000)) {
+      markActed('ben_crickets_open');
+      runWithOptionalPanel(
+        () => {
+          sendBenWs({ t: 'crickets' });
+        },
+        '🎋 Đang mở Ống tre nuôi dế để kiểm tra dế...',
+        { panel: 'crickets' },
+        1200
+      );
+      return { acted: true, msg: '🎋 Đang mở Ống tre nuôi dế...' };
+    }
     return { acted: false };
   }
   const box: CricketItem[] = bn.crickets.box || [];
@@ -165,7 +187,6 @@ export function runCricketHuntStep(ctx: BenExecutionContext): BenStepResult {
     const lowestCp = cricketTotal(lowest);
 
     markActed('ben_cricket_release');
-    sendBenWs({ t: 'release', id: lowest.id });
     const cName = CRICKET_SPECIES_NAMES[lowest.species] || 'Dế';
     const rarityLabelMap: Record<string, string> = {
       common: 'Thường',
@@ -175,10 +196,20 @@ export function runCricketHuntStep(ctx: BenExecutionContext): BenStepResult {
       legendary: 'Huyền thoại',
     };
     const rarityStr = rarityLabelMap[lowestRarity] || lowestRarity;
+    const releaseLabel = `🎋 Ống tre đầy (6/6) -> Mở ống tre thả ${cName} (CP ${lowestCp} · ${rarityStr}) về đồng (+${CRICKET_RARITY_REFUND[lowestRarity] || 5}🐚)`;
+
+    runWithOptionalPanel(
+      () => {
+        sendBenWs({ t: 'release', id: lowest.id });
+      },
+      releaseLabel,
+      { panel: 'crickets' },
+      1400
+    );
 
     return {
       acted: true,
-      msg: `🎋 Ống tre đầy (6/6) -> Thả ${cName} (CP ${lowestCp} · ${rarityStr}) về đồng (+${CRICKET_RARITY_REFUND[lowestRarity] || 5}🐚)`,
+      msg: releaseLabel,
     };
   }
 

@@ -38,6 +38,24 @@ export async function stepBenDoFishing(
   // Keep the page-hook cricket watchers (trap / tickle / bet timing) alive
   void execGameAction('BEN_WATCH', { config });
 
+  // Strict Area Isolation: If currently across the river at Chợ Bãi ('bai') or Đất Của Mình ('farm'),
+  // step the Alluvial Land state machine directly instead of running Bến Đò fishing checks.
+  const currentKind = snap.baiState?.kind || 'ben';
+  if (currentKind !== 'ben') {
+    const prep = await execGameAction('BEN_STEP', { config });
+    if (prep && prep.ok && prep.msg) {
+      setStatus(prep.msg);
+    } else {
+      setStatus(
+        currentKind === 'farm'
+          ? '🌱 Đang kiểm tra & canh tác tại Đất Của Mình (Bãi Phù Sa)...'
+          : '🏪 Đang giao dịch tại Chợ Bãi (Bãi Phù Sa)...'
+      );
+    }
+    await sleep(delayMs);
+    return { finishedArea: false };
+  }
+
   // 0. Live status updates from page-hook cricket watchers (trapping / misses / tickles)
   const crEvents = snap.benNet?.cricketEvents;
   if (Array.isArray(crEvents) && crEvents.length > 0) {
@@ -144,13 +162,7 @@ export async function stepBenDoFishing(
     return { finishedArea: false };
   }
 
-  // 6. Walking
-  if (bu?.walking && !isBossActive && !isBossImpending) {
-    setStatus('🚶 Đang đi bộ ở Bến Đò...');
-    return { finishedArea: false };
-  }
-
-  // 7. Idle phase
+  // 6. Idle phase & Alluvial / Sub-area actions
   if (bn.fishing === 'idle') {
     if (isBossImpending) {
       const prep = await execGameAction('BEN_STEP', { config });
@@ -167,6 +179,11 @@ export async function stepBenDoFishing(
       setStatus(prep.msg || '🛶 Đang chuẩn bị tại Bến Đò...');
       const stepDelay = prep.isBossHunt ? 120 : delayMs;
       await sleep(stepDelay);
+      return { finishedArea: false };
+    }
+
+    if (bu?.walking && !isBossActive && !isBossImpending) {
+      setStatus('🚶 Đang đi bộ ở Bến Đò...');
       return { finishedArea: false };
     }
 
@@ -213,6 +230,17 @@ export async function stepBenDoFishing(
     }
 
     const greenCastBtn = document.querySelector('button.ben-cast.btn-green:not(.ben-light)') as HTMLButtonElement | null;
+    const holdUntil = Math.max(
+      bn.notice?.error === 'held' ? Number(bn.notice.until) || 0 : 0,
+      Number(bn.checkDone?.holdUntil) || 0
+    );
+    const isRodHeld = holdUntil > Date.now();
+    if (isRodHeld) {
+      const waitSec = Math.max(1, Math.ceil((holdUntil - Date.now()) / 1000));
+      setStatus(`🪖 Dân quân đang giữ cần câu (còn ${waitSec}s) -> Tạm dừng quăng câu...`);
+      return { finishedArea: false };
+    }
+
     const allowCast = Boolean(prep?.ok && prep.allowCast);
     const targetCastDelay = Math.max(600, nextCastDelayMs || delayMs);
     if (

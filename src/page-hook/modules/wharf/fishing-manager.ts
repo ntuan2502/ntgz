@@ -37,6 +37,7 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
     needShellsForBait,
     needShellsForFood,
     isBossImpending,
+    runWithOptionalPanel,
     walkAndRun,
   } = ctx;
 
@@ -62,11 +63,19 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
         for (const dup of list.slice(1)) {
           if (dup.id && canAct(`ben_unkeep_${dup.id}`, 1000)) {
             markActed(`ben_unkeep_${dup.id}`);
-            sendBenWs({ t: 'keep', id: dup.id, on: false });
             const fishName = (dup as { name?: string }).name || dup.fish || 'Cá';
+            const unkeepMsg = `🔄 Bỏ giữ cá trùng: ${fishName} (${Number(dup.price || 0).toLocaleString('vi-VN')}🐚) để bán (ưu tiên giữ con ${Number(list[0].price || 0).toLocaleString('vi-VN')}🐚)`;
+            runWithOptionalPanel(
+              () => {
+                sendBenWs({ t: 'keep', id: dup.id, on: false });
+              },
+              unkeepMsg,
+              { panel: 'pack', bagTab: 'fish' },
+              1200
+            );
             return {
               acted: true,
-              msg: `🔄 Bỏ giữ cá trùng: ${fishName} (${Number(dup.price || 0).toLocaleString('vi-VN')}🐚) để bán (ưu tiên giữ con ${Number(list[0].price || 0).toLocaleString('vi-VN')}🐚)`,
+              msg: unkeepMsg,
             };
           }
         }

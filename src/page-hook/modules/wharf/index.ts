@@ -1,11 +1,11 @@
-import { stores, getActiveScene, sendBenWs } from '../../core/engine-access';
+import { stores, getActiveScene } from '../../core/engine-access';
 import { canAct, markActed } from '../../core/cooldown';
 import { computeBenStamina } from '../../core/store-watcher';
 import { dismissInterruptsIfNeeded } from '../../core/interrupts';
 import { AppConfig, WharfSubAreaId } from '../../../shared/types/config';
 import { computeWharfBossStatus } from '../../../shared/constants/wharf-catalog';
 import { refreshCricketWatchers, getMyBout } from './cricket-watchers';
-import { stepAlluvial } from './alluvial';
+import { stepAlluvial, isAlluvialInTransit, getBaiSnapshot } from './alluvial';
 import {
   BenStepResult,
   BenDoPhaserScene,
@@ -62,16 +62,53 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   const isBossImpending = bossStatus.isBossImpending;
   const secondsToNextBoss = bossStatus.secondsToNextBoss;
 
+  const interrupted = dismissInterruptsIfNeeded(cfg);
+  if (interrupted) return interrupted;
+
+  const baiSnap = getBaiSnapshot();
+  const currentKind = baiSnap?.kind || 'ben';
+
+  // Strict Area Isolation: When across the river at Chợ Bãi ('bai') or Đất Của Mình ('farm'),
+  // ONLY run the Alluvial state machine. Never fall through to Bến Đò tasks.
+  if (currentKind !== 'ben') {
+    const alluvialRes = stepAlluvial(cfg);
+    if (alluvialRes && alluvialRes.acted) {
+      return {
+        acted: true,
+        msg: alluvialRes.msg,
+        allowCast: false,
+      };
+    }
+    return {
+      acted: true,
+      msg:
+        currentKind === 'farm'
+          ? '🌱 Đang ở khu Đất Của Mình (Bãi Phù Sa)...'
+          : '🏪 Đang ở khu Chợ Bãi (Bãi Phù Sa)...',
+      allowCast: false,
+    };
+  }
+
+  // Priority at Bến Đò: If currently walking to Ông Tám to board the ferry,
+  // continue the Alluvial state machine before checking `bu.walking` or Bến Đò fishing tasks.
+  if (!isBossActive && !isBossImpending && isAlluvialInTransit()) {
+    const alluvialTransitRes = stepAlluvial(cfg);
+    if (alluvialTransitRes && alluvialTransitRes.acted) {
+      return {
+        acted: true,
+        msg: alluvialTransitRes.msg,
+        allowCast: Boolean(alluvialTransitRes.allowCast),
+      };
+    }
+  }
+
   if (!isBossActive && !isBossImpending && (bu.walking || bn.fishing !== 'idle')) {
     return { acted: false };
   }
 
-  const interrupted = dismissInterruptsIfNeeded(cfg);
-  if (interrupted) return interrupted;
-
-  const benShowFullActions = Boolean(cfg.benShowFullActions);
-  if (benShowFullActions && bu.panel && Date.now() < keepBenPanelUntil) {
-    return { acted: true, msg: keepBenPanelMsg || '👁️ Đang hiển thị giao diện thao tác...' };
+  const benShowFullActions = true;
+  if (bu.panel && Date.now() < keepBenPanelUntil) {
+    return { acted: true, msg: keepBenPanelMsg || '👁️ Đang thao tác trên giao diện...' };
   }
 
   const wallet = bn.wallet;
@@ -120,16 +157,15 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
     panelState?: Record<string, unknown>,
     holdMs = 1500
   ) => {
-    if (benShowFullActions && panelState) {
+    if (panelState) {
       buStore.setState(panelState);
       keepBenPanelUntil = Date.now() + holdMs;
       keepBenPanelMsg = label;
       setTimeout(() => {
         actionFn();
-      }, 250);
+      }, 350);
     } else {
       actionFn();
-      buStore.setState({ panel: null });
     }
   };
 
@@ -144,29 +180,40 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
     if (actionKey && !canAct(actionKey)) {
       return { acted: false };
     }
-    if (benScene && typeof benScene.goFarmer === 'function') {
-      const cur = benScene.farmer?.tile;
-      if (cur && Math.abs(cur.x - tile.x) + Math.abs(cur.y - tile.y) <= 1) {
-        if (actionKey) markActed(actionKey);
-        runWithOptionalPanel(actionFn, label, panelState, holdMs);
-        return { acted: true, msg: label };
-      }
-      if (benScene.farmer?.running) {
-        return { acted: true, msg: '🚶 Đang di chuyển...' };
-      }
-      benScene.goFarmer(tile, () => {
-        setTimeout(() => {
-          if (!actionKey || canAct(actionKey)) {
-            if (actionKey) markActed(actionKey);
-            runWithOptionalPanel(actionFn, label, panelState, holdMs);
-          }
-        }, 250);
-      });
+    if (
+      (getBaiSnapshot()?.kind || 'ben') !== 'ben' ||
+      !benScene ||
+      typeof benScene.goFarmer !== 'function'
+    ) {
+      return { acted: false };
+    }
+    const cur = benScene.farmer?.tile;
+    if (!cur) {
+      return { acted: false };
+    }
+    if (!benScene.farmer?.running && Math.abs(cur.x - tile.x) + Math.abs(cur.y - tile.y) <= 1) {
+      if (actionKey) markActed(actionKey);
+      runWithOptionalPanel(actionFn, label, panelState, holdMs);
+      return { acted: true, msg: label };
+    }
+    if (benScene.farmer?.running) {
       return { acted: true, msg: `🚶 ${label}` };
     }
-    if (actionKey) markActed(actionKey);
-    runWithOptionalPanel(actionFn, label, panelState, holdMs);
-    return { acted: true, msg: label };
+    benScene.goFarmer(tile, () => {
+      setTimeout(() => {
+        const latestKind = getBaiSnapshot()?.kind || 'ben';
+        const latestTile = benScene.farmer?.tile;
+        const arrived =
+          latestKind === 'ben' &&
+          latestTile &&
+          Math.abs(latestTile.x - tile.x) + Math.abs(latestTile.y - tile.y) <= 2;
+        if (arrived && (!actionKey || canAct(actionKey))) {
+          if (actionKey) markActed(actionKey);
+          runWithOptionalPanel(actionFn, label, panelState, holdMs);
+        }
+      }, 250);
+    });
+    return { acted: true, msg: `🚶 ${label}` };
   };
 
   const ctx: BenExecutionContext = {
@@ -234,26 +281,9 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   if (hadMyBout) {
     hadMyBout = false;
     markActed('ben_boss_wait');
-    sendBenWs({ t: 'soi' });
-    sendBenWs({ t: 'crickets' });
   }
 
-  // 5. Periodic background data refreshes
-  if ((huntEnabled || arenaEnabled) && (!bn.crickets || !bn.soi) && canAct('ben_cricket_init', 5000)) {
-    markActed('ben_cricket_init');
-    if (!bn.crickets) sendBenWs({ t: 'crickets' });
-    if (!bn.soi) sendBenWs({ t: 'soi' });
-  } else if (arenaEnabled && bn.soi && canAct('ben_soi_refresh', 60000)) {
-    markActed('ben_soi_refresh');
-    sendBenWs({ t: 'soi' });
-  }
-
-  if (canAct('ben_board_bg_refresh', 60000)) {
-    markActed('ben_board_bg_refresh');
-    sendBenWs({ t: 'board' });
-  }
-
-  // 6. Sub-area dispatcher
+  // 5. Sub-area dispatcher
   const subAreaRunners: Record<WharfSubAreaId, () => BenStepResult> = {
     fishing: () => runFishingStep(ctx),
     cricketBoss: () => runCricketBossStep(ctx),
@@ -269,10 +299,25 @@ export function execBenStep(cfg: AppConfig): BenStepResult {
   };
   const continuousSubs = new Set<WharfSubAreaId>(['fishing', 'cricketHunt']);
 
-  const activeOrder: WharfSubAreaId[] =
-    Array.isArray(cfg.benSubOrder) && cfg.benSubOrder.length > 0
-      ? cfg.benSubOrder
-      : ['fishing', 'cricketBoss', 'cricketHunt', 'entertainment', 'alluvialLand'];
+  const defaultOrder: WharfSubAreaId[] = [
+    'alluvialLand',
+    'cricketBoss',
+    'entertainment',
+    'fishing',
+    'cricketHunt',
+  ];
+  const savedOrder: WharfSubAreaId[] =
+    Array.isArray(cfg.benSubOrder) && cfg.benSubOrder.length > 0 ? [...cfg.benSubOrder] : [];
+  for (const id of defaultOrder) {
+    if (!savedOrder.includes(id)) {
+      savedOrder.push(id);
+    }
+  }
+  // Ensure bounded periodic tasks (alluvialLand) are checked before continuous fishing/cricketHunt
+  const activeOrder: WharfSubAreaId[] = [
+    ...savedOrder.filter((id) => !continuousSubs.has(id)),
+    ...savedOrder.filter((id) => continuousSubs.has(id)),
+  ];
 
   let deferred: (() => BenStepResult) | null = null;
   let exhaustedResult: BenStepResult | null = null;

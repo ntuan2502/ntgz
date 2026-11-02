@@ -1,6 +1,7 @@
-import { stores, sendBenWs } from '../../core/engine-access';
+import { stores, sendBenWs, getActiveScene } from '../../core/engine-access';
 import { AppConfig } from '../../../shared/types/config';
 import { BenNetState, BoutSide, BoutState } from '../../../shared/types/game-store';
+import { BenDoPhaserScene, SOI_TILE } from './types';
 
 /**
  * Timing-critical cricket automation (hunt trap, bout tickle, arena betting).
@@ -104,6 +105,10 @@ function watchTick(): void {
   if (!bnStore) return;
   const bn = bnStore.getState();
   if (bn.status !== 'in') return;
+
+  // Strict Area Isolation: Cricket hunt / arena only exist at Bến Đò ('ben'), never across the river
+  const curKind = stores.bai?.getState()?.kind || 'ben';
+  if (curKind !== 'ben') return;
 
   try {
     if (cfg.benSubEnabled?.cricketHunt !== false && cfg.benAutoCricketHunt !== false) {
@@ -252,6 +257,18 @@ function watchBoutTickle(bn: BenNetState): void {
 }
 
 function watchArenaBets(bn: BenNetState, cfg: AppConfig): void {
+  // Only place arena bets when the player has the Sới Dế panel open and is standing at Sới Dế
+  if (stores.benUI?.getState()?.panel !== 'soi') return;
+  const benScene = getActiveScene('BenDoScene') as unknown as BenDoPhaserScene | null;
+  const curTile = benScene?.farmer?.tile;
+  if (
+    !curTile ||
+    benScene?.farmer?.running ||
+    Math.abs(curTile.x - SOI_TILE.x) + Math.abs(curTile.y - SOI_TILE.y) > 2
+  ) {
+    return;
+  }
+
   const betsToday = bn.soi?.bets;
   if (typeof betsToday !== 'number' || betsToday >= MAX_BETS_PER_DAY) return;
   const shells = bn.wallet?.shells || 0;

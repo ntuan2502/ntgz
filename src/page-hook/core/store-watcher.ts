@@ -59,7 +59,14 @@ export function computeBenStamina(
 }
 
 export function getSnapshot(): GameSnapshot {
-  if (!stores.main || !stores.sea || !stores.benUI || !stores.benNet) {
+  if (!stores.main) {
+    discoverStores();
+  }
+  const mPre = stores.main ? stores.main.getState() : null;
+  if (
+    (mPre?.screen === 'benDo' && (!stores.benUI || !stores.benNet || !stores.bai)) ||
+    (mPre?.screen === 'sea' && !stores.sea)
+  ) {
     discoverStores();
   }
   hookPhaserGame();
@@ -193,6 +200,10 @@ export function getSnapshot(): GameSnapshot {
           cashed: bn.cashed ?? null,
           landed: bn.landed,
           notice: bn.notice,
+          check: bn.check ?? null,
+          checkDone: bn.checkDone ?? null,
+          htx: bn.htx ?? null,
+          htxDone: bn.htxDone ?? null,
           wheel: bn.wheel,
           spun: bn.spun ?? null,
           crickets: bn.crickets,

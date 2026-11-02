@@ -8,6 +8,8 @@ let lastWheelActionAt = 0;
 let lastAtmActionAt = 0;
 let lastCricketCatchAt = 0;
 let lastBoutCloseAt = 0;
+let militiaFirstSeenAt = 0;
+let lastMilitiaClickAt = 0;
 
 export function formatBenCatchSummary(card: HTMLElement, kept: boolean): string {
   const fishName = card.querySelector('h3')?.textContent?.trim() || 'Cá';
@@ -363,6 +365,50 @@ export function handleBenOverlayModals(
   delayMs: number
 ): boolean {
   const now = performance.now();
+
+  // 0. Militia Check Modal ("🪖 Dân quân kiểm tra!") - Giả lập đếm số cá 🐟 và bấm nút đáp án trên UI
+  const militiaPanel = document.querySelector('.panel.ben-panel.militia-check') as HTMLElement | null;
+  if (militiaPanel && isVisible(militiaPanel)) {
+    if (militiaFirstSeenAt === 0) {
+      militiaFirstSeenAt = now;
+    }
+    const humanReadDelay = 950;
+    if (now - militiaFirstSeenAt < humanReadDelay) {
+      setStatus('🪖 Dân quân kiểm tra: Đang quan sát hàng con vật để đếm số cá 🐟...');
+      return true;
+    }
+    if (now - lastMilitiaClickAt > 800) {
+      const spans = Array.from(militiaPanel.querySelectorAll('.militia-check-row span'));
+      const domFishCount = spans.filter((s) => (s.textContent || '').includes('🐟')).length;
+      const storeKinds = snap.benNet?.check?.kinds;
+      const fishCount =
+        spans.length > 0
+          ? domFishCount
+          : Array.isArray(storeKinds)
+            ? storeKinds.filter((k) => k === 'fish').length
+            : 0;
+
+      const optionBtns = Array.from(
+        militiaPanel.querySelectorAll('.militia-check-options button')
+      ) as HTMLButtonElement[];
+      const targetBtn = optionBtns.find(
+        (btn) => (btn.textContent || '').trim() === String(fishCount) && !btn.disabled
+      );
+
+      if (targetBtn) {
+        triggerPointerDownAndClick(targetBtn);
+        lastMilitiaClickAt = now;
+        setStatus(
+          `🪖 Dân quân kiểm tra: Đếm được ${fishCount} con cá 🐟 -> Đã bấm chọn đáp án "${fishCount}"!`
+        );
+      } else {
+        setStatus('🪖 Dân quân kiểm tra: Đã chọn đáp án, đang chờ chấm kết quả...');
+      }
+    }
+    return true;
+  } else {
+    militiaFirstSeenAt = 0;
+  }
 
   // 1. Gift Modal
   const giftBtn = document.querySelector('.ben-gift-card button.btn-green') as HTMLButtonElement | null;
