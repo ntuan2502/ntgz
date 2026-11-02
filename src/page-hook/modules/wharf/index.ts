@@ -32,6 +32,39 @@ let keepBenPanelUntil = 0;
 let keepBenPanelMsg = '';
 let hadMyBout = false;
 
+/**
+ * Tự động đóng modal nhận cá câu được (.catch-card.ben-catch),
+ * cất cá quý vào ngăn giữ lại (nếu bật cấu hình) và chuyển trạng thái cần câu về idle.
+ */
+export function dismissBenCatchModal(cfg?: AppConfig): void {
+  const bnStore = stores.benNet;
+  if (!bnStore) return;
+  const bn = bnStore.getState();
+  if (bn?.landed) {
+    const landed = bn.landed as {
+      id?: string;
+      fish?: string;
+      rarity?: string;
+      price?: number;
+      rainbow?: boolean;
+      odd?: boolean;
+    };
+    const rawRarity = (landed.rarity || '').toLowerCase();
+    const allowedRarities = Array.isArray(cfg?.benKeepRarities)
+      ? cfg.benKeepRarities
+      : ['mythic', 'legendary', 'rainbow', 'odd'];
+    const shouldKeep =
+      Boolean(cfg?.benAutoKeepRare) &&
+      ((landed.rainbow && allowedRarities.includes('rainbow')) ||
+        (landed.odd && allowedRarities.includes('odd')) ||
+        allowedRarities.includes(rawRarity));
+    if (shouldKeep && landed.id) {
+      sendBenWs({ t: 'keep', id: landed.id, on: true });
+    }
+  }
+  bnStore.setState({ fishing: 'idle', landed: null });
+}
+
 export function execBenStep(
   cfg: AppConfig,
   onlineTarget: 'all' | 'benDo' | 'alluvialLand' = 'all'
@@ -92,7 +125,11 @@ export function execBenStep(
     keepBenPanelUntil = 0;
 
     if (bn.fishing !== 'idle') {
-      sendBenWs({ t: 'hook' });
+      if (bn.fishing === 'landing' || bn.landed) {
+        dismissBenCatchModal(cfg);
+      } else {
+        sendBenWs({ t: 'hook' });
+      }
     }
     if (bn.hunt) {
       bnStore.setState({ hunt: null });
@@ -160,8 +197,29 @@ export function execBenStep(
     };
   }
 
+  // Dedicated Nông Trại Online mode: only execute alluvial steps, skip fishing and crickets
+  if (onlineTarget === 'alluvialLand') {
+    if (bn.fishing === 'landing' || bn.landed) {
+      dismissBenCatchModal(cfg);
+    } else if (bn.fishing === 'cast' || bn.fishing === 'bite') {
+      sendBenWs({ t: 'hook' });
+    }
+    const alluvialRes = stepAlluvial(cfg, 'alluvialLand');
+    if (alluvialRes && alluvialRes.acted) {
+      return {
+        acted: true,
+        msg: alluvialRes.msg,
+        allowCast: Boolean(alluvialRes.allowCast),
+      };
+    }
+    return { acted: false };
+  }
+
   // Priority at Bến Đò: If currently in transit across the river, continue Alluvial machine
   if (!isBossActive && !isBossImpending && onlineTarget !== 'benDo' && isAlluvialInTransit()) {
+    if (bn.fishing === 'landing' || bn.landed) {
+      dismissBenCatchModal(cfg);
+    }
     const alluvialTransitRes = stepAlluvial(cfg, onlineTarget);
     if (alluvialTransitRes && alluvialTransitRes.acted) {
       return {
@@ -173,19 +231,6 @@ export function execBenStep(
   }
 
   if (!isBossActive && !isBossImpending && (bu.walking || bn.fishing !== 'idle')) {
-    return { acted: false };
-  }
-
-  // Dedicated Nông Trại Online mode: only execute alluvial steps, skip fishing and crickets
-  if (onlineTarget === 'alluvialLand') {
-    const alluvialRes = stepAlluvial(cfg, 'alluvialLand');
-    if (alluvialRes && alluvialRes.acted) {
-      return {
-        acted: true,
-        msg: alluvialRes.msg,
-        allowCast: Boolean(alluvialRes.allowCast),
-      };
-    }
     return { acted: false };
   }
 
@@ -371,6 +416,9 @@ export function execBenStep(
     alluvialLand: () => {
       if (onlineTarget === 'benDo' || cfg.areaEnabled?.alluvialLand === false) {
         return { acted: false };
+      }
+      if (bn.fishing === 'landing' || bn.landed) {
+        dismissBenCatchModal(cfg);
       }
       const res = stepAlluvial(cfg, onlineTarget);
       if (res && res.acted) {

@@ -45,6 +45,18 @@ export async function stepBenDoFishing(
   void execGameAction('BEN_WATCH', { config });
 
   // =========================================================================
+  // 🐟 HIGHEST PRIORITY: CATCH RESULT MODAL (MENU NHẬN CÁ)
+  // Xử lý và đóng ngay bảng nhận cá câu được trước mọi kiểm tra chuyển map hay câu tiếp
+  // =========================================================================
+  if (bn.fishing === 'landing' || Boolean(bn.landed) || Boolean(document.querySelector('.catch-card.ben-catch'))) {
+    const catchResult = handleBenCatchModal(snap, config, setStatus, onCatchIncrement, delayMs);
+    if (catchResult.handled) {
+      await sleep(Math.max(200, delayMs * 0.4));
+      return { finishedArea: false };
+    }
+  }
+
+  // =========================================================================
   // 👑 HIGHEST PRIORITY #1: PUMPKIN BOSS (SĂN BOSS BÍ NGÔ & CHỜ 10S GIỮA MAP)
   // Luôn luôn ưu tiên việc này trước tiên, bất kể đang ở khu nào hay làm gì!
   // =========================================================================
@@ -80,6 +92,17 @@ export async function stepBenDoFishing(
 
   // 1. DEDICATED NÔNG TRẠI ONLINE MODE:
   if (onlineTarget === 'alluvialLand') {
+    if (bn.fishing === 'cast' || bn.fishing === 'bite') {
+      const pullBtn = document.querySelector('button.ben-cast.btn-brown') as HTMLButtonElement | null;
+      if (pullBtn && isVisible(pullBtn)) {
+        triggerPointerDownOnly(pullBtn);
+      } else {
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true }));
+      }
+      await sleep(250);
+      return { finishedArea: false };
+    }
+
     const prep = await execGameAction('BEN_STEP', { config, onlineTarget: 'alluvialLand' });
     if (prep && prep.ok && prep.msg) {
       setStatus(prep.msg);

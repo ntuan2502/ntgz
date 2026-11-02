@@ -449,9 +449,9 @@ export function runBaiFarmWorkStep(
           'BaiScene',
           'farm',
           DRYFISH_LOT_TILE,
-          '🚶 Đất Bãi: Đang đi lại Sân Phơi Khô Cá (41, 20) để mở Sổ Khô Cá...',
-          { panel: 'dryDex' },
-          600
+          '🚶 Đất Bãi: Đang đi lại Sân Phơi Khô Cá (41, 20) để cất khô cá vào bộ sưu tập...',
+          { panel: 'lot', lotSel: 'dryFish' },
+          500
         );
         if (!walk.ready) {
           return { nextWorkStep: 8, result: { acted: true, msg: walk.msg, allowCast: false } };
@@ -464,7 +464,7 @@ export function runBaiFarmWorkStep(
           nextWorkStep: 8,
           result: {
             acted: true,
-            msg: `📜 Sổ Khô Cá: Đã cất khô cá ${fishName} (${candidateDex.size}cm) vào bộ sưu tập (+⭐ Nổi tiếng)!`,
+            msg: `🐟 Sân Phơi Khô Cá: Đã cất khô cá ${fishName} (${candidateDex.size}cm) vào bộ sưu tập (+⭐ Nổi tiếng)!`,
             allowCast: false,
           },
         };
@@ -554,6 +554,7 @@ export function runBaiFarmWorkStep(
         };
       }
     }
+    closeBaiPanel();
     step = 9;
   }
 

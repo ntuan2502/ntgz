@@ -4,7 +4,7 @@ import { dismissInterruptsIfNeeded } from './core/interrupts';
 import { getGameAssets, drawGameAsset } from './core/asset-renderer';
 import { execFarmSubAreaStep } from './modules/farm';
 import { execSeaStep } from './modules/sea';
-import { execBenStep, refreshCricketWatchers } from './modules/wharf';
+import { execBenStep, refreshCricketWatchers, dismissBenCatchModal } from './modules/wharf';
 import { execFarmstayStep } from './modules/farmstay';
 import { AppConfig, FarmSubAreaId } from '../shared/types/config';
 
@@ -233,6 +233,11 @@ interface GameActionPayload {
 
         case 'BAI_FARM_QUICK': {
           sendBenWs({ t: 'farmQuick' });
+          return { ok: true };
+        }
+
+        case 'BEN_DISMISS_CATCH': {
+          dismissBenCatchModal(payload.config);
           return { ok: true };
         }
 

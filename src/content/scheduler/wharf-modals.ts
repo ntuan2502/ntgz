@@ -68,6 +68,10 @@ export function handleBenCatchModal(
 
   const card = document.querySelector('.catch-card.ben-catch') as HTMLElement | null;
   if (!card) {
+    if (bn?.fishing === 'landing' || bn?.landed) {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'z', code: 'KeyZ', bubbles: true }));
+      void execGameAction('BEN_DISMISS_CATCH', { config });
+    }
     return { handled: true };
   }
 
@@ -157,12 +161,17 @@ export function handleBenCatchModal(
     triggerPointerDownAndClick(keepBtn);
     setStatus(msg);
     if (oldKeptIdToUnkeep) {
-      execGameAction('BEN_KEEP_FISH', { id: oldKeptIdToUnkeep, on: false });
+      void execGameAction('BEN_KEEP_FISH', { id: oldKeptIdToUnkeep, on: false });
     }
+    void execGameAction('BEN_DISMISS_CATCH', { config });
   } else if (bagBtn) {
     const msg = `${formatBenCatchSummary(card, false)}${duplicateNote}`;
     triggerPointerDownAndClick(bagBtn);
     setStatus(msg);
+    void execGameAction('BEN_DISMISS_CATCH', { config });
+  } else {
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'z', code: 'KeyZ', bubbles: true }));
+    void execGameAction('BEN_DISMISS_CATCH', { config });
   }
   lastModalClickAt = now;
   onCatchIncrement();
