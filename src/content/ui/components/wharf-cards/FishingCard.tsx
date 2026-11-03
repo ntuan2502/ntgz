@@ -271,10 +271,10 @@ export function FishingCard({ config, updateField }: FishingCardProps) {
               <input
                 type="number"
                 min={2}
-                max={30}
+                max={60}
                 step={1}
                 value={config.benMilitiaSolveDelaySec ?? 5}
-                onChange={(e) => updateField('benMilitiaSolveDelaySec', Math.max(2, Math.min(30, Number(e.target.value) || 5)))}
+                onChange={(e) => updateField('benMilitiaSolveDelaySec', Math.max(2, Math.min(60, Number(e.target.value) || 5)))}
                 className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
               />
               <span className="text-slate-500 text-[10px]">giây</span>
