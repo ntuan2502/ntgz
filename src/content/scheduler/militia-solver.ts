@@ -165,6 +165,7 @@ function analyzeImageData(
     redCount: number;
     orangeCount: number;
     pixelCoords: Set<string>;
+    eyePixels: Array<{ x: number; y: number }>;
   }> = [];
 
   for (let y = 0; y < height; y++) {
@@ -190,6 +191,7 @@ function analyzeImageData(
       let redCount = 0;
       let orangeCount = 0;
       const pixelCoords = new Set<string>();
+      const eyePixels: Array<{ x: number; y: number }> = [];
 
       while (head < q.length) {
         const cx = q[head++];
@@ -210,9 +212,10 @@ function analyzeImageData(
           tanFootCount++;
         }
 
-        // 2. Fish White Eye: bright white #ffffff
-        if (pr > 230 && pg > 230 && pb > 230) {
+        // 2. Fish White Eye: bright white #ffffff (strict threshold >= 235)
+        if (pr >= 235 && pg >= 235 && pb >= 235) {
           whiteEyeCount++;
+          eyePixels.push({ x: cx, y: cy });
         }
 
         // 3. Red & Wine tones (some crabs, red fish): #e0393e or #96202a
@@ -273,6 +276,7 @@ function analyzeImageData(
           redCount,
           orangeCount,
           pixelCoords,
+          eyePixels,
         });
       }
     }
@@ -358,12 +362,20 @@ function analyzeImageData(
       ((hasWhiskers && (aspect >= 1.5 || b.orangeCount >= 2)) ||
         (b.orangeCount >= 4 && aspect >= 1.65));
 
-    // 4. FISH: Bright eye dot or standard horizontal fish silhouette
+    // 4. FISH: Must possess a distinct white eye dot (1 to 6 pixels).
+    // Non-fish decoys (clams, weed, sandals, bags, cans, shells) do NOT have white eye dots!
     const isFish =
       !isSnail &&
       !isCrab &&
       !isShrimp &&
-      (b.whiteEyeCount >= 1 || (aspect >= 1.45 && aspect <= 2.8 && b.bw >= 14));
+      b.whiteEyeCount >= 1 &&
+      b.whiteEyeCount <= 6 &&
+      b.bw >= 12 &&
+      b.bw <= 42 &&
+      b.bh >= 6 &&
+      b.bh <= 22 &&
+      aspect >= 1.25 &&
+      aspect <= 3.4;
 
     if (isSnail) {
       counts.snail++;
@@ -372,7 +384,16 @@ function analyzeImageData(
     } else if (isShrimp) {
       counts.shrimp++;
     } else if (isFish) {
-      counts.fish++;
+      // Check for overlapping fish in a single blob
+      let fishInBlob = 1;
+      if (b.eyePixels.length >= 2 && b.bw >= 28) {
+        const minEyeX = Math.min(...b.eyePixels.map((p) => p.x));
+        const maxEyeX = Math.max(...b.eyePixels.map((p) => p.x));
+        if (maxEyeX - minEyeX >= 11) {
+          fishInBlob = 2;
+        }
+      }
+      counts.fish += fishInBlob;
     } else {
       counts.other++;
     }

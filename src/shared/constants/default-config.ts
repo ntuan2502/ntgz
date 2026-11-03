@@ -411,6 +411,8 @@ export const DEFAULT_CONFIG: AppConfig = {
   benAutoClearBasketNearFull: true,
   benBasketNearFullThreshold: 50,
   benSmartSleepMode: false,
+  benAutoMilitiaSolve: true,
+  benMilitiaSolveDelaySec: 5,
 
   // Ben Do Alluvial Land & Market (Bãi Phù Sa & Chợ Bãi - Phase 1, 2, 3)
   benAutoBaiFerry: true,

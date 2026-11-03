@@ -243,6 +243,8 @@ export interface AppConfig {
   benAutoClearBasketNearFull?: boolean;
   benBasketNearFullThreshold?: number;
   benSmartSleepMode?: boolean;
+  benAutoMilitiaSolve?: boolean;
+  benMilitiaSolveDelaySec?: number;
 
   // Ben Do Alluvial Land & Market (Bãi Phù Sa & Chợ Bãi - Phase 1, 2, 3)
   benAutoBaiFerry: boolean;

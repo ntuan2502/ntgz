@@ -383,7 +383,7 @@ export function handleBenAtmPanel(
 
 export function handleBenMilitiaModal(
   snap: GameSnapshot,
-  _config: AppConfig,
+  config: AppConfig,
   setStatus: (text: string) => void
 ): boolean {
   const militiaPanel = document.querySelector('.panel.ben-panel.militia-check') as HTMLElement | null;
@@ -531,12 +531,22 @@ export function handleBenMilitiaModal(
     }
   }
 
-  // Natural human deliberation delay (3.2s) when exact match is found
-  const exactHumanDelay = 3200;
+  // If manual solving is configured, only alert & provide guess without auto-clicking
+  if (config.benAutoMilitiaSolve === false) {
+    const guessStr = targetValue !== null ? ` (Gợi ý: "${targetValue}")` : '';
+    setStatus(
+      `🪖 Dân quân kiểm tra: Phát hiện ${resolvedCount ?? '?'} ${kindLabel}${guessStr}. Chế độ thủ công: Bà con tự chọn đáp án nha! (còn ${remainingSec}s)`
+    );
+    return true;
+  }
+
+  // Natural deliberation delay (customizable, default 5s) when exact match is found
+  const userDelaySec = Math.max(2, Math.min(30, Number(config.benMilitiaSolveDelaySec) || 5));
+  const exactHumanDelay = userDelaySec * 1000;
   if (isExactMatch && !isCriticalTimeout && now - militiaFirstSeenAt < exactHumanDelay) {
     const waitSec = Math.max(1, Math.ceil((militiaFirstSeenAt + exactHumanDelay - now) / 1000));
     setStatus(
-      `🪖 Dân quân kiểm tra: Đếm được ${resolvedCount} ${kindLabel} (khớp đáp án "${targetValue}"). Tự bấm sau ${waitSec}s... (còn ${remainingSec}s)`
+      `🪖 Dân quân kiểm tra: Đếm được ${resolvedCount} ${kindLabel} (khớp đáp án "${targetValue}"). Tự bấm sau ${waitSec}s (Bà con có thể bấm trước)... (còn ${remainingSec}s)`
     );
     return true;
   }

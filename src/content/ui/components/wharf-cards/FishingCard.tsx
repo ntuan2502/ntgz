@@ -255,6 +255,33 @@ export function FishingCard({ config, updateField }: FishingCardProps) {
           </div>
         </div>
       )}
+
+      <label className="flex items-center justify-between text-slate-700 cursor-pointer">
+        <span>🪖 Tự động giải Dân quân kiểm tra (Captcha)</span>
+        <Switch
+          checked={Boolean(config.benAutoMilitiaSolve ?? true)}
+          onCheckedChange={(c) => updateField('benAutoMilitiaSolve', c)}
+        />
+      </label>
+      {config.benAutoMilitiaSolve !== false && (
+        <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-1.5 text-[11px]">
+          <div className="flex items-center justify-between">
+            <span className="text-slate-500">Chờ quan sát trước khi bấm:</span>
+            <div className="flex items-center gap-1.5">
+              <input
+                type="number"
+                min={2}
+                max={30}
+                step={1}
+                value={config.benMilitiaSolveDelaySec ?? 5}
+                onChange={(e) => updateField('benMilitiaSolveDelaySec', Math.max(2, Math.min(30, Number(e.target.value) || 5)))}
+                className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              />
+              <span className="text-slate-500 text-[10px]">giây</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
