@@ -277,7 +277,20 @@ function analyzeImageData(
   for (const b of blobs) {
     const aspect = b.bw / b.bh;
 
-    // 1. CRAB: Distinct dual top claws at extreme left and right with empty center in top rows
+    // 1. FISH: Must possess a distinct white eye dot (1 to 6 pixels).
+    // In game pixel art, fish are the ONLY creatures that have bright white eye dots (#ffffff).
+    // Crabs, snails, shrimp, and river junk (clams, weed, sandals, cans) NEVER have white eye dots!
+    const isFish =
+      b.whiteEyeCount >= 1 &&
+      b.whiteEyeCount <= 6 &&
+      b.bw >= 10 &&
+      b.bw <= 52 &&
+      b.bh >= 6 &&
+      b.bh <= 28 &&
+      aspect >= 1.25 &&
+      aspect <= 3.4;
+
+    // 2. CRAB: Distinct dual top claws at extreme left and right with empty center in top rows
     let topRow1 = -1;
     let topRow2 = -1;
     for (let y = b.minY; y <= b.maxY; y++) {
@@ -313,30 +326,7 @@ function analyzeImageData(
     };
 
     const hasClaws = checkRowClaws(topRow1) || checkRowClaws(topRow2);
-    const isCrab = hasClaws && aspect >= 1.25 && aspect <= 2.3;
-
-    // 2. SHRIMP: Antenna whiskers on one side of top row, or curved segmented body
-    let hasWhiskers = false;
-    if (topRow1 !== -1) {
-      let left = 0;
-      let right = 0;
-      let mid = 0;
-      for (let x = b.minX; x <= b.maxX; x++) {
-        if (b.pixelCoords.has(`${x},${topRow1}`)) {
-          if (x < b.minX + b.bw * 0.25) left++;
-          else if (x > b.maxX - b.bw * 0.25) right++;
-          else mid++;
-        }
-      }
-      if (((left > 0 && right === 0) || (right > 0 && left === 0)) && mid === 0 && b.bw >= 15) {
-        hasWhiskers = true;
-      }
-    }
-
-    const isShrimp =
-      !isCrab &&
-      ((hasWhiskers && (aspect < 1.4 || aspect >= 1.5)) ||
-        (b.orangeCount >= 4 && (aspect < 1.4 || aspect >= 1.65)));
+    const isCrab = !isFish && b.whiteEyeCount === 0 && hasClaws && aspect >= 1.25 && aspect <= 2.3;
 
     // 3. SNAIL: Anatomical flat bottom foot + single-sided eye stalk tentacle bump (facing left or right)
     let bottomRowMinX = b.maxX;
@@ -381,36 +371,43 @@ function analyzeImageData(
     }
 
     const isSnail =
+      !isFish &&
       !isCrab &&
-      !isShrimp &&
       b.whiteEyeCount === 0 &&
       ((hasStalkLeft || hasStalkRight) || b.tanFootCount >= 2) &&
       bottomSpanRatio >= 0.65 &&
       aspect >= 1.30 &&
       aspect <= 2.25;
 
-    // 4. FISH: Must possess a distinct white eye dot (1 to 6 pixels).
-    // Non-fish decoys (clams, weed, sandals, bags, cans, shells) do NOT have white eye dots!
-    const isFish =
-      !isCrab &&
-      !isShrimp &&
-      !isSnail &&
-      b.whiteEyeCount >= 1 &&
-      b.whiteEyeCount <= 6 &&
-      b.bw >= 10 &&
-      b.bw <= 52 &&
-      b.bh >= 6 &&
-      b.bh <= 28 &&
-      aspect >= 1.25 &&
-      aspect <= 3.4;
+    // 4. SHRIMP: Antenna whiskers on one side of top row, or curved crescent body.
+    // Strictly requires NO white eyes (ruling out fish), NO crab claws, NO snail flat foot.
+    let hasShrimpWhisker = false;
+    if (topRow1 !== -1) {
+      let left = 0;
+      let right = 0;
+      let mid = 0;
+      for (let x = b.minX; x <= b.maxX; x++) {
+        if (b.pixelCoords.has(`${x},${topRow1}`)) {
+          if (x < b.minX + b.bw * 0.25) left++;
+          else if (x > b.maxX - b.bw * 0.25) right++;
+          else mid++;
+        }
+      }
+      if (((left > 0 && right === 0) || (right > 0 && left === 0)) && mid === 0 && b.bw >= 15) {
+        hasShrimpWhisker = true;
+      }
+    }
 
-    if (isSnail) {
-      counts.snail++;
-    } else if (isCrab) {
-      counts.crab++;
-    } else if (isShrimp) {
-      counts.shrimp++;
-    } else if (isFish) {
+    const isShrimp =
+      !isFish &&
+      !isCrab &&
+      !isSnail &&
+      b.whiteEyeCount === 0 &&
+      (hasShrimpWhisker ||
+        (b.orangeCount >= 4 && aspect >= 1.5) ||
+        (aspect >= 0.95 && aspect <= 1.35 && b.bh >= 15));
+
+    if (isFish) {
       // Check for overlapping fish in a single blob
       let fishInBlob = 1;
       if (b.eyePixels.length >= 2 && b.bw >= 28) {
@@ -421,6 +418,12 @@ function analyzeImageData(
         }
       }
       counts.fish += fishInBlob;
+    } else if (isCrab) {
+      counts.crab++;
+    } else if (isSnail) {
+      counts.snail++;
+    } else if (isShrimp) {
+      counts.shrimp++;
     } else {
       counts.other++;
     }
