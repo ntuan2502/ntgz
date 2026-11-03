@@ -125,8 +125,9 @@ function analyzeImageData(
     if (r < 50 && g < 50 && b < 60) return true;
     // River water: typical teal/cyan river water (blue >= 105, green >= 80, red <= 90)
     if (b >= 105 && g >= 80 && r <= 90) return false;
-    // River water ripples (light cyan/white highlights)
-    if (b >= 160 && g >= 150 && r >= 130 && b >= g && b >= r) return false;
+    // River water ripples (cyan/light blue highlights): blue and green strongly dominate red.
+    // Silver/white creatures (like Tép Bạc / Tôm bạc #e0e4e8) have near-equal RGB and are preserved.
+    if (b >= 155 && g >= 140 && (b - r >= 35 || g - r >= 25)) return false;
     // Seaweed green foliage (g > 95 and distinct green dominance)
     if (g > 95 && g > r + 25 && g > b + 20) return false;
     // Dialog card border (if image padding or borders touch the canvas)
