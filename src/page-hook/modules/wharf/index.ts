@@ -89,6 +89,18 @@ export function execBenStep(
   initWharfSeqsIfNeeded(bn);
   refreshCricketWatchers(cfg);
 
+  // =========================================================================
+  // 🪖 HIGHEST PRIORITY #0: MILITIA CHECK ("🪖 Dân quân kiểm tra!")
+  // Tạm dừng mọi hành vi di chuyển/câu cá để chờ hoàn tất giải câu đố xác thực
+  // =========================================================================
+  if (bn.check) {
+    return {
+      acted: true,
+      msg: '🪖 Dân quân kiểm tra: Đang phân tích hình ảnh và trả lời câu đố...',
+      allowCast: false,
+    };
+  }
+
   const benScene = getActiveScene('BenDoScene') as unknown as BenDoPhaserScene | null;
   const isBossVisible = Boolean(benScene?.boss?.visible);
   const bossStatus = computeWharfBossStatus(bn, cfg.benAutoBossHunt !== false);

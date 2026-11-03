@@ -249,10 +249,17 @@ export interface BenNetState {
     [key: string]: unknown;
   };
   check?: {
-    kinds?: string[];
+    img?: string;
+    ask?: 'fish' | 'crab' | 'shrimp' | 'snail' | string;
     options?: number[];
     ms?: number;
     until?: number;
+    kinds?: string[];
+    count?: number;
+    ans?: number;
+    solution?: number;
+    correct?: number;
+    pick?: number;
     [key: string]: unknown;
   } | null;
   checkDone?: {

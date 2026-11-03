@@ -102,6 +102,24 @@ try {
               if (typeof ev.data === 'string') {
                 const msg = JSON.parse(ev.data);
                 if (msg && typeof msg === 'object') {
+                  if (msg.t === 'check' && stores.benNet) {
+                    const curCheck = stores.benNet.getState().check;
+                    stores.benNet.setState({
+                      check: {
+                        ...curCheck,
+                        img: (msg.img as string) ?? '',
+                        ask: (msg.ask as string) ?? 'fish',
+                        options: (msg.options as number[]) ?? [],
+                        ms: (msg.ms as number) ?? 15000,
+                        until: Date.now() + (Number(msg.ms) || 15000),
+                        ...(typeof msg.count === 'number' ? { count: msg.count } : {}),
+                        ...(typeof msg.ans === 'number' ? { ans: msg.ans } : {}),
+                        ...(typeof msg.solution === 'number' ? { solution: msg.solution } : {}),
+                        ...(typeof msg.correct === 'number' ? { correct: msg.correct } : {}),
+                        ...(typeof msg.pick === 'number' ? { pick: msg.pick } : {}),
+                      },
+                    });
+                  }
                   for (const listener of wsListeners) {
                     try {
                       listener(msg);

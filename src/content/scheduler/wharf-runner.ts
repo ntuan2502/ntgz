@@ -4,7 +4,7 @@ import { computeWharfBossStatus } from '../../shared/constants/wharf-catalog';
 import { execGameAction } from '../bridge/content-bridge';
 import { isVisible, triggerPointerDownAndClick, triggerPointerDownOnly, sleep } from './dom-helpers';
 import { handleFightMinigame } from './minigame';
-import { handleBenCatchModal, handleBenOverlayModals } from './wharf-modals';
+import { handleBenCatchModal, handleBenMilitiaModal, handleBenOverlayModals } from './wharf-modals';
 
 let lastHookAt = 0;
 let lastCastAt = 0;
@@ -52,6 +52,17 @@ export async function stepBenDoFishing(
     const catchResult = handleBenCatchModal(snap, config, setStatus, onCatchIncrement, delayMs);
     if (catchResult.handled) {
       await sleep(Math.max(200, delayMs * 0.4));
+      return { finishedArea: false };
+    }
+  }
+
+  // =========================================================================
+  // 🪖 HIGHEST PRIORITY #0.5: MILITIA CHECK MODAL ("🪖 Dân quân kiểm tra!")
+  // Tự động nhận diện hình ảnh và giải captcha câu hỏi dân quân kiểm tra
+  // =========================================================================
+  if (Boolean(bn.check) || Boolean(document.querySelector('.panel.ben-panel.militia-check'))) {
+    if (handleBenMilitiaModal(snap, config, setStatus)) {
+      await sleep(250);
       return { finishedArea: false };
     }
   }

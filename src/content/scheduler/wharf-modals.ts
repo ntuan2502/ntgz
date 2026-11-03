@@ -2,6 +2,15 @@ import { AppConfig } from '../../shared/types/config';
 import { GameSnapshot } from '../../shared/types/game-state';
 import { execGameAction } from '../bridge/content-bridge';
 import { isVisible, triggerPointerDownAndClick } from './dom-helpers';
+import {
+  classifyMilitiaImage,
+  MILITIA_KIND_LABELS,
+  MilitiaAskKind,
+  MilitiaClassificationResult,
+  parseMilitiaTarget,
+  playMilitiaAlertBeep,
+  resolveMilitiaAnswer,
+} from './militia-solver';
 
 let lastModalClickAt = 0;
 let lastWheelActionAt = 0;
@@ -10,6 +19,11 @@ let lastCricketCatchAt = 0;
 let lastBoutCloseAt = 0;
 let militiaFirstSeenAt = 0;
 let lastMilitiaClickAt = 0;
+let militiaSolvingPromise: Promise<MilitiaClassificationResult | null> | null = null;
+let militiaSolvedResult: MilitiaClassificationResult | null = null;
+let militiaTargetKind: MilitiaAskKind = 'fish';
+let militiaOptions: number[] = [];
+let militiaHasAlerted = false;
 
 export function formatBenCatchSummary(card: HTMLElement, kept: boolean): string {
   const fishName = card.querySelector('h3')?.textContent?.trim() || 'Cá';
@@ -367,6 +381,190 @@ export function handleBenAtmPanel(
   return true;
 }
 
+export function handleBenMilitiaModal(
+  snap: GameSnapshot,
+  _config: AppConfig,
+  setStatus: (text: string) => void
+): boolean {
+  const militiaPanel = document.querySelector('.panel.ben-panel.militia-check') as HTMLElement | null;
+  const hasStoreCheck = Boolean(snap.benNet?.check);
+
+  if (!militiaPanel && !hasStoreCheck) {
+    militiaFirstSeenAt = 0;
+    lastMilitiaClickAt = 0;
+    militiaSolvingPromise = null;
+    militiaSolvedResult = null;
+    militiaOptions = [];
+    militiaHasAlerted = false;
+    return false;
+  }
+
+  const now = performance.now();
+
+  // Play audio chime alert once on first appearance
+  if (!militiaHasAlerted) {
+    militiaHasAlerted = true;
+    playMilitiaAlertBeep();
+  }
+
+  if (militiaFirstSeenAt === 0) {
+    militiaFirstSeenAt = now;
+  }
+
+  // Parse target creature and options
+  const check = snap.benNet?.check;
+  militiaTargetKind = parseMilitiaTarget(check?.ask, militiaPanel?.textContent || '');
+  const kindLabel = MILITIA_KIND_LABELS[militiaTargetKind] || 'con vật';
+
+  // Read options from store or DOM
+  if (Array.isArray(check?.options) && check.options.length > 0) {
+    militiaOptions = check.options;
+  } else if (militiaPanel) {
+    const btns = Array.from(militiaPanel.querySelectorAll('.militia-check-options button'));
+    if (btns.length > 0) {
+      militiaOptions = btns.map((b) => Number((b.textContent || '').trim())).filter((n) => !Number.isNaN(n));
+    }
+  }
+
+  // Trigger image recognition in background as soon as image or base64 is available
+  if (!militiaSolvedResult && !militiaSolvingPromise) {
+    const imgEl = militiaPanel?.querySelector('img.militia-check-img') as HTMLImageElement | null;
+    const imgSrc = imgEl?.src || (check?.img ? `data:image/png;base64,${check.img}` : '');
+    if (imgSrc) {
+      militiaSolvingPromise = classifyMilitiaImage(
+        imgEl && imgEl.complete && imgEl.naturalWidth > 0 ? imgEl : imgSrc
+      )
+        .then((res) => {
+          militiaSolvedResult = res;
+          return res;
+        })
+        .catch((err) => {
+          console.warn('[Militia] Image classification failed:', err);
+          return null;
+        });
+    }
+  }
+
+  // Check if option button is already selected or game is evaluating
+  const optionBtns = militiaPanel
+    ? (Array.from(militiaPanel.querySelectorAll('.militia-check-options button')) as HTMLButtonElement[])
+    : [];
+  const isAlreadySelected = optionBtns.some((btn) => btn.classList.contains('on') || btn.disabled);
+  const leftText = militiaPanel?.querySelector('.militia-check-left')?.textContent || '';
+  if (isAlreadySelected || leftText.includes('Đang chấm')) {
+    setStatus('🪖 Dân quân kiểm tra: Đã chọn đáp án, đang chờ chấm kết quả...');
+    return true;
+  }
+
+  // Calculate remaining time
+  const totalMs = Number(check?.ms) || 15000;
+  const expireAt = Number(check?.until) || Date.now() + totalMs;
+  const remainingSec = Math.max(0, Math.ceil((expireAt - Date.now()) / 1000));
+
+  // Deliberation delay: take 1.6s - 2.0s for human look & count, unless time is critically short (<= 4s)
+  const isUrgent = remainingSec <= 4;
+  const humanDelay = 1800;
+  if (!isUrgent && now - militiaFirstSeenAt < humanDelay) {
+    setStatus(`🪖 Dân quân kiểm tra: Đang quan sát hình ảnh đếm số ${kindLabel}... (còn ${remainingSec}s)`);
+    return true;
+  }
+
+  if (now - lastMilitiaClickAt > 1000 && optionBtns.length > 0) {
+    // Check if server leaked answer in raw store check
+    let resolvedCount: number | null = null;
+    let targetIndex: number | null = null;
+    let targetValue: number | null = null;
+    let resolutionType = 'recognize';
+
+    const leakedAns =
+      typeof check?.ans === 'number'
+        ? check.ans
+        : typeof check?.count === 'number'
+          ? check.count
+          : typeof check?.solution === 'number'
+            ? check.solution
+            : typeof check?.correct === 'number'
+              ? check.correct
+              : typeof check?.pick === 'number'
+                ? check.pick
+                : null;
+
+    if (leakedAns !== null) {
+      if (militiaOptions.includes(leakedAns)) {
+        targetValue = leakedAns;
+        targetIndex = militiaOptions.indexOf(leakedAns);
+      } else if (leakedAns >= 0 && leakedAns < militiaOptions.length) {
+        targetIndex = leakedAns;
+        targetValue = militiaOptions[leakedAns];
+      }
+      resolvedCount = targetValue ?? leakedAns;
+      resolutionType = 'leaked';
+    }
+
+    // Otherwise use image classification result
+    if (targetIndex === null && militiaSolvedResult) {
+      const resolution = resolveMilitiaAnswer(militiaTargetKind, militiaSolvedResult, militiaOptions);
+      resolvedCount = resolution.count;
+      targetIndex = resolution.optionIndex;
+      targetValue = resolution.optionValue;
+      resolutionType = resolution.confidence;
+    }
+
+    // Fallback if still not ready or failed: check DOM text spans (legacy fallback)
+    if (targetIndex === null) {
+      const spans = militiaPanel ? Array.from(militiaPanel.querySelectorAll('.militia-check-row span')) : [];
+      if (spans.length > 0) {
+        const domCount = spans.filter((s) => (s.textContent || '').includes('🐟')).length;
+        const fallbackIdx = militiaOptions.indexOf(domCount);
+        if (fallbackIdx !== -1) {
+          targetIndex = fallbackIdx;
+          targetValue = domCount;
+          resolvedCount = domCount;
+        }
+      }
+    }
+
+    // Ultimate fallback if urgent or no image classifier result yet: pick option 0 or 1
+    if (targetIndex === null && (isUrgent || now - militiaFirstSeenAt > 3500)) {
+      targetIndex = Math.min(1, optionBtns.length - 1);
+      const domNum = Number(optionBtns[targetIndex]?.textContent?.trim());
+      targetValue = militiaOptions[targetIndex] ?? (Number.isNaN(domNum) ? 0 : domNum);
+      resolvedCount = targetValue;
+      resolutionType = 'emergency-fallback';
+    }
+
+    if (targetIndex !== null && targetIndex >= 0 && targetIndex < optionBtns.length) {
+      const targetBtn = optionBtns[targetIndex];
+      if (targetBtn && !targetBtn.disabled) {
+        triggerPointerDownAndClick(targetBtn);
+        lastMilitiaClickAt = now;
+        setStatus(
+          `🪖 Dân quân kiểm tra: Phát hiện ${resolvedCount ?? targetValue} ${kindLabel} ➔ Đã bấm chọn đáp án "${targetValue}"! (${resolutionType})`
+        );
+        return true;
+      }
+    }
+
+    // Also try finding button by matching targetValue text
+    if (targetValue !== null) {
+      const matchBtn = optionBtns.find((b) => (b.textContent || '').trim() === String(targetValue) && !b.disabled);
+      if (matchBtn) {
+        triggerPointerDownAndClick(matchBtn);
+        lastMilitiaClickAt = now;
+        setStatus(
+          `🪖 Dân quân kiểm tra: Phát hiện ${resolvedCount ?? targetValue} ${kindLabel} ➔ Đã bấm chọn đáp án "${targetValue}"!`
+        );
+        return true;
+      }
+    }
+
+    setStatus(`🪖 Dân quân kiểm tra: Đang phân tích hình ảnh đếm ${kindLabel}... (còn ${remainingSec}s)`);
+    return true;
+  }
+
+  return true;
+}
+
 export function handleBenOverlayModals(
   snap: GameSnapshot,
   config: AppConfig,
@@ -375,48 +573,9 @@ export function handleBenOverlayModals(
 ): boolean {
   const now = performance.now();
 
-  // 0. Militia Check Modal ("🪖 Dân quân kiểm tra!") - Giả lập đếm số cá 🐟 và bấm nút đáp án trên UI
-  const militiaPanel = document.querySelector('.panel.ben-panel.militia-check') as HTMLElement | null;
-  if (militiaPanel && isVisible(militiaPanel)) {
-    if (militiaFirstSeenAt === 0) {
-      militiaFirstSeenAt = now;
-    }
-    const humanReadDelay = 950;
-    if (now - militiaFirstSeenAt < humanReadDelay) {
-      setStatus('🪖 Dân quân kiểm tra: Đang quan sát hàng con vật để đếm số cá 🐟...');
-      return true;
-    }
-    if (now - lastMilitiaClickAt > 800) {
-      const spans = Array.from(militiaPanel.querySelectorAll('.militia-check-row span'));
-      const domFishCount = spans.filter((s) => (s.textContent || '').includes('🐟')).length;
-      const storeKinds = snap.benNet?.check?.kinds;
-      const fishCount =
-        spans.length > 0
-          ? domFishCount
-          : Array.isArray(storeKinds)
-            ? storeKinds.filter((k) => k === 'fish').length
-            : 0;
-
-      const optionBtns = Array.from(
-        militiaPanel.querySelectorAll('.militia-check-options button')
-      ) as HTMLButtonElement[];
-      const targetBtn = optionBtns.find(
-        (btn) => (btn.textContent || '').trim() === String(fishCount) && !btn.disabled
-      );
-
-      if (targetBtn) {
-        triggerPointerDownAndClick(targetBtn);
-        lastMilitiaClickAt = now;
-        setStatus(
-          `🪖 Dân quân kiểm tra: Đếm được ${fishCount} con cá 🐟 -> Đã bấm chọn đáp án "${fishCount}"!`
-        );
-      } else {
-        setStatus('🪖 Dân quân kiểm tra: Đã chọn đáp án, đang chờ chấm kết quả...');
-      }
-    }
+  // 0. Militia Check Modal ("🪖 Dân quân kiểm tra!")
+  if (handleBenMilitiaModal(snap, config, setStatus)) {
     return true;
-  } else {
-    militiaFirstSeenAt = 0;
   }
 
   // 1. Gift Modal
