@@ -5,6 +5,38 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.15.0] - 2026-11-03
+
+### 🦀 Nâng Cấp Bộ Giải Dân Quân Kiểm Tra 2.0 (Militia CAPTCHA Solver 2.0)
+- **Tập dữ liệu kiểm thử thực tế & Độ chính xác 100%**:
+  - Mở rộng bộ fixture kiểm thử chuẩn gồm 10 ảnh CAPTCHA thực tế trích xuất từ game (`tests/fixtures/militia-captcha/`).
+  - Phân loại và đếm chuẩn xác 4 loài sinh vật dưới nước (Cá 🐟, Cua 🦀, Ốc 🐌, Tôm 🦐) trên toàn bộ các biến thể màu sắc (cam, đỏ, tím, hồng, nâu, trắng bạc) và kích thước (to, nhỏ).
+- **Tinh chỉnh bộ lọc tách nền nước thông minh**:
+  - Bảo tồn sinh vật màu trắng bạc (tôm bạc `#e0e4e8`) và cá màu bạc/xanh lam nhạt (`#b4c8cc`), ngăn ngừa nguy cơ bị lọc nhầm thành gợn sóng nước.
+  - Điều kiện lọc gợn sóng nước được thắt chặt, chỉ loại bỏ khi sắc lam/lục vượt trội rõ rệt (`b - r >= 35 || g - r >= 25`).
+- **Thời gian chờ giải CAPTCHA tự nhiên**:
+  - Cập nhật cấu hình mặc định thời gian chờ tự động bấm (`benMilitiaSolveDelaySec`) lên 60 giây, khớp với thói quen sử dụng thực tế của người chơi. Cho phép người dùng quan sát kết quả dự đoán và bấm trước nếu muốn.
+
+### 🌾 Khắc Phục Hiện Tượng Treo & Liên Kết Bến Đò - Nông Trại Online Liền Mạch
+- **Tự động chuyển khu vực khi chờ nông sản**:
+  - Khắc phục triệt để lỗi bot đứng im tại Đất Bãi Phù Sa khi đã hoàn thành toàn bộ công việc chăm sóc vườn.
+  - Tự động bắt đò quay về Bến Đò tiếp tục câu cá giải trí trong lúc chờ cây trồng/vật nuôi đến giờ thu hoạch (`nextReadyAt`), và tự động dùng `farmQuick` quay lại đất khi đến chu kỳ.
+- **Dọn dẹp mã nguồn**:
+  - Loại bỏ hoàn toàn tệp máy chủ cầu nối thử nghiệm `tools/bridge-server.js` không còn sử dụng.
+
+### ⚡ Tối Ưu Hóa Toàn Diện Hiệu Năng Codebase (4 Hạng Mục)
+- **Hạng mục 1: Tái sử dụng Buffer & OffscreenCanvas (Zero-Allocation Memory)**:
+  - Tái sử dụng `OffscreenCanvas` singleton và bộ nhớ đệm `TypedArray` cố định (`Uint8Array`, `Int32Array`) kích thước 300×150 cho bộ giải Dân quân, triệt tiêu Garbage Collection và memory churn khi chạy đếm sinh vật lặp lại.
+- **Hạng mục 2: Lọc Modal theo Store-First & Tái Sử Dụng DOM Element**:
+  - Kiểm tra trạng thái Zustand Store (`useBenStore.getState().modals`) trước khi can thiệp vào DOM, truyền trực tiếp DOM element đã query vào hàm xử lý, loại bỏ tình trạng quét DOM thừa (`querySelector`) liên tục.
+- **Hạng mục 3: Tối ưu hóa kích thước Bundle với Esbuild Minification**:
+  - Kích hoạt `minify: true`, `treeShaking: true`, và `legalComments: 'none'` trong `build.mjs`.
+  - Giảm hơn 52% dung lượng bundle đầu ra (`dist/content.js` giảm từ 2.13MB xuống 1.00MB; `dist/popup.js` giảm từ 887KB xuống 306KB), tăng tốc độ tải và inject extension.
+- **Hạng mục 4: Hoãn lưu trữ cấu hình HUD (Storage Write Debouncing & Auto-Flush)**:
+  - Bổ sung bộ đệm hoãn lưu cấu hình HUD 300ms với cơ chế tự động xả đệm khi người dùng tắt hoặc làm mới trang (`beforeunload`), ngăn ngừa nghẽn I/O khi thay đổi cài đặt hoặc kéo dãn cửa sổ.
+
+---
+
 ## [1.14.0] - 2026-11-02
 
 ### 🌐 Tách Biệt Chế Độ Online & Offline Toàn Diện (Online & Offline UI & Runtime Separation)
