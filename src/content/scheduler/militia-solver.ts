@@ -145,6 +145,7 @@ function analyzeImageData(
     pixelCount: number;
     tanFootCount: number;
     whiteEyeCount: number;
+    darkEyeCount: number;
     redCount: number;
     orangeCount: number;
     pixelCoords: Set<string>;
@@ -171,6 +172,7 @@ function analyzeImageData(
       let pixelCount = 0;
       let tanFootCount = 0;
       let whiteEyeCount = 0;
+      let darkEyeCount = 0;
       let redCount = 0;
       let orangeCount = 0;
       const pixelCoords = new Set<string>();
@@ -199,6 +201,11 @@ function analyzeImageData(
         if (pr >= 235 && pg >= 235 && pb >= 235) {
           whiteEyeCount++;
           eyePixels.push({ x: cx, y: cy });
+        }
+
+        // 2b. Dark Eye / Pupil / Outline (pr < 50 && pg < 50 && pb < 60)
+        if (pr < 50 && pg < 50 && pb < 60) {
+          darkEyeCount++;
         }
 
         // 3. Red & Wine tones (some crabs, red fish): #e0393e or #96202a
@@ -256,6 +263,7 @@ function analyzeImageData(
           pixelCount,
           tanFootCount,
           whiteEyeCount,
+          darkEyeCount,
           redCount,
           orangeCount,
           pixelCoords,
@@ -277,20 +285,7 @@ function analyzeImageData(
   for (const b of blobs) {
     const aspect = b.bw / b.bh;
 
-    // 1. FISH: Must possess a distinct white eye dot (1 to 6 pixels).
-    // In game pixel art, fish are the ONLY creatures that have bright white eye dots (#ffffff).
-    // Crabs, snails, shrimp, and river junk (clams, weed, sandals, cans) NEVER have white eye dots!
-    const isFish =
-      b.whiteEyeCount >= 1 &&
-      b.whiteEyeCount <= 6 &&
-      b.bw >= 10 &&
-      b.bw <= 52 &&
-      b.bh >= 6 &&
-      b.bh <= 28 &&
-      aspect >= 1.25 &&
-      aspect <= 3.4;
-
-    // 2. CRAB: Distinct dual top claws at extreme left and right with empty center in top rows
+    // 1. CRAB: Distinct dual top claws at extreme left and right with empty center in top rows
     let topRow1 = -1;
     let topRow2 = -1;
     for (let y = b.minY; y <= b.maxY; y++) {
@@ -326,22 +321,22 @@ function analyzeImageData(
     };
 
     const hasClaws = checkRowClaws(topRow1) || checkRowClaws(topRow2);
-    const isCrab = !isFish && b.whiteEyeCount === 0 && hasClaws && aspect >= 1.25 && aspect <= 2.3;
+    const isCrab = b.whiteEyeCount === 0 && hasClaws && aspect >= 1.25 && aspect <= 2.3;
 
-    // 3. SNAIL: Anatomical flat bottom foot + single-sided eye stalk tentacle bump (facing left or right)
-    let bottomRowMinX = b.maxX;
-    let bottomRowMaxX = b.minX;
-    const bottomScanY = Math.max(b.minY, b.maxY - Math.max(1, Math.floor(b.bh * 0.18)));
-    for (let y = bottomScanY; y <= b.maxY; y++) {
-      for (let x = b.minX; x <= b.maxX; x++) {
-        if (b.pixelCoords.has(`${x},${y}`)) {
-          bottomRowMinX = Math.min(bottomRowMinX, x);
-          bottomRowMaxX = Math.max(bottomRowMaxX, x);
-        }
+    // Baseline bottom row span (at maxY)
+    // Snails have a flat baseline foot extending across the whole bottom row (span >= 80%).
+    // Fish ventral fin and shrimp tails only span a fraction of maxY (span <= 65%).
+    let minX_at_maxY = b.maxX;
+    let maxX_at_maxY = b.minX;
+    for (let x = b.minX; x <= b.maxX; x++) {
+      if (b.pixelCoords.has(`${x},${b.maxY}`)) {
+        minX_at_maxY = Math.min(minX_at_maxY, x);
+        maxX_at_maxY = Math.max(maxX_at_maxY, x);
       }
     }
-    const bottomSpanRatio = (bottomRowMaxX - bottomRowMinX + 1) / b.bw;
+    const bottomRowSpan = (maxX_at_maxY - minX_at_maxY + 1) / b.bw;
 
+    // 2. SNAIL: Anatomical flat bottom foot + single-sided eye stalk tentacle bump (facing left or right)
     let hasStalkRight = false;
     let hasStalkLeft = false;
     const midY1 = b.minY + Math.floor(b.bh * 0.45);
@@ -371,13 +366,46 @@ function analyzeImageData(
     }
 
     const isSnail =
-      !isFish &&
       !isCrab &&
       b.whiteEyeCount === 0 &&
+      bottomRowSpan >= 0.80 &&
       ((hasStalkLeft || hasStalkRight) || b.tanFootCount >= 2) &&
-      bottomSpanRatio >= 0.65 &&
       aspect >= 1.30 &&
       aspect <= 2.25;
+
+    // 3. FISH:
+    // Fish can have bright white eye (#ffffff) OR dark embedded eye (#1e1e28).
+    // Fish is horizontally elongated (aspect >= 1.25), convex on top and bottom (bottomRowSpan <= 0.70).
+    // Dorsal fin on top, ventral fin on bottom, tail peduncle at back.
+    const hasWhiteEye = b.whiteEyeCount >= 1 && b.whiteEyeCount <= 6;
+    let hasEmbeddedDarkEye = false;
+    if (b.darkEyeCount >= 2 && !isCrab && !isSnail) {
+      for (let y = b.minY + Math.floor(b.bh * 0.25); y <= b.minY + Math.floor(b.bh * 0.60); y++) {
+        for (let x = b.minX; x <= b.maxX; x++) {
+          const [pr, pg, pb] = getPixel(x, y);
+          if (pr < 50 && pg < 50 && pb < 60) {
+            const relX = (x - b.minX) / b.bw;
+            if (relX > 0.65 || relX < 0.35) {
+              hasEmbeddedDarkEye = true;
+              break;
+            }
+          }
+        }
+        if (hasEmbeddedDarkEye) break;
+      }
+    }
+
+    const isFish =
+      !isCrab &&
+      !isSnail &&
+      (hasWhiteEye || hasEmbeddedDarkEye || (aspect >= 1.4 && bottomRowSpan <= 0.65)) &&
+      bottomRowSpan <= 0.70 &&
+      b.bw >= 10 &&
+      b.bw <= 55 &&
+      b.bh >= 6 &&
+      b.bh <= 30 &&
+      aspect >= 1.25 &&
+      aspect <= 3.4;
 
     // 4. SHRIMP: Antenna whiskers on one side of top row, or curved crescent body.
     // Strictly requires NO white eyes (ruling out fish), NO crab claws, NO snail flat foot.
@@ -407,7 +435,11 @@ function analyzeImageData(
         (b.orangeCount >= 4 && aspect >= 1.5) ||
         (aspect >= 0.95 && aspect <= 1.35 && b.bh >= 15));
 
-    if (isFish) {
+    if (isCrab) {
+      counts.crab++;
+    } else if (isSnail) {
+      counts.snail++;
+    } else if (isFish) {
       // Check for overlapping fish in a single blob
       let fishInBlob = 1;
       if (b.eyePixels.length >= 2 && b.bw >= 28) {
@@ -418,10 +450,6 @@ function analyzeImageData(
         }
       }
       counts.fish += fishInBlob;
-    } else if (isCrab) {
-      counts.crab++;
-    } else if (isSnail) {
-      counts.snail++;
     } else if (isShrimp) {
       counts.shrimp++;
     } else {
