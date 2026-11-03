@@ -10,6 +10,7 @@
     "lint": "eslint src",
     "type-check": "tsc --noEmit",
     "check-syntax": "node --check dist/content.js && node --check dist/page-hook.js && node --check dist/background.js && node --check dist/popup.js",
+    "test:militia": "node tests/test-militia-solver.mjs",
     "commitlint": "commitlint --last",
     "prepare": "husky"
   },
