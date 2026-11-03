@@ -436,6 +436,14 @@ export function handleBenMilitiaModal(
       )
         .then((res) => {
           militiaSolvedResult = res;
+          (window as unknown as { __LAST_MILITIA_CAPTCHA__?: unknown }).__LAST_MILITIA_CAPTCHA__ = {
+            ask: militiaTargetKind,
+            options: militiaOptions,
+            counts: res,
+            img: imgSrc,
+            timestamp: Date.now(),
+          };
+          console.log('[Militia] Recognition result:', res, 'Target:', militiaTargetKind, 'Options:', militiaOptions);
           return res;
         })
         .catch((err) => {
@@ -457,82 +465,103 @@ export function handleBenMilitiaModal(
   }
 
   // Calculate remaining time
-  const totalMs = Number(check?.ms) || 15000;
+  const totalMs = Number(check?.ms) || 120000;
   const expireAt = Number(check?.until) || Date.now() + totalMs;
   const remainingSec = Math.max(0, Math.ceil((expireAt - Date.now()) / 1000));
+  const isCriticalTimeout = remainingSec <= 6;
 
-  // Deliberation delay: take 1.6s - 2.0s for human look & count, unless time is critically short (<= 4s)
-  const isUrgent = remainingSec <= 4;
-  const humanDelay = 1800;
-  if (!isUrgent && now - militiaFirstSeenAt < humanDelay) {
-    setStatus(`🪖 Dân quân kiểm tra: Đang quan sát hình ảnh đếm số ${kindLabel}... (còn ${remainingSec}s)`);
+  // Resolve best answer candidates
+  let resolvedCount: number | null = null;
+  let targetIndex: number | null = null;
+  let targetValue: number | null = null;
+  let isExactMatch = false;
+  let resolutionType = 'recognize';
+
+  // 1. Check if server leaked answer in raw store check
+  const leakedAns =
+    typeof check?.ans === 'number'
+      ? check.ans
+      : typeof check?.count === 'number'
+        ? check.count
+        : typeof check?.solution === 'number'
+          ? check.solution
+          : typeof check?.correct === 'number'
+            ? check.correct
+            : typeof check?.pick === 'number'
+              ? check.pick
+              : null;
+
+  if (leakedAns !== null) {
+    if (militiaOptions.includes(leakedAns)) {
+      targetValue = leakedAns;
+      targetIndex = militiaOptions.indexOf(leakedAns);
+      isExactMatch = true;
+    } else if (leakedAns >= 0 && leakedAns < militiaOptions.length) {
+      targetIndex = leakedAns;
+      targetValue = militiaOptions[leakedAns];
+      isExactMatch = true;
+    }
+    resolvedCount = targetValue ?? leakedAns;
+    resolutionType = 'leaked';
+  }
+
+  // 2. Otherwise use image classification result
+  if (targetIndex === null && militiaSolvedResult) {
+    const resolution = resolveMilitiaAnswer(militiaTargetKind, militiaSolvedResult, militiaOptions);
+    resolvedCount = resolution.count;
+    targetIndex = resolution.optionIndex;
+    targetValue = resolution.optionValue;
+    isExactMatch = resolution.confidence === 'exact';
+    resolutionType = resolution.confidence;
+  }
+
+  // 3. Fallback to DOM text spans if legacy format
+  if (targetIndex === null) {
+    const spans = militiaPanel ? Array.from(militiaPanel.querySelectorAll('.militia-check-row span')) : [];
+    if (spans.length > 0) {
+      const domCount = spans.filter((s) => (s.textContent || '').includes('🐟')).length;
+      const fallbackIdx = militiaOptions.indexOf(domCount);
+      if (fallbackIdx !== -1) {
+        targetIndex = fallbackIdx;
+        targetValue = domCount;
+        resolvedCount = domCount;
+        isExactMatch = true;
+        resolutionType = 'legacy-span';
+      }
+    }
+  }
+
+  // Natural human deliberation delay (3.2s) when exact match is found
+  const exactHumanDelay = 3200;
+  if (isExactMatch && !isCriticalTimeout && now - militiaFirstSeenAt < exactHumanDelay) {
+    const waitSec = Math.max(1, Math.ceil((militiaFirstSeenAt + exactHumanDelay - now) / 1000));
+    setStatus(
+      `🪖 Dân quân kiểm tra: Đếm được ${resolvedCount} ${kindLabel} (khớp đáp án "${targetValue}"). Tự bấm sau ${waitSec}s... (còn ${remainingSec}s)`
+    );
     return true;
   }
 
+  // If answer is NOT exact, DO NOT rush! Let the user click manually if present.
+  // Only auto-click closest option when time is running out (remainingSec <= 6)
+  if (!isExactMatch && !isCriticalTimeout) {
+    const optsStr = militiaOptions.length > 0 ? militiaOptions.join(', ') : '...';
+    setStatus(
+      `🪖 Dân quân kiểm tra: Đang đếm ${kindLabel} (phát hiện ${resolvedCount ?? '?'} - các đáp án [${optsStr}]). Chờ bạn chọn hoặc auto bấm lúc còn 6s! (còn ${remainingSec}s)`
+    );
+    return true;
+  }
+
+  // Emergency fallback when timeout is critical (<= 6s) and still no target index
+  if (targetIndex === null && isCriticalTimeout) {
+    targetIndex = Math.min(1, optionBtns.length - 1);
+    const domNum = Number(optionBtns[targetIndex]?.textContent?.trim());
+    targetValue = militiaOptions[targetIndex] ?? (Number.isNaN(domNum) ? 0 : domNum);
+    resolvedCount = targetValue;
+    resolutionType = 'emergency-fallback';
+  }
+
+  // Perform click on the chosen option button
   if (now - lastMilitiaClickAt > 1000 && optionBtns.length > 0) {
-    // Check if server leaked answer in raw store check
-    let resolvedCount: number | null = null;
-    let targetIndex: number | null = null;
-    let targetValue: number | null = null;
-    let resolutionType = 'recognize';
-
-    const leakedAns =
-      typeof check?.ans === 'number'
-        ? check.ans
-        : typeof check?.count === 'number'
-          ? check.count
-          : typeof check?.solution === 'number'
-            ? check.solution
-            : typeof check?.correct === 'number'
-              ? check.correct
-              : typeof check?.pick === 'number'
-                ? check.pick
-                : null;
-
-    if (leakedAns !== null) {
-      if (militiaOptions.includes(leakedAns)) {
-        targetValue = leakedAns;
-        targetIndex = militiaOptions.indexOf(leakedAns);
-      } else if (leakedAns >= 0 && leakedAns < militiaOptions.length) {
-        targetIndex = leakedAns;
-        targetValue = militiaOptions[leakedAns];
-      }
-      resolvedCount = targetValue ?? leakedAns;
-      resolutionType = 'leaked';
-    }
-
-    // Otherwise use image classification result
-    if (targetIndex === null && militiaSolvedResult) {
-      const resolution = resolveMilitiaAnswer(militiaTargetKind, militiaSolvedResult, militiaOptions);
-      resolvedCount = resolution.count;
-      targetIndex = resolution.optionIndex;
-      targetValue = resolution.optionValue;
-      resolutionType = resolution.confidence;
-    }
-
-    // Fallback if still not ready or failed: check DOM text spans (legacy fallback)
-    if (targetIndex === null) {
-      const spans = militiaPanel ? Array.from(militiaPanel.querySelectorAll('.militia-check-row span')) : [];
-      if (spans.length > 0) {
-        const domCount = spans.filter((s) => (s.textContent || '').includes('🐟')).length;
-        const fallbackIdx = militiaOptions.indexOf(domCount);
-        if (fallbackIdx !== -1) {
-          targetIndex = fallbackIdx;
-          targetValue = domCount;
-          resolvedCount = domCount;
-        }
-      }
-    }
-
-    // Ultimate fallback if urgent or no image classifier result yet: pick option 0 or 1
-    if (targetIndex === null && (isUrgent || now - militiaFirstSeenAt > 3500)) {
-      targetIndex = Math.min(1, optionBtns.length - 1);
-      const domNum = Number(optionBtns[targetIndex]?.textContent?.trim());
-      targetValue = militiaOptions[targetIndex] ?? (Number.isNaN(domNum) ? 0 : domNum);
-      resolvedCount = targetValue;
-      resolutionType = 'emergency-fallback';
-    }
-
     if (targetIndex !== null && targetIndex >= 0 && targetIndex < optionBtns.length) {
       const targetBtn = optionBtns[targetIndex];
       if (targetBtn && !targetBtn.disabled) {
@@ -545,7 +574,6 @@ export function handleBenMilitiaModal(
       }
     }
 
-    // Also try finding button by matching targetValue text
     if (targetValue !== null) {
       const matchBtn = optionBtns.find((b) => (b.textContent || '').trim() === String(targetValue) && !b.disabled);
       if (matchBtn) {
@@ -557,9 +585,6 @@ export function handleBenMilitiaModal(
         return true;
       }
     }
-
-    setStatus(`🪖 Dân quân kiểm tra: Đang phân tích hình ảnh đếm ${kindLabel}... (còn ${remainingSec}s)`);
-    return true;
   }
 
   return true;

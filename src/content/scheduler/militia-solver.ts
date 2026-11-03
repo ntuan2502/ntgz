@@ -3,7 +3,7 @@
  * 
  * Automatically detects the "🪖 Dân quân kiểm tra!" puzzle modal,
  * triggers an audio chime to notify the player, analyzes the 260x128 pixel art
- * river image using offscreen Canvas BFS Connected Component Analysis & Color/Shape classification,
+ * river image using offscreen Canvas BFS Connected Component Analysis & Structural/Anatomical classification,
  * and clicks the correct option button.
  */
 
@@ -14,6 +14,7 @@ export interface MilitiaClassificationResult {
   crab: number;
   shrimp: number;
   snail: number;
+  other: number;
   blobsCount: number;
 }
 
@@ -103,7 +104,7 @@ function colorDistance(r1: number, g1: number, b1: number, r2: number, g2: numbe
 }
 
 /**
- * Performs Connected Component Analysis & Feature Classification on pixel data of the river captcha.
+ * Performs Connected Component Analysis & Structural Classification on pixel data of the river captcha.
  */
 function analyzeImageData(
   imgData: ImageData,
@@ -163,6 +164,7 @@ function analyzeImageData(
     whiteEyeCount: number;
     redCount: number;
     orangeCount: number;
+    pixelCoords: Set<string>;
   }> = [];
 
   for (let y = 0; y < height; y++) {
@@ -187,11 +189,13 @@ function analyzeImageData(
       let whiteEyeCount = 0;
       let redCount = 0;
       let orangeCount = 0;
+      const pixelCoords = new Set<string>();
 
       while (head < q.length) {
         const cx = q[head++];
         const cy = q[head++];
         pixelCount++;
+        pixelCoords.add(`${cx},${cy}`);
 
         minX = Math.min(minX, cx);
         maxX = Math.max(maxX, cx);
@@ -201,13 +205,17 @@ function analyzeImageData(
         const [pr, pg, pb] = getPixel(cx, cy);
 
         // Feature tests:
-        // 1. Snail Tan Foot: #b8a888 -> R:184, G:168, B:136
-        if (colorDistance(pr, pg, pb, 184, 168, 136) < 30) tanFootCount++;
+        // 1. Snail Tan Foot: #b8a888 -> R:184, G:168, B:136 (strictly in lower half)
+        if (colorDistance(pr, pg, pb, 184, 168, 136) < 30) {
+          tanFootCount++;
+        }
 
         // 2. Fish White Eye: bright white #ffffff
-        if (pr > 235 && pg > 235 && pb > 235) whiteEyeCount++;
+        if (pr > 230 && pg > 230 && pb > 230) {
+          whiteEyeCount++;
+        }
 
-        // 3. Crab Red & Wine: #e0393e (224, 57, 62) or #96202a (150, 32, 42)
+        // 3. Red & Wine tones (some crabs, red fish): #e0393e or #96202a
         if (
           (pr > 135 && pr > pg + 30 && pr > pb + 30) ||
           colorDistance(pr, pg, pb, 224, 57, 62) < 35 ||
@@ -217,7 +225,9 @@ function analyzeImageData(
         }
 
         // 4. Shrimp Orange Segment: #ff9a2a (255, 154, 42)
-        if (pr > 200 && pg > 110 && pg < 190 && pb < 90) orangeCount++;
+        if (pr > 200 && pg > 110 && pg < 190 && pb < 90) {
+          orangeCount++;
+        }
 
         // 8-neighbor expansion
         for (const [dx, dy] of [
@@ -262,6 +272,7 @@ function analyzeImageData(
           whiteEyeCount,
           redCount,
           orangeCount,
+          pixelCoords,
         });
       }
     }
@@ -272,30 +283,99 @@ function analyzeImageData(
     crab: 0,
     shrimp: 0,
     snail: 0,
+    other: 0,
     blobsCount: blobs.length,
   };
 
   for (const b of blobs) {
     const aspect = b.bw / b.bh;
-    let kind: MilitiaAskKind;
 
-    if (b.tanFootCount >= 2) {
-      kind = 'snail';
-    } else if (b.whiteEyeCount >= 1) {
-      kind = 'fish';
-    } else if (b.orangeCount >= 4 && aspect >= 1.6) {
-      kind = 'shrimp';
-    } else if (b.redCount >= 12) {
-      kind = 'crab';
-    } else if (aspect >= 1.7) {
-      kind = 'fish';
-    } else if (aspect >= 1.3) {
-      kind = 'crab';
-    } else {
-      kind = 'snail';
+    // 1. SNAIL: Characteristic tan foot (#b8a888) in lower rows
+    const isSnail = b.tanFootCount >= 2 && b.bh >= 8 && b.bw >= 12;
+
+    // 2. CRAB: Distinct dual top claws at extreme left and right with empty center in top rows
+    let topRow1 = -1;
+    let topRow2 = -1;
+    for (let y = b.minY; y <= b.maxY; y++) {
+      let hasAny = false;
+      for (let x = b.minX; x <= b.maxX; x++) {
+        if (b.pixelCoords.has(`${x},${y}`)) {
+          hasAny = true;
+          break;
+        }
+      }
+      if (hasAny) {
+        if (topRow1 === -1) topRow1 = y;
+        else if (topRow2 === -1) {
+          topRow2 = y;
+          break;
+        }
+      }
     }
 
-    counts[kind]++;
+    const checkRowClaws = (y: number): boolean => {
+      if (y === -1) return false;
+      let left = 0;
+      let right = 0;
+      let mid = 0;
+      for (let x = b.minX; x <= b.maxX; x++) {
+        if (b.pixelCoords.has(`${x},${y}`)) {
+          if (x < b.minX + b.bw * 0.32) left++;
+          else if (x > b.maxX - b.bw * 0.32) right++;
+          else mid++;
+        }
+      }
+      return left >= 1 && right >= 1 && mid === 0;
+    };
+
+    const hasClaws = checkRowClaws(topRow1) || checkRowClaws(topRow2);
+    const isCrab =
+      !isSnail &&
+      ((hasClaws && b.bw >= 14 && b.bh >= 8 && aspect >= 1.25 && aspect <= 2.3) ||
+        (b.redCount >= 14 && b.bw >= 16 && aspect >= 1.3 && aspect <= 2.2));
+
+    // 3. SHRIMP: Antenna whiskers on one side of top row, or curved segmented body
+    let hasWhiskers = false;
+    if (topRow1 !== -1) {
+      let left = 0;
+      let right = 0;
+      let mid = 0;
+      for (let x = b.minX; x <= b.maxX; x++) {
+        if (b.pixelCoords.has(`${x},${topRow1}`)) {
+          if (x < b.minX + b.bw * 0.25) left++;
+          else if (x > b.maxX - b.bw * 0.25) right++;
+          else mid++;
+        }
+      }
+      if (((left > 0 && right === 0) || (right > 0 && left === 0)) && mid === 0 && b.bw >= 15) {
+        hasWhiskers = true;
+      }
+    }
+
+    const isShrimp =
+      !isSnail &&
+      !isCrab &&
+      ((hasWhiskers && (aspect >= 1.5 || b.orangeCount >= 2)) ||
+        (b.orangeCount >= 4 && aspect >= 1.65));
+
+    // 4. FISH: Bright eye dot or standard horizontal fish silhouette
+    const isFish =
+      !isSnail &&
+      !isCrab &&
+      !isShrimp &&
+      (b.whiteEyeCount >= 1 || (aspect >= 1.45 && aspect <= 2.8 && b.bw >= 14));
+
+    if (isSnail) {
+      counts.snail++;
+    } else if (isCrab) {
+      counts.crab++;
+    } else if (isShrimp) {
+      counts.shrimp++;
+    } else if (isFish) {
+      counts.fish++;
+    } else {
+      counts.other++;
+    }
   }
 
   return counts;
@@ -336,7 +416,7 @@ export async function classifyMilitiaImage(
   canvas.height = height;
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
   if (!ctx) {
-    return { fish: 0, crab: 0, shrimp: 0, snail: 0, blobsCount: 0 };
+    return { fish: 0, crab: 0, shrimp: 0, snail: 0, other: 0, blobsCount: 0 };
   }
 
   ctx.drawImage(imgEl, 0, 0);
@@ -374,7 +454,7 @@ export function resolveMilitiaAnswer(
     };
   }
 
-  // 2. Nearest numeric option
+  // 2. Nearest numeric option (fallback when exact count slightly deviates)
   let closestIdx = 0;
   let minDiff = Infinity;
   for (let i = 0; i < options.length; i++) {
