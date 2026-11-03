@@ -378,6 +378,7 @@ const fixtures = [
   { file: 'tests/fixtures/militia-captcha/captcha_03_snail_5.png', ask: 'snail', options: [7, 5, 6, 4], expected: 5 },
   { file: 'tests/fixtures/militia-captcha/captcha_04_snail_3.png', ask: 'snail', options: [2, 3, 5, 4], expected: 3 },
   { file: 'tests/fixtures/militia-captcha/captcha_05_crab_2.png', ask: 'crab', options: [2, 1, 4, 3], expected: 2 },
+  { file: 'tests/fixtures/militia-captcha/captcha_06_shrimp_2.png', ask: 'shrimp', options: [2, 4, 1, 3], expected: 2 },
 ];
 
 console.log('=== RUNNING MILITIA CAPTCHA TEST SUITE ===');
