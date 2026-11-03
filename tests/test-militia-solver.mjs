@@ -407,6 +407,7 @@ const fixtures = [
   { file: 'tests/fixtures/militia-captcha/captcha_12_crab_6.png', ask: 'crab', options: [8, 5, 6, 7], expected: 6 },
   { file: 'tests/fixtures/militia-captcha/captcha_13_crab_6.png', ask: 'crab', options: [6, 8, 7, 5], expected: 6 },
   { file: 'tests/fixtures/militia-captcha/captcha_14_shrimp_5.png', ask: 'shrimp', options: [6, 4, 5, 7], expected: 5 },
+  { file: 'tests/fixtures/militia-captcha/captcha_15_crab_2.png', ask: 'crab', options: [4, 1, 3, 2], expected: 2 },
 ];
 
 console.log('=== RUNNING MILITIA CAPTCHA TEST SUITE ===');
