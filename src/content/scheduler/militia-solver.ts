@@ -118,37 +118,20 @@ function analyzeImageData(
     return [data[idx], data[idx + 1], data[idx + 2], data[idx + 3]];
   };
 
-  // 1. Detect river background color from image border samples
-  const cornerCoords = [
-    [2, 2],
-    [width - 3, 2],
-    [2, height - 3],
-    [width - 3, height - 3],
-    [Math.floor(width / 2), 2],
-    [Math.floor(width / 2), height - 3],
-    [2, Math.floor(height / 2)],
-    [width - 3, Math.floor(height / 2)],
-  ];
-
-  let bgR = 0;
-  let bgG = 0;
-  let bgB = 0;
-  for (const [cx, cy] of cornerCoords) {
-    const p = getPixel(cx, cy);
-    bgR += p[0];
-    bgG += p[1];
-    bgB += p[2];
-  }
-  bgR /= cornerCoords.length;
-  bgG /= cornerCoords.length;
-  bgB /= cornerCoords.length;
-
-  // Outline color #2b2230: R:43, G:34, B:48
+  // Foreground detection: distinguishes creature/object pixels from river water, ripples, and seaweed
   const isForeground = (r: number, g: number, b: number, a: number): boolean => {
     if (a < 128) return false;
-    const isDarkOutline = colorDistance(r, g, b, 43, 34, 48) < 25;
-    const distToBg = colorDistance(r, g, b, bgR, bgG, bgB);
-    return distToBg > 22 || isDarkOutline;
+    // Dark outline (#1e1e28 or #2b2230) is always creature/object outline
+    if (r < 50 && g < 50 && b < 60) return true;
+    // River water: typical teal/cyan river water (blue >= 105, green >= 80, red <= 90)
+    if (b >= 105 && g >= 80 && r <= 90) return false;
+    // River water ripples (light cyan/white highlights)
+    if (b >= 160 && g >= 150 && r >= 130 && b >= g && b >= r) return false;
+    // Seaweed green foliage (g > 95 and distinct green dominance)
+    if (g > 95 && g > r + 25 && g > b + 20) return false;
+    // Dialog card border (if image padding or borders touch the canvas)
+    if (r > 225 && g > 210 && b > 175 && Math.abs(r - g) < 25) return false;
+    return true;
   };
 
   const visited = new Uint8Array(width * height);
@@ -261,8 +244,8 @@ function analyzeImageData(
       const bw = maxX - minX + 1;
       const bh = maxY - minY + 1;
 
-      // Filter creature sprites (typically 12-32px wide, 8-24px high, >= 20 pixels)
-      if (bw >= 8 && bw <= 55 && bh >= 6 && bh <= 45 && pixelCount >= 20) {
+      // Filter creature sprites (typically 10-52px wide, 6-40px high, >= 15 pixels)
+      if (bw >= 8 && bw <= 55 && bh >= 6 && bh <= 45 && pixelCount >= 15) {
         blobs.push({
           minX,
           maxX,
@@ -294,10 +277,7 @@ function analyzeImageData(
   for (const b of blobs) {
     const aspect = b.bw / b.bh;
 
-    // 1. SNAIL: Characteristic tan foot (#b8a888) in lower rows
-    const isSnail = b.tanFootCount >= 2 && b.bh >= 8 && b.bw >= 12;
-
-    // 2. CRAB: Distinct dual top claws at extreme left and right with empty center in top rows
+    // 1. CRAB: Distinct dual top claws at extreme left and right with empty center in top rows
     let topRow1 = -1;
     let topRow2 = -1;
     for (let y = b.minY; y <= b.maxY; y++) {
@@ -334,11 +314,10 @@ function analyzeImageData(
 
     const hasClaws = checkRowClaws(topRow1) || checkRowClaws(topRow2);
     const isCrab =
-      !isSnail &&
-      ((hasClaws && b.bw >= 14 && b.bh >= 8 && aspect >= 1.25 && aspect <= 2.3) ||
-        (b.redCount >= 14 && b.bw >= 16 && aspect >= 1.3 && aspect <= 2.2));
+      (hasClaws && aspect >= 1.25 && aspect <= 2.3) ||
+      (b.redCount >= 14 && b.bw >= 16 && aspect >= 1.3 && aspect <= 2.2);
 
-    // 3. SHRIMP: Antenna whiskers on one side of top row, or curved segmented body
+    // 2. SHRIMP: Antenna whiskers on one side of top row, or curved segmented body
     let hasWhiskers = false;
     if (topRow1 !== -1) {
       let left = 0;
@@ -357,23 +336,73 @@ function analyzeImageData(
     }
 
     const isShrimp =
-      !isSnail &&
       !isCrab &&
-      ((hasWhiskers && (aspect >= 1.5 || b.orangeCount >= 2)) ||
-        (b.orangeCount >= 4 && aspect >= 1.65));
+      ((hasWhiskers && (aspect < 1.4 || aspect >= 1.5)) ||
+        (b.orangeCount >= 4 && (aspect < 1.4 || aspect >= 1.65)));
+
+    // 3. SNAIL: Anatomical flat bottom foot + single-sided eye stalk tentacle bump (facing left or right)
+    let bottomRowMinX = b.maxX;
+    let bottomRowMaxX = b.minX;
+    const bottomScanY = Math.max(b.minY, b.maxY - Math.max(1, Math.floor(b.bh * 0.18)));
+    for (let y = bottomScanY; y <= b.maxY; y++) {
+      for (let x = b.minX; x <= b.maxX; x++) {
+        if (b.pixelCoords.has(`${x},${y}`)) {
+          bottomRowMinX = Math.min(bottomRowMinX, x);
+          bottomRowMaxX = Math.max(bottomRowMaxX, x);
+        }
+      }
+    }
+    const bottomSpanRatio = (bottomRowMaxX - bottomRowMinX + 1) / b.bw;
+
+    let hasStalkRight = false;
+    let hasStalkLeft = false;
+    const midY1 = b.minY + Math.floor(b.bh * 0.45);
+    const midY2 = b.minY + Math.floor(b.bh * 0.85);
+    for (let y = midY1; y <= midY2; y++) {
+      let hasRightEdge = false;
+      let hasRightGap = false;
+      const rightStalkX = b.maxX - Math.max(1, Math.floor(b.bw * 0.15));
+      for (let x = rightStalkX; x <= b.maxX; x++) {
+        if (b.pixelCoords.has(`${x},${y}`)) hasRightEdge = true;
+      }
+      for (let x = Math.floor(b.minX + b.bw * 0.65); x < rightStalkX; x++) {
+        if (!b.pixelCoords.has(`${x},${y}`)) hasRightGap = true;
+      }
+      if (hasRightEdge && hasRightGap) hasStalkRight = true;
+
+      let hasLeftEdge = false;
+      let hasLeftGap = false;
+      const leftStalkX = b.minX + Math.max(1, Math.floor(b.bw * 0.15));
+      for (let x = b.minX; x <= leftStalkX; x++) {
+        if (b.pixelCoords.has(`${x},${y}`)) hasLeftEdge = true;
+      }
+      for (let x = leftStalkX + 1; x <= Math.floor(b.minX + b.bw * 0.35); x++) {
+        if (!b.pixelCoords.has(`${x},${y}`)) hasLeftGap = true;
+      }
+      if (hasLeftEdge && hasLeftGap) hasStalkLeft = true;
+    }
+
+    const isSnail =
+      !isCrab &&
+      !isShrimp &&
+      b.whiteEyeCount === 0 &&
+      ((hasStalkLeft || hasStalkRight) || b.tanFootCount >= 2) &&
+      bottomSpanRatio >= 0.65 &&
+      aspect >= 1.30 &&
+      aspect <= 2.25;
 
     // 4. FISH: Must possess a distinct white eye dot (1 to 6 pixels).
     // Non-fish decoys (clams, weed, sandals, bags, cans, shells) do NOT have white eye dots!
     const isFish =
-      !isSnail &&
       !isCrab &&
       !isShrimp &&
+      !isSnail &&
       b.whiteEyeCount >= 1 &&
       b.whiteEyeCount <= 6 &&
-      b.bw >= 12 &&
-      b.bw <= 42 &&
+      b.bw >= 10 &&
+      b.bw <= 52 &&
       b.bh >= 6 &&
-      b.bh <= 22 &&
+      b.bh <= 28 &&
       aspect >= 1.25 &&
       aspect <= 3.4;
 
@@ -440,7 +469,7 @@ export async function classifyMilitiaImage(
     return { fish: 0, crab: 0, shrimp: 0, snail: 0, other: 0, blobsCount: 0 };
   }
 
-  ctx.drawImage(imgEl, 0, 0);
+  ctx.drawImage(imgEl, 0, 0, width, height);
   const imgData = ctx.getImageData(0, 0, width, height);
   return analyzeImageData(imgData, width, height);
 }
