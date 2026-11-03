@@ -540,8 +540,8 @@ export function handleBenMilitiaModal(
     return true;
   }
 
-  // Natural deliberation delay (customizable, default 5s, max 60s) when exact match is found
-  const userDelaySec = Math.max(2, Math.min(60, Number(config.benMilitiaSolveDelaySec) || 5));
+  // Natural deliberation delay (customizable, default 60s, max 60s) when exact match is found
+  const userDelaySec = Math.max(2, Math.min(60, Number(config.benMilitiaSolveDelaySec) || 60));
   const exactHumanDelay = userDelaySec * 1000;
   if (isExactMatch && !isCriticalTimeout && now - militiaFirstSeenAt < exactHumanDelay) {
     const waitSec = Math.max(1, Math.ceil((militiaFirstSeenAt + exactHumanDelay - now) / 1000));
