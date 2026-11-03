@@ -24,12 +24,26 @@ export interface StoreRegistry {
   bai: ZustandStore<BaiStoreState> | null;
 }
 
+export interface FarmerSprite {
+  x?: number;
+  y?: number;
+  tile?: { x: number; y: number };
+  running?: boolean;
+  shownName?: string;
+  enqueue?: (item: { kind: string; to?: { x: number; y: number }; arrive?: () => void }) => void;
+  cancelAll?: () => void;
+  lookAt?: (x: number, y: number) => void;
+  [key: string]: unknown;
+}
+
 export interface PhaserSceneInstance {
   sys?: {
     isActive: () => boolean;
     game?: PhaserGameInstance;
     [key: string]: unknown;
   };
+  farmer?: FarmerSprite;
+  goFarmer?: (tile: { x: number; y: number }, cb?: () => void) => void;
   announce?: () => void;
   [key: string]: unknown;
 }
@@ -171,6 +185,38 @@ export function hookPhaserGame(): PhaserGameInstance | null {
     phaserGame = cachedGame;
     return phaserGame;
   }
+  // Fallback: discover Phaser.Game from .game-container / canvas React Fiber
+  try {
+    const container = document.querySelector('.game-container') || document.querySelector('canvas');
+    if (container) {
+      const rec = container as unknown as Record<string, unknown>;
+      for (const k of Object.keys(rec)) {
+        if (k.startsWith('__reactFiber$')) {
+          let fiber = rec[k] as { memoizedState?: unknown; return?: unknown } | undefined;
+          let count = 0;
+          while (fiber && count < 25) {
+            count++;
+            let hook = fiber.memoizedState as { memoizedState?: unknown; next?: unknown } | undefined;
+            while (hook) {
+              const ms = hook.memoizedState as { current?: unknown } | undefined;
+              if (ms && ms.current && typeof ms.current === 'object') {
+                const g = ms.current as PhaserGameInstance;
+                if (g && g.scene && typeof g.scene.getScene === 'function') {
+                  phaserGame = g;
+                  win.__ntg_phaserGame = phaserGame;
+                  return phaserGame;
+                }
+              }
+              hook = hook.next as typeof hook;
+            }
+            fiber = fiber.return as typeof fiber;
+          }
+        }
+      }
+    }
+  } catch {
+    // ignore
+  }
   try {
     const origPush = Array.prototype.push;
     let restored = false;
@@ -202,12 +248,177 @@ export function hookPhaserGame(): PhaserGameInstance | null {
 
 hookPhaserGame();
 
+export function getBenFarmer(sc: PhaserSceneInstance | null): FarmerSprite | null {
+  if (!sc) return null;
+  const scRecord = sc as Record<string, unknown>;
+
+  // Check cached instance
+  const existingFarmer = scRecord.__farmer as FarmerSprite | undefined;
+  if (existingFarmer && typeof existingFarmer.enqueue === 'function') {
+    return existingFarmer;
+  }
+
+  // 1. Try scene.speaker(you)
+  try {
+    const you = stores.benNet?.getState()?.you;
+    if (typeof scRecord.speaker === 'function' && you) {
+      const s = (scRecord.speaker as (id: unknown) => unknown)(you) as FarmerSprite | undefined;
+      if (s && typeof s.enqueue === 'function') {
+        scRecord.__farmer = s;
+        return s;
+      }
+    }
+  } catch {
+    // ignore
+  }
+
+  // 2. Search scene children / display list
+  try {
+    const childrenList =
+      (scRecord.children as { list?: unknown[] } | undefined)?.list ||
+      (typeof (scRecord.children as { getChildren?: () => unknown[] } | undefined)?.getChildren === 'function'
+        ? (scRecord.children as { getChildren: () => unknown[] }).getChildren()
+        : null) ||
+      (scRecord.sys as { displayList?: { list?: unknown[] } } | undefined)?.displayList?.list ||
+      [];
+
+    const playerName = stores.main?.getState()?.player?.name;
+    const others = scRecord.others as Map<unknown, unknown> | undefined;
+    const tam = scRecord.tam;
+
+    let fallbackCandidate: FarmerSprite | null = null;
+    for (const item of childrenList) {
+      if (!item || typeof item !== 'object') continue;
+      const rec = item as FarmerSprite;
+      if (
+        typeof rec.enqueue === 'function' &&
+        typeof rec.cancelAll === 'function' &&
+        typeof rec.lookAt === 'function' &&
+        'queue' in rec
+      ) {
+        // Exclude Ong Tam
+        if (tam && rec === tam) continue;
+        // Exclude other players in room
+        if (others && others instanceof Map) {
+          let isOther = false;
+          for (const otherObj of others.values()) {
+            if (otherObj === rec) {
+              isOther = true;
+              break;
+            }
+          }
+          if (isOther) continue;
+        }
+        // Match player name if available
+        if (playerName && rec.shownName === playerName) {
+          scRecord.__farmer = rec;
+          return rec;
+        }
+        if (!fallbackCandidate) {
+          fallbackCandidate = rec;
+        }
+      }
+    }
+    if (fallbackCandidate) {
+      scRecord.__farmer = fallbackCandidate;
+      return fallbackCandidate;
+    }
+  } catch {
+    // ignore
+  }
+
+  return null;
+}
+
+export function attachBenSceneHelpers(sc: PhaserSceneInstance): void {
+  const scRecord = sc as Record<string, unknown>;
+
+  // Polyfill 'farmer' getter if not present or private
+  if (!('farmer' in scRecord) || !scRecord.farmer) {
+    Object.defineProperty(scRecord, 'farmer', {
+      configurable: true,
+      enumerable: true,
+      get: () => getBenFarmer(sc),
+      set: (val: FarmerSprite) => {
+        scRecord.__farmer = val;
+      },
+    });
+  }
+
+  // Polyfill 'goFarmer' if missing (due to minification into private #n)
+  if (typeof scRecord.goFarmer !== 'function') {
+    scRecord.goFarmer = function (tile: { x: number; y: number }, cb?: () => void) {
+      const farmer = getBenFarmer(sc);
+      if (!farmer) return;
+
+      const route = typeof scRecord.route === 'number' ? ++scRecord.route : 1;
+      scRecord.route = route;
+
+      try {
+        const cameras = scRecord.cameras as {
+          main?: { startFollow?: (...args: unknown[]) => void };
+        };
+        cameras?.main?.startFollow?.(farmer, true, 0.1, 0.1);
+      } catch {
+        // ignore
+      }
+
+      try {
+        farmer.cancelAll?.();
+      } catch {
+        // ignore
+      }
+
+      try {
+        farmer.enqueue?.({
+          kind: 'move',
+          to: tile,
+          arrive: () => {
+            if (scRecord.route !== route) return;
+            try {
+              if (typeof farmer.lookAt === 'function') {
+                const fx = Number(farmer.x) || 0;
+                const fy = Number(farmer.y) || 0;
+                // Face water if near water edge:
+                // Upper river / pier (y <= 13) -> face up (dy: -20)
+                // Bridge / right stream (x >= 45 && y >= 14) -> face right (dx: 20)
+                const dx = tile.x >= 45 && tile.y >= 14 ? 20 : 0;
+                const dy = tile.x >= 45 && tile.y >= 14 ? 0 : -20;
+                farmer.lookAt(fx + dx, fy + dy);
+              }
+            } catch {
+              // ignore
+            }
+            cb?.();
+          },
+        });
+      } catch {
+        // ignore
+      }
+
+      sendBenWs({ t: 'move', x: tile.x, y: tile.y });
+      try {
+        if (typeof scRecord.announce === 'function') {
+          (scRecord.announce as () => void)();
+        }
+      } catch {
+        // ignore
+      }
+    };
+  }
+}
+
 export function getActiveScene(key: string): PhaserSceneInstance | null {
   const game = hookPhaserGame();
   if (!game || !game.scene || typeof game.scene.getScene !== 'function') return null;
   try {
     const sc = game.scene.getScene(key);
-    if (sc && sc.sys && sc.sys.isActive()) return sc;
+    if (sc && sc.sys && sc.sys.isActive()) {
+      if (key === 'BenDoScene' || !('farmer' in sc)) {
+        attachBenSceneHelpers(sc);
+      }
+      return sc;
+    }
     return null;
   } catch {
     return null;

@@ -317,7 +317,10 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
       ? curTile.x === targetTile.x && curTile.y === targetTile.y
       : bu.spot === spotMeta.kind;
 
-    const needsWalkToSpot = !bu.spot || (!isAtTargetTile && (spotChoice as string) !== 'any');
+    const needsWalkToSpot =
+      (spotChoice as string) === 'any'
+        ? !bu.spot
+        : !isAtTargetTile;
 
     if (needsWalkToSpot) {
       if (benScene && typeof benScene.goFarmer === 'function') {
@@ -341,7 +344,7 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
       }
     }
 
-    if (benScene?.farmer?.lookAt && Math.random() < 0.04) {
+    if (isAtTargetTile && benScene?.farmer?.lookAt && Math.random() < 0.15) {
       const lookDir =
         spotMeta.kind === 'bank' || spotKey === 'dock' ? { dx: 0, dy: -24 } : { dx: 24, dy: 0 };
       benScene.farmer.lookAt(
