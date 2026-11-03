@@ -236,9 +236,50 @@ export function mergeConfig(saved: Partial<AppConfig> | null | undefined): AppCo
   return next;
 }
 
-export function saveConfig(): void {
-  chrome.storage.local.set({ autoConfig: config });
+let saveTimer: ReturnType<typeof setTimeout> | null = null;
+
+export function saveConfig(immediate = false): void {
   renderAll();
+
+  if (immediate) {
+    if (saveTimer) {
+      clearTimeout(saveTimer);
+      saveTimer = null;
+    }
+    try {
+      chrome.storage.local.set({ autoConfig: config });
+    } catch {
+      // Context might be invalidated
+    }
+    return;
+  }
+
+  if (saveTimer) {
+    clearTimeout(saveTimer);
+  }
+
+  saveTimer = setTimeout(() => {
+    saveTimer = null;
+    try {
+      chrome.storage.local.set({ autoConfig: config });
+    } catch {
+      // Context might be invalidated
+    }
+  }, 300);
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', () => {
+    if (saveTimer) {
+      clearTimeout(saveTimer);
+      saveTimer = null;
+      try {
+        chrome.storage.local.set({ autoConfig: config });
+      } catch {
+        // Ignore on unload
+      }
+    }
+  });
 }
 
 export function renderAll(): void {

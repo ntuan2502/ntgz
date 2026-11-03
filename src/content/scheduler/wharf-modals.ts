@@ -384,9 +384,13 @@ export function handleBenAtmPanel(
 export function handleBenMilitiaModal(
   snap: GameSnapshot,
   config: AppConfig,
-  setStatus: (text: string) => void
+  setStatus: (text: string) => void,
+  cachedPanel?: HTMLElement | null
 ): boolean {
-  const militiaPanel = document.querySelector('.panel.ben-panel.militia-check') as HTMLElement | null;
+  const militiaPanel =
+    cachedPanel !== undefined
+      ? cachedPanel
+      : (document.querySelector('.panel.ben-panel.militia-check') as HTMLElement | null);
   const hasStoreCheck = Boolean(snap.benNet?.check);
 
   if (!militiaPanel && !hasStoreCheck) {

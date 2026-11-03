@@ -60,8 +60,13 @@ export async function stepBenDoFishing(
   // 🪖 HIGHEST PRIORITY #0.5: MILITIA CHECK MODAL ("🪖 Dân quân kiểm tra!")
   // Tự động nhận diện hình ảnh và giải captcha câu hỏi dân quân kiểm tra
   // =========================================================================
-  if (Boolean(bn.check) || Boolean(document.querySelector('.panel.ben-panel.militia-check'))) {
-    if (handleBenMilitiaModal(snap, config, setStatus)) {
+  const hasStoreMilitia = Boolean(bn.check) || bu?.panel === 'militiaCheck';
+  const militiaPanel = hasStoreMilitia
+    ? (document.querySelector('.panel.ben-panel.militia-check') as HTMLElement | null)
+    : (document.querySelector('.panel.ben-panel.militia-check') as HTMLElement | null);
+
+  if (Boolean(bn.check) || militiaPanel) {
+    if (handleBenMilitiaModal(snap, config, setStatus, militiaPanel)) {
       await sleep(250);
       return { finishedArea: false };
     }

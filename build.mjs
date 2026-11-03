@@ -65,6 +65,8 @@ const commonConfig = {
   bundle: true,
   target: 'es2022',
   sourcemap: true,
+  minify: !isWatch,
+  treeShaking: true,
   loader: {
     '.css': 'text',
   },

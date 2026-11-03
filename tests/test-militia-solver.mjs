@@ -93,6 +93,7 @@ function analyzeImage(filePath) {
   const riverH = 165;
 
   const visited = new Uint8Array(width * height);
+  const q = new Int32Array(width * height * 2);
   const blobs = [];
 
   for (let y = riverY; y < riverY + riverH; y++) {
@@ -104,8 +105,10 @@ function analyzeImage(filePath) {
       if (!isForeground(r, g, b, a)) continue;
 
       visited[idx] = 1;
-      const q = [x, y];
       let head = 0;
+      let tail = 0;
+      q[tail++] = x;
+      q[tail++] = y;
 
       let minX = x;
       let maxX = x;
@@ -120,7 +123,7 @@ function analyzeImage(filePath) {
       const pixelCoords = new Set();
       const eyePixels = [];
 
-      while (head < q.length) {
+      while (head < tail) {
         const cx = q[head++];
         const cy = q[head++];
         pixelCount++;
@@ -162,7 +165,8 @@ function analyzeImage(filePath) {
               const [nr, ng, nb, na] = getPixel(nx, ny);
               if (isForeground(nr, ng, nb, na)) {
                 visited[nIdx] = 1;
-                q.push(nx, ny);
+                q[tail++] = nx;
+                q[tail++] = ny;
               }
             }
           }

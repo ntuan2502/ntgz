@@ -103,6 +103,62 @@ function colorDistance(r1: number, g1: number, b1: number, r2: number, g2: numbe
   return Math.hypot(r1 - r2, g1 - g2, b1 - b2);
 }
 
+// Static buffer memory pool to eliminate garbage collection overhead during repeated parses
+let cachedVisitedBuffer: Uint8Array | null = null;
+let cachedQueueBuffer: Int32Array | null = null;
+
+function getVisitedBuffer(size: number): Uint8Array {
+  if (!cachedVisitedBuffer || cachedVisitedBuffer.length < size) {
+    cachedVisitedBuffer = new Uint8Array(Math.max(size, 400 * 250));
+  }
+  cachedVisitedBuffer.fill(0, 0, size);
+  return cachedVisitedBuffer;
+}
+
+function getQueueBuffer(size: number): Int32Array {
+  const reqLen = size * 2;
+  if (!cachedQueueBuffer || cachedQueueBuffer.length < reqLen) {
+    cachedQueueBuffer = new Int32Array(Math.max(reqLen, 400 * 250 * 2));
+  }
+  return cachedQueueBuffer;
+}
+
+let cachedOffscreenCanvas: OffscreenCanvas | HTMLCanvasElement | null = null;
+let cachedCanvasCtx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null = null;
+
+function getReusableCanvas(width: number, height: number): {
+  canvas: OffscreenCanvas | HTMLCanvasElement | null;
+  ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
+} {
+  if (!cachedOffscreenCanvas) {
+    if (typeof OffscreenCanvas !== 'undefined') {
+      try {
+        cachedOffscreenCanvas = new OffscreenCanvas(width, height);
+        cachedCanvasCtx = cachedOffscreenCanvas.getContext('2d', {
+          willReadFrequently: true,
+        }) as OffscreenCanvasRenderingContext2D | null;
+      } catch {
+        cachedOffscreenCanvas = null;
+        cachedCanvasCtx = null;
+      }
+    }
+    if (!cachedOffscreenCanvas && typeof document !== 'undefined') {
+      const el = document.createElement('canvas');
+      el.width = width;
+      el.height = height;
+      cachedOffscreenCanvas = el;
+      cachedCanvasCtx = el.getContext('2d', { willReadFrequently: true });
+    }
+  }
+
+  if (cachedOffscreenCanvas) {
+    if (cachedOffscreenCanvas.width < width) cachedOffscreenCanvas.width = width;
+    if (cachedOffscreenCanvas.height < height) cachedOffscreenCanvas.height = height;
+  }
+
+  return { canvas: cachedOffscreenCanvas, ctx: cachedCanvasCtx };
+}
+
 /**
  * Performs Connected Component Analysis & Structural Classification on pixel data of the river captcha.
  */
@@ -135,7 +191,8 @@ function analyzeImageData(
     return true;
   };
 
-  const visited = new Uint8Array(width * height);
+  const visited = getVisitedBuffer(width * height);
+  const q = getQueueBuffer(width * height);
   const blobs: Array<{
     minX: number;
     maxX: number;
@@ -161,10 +218,12 @@ function analyzeImageData(
       const [r, g, b, a] = getPixel(x, y);
       if (!isForeground(r, g, b, a)) continue;
 
-      // 8-Connected BFS
+      // 8-Connected BFS with zero-allocation flat array
       visited[idx] = 1;
-      const q: number[] = [x, y];
       let head = 0;
+      let tail = 0;
+      q[tail++] = x;
+      q[tail++] = y;
 
       let minX = x;
       let maxX = x;
@@ -179,7 +238,7 @@ function analyzeImageData(
       const pixelCoords = new Set<string>();
       const eyePixels: Array<{ x: number; y: number }> = [];
 
-      while (head < q.length) {
+      while (head < tail) {
         const cx = q[head++];
         const cy = q[head++];
         pixelCount++;
@@ -242,7 +301,8 @@ function analyzeImageData(
               const [nr, ng, nb, na] = getPixel(nx, ny);
               if (isForeground(nr, ng, nb, na)) {
                 visited[nIdx] = 1;
-                q.push(nx, ny);
+                q[tail++] = nx;
+                q[tail++] = ny;
               }
             }
           }
@@ -491,14 +551,12 @@ export async function classifyMilitiaImage(
   const width = imgEl.naturalWidth || 260;
   const height = imgEl.naturalHeight || 128;
 
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext('2d', { willReadFrequently: true });
-  if (!ctx) {
+  const { canvas, ctx } = getReusableCanvas(width, height);
+  if (!canvas || !ctx) {
     return { fish: 0, crab: 0, shrimp: 0, snail: 0, other: 0, blobsCount: 0 };
   }
 
+  ctx.clearRect(0, 0, width, height);
   ctx.drawImage(imgEl, 0, 0, width, height);
   const imgData = ctx.getImageData(0, 0, width, height);
   return analyzeImageData(imgData, width, height);
