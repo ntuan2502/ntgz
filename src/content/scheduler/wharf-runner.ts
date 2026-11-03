@@ -127,7 +127,8 @@ export async function stepBenDoFishing(
       }
     }
     await sleep(delayMs);
-    return { finishedArea: false };
+    const isFinished = Boolean(prep?.finishedFarm || (!prep?.acted && currentKind === 'farm'));
+    return { finishedArea: isFinished };
   }
 
   // 2. DEDICATED BẾN ĐÒ MODE:

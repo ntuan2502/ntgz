@@ -10,6 +10,8 @@ export interface BenStepResult {
   isBossHunt?: boolean;
   /** Content runner may click the cast button (fishing owns the continuous slot and stands at the spot) */
   allowCast?: boolean;
+  /** True when alluvial land tasks are finished and waiting for next crop cycle */
+  finishedFarm?: boolean;
   /** Continuous activity (fishing / hunting) to run only if no bounded task is ready */
   deferred?: () => BenStepResult;
 }

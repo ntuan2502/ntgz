@@ -202,7 +202,12 @@ export function stepAlluvial(
         transitStartedAt = now;
         resetBaiWalkTracker();
       } else {
-        if (onlineTarget === 'all' || onlineTarget === 'benDo') {
+        const shouldReturnToBen =
+          onlineTarget === 'all' ||
+          onlineTarget === 'benDo' ||
+          (cfg.areaEnabled?.benDo !== false && cfg.benSubEnabled?.fishing !== false);
+
+        if (shouldReturnToBen) {
           if (!hasMarketWork(cfg)) {
             closeBaiPanel();
             sendBenWs({ t: 'farmExit' });
@@ -228,7 +233,7 @@ export function stepAlluvial(
             };
           }
         }
-        // onlineTarget === 'alluvialLand': stay idle and wait for crops/animals
+        // Dedicated alluvialLand without Ben Do: stay idle and wait for crops/animals
         const nextTimeStr =
           baiState.nextReadyAt > 0
             ? new Date(baiState.nextReadyAt).toLocaleTimeString('vi-VN', {
@@ -542,7 +547,12 @@ export function stepAlluvial(
       recalculateNextReadyAt();
       baiState.lastFarmSurveyAt = now;
 
-      if (onlineTarget === 'alluvialLand') {
+      const shouldReturnToBen =
+        onlineTarget === 'all' ||
+        onlineTarget === 'benDo' ||
+        (cfg.areaEnabled?.benDo !== false && cfg.benSubEnabled?.fishing !== false);
+
+      if (!shouldReturnToBen) {
         transitState = 'idle';
         resetBaiWalkTracker();
         const nextTimeStr =
@@ -553,7 +563,7 @@ export function stepAlluvial(
               })
             : 'đang tính';
         return {
-          acted: true,
+          acted: false,
           msg: `🌾 Nông Trại Online: Đã xong việc vườn, đang chờ chu kỳ kế tiếp lúc ${nextTimeStr}...`,
           allowCast: false,
         };

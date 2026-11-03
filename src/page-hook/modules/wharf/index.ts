@@ -200,12 +200,14 @@ export function execBenStep(
       };
     }
     return {
-      acted: true,
+      acted: false,
       msg:
-        currentKind === 'farm'
+        alluvialRes?.msg ||
+        (currentKind === 'farm'
           ? '🌱 Đang ở khu Đất Của Mình (Bãi Phù Sa)...'
-          : '🏪 Đang ở khu Chợ Bãi (Bãi Phù Sa)...',
+          : '🏪 Đang ở khu Chợ Bãi (Bãi Phù Sa)...'),
       allowCast: false,
+      finishedFarm: true,
     };
   }
 
