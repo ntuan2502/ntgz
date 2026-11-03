@@ -5,6 +5,21 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.15.1] - 2026-11-03
+
+### 🐟 Khắc Phục Lỗi Nhận Diện Cá Xanh Dương & Mở Rộng Bộ Test Hồi Quy (Militia Solver Fix)
+- **Bảo tồn sinh vật sắc lam/tím sâu (Deep Blue / Purple Creature Preservation)**:
+  - Khắc phục lỗi lọc nhầm thân cá xanh dương (`#5ba2da` / `rgb(91, 162, 218)`) thành gợn sóng nước.
+  - Bổ sung bộ nhận diện sinh vật sắc lam vượt trội (`b >= 135 && b - g >= 35 && b - r >= 35`) được bảo vệ tuyệt đối làm tiền cảnh sinh vật, do nước sông trong game luôn là màu ngọc lam Cyan (`b - g <= 32`).
+- **Mở rộng ngưỡng hình thể vây bụng cá bầu (`bottomRowSpan`)**:
+  - Tăng ngưỡng tỷ lệ đáy `bottomRowSpan` từ `0.70` lên `0.78` cho các loài cá dạng bầu có vây bụng bè rộng, không bị nhầm lẫn với ốc sên (ốc sên luôn có chân đáy phẳng `0.85 - 1.0` kèm xúc tu/chân bụng nâu).
+- **Mở rộng bộ dữ liệu kiểm thử thực tế (13 Fixtures)**:
+  - Bổ sung `captcha_11_fish_4.png` (nhận diện chính xác 4 cá 🐟).
+  - Bổ sung `captcha_12_crab_6.png` và `captcha_13_crab_6.png` (nhận diện chính xác 6 cua 🦀 trên khung hình 10 sinh vật phức tạp).
+  - Đảm bảo toàn bộ **13/13 test case thực tế đạt độ chính xác 100% tuyệt đối**.
+
+---
+
 ## [1.15.0] - 2026-11-03
 
 ### 🦀 Nâng Cấp Bộ Giải Dân Quân Kiểm Tra 2.0 (Militia CAPTCHA Solver 2.0)
