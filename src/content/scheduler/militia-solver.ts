@@ -179,6 +179,9 @@ function analyzeImageData(
     if (a < 128) return false;
     // Dark outline (#1e1e28 or #2b2230) is always creature/object outline
     if (r < 50 && g < 50 && b < 60) return true;
+    // Blue/purple creatures (e.g. Blue Fish #5ba2da rgb(91,162,218), Purple Crab #9664b4):
+    // Blue distinctly dominates green (b - g >= 35) and red (b - r >= 35)
+    if (b >= 135 && b - g >= 35 && b - r >= 35) return true;
     // River water: typical teal/cyan river water (blue >= 105, green >= 80, red <= 90)
     if (b >= 105 && g >= 80 && r <= 90) return false;
     // River water ripples (cyan/light blue highlights): blue and green strongly dominate red.
@@ -460,7 +463,7 @@ function analyzeImageData(
       !isCrab &&
       !isSnail &&
       (hasWhiteEye || hasEmbeddedDarkEye || (aspect >= 1.4 && bottomRowSpan <= 0.65)) &&
-      bottomRowSpan <= 0.70 &&
+      bottomRowSpan <= 0.78 &&
       b.bw >= 10 &&
       b.bw <= 55 &&
       b.bh >= 6 &&

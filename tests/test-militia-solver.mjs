@@ -76,6 +76,9 @@ function analyzeImage(filePath) {
     if (a < 128) return false;
     // Dark outline (#1e1e28 or #2b2230) is always creature/object outline
     if (r < 50 && g < 50 && b < 60) return true;
+    // Blue/purple creatures (e.g. Blue Fish #5ba2da rgb(91,162,218), Purple Crab #9664b4)
+    // Blue distinctly dominates green (b - g >= 35) and red (b - r >= 35)
+    if (b >= 135 && b - g >= 35 && b - r >= 35) return true;
     // River water: typical teal/cyan river water (blue >= 105, green >= 80, red <= 90)
     if (b >= 105 && g >= 80 && r <= 90) return false;
     // River water ripples (cyan/light blue highlights): blue and green strongly dominate red
@@ -87,10 +90,23 @@ function analyzeImage(filePath) {
     return true;
   };
 
-  const riverX = 26;
-  const riverY = 128;
-  const riverW = 340;
-  const riverH = 165;
+  let minRiverY = height, maxRiverY = 0;
+  for (let y = 0; y < height; y++) {
+    let waterCount = 0;
+    for (let x = 0; x < width; x++) {
+      const [r, g, b] = getPixel(x, y);
+      if (b >= 105 && g >= 80 && r <= 90) waterCount++;
+    }
+    if (waterCount > 50) {
+      minRiverY = Math.min(minRiverY, y);
+      maxRiverY = Math.max(maxRiverY, y);
+    }
+  }
+
+  const riverX = 17;
+  const riverY = minRiverY < height ? minRiverY : 115;
+  const riverW = width - 34;
+  const riverH = maxRiverY > minRiverY ? maxRiverY - riverY + 1 : 170;
 
   const visited = new Uint8Array(width * height);
   const q = new Int32Array(width * height * 2);
@@ -293,7 +309,7 @@ function analyzeImage(filePath) {
       !isCrab &&
       !isSnail &&
       (hasWhiteEye || hasEmbeddedDarkEye || (aspect >= 1.4 && bottomRowSpan <= 0.65)) &&
-      bottomRowSpan <= 0.70 &&
+      bottomRowSpan <= 0.78 &&
       b.bw >= 10 &&
       b.bw <= 55 &&
       b.bh >= 6 &&
@@ -387,6 +403,7 @@ const fixtures = [
   { file: 'tests/fixtures/militia-captcha/captcha_08_fish_6.png', ask: 'fish', options: [7, 8, 6, 5], expected: 6 },
   { file: 'tests/fixtures/militia-captcha/captcha_09_shrimp_5.png', ask: 'shrimp', options: [6, 5, 7, 4], expected: 5 },
   { file: 'tests/fixtures/militia-captcha/captcha_10_shrimp_5.png', ask: 'shrimp', options: [7, 6, 4, 5], expected: 5 },
+  { file: 'tests/fixtures/militia-captcha/captcha_11_fish_4.png', ask: 'fish', options: [3, 6, 5, 4], expected: 4 },
 ];
 
 console.log('=== RUNNING MILITIA CAPTCHA TEST SUITE ===');
