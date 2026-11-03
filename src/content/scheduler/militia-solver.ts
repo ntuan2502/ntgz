@@ -313,9 +313,7 @@ function analyzeImageData(
     };
 
     const hasClaws = checkRowClaws(topRow1) || checkRowClaws(topRow2);
-    const isCrab =
-      (hasClaws && aspect >= 1.25 && aspect <= 2.3) ||
-      (b.redCount >= 14 && b.bw >= 16 && aspect >= 1.3 && aspect <= 2.2);
+    const isCrab = hasClaws && aspect >= 1.25 && aspect <= 2.3;
 
     // 2. SHRIMP: Antenna whiskers on one side of top row, or curved segmented body
     let hasWhiskers = false;
