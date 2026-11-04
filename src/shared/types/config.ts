@@ -197,9 +197,12 @@ export interface AppConfig {
   benAutoKeepRare: boolean;
   benKeepRarities?: string[];
   benAutoSellDuplicateKept?: boolean;
-  benAutoGoiDau: boolean;
+  benAutoGoiDau?: boolean;
   benAutoRecoverStamina: boolean;
   benStaminaCollapsed?: boolean;
+  benStaminaPriority?: 'bag' | 'stall';
+  benPackFoodItem?: string;
+  benPackFoodStock?: number;
   benPreferFood: string;
   benAutoLuckDrink: boolean;
   benPreferDrink: string;

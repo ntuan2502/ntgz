@@ -7,6 +7,7 @@ import {
   computeBasketKeepPlan,
   computeWharfBossStatus,
   shouldKeepFishByConfig,
+  PACK_FOOD_PRICES,
 } from '../../../shared/constants/wharf-catalog';
 import { refreshCricketWatchers, getMyBout } from './cricket-watchers';
 import { stepAlluvial, isAlluvialInTransit, getBaiSnapshot } from './alluvial';
@@ -570,7 +571,11 @@ export function execBenStep(
   const packItems = Object.keys(pack).filter((k) => (pack[k] || 0) > 0);
 
   const prefFood = cfg.benPreferFood || 'lauMam';
-  const targetFoodPrice = FOOD_PRICES[prefFood] || 45;
+  const packFoodItem = cfg.benPackFoodItem || 'banhTet';
+  const targetFoodPrice =
+    (cfg.benStaminaPriority || 'bag') === 'stall'
+      ? FOOD_PRICES[prefFood] || 45
+      : PACK_FOOD_PRICES[packFoodItem] || 30;
 
   if (stamina >= 25 && bn.notice?.error !== 'tired') {
     wharfWatchState.benNoticeTired = false;

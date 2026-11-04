@@ -354,6 +354,35 @@ export const BEN_PACK_NAMES: Record<string, string> = {
   nuocSuoi: '💧 Chai nước suối (+10⚡)',
 };
 
+export interface PackFoodEntry {
+  id: string;
+  name: string;
+  price: number;
+  stamina: number;
+  icon: string;
+  desc?: string;
+}
+
+export const PACK_FOOD_OPTIONS: PackFoodEntry[] = [
+  { id: 'banhTet', name: 'Bánh tét lá cẩm', price: 30, stamina: 50, icon: '🫔', desc: 'Nguyên đòn bánh tét gói lá (+50⚡ · 30🐚)' },
+  { id: 'comNam', name: 'Cơm nắm muối mè', price: 17, stamina: 30, icon: '🍙', desc: 'Nắm chặt tay, chấm muối mè (+30⚡ · 17🐚)' },
+  { id: 'banhBao', name: 'Bánh bao nhân thịt', price: 13, stamina: 22, icon: '🥟', desc: 'Nhân thịt trứng cút (+22⚡ · 13🐚)' },
+  { id: 'banhMiGoi', name: 'Bánh mì gói giấy', price: 12, stamina: 20, icon: '🥖', desc: 'Bánh mì thịt gói giấy (+20⚡ · 12🐚)' },
+  { id: 'xoiBap', name: 'Xôi bắp gói lá chuối', price: 9, stamina: 15, icon: '🍙', desc: 'Xôi bắp dừa nạo (+15⚡ · 9🐚)' },
+];
+
+export const PACK_FOOD_MAP: Map<string, PackFoodEntry> = new Map(
+  PACK_FOOD_OPTIONS.map((f) => [f.id, f])
+);
+
+export const PACK_FOOD_PRICES: Record<string, number> = Object.fromEntries(
+  PACK_FOOD_OPTIONS.map((f) => [f.id, f.price])
+);
+
+export const PACK_FOOD_STAMINA: Record<string, number> = Object.fromEntries(
+  PACK_FOOD_OPTIONS.map((f) => [f.id, f.stamina])
+);
+
 export const BEN_DRINK_NAMES: Record<string, string> = {
   traDa: '🧊 Trà đá (+8⚡)',
   nuocMia: '🥤 Nước mía tắc (+5⚡, May +1)',

@@ -116,7 +116,7 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onO
                 Hồi phục Thể Lực Bến Đò
               </span>
               <span className="block text-[10px] text-amber-700 font-medium truncate">
-                Tự ăn uống / gội đầu khi hết Sức
+                Tự ăn uống hồi Sức (túi đồ / Quán Dì Tám)
               </span>
             </div>
           </div>
@@ -136,30 +136,72 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onO
             {isStaminaEnabled ? (
               <>
                 <div className="flex items-center justify-between gap-2 min-w-0">
-                  <span className="text-slate-600 shrink-0">Món ăn ưu tiên (Quán ăn Dì Tám):</span>
+                  <span className="text-slate-600 shrink-0 font-medium">Ưu tiên hồi phục:</span>
                   <HudSelect
-                    value={config.benPreferFood || 'lauMam'}
-                    onValueChange={(val) => updateField('benPreferFood', val)}
+                    value={config.benStaminaPriority || 'bag'}
+                    onValueChange={(val) => updateField('benStaminaPriority', val as 'bag' | 'stall')}
                     options={[
-                      { value: 'lauMam', label: '🍲 Lẩu cá linh (+100 Sức · 45 vỏ sò)' },
-                      { value: 'comTam', label: '🍛 Cơm tấm sườn bì (+60 Sức · 28 vỏ sò)' },
-                      { value: 'huTieu', label: '🍜 Hủ tiếu nam vang (+40 Sức · 20 vỏ sò)' },
-                      { value: 'chaoCa', label: '🥣 Cháo cá lóc (+28 Sức · 14 vỏ sò)' },
-                      { value: 'banhMi', label: '🥖 Bánh mì thịt (+20 Sức · 10 vỏ sò)' },
+                      { value: 'bag', label: '🎒 Ăn đồ trong túi (ba lô)' },
+                      { value: 'stall', label: '🍲 Ăn món ở Quán Dì Tám' },
                     ]}
                   />
                 </div>
 
-                <label className="flex items-center justify-between text-slate-700 cursor-pointer pt-0.5">
-                  <span>💆 Tiệm Út Mười: Gội đầu massage (+50⚡ · 25🐚)</span>
-                  <Switch
-                    size="sm"
-                    checked={Boolean(config.benAutoGoiDau ?? false)}
-                    onCheckedChange={(c) => updateField('benAutoGoiDau', c)}
-                  />
-                </label>
+                {(config.benStaminaPriority || 'bag') === 'bag' ? (
+                  <>
+                    <div className="flex items-center justify-between gap-2 min-w-0">
+                      <span className="text-slate-600 shrink-0">Món mua dự trữ khi hết:</span>
+                      <HudSelect
+                        value={config.benPackFoodItem || 'banhTet'}
+                        onValueChange={(val) => updateField('benPackFoodItem', val)}
+                        options={[
+                          { value: 'banhTet', label: '🫔 Bánh tét lá cẩm (+50⚡ · 30🐚)' },
+                          { value: 'comNam', label: '🍙 Cơm nắm muối mè (+30⚡ · 17🐚)' },
+                          { value: 'banhBao', label: '🥟 Bánh bao nhân thịt (+22⚡ · 13🐚)' },
+                          { value: 'banhMiGoi', label: '🥖 Bánh mì gói giấy (+20⚡ · 12🐚)' },
+                          { value: 'xoiBap', label: '🍙 Xôi bắp lá chuối (+15⚡ · 9🐚)' },
+                        ]}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between gap-2 min-w-0">
+                      <span className="text-slate-600 shrink-0">Số lượng mua tối đa (1-12):</span>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <input
+                          type="number"
+                          min={1}
+                          max={12}
+                          value={config.benPackFoodStock ?? 12}
+                          onChange={(e) => {
+                            const val = Math.max(1, Math.min(12, Number(e.target.value) || 12));
+                            updateField('benPackFoodStock', val);
+                          }}
+                          className="w-14 h-6 text-center rounded border border-slate-300 bg-white text-xs font-semibold text-slate-700 focus:outline-none focus:border-amber-400"
+                        />
+                        <span className="text-[10px] text-slate-500">món</span>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex items-center justify-between gap-2 min-w-0">
+                    <span className="text-slate-600 shrink-0">Món ăn tại quán:</span>
+                    <HudSelect
+                      value={config.benPreferFood || 'lauMam'}
+                      onValueChange={(val) => updateField('benPreferFood', val)}
+                      options={[
+                        { value: 'lauMam', label: '🍲 Lẩu cá linh (+100 Sức · 45 vỏ sò)' },
+                        { value: 'comTam', label: '🍛 Cơm tấm sườn bì (+60 Sức · 28 vỏ sò)' },
+                        { value: 'huTieu', label: '🍜 Hủ tiếu nam vang (+40 Sức · 20 vỏ sò)' },
+                        { value: 'chaoCa', label: '🥣 Cháo cá lóc (+28 Sức · 14 vỏ sò)' },
+                        { value: 'banhMi', label: '🥖 Bánh mì thịt (+20 Sức · 10 vỏ sò)' },
+                      ]}
+                    />
+                  </div>
+                )}
+
                 <p className="text-[10px] text-slate-500 italic">
-                  💡 Tự động ăn bánh mì, xôi bắp trong ba lô trước; nếu hết mới ghé Quán Dì Tám mua thức ăn hoặc tiệm Út Mười gội đầu.
+                  {(config.benStaminaPriority || 'bag') === 'bag'
+                    ? '💡 Tự động ăn thức ăn trong ba lô trước; khi hết thức ăn sẽ tự ghé Quán Dì Tám mua dự trữ (tối đa 12 món).'
+                    : '💡 Tự động ghé Quán Dì Tám ăn món đã chọn; nếu thiếu vỏ sò sẽ ăn đồ dự phòng trong ba lô.'}
                 </p>
               </>
             ) : (
