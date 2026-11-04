@@ -29,6 +29,7 @@ const CONFIG_STALE_MS = 5000;
 let currentCastSeq = -1;
 let lastHookedAt = 0;
 let lastPulledN = -1;
+let scheduledRunN = -1;
 let biteTimeoutId: ReturnType<typeof setTimeout> | null = null;
 let runTimeoutId: ReturnType<typeof setTimeout> | null = null;
 let isListenerRegistered = false;
@@ -78,6 +79,8 @@ function scheduleHook(): void {
     const now = performance.now();
     if (now - lastHookedAt < 280) return;
     lastHookedAt = now;
+    lastPulledN = -1;
+    scheduledRunN = -1;
 
     // Send WebSocket hook packet directly
     sendBenWs({ t: 'hook' });
@@ -111,15 +114,15 @@ function handleIncomingBite(msgSeq?: number): void {
  * - "Cá chạy sang TRÁI · vuốt sang PHẢI!" -> fish runs left, pull right -> press ArrowRight
  * - "Cá chạy sang PHẢI · vuốt sang TRÁI!" -> fish runs right, pull left -> press ArrowLeft
  */
-function detectFightDirection(): { fishDir: 'left' | 'right'; pullDir: 'left' | 'right' } | null {
+function detectFightDirection(dirHint?: 'left' | 'right'): { fishDir: 'left' | 'right'; pullDir: 'left' | 'right' } | null {
   const fightBox = document.querySelector('.ben-fight');
-  const runTextEl = fightBox?.querySelector('.ben-run-text');
+  const runTextEl = fightBox?.querySelector('.ben-run-text:not(.calm)');
   const text = (runTextEl?.textContent || '').toUpperCase();
 
   let fishDir: 'left' | 'right' | null = null;
   let pullDir: 'left' | 'right' | null = null;
 
-  // 1. Primary check: DOM announcement text
+  // 1. Primary check: DOM announcement text (must not be the calm state)
   if (text.includes('VUỐT SANG PHẢI') || text.includes('CHẠY SANG TRÁI')) {
     fishDir = 'left';
     pullDir = 'right';
@@ -139,10 +142,11 @@ function detectFightDirection(): { fishDir: 'left' | 'right'; pullDir: 'left' | 
     }
   }
 
-  // 3. Fallback: Zustand store fight.run
+  // 3. Fallback: Zustand store fight.run or hint
   const curRun = stores.benNet?.getState().fight?.run;
-  if (!pullDir && curRun?.dir) {
-    fishDir = curRun.dir === 'left' ? 'left' : 'right';
+  const storeDir = curRun?.dir === 'left' || curRun?.dir === 'right' ? curRun.dir : dirHint;
+  if (!pullDir && (storeDir === 'left' || storeDir === 'right')) {
+    fishDir = storeDir;
     pullDir = fishDir === 'left' ? 'right' : 'left';
   }
 
@@ -152,14 +156,15 @@ function detectFightDirection(): { fishDir: 'left' | 'right'; pullDir: 'left' | 
 
 /**
  * Simulate pressing the arrow key (ArrowLeft or ArrowRight) on window,
- * which triggers the game's native keydown listener in h8 (bundle.js:3462200).
+ * which triggers the game's native keydown listener in h8 (bundle.js:3462200),
+ * with synchronous verification so we never send duplicate or missed pulls.
  */
-function pressArrowKey(pullDir: 'left' | 'right'): void {
+function executeFightPull(n: number, pullDir: 'left' | 'right'): void {
   const key = pullDir === 'left' ? 'ArrowLeft' : 'ArrowRight';
   const code = pullDir === 'left' ? 'ArrowLeft' : 'ArrowRight';
   const keyCode = pullDir === 'left' ? 37 : 39;
 
-  // 1. Dispatch native keydown on window and document
+  // 1. Dispatch native keydown on window (h8 listens on window.addEventListener('keydown'))
   const downEv = new KeyboardEvent('keydown', {
     key,
     code,
@@ -169,26 +174,8 @@ function pressArrowKey(pullDir: 'left' | 'right'): void {
     cancelable: true,
   });
   window.dispatchEvent(downEv);
-  document.dispatchEvent(downEv);
 
-  // 2. Also trigger pointerdown & click on corresponding button in .ben-fight for visual feedback
-  try {
-    const fightBox = document.querySelector('.ben-fight');
-    if (fightBox) {
-      const btns = Array.from(fightBox.querySelectorAll('.ben-fight-btns button')) as HTMLButtonElement[];
-      const targetBtn = btns.find((b) =>
-        (b.textContent || '').includes(pullDir === 'left' ? 'Ghìm trái' : 'Ghìm phải')
-      );
-      if (targetBtn && !targetBtn.disabled) {
-        targetBtn.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true }));
-        targetBtn.click();
-      }
-    }
-  } catch {
-    // ignore
-  }
-
-  // 3. Dispatch keyup after 60ms
+  // Release key naturally after 50ms
   setTimeout(() => {
     const upEv = new KeyboardEvent('keyup', {
       key,
@@ -199,58 +186,83 @@ function pressArrowKey(pullDir: 'left' | 'right'): void {
       cancelable: true,
     });
     window.dispatchEvent(upEv);
-    document.dispatchEvent(upEv);
-  }, 60);
+  }, 50);
+
+  // 2. Check synchronously if h8's keydown handler already cleared fight.run in Zustand store
+  const afterKeyRun = stores.benNet?.getState().fight?.run;
+  if (!afterKeyRun || afterKeyRun.n !== n) {
+    return;
+  }
+
+  // 3. Fallback: trigger pointerdown on corresponding button in .ben-fight
+  try {
+    const fightBox = document.querySelector('.ben-fight');
+    if (fightBox) {
+      const btns = Array.from(fightBox.querySelectorAll('.ben-fight-btns button')) as HTMLButtonElement[];
+      const targetBtn = btns.find((b) =>
+        (b.textContent || '').includes(pullDir === 'left' ? 'Ghìm trái' : 'Ghìm phải')
+      );
+      if (targetBtn && !targetBtn.disabled) {
+        targetBtn.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true }));
+      }
+    }
+  } catch {
+    // ignore
+  }
+
+  // 4. Final guarantee: if still not cleared, update store and send WebSocket packet directly
+  const afterBtnRun = stores.benNet?.getState().fight?.run;
+  if (afterBtnRun && afterBtnRun.n === n) {
+    stores.benNet?.setState((st) => ({
+      fight: st.fight && st.fight.run?.n === n ? { ...st.fight, run: null } : st.fight,
+    }));
+    sendBenWs({ t: 'pull', n, dir: pullDir });
+  }
 }
 
 function handleIncomingRun(n: number, dirHint?: 'left' | 'right', msHint?: number): void {
   if (!isFishingAutoEnabled()) return;
+  if (typeof n !== 'number' || n <= 0) return;
 
   const bn = stores.benNet?.getState();
   if (!bn || bn.check) return;
 
-  if (n === lastPulledN) return;
+  // Already pulled or already scheduled for this exact run sequence n
+  if (n === lastPulledN || (runTimeoutId !== null && scheduledRunN === n)) return;
 
   if (runTimeoutId) {
     clearTimeout(runTimeoutId);
     runTimeoutId = null;
   }
+  scheduledRunN = n;
 
-  // Natural reaction delay: 130ms - 190ms (leaves 500ms+ before run timeout)
+  // Natural reaction delay: 140ms - 190ms (gives React time to render DOM text & lands in max tension reduction window)
   const ms = msHint || 800;
-  const reactionMs = Math.min(ms * 0.25, 130 + Math.floor(Math.random() * 60));
+  const reactionMs = Math.min(ms * 0.25, 140 + Math.floor(Math.random() * 50));
 
   runTimeoutId = setTimeout(() => {
     runTimeoutId = null;
+    scheduledRunN = -1;
     if (!isFishingAutoEnabled()) return;
 
     const cur = stores.benNet?.getState();
-    if (!cur || cur.fishing !== 'fight') return;
+    if (!cur || cur.fishing !== 'fight' || cur.check) return;
+
+    // Must verify run n is still the active run! Never pull during calm state between runs.
+    const activeRun = cur.fight?.run;
+    if (!activeRun || activeRun.n !== n) return;
 
     // Detect exact direction from DOM announcement text / fish arrow / store
-    const detected = detectFightDirection();
-    const fishDir = detected?.fishDir || dirHint || 'left';
-    // Opposite direction: fish runs left -> pull right; fish runs right -> pull left
-    const pullDir = detected?.pullDir || (fishDir === 'left' ? 'right' : 'left');
+    const detected = detectFightDirection(dirHint);
+    if (!detected) return;
 
+    const { fishDir, pullDir } = detected;
     lastPulledN = n;
 
-    // 1. Simulate arrow key press (ArrowLeft / ArrowRight) as requested
-    pressArrowKey(pullDir);
-
-    // 2. Safety fallback: if store.run.n is still active after 70ms, send direct WebSocket packet
-    setTimeout(() => {
-      const checkStore = stores.benNet?.getState();
-      if (checkStore?.fishing === 'fight' && checkStore.fight?.run?.n === n) {
-        sendBenWs({ t: 'pull', n, dir: pullDir });
-        stores.benNet?.setState((st) => ({
-          fight: st.fight && st.fight.run?.n === n ? { ...st.fight, run: null } : st.fight,
-        }));
-      }
-    }, 70);
+    executeFightPull(n, pullDir);
 
     pushFishingEvent(
-      `💪 Bến Đò: Cá chạy ${fishDir === 'left' ? 'TRÁI ⬅' : 'PHẢI ➡'} -> Bấm phím ${
+      `💪 Bến Đò: Lượt ${n} - Cá chạy ${fishDir === 'left' ? 'TRÁI ⬅' : 'PHẢI ➡'} -> Bấm phím ${
         pullDir === 'left' ? '⬅ [ArrowLeft]' : '➡ [ArrowRight]'
       }`
     );
@@ -273,6 +285,12 @@ function ensureStoreSubscription(): void {
       }
     }
 
+    // Reset pull tracking when entering a new fight
+    if (state.fishing === 'fight' && prevState?.fishing !== 'fight') {
+      lastPulledN = -1;
+      scheduledRunN = -1;
+    }
+
     // When a new fish run starts in fight
     const newRun = state.fight?.run;
     const prevRun = prevState?.fight?.run;
@@ -282,7 +300,7 @@ function ensureStoreSubscription(): void {
       typeof newRun.n === 'number' &&
       newRun.n !== prevRun?.n
     ) {
-      if (isFishingAutoEnabled() && newRun.n !== lastPulledN && !runTimeoutId) {
+      if (isFishingAutoEnabled() && newRun.n !== lastPulledN) {
         handleIncomingRun(newRun.n, newRun.dir, Number(newRun.ms) || 800);
       }
     }
@@ -298,6 +316,11 @@ function ensureWsListener(): void {
 
     if (msg.t === 'cast') {
       currentCastSeq = typeof msg.s === 'number' ? msg.s : -1;
+      lastPulledN = -1;
+      scheduledRunN = -1;
+    } else if (msg.t === 'fight') {
+      lastPulledN = -1;
+      scheduledRunN = -1;
     } else if (msg.t === 'bite') {
       if (!isFishingAutoEnabled()) return;
       handleIncomingBite(typeof msg.s === 'number' ? msg.s : undefined);
@@ -324,6 +347,7 @@ function ensureWsListener(): void {
         runTimeoutId = null;
       }
       lastPulledN = -1;
+      scheduledRunN = -1;
 
       let whyMsg = 'hụt cá';
       if (msg.why === 'early') {
@@ -348,6 +372,7 @@ function ensureWsListener(): void {
         runTimeoutId = null;
       }
       lastPulledN = -1;
+      scheduledRunN = -1;
 
       const fishName = typeof msg.fish === 'string' ? msg.fish : '';
       const size = typeof msg.size === 'number' ? `${msg.size}cm` : '';
@@ -372,14 +397,17 @@ function fastTick(): void {
     }
   }
 
-  // Secondary fallback: check if in fight run
+  // Secondary fallback: ONLY trigger when an actual fish run is active in store
   const run = bn.fight?.run;
-  const fightBox = document.querySelector('.ben-fight');
-  if (bn.fishing === 'fight' && (run || fightBox) && !runTimeoutId) {
-    const runN = typeof run?.n === 'number' ? run.n : 1;
-    if (runN !== lastPulledN) {
-      handleIncomingRun(runN, run?.dir, Number(run?.ms) || 800);
-    }
+  if (
+    bn.fishing === 'fight' &&
+    run &&
+    typeof run.n === 'number' &&
+    (run.dir === 'left' || run.dir === 'right') &&
+    run.n !== lastPulledN &&
+    run.n !== scheduledRunN
+  ) {
+    handleIncomingRun(run.n, run.dir, Number(run.ms) || 800);
   }
 }
 
@@ -397,6 +425,7 @@ export function refreshFishingWatcher(cfg: AppConfig): void {
       runTimeoutId = null;
     }
     lastPulledN = -1;
+    scheduledRunN = -1;
   }
 
   ensureStoreSubscription();

@@ -253,15 +253,9 @@ export async function stepBenDoFishing(
 
   // 1. Handle Fight Minigame
   if (bn.fishing === 'fight' || document.querySelector('.ben-fight')) {
-    // In Ben Do, page-hook fishing-watcher handles fight via keyboard arrow simulation and WebSocket.
-    if (!hadFreshFishingEvent) {
-      const run = bn.fight?.run;
-      if (run && run.dir) {
-        const pullDir = run.dir === 'left' ? 'PHẢI ➡' : 'TRÁI ⬅';
-        setStatus(`💪 Bến Đò: Cá chạy ${run.dir === 'left' ? 'trái' : 'phải'} -> Ghìm ${pullDir}`);
-      } else {
-        setStatus('🎣 Bến Đò: Đang ghìm cá...');
-      }
+    // In Ben Do, page-hook fishing-watcher handles fight via keyboard arrow simulation and reports each turn via fishingEvents.
+    if (!hadFreshFishingEvent && !bn.fight?.run && (bn.fight?.last === null || bn.fight?.last === undefined)) {
+      setStatus('🎣 Bến Đò: Đang ghìm cá...');
     }
     return { finishedArea: false };
   }
