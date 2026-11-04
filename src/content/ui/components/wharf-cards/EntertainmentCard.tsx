@@ -106,7 +106,7 @@ export function EntertainmentCard({ config, updateField }: EntertainmentCardProp
       {/* Boss Bí Ngô */}
       <label className="flex items-center justify-between text-slate-700 cursor-pointer pt-1 border-t border-slate-200/60">
         <span className="flex items-center gap-1.5 font-medium">
-          <span>👑 Săn Boss Bí Ngô (đếm ngược 10s thu cần ra giữa map &amp; bám nhặt quà)</span>
+          <span>👑 Săn Boss Bí Ngô (đếm ngược 10s thu cần chờ tại chỗ &amp; bám nhặt quà)</span>
         </span>
         <Switch
           checked={Boolean(config.benAutoBossHunt ?? true)}
@@ -132,7 +132,7 @@ export function EntertainmentCard({ config, updateField }: EntertainmentCardProp
           <span>🎃 Sạp Bà Tư Bí: Tự đổi quà (10 xương + 5 bí)</span>
         </span>
         <Switch
-          checked={Boolean(config.benAutoHlwExchange ?? true)}
+          checked={Boolean(config.benAutoHlwExchange ?? false)}
           onCheckedChange={(c) => updateField('benAutoHlwExchange', c)}
         />
       </label>
@@ -163,7 +163,7 @@ export function EntertainmentCard({ config, updateField }: EntertainmentCardProp
           <span>🧺 Hợp Tác Xã Cô Tư: Tự điểm danh nhận quà hàng ngày</span>
         </span>
         <Switch
-          checked={Boolean(config.benAutoHtxClaim ?? true)}
+          checked={Boolean(config.benAutoHtxClaim ?? false)}
           onCheckedChange={(c) => updateField('benAutoHtxClaim', c)}
         />
       </label>

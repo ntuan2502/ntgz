@@ -78,7 +78,7 @@ export function AlluvialLandCard({ config, updateField, onUpdateConfig }: Alluvi
           </div>
           <Switch
             size="sm"
-            checked={Boolean(config.benAutoBuyLand ?? true)}
+            checked={Boolean(config.benAutoBuyLand ?? false)}
             onCheckedChange={(c) => updateField('benAutoBuyLand', c)}
           />
         </label>
@@ -175,7 +175,7 @@ export function AlluvialLandCard({ config, updateField, onUpdateConfig }: Alluvi
                 </div>
                 <Switch
                   size="sm"
-                  checked={Boolean(config.benAutoBaiSellCrops ?? true)}
+                  checked={Boolean(config.benAutoBaiSellCrops ?? false)}
                   onCheckedChange={(c) => updateField('benAutoBaiSellCrops', c)}
                 />
               </label>
@@ -341,7 +341,7 @@ export function AlluvialLandCard({ config, updateField, onUpdateConfig }: Alluvi
           </div>
           <Switch
             size="sm"
-            checked={Boolean(config.benAutoCandySell ?? true)}
+            checked={Boolean(config.benAutoCandySell ?? false)}
             onCheckedChange={(c) => updateField('benAutoCandySell', c)}
           />
         </label>
@@ -388,7 +388,7 @@ export function AlluvialLandCard({ config, updateField, onUpdateConfig }: Alluvi
           </div>
           <Switch
             size="sm"
-            checked={Boolean(config.benAutoEggSell ?? true)}
+            checked={Boolean(config.benAutoEggSell ?? false)}
             onCheckedChange={(c) => updateField('benAutoEggSell', c)}
           />
         </label>
@@ -430,7 +430,7 @@ export function AlluvialLandCard({ config, updateField, onUpdateConfig }: Alluvi
           </div>
           <Switch
             size="sm"
-            checked={Boolean(config.benAutoNetSell ?? true)}
+            checked={Boolean(config.benAutoNetSell ?? false)}
             onCheckedChange={(c) => updateField('benAutoNetSell', c)}
           />
         </label>
@@ -463,12 +463,12 @@ export function AlluvialLandCard({ config, updateField, onUpdateConfig }: Alluvi
           </div>
           <Switch
             size="sm"
-            checked={Boolean(config.benAutoLuckDraw ?? true)}
+            checked={Boolean(config.benAutoLuckDraw ?? false)}
             onCheckedChange={(c) => updateField('benAutoLuckDraw', c)}
           />
         </label>
 
-        {config.benAutoLuckDraw !== false && (
+        {Boolean(config.benAutoLuckDraw) && (
           <div className="ml-2 pl-2.5 border-l-2 border-amber-200 space-y-1.5 text-[11px]">
             <div className="flex items-center justify-between gap-2 min-w-0">
               <span className="text-slate-600 shrink-0">Ưu tiên ống thăm:</span>

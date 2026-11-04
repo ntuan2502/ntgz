@@ -5,6 +5,39 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.16.0] - 2026-11-04
+
+### 🔒 Khóa Bảo Mật Mã PIN 6 Số Cho Khu Vực Online (Session PIN Gate)
+- **Màn hình khóa toàn diện phần Online (`OnlinePinGate`)**:
+  - Che toàn bộ giao diện trực tuyến (Thanh thông số, nút điều khiển Auto, tab Bến Đò, tab Nông Trại Online, cửa sổ Giám sát và cấu hình Online trong Settings) khi chưa mở khóa.
+  - Hỗ trợ nhập mã PIN 6 số bằng bàn phím vật lý, dán nhanh từ clipboard (`Paste`) hoặc bàn phím số ảo trên màn hình.
+- **Lưu trạng thái mở khóa theo phiên Tab (`sessionStorage`)**:
+  - Giữ nguyên trạng thái đã mở khóa khi game tự động tải lại trang (`location.reload()`) hoặc người dùng bấm `F5` trong cùng tab.
+  - Tự động khóa lại và yêu cầu nhập mã PIN mới khi đóng tab trình duyệt và mở lại tab mới.
+  - Ngăn chặn kích hoạt Auto Online qua phím tắt `Alt + A` hoặc thanh thu nhỏ khi chưa nhập đúng mã PIN.
+
+### 🎣 Tối Ưu Hóa Toàn Diện Câu Cá, Ghìm Cần & Mua Sắm Giống Người Thật
+- **Ưu tiên tối đa trạng thái đang ghìm cần câu cá (`Priority #0.5`)**:
+  - Khi đang trong trạng thái ghìm cần (`bn.fishing === 'fight'` / `.ben-fight`), hệ thống khóa cứng ưu tiên hoàn tất việc ghìm cá lên bờ trước khi thực hiện bất kỳ hành động nào khác (kể cả khi Boss Bí Ngô xuất hiện hoặc đến chu kỳ chuyển sang Đất Bãi).
+  - Tự động nhận diện hướng cá chạy từ thông báo và giả lập phím mũi tên Trái/Phải (`ArrowLeft` / `ArrowRight`) ngược hướng cá vùng với độ trễ tự nhiên của người thật, chống bấm nhầm trong giai đoạn nghỉ giữa các đợt cá chạy.
+- **Giữ cửa sổ mở mua sắm & thao tác liên tục (`shouldContinue` / `leaveOpen`)**:
+  - Khắc phục triệt để hiện tượng mở cửa sổ ➔ bấm 1 lần ➔ đóng cửa sổ ➔ mở lại liên tục.
+  - Khi mua mồi câu tại Sạp Chú Đực, ăn uống hồi thể lực tại Quán Dì Tám / Xe Chị Thơm / Balo, đổi thưởng & mua vé số, đổi quà & mở hộp quà Bà Tư Bí, quay lồng đèn Cô Bảy, hay giao dịch tại Chợ Bãi: hệ thống chờ nút bấm sáng lên mới tương tác và giữ nguyên cửa sổ mở để thực hiện liên tục cho tới khi đạt đủ điều kiện mục tiêu mới đóng bảng một lần duy nhất.
+- **Tối ưu logic săn Boss Bí Ngô**:
+  - Khi Boss Bí Ngô đếm ngược chuẩn bị xuất hiện (≤ 10 giây), nhân vật chỉ cần thu cần câu về và đứng chờ ngay tại chỗ để săn Boss, loại bỏ thao tác chạy bộ ra giữa bản đồ.
+- **Chuẩn hóa logic giữ cá quý trong giỏ (`computeBasketKeepPlan`)**:
+  - Đồng bộ hoàn toàn với mã nguồn game mới nhất: tự động đối chiếu toàn bộ danh sách cá trong giỏ để ghim giữ cá theo độ hiếm đã chọn và tự động mở khóa các con cá trùng loài có giá trị thấp hơn để bán gọn trong 1 lượt tại Vựa Anh Tư.
+
+### 🔄 Đồng Bộ Giao Thức Game Mới Nhất & Cấu Hình Mặc Định Online
+- **Cập nhật giao thức WebSocket & Kiểm tra công trình Đất Bãi**:
+  - Chủ động đồng bộ `farmInfo` trước khi chuyển cảnh bằng `farmQuick`; phân tách rõ `fert` và `fertBio`; kiểm tra sự tồn tại của từng công trình (`farm.candy`, `farm.dryFish`, `farm.coop`, `farm.net`) trước khi thao tác; bổ sung bán ốc bươu và cua đồng (`oc`, `cua`) tại Ghe Anh Mười; cập nhật panel `gearLuck` cho Sạp Thím Hên.
+- **Mở rộng bộ kiểm thử Dân Quân (15 Fixtures)**:
+  - Bổ sung `captcha_14_shrimp_5.png` và `captcha_15_crab_2.png`, nâng tổng số mẫu kiểm thử hồi quy lên **15/15 đạt độ chính xác 100%**.
+- **Cập nhật cấu hình mặc định Online (`DEFAULT_CONFIG`)**:
+  - Lưu bộ thiết lập Online tối ưu hiện tại của người dùng làm cấu hình mặc định ban đầu (`benSpot: 'dock'`, `benMilitiaSolveDelaySec: 10`, `benSmartSleepMode: true`, trạng thái thu gọn thẻ và các công tắc tự động hóa).
+
+---
+
 ## [1.15.1] - 2026-11-03
 
 ### 🐟 Khắc Phục Lỗi Nhận Diện Cá Xanh Dương & Mở Rộng Bộ Test Hồi Quy (Militia Solver Fix)

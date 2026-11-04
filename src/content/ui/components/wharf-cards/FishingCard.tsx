@@ -117,7 +117,7 @@ export function FishingCard({ config, updateField }: FishingCardProps) {
               value={
                 Array.isArray(config.benKeepRarities)
                   ? config.benKeepRarities
-                  : ['mythic', 'legendary', 'rainbow', 'odd']
+                  : ['mythic', 'rainbow']
               }
               onChange={(next) => updateField('benKeepRarities', next)}
               placeholder="Chọn các độ hiếm cá cần giữ..."
@@ -207,11 +207,11 @@ export function FishingCard({ config, updateField }: FishingCardProps) {
             <span>⚡ Dọn giỏ cá sớm trước khi nghẽn (Tránh kẹt cần 60/60)</span>
             <Switch
               size="sm"
-              checked={Boolean(config.benAutoClearBasketNearFull ?? true)}
+              checked={Boolean(config.benAutoClearBasketNearFull ?? false)}
               onCheckedChange={(c) => updateField('benAutoClearBasketNearFull', c)}
             />
           </label>
-          {config.benAutoClearBasketNearFull !== false && (
+          {Boolean(config.benAutoClearBasketNearFull) && (
             <div className="flex items-center justify-between">
               <span className="text-slate-500">Ngưỡng dọn cá sớm:</span>
               <div className="flex items-center gap-1.5">
@@ -273,8 +273,8 @@ export function FishingCard({ config, updateField }: FishingCardProps) {
                 min={2}
                 max={60}
                 step={1}
-                value={config.benMilitiaSolveDelaySec ?? 60}
-                onChange={(e) => updateField('benMilitiaSolveDelaySec', Math.max(2, Math.min(60, Number(e.target.value) || 60)))}
+                value={config.benMilitiaSolveDelaySec ?? 10}
+                onChange={(e) => updateField('benMilitiaSolveDelaySec', Math.max(2, Math.min(60, Number(e.target.value) || 10)))}
                 className="w-16 h-8 min-h-8 rounded-lg bg-slate-50 px-2 py-1 text-center text-xs text-slate-800 border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
               />
               <span className="text-slate-500 text-[10px]">giây</span>

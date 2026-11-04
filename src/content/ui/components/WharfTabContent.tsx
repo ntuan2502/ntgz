@@ -154,7 +154,7 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onO
                   <span>💆 Tiệm Út Mười: Gội đầu massage (+50⚡ · 25🐚)</span>
                   <Switch
                     size="sm"
-                    checked={Boolean(config.benAutoGoiDau ?? true)}
+                    checked={Boolean(config.benAutoGoiDau ?? false)}
                     onCheckedChange={(c) => updateField('benAutoGoiDau', c)}
                   />
                 </label>
