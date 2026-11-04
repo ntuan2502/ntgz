@@ -195,7 +195,7 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
         `Mua ${baitLabel} tại Sạp Chú Đực (-${baitCost}🐚, hiện có ${bait}/${maxBait} mồi)`,
         'ben_bait',
         { panel: 'bait' },
-        1200
+        350
       );
     }
 
@@ -221,7 +221,7 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
         `Xin ${BEN_BAIT_NAMES.xinMoi} tại Sạp Chú Đực`,
         'ben_bait',
         { panel: 'bait' },
-        1500
+        350
       );
     }
 
@@ -253,7 +253,7 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
         `Uống ${drinkLabel} tại Xe trà đá Chị Thơm (-${drinkCost}🐚)`,
         'ben_luck_drink',
         { panel: 'tea', teaStand: 'river' },
-        1500
+        350
       );
     }
   }

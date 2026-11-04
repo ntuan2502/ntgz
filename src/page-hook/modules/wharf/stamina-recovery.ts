@@ -41,7 +41,7 @@ export function tryRecoverBenStamina(ctx: BenExecutionContext): BenStepResult | 
         },
         `Đã ăn ${packLabel} trong balo hồi Sức`,
         { panel: 'pack', bagTab: 'food' },
-        1400
+        350
       );
       return { acted: true, msg: `Đã ăn ${packLabel} trong balo hồi Sức` };
     }
@@ -56,7 +56,7 @@ export function tryRecoverBenStamina(ctx: BenExecutionContext): BenStepResult | 
         '💆 Gội đầu massage tại Tiệm Út Mười (+50⚡, -25🐚)',
         'ben_goi_dau',
         { panel: 'hair' },
-        1500
+        350
       );
     }
 
@@ -83,7 +83,7 @@ export function tryRecoverBenStamina(ctx: BenExecutionContext): BenStepResult | 
         `Mua ${foodLabel} tại Quán ăn Dì Tám (-${foodCost}🐚)`,
         'ben_buy_food',
         { panel: 'food' },
-        1500
+        350
       );
     }
 
@@ -97,7 +97,7 @@ export function tryRecoverBenStamina(ctx: BenExecutionContext): BenStepResult | 
         `Uống ${BEN_DRINK_NAMES.traDa} tại Xe trà đá Chị Thơm (-3🐚)`,
         'ben_drink',
         { panel: 'tea', teaStand: 'river' },
-        1500
+        350
       );
     }
 
@@ -121,7 +121,7 @@ export function tryRecoverBenStamina(ctx: BenExecutionContext): BenStepResult | 
       `🐟 Bán ${nonKeptCount} con cá tại Vựa Anh Tư (+${totalSellShells.toLocaleString('vi-VN')} vỏ sò 🐚) để lấy tiền ăn`,
       'ben_sell',
       { panel: 'sell' },
-      1400
+      350
     );
   }
 

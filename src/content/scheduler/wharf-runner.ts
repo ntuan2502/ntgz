@@ -51,7 +51,7 @@ export async function stepBenDoFishing(
   if (bn.fishing === 'landing' || Boolean(bn.landed) || Boolean(document.querySelector('.catch-card.ben-catch'))) {
     const catchResult = handleBenCatchModal(snap, config, setStatus, onCatchIncrement, delayMs);
     if (catchResult.handled) {
-      await sleep(Math.max(200, delayMs * 0.4));
+      await sleep(Math.max(100, Math.min(delayMs * 0.25, 250)));
       return { finishedArea: false };
     }
   }
@@ -336,7 +336,7 @@ export async function stepBenDoFishing(
     const prep = await execGameAction('BEN_STEP', { config, onlineTarget });
     if (prep && prep.ok && prep.acted) {
       setStatus(prep.msg || '🛶 Đang chuẩn bị tại Bến Đò...');
-      const stepDelay = prep.isBossHunt ? 120 : delayMs;
+      const stepDelay = prep.isBossHunt ? 120 : Math.min(delayMs, 250);
       await sleep(stepDelay);
       return { finishedArea: false };
     }
@@ -410,7 +410,7 @@ export async function stepBenDoFishing(
     }
 
     const allowCast = Boolean(prep?.ok && prep.allowCast);
-    const targetCastDelay = Math.max(600, nextCastDelayMs || delayMs);
+    const targetCastDelay = Math.max(200, Math.min(nextCastDelayMs || delayMs, 500));
     if (
       allowCast &&
       greenCastBtn &&
@@ -421,9 +421,9 @@ export async function stepBenDoFishing(
       triggerPointerDownAndClick(greenCastBtn);
       lastCastAt = now;
       if (config.benHumanJitter !== false) {
-        nextCastDelayMs = delayMs + Math.floor(Math.random() * 700) + 150;
+        nextCastDelayMs = Math.floor(Math.random() * 200) + 200;
       } else {
-        nextCastDelayMs = delayMs;
+        nextCastDelayMs = 150;
       }
       setStatus(`🎣 Bến Đò: Quăng câu (🪱 ${bn.wallet?.bait ?? 0} · ⚡ ${bn.wallet?.liveStamina ?? 0})`);
     } else if (allowCast && !bu?.spot) {

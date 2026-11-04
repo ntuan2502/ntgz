@@ -61,7 +61,7 @@ export function runEntertainmentStep(ctx: BenExecutionContext): BenStepResult {
         `Đi lại Sạp Lồng Đèn Cô Bảy để ${shouldSpin ? `quay ${tickets} vé 🎟️` : 'mua vé quay'}...`,
         'ben_lantern_walk',
         { panel: 'lantern' },
-        2500
+        500
       );
     } else if (
       tickets > 0 &&
@@ -89,7 +89,7 @@ export function runEntertainmentStep(ctx: BenExecutionContext): BenStepResult {
         `🎟️ Đổi thưởng vé số Bến Đò tại Đại lý Chú Bảy (+${(lottoState?.pending || 0).toLocaleString('vi-VN')}🐚)`,
         'ben_lotto_claim',
         { panel: 'agent' },
-        1500
+        350
       );
     }
 
@@ -108,7 +108,7 @@ export function runEntertainmentStep(ctx: BenExecutionContext): BenStepResult {
           `🍀 Mua 1 vé số Bến Đò (số ${randNum < 10 ? '0' + randNum : randNum}) tại Đại lý Chú Bảy (-10🐚)`,
           'ben_lotto_buy',
           { panel: 'agent' },
-          1500
+          350
         );
       }
     }
@@ -177,7 +177,7 @@ export function runEntertainmentStep(ctx: BenExecutionContext): BenStepResult {
         'Đi lại Cây ATM để đổi vỏ sò...',
         'ben_atm_walk',
         { panel: 'atm' },
-        2800
+        500
       );
     }
   }
@@ -207,7 +207,7 @@ export function runEntertainmentStep(ctx: BenExecutionContext): BenStepResult {
         `🎃 Đổi ${maxExchanges} phần quà tại Sạp Bà Tư Bí (-${maxExchanges * 10}🦴, -${maxExchanges * 5}🎃)`,
         'ben_hlw_exchange',
         { panel: 'hlw' },
-        1500
+        350
       );
     }
 
@@ -223,7 +223,7 @@ export function runEntertainmentStep(ctx: BenExecutionContext): BenStepResult {
         `🎁 Mở ${boxes} Hộp quà Đêm Bí Ngô tại Sạp Bà Tư Bí`,
         'ben_hlw_open',
         { panel: 'hlw' },
-        1500
+        350
       );
     }
 

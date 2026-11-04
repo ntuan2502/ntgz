@@ -297,15 +297,13 @@ export function execBenStep(
     actionFn: () => void,
     label: string,
     panelState?: Record<string, unknown>,
-    holdMs = 1500
+    holdMs = 350
   ) => {
     if (panelState) {
       buStore.setState(panelState);
-      keepBenPanelUntil = Date.now() + holdMs;
+      keepBenPanelUntil = Date.now() + Math.min(holdMs, 400);
       keepBenPanelMsg = label;
-      setTimeout(() => {
-        actionFn();
-      }, 350);
+      actionFn();
     } else {
       actionFn();
     }
@@ -317,7 +315,7 @@ export function execBenStep(
     label: string,
     actionKey: string | null = null,
     panelState?: Record<string, unknown>,
-    holdMs = 1500
+    holdMs = 350
   ): BenStepResult => {
     if (actionKey && !canAct(actionKey)) {
       return { acted: false };
@@ -342,18 +340,16 @@ export function execBenStep(
       return { acted: true, msg: `🚶 ${label}` };
     }
     benScene.goFarmer(tile, () => {
-      setTimeout(() => {
-        const latestKind = getBaiSnapshot()?.kind || 'ben';
-        const latestTile = benScene.farmer?.tile;
-        const arrived =
-          latestKind === 'ben' &&
-          latestTile &&
-          Math.abs(latestTile.x - tile.x) + Math.abs(latestTile.y - tile.y) <= 2;
-        if (arrived && (!actionKey || canAct(actionKey))) {
-          if (actionKey) markActed(actionKey);
-          runWithOptionalPanel(actionFn, label, panelState, holdMs);
-        }
-      }, 250);
+      const latestKind = getBaiSnapshot()?.kind || 'ben';
+      const latestTile = benScene.farmer?.tile;
+      const arrived =
+        latestKind === 'ben' &&
+        latestTile &&
+        Math.abs(latestTile.x - tile.x) + Math.abs(latestTile.y - tile.y) <= 2;
+      if (arrived && (!actionKey || canAct(actionKey))) {
+        if (actionKey) markActed(actionKey);
+        runWithOptionalPanel(actionFn, label, panelState, holdMs);
+      }
     });
     return { acted: true, msg: `🚶 ${label}` };
   };

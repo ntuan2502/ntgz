@@ -76,7 +76,7 @@ export function handleBenCatchModal(
   }
 
   const now = performance.now();
-  if (now - lastModalClickAt <= Math.max(350, delayMs * 0.7)) {
+  if (now - lastModalClickAt <= Math.max(120, Math.min(delayMs * 0.25, 250))) {
     return { handled: true };
   }
 
@@ -191,12 +191,12 @@ export function handleBenCatchModal(
   onCatchIncrement();
 
   if (config.benHumanJitter !== false) {
-    const microBreakMs = Math.random() < 0.06 ? Math.floor(Math.random() * 2500) + 3000 : 0;
-    const nextCastDelayMs = delayMs + Math.floor(Math.random() * 700) + 150;
+    const microBreakMs = Math.random() < 0.04 ? Math.floor(Math.random() * 2000) + 2000 : 0;
+    const nextCastDelayMs = Math.floor(Math.random() * 200) + 200;
     return { handled: true, microBreakMs, nextCastDelayMs };
   }
 
-  return { handled: true, nextCastDelayMs: delayMs };
+  return { handled: true, nextCastDelayMs: 150 };
 }
 
 export function handleBenLanternWheel(
