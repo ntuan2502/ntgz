@@ -25,9 +25,9 @@ import { runBossHuntOrImpendingStep } from './boss-hunter';
 import { runFishingStep, updateSpotFishCounter } from './fishing-manager';
 import { runCricketBossStep, runCricketHuntStep, getHuntLightAt } from './cricket-arena';
 import { runEntertainmentStep } from './entertainment';
-import { refreshFishingWatcher } from './fishing-watcher';
+import { refreshFishingWatcher, getFishingEvents } from './fishing-watcher';
 
-export { refreshCricketWatchers, refreshFishingWatcher, stepAlluvial, getWharfNextAtmTime };
+export { refreshCricketWatchers, refreshFishingWatcher, getFishingEvents, stepAlluvial, getWharfNextAtmTime };
 
 let keepBenPanelUntil = 0;
 let keepBenPanelMsg = '';

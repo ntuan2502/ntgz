@@ -173,6 +173,7 @@ export interface BenNetState {
   /** Hunt ended without a catch: none = no cricket heard, escaped = ran out of hops, moved = walked away */
   gotAway?: { why: 'none' | 'escaped' | 'moved' | string; seq: number } | null;
   cricketEvents?: Array<{ seq: number; text: string }>;
+  fishingEvents?: Array<{ seq: number; text: string }>;
   caught?: CricketCaughtState;
   boutDone?: {
     won?: boolean;

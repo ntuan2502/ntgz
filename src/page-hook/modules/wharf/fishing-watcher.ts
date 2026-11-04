@@ -1,7 +1,31 @@
 import { stores, sendBenWs, addBenWsMessageListener } from '../../core/engine-access';
 import { AppConfig } from '../../../shared/types/config';
 
+export interface FishingWatchEvent {
+  seq: number;
+  text: string;
+}
+
+const MAX_FISHING_EVENTS = 30;
+const fishingEvents: FishingWatchEvent[] = [];
+let fishingEventSeq = 0;
+
+function pushFishingEvent(text: string): void {
+  fishingEvents.push({ seq: ++fishingEventSeq, text });
+  if (fishingEvents.length > MAX_FISHING_EVENTS) {
+    fishingEvents.shift();
+  }
+}
+
+export function getFishingEvents(): FishingWatchEvent[] {
+  return fishingEvents;
+}
+
 let watchCfg: AppConfig | null = null;
+let watchCfgAt = 0;
+const CONFIG_STALE_MS = 5000;
+
+let currentCastSeq = -1;
 let lastHookedAt = 0;
 let lastPulledN = -1;
 let biteTimeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -11,7 +35,17 @@ let fastTimerId: ReturnType<typeof setInterval> | null = null;
 
 const FAST_WATCH_INTERVAL_MS = 40;
 
+function isFishingAutoEnabled(): boolean {
+  if (!watchCfg || !watchCfg.running || Date.now() - watchCfgAt > CONFIG_STALE_MS) return false;
+  if (watchCfg.benSubEnabled?.fishing === false) return false;
+  if (watchCfg.runMode === 'all' && watchCfg.areaEnabled?.benDo === false) return false;
+  if (watchCfg.runMode === 'tab' && watchCfg.activeTab !== 'benDo') return false;
+  return stores.main?.getState().screen === 'benDo';
+}
+
 function handleIncomingBite(): void {
+  if (!isFishingAutoEnabled()) return;
+
   const bn = stores.benNet?.getState();
   if (!bn) return;
   // Never hook if militia check captcha is active or rod is held
@@ -22,17 +56,17 @@ function handleIncomingBite(): void {
   );
   if (holdUntil > Date.now()) return;
 
-  if (watchCfg && watchCfg.benSubEnabled?.fishing === false) return;
-
   if (biteTimeoutId) {
     clearTimeout(biteTimeoutId);
     biteTimeoutId = null;
   }
 
-  // Fast human-jitter reaction delay: 70ms - 130ms (well within 500ms - 1100ms bite window)
-  const reactionMs = 70 + Math.floor(Math.random() * 60);
+  // Human reaction delay: 110ms - 190ms (well within 500ms - 1100ms bite window)
+  const reactionMs = 110 + Math.floor(Math.random() * 80);
   biteTimeoutId = setTimeout(() => {
     biteTimeoutId = null;
+    if (!isFishingAutoEnabled()) return;
+
     const cur = stores.benNet?.getState();
     if (!cur || cur.fishing !== 'bite' || cur.check) return;
 
@@ -40,21 +74,14 @@ function handleIncomingBite(): void {
     if (now - lastHookedAt < 280) return;
     lastHookedAt = now;
 
-    // 1. Direct WebSocket packet for zero-latency server arrival
+    // Send WebSocket hook packet directly
     sendBenWs({ t: 'hook' });
-
-    // 2. Trigger DOM button and Spacebar for sound & visual feedback
-    try {
-      const pullBtn = document.querySelector('button.ben-cast.btn-brown') as HTMLButtonElement | null;
-      if (pullBtn) pullBtn.click();
-      window.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true }));
-    } catch {
-      // ignore
-    }
   }, reactionMs);
 }
 
 function handleIncomingRun(n: number, dir: 'left' | 'right', ms: number): void {
+  if (!isFishingAutoEnabled()) return;
+
   const bn = stores.benNet?.getState();
   if (!bn || bn.check) return;
 
@@ -68,11 +95,13 @@ function handleIncomingRun(n: number, dir: 'left' | 'right', ms: number): void {
   // Opposite direction: fish runs left -> pull right; fish runs right -> pull left
   const pullDir: 'left' | 'right' = dir === 'left' ? 'right' : 'left';
 
-  // Natural reaction delay: 100ms - 160ms (well within ms which is 500ms - 1500ms)
-  const reactionMs = Math.min(ms * 0.25, 100 + Math.floor(Math.random() * 60));
+  // Natural reaction delay: 90ms - 140ms (well within ms which is 500ms - 1500ms)
+  const reactionMs = Math.min(ms * 0.25, 90 + Math.floor(Math.random() * 50));
 
   runTimeoutId = setTimeout(() => {
     runTimeoutId = null;
+    if (!isFishingAutoEnabled()) return;
+
     const cur = stores.benNet?.getState();
     if (!cur || cur.fishing !== 'fight') return;
 
@@ -85,22 +114,6 @@ function handleIncomingRun(n: number, dir: 'left' | 'right', ms: number): void {
     stores.benNet?.setState((st) => ({
       fight: st.fight && st.fight.run?.n === n ? { ...st.fight, run: null } : st.fight,
     }));
-
-    // 3. Dispatch native KeyboardEvent & click DOM button for audio/visuals
-    try {
-      const code = pullDir === 'left' ? 'KeyA' : 'KeyD';
-      const key = pullDir === 'left' ? 'ArrowLeft' : 'ArrowRight';
-      window.dispatchEvent(new KeyboardEvent('keydown', { key, code, bubbles: true }));
-
-      const fightBox = document.querySelector('.ben-fight');
-      if (fightBox) {
-        const btns = Array.from(fightBox.querySelectorAll('.ben-fight-btns button')) as HTMLButtonElement[];
-        const targetBtn = btns.find((b) => (b.textContent || '').includes(pullDir === 'left' ? 'Ghìm trái' : 'Ghìm phải'));
-        if (targetBtn && !targetBtn.disabled) targetBtn.click();
-      }
-    } catch {
-      // ignore
-    }
   }, reactionMs);
 }
 
@@ -111,14 +124,29 @@ function ensureWsListener(): void {
   addBenWsMessageListener((msg) => {
     if (!msg || typeof msg !== 'object') return;
 
-    if (msg.t === 'bite') {
+    if (msg.t === 'cast') {
+      currentCastSeq = typeof msg.s === 'number' ? msg.s : -1;
+    } else if (msg.t === 'bite') {
+      if (!isFishingAutoEnabled()) return;
+      // In wharf room, server broadcasts bites. Only handle bite matching our cast sequence.
+      if (typeof msg.s === 'number' && currentCastSeq !== -1 && msg.s !== currentCastSeq) {
+        return;
+      }
       handleIncomingBite();
     } else if (msg.t === 'run' && typeof msg.n === 'number' && typeof msg.dir === 'string') {
+      if (!isFishingAutoEnabled()) return;
       const dir = msg.dir === 'left' || msg.dir === 'right' ? msg.dir : 'left';
       handleIncomingRun(msg.n, dir, Number(msg.ms) || 800);
     } else if (msg.t === 'pulled' && typeof msg.n === 'number') {
       lastPulledN = msg.n;
-    } else if (msg.t === 'miss' || msg.t === 'landed') {
+      const tension = typeof msg.tension === 'number' ? msg.tension : 0;
+      if (msg.ok === false) {
+        pushFishingEvent(`⚠️ Bến Đò: Ghìm hụt lượt ${msg.n}! Dây căng ${tension}%`);
+      } else if (msg.ok === true) {
+        const left = typeof msg.left === 'number' ? msg.left : 0;
+        pushFishingEvent(`💪 Bến Đò: Ghìm chuẩn lượt ${msg.n} (còn ${left} lượt, căng ${tension}%)`);
+      }
+    } else if (msg.t === 'miss') {
       if (biteTimeoutId) {
         clearTimeout(biteTimeoutId);
         biteTimeoutId = null;
@@ -128,11 +156,43 @@ function ensureWsListener(): void {
         runTimeoutId = null;
       }
       lastPulledN = -1;
+
+      let whyMsg = 'hụt cá';
+      if (msg.why === 'early') {
+        whyMsg = 'Cá mới rỉa chưa cắn đã giật cần!';
+      } else if (msg.why === 'late') {
+        whyMsg = 'Phao chìm lâu quá, cá ăn sạch mồi rồi chuồn!';
+      } else if (msg.why === 'snap') {
+        whyMsg = 'Dây căng quá đứt phựt rồi!';
+      } else if (msg.why === 'escape') {
+        whyMsg = 'Cá giãy thoát mất!';
+      } else if (msg.why) {
+        whyMsg = `Lý do: ${msg.why}`;
+      }
+      pushFishingEvent(`❌ Bến Đò: Trượt cá (${whyMsg})`);
+    } else if (msg.t === 'landed') {
+      if (biteTimeoutId) {
+        clearTimeout(biteTimeoutId);
+        biteTimeoutId = null;
+      }
+      if (runTimeoutId) {
+        clearTimeout(runTimeoutId);
+        runTimeoutId = null;
+      }
+      lastPulledN = -1;
+
+      const fishName = typeof msg.fish === 'string' ? msg.fish : '';
+      const size = typeof msg.size === 'number' ? `${msg.size}cm` : '';
+      const price = typeof msg.price === 'number' ? `${msg.price} vỏ` : '';
+      const details = [size, price].filter(Boolean).join(', ');
+      pushFishingEvent(`🎉 Bến Đò: Đã câu được ${fishName || 'cá'}${details ? ` (${details})` : ''}!`);
     }
   });
 }
 
 function fastTick(): void {
+  if (!isFishingAutoEnabled()) return;
+
   const bn = stores.benNet?.getState();
   if (!bn) return;
 
@@ -142,13 +202,6 @@ function fastTick(): void {
     if (now - lastHookedAt > 350) {
       lastHookedAt = now;
       sendBenWs({ t: 'hook' });
-      try {
-        const pullBtn = document.querySelector('button.ben-cast.btn-brown') as HTMLButtonElement | null;
-        if (pullBtn) pullBtn.click();
-        window.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true }));
-      } catch {
-        // ignore
-      }
     }
   }
 
@@ -162,6 +215,20 @@ function fastTick(): void {
 
 export function refreshFishingWatcher(cfg: AppConfig): void {
   watchCfg = cfg;
+  watchCfgAt = Date.now();
+
+  if (!isFishingAutoEnabled()) {
+    if (biteTimeoutId) {
+      clearTimeout(biteTimeoutId);
+      biteTimeoutId = null;
+    }
+    if (runTimeoutId) {
+      clearTimeout(runTimeoutId);
+      runTimeoutId = null;
+    }
+    lastPulledN = -1;
+  }
+
   ensureWsListener();
 
   if (!fastTimerId) {

@@ -3,12 +3,12 @@ import { GameSnapshot } from '../../shared/types/game-state';
 import { computeWharfBossStatus } from '../../shared/constants/wharf-catalog';
 import { execGameAction } from '../bridge/content-bridge';
 import { isVisible, triggerPointerDownAndClick, triggerPointerDownOnly, sleep } from './dom-helpers';
-import { handleFightMinigame } from './minigame';
 import { handleBenCatchModal, handleBenMilitiaModal, handleBenOverlayModals } from './wharf-modals';
 
 let lastHookAt = 0;
 let lastCastAt = 0;
 let lastCricketEventSeq = -1;
+let lastFishingEventSeq = -1;
 let lastGotAwaySeq = -1;
 let nextCastDelayMs = 0;
 let microBreakUntil = 0;
@@ -219,10 +219,22 @@ export async function stepBenDoFishing(
   // 0. Live status updates from page-hook cricket watchers (trapping / misses / tickles)
   const crEvents = snap.benNet?.cricketEvents;
   if (Array.isArray(crEvents) && crEvents.length > 0) {
-    const latest = crEvents[crEvents.length - 1];
-    if (latest && latest.seq > lastCricketEventSeq) {
-      lastCricketEventSeq = latest.seq;
-      setStatus(latest.text);
+    for (const ev of crEvents) {
+      if (ev && typeof ev.seq === 'number' && ev.seq > lastCricketEventSeq) {
+        lastCricketEventSeq = ev.seq;
+        setStatus(ev.text);
+      }
+    }
+  }
+
+  // 0b. Live status updates from page-hook fishing watchers (misses / pull results / catches)
+  const fshEvents = snap.benNet?.fishingEvents;
+  if (Array.isArray(fshEvents) && fshEvents.length > 0) {
+    for (const ev of fshEvents) {
+      if (ev && typeof ev.seq === 'number' && ev.seq > lastFishingEventSeq) {
+        lastFishingEventSeq = ev.seq;
+        setStatus(ev.text);
+      }
     }
   }
 
@@ -239,7 +251,14 @@ export async function stepBenDoFishing(
 
   // 1. Handle Fight Minigame
   if (bn.fishing === 'fight' || document.querySelector('.ben-fight')) {
-    handleFightMinigame(snap, setStatus);
+    // In Ben Do, page-hook fishing-watcher handles fight via WebSocket with zero latency.
+    const run = bn.fight?.run;
+    if (run && run.dir) {
+      const pullDir = run.dir === 'left' ? 'PHẢI ➡' : 'TRÁI ⬅';
+      setStatus(`💪 Bến Đò: Cá chạy ${run.dir === 'left' ? 'trái' : 'phải'} -> Ghìm ${pullDir}`);
+    } else {
+      setStatus('🎣 Bến Đò: Đang ghìm cá...');
+    }
     return { finishedArea: false };
   }
 
@@ -276,14 +295,8 @@ export async function stepBenDoFishing(
   }
 
   // 4. Handle Bite ("GIẬT!")
-  const benBobberBite = document.querySelector('span.ben-bobber.bite');
-  if (bn.fishing === 'bite' || (benBobberBite && isVisible(benBobberBite))) {
+  if (bn.fishing === 'bite') {
     if (now - lastHookAt > 260) {
-      const pullBtn = document.querySelector('button.ben-cast.btn-brown') as HTMLButtonElement | null;
-      if (pullBtn && isVisible(pullBtn)) {
-        triggerPointerDownOnly(pullBtn);
-      }
-      window.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true }));
       lastHookAt = now;
       setStatus('🎣 Bến Đò: Cá cắn câu -> GIẬT!');
     }

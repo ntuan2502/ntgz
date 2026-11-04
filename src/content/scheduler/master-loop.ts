@@ -32,6 +32,9 @@ export function toggleAutoAll(): void {
     config.running = false;
     setLockedAllMode(null);
     setStatus(`⏸️ Đã dừng Auto Tất Cả ${isOnline ? 'Online' : 'Offline'}`);
+    saveConfig();
+    void execGameAction('BEN_WATCH', { config });
+    return;
   } else {
     config.running = true;
     config.runMode = 'all';
@@ -54,6 +57,9 @@ export function toggleAutoTab(): void {
     config.running = false;
     setLockedTabArea(null);
     setStatus('⏸️ Đã dừng Auto Tab');
+    saveConfig();
+    void execGameAction('BEN_WATCH', { config });
+    return;
   } else {
     config.running = true;
     config.runMode = 'tab';
@@ -95,6 +101,7 @@ export function stopAuto(): void {
   setLockedTabArea(null);
   setStatus('⏸️ Đã tạm dừng Auto');
   saveConfig();
+  void execGameAction('BEN_WATCH', { config });
 }
 
 export function togglePanel(): void {
@@ -122,9 +129,11 @@ export async function tickAuto(): Promise<void> {
 
     // Priority 0: Handle fight minigame if visible on screen
     if (document.querySelector('.ben-fight')) {
-      handleFightMinigame(snap, setStatus);
-      isBusy = false;
-      return;
+      if (snap.screen !== 'benDo') {
+        handleFightMinigame(snap, setStatus);
+        isBusy = false;
+        return;
+      }
     }
 
     // Reset daily fishing & farmstay exhaustion flags on a new day

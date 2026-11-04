@@ -1,5 +1,6 @@
 import { stores, discoverStores, hookPhaserGame, phaserGame, benWs } from './engine-access';
 import { getCricketEvents } from '../modules/wharf/cricket-watchers';
+import { getFishingEvents } from '../modules/wharf/fishing-watcher';
 import { getWharfNextAtmTime } from '../modules/wharf';
 import { getActiveImportantAlert } from './interrupts';
 import { GameSnapshot } from '../../shared/types/game-state';
@@ -221,6 +222,7 @@ export function getSnapshot(): GameSnapshot {
           hlwLive: bn.hlwLive ?? null,
           hlwToast: bn.hlwToast ?? null,
           cricketEvents: getCricketEvents(),
+          fishingEvents: getFishingEvents(),
         }
       : null,
     friends: stores.friends ? stores.friends.getState() : null,

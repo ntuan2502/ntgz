@@ -6,6 +6,11 @@ let lastPulledRunN: string | number = -1;
 let lastPullAt = 0;
 
 export function handleFightMinigame(snap: GameSnapshot, setStatus: (text: string) => void): boolean {
+  if (snap.screen === 'benDo') {
+    // In Ben Do, page-hook fishing-watcher handles fight via WebSocket with zero latency.
+    return true;
+  }
+
   const fightBox = document.querySelector('.ben-fight');
   if (!fightBox || !isVisible(fightBox)) {
     lastPulledRunKey = '';
