@@ -5,6 +5,43 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.18.0] - 2026-11-04
+
+### 🛡️ Phòng Thủ Stealth Tàng Hình & Vượt Toàn Diện Anti-Cheat Probe Game Mới
+- **Vượt qua cơ chế kiểm tra ngầm Anti-Cheat (`oq(qZ)`) của bản cập nhật game**:
+  - Tích hợp module `stealth-guard.ts` phòng thủ cấp kernel trang ngay từ `document_start`.
+  - Giả lập `Function.prototype.toString` an toàn tuyệt đối qua iframe sạch (`about:blank`), vượt qua các kiểm tra chuỗi `[native code]` cho `WebSocket.prototype.send`, `WebSocket`, `addEventListener`, `JSON` và `Function.prototype.toString` mà không để lộ wrapper.
+  - Proxy bộ bắt sự kiện trình duyệt `addEventListener`, đảm bảo các sự kiện tương tác chuột/chạm luôn phản ánh `isTrusted: true`, liên tục làm mới timestamp tương tác gần nhất `ZK` và ngăn chặn tăng biến đếm thao tác ảo `QK` (`fakeInput`).
+  - Tự động xóa cờ `navigator.webdriver = false` và các thuộc tính điều khiển tự động của trình duyệt.
+  - Chặn bắt và phân tích gói tin kiểm tra probe từ máy chủ game, tự động gửi phản hồi mảng rỗng `f: []` (xác nhận môi trường người dùng nguyên bản 100%).
+  - Tự động bù trừ và gắn thời gian tương tác tự nhiên (`u: 65ms..185ms`) vào tất cả các gói tin hành động (`cast`, `hook`, `pull`, `buy`, `sell`), loại bỏ triệt để lỗi máy chủ từ chối thao tác `{"t":"error","error":"wait"}`.
+
+### ⚡ Tái Cấu Trúc Toàn Diện Hệ Thống Hồi Phục Thể Lực Bến Đò
+- **Loại bỏ dịch vụ gội đầu/massage Út Mười**:
+  - Dọn sạch tùy chọn gội đầu Út Mười (`goiDau`) theo phản hồi thực tế của người chơi nhằm tối ưu chi phí và tốc độ cày cuốc.
+- **Tùy chọn linh hoạt thứ tự ưu tiên hồi phục thể lực (`benStaminaPriority`)**:
+  - Hỗ trợ chọn **Ưu tiên ăn đồ trong Túi** (`'bag'`) hoặc **Ưu tiên ăn món Quán Dì Tám** (`'stall'`) trực tiếp trên giao diện cài đặt Bến Đò.
+- **Tự động đi mua thức ăn bỏ túi khi hết (`benPackFoodStock`)**:
+  - Khi thiết lập ưu tiên ăn đồ trong túi mà túi đồ hết sạch thức ăn, bot tự động tìm đến Quán Dì Tám để mua bổ sung thức ăn bỏ túi.
+  - Cho phép người dùng tùy chỉnh số lượng mua tối đa (mặc định và tối đa **12** món), tự động đối chiếu số ô trống balo (`packSlots`) để mua đủ số lượng cần thiết mà không gây tràn túi đồ.
+- **Tùy chọn loại thức ăn cần mua (`benPackFoodItem`)**:
+  - Hỗ trợ chọn món ăn bỏ túi cần mua trong danh mục món của Quán Dì Tám.
+  - Mặc định chọn món hồi phục nhiều thể lực nhất: **Bánh tét lá cẩm (`banhTet`, +50⚡ / 30 vỏ sò)**. Ngoài ra hỗ trợ đầy đủ các món: Bánh cam đường (+10⚡), Bánh da lợn (+20⚡), Chuối nướng mỡ hành (+25⚡), Bánh chuối hấp (+35⚡).
+
+### 🏪 Chợ Bãi: Ưu Tiên Mua Vật Tư Nông Nghiệp Trước Khi Trở Lại Đất
+- **Đảm bảo mua vật tư trước khi về vườn**:
+  - Sửa lỗi khi người chơi cạn sạch vật tư (hạt giống, thuốc chữa bệnh gia cầm, cám cá, đường mía), cờ `needsFarmVisit` bị kích hoạt sớm khiến bot gửi lệnh `farmQuick` quay về vườn ngay khi vừa sang Chợ Bãi.
+  - Ưu tiên cờ kiểm tra công việc mua sắm `hasMarketWork(cfg)` lên trước `needsFarmVisit`, đảm bảo sau khi từ Bến Đò sang Chợ Bãi, bot luôn ghé các sạp hàng để mua đầy đủ toàn bộ vật tư thiết yếu rồi mới tiến vào khu vườn riêng.
+
+### 🚶 Bến Đò: Tối Ưu Hóa Nhận Diện Sprite & Di Chuyển Bãi Câu Trực Quan
+- **Cải tiến định danh sprite nhân vật chính (`getBenFarmer`)**:
+  - Bổ sung điều kiện kiểm tra sprite còn sống và đang thuộc active scene (`farmer.active !== false && farmer.scene === sc`), ngăn ngừa trường hợp lưu giữ tham chiếu sprite cũ sau khi đổi scene.
+  - Bổ sung cơ chế fallback trực tiếp qua mục tiêu camera `cameras.main._follow`.
+- **Kích hoạt bước chân di chuyển ngay khi bật Auto**:
+  - Tinh chỉnh điều kiện di chuyển trong `wharf-runner.ts`: phát lệnh `BEN_STEP` ngay khi phát hiện người chơi chưa đứng ở bãi câu hợp lệ mà không phụ thuộc vào trạng thái sẵn sàng của nút quăng cần, giúp nhân vật lập tức bước ra sát mép nước khi vừa bấm Auto.
+
+---
+
 ## [1.17.0] - 2026-11-04
 
 ### 🛶 Bến Đò: Khắc Phục Triệt Để Lỗi Nhân Vật Không Di Chuyển Ra Bãi Câu
