@@ -298,7 +298,7 @@ export async function stepBenDoFishing(
   if (bn.fishing === 'bite') {
     if (now - lastHookAt > 260) {
       lastHookAt = now;
-      setStatus('🎣 Bến Đò: Cá cắn câu -> GIẬT!');
+      setStatus('🎣 Bến Đò: Cá cắn câu -> Đợi phao chìm hẳn để giật...');
     }
     return { finishedArea: false };
   }

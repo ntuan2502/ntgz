@@ -1,5 +1,6 @@
 import { stores, sendBenWs, addBenWsMessageListener } from '../../core/engine-access';
 import { AppConfig } from '../../../shared/types/config';
+import { BenNetState } from '../../../shared/types/wharf-types';
 
 export interface FishingWatchEvent {
   seq: number;
@@ -31,6 +32,7 @@ let lastPulledN = -1;
 let biteTimeoutId: ReturnType<typeof setTimeout> | null = null;
 let runTimeoutId: ReturnType<typeof setTimeout> | null = null;
 let isListenerRegistered = false;
+let isStoreSubscribed = false;
 let fastTimerId: ReturnType<typeof setInterval> | null = null;
 
 const FAST_WATCH_INTERVAL_MS = 40;
@@ -43,13 +45,17 @@ function isFishingAutoEnabled(): boolean {
   return stores.main?.getState().screen === 'benDo';
 }
 
-function handleIncomingBite(): void {
+/**
+ * Schedule hook action after bobber completely plunges and settles.
+ * Game rule (Ref: bundle.js Vbe): "Canh phao: chìm hẳn, nằm luôn mới giật! Cá mới rỉa thôi mà giật là trượt sớm (early)."
+ * Sinking plunge ripple takes ~260ms. Delay of 360ms - 430ms guarantees the bobber has sunk completely,
+ * while staying well within the 560ms - 1100ms bite window.
+ */
+function scheduleHook(): void {
   if (!isFishingAutoEnabled()) return;
 
   const bn = stores.benNet?.getState();
-  if (!bn) return;
-  // Never hook if militia check captcha is active or rod is held
-  if (bn.check) return;
+  if (!bn || bn.check) return;
   const holdUntil = Math.max(
     bn.notice?.error === 'held' ? Number(bn.notice.until) || 0 : 0,
     Number(bn.checkDone?.holdUntil) || 0
@@ -61,8 +67,7 @@ function handleIncomingBite(): void {
     biteTimeoutId = null;
   }
 
-  // Human reaction delay: 110ms - 190ms (well within 500ms - 1100ms bite window)
-  const reactionMs = 110 + Math.floor(Math.random() * 80);
+  const delayMs = 360 + Math.floor(Math.random() * 70);
   biteTimeoutId = setTimeout(() => {
     biteTimeoutId = null;
     if (!isFishingAutoEnabled()) return;
@@ -76,7 +81,29 @@ function handleIncomingBite(): void {
 
     // Send WebSocket hook packet directly
     sendBenWs({ t: 'hook' });
-  }, reactionMs);
+  }, delayMs);
+}
+
+function handleIncomingBite(msgSeq?: number): void {
+  if (!isFishingAutoEnabled()) return;
+
+  // In wharf room, server broadcasts bites. If sequence provided, reject mismatched sequence.
+  if (typeof msgSeq === 'number' && currentCastSeq !== -1 && msgSeq !== currentCastSeq) {
+    return;
+  }
+
+  // Verify Zustand store confirms bite
+  const cur = stores.benNet?.getState();
+  if (cur?.fishing === 'bite') {
+    scheduleHook();
+  } else {
+    setTimeout(() => {
+      const later = stores.benNet?.getState();
+      if (later?.fishing === 'bite') {
+        scheduleHook();
+      }
+    }, 35);
+  }
 }
 
 function handleIncomingRun(n: number, dir: 'left' | 'right', ms: number): void {
@@ -117,6 +144,23 @@ function handleIncomingRun(n: number, dir: 'left' | 'right', ms: number): void {
   }, reactionMs);
 }
 
+function ensureStoreSubscription(): void {
+  if (isStoreSubscribed) return;
+  const bnStore = stores.benNet;
+  if (!bnStore || typeof bnStore.subscribe !== 'function') return;
+  isStoreSubscribed = true;
+
+  bnStore.subscribe((state: BenNetState, prevState: BenNetState) => {
+    if (!state) return;
+    // When Zustand store transitions into bite phase
+    if (state.fishing === 'bite' && prevState?.fishing !== 'bite') {
+      if (isFishingAutoEnabled() && !biteTimeoutId) {
+        scheduleHook();
+      }
+    }
+  });
+}
+
 function ensureWsListener(): void {
   if (isListenerRegistered) return;
   isListenerRegistered = true;
@@ -128,11 +172,7 @@ function ensureWsListener(): void {
       currentCastSeq = typeof msg.s === 'number' ? msg.s : -1;
     } else if (msg.t === 'bite') {
       if (!isFishingAutoEnabled()) return;
-      // In wharf room, server broadcasts bites. Only handle bite matching our cast sequence.
-      if (typeof msg.s === 'number' && currentCastSeq !== -1 && msg.s !== currentCastSeq) {
-        return;
-      }
-      handleIncomingBite();
+      handleIncomingBite(typeof msg.s === 'number' ? msg.s : undefined);
     } else if (msg.t === 'run' && typeof msg.n === 'number' && typeof msg.dir === 'string') {
       if (!isFishingAutoEnabled()) return;
       const dir = msg.dir === 'left' || msg.dir === 'right' ? msg.dir : 'left';
@@ -196,12 +236,11 @@ function fastTick(): void {
   const bn = stores.benNet?.getState();
   if (!bn) return;
 
-  // Secondary fallback: check if Zustand store is in bite phase but hook wasn't triggered
+  // Secondary fallback: check if Zustand store is in bite phase but hook wasn't scheduled
   if (bn.fishing === 'bite' && !bn.check && !biteTimeoutId) {
     const now = performance.now();
-    if (now - lastHookedAt > 350) {
-      lastHookedAt = now;
-      sendBenWs({ t: 'hook' });
+    if (now - lastHookedAt > 280) {
+      scheduleHook();
     }
   }
 
@@ -229,6 +268,7 @@ export function refreshFishingWatcher(cfg: AppConfig): void {
     lastPulledN = -1;
   }
 
+  ensureStoreSubscription();
   ensureWsListener();
 
   if (!fastTimerId) {
