@@ -16,6 +16,7 @@ import {
   setLockedTabArea,
   getLockedAllMode,
   setLockedAllMode,
+  isOnlinePinUnlocked,
 } from '../ui/hud-core';
 
 let isBusy = false;
@@ -28,6 +29,16 @@ let farmstayCooldownUntil = 0;
 export function toggleAutoAll(): void {
   const config = getConfig();
   const isOnline = config.activeTab === 'benDo' || config.activeTab === 'alluvialLand';
+  if (isOnline && !isOnlinePinUnlocked()) {
+    if (config.running) {
+      config.running = false;
+      setLockedAllMode(null);
+      saveConfig();
+      void execGameAction('BEN_WATCH', { config });
+    }
+    setStatus('🔒 Vui lòng nhập mã PIN 6 số để mở khóa và sử dụng phần Online!');
+    return;
+  }
   if (config.running && config.runMode === 'all') {
     config.running = false;
     setLockedAllMode(null);
@@ -53,6 +64,17 @@ export function toggleAutoAll(): void {
 
 export function toggleAutoTab(): void {
   const config = getConfig();
+  const isOnline = config.activeTab === 'benDo' || config.activeTab === 'alluvialLand';
+  if (isOnline && !isOnlinePinUnlocked()) {
+    if (config.running) {
+      config.running = false;
+      setLockedTabArea(null);
+      saveConfig();
+      void execGameAction('BEN_WATCH', { config });
+    }
+    setStatus('🔒 Vui lòng nhập mã PIN 6 số để mở khóa và sử dụng phần Online!');
+    return;
+  }
   if (config.running && config.runMode === 'tab') {
     config.running = false;
     setLockedTabArea(null);
@@ -177,15 +199,26 @@ export async function tickAuto(): Promise<void> {
             await sleep(1500);
           }
         }
-      } else if (tab === 'benDo') {
-        const res = await stepBenDoFishing(snap, config, setStatus, () => {}, 'benDo');
-        if (res.finishedArea && config.autoSleep && config.sleepOnFishingLimit && (snap.minutes || 0) >= targetSleepMinutes) {
-          setStatus('🌙 Hết câu được ở Bến Đò buổi tối -> Về nhà đi ngủ...');
-          await execGameAction('SLEEP_NOW');
-          await sleep(1200);
+      } else if (tab === 'benDo' || tab === 'alluvialLand') {
+        if (!isOnlinePinUnlocked()) {
+          config.running = false;
+          setLockedTabArea(null);
+          saveConfig();
+          void execGameAction('BEN_WATCH', { config });
+          setStatus('🔒 Phần Online đang khóa: Vui lòng nhập mã PIN 6 số để sử dụng!');
+          isBusy = false;
+          return;
         }
-      } else if (tab === 'alluvialLand') {
-        await stepBenDoFishing(snap, config, setStatus, () => {}, 'alluvialLand');
+        if (tab === 'benDo') {
+          const res = await stepBenDoFishing(snap, config, setStatus, () => {}, 'benDo');
+          if (res.finishedArea && config.autoSleep && config.sleepOnFishingLimit && (snap.minutes || 0) >= targetSleepMinutes) {
+            setStatus('🌙 Hết câu được ở Bến Đò buổi tối -> Về nhà đi ngủ...');
+            await execGameAction('SLEEP_NOW');
+            await sleep(1200);
+          }
+        } else {
+          await stepBenDoFishing(snap, config, setStatus, () => {}, 'alluvialLand');
+        }
       } else if (tab === 'sea') {
         const res = await stepSeaFishing(snap, config, setStatus, () => {});
         if (res.finishedArea) {
@@ -212,6 +245,15 @@ export async function tickAuto(): Promise<void> {
     const allMode = getLockedAllMode() || (config.activeTab === 'benDo' || config.activeTab === 'alluvialLand' ? 'online' : 'offline');
 
     if (allMode === 'online') {
+      if (!isOnlinePinUnlocked()) {
+        config.running = false;
+        setLockedAllMode(null);
+        saveConfig();
+        void execGameAction('BEN_WATCH', { config });
+        setStatus('🔒 Phần Online đang khóa: Vui lòng nhập mã PIN 6 số để sử dụng!');
+        isBusy = false;
+        return;
+      }
       const benDoEnabled = config.areaEnabled.benDo !== false;
       const alluvialEnabled = config.areaEnabled.alluvialLand !== false;
 

@@ -12,7 +12,8 @@ import { WharfTabContent } from './components/WharfTabContent';
 import { SeaTabContent } from './components/SeaTabContent';
 import { FarmstayTabContent } from './components/FarmstayTabContent';
 import { OnlineFarmTabContent } from './components/OnlineFarmTabContent';
-import { HudLogEntry, getSessionLogs, clearSessionLogs } from './hud-core';
+import { OnlinePinGate } from './components/OnlinePinGate';
+import { HudLogEntry, getSessionLogs, clearSessionLogs, isOnlinePinUnlocked } from './hud-core';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ReleaseChangelogView } from '@/components/ReleaseChangelogView';
 import { SettingsView } from './components/SettingsView';
@@ -53,8 +54,10 @@ export function HudApp({
   const [monitorWidth, setMonitorWidth] = useState<number>(420);
   const [isMonitorOpen, setIsMonitorOpen] = useState<boolean>(false);
   const [monitorTab, setMonitorTab] = useState<MonitorTabId>('board');
+  const [isOnlineUnlocked, setIsOnlineUnlocked] = useState<boolean>(() => isOnlinePinUnlocked());
 
   const handleOpenMonitorTab = (tab: MonitorTabId) => {
+    if (!isOnlineUnlocked) return;
     setMonitorTab(tab);
     setIsMonitorOpen(true);
   };
@@ -127,16 +130,22 @@ export function HudApp({
       }
     };
 
+    const handleOnlinePinUnlocked = () => {
+      setIsOnlineUnlocked(true);
+    };
+
     window.addEventListener('__NTG_SNAP_UPDATE__' as unknown as keyof WindowEventMap, handleSnapUpdate as EventListener);
     window.addEventListener('__NTG_ACTION_UPDATE__' as unknown as keyof WindowEventMap, handleActionUpdate as EventListener);
     window.addEventListener('__NTG_LOGS_UPDATE__' as unknown as keyof WindowEventMap, handleLogsUpdate as EventListener);
     window.addEventListener('__NTG_CONFIG_UPDATE__' as unknown as keyof WindowEventMap, handleConfigExternalUpdate as EventListener);
+    window.addEventListener('__NTG_ONLINE_PIN_UNLOCKED__' as unknown as keyof WindowEventMap, handleOnlinePinUnlocked as EventListener);
 
     return () => {
       window.removeEventListener('__NTG_SNAP_UPDATE__' as unknown as keyof WindowEventMap, handleSnapUpdate as EventListener);
       window.removeEventListener('__NTG_ACTION_UPDATE__' as unknown as keyof WindowEventMap, handleActionUpdate as EventListener);
       window.removeEventListener('__NTG_LOGS_UPDATE__' as unknown as keyof WindowEventMap, handleLogsUpdate as EventListener);
       window.removeEventListener('__NTG_CONFIG_UPDATE__' as unknown as keyof WindowEventMap, handleConfigExternalUpdate as EventListener);
+      window.removeEventListener('__NTG_ONLINE_PIN_UNLOCKED__' as unknown as keyof WindowEventMap, handleOnlinePinUnlocked as EventListener);
     };
   }, []);
 
@@ -209,6 +218,12 @@ export function HudApp({
   };
 
   const handleToggleTabAuto = () => {
+    if ((config.activeTab === 'benDo' || config.activeTab === 'alluvialLand') && !isOnlineUnlocked) {
+      if (isMinimized) {
+        handleToggleMinimize();
+      }
+      return;
+    }
     if (config.running) {
       if (config.runMode === 'tab') {
         onToggleTab();
@@ -316,6 +331,11 @@ export function HudApp({
   };
 
   const handleToggleMonitor = () => {
+    if (!isOnlineUnlocked) {
+      setViewMode('main');
+      handleModeSelect('online');
+      return;
+    }
     setIsMonitorOpen((prev) => !prev);
   };
 
@@ -475,128 +495,162 @@ export function HudApp({
               </div>
             ) : (
               <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-                {/* Live Stats Bar */}
-                <HudStats snap={snap} activeTab={config.activeTab} />
+                {uiMode === 'online' && !isOnlineUnlocked ? (
+                  <>
+                    {/* Mode Selector: Online vs Offline remains accessible so user can switch back to Offline */}
+                    <div className="px-2.5 pt-2.5 pb-1 shrink-0 border-b border-slate-100 bg-white">
+                      <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-200/75 rounded-xl text-xs font-semibold shadow-inner">
+                        <button
+                          type="button"
+                          onClick={() => handleModeSelect('online')}
+                          className="flex items-center justify-center gap-1.5 py-1.5 rounded-lg transition-all cursor-pointer bg-white text-emerald-800 shadow-xs font-bold border border-slate-200/70"
+                        >
+                          <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                          </span>
+                          <span>🔒 Online (Trực Tuyến)</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleModeSelect('offline')}
+                          className="flex items-center justify-center gap-1.5 py-1.5 rounded-lg transition-all cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-100/50"
+                        >
+                          <span>🏡</span>
+                          <span>Offline (Ngoại Tuyến)</span>
+                        </button>
+                      </div>
+                    </div>
 
-                {/* Master Auto Controls */}
-                <HudControls
-                  config={config}
-                  activeTab={config.activeTab}
-                  onToggleAll={onToggleAll}
-                  onToggleTab={onToggleTab}
-                />
+                    {/* Full PIN Gate covering the entire Online UI */}
+                    <OnlinePinGate onUnlocked={() => setIsOnlineUnlocked(true)} />
+                  </>
+                ) : (
+                  <>
+                    {/* Live Stats Bar */}
+                    <HudStats snap={snap} activeTab={config.activeTab} />
 
-                {/* Current Action Status Bar (Terminal toggles separate window) */}
-                <HudStatusBar
-                  lastAction={lastAction}
-                  logsCount={logs.length}
-                  isTerminalOpen={isTerminalOpen}
-                  onToggleTerminal={handleToggleTerminal}
-                />
+                    {/* Master Auto Controls */}
+                    <HudControls
+                      config={config}
+                      activeTab={config.activeTab}
+                      onToggleAll={onToggleAll}
+                      onToggleTab={onToggleTab}
+                    />
 
-                {/* Mode Selector: Online vs Offline */}
-                <div className="px-2.5 pt-2 shrink-0">
-                  <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-200/75 rounded-xl text-xs font-semibold shadow-inner">
-                    <button
-                      type="button"
-                      onClick={() => handleModeSelect('online')}
-                      className={`flex items-center justify-center gap-1.5 py-1.5 rounded-lg transition-all cursor-pointer ${
-                        uiMode === 'online'
-                          ? 'bg-white text-emerald-800 shadow-xs font-bold border border-slate-200/70'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/50'
-                      }`}
-                    >
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                      </span>
-                      <span>🌐 Online (Trực Tuyến)</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleModeSelect('offline')}
-                      className={`flex items-center justify-center gap-1.5 py-1.5 rounded-lg transition-all cursor-pointer ${
-                        uiMode === 'offline'
-                          ? 'bg-white text-amber-800 shadow-xs font-bold border border-slate-200/70'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/50'
-                      }`}
-                    >
-                      <span>🏡</span>
-                      <span>Offline (Ngoại Tuyến)</span>
-                    </button>
-                  </div>
-                </div>
+                    {/* Current Action Status Bar (Terminal toggles separate window) */}
+                    <HudStatusBar
+                      lastAction={lastAction}
+                      logsCount={logs.length}
+                      isTerminalOpen={isTerminalOpen}
+                      onToggleTerminal={handleToggleTerminal}
+                    />
 
-                {/* Navigation Tabs */}
-                <Tabs value={config.activeTab} onValueChange={handleTabChange} className="w-full flex-1 flex flex-col min-h-0 px-2.5 pb-2.5 pt-1.5 overflow-hidden">
-                  {uiMode === 'online' ? (
-                    <TabsList className="grid w-full grid-cols-2 h-8 text-[11px] rounded-xl p-1 bg-slate-100 border border-slate-200/80 text-slate-600 shrink-0">
-                      <TabsTrigger
-                        value="benDo"
-                        className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium cursor-pointer"
-                      >
-                        🛶 Bến Đò
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value="alluvialLand"
-                        className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium cursor-pointer"
-                      >
-                        🌾 Nông Trại Online
-                      </TabsTrigger>
-                    </TabsList>
-                  ) : (
-                    <TabsList className="grid w-full grid-cols-3 h-8 text-[11px] rounded-xl p-1 bg-slate-100 border border-slate-200/80 text-slate-600 shrink-0">
-                      <TabsTrigger
-                        value="farm"
-                        className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-amber-800 data-[state=active]:shadow-xs font-medium cursor-pointer"
-                      >
-                        🌾 Nông Trại
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value="sea"
-                        className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-amber-800 data-[state=active]:shadow-xs font-medium cursor-pointer"
-                      >
-                        🏖️ Biển
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value="farmstay"
-                        className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-amber-800 data-[state=active]:shadow-xs font-medium cursor-pointer"
-                      >
-                        🏡 Farmstay
-                      </TabsTrigger>
-                    </TabsList>
-                  )}
+                    {/* Mode Selector: Online vs Offline */}
+                    <div className="px-2.5 pt-2 shrink-0">
+                      <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-200/75 rounded-xl text-xs font-semibold shadow-inner">
+                        <button
+                          type="button"
+                          onClick={() => handleModeSelect('online')}
+                          className={`flex items-center justify-center gap-1.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+                            uiMode === 'online'
+                              ? 'bg-white text-emerald-800 shadow-xs font-bold border border-slate-200/70'
+                              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/50'
+                          }`}
+                        >
+                          <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                          </span>
+                          <span>🌐 Online (Trực Tuyến)</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleModeSelect('offline')}
+                          className={`flex items-center justify-center gap-1.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+                            uiMode === 'offline'
+                              ? 'bg-white text-amber-800 shadow-xs font-bold border border-slate-200/70'
+                              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/50'
+                          }`}
+                        >
+                          <span>🏡</span>
+                          <span>Offline (Ngoại Tuyến)</span>
+                        </button>
+                      </div>
+                    </div>
 
-                  <div className="mt-2 flex-1 overflow-y-auto overflow-x-hidden pr-1 min-h-0">
-                    <TabsContent value="farm" className="m-0">
-                      <FarmTabContent config={config} onUpdateConfig={handleUpdateConfig} />
-                    </TabsContent>
+                    {/* Navigation Tabs */}
+                    <Tabs value={config.activeTab} onValueChange={handleTabChange} className="w-full flex-1 flex flex-col min-h-0 px-2.5 pb-2.5 pt-1.5 overflow-hidden">
+                      {uiMode === 'online' ? (
+                        <TabsList className="grid w-full grid-cols-2 h-8 text-[11px] rounded-xl p-1 bg-slate-100 border border-slate-200/80 text-slate-600 shrink-0">
+                          <TabsTrigger
+                            value="benDo"
+                            className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium cursor-pointer"
+                          >
+                            🛶 Bến Đò
+                          </TabsTrigger>
+                          <TabsTrigger
+                            value="alluvialLand"
+                            className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-medium cursor-pointer"
+                          >
+                            🌾 Nông Trại Online
+                          </TabsTrigger>
+                        </TabsList>
+                      ) : (
+                        <TabsList className="grid w-full grid-cols-3 h-8 text-[11px] rounded-xl p-1 bg-slate-100 border border-slate-200/80 text-slate-600 shrink-0">
+                          <TabsTrigger
+                            value="farm"
+                            className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-amber-800 data-[state=active]:shadow-xs font-medium cursor-pointer"
+                          >
+                            🌾 Nông Trại
+                          </TabsTrigger>
+                          <TabsTrigger
+                            value="sea"
+                            className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-amber-800 data-[state=active]:shadow-xs font-medium cursor-pointer"
+                          >
+                            🏖️ Biển
+                          </TabsTrigger>
+                          <TabsTrigger
+                            value="farmstay"
+                            className="px-1 py-1 rounded-lg data-[state=active]:bg-white data-[state=active]:text-amber-800 data-[state=active]:shadow-xs font-medium cursor-pointer"
+                          >
+                            🏡 Farmstay
+                          </TabsTrigger>
+                        </TabsList>
+                      )}
 
-                    <TabsContent value="benDo" className="m-0">
-                      <WharfTabContent
-                        config={config}
-                        onUpdateConfig={handleUpdateConfig}
-                        onOpenMonitorTab={handleOpenMonitorTab}
-                      />
-                    </TabsContent>
+                      <div className="mt-2 flex-1 overflow-y-auto overflow-x-hidden pr-1 min-h-0">
+                        <TabsContent value="farm" className="m-0">
+                          <FarmTabContent config={config} onUpdateConfig={handleUpdateConfig} />
+                        </TabsContent>
 
-                    <TabsContent value="alluvialLand" className="m-0">
-                      <OnlineFarmTabContent
-                        config={config}
-                        onUpdateConfig={handleUpdateConfig}
-                        onOpenMonitorTab={handleOpenMonitorTab}
-                      />
-                    </TabsContent>
+                        <TabsContent value="benDo" className="m-0">
+                          <WharfTabContent
+                            config={config}
+                            onUpdateConfig={handleUpdateConfig}
+                            onOpenMonitorTab={handleOpenMonitorTab}
+                          />
+                        </TabsContent>
 
-                    <TabsContent value="sea" className="m-0">
-                      <SeaTabContent config={config} onUpdateConfig={handleUpdateConfig} />
-                    </TabsContent>
+                        <TabsContent value="alluvialLand" className="m-0">
+                          <OnlineFarmTabContent
+                            config={config}
+                            onUpdateConfig={handleUpdateConfig}
+                            onOpenMonitorTab={handleOpenMonitorTab}
+                          />
+                        </TabsContent>
 
-                    <TabsContent value="farmstay" className="m-0">
-                      <FarmstayTabContent config={config} onUpdateConfig={handleUpdateConfig} />
-                    </TabsContent>
-                  </div>
-                </Tabs>
+                        <TabsContent value="sea" className="m-0">
+                          <SeaTabContent config={config} onUpdateConfig={handleUpdateConfig} />
+                        </TabsContent>
+
+                        <TabsContent value="farmstay" className="m-0">
+                          <FarmstayTabContent config={config} onUpdateConfig={handleUpdateConfig} />
+                        </TabsContent>
+                      </div>
+                    </Tabs>
+                  </>
+                )}
               </div>
             )}
           </>
@@ -659,7 +713,7 @@ export function HudApp({
 
     {/* Standalone Detached Realtime Monitor Window */}
     <HudMonitorWindow
-      isOpen={isMonitorOpen && !isMinimized}
+      isOpen={isMonitorOpen && !isMinimized && isOnlineUnlocked}
       onClose={handleToggleMonitor}
       snap={snap}
       position={position}

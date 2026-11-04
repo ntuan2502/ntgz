@@ -4,7 +4,7 @@ import { AREA_META } from '@/shared/constants/default-config';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
-import { clearSessionLogs } from '../hud-core';
+import { clearSessionLogs, isOnlinePinUnlocked } from '../hud-core';
 import { HudSubHeader } from './HudSubHeader';
 import {
   Clock,
@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   Sliders,
   Globe,
+  Lock,
 } from 'lucide-react';
 
 interface SettingsViewProps {
@@ -266,59 +267,70 @@ export function SettingsView({
               <span className="truncate">Khu vực Trực Tuyến (Online)</span>
             </div>
             <span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2 py-0.5 rounded-full font-medium shrink-0">
-              ⚡ Real-time
+              {isOnlinePinUnlocked() ? '⚡ Real-time' : '🔒 Đang khóa PIN'}
             </span>
           </div>
 
-          <p className="text-[11px] text-slate-500 leading-relaxed">
-            Bật/tắt các khu vực tham gia khi chạy chế độ <strong>▶️ TẤT CẢ ONLINE</strong>. Bot sẽ tự động sang Đất Bãi làm ruộng vườn, thu hoạch, chăm dừa/gia cầm rồi về Bến Đò câu cá & săn dế:
-          </p>
+          {!isOnlinePinUnlocked() ? (
+            <div className="flex items-center gap-2 rounded-lg bg-slate-50 border border-slate-200/80 px-2.5 py-2.5 text-[11px] text-slate-500">
+              <Lock className="h-4 w-4 text-slate-400 shrink-0" />
+              <span>
+                Vui lòng nhập <strong>mã PIN 6 số</strong> tại tab <strong>🌐 Online (Trực Tuyến)</strong> để mở khóa cài đặt khu vực này.
+              </span>
+            </div>
+          ) : (
+            <>
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                Bật/tắt các khu vực tham gia khi chạy chế độ <strong>▶️ TẤT CẢ ONLINE</strong>. Bot sẽ tự động sang Đất Bãi làm ruộng vườn, thu hoạch, chăm dừa/gia cầm rồi về Bến Đò câu cá & săn dế:
+              </p>
 
-          <div className="space-y-1.5">
-            {/* Bến Đò */}
-            <div className="flex items-center justify-between rounded-lg bg-slate-50 px-2.5 py-2 border border-slate-200/80 text-[11px] hover:bg-slate-100/70 transition-colors">
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="text-base shrink-0 leading-none">🛶</span>
-                <div className="min-w-0">
-                  <div className={`text-xs font-semibold truncate ${config.areaEnabled.benDo !== false ? 'text-slate-800' : 'text-slate-400 line-through'}`}>
-                    Bến Đò (Sông Vàm Nao)
+              <div className="space-y-1.5">
+                {/* Bến Đò */}
+                <div className="flex items-center justify-between rounded-lg bg-slate-50 px-2.5 py-2 border border-slate-200/80 text-[11px] hover:bg-slate-100/70 transition-colors">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-base shrink-0 leading-none">🛶</span>
+                    <div className="min-w-0">
+                      <div className={`text-xs font-semibold truncate ${config.areaEnabled.benDo !== false ? 'text-slate-800' : 'text-slate-400 line-through'}`}>
+                        Bến Đò (Sông Vàm Nao)
+                      </div>
+                      <div className="text-[10px] text-slate-500 truncate">
+                        Câu cá sông, sới dế, bắt dế đêm, quay đèn, ATM, săn Boss...
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-[10px] text-slate-500 truncate">
-                    Câu cá sông, sới dế, bắt dế đêm, quay đèn, ATM, săn Boss...
+                  <Switch
+                    size="sm"
+                    checked={config.areaEnabled.benDo !== false}
+                    onCheckedChange={(checked) => handleToggleAreaEnabled('benDo', checked)}
+                    title={config.areaEnabled.benDo !== false ? 'Bến Đò đang được bật Auto' : 'Bến Đò đã bị tắt'}
+                    className="shrink-0 ml-2"
+                  />
+                </div>
+
+                {/* Nông Trại Online */}
+                <div className="flex items-center justify-between rounded-lg bg-slate-50 px-2.5 py-2 border border-slate-200/80 text-[11px] hover:bg-slate-100/70 transition-colors">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-base shrink-0 leading-none">🌾</span>
+                    <div className="min-w-0">
+                      <div className={`text-xs font-semibold truncate ${config.areaEnabled.alluvialLand !== false ? 'text-slate-800' : 'text-slate-400 line-through'}`}>
+                        Nông Trại Online (Đất Bãi Phù Sa)
+                      </div>
+                      <div className="text-[10px] text-slate-500 truncate">
+                        Đất bãi, vườn dừa, lò kẹo, sân cá khô, chuồng gà, khúc sông quây...
+                      </div>
+                    </div>
                   </div>
+                  <Switch
+                    size="sm"
+                    checked={config.areaEnabled.alluvialLand !== false}
+                    onCheckedChange={(checked) => handleToggleAreaEnabled('alluvialLand', checked)}
+                    title={config.areaEnabled.alluvialLand !== false ? 'Nông Trại Online đang được bật Auto' : 'Nông Trại Online đã bị tắt'}
+                    className="shrink-0 ml-2"
+                  />
                 </div>
               </div>
-              <Switch
-                size="sm"
-                checked={config.areaEnabled.benDo !== false}
-                onCheckedChange={(checked) => handleToggleAreaEnabled('benDo', checked)}
-                title={config.areaEnabled.benDo !== false ? 'Bến Đò đang được bật Auto' : 'Bến Đò đã bị tắt'}
-                className="shrink-0 ml-2"
-              />
-            </div>
-
-            {/* Nông Trại Online */}
-            <div className="flex items-center justify-between rounded-lg bg-slate-50 px-2.5 py-2 border border-slate-200/80 text-[11px] hover:bg-slate-100/70 transition-colors">
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="text-base shrink-0 leading-none">🌾</span>
-                <div className="min-w-0">
-                  <div className={`text-xs font-semibold truncate ${config.areaEnabled.alluvialLand !== false ? 'text-slate-800' : 'text-slate-400 line-through'}`}>
-                    Nông Trại Online (Đất Bãi Phù Sa)
-                  </div>
-                  <div className="text-[10px] text-slate-500 truncate">
-                    Đất bãi, vườn dừa, lò kẹo, sân cá khô, chuồng gà, khúc sông quây...
-                  </div>
-                </div>
-              </div>
-              <Switch
-                size="sm"
-                checked={config.areaEnabled.alluvialLand !== false}
-                onCheckedChange={(checked) => handleToggleAreaEnabled('alluvialLand', checked)}
-                title={config.areaEnabled.alluvialLand !== false ? 'Nông Trại Online đang được bật Auto' : 'Nông Trại Online đã bị tắt'}
-                className="shrink-0 ml-2"
-              />
-            </div>
-          </div>
+            </>
+          )}
         </div>
 
         {/* 4. Thứ tự & Khu Vực Ngoại Tuyến (Offline) */}

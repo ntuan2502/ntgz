@@ -26,6 +26,35 @@ let sessionLogs: HudLogEntry[] = [];
 let onToggleAllHandler: (() => void) | null = null;
 let onToggleTabHandler: (() => void) | null = null;
 
+const ONLINE_PIN_SESSION_KEY = 'ntg_online_pin_unlocked_v1';
+export const ONLINE_REQUIRED_PIN = '250297';
+
+/**
+ * Kiểm tra cờ mở khóa mã PIN phần Online trong phiên tab hiện tại (sessionStorage).
+ * - Giữ nguyên trạng thái mở khóa khi game tự reload hoặc F5 tải lại trang trong cùng tab.
+ * - Tự động xóa khi đóng tab và mở lại tab mới.
+ */
+export function isOnlinePinUnlocked(): boolean {
+  try {
+    return window.sessionStorage.getItem(ONLINE_PIN_SESSION_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export function unlockOnlinePin(pin: string): boolean {
+  if (pin.trim() !== ONLINE_REQUIRED_PIN) {
+    return false;
+  }
+  try {
+    window.sessionStorage.setItem(ONLINE_PIN_SESSION_KEY, '1');
+  } catch {
+    // Ignore storage error
+  }
+  window.dispatchEvent(new CustomEvent<boolean>('__NTG_ONLINE_PIN_UNLOCKED__', { detail: true }));
+  return true;
+}
+
 export function setAutoActionHandlers(onToggleAll: () => void, onToggleTab: () => void): void {
   onToggleAllHandler = onToggleAll;
   onToggleTabHandler = onToggleTab;
