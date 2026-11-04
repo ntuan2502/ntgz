@@ -134,6 +134,19 @@ interface GameActionPayload {
           return { ok: true, ...res };
         }
 
+        case 'BEN_CAST': {
+          if (!stores.benNet) discoverStores();
+          if (stores.benNet) {
+            const bn = stores.benNet.getState();
+            if (bn.fishing === 'idle' && !bn.hunt) {
+              stores.benNet.setState({ fishing: 'casting', landed: null });
+              sendBenWs({ t: 'cast' });
+              return { ok: true, casted: true };
+            }
+          }
+          return { ok: false, reason: 'NOT_IDLE' };
+        }
+
         case 'FARMSTAY_STEP': {
           if (!payload.config) return { ok: false, error: 'NO_CONFIG' };
           const res = execFarmstayStep(payload.config);

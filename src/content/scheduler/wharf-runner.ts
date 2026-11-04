@@ -432,6 +432,7 @@ export async function stepBenDoFishing(
     }
 
     const allowCast = Boolean(prep?.ok && prep.allowCast);
+    const isGreenReady = Boolean(greenCastBtn && isVisible(greenCastBtn) && !greenCastBtn.disabled);
     const targetCastDelay = Math.max(200, Math.min(nextCastDelayMs || delayMs, 1400));
 
     if (bu?.spot && !bu?.walking) {
@@ -446,14 +447,18 @@ export async function stepBenDoFishing(
       lastArrivedSpotAt = 0;
     }
 
-    if (
-      allowCast &&
-      greenCastBtn &&
-      isVisible(greenCastBtn) &&
-      !greenCastBtn.disabled &&
-      now - lastCastAt > targetCastDelay
-    ) {
+    const canCastNow = (allowCast || isGreenReady) && isGreenReady;
+
+    if (canCastNow && now - lastCastAt > targetCastDelay) {
       triggerPointerDownAndClick(greenCastBtn);
+      try {
+        window.dispatchEvent(
+          new KeyboardEvent('keydown', { key: ' ', code: 'Space', keyCode: 32, which: 32, bubbles: true })
+        );
+      } catch {
+        // ignore
+      }
+      void execGameAction('BEN_CAST');
       lastCastAt = now;
       lastArrivedSpotAt = 0;
       if (config.benHumanJitter !== false) {
@@ -462,7 +467,7 @@ export async function stepBenDoFishing(
         nextCastDelayMs = 150;
       }
       setStatus(`🎣 Bến Đò: Quăng câu (🪱 ${bn.wallet?.bait ?? 0} · ⚡ ${bn.wallet?.liveStamina ?? 0})`);
-    } else if (allowCast && !bu?.spot) {
+    } else if (allowCast && !bu?.spot && !isGreenReady) {
       if (config.benAutoSpot !== false) {
         void execGameAction('BEN_STEP', { config, onlineTarget });
         setStatus('🚶 Đang di chuyển ra mép nước để câu cá...');
@@ -470,7 +475,7 @@ export async function stepBenDoFishing(
         return { finishedArea: false };
       }
       setStatus('📍 Hãy đứng sát mép nước (hoặc bật Tự ra vị trí câu)');
-    } else if (!allowCast) {
+    } else if (!allowCast && !isGreenReady) {
       setStatus('✅ Bến Đò: Đã xong các việc được bật (đang canh tự động...)');
       if (config.benSmartSleepMode !== false) {
         await sleep(1500);

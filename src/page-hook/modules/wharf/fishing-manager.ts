@@ -384,14 +384,14 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
     );
     const isAtTargetTile = curTile
       ? curTile.x === targetTile.x && curTile.y === targetTile.y
-      : false;
+      : (bu.spot === spotMeta.kind || Boolean(bu.spot));
 
     const isAtDesiredSpot = isAtAnyCandidate || isAtTargetTile;
 
     const needsWalkToSpot =
       (spotChoice as string) === 'any'
         ? !bu.spot
-        : !isAtDesiredSpot;
+        : (curTile ? !isAtDesiredSpot : !bu.spot);
 
     if (needsWalkToSpot) {
       if (benScene && typeof benScene.goFarmer === 'function') {
@@ -413,8 +413,11 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
           },
         };
       }
+      if (bu.spot) {
+        return { acted: false, deferred: () => ({ acted: false, allowCast: true }) };
+      }
       return {
-        acted: true,
+        acted: false,
         msg: `🛶 Đang định vị vị trí câu cá ${spotMeta.label} (${targetTile.x}, ${targetTile.y})...`,
         allowCast: false,
       };

@@ -20,12 +20,22 @@ function init(): void {
   if (!window.location.href.includes('nongtraigenz.online/play')) {
     return;
   }
+  // Inject page-hook immediately at document_start so hooks run before Phaser initializes
   injectPageHook();
   initBridgeListener();
-  createHud();
-  setAutoActionHandlers(toggleAutoAll, toggleAutoTab);
-  loadConfig();
-  setInterval(tickAuto, 200);
+
+  const mountHud = () => {
+    createHud();
+    setAutoActionHandlers(toggleAutoAll, toggleAutoTab);
+    loadConfig();
+    setInterval(tickAuto, 200);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountHud);
+  } else {
+    mountHud();
+  }
 
   // Keyboard shortcuts
   window.addEventListener('keydown', (e: KeyboardEvent) => {
@@ -76,8 +86,4 @@ function init(): void {
   });
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
-}
+init();

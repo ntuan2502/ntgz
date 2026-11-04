@@ -271,6 +271,18 @@ export function getBenFarmer(sc: PhaserSceneInstance | null): FarmerSprite | nul
     return existingFarmer;
   }
 
+  // 0. Try cameras.main._follow (in Phaser, scene.cameras.main.startFollow(this.#e) stores target in _follow)
+  try {
+    const cameras = scRecord.cameras as { main?: { _follow?: FarmerSprite } } | undefined;
+    const followTarget = cameras?.main?._follow;
+    if (followTarget && typeof followTarget.enqueue === 'function') {
+      scRecord.__farmer = followTarget;
+      return followTarget;
+    }
+  } catch {
+    // ignore
+  }
+
   // 1. Try atmosphere.player() - in BenDoScene this is () => this.#e (direct access to local player sprite)
   try {
     const atmos = scRecord.atmosphere as { player?: () => unknown } | undefined;
@@ -391,6 +403,17 @@ export function attachBenSceneHelpers(sc: PhaserSceneInstance): void {
 
       const route = typeof scRecord.route === 'number' ? ++scRecord.route : 1;
       scRecord.route = route;
+
+      try {
+        if (typeof scRecord.leaveSwing === 'function') {
+          (scRecord.leaveSwing as () => void)();
+        }
+        if (typeof scRecord.leaveStool === 'function') {
+          (scRecord.leaveStool as () => void)();
+        }
+      } catch {
+        // ignore
+      }
 
       try {
         const cameras = scRecord.cameras as {
