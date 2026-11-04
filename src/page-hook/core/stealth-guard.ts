@@ -16,9 +16,13 @@ function patchIframeContentWindow(cw: Window | null): void {
         this === WebSocket.prototype.addEventListener ||
         this === window.WebSocket ||
         this === JSON.parse ||
-        this === JSON.stringify
+        this === JSON.stringify ||
+        this === Function.prototype.toString ||
+        this === realToString ||
+        this === cwRec.Function?.prototype?.toString ||
+        (typeof this === 'function' && (this as { name?: string })?.name === 'toString')
       ) {
-        const name = (this as { name?: string })?.name || 'send';
+        const name = (this as { name?: string })?.name || 'toString';
         return `function ${name}() { [native code] }`;
       }
       return realToString.call(this);
@@ -29,6 +33,26 @@ function patchIframeContentWindow(cw: Window | null): void {
 }
 
 export function initStealthGuard(): void {
+  // 0. Spoof navigator.webdriver
+  try {
+    if (typeof navigator !== 'undefined') {
+      const navProto = Object.getPrototypeOf(navigator);
+      if (navProto) {
+        Object.defineProperty(navProto, 'webdriver', {
+          get: () => false,
+          configurable: true,
+          enumerable: true,
+        });
+      }
+      Object.defineProperty(navigator, 'webdriver', {
+        get: () => false,
+        configurable: true,
+        enumerable: true,
+      });
+    }
+  } catch {
+    // ignore
+  }
   // 1. Defend iframe-based Function.prototype.toString inspection (iq / aq in game bundle)
   try {
     const origAppendChild = Node.prototype.appendChild;

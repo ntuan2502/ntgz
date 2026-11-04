@@ -471,7 +471,7 @@ export async function stepBenDoFishing(
         nextCastDelayMs = 250;
       }
       setStatus(`🎣 Bến Đò: Quăng câu (🪱 ${bn.wallet?.bait ?? 0} · ⚡ ${bn.wallet?.liveStamina ?? 0})`);
-    } else if (allowCast && !bu?.spot && !isGreenReady) {
+    } else if (!bu?.spot && !isGreenReady) {
       if (config.benAutoSpot !== false) {
         void execGameAction('BEN_STEP', { config, onlineTarget });
         setStatus('🚶 Đang di chuyển ra mép nước để câu cá...');

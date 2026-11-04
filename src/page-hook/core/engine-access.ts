@@ -321,7 +321,12 @@ export function getBenFarmer(sc: PhaserSceneInstance | null): FarmerSprite | nul
 
   // Check cached instance
   const existingFarmer = scRecord.__farmer as FarmerSprite | undefined;
-  if (existingFarmer && typeof existingFarmer.enqueue === 'function') {
+  if (
+    existingFarmer &&
+    existingFarmer.active !== false &&
+    existingFarmer.scene === sc &&
+    typeof existingFarmer.enqueue === 'function'
+  ) {
     return existingFarmer;
   }
 
@@ -529,7 +534,7 @@ export function getActiveScene(key: string): PhaserSceneInstance | null {
   try {
     const sc = game.scene.getScene(key);
     if (sc && sc.sys && sc.sys.isActive()) {
-      if (key === 'BenDoScene' || !('farmer' in sc)) {
+      if (key === 'BenDoScene' || key === 'BaiScene' || !('farmer' in sc)) {
         attachBenSceneHelpers(sc);
       }
       return sc;

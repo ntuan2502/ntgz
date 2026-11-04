@@ -234,6 +234,16 @@ export function stepAlluvial(
         };
       }
     } else if (baiState.kind === 'bai') {
+      if (hasMarketWork(cfg)) {
+        transitState = 'at_bai_market';
+        transitStartedAt = now;
+        resetBaiWalkTracker();
+        return {
+          acted: true,
+          msg: '🏪 Chợ Bãi: Bắt đầu giao thương nông sản / mua vật tư...',
+          allowCast: false,
+        };
+      }
       const needsFarmVisit =
         (baiState.hasLand || baiState.lastInfoAt === 0) &&
         (baiState.lastFarmSurveyAt === 0 ||
@@ -249,11 +259,6 @@ export function stepAlluvial(
           msg: '🌾 Chợ Bãi: Đang chuyển nhanh về Đất Của Mình...',
           allowCast: false,
         };
-      }
-      if (hasMarketWork(cfg)) {
-        transitState = 'at_bai_market';
-        transitStartedAt = now;
-        resetBaiWalkTracker();
       } else {
         if (onlineTarget === 'alluvialLand') {
           sendBenWs({ t: 'farmQuick' });
@@ -451,6 +456,16 @@ export function stepAlluvial(
       transitStartedAt = now;
       resetBaiWalkTracker();
     } else if (baiState.kind === 'bai') {
+      if (hasMarketWork(cfg)) {
+        transitState = 'at_bai_market';
+        transitStartedAt = now;
+        resetBaiWalkTracker();
+        return {
+          acted: true,
+          msg: '🏪 Chợ Bãi: Đã tới bến, bắt đầu ghé các sạp giao thương / mua vật tư...',
+          allowCast: false,
+        };
+      }
       const hasLand = baiState.hasLand || Boolean(stores.bai?.getState()?.info?.land);
       if (hasLand) {
         sendBenWs({ t: 'farmQuick' });
