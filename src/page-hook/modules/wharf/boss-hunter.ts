@@ -1,6 +1,6 @@
 import { sendBenWs } from '../../core/engine-access';
 import { canAct, markActed } from '../../core/cooldown';
-import { BenExecutionContext, BenStepResult, BEN_MAP_CENTER_TILE } from './types';
+import { BenExecutionContext, BenStepResult } from './types';
 
 let lastBossPxX = 0;
 let lastBossPxY = 0;
@@ -8,10 +8,10 @@ let lastBossTime = 0;
 let lastDispatchedBossTile = { x: -1, y: -1 };
 
 /**
- * Xử lý Săn Boss Bí Ngô (Mỗi 30 phút, chạy 3 phút) & Đón lõng 10s giữa map.
+ * Xử lý Săn Boss Bí Ngô (Mỗi 30 phút, chạy 3 phút) & Thu cần chờ sẵn (không chạy ra giữa map).
  */
 export function runBossHuntOrImpendingStep(ctx: BenExecutionContext): BenStepResult | null {
-  const { cfg, bn, benScene, isBossImpending, secondsToNextBoss } = ctx;
+  const { cfg, bn, benScene, isBossActive, isBossImpending, secondsToNextBoss } = ctx;
 
   // 1. Khi Boss Bí Ngô đang xuất hiện trên bản đồ -> Bám sát tọa độ Boss
   if (cfg.benAutoBossHunt !== false) {
@@ -85,39 +85,31 @@ export function runBossHuntOrImpendingStep(ctx: BenExecutionContext): BenStepRes
     }
   }
 
-  // 2. Khi đếm ngược còn <= 10s -> Thu cần ngay và chạy ra giữa map chờ sẵn
+  // 2. Khi đếm ngược còn <= 10s -> Chỉ cần thu cần lại, đứng tại chỗ chờ săn Boss (không cần ra giữa map)
   if (isBossImpending) {
     if (bn.fishing !== 'idle') {
       sendBenWs({ t: 'hook' });
-    }
-
-    const curTile = benScene?.farmer?.tile;
-    const isAtCenter =
-      curTile &&
-      Math.abs(curTile.x - BEN_MAP_CENTER_TILE.x) <= 1 &&
-      Math.abs(curTile.y - BEN_MAP_CENTER_TILE.y) <= 1;
-
-    if (!isAtCenter && benScene && typeof benScene.goFarmer === 'function') {
-      if (!benScene.farmer?.running) {
-        benScene.goFarmer(BEN_MAP_CENTER_TILE);
-      }
-      return {
-        acted: true,
-        isBossHunt: true,
-        allowCast: false,
-        msg: `👑 Boss Bí Ngô sắp xuất hiện (còn ${secondsToNextBoss}s) ➔ Đang chạy ra giữa map (${BEN_MAP_CENTER_TILE.x}, ${BEN_MAP_CENTER_TILE.y}) chờ sẵn 🎃`,
-      };
-    }
-
-    if (benScene?.farmer?.lookAt) {
-      benScene.farmer.lookAt(BEN_MAP_CENTER_TILE.x * 16, (BEN_MAP_CENTER_TILE.y + 2) * 16);
     }
 
     return {
       acted: true,
       isBossHunt: true,
       allowCast: false,
-      msg: `👑 Đã đứng giữa map (${BEN_MAP_CENTER_TILE.x}, ${BEN_MAP_CENTER_TILE.y}) chờ Boss Bí Ngô xuất hiện (còn ${secondsToNextBoss}s) 🎃`,
+      msg: `👑 Boss Bí Ngô sắp xuất hiện (còn ${secondsToNextBoss}s) ➔ Đã thu cần đứng chờ sẵn săn Boss 🎃`,
+    };
+  }
+
+  // 3. Khi Boss đang hoạt động nhưng chưa thấy trên map -> Thu cần đứng quan sát
+  if (isBossActive) {
+    if (bn.fishing !== 'idle') {
+      sendBenWs({ t: 'hook' });
+    }
+
+    return {
+      acted: true,
+      isBossHunt: true,
+      allowCast: false,
+      msg: '👑 Boss Bí Ngô đang hoạt động ➔ Đã thu cần, đứng quan sát chờ Boss 🎃',
     };
   }
 

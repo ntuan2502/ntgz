@@ -106,7 +106,7 @@ export async function stepBenDoFishing(
   }
 
   // =========================================================================
-  // 👑 HIGHEST PRIORITY #1: PUMPKIN BOSS (SĂN BOSS BÍ NGÔ & CHỜ 10S GIỮA MAP)
+  // 👑 HIGHEST PRIORITY #1: PUMPKIN BOSS (SĂN BOSS BÍ NGÔ & THU CẦN CHỜ SẴN)
   // Luôn luôn ưu tiên việc này trước tiên, bất kể đang ở khu nào hay làm gì!
   // =========================================================================
   const { isBossActive, isBossImpending, secondsToNextBoss } = computeWharfBossStatus(
@@ -130,7 +130,7 @@ export async function stepBenDoFishing(
       setStatus(
         isBossActive
           ? '👑 Phát hiện Boss Bí Ngô xuất hiện! Đang áp sát săn Boss 🎃'
-          : `👑 Boss Bí Ngô đếm ngược còn ${secondsToNextBoss}s ➔ Thu cần và ra giữa map chờ sẵn 🎃`
+          : `👑 Boss Bí Ngô đếm ngược còn ${secondsToNextBoss}s ➔ Thu cần đứng chờ sẵn săn Boss 🎃`
       );
     }
     await sleep(prep?.isBossHunt ? 120 : 250);
@@ -322,7 +322,7 @@ export async function stepBenDoFishing(
       }
       setStatus(
         isBossImpending
-          ? `👑 Boss Bí Ngô đếm ngược còn ${secondsToNextBoss}s! Thu cần ngay để ra giữa map chờ 🎃`
+          ? `👑 Boss Bí Ngô đếm ngược còn ${secondsToNextBoss}s! Thu cần ngay đứng chờ sẵn săn Boss 🎃`
           : '👑 Phát hiện Boss Bí Ngô xuất hiện! Đang thu cần gấp để bám theo săn Boss 🎃'
       );
       await sleep(150);
@@ -349,7 +349,7 @@ export async function stepBenDoFishing(
       if (prep && prep.ok && prep.msg) {
         setStatus(prep.msg);
       } else {
-        setStatus(`👑 Boss Bí Ngô đếm ngược còn ${secondsToNextBoss}s ➔ Thu cần và ra giữa map chờ, không câu cố 🎃`);
+        setStatus(`👑 Boss Bí Ngô đếm ngược còn ${secondsToNextBoss}s ➔ Thu cần đứng chờ sẵn, không quăng câu cố 🎃`);
       }
       await sleep(150);
       return { finishedArea: false };

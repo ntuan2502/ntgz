@@ -58,6 +58,7 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
     totalSellShells,
     needShellsForBait,
     needShellsForFood,
+    isBossActive,
     isBossImpending,
     runWithOptionalPanel,
     walkAndRun,
@@ -414,7 +415,7 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
     }
   }
 
-  if (isBossImpending) {
+  if (isBossImpending || isBossActive) {
     return { acted: false, allowCast: false };
   }
 

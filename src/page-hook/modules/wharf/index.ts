@@ -388,7 +388,7 @@ export function execBenStep(
   const secondsToNextBoss = bossStatus.secondsToNextBoss;
 
   // =========================================================================
-  // 👑 HIGHEST PRIORITY #1: WORLD BOSS BÍ NGÔ (SĂN BOSS & ĐÓN LÕNG 10S GIỮA MAP)
+  // 👑 HIGHEST PRIORITY #1: WORLD BOSS BÍ NGÔ (SĂN BOSS & THU CẦN CHỜ SẴN)
   // Luôn luôn ưu tiên việc này trước tiên, bất kể đang ở khu nào hay làm gì!
   // =========================================================================
   if (isBossActive || isBossImpending) {
