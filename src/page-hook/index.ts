@@ -152,14 +152,6 @@ interface GameActionPayload {
 
         case 'BEN_HOOK': {
           sendBenWs({ t: 'hook' });
-          try {
-            const hookBtn = document.querySelector('button.ben-cast.btn-brown') as HTMLButtonElement | null;
-            if (hookBtn && (hookBtn.textContent || '').includes('GIẬT')) {
-              hookBtn.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true }));
-            }
-          } catch {
-            // ignore
-          }
           return { ok: true, hooked: true };
         }
 

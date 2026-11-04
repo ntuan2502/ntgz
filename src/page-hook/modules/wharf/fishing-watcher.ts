@@ -88,16 +88,6 @@ function scheduleHook(): void {
 
     // Send WebSocket hook packet directly
     sendBenWs({ t: 'hook' });
-
-    // Also trigger pointerdown on the GIẬT button if present in DOM
-    try {
-      const hookBtn = document.querySelector('button.ben-cast.btn-brown') as HTMLButtonElement | null;
-      if (hookBtn && (hookBtn.textContent || '').includes('GIẬT')) {
-        hookBtn.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true }));
-      }
-    } catch {
-      // ignore
-    }
   }, delayMs);
 }
 
