@@ -5,6 +5,28 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.17.0] - 2026-11-04
+
+### 🛶 Bến Đò: Khắc Phục Triệt Để Lỗi Nhân Vật Không Di Chuyển Ra Bãi Câu
+- **Trích xuất trực tiếp sprite nhân vật chính (`#e`) qua `sc.atmosphere.player()`**:
+  - Khắc phục lỗi bắt nhầm sprite NPC hoặc không tìm thấy `#e` khi mới bấm Auto lúc thông tin người chơi (`you`) chưa đồng bộ xong từ gói WebSocket `welcome`.
+  - Kết nối trực tiếp với getter `atmosphere.player()` của `BenDoScene` trong engine Phaser, đảm bảo nhận diện chính xác 100% nhân vật của người chơi ngay lập tức.
+- **Tự động tìm ô đi bộ hợp lệ sát nhất (`nearestWalkable`) trong `goFarmer`**:
+  - Tích hợp kiểm tra `grid.walkable` và `grid.nearestWalkable` trước khi phát lệnh `farmer.enqueue` và gửi `sendBenWs({ t: 'move' })`.
+  - Ngăn ngừa tình trạng `findPath` trả về `null` trong im lặng khi ô đích có va chạm nhẹ với mép nước hoặc góc cản, đảm bảo nhân vật luôn luôn di chuyển mượt mà tới sát mép nước.
+- **Chuẩn hóa nhận diện vị trí câu (`isAtDesiredSpot`)**:
+  - Hỗ trợ đối chiếu toàn bộ các ô hợp lệ của bãi câu đã chọn (`candidateTiles`); nếu nhân vật đã đứng ở bất kỳ ô nào thuộc bãi câu, tool bắt đầu câu ngay mà không cần bước dịch chuyển thừa.
+  - Ngăn chặn triệt để tình trạng nhả cờ `allowCast: true` sớm khi nhân vật chưa ở bãi câu, loại bỏ hiện tượng bị kẹt thông báo "Hãy đứng sát mép nước".
+- **Kéo dài cửa sổ bắt Phaser Game**:
+  - Tăng thời gian lắng nghe khởi tạo Phaser từ 1.5s lên 2 phút, đảm bảo bắt được engine game ngay cả khi tải tài nguyên hoặc mạng bị trễ.
+
+### 🌾 Nông Trại Online: Khắc Phục Lỗi Ra Chợ Bãi & Di Chuyển Cổng Vườn
+- **Di chuyển ra cổng vườn (`3, 26`) trước khi thoát Đất Của Mình**:
+  - Đồng bộ đúng cơ chế máy chủ game: bắt buộc nhân vật bước chân ra sát cổng vườn tại tọa độ `{ x: 3, y: 26 }` mới gửi gói tin `farmExit` để qua Chợ Bãi.
+  - Khắc phục lỗi khi hết vật tư nông sản/hạt giống nhưng nhân vật đứng im trong vườn không ra Chợ Bãi mua đồ.
+
+---
+
 ## [1.16.0] - 2026-11-04
 
 ### 🔒 Khóa Bảo Mật Mã PIN 6 Số Cho Khu Vực Online (Session PIN Gate)
