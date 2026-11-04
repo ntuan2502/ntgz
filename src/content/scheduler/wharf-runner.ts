@@ -463,6 +463,12 @@ export async function stepBenDoFishing(
       }
       setStatus(`🎣 Bến Đò: Quăng câu (🪱 ${bn.wallet?.bait ?? 0} · ⚡ ${bn.wallet?.liveStamina ?? 0})`);
     } else if (allowCast && !bu?.spot) {
+      if (config.benAutoSpot !== false) {
+        void execGameAction('BEN_STEP', { config, onlineTarget });
+        setStatus('🚶 Đang di chuyển ra mép nước để câu cá...');
+        await sleep(250);
+        return { finishedArea: false };
+      }
       setStatus('📍 Hãy đứng sát mép nước (hoặc bật Tự ra vị trí câu)');
     } else if (!allowCast) {
       setStatus('✅ Bến Đò: Đã xong các việc được bật (đang canh tự động...)');

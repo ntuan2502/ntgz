@@ -1,4 +1,4 @@
-import { stores, getActiveScene, sendBenWs } from '../../core/engine-access';
+import { stores, getActiveScene, sendBenWs, discoverStores } from '../../core/engine-access';
 import { canAct, markActed } from '../../core/cooldown';
 import { computeBenStamina } from '../../core/store-watcher';
 import { dismissInterruptsIfNeeded } from '../../core/interrupts';
@@ -333,6 +333,9 @@ export function execBenStep(
   cfg: AppConfig,
   onlineTarget: 'all' | 'benDo' | 'alluvialLand' = 'all'
 ): BenStepResult {
+  if (!stores.main || !stores.benUI || !stores.benNet) {
+    discoverStores();
+  }
   const mStore = stores.main;
   const buStore = stores.benUI;
   const bnStore = stores.benNet;
@@ -757,8 +760,15 @@ export function execBenStep(
   };
   const continuousSubs = new Set<WharfSubAreaId>(['fishing', 'cricketHunt']);
 
+  const defaultSubs: WharfSubAreaId[] = [
+    'fishing',
+    'cricketBoss',
+    'cricketHunt',
+    'entertainment',
+    'alluvialLand',
+  ];
   const savedOrder: WharfSubAreaId[] =
-    Array.isArray(cfg.benSubOrder) && cfg.benSubOrder.length > 0 ? [...cfg.benSubOrder] : [];
+    Array.isArray(cfg.benSubOrder) && cfg.benSubOrder.length > 0 ? [...cfg.benSubOrder] : defaultSubs;
 
   // Always ensure bounded periodic alluvialLand is evaluated first in activeOrder
   const activeOrder: WharfSubAreaId[] = [

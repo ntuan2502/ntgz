@@ -373,15 +373,25 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
     const candidateTiles = spotMeta.tiles;
     const targetTile = candidateTiles[activeTileIdx % candidateTiles.length] || candidateTiles[0];
 
-    const curTile = benScene?.farmer?.tile;
+    const curTile =
+      benScene?.farmer?.tile ??
+      (typeof benScene?.farmer?.x === 'number' && typeof benScene?.farmer?.y === 'number'
+        ? { x: Math.floor(benScene.farmer.x / 16), y: Math.floor((benScene.farmer.y - 1) / 16) }
+        : undefined);
+
+    const isAtAnyCandidate = Boolean(
+      curTile && candidateTiles.some((t) => t.x === curTile.x && t.y === curTile.y)
+    );
     const isAtTargetTile = curTile
       ? curTile.x === targetTile.x && curTile.y === targetTile.y
-      : bu.spot === spotMeta.kind;
+      : false;
+
+    const isAtDesiredSpot = isAtAnyCandidate || isAtTargetTile;
 
     const needsWalkToSpot =
       (spotChoice as string) === 'any'
         ? !bu.spot
-        : !isAtTargetTile;
+        : !isAtDesiredSpot;
 
     if (needsWalkToSpot) {
       if (benScene && typeof benScene.goFarmer === 'function') {
@@ -403,9 +413,14 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
           },
         };
       }
+      return {
+        acted: true,
+        msg: `🛶 Đang định vị vị trí câu cá ${spotMeta.label} (${targetTile.x}, ${targetTile.y})...`,
+        allowCast: false,
+      };
     }
 
-    if (isAtTargetTile && benScene?.farmer?.lookAt && Math.random() < 0.15) {
+    if (isAtDesiredSpot && benScene?.farmer?.lookAt && Math.random() < 0.15) {
       const lookDir =
         spotMeta.kind === 'bank' || spotKey === 'dock' ? { dx: 0, dy: -24 } : { dx: 24, dy: 0 };
       benScene.farmer.lookAt(

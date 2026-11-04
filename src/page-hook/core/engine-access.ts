@@ -234,9 +234,15 @@ export function hookPhaserGame(): PhaserGameInstance | null {
     };
     Array.prototype.push = function (...items: unknown[]) {
       try {
-        const first = items[0] as { sys?: { game?: PhaserGameInstance } } | undefined;
-        if (first && typeof first === 'object' && first.sys && first.sys.game && first.sys.game.scene) {
-          phaserGame = first.sys.game;
+        const item0 = items[0] as {
+          sys?: { game?: PhaserGameInstance };
+          game?: PhaserGameInstance;
+          scene?: { game?: PhaserGameInstance };
+        } | undefined;
+        const candidate =
+          item0?.sys?.game ?? item0?.game ?? item0?.scene?.game;
+        if (candidate && candidate.scene && typeof candidate.scene.getScene === 'function') {
+          phaserGame = candidate;
           win.__ntg_phaserGame = phaserGame;
           restore();
         }
@@ -245,7 +251,8 @@ export function hookPhaserGame(): PhaserGameInstance | null {
       }
       return origPush.apply(this, items);
     };
-    setTimeout(restore, 1500);
+    // Keep hook active until game boots or up to 2 minutes
+    setTimeout(restore, 120000);
   } catch {
     // ignore
   }
@@ -264,8 +271,23 @@ export function getBenFarmer(sc: PhaserSceneInstance | null): FarmerSprite | nul
     return existingFarmer;
   }
 
-  // 1. Try scene.speaker(you)
+  // 1. Try atmosphere.player() - in BenDoScene this is () => this.#e (direct access to local player sprite)
   try {
+    const atmos = scRecord.atmosphere as { player?: () => unknown } | undefined;
+    if (atmos && typeof atmos.player === 'function') {
+      const p = atmos.player() as FarmerSprite | undefined;
+      if (p && typeof p.enqueue === 'function') {
+        scRecord.__farmer = p;
+        return p;
+      }
+    }
+  } catch {
+    // ignore
+  }
+
+  // 2. Try scene.speaker(you)
+  try {
+    if (!stores.benNet) discoverStores();
     const you = stores.benNet?.getState()?.you;
     if (typeof scRecord.speaker === 'function' && you) {
       const s = (scRecord.speaker as (id: unknown) => unknown)(you) as FarmerSprite | undefined;
@@ -278,7 +300,7 @@ export function getBenFarmer(sc: PhaserSceneInstance | null): FarmerSprite | nul
     // ignore
   }
 
-  // 2. Search scene children / display list
+  // 3. Search scene children / display list
   try {
     const childrenList =
       (scRecord.children as { list?: unknown[] } | undefined)?.list ||
@@ -357,6 +379,16 @@ export function attachBenSceneHelpers(sc: PhaserSceneInstance): void {
       const farmer = getBenFarmer(sc);
       if (!farmer) return;
 
+      const grid = scRecord.grid as {
+        walkable?: (x: number, y: number) => boolean;
+        nearestWalkable?: (x: number, y: number) => { x: number; y: number } | null;
+      } | undefined;
+
+      const target =
+        grid && typeof grid.walkable === 'function' && grid.walkable(tile.x, tile.y)
+          ? tile
+          : grid?.nearestWalkable?.(tile.x, tile.y) ?? tile;
+
       const route = typeof scRecord.route === 'number' ? ++scRecord.route : 1;
       scRecord.route = route;
 
@@ -378,7 +410,7 @@ export function attachBenSceneHelpers(sc: PhaserSceneInstance): void {
       try {
         farmer.enqueue?.({
           kind: 'move',
-          to: tile,
+          to: target,
           arrive: () => {
             if (scRecord.route !== route) return;
             try {
@@ -388,8 +420,8 @@ export function attachBenSceneHelpers(sc: PhaserSceneInstance): void {
                 // Face water if near water edge:
                 // Upper river / pier (y <= 13) -> face up (dy: -20)
                 // Bridge / right stream (x >= 45 && y >= 14) -> face right (dx: 20)
-                const dx = tile.x >= 45 && tile.y >= 14 ? 20 : 0;
-                const dy = tile.x >= 45 && tile.y >= 14 ? 0 : -20;
+                const dx = target.x >= 45 && target.y >= 14 ? 20 : 0;
+                const dy = target.x >= 45 && target.y >= 14 ? 0 : -20;
                 farmer.lookAt(fx + dx, fy + dy);
               }
             } catch {
@@ -402,7 +434,7 @@ export function attachBenSceneHelpers(sc: PhaserSceneInstance): void {
         // ignore
       }
 
-      sendBenWs({ t: 'move', x: tile.x, y: tile.y });
+      sendBenWs({ t: 'move', x: target.x, y: target.y });
       try {
         if (typeof scRecord.announce === 'function') {
           (scRecord.announce as () => void)();
