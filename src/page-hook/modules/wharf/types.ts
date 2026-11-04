@@ -32,6 +32,26 @@ export interface BenDoPhaserScene {
   };
 }
 
+export interface PanelActionContinuation {
+  keepGoing: boolean;
+  label?: string;
+  actionFn?: () => void;
+}
+
+export interface PanelActionOptions {
+  /**
+   * Called after each confirmed action in the panel.
+   * When `keepGoing` is true, the panel stays open and triggers the next action
+   * after a short human-like pause instead of closing and reopening the panel.
+   */
+  shouldContinue?: () => PanelActionContinuation;
+  /**
+   * When true, leaves the panel open after the initial action completes
+   * (used for modal-driven panels like `lantern`, `atm`, or `soi`).
+   */
+  leaveOpen?: boolean;
+}
+
 export interface BenExecutionContext {
   cfg: AppConfig;
   m: MainGameStoreState;
@@ -64,7 +84,8 @@ export interface BenExecutionContext {
     label: string,
     panelState?: Record<string, unknown>,
     triggerDelayMs?: number,
-    holdAfterMs?: number
+    holdAfterMs?: number,
+    options?: PanelActionOptions
   ) => void;
   walkAndRun: (
     tile: { x: number; y: number },
@@ -73,7 +94,8 @@ export interface BenExecutionContext {
     actionKey?: string | null,
     panelState?: Record<string, unknown>,
     triggerDelayMs?: number,
-    holdAfterMs?: number
+    holdAfterMs?: number,
+    options?: PanelActionOptions
   ) => BenStepResult;
 }
 

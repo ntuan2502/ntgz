@@ -14,6 +14,8 @@ import {
   BenStepResult,
   BenDoPhaserScene,
   BenExecutionContext,
+  PanelActionContinuation,
+  PanelActionOptions,
   FOOD_PRICES,
   HUNT_LIGHT_STALE_MS,
 } from './types';
@@ -67,6 +69,8 @@ interface PendingPanelAction {
   baselineNoticeSeq: number;
   confirmed: boolean;
   closeAt: number;
+  shouldContinue?: () => PanelActionContinuation;
+  leaveOpen?: boolean;
 }
 
 let pendingPanel: PendingPanelAction | null = null;
@@ -197,6 +201,22 @@ function stepPendingPanel(
       if (now - p.executedAt < p.holdAfterMs) {
         return { acted: true, msg: `👁️ ${p.label} (đang xử lý...)` };
       }
+      const nextStep = p.shouldContinue?.();
+      if (nextStep?.keepGoing) {
+        if (nextStep.label) p.label = nextStep.label;
+        if (nextStep.actionFn) p.actionFn = nextStep.actionFn;
+        p.executedAt = 0;
+        p.confirmed = false;
+        p.attempts = 0;
+        p.readySince = now;
+        p.readyPauseMs = humanDelay(320, 650);
+        return { acted: true, msg: `🔄 Tiếp tục: ${p.label}` };
+      }
+      if (p.leaveOpen) {
+        pendingPanel = null;
+        keepBenPanelUntil = 0;
+        return { acted: true, msg: `✅ ${p.label}` };
+      }
       p.confirmed = true;
       p.closeAt = now + humanDelay(250, 600);
       return { acted: true, msg: `✅ ${p.label}` };
@@ -205,6 +225,22 @@ function stepPendingPanel(
     const notice = bn.notice as { error?: string; seq?: number } | null | undefined;
     const newError = notice && (notice.seq ?? -1) !== p.baselineNoticeSeq ? notice.error : undefined;
     if (walletSignature(bn) !== p.baselineSig) {
+      const nextStep = p.shouldContinue?.();
+      if (nextStep?.keepGoing) {
+        if (nextStep.label) p.label = nextStep.label;
+        if (nextStep.actionFn) p.actionFn = nextStep.actionFn;
+        p.executedAt = 0;
+        p.confirmed = false;
+        p.attempts = 0;
+        p.readySince = now;
+        p.readyPauseMs = humanDelay(320, 650);
+        return { acted: true, msg: `✅ Đã mua · Tiếp tục: ${p.label}` };
+      }
+      if (p.leaveOpen) {
+        pendingPanel = null;
+        keepBenPanelUntil = 0;
+        return { acted: true, msg: `✅ Thành công: ${p.label}` };
+      }
       p.confirmed = true;
       p.closeAt = now + humanDelay(p.holdAfterMs, p.holdAfterMs + 450);
       return { acted: true, msg: `✅ Thành công: ${p.label}` };
@@ -326,6 +362,18 @@ export function execBenStep(
     return {
       acted: true,
       msg: '🪖 Dân quân kiểm tra: Đang phân tích hình ảnh và trả lời câu đố...',
+      allowCast: false,
+    };
+  }
+
+  // =========================================================================
+  // 🎣 HIGHEST PRIORITY #0.5: ACTIVE FISHING FIGHT (ĐANG GHÌM CẦN TRÁI/PHẢI)
+  // Hoàn thành xong hành động ghìm cần rồi mới thực hiện mọi hành động khác (kể cả Boss Bí Ngô)
+  // =========================================================================
+  if (bn.fishing === 'fight' || Boolean(document.querySelector('.ben-fight'))) {
+    return {
+      acted: true,
+      msg: '🎣 Bến Đò: Đang ghìm cần câu cá (ưu tiên hoàn tất ghìm cần trước mọi việc khác)...',
       allowCast: false,
     };
   }
@@ -535,21 +583,23 @@ export function execBenStep(
     label: string,
     panelState?: Record<string, unknown>,
     triggerDelayMs = 550,
-    holdAfterMs = 400
+    holdAfterMs = 400,
+    options?: PanelActionOptions
   ) => {
     if (panelState) {
       if (pendingPanel) return;
+      const targetPanelKey = panelState.panel as string | undefined;
+      const isAlreadyOpen = Boolean(targetPanelKey && bu.panel === targetPanelKey);
       // The game's shop panel requests its own shop token on mount (and re-polls every 2s).
       // Sending an extra `{ t: 'shop' }` here would rotate the token and void the purchase.
-      const panelKey = panelState.panel as string | undefined;
       const human = cfg.benHumanJitter !== false;
       pendingPanel = {
         label,
         panelState,
         actionFn,
-        shopAt: (panelKey && SHOP_PANEL_AT[panelKey]) || null,
-        openAt: Date.now() + (human ? humanDelay(320, 750) : 150),
-        openedAt: 0,
+        shopAt: (targetPanelKey && SHOP_PANEL_AT[targetPanelKey]) || null,
+        openAt: isAlreadyOpen ? Date.now() : Date.now() + (human ? humanDelay(320, 750) : 150),
+        openedAt: isAlreadyOpen ? Date.now() : 0,
         triggerDelayMs: Math.max(500, triggerDelayMs),
         holdAfterMs: Math.max(human ? 550 : 300, holdAfterMs),
         readySince: 0,
@@ -560,6 +610,8 @@ export function execBenStep(
         baselineNoticeSeq: -1,
         confirmed: false,
         closeAt: 0,
+        shouldContinue: options?.shouldContinue,
+        leaveOpen: options?.leaveOpen,
       };
       keepBenPanelMsg = label;
     } else {
@@ -574,9 +626,10 @@ export function execBenStep(
     actionKey: string | null = null,
     panelState?: Record<string, unknown>,
     triggerDelayMs = 550,
-    holdAfterMs = 400
+    holdAfterMs = 400,
+    options?: PanelActionOptions
   ): BenStepResult => {
-    if (actionKey && !canAct(actionKey)) {
+    if (actionKey && !canAct(actionKey, 1000)) {
       return { acted: false };
     }
     if (
@@ -594,7 +647,7 @@ export function execBenStep(
     // nearest walkable tile is 2 steps away makes the farmer re-walk on every retry.
     if (!benScene.farmer?.running && Math.abs(cur.x - tile.x) + Math.abs(cur.y - tile.y) <= 2) {
       if (actionKey) markActed(actionKey);
-      runWithOptionalPanel(actionFn, label, panelState, triggerDelayMs, holdAfterMs);
+      runWithOptionalPanel(actionFn, label, panelState, triggerDelayMs, holdAfterMs, options);
       return { acted: true, msg: label };
     }
     if (benScene.farmer?.running) {
@@ -607,9 +660,9 @@ export function execBenStep(
         latestKind === 'ben' &&
         latestTile &&
         Math.abs(latestTile.x - tile.x) + Math.abs(latestTile.y - tile.y) <= 2;
-      if (arrived && (!actionKey || canAct(actionKey))) {
+      if (arrived && (!actionKey || canAct(actionKey, 1000))) {
         if (actionKey) markActed(actionKey);
-        runWithOptionalPanel(actionFn, label, panelState, triggerDelayMs, holdAfterMs);
+        runWithOptionalPanel(actionFn, label, panelState, triggerDelayMs, holdAfterMs, options);
       }
     });
     return { acted: true, msg: `🚶 ${label}` };
@@ -734,7 +787,12 @@ export function execBenStep(
     }
   }
 
-  if (bu.panel && (!benShowFullActions || Date.now() >= keepBenPanelUntil)) {
+  const modalManagedPanels = new Set(['lantern', 'atm', 'militiaCheck', 'soi']);
+  if (
+    bu.panel &&
+    !modalManagedPanels.has(String(bu.panel)) &&
+    (!benShowFullActions || Date.now() >= keepBenPanelUntil)
+  ) {
     buStore.setState({ panel: null });
   }
 

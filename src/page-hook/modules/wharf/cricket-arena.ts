@@ -32,7 +32,7 @@ export function getHuntLightAt(): number {
  * SUB-AREA RUNNER 2: CRICKET ARENA & BOSS FIGHT (Sới dế Ông Sáu)
  */
 export function runCricketBossStep(ctx: BenExecutionContext): BenStepResult {
-  const { bn, bossEnabled, walkAndRun } = ctx;
+  const { bn, bu, buStore, bossEnabled, walkAndRun } = ctx;
 
   if (!bossEnabled) {
     return { acted: false };
@@ -48,7 +48,9 @@ export function runCricketBossStep(ctx: BenExecutionContext): BenStepResult {
         '🥊 Đi lại Sới Dế Ông Sáu để xem danh sách Boss...',
         'ben_soi_fetch',
         { panel: 'soi' },
-        1200
+        600,
+        400,
+        { leaveOpen: true }
       );
     }
     return { acted: false };
@@ -73,7 +75,12 @@ export function runCricketBossStep(ctx: BenExecutionContext): BenStepResult {
       break;
     }
   }
-  if (!nextBossMeta) return { acted: false };
+  if (!nextBossMeta) {
+    if (bu.panel === 'soi') {
+      buStore.setState({ panel: null });
+    }
+    return { acted: false };
+  }
 
   const box: CricketItem[] = bn.soi.box?.length ? bn.soi.box : bn.crickets?.box || [];
   const nowServer = getBenServerNow(bn);
@@ -85,7 +92,12 @@ export function runCricketBossStep(ctx: BenExecutionContext): BenStepResult {
       return combatScore(b) - combatScore(a);
     });
   const bestCricket = readyCrickets[0];
-  if (!bestCricket) return { acted: false };
+  if (!bestCricket) {
+    if (bu.panel === 'soi') {
+      buStore.setState({ panel: null });
+    }
+    return { acted: false };
+  }
 
   const bossNpcId = targetNpcId || nextBossMeta.id;
   const cTotal = cricketTotal(bestCricket);
@@ -98,7 +110,9 @@ export function runCricketBossStep(ctx: BenExecutionContext): BenStepResult {
     `🥊 Thách đấu ${nextBossMeta.name} tại Sới Dế (+${nextBossMeta.reward}🐚) với ${cName} (Tổng: ${cTotal} vs ${nextBossMeta.total})`,
     'ben_boss_bout',
     { panel: 'soi' },
-    1200
+    800,
+    400,
+    { leaveOpen: true }
   );
 }
 
@@ -112,17 +126,9 @@ export function runCricketHuntStep(ctx: BenExecutionContext): BenStepResult {
     return { acted: false };
   }
   if (!bn.crickets) {
-    if (canAct('ben_crickets_open', 4000)) {
+    if (canAct('ben_crickets_open', 10000)) {
       markActed('ben_crickets_open');
-      runWithOptionalPanel(
-        () => {
-          sendBenWs({ t: 'crickets' });
-        },
-        '🎋 Đang mở Ống tre nuôi dế để kiểm tra dế...',
-        { panel: 'crickets' },
-        1200
-      );
-      return { acted: true, msg: '🎋 Đang mở Ống tre nuôi dế...' };
+      sendBenWs({ t: 'crickets' });
     }
     return { acted: false };
   }
@@ -201,10 +207,13 @@ export function runCricketHuntStep(ctx: BenExecutionContext): BenStepResult {
     runWithOptionalPanel(
       () => {
         sendBenWs({ t: 'release', id: lowest.id });
+        if (bn.crickets && Array.isArray(bn.crickets.box)) {
+          bn.crickets.box = bn.crickets.box.filter((c) => c.id !== lowest.id);
+        }
       },
       releaseLabel,
       { panel: 'crickets' },
-      1400
+      700
     );
 
     return {

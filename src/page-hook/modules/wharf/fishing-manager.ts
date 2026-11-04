@@ -196,31 +196,70 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
       moi150: 90,
     };
     const prefBait = cfg.benPreferBait || 'moi150';
-    const buyBaitChoice =
-      shells >= (baitPrices[prefBait] || 40)
+    const resolveBaitChoice = (curShells: number): string =>
+      curShells >= (baitPrices[prefBait] || 40)
         ? prefBait
-        : shells >= 15
+        : curShells >= 15
           ? 'moi20'
           : 'xinMoi';
 
+    const buyBaitChoice = resolveBaitChoice(shells);
     const baitCost = baitPrices[buyBaitChoice] || 0;
     const canAfford = shells >= minShellsForBait + baitCost || (bait <= 0 && shells >= baitCost);
 
-    if (buyBaitChoice !== 'xinMoi' && canAfford && canAct('ben_bait', 1200)) {
-      const baitLabel = BEN_BAIT_NAMES[buyBaitChoice] || buyBaitChoice;
-      return walkAndRun(
-        { x: 53, y: 11 },
-        () => {
-          sendBenWs({ t: 'buy', item: buyBaitChoice });
-        },
-        `Mua ${baitLabel} tại Sạp Chú Đực (-${baitCost}🐚, hiện có ${bait}/${maxBait} mồi)`,
-        'ben_bait',
-        { panel: 'bait' },
-        350
-      );
+    if (buyBaitChoice !== 'xinMoi' && canAfford) {
+      if (canAct('ben_bait', 1000)) {
+        const baitLabel = BEN_BAIT_NAMES[buyBaitChoice] || buyBaitChoice;
+        return walkAndRun(
+          { x: 53, y: 11 },
+          () => {
+            sendBenWs({ t: 'buy', item: buyBaitChoice });
+          },
+          `Mua ${baitLabel} tại Sạp Chú Đực (-${baitCost}🐚, hiện có ${bait}/${maxBait} mồi)`,
+          'ben_bait',
+          { panel: 'bait' },
+          350,
+          400,
+          {
+            shouldContinue: () => {
+              const latestBn = ctx.bnStore.getState();
+              const curBait = latestBn?.wallet?.bait ?? 0;
+              const curShells = latestBn?.wallet?.shells ?? 0;
+              if (curBait >= maxBait) {
+                isStockingBait = false;
+                return { keepGoing: false };
+              }
+              const nextChoice = resolveBaitChoice(curShells);
+              const nextCost = baitPrices[nextChoice] || 0;
+              const canStillAfford =
+                nextChoice !== 'xinMoi' &&
+                (curShells >= minShellsForBait + nextCost ||
+                  (curBait <= 0 && curShells >= nextCost));
+              if (!canStillAfford) {
+                if (curBait > 0) {
+                  isStockingBait = false;
+                }
+                return { keepGoing: false };
+              }
+              const nextLabel = BEN_BAIT_NAMES[nextChoice] || nextChoice;
+              return {
+                keepGoing: true,
+                label: `Mua ${nextLabel} tại Sạp Chú Đực (-${nextCost}🐚, hiện có ${curBait}/${maxBait} mồi)`,
+                actionFn: () => {
+                  sendBenWs({ t: 'buy', item: nextChoice });
+                },
+              };
+            },
+          }
+        );
+      }
+      return {
+        acted: true,
+        msg: `🪱 Đang ở Sạp Chú Đực mua mồi câu (${bait}/${maxBait} mồi)...`,
+      };
     }
 
-    if (bait > 0 && shells < minShellsForBait) {
+    if (bait > 0 && !canAfford) {
       isStockingBait = false;
     }
   }

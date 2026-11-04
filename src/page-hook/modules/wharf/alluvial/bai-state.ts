@@ -207,26 +207,37 @@ export function ensureAtSceneTile(
     return { ready: false, msg: walkMsg };
   }
 
-  // 6. Nhân vật đã đứng tại điểm đích -> Mở bảng UI (nếu có) và giữ đủ thời gian như người thật
+  // 6. Nhân vật đã đứng tại điểm đích -> Mở bảng UI (nếu chưa mở) và giữ đủ thời gian như người thật
+  const curOpenPanel = stores.benUI?.getState()?.panel;
+  const curLotSel = stores.bai?.getState()?.lotSel;
+  const isTargetPanelAlreadyOpen = Boolean(
+    panelState?.panel &&
+      curOpenPanel === panelState.panel &&
+      (!panelState.lotSel || curLotSel === panelState.lotSel)
+  );
+
   if (walkTracker.arrivedAt === 0) {
     walkTracker.arrivedAt = now;
     if (panelState) {
-      if (panelState.lotSel && stores.bai) {
-        stores.bai.setState({ lotSel: panelState.lotSel });
-      }
-      if (panelState.panel && stores.benUI) {
-        stores.benUI.setState({ panel: panelState.panel });
-      }
-      if (panelState.onOpen) {
-        panelState.onOpen();
-      }
-      if (holdPanelMs > 0) {
-        return { ready: false, msg: walkMsg };
+      if (!isTargetPanelAlreadyOpen) {
+        if (panelState.lotSel && stores.bai) {
+          stores.bai.setState({ lotSel: panelState.lotSel });
+        }
+        if (panelState.panel && stores.benUI) {
+          stores.benUI.setState({ panel: panelState.panel });
+        }
+        if (panelState.onOpen) {
+          panelState.onOpen();
+        }
+        if (holdPanelMs > 0) {
+          return { ready: false, msg: walkMsg };
+        }
       }
     }
   }
 
-  if (panelState && holdPanelMs > 0 && now - walkTracker.arrivedAt < holdPanelMs) {
+  const effectiveHoldMs = isTargetPanelAlreadyOpen ? Math.min(200, holdPanelMs) : holdPanelMs;
+  if (panelState && effectiveHoldMs > 0 && now - walkTracker.arrivedAt < effectiveHoldMs) {
     return { ready: false, msg: walkMsg };
   }
 

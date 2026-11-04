@@ -46,13 +46,44 @@ export async function stepBenDoFishing(
   // Keep the page-hook cricket watchers (trap / tickle / bet timing) alive
   void execGameAction('BEN_WATCH', { config });
 
+  // 0a. Flush live fishing events first so fight turns are always displayed in real-time
+  let hadFreshFishingEvent = false;
+  const fshEvents = snap.benNet?.fishingEvents;
+  if (Array.isArray(fshEvents) && fshEvents.length > 0) {
+    for (const ev of fshEvents) {
+      if (ev && typeof ev.seq === 'number' && ev.seq > lastFishingEventSeq) {
+        lastFishingEventSeq = ev.seq;
+        setStatus(ev.text);
+        hadFreshFishingEvent = true;
+      }
+    }
+  }
+
   // =========================================================================
-  // 🐟 HIGHEST PRIORITY: CATCH RESULT MODAL (MENU NHẬN CÁ)
+  // 🎣 HIGHEST PRIORITY #0: ACTIVE FISHING FIGHT (ĐANG GHÌM CẦN TRÁI / PHẢI)
+  // Bắt buộc hoàn thành xong hành động ghìm cần rồi mới thực hiện các hành động khác,
+  // kể cả khi Boss Bí Ngô xuất hiện hay tới giờ sang Đất Bãi!
+  // =========================================================================
+  if (bn.fishing === 'fight' || Boolean(document.querySelector('.ben-fight'))) {
+    if (!hadFreshFishingEvent && !bn.fight?.run && (bn.fight?.last === null || bn.fight?.last === undefined)) {
+      setStatus('🎣 Bến Đò: Đang ghìm cá...');
+    }
+    return { finishedArea: false };
+  }
+
+  // =========================================================================
+  // 🐟 HIGHEST PRIORITY #0.2: CATCH RESULT MODAL (MENU NHẬN CÁ)
   // Xử lý và đóng ngay bảng nhận cá câu được trước mọi kiểm tra chuyển map hay câu tiếp
   // =========================================================================
   if (bn.fishing === 'landing' || Boolean(bn.landed) || Boolean(document.querySelector('.catch-card.ben-catch'))) {
     const catchResult = handleBenCatchModal(snap, config, setStatus, onCatchIncrement, delayMs);
     if (catchResult.handled) {
+      if (catchResult.microBreakMs && catchResult.microBreakMs > 0) {
+        microBreakUntil = performance.now() + catchResult.microBreakMs;
+      }
+      if (typeof catchResult.nextCastDelayMs === 'number') {
+        nextCastDelayMs = catchResult.nextCastDelayMs;
+      }
       await sleep(Math.max(100, Math.min(delayMs * 0.25, 250)));
       return { finishedArea: false };
     }
@@ -228,19 +259,6 @@ export async function stepBenDoFishing(
     }
   }
 
-  // 0b. Live status updates from page-hook fishing watchers (misses / pull results / catches)
-  let hadFreshFishingEvent = false;
-  const fshEvents = snap.benNet?.fishingEvents;
-  if (Array.isArray(fshEvents) && fshEvents.length > 0) {
-    for (const ev of fshEvents) {
-      if (ev && typeof ev.seq === 'number' && ev.seq > lastFishingEventSeq) {
-        lastFishingEventSeq = ev.seq;
-        setStatus(ev.text);
-        hadFreshFishingEvent = true;
-      }
-    }
-  }
-
   // Handle hunt gotAway notice (empty bush / escaped)
   const gotAway = snap.benNet?.gotAway;
   if (gotAway && typeof gotAway.seq === 'number' && gotAway.seq !== lastGotAwaySeq) {
@@ -250,15 +268,6 @@ export async function stepBenDoFishing(
     } else if (gotAway.why === 'escaped') {
       setStatus('🦗 Dế đã nhảy mất vào bóng đêm!');
     }
-  }
-
-  // 1. Handle Fight Minigame
-  if (bn.fishing === 'fight' || document.querySelector('.ben-fight')) {
-    // In Ben Do, page-hook fishing-watcher handles fight via keyboard arrow simulation and reports each turn via fishingEvents.
-    if (!hadFreshFishingEvent && !bn.fight?.run && (bn.fight?.last === null || bn.fight?.last === undefined)) {
-      setStatus('🎣 Bến Đò: Đang ghìm cá...');
-    }
-    return { finishedArea: false };
   }
 
   const now = performance.now();

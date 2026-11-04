@@ -41,10 +41,13 @@ const FAST_WATCH_INTERVAL_MS = 40;
 
 function isFishingAutoEnabled(): boolean {
   if (!watchCfg || !watchCfg.running || Date.now() - watchCfgAt > CONFIG_STALE_MS) return false;
+  if (stores.main?.getState().screen !== 'benDo') return false;
+  // Always complete an active fish fight (ghìm cần) regardless of sub-area switches
+  if (stores.benNet?.getState().fishing === 'fight') return true;
   if (watchCfg.benSubEnabled?.fishing === false) return false;
   if (watchCfg.runMode === 'all' && watchCfg.areaEnabled?.benDo === false) return false;
   if (watchCfg.runMode === 'tab' && watchCfg.activeTab !== 'benDo') return false;
-  return stores.main?.getState().screen === 'benDo';
+  return true;
 }
 
 /**

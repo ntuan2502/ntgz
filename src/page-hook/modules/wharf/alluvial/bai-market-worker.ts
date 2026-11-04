@@ -249,14 +249,20 @@ export function runBaiMarketWorkStep(cfg: AppConfig): {
     }
   }
 
-  // 3. Bán trứng gà & trứng vịt cho Sạp Chú Năm
+  // 3. Sạp Chú Năm / Bà Bảy (4, 15): Bán trứng gà/vịt & Mua thuốc gia cầm trong cùng 1 lần mở cửa sổ `{ panel: 'poultry' }`
   const henEggs = cfg.benAutoEggSell !== false ? baiState.items['eggHen'] || 0 : 0;
   const duckEggs = cfg.benAutoEggSell !== false ? baiState.items['eggDuck'] || 0 : 0;
-  if ((henEggs > 0 || duckEggs > 0) && !skippedStalls.has('poultry_eggs')) {
+  const pendingMed = baiState.pendingSupplies.med || 0;
+  const needPoultrySell = henEggs > 0 || duckEggs > 0;
+  const needPoultryMed = pendingMed > 0;
+
+  if ((needPoultrySell || needPoultryMed) && !skippedStalls.has('poultry')) {
     const walk = tryWalkToStall(
-      'poultry_eggs',
+      'poultry',
       POULTRY_STALL_TILE,
-      '🚶 Chợ Bãi: Đang đi bộ tới Sạp Chú Năm (4, 15) để bán trứng...',
+      needPoultrySell
+        ? '🚶 Chợ Bãi: Đang đi bộ tới Sạp Chú Năm (4, 15) để bán trứng...'
+        : `🚶 Chợ Bãi: Đang đi bộ tới Sạp Bà Bảy (4, 15) mua ${pendingMed} liều thuốc gia cầm...`,
       { panel: 'poultry' },
       550
     );
@@ -267,7 +273,7 @@ export function runBaiMarketWorkStep(cfg: AppConfig): {
         finishedMarket: false,
         result: { acted: true, msg: walk.msg, allowCast: false },
       };
-    } else {
+    } else if (needPoultrySell) {
       sendBenWs({
         t: 'eggSell',
         pick: {
@@ -277,7 +283,9 @@ export function runBaiMarketWorkStep(cfg: AppConfig): {
       });
       baiState.items['eggHen'] = 0;
       baiState.items['eggDuck'] = 0;
-      closeBaiPanel();
+      if (!needPoultryMed) {
+        closeBaiPanel();
+      }
 
       return {
         finishedMarket: false,
@@ -287,63 +295,99 @@ export function runBaiMarketWorkStep(cfg: AppConfig): {
           allowCast: false,
         },
       };
+    } else if (needPoultryMed) {
+      sendBenWs({ t: 'medBuy', qty: pendingMed });
+      baiState.items['med'] = (baiState.items['med'] || 0) + pendingMed;
+      baiState.pendingSupplies.med = 0;
+      baiState.boughtSuppliesForFarm = true;
+      closeBaiPanel();
+      return {
+        finishedMarket: false,
+        result: {
+          acted: true,
+          msg: `💊 Sạp Bà Bảy: Đã mua ${pendingMed} liều thuốc chữa bệnh gia cầm!`,
+          allowCast: false,
+        },
+      };
     }
   }
 
-  // 4. Bán cá nuôi lưới & ốc bươu, cua đồng cho Ghe Anh Mười
-  if (cfg.benAutoNetSell !== false) {
-    const netFishCatalog = Object.keys(baiState.info?.net?.fish || {});
-    const fishKeys = Object.keys(baiState.items).filter(
-      (k) =>
-        baiState.items[k] > 0 &&
-        (k === 'oc' ||
-          k === 'cua' ||
-          k.startsWith('fish:') ||
-          k.toLowerCase().startsWith('netfish:') ||
-          netFishCatalog.includes(k))
+  // 4. Ghe Anh Mười (15, 5): Bán thủy sản (cá lưới, ốc, cua) & Mua cám cá trong cùng 1 lần mở cửa sổ `{ panel: 'fishBoat' }`
+  const netFishCatalog = Object.keys(baiState.info?.net?.fish || {});
+  const fishKeys =
+    cfg.benAutoNetSell !== false
+      ? Object.keys(baiState.items).filter(
+          (k) =>
+            baiState.items[k] > 0 &&
+            (k === 'oc' ||
+              k === 'cua' ||
+              k.startsWith('fish:') ||
+              k.toLowerCase().startsWith('netfish:') ||
+              netFishCatalog.includes(k))
+        )
+      : [];
+  const pendingNetFeed = baiState.pendingSupplies.netFeed || 0;
+  const needFishBoatSell = fishKeys.length > 0;
+  const needFishBoatFeed = pendingNetFeed > 0;
+
+  if ((needFishBoatSell || needFishBoatFeed) && !skippedStalls.has('fishBoat')) {
+    const walk = tryWalkToStall(
+      'fishBoat',
+      FISHBOAT_STALL_TILE,
+      needFishBoatSell
+        ? '🚶 Chợ Bãi: Đang đi bộ tới Ghe Anh Mười (15, 5) để bán thủy sản...'
+        : `🚶 Chợ Bãi: Đang đi bộ tới Ghe Anh Mười (15, 5) mua ${pendingNetFeed} bao cám cá...`,
+      { panel: 'fishBoat' },
+      550
     );
-
-    if (fishKeys.length > 0 && !skippedStalls.has('fishBoat_sell')) {
-      const walk = tryWalkToStall(
-        'fishBoat_sell',
-        FISHBOAT_STALL_TILE,
-        '🚶 Chợ Bãi: Đang đi bộ tới Ghe Anh Mười (15, 5) để bán thủy sản...',
-        { panel: 'fishBoat' },
-        550
-      );
-      if (walk.timedOut) {
-        // Skipped
-      } else if (!walk.ready) {
-        return {
-          finishedMarket: false,
-          result: { acted: true, msg: walk.msg, allowCast: false },
-        };
-      } else {
-        const pick: Record<string, number> = {};
-        let totalSold = 0;
-        for (const k of fishKeys) {
-          const qty = baiState.items[k];
-          if (k === 'oc' || k === 'cua' || k.startsWith('netfish:')) {
-            pick[k] = qty;
-          } else {
-            const shortKey = k.replace(/^(fish:|netfish:|netFish:)/i, '');
-            pick[`netfish:${shortKey}`] = qty;
-          }
-          totalSold += qty;
-          baiState.items[k] = 0;
+    if (walk.timedOut) {
+      // Skipped
+    } else if (!walk.ready) {
+      return {
+        finishedMarket: false,
+        result: { acted: true, msg: walk.msg, allowCast: false },
+      };
+    } else if (needFishBoatSell) {
+      const pick: Record<string, number> = {};
+      let totalSold = 0;
+      for (const k of fishKeys) {
+        const qty = baiState.items[k];
+        if (k === 'oc' || k === 'cua' || k.startsWith('netfish:')) {
+          pick[k] = qty;
+        } else {
+          const shortKey = k.replace(/^(fish:|netfish:|netFish:)/i, '');
+          pick[`netfish:${shortKey}`] = qty;
         }
-
-        sendBenWs({ t: 'netSell', pick });
-        closeBaiPanel();
-        return {
-          finishedMarket: false,
-          result: {
-            acted: true,
-            msg: `🐟 Ghe Anh Mười: Đã bán ${totalSold} con thủy sản (cá lưới / ốc / cua) lấy vỏ sò!`,
-            allowCast: false,
-          },
-        };
+        totalSold += qty;
+        baiState.items[k] = 0;
       }
+
+      sendBenWs({ t: 'netSell', pick });
+      if (!needFishBoatFeed) {
+        closeBaiPanel();
+      }
+      return {
+        finishedMarket: false,
+        result: {
+          acted: true,
+          msg: `🐟 Ghe Anh Mười: Đã bán ${totalSold} con thủy sản (cá lưới / ốc / cua) lấy vỏ sò!`,
+          allowCast: false,
+        },
+      };
+    } else if (needFishBoatFeed) {
+      sendBenWs({ t: 'netBuy', kind: 'feed', qty: pendingNetFeed });
+      baiState.items['netFeed'] = (baiState.items['netFeed'] || 0) + pendingNetFeed;
+      baiState.pendingSupplies.netFeed = 0;
+      baiState.boughtSuppliesForFarm = true;
+      closeBaiPanel();
+      return {
+        finishedMarket: false,
+        result: {
+          acted: true,
+          msg: `🌾 Ghe Anh Mười: Đã mua ${pendingNetFeed} bao cám nuôi cá sông!`,
+          allowCast: false,
+        },
+      };
     }
   }
 
@@ -456,74 +500,6 @@ export function runBaiMarketWorkStep(cfg: AppConfig): {
     }
   }
 
-  // 8. Mua thuốc gia cầm tại Sạp Chú Năm / Bà Bảy (4, 15)
-  const pendingMed = baiState.pendingSupplies.med || 0;
-  if (pendingMed > 0 && !skippedStalls.has('poultry_med')) {
-    const walk = tryWalkToStall(
-      'poultry_med',
-      POULTRY_STALL_TILE,
-      `🚶 Chợ Bãi: Đang đi bộ tới Sạp Bà Bảy (4, 15) mua ${pendingMed} liều thuốc gia cầm...`,
-      { panel: 'poultry' },
-      550
-    );
-    if (walk.timedOut) {
-      // Skipped
-    } else if (!walk.ready) {
-      return {
-        finishedMarket: false,
-        result: { acted: true, msg: walk.msg, allowCast: false },
-      };
-    } else {
-      sendBenWs({ t: 'medBuy', qty: pendingMed });
-      baiState.items['med'] = (baiState.items['med'] || 0) + pendingMed;
-      baiState.pendingSupplies.med = 0;
-      baiState.boughtSuppliesForFarm = true;
-      closeBaiPanel();
-      return {
-        finishedMarket: false,
-        result: {
-          acted: true,
-          msg: `💊 Sạp Bà Bảy: Đã mua ${pendingMed} liều thuốc chữa bệnh gia cầm!`,
-          allowCast: false,
-        },
-      };
-    }
-  }
-
-  // 9. Mua cám cá tại Ghe Anh Mười (15, 5)
-  const pendingNetFeed = baiState.pendingSupplies.netFeed || 0;
-  if (pendingNetFeed > 0 && !skippedStalls.has('fishBoat_feed')) {
-    const walk = tryWalkToStall(
-      'fishBoat_feed',
-      FISHBOAT_STALL_TILE,
-      `🚶 Chợ Bãi: Đang đi bộ tới Ghe Anh Mười (15, 5) mua ${pendingNetFeed} bao cám cá...`,
-      { panel: 'fishBoat' },
-      550
-    );
-    if (walk.timedOut) {
-      // Skipped
-    } else if (!walk.ready) {
-      return {
-        finishedMarket: false,
-        result: { acted: true, msg: walk.msg, allowCast: false },
-      };
-    } else {
-      sendBenWs({ t: 'netBuy', kind: 'feed', qty: pendingNetFeed });
-      baiState.items['netFeed'] = (baiState.items['netFeed'] || 0) + pendingNetFeed;
-      baiState.pendingSupplies.netFeed = 0;
-      baiState.boughtSuppliesForFarm = true;
-      closeBaiPanel();
-      return {
-        finishedMarket: false,
-        result: {
-          acted: true,
-          msg: `🌾 Ghe Anh Mười: Đã mua ${pendingNetFeed} bao cám nuôi cá sông!`,
-          allowCast: false,
-        },
-      };
-    }
-  }
-
   // 10. Ghé Kho HTX Cô Tư (29, 10) kiểm tra và nhận thưởng đóng góp HTX
   if (cfg.benAutoHtxClaim !== false && !skippedStalls.has('htx')) {
     const now = Date.now();
@@ -575,10 +551,11 @@ export function runBaiMarketWorkStep(cfg: AppConfig): {
     }
   }
 
-  // 11. Bốc thăm may mắn tại Sạp Thím Hên (42, 24) khi có que thăm HTX
+  // 11. Bốc thăm may mắn tại Sạp Thím Hên (42, 24) khi có que thăm HTX (giữ cửa sổ mở nếu còn > 10 que)
   if (cfg.benAutoLuckDraw !== false && !skippedStalls.has('luck')) {
     const bn = stores.benNet?.getState();
-    const sticks = (bn?.wallet as { sticks?: number } | undefined)?.sticks ?? 0;
+    const wallet = bn?.wallet as { sticks?: number } | undefined;
+    const sticks = wallet?.sticks ?? 0;
     if (sticks > 0) {
       const walk = tryWalkToStall(
         'luck',
@@ -598,7 +575,13 @@ export function runBaiMarketWorkStep(cfg: AppConfig): {
         const drawN = Math.min(sticks, 10);
         const pool = cfg.benLuckDrawPool || 'back';
         sendBenWs({ t: 'luckDraw', pool, n: drawN, pay: 'sticks' });
-        closeBaiPanel();
+        const remSticks = Math.max(0, sticks - drawN);
+        if (wallet) {
+          wallet.sticks = remSticks;
+        }
+        if (remSticks <= 0) {
+          closeBaiPanel();
+        }
         return {
           finishedMarket: false,
           result: {
