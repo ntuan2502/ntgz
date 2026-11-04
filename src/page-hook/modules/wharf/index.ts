@@ -33,18 +33,210 @@ let keepBenPanelUntil = 0;
 let keepBenPanelMsg = '';
 let hadMyBout = false;
 
+/** Panels whose buy/sell buttons are gated by a server shop token (`{ t: 'shop', at }` → `shop.k` + `shop.ready`). */
+const SHOP_PANEL_AT: Record<string, string> = {
+  bait: 'bait',
+  tea: 'tea',
+  food: 'food',
+  hair: 'hair',
+  sell: 'stall',
+};
+const SHOP_READY_TIMEOUT_MS = 8000;
+const SHOP_CONFIRM_TIMEOUT_MS = 4000;
+const SHOP_MAX_ATTEMPTS = 3;
+const RETRYABLE_SHOP_ERRORS = new Set(['shopClosed', 'slow']);
+
 interface PendingPanelAction {
   label: string;
   panelState: Record<string, unknown>;
   actionFn: () => void;
+  shopAt: string | null;
+  openAt: number;
   openedAt: number;
   triggerDelayMs: number;
   holdAfterMs: number;
-  executed: boolean;
+  readySince: number;
+  readyPauseMs: number;
+  executedAt: number;
+  attempts: number;
+  baselineSig: string;
+  baselineNoticeSeq: number;
+  confirmed: boolean;
   closeAt: number;
 }
 
 let pendingPanel: PendingPanelAction | null = null;
+
+function humanDelay(minMs: number, maxMs: number): number {
+  return Math.floor(minMs + Math.random() * Math.max(0, maxMs - minMs));
+}
+
+/** Snapshot of everything a successful buy / sell / eat changes on the wharf store. */
+function walletSignature(bn: Record<string, unknown>): string {
+  const w = (bn.wallet || {}) as Record<string, unknown>;
+  const seqOf = (key: string) => (bn[key] as { seq?: number } | null | undefined)?.seq ?? null;
+  const pack = (bn.pack || {}) as Record<string, number>;
+  const packTotal = Object.values(pack).reduce((s, n) => s + (Number(n) || 0), 0);
+  return JSON.stringify([
+    w.shells,
+    w.bait,
+    w.stamina,
+    w.liveStamina,
+    w.luckCasts,
+    packTotal,
+    seqOf('bought'),
+    seqOf('sold'),
+    seqOf('ate'),
+  ]);
+}
+
+function hasEnabledShopButton(): boolean {
+  const btn = document.querySelector<HTMLButtonElement>(
+    '.ben-panel button.ben-item-buy:not(:disabled), .ben-panel button.ben-sell-btn:not(:disabled)'
+  );
+  return Boolean(btn && btn.offsetParent !== null);
+}
+
+function finishPendingPanel(
+  buStore: { setState: (s: Record<string, unknown>) => void },
+  msg: string
+): BenStepResult {
+  buStore.setState({ panel: null });
+  pendingPanel = null;
+  keepBenPanelUntil = 0;
+  return { acted: true, msg };
+}
+
+/**
+ * Drives one queued panel action like a human: pause after arriving → open panel →
+ * wait for the shop token + lit buy button → short reaction pause → act →
+ * wait for the server to confirm (wallet/bought/sold changes) → linger → close.
+ */
+function stepPendingPanel(
+  bn: Record<string, unknown>,
+  bu: { panel?: unknown },
+  buStore: { setState: (s: Record<string, unknown>) => void }
+): BenStepResult | null {
+  const p = pendingPanel;
+  if (!p) return null;
+  const now = Date.now();
+
+  if (!p.openedAt) {
+    if (now < p.openAt) {
+      return { acted: true, msg: `🧍 Đã tới nơi, chuẩn bị mở bảng: ${p.label}` };
+    }
+    buStore.setState(p.panelState);
+    p.openedAt = now;
+    return { acted: true, msg: `📂 Mở bảng: ${p.label}` };
+  }
+
+  if (!bu.panel) {
+    pendingPanel = null;
+    keepBenPanelUntil = 0;
+    if (p.confirmed) return { acted: true, msg: `✅ Xong: ${p.label}` };
+    return {
+      acted: true,
+      msg: `⚠️ Bảng bị đóng trước khi xác nhận xong: ${p.label} -> sẽ thử lại tại chỗ`,
+    };
+  }
+
+  // 1. Waiting for the button to light up
+  if (!p.executedAt) {
+    let ready: boolean;
+    if (p.shopAt) {
+      const shop = bn.shop as { at?: string; k?: string; ready?: number } | null | undefined;
+      ready =
+        shop?.at === p.shopAt &&
+        Boolean(shop.k) &&
+        typeof shop.ready === 'number' &&
+        shop.ready <= performance.now() &&
+        hasEnabledShopButton();
+      if (!ready && now - p.openedAt > SHOP_READY_TIMEOUT_MS) {
+        return finishPendingPanel(
+          buStore,
+          `❌ ${p.label}: Chờ ${SHOP_READY_TIMEOUT_MS / 1000}s nút mua vẫn chưa sáng (shop=${shop?.at ?? 'null'}, token=${shop?.k ? 'có' : 'chưa'}) -> đóng bảng, thử lại sau`
+        );
+      }
+    } else {
+      ready = now - p.openedAt >= p.triggerDelayMs;
+    }
+
+    if (!ready) {
+      return { acted: true, msg: `⏳ ${p.label} (chờ nút thao tác sáng lên...)` };
+    }
+    if (!p.readySince) {
+      p.readySince = now;
+      p.readyPauseMs = humanDelay(380, 820);
+    }
+    if (now - p.readySince < p.readyPauseMs) {
+      return { acted: true, msg: `👀 ${p.label} (đang xem bảng...)` };
+    }
+
+    p.baselineSig = walletSignature(bn);
+    p.baselineNoticeSeq = (bn.notice as { seq?: number } | null | undefined)?.seq ?? -1;
+    p.attempts += 1;
+    p.executedAt = now;
+    try {
+      p.actionFn();
+    } catch (err) {
+      console.error('[Wharf] Action execution error:', err);
+    }
+    return {
+      acted: true,
+      msg: `🖱️ Bấm thao tác${p.attempts > 1 ? ` (lần ${p.attempts})` : ''}: ${p.label}`,
+    };
+  }
+
+  // 2. Waiting for the server to confirm
+  if (!p.confirmed) {
+    if (!p.shopAt) {
+      if (now - p.executedAt < p.holdAfterMs) {
+        return { acted: true, msg: `👁️ ${p.label} (đang xử lý...)` };
+      }
+      p.confirmed = true;
+      p.closeAt = now + humanDelay(250, 600);
+      return { acted: true, msg: `✅ ${p.label}` };
+    }
+
+    const notice = bn.notice as { error?: string; seq?: number } | null | undefined;
+    const newError = notice && (notice.seq ?? -1) !== p.baselineNoticeSeq ? notice.error : undefined;
+    if (walletSignature(bn) !== p.baselineSig) {
+      p.confirmed = true;
+      p.closeAt = now + humanDelay(p.holdAfterMs, p.holdAfterMs + 450);
+      return { acted: true, msg: `✅ Thành công: ${p.label}` };
+    }
+
+    const retry = (reason: string): BenStepResult => {
+      if (p.attempts >= SHOP_MAX_ATTEMPTS) {
+        return finishPendingPanel(
+          buStore,
+          `❌ ${p.label}: Thất bại sau ${p.attempts} lần (${reason}) -> đóng bảng, thử lại sau`
+        );
+      }
+      p.executedAt = 0;
+      p.readySince = 0;
+      return {
+        acted: true,
+        msg: `⚠️ ${p.label}: Chưa mua được (${reason}) -> đứng lại chờ nút sáng để bấm lại`,
+      };
+    };
+
+    if (newError) {
+      if (RETRYABLE_SHOP_ERRORS.has(newError)) return retry(newError);
+      return finishPendingPanel(buStore, `❌ ${p.label}: Máy chủ từ chối (${newError})`);
+    }
+    if (now - p.executedAt > SHOP_CONFIRM_TIMEOUT_MS) {
+      return retry('không thấy máy chủ xác nhận');
+    }
+    return { acted: true, msg: `⏳ ${p.label} (chờ xác nhận...)` };
+  }
+
+  // 3. Linger briefly like a human reading the toast, then close
+  if (now < p.closeAt) {
+    return { acted: true, msg: `👁️ ${p.label} (xong, chuẩn bị đóng bảng...)` };
+  }
+  return finishPendingPanel(buStore, '🚪 Đã đóng bảng thao tác');
+}
 
 /**
  * Tự động đóng modal nhận cá câu được (.catch-card.ben-catch),
@@ -265,53 +457,12 @@ export function execBenStep(
 
   const benShowFullActions = true;
 
-  if (pendingPanel) {
-    if (!bu.panel) {
-      pendingPanel = null;
-    } else {
-      const elapsed = Date.now() - pendingPanel.openedAt;
-      const isShopReady = Boolean(bn.shop?.ready && bn.shop.ready <= performance.now());
-      if (!pendingPanel.executed) {
-        if (elapsed < pendingPanel.triggerDelayMs && !isShopReady) {
-          return {
-            acted: true,
-            msg: `⏳ Đang mở ${pendingPanel.label} (chờ hiển thị nút thao tác...)`,
-          };
-        }
-        // Button is enabled in the live UI! Attempt clicking the active DOM button
-        const buyBtn = document.querySelector<HTMLButtonElement>(
-          'button.ben-item-buy:not(:disabled), button.ben-sell-btn:not(:disabled), .ben-panel button.btn-green:not(:disabled), .panel button.btn-green:not(:disabled)'
-        );
-        if (buyBtn && !buyBtn.disabled && buyBtn.offsetParent !== null) {
-          buyBtn.click();
-        }
-        try {
-          pendingPanel.actionFn();
-        } catch (err) {
-          console.error('[Wharf] Action execution error:', err);
-        }
-        pendingPanel.executed = true;
-        pendingPanel.closeAt = Date.now() + pendingPanel.holdAfterMs;
-        return {
-          acted: true,
-          msg: `✅ Đã chọn mua/thao tác tại ${pendingPanel.label}`,
-        };
-      } else {
-        if (Date.now() < pendingPanel.closeAt) {
-          return {
-            acted: true,
-            msg: `👁️ ${pendingPanel.label} (đang xử lý...)`,
-          };
-        }
-        buStore.setState({ panel: null });
-        pendingPanel = null;
-        return {
-          acted: true,
-          msg: '🚪 Đã đóng bảng thao tác',
-        };
-      }
-    }
-  }
+  const pendingRes = stepPendingPanel(
+    bn as unknown as Record<string, unknown>,
+    bu,
+    buStore as unknown as { setState: (s: Record<string, unknown>) => void }
+  );
+  if (pendingRes) return pendingRes;
 
   if (bu.panel && Date.now() < keepBenPanelUntil) {
     return { acted: true, msg: keepBenPanelMsg || '👁️ Đang thao tác trên giao diện...' };
@@ -365,22 +516,29 @@ export function execBenStep(
     holdAfterMs = 400
   ) => {
     if (panelState) {
-      buStore.setState(panelState);
+      if (pendingPanel) return;
+      // The game's shop panel requests its own shop token on mount (and re-polls every 2s).
+      // Sending an extra `{ t: 'shop' }` here would rotate the token and void the purchase.
       const panelKey = panelState.panel as string | undefined;
-      if (panelKey && ['bait', 'tea', 'food', 'hair', 'sell'].includes(panelKey)) {
-        sendBenWs({ t: 'shop', at: panelKey === 'sell' ? 'stall' : panelKey });
-      }
+      const human = cfg.benHumanJitter !== false;
       pendingPanel = {
         label,
         panelState,
         actionFn,
-        openedAt: Date.now(),
+        shopAt: (panelKey && SHOP_PANEL_AT[panelKey]) || null,
+        openAt: Date.now() + (human ? humanDelay(320, 750) : 150),
+        openedAt: 0,
         triggerDelayMs: Math.max(500, triggerDelayMs),
-        holdAfterMs: Math.max(300, holdAfterMs),
-        executed: false,
+        holdAfterMs: Math.max(human ? 550 : 300, holdAfterMs),
+        readySince: 0,
+        readyPauseMs: 0,
+        executedAt: 0,
+        attempts: 0,
+        baselineSig: '',
+        baselineNoticeSeq: -1,
+        confirmed: false,
         closeAt: 0,
       };
-      keepBenPanelUntil = Date.now() + Math.max(500, triggerDelayMs) + Math.max(300, holdAfterMs);
       keepBenPanelMsg = label;
     } else {
       actionFn();
@@ -410,7 +568,9 @@ export function execBenStep(
     if (!cur) {
       return { acted: false };
     }
-    if (!benScene.farmer?.running && Math.abs(cur.x - tile.x) + Math.abs(cur.y - tile.y) <= 1) {
+    // Same tolerance as the arrival callback below, otherwise a stall whose
+    // nearest walkable tile is 2 steps away makes the farmer re-walk on every retry.
+    if (!benScene.farmer?.running && Math.abs(cur.x - tile.x) + Math.abs(cur.y - tile.y) <= 2) {
       if (actionKey) markActed(actionKey);
       runWithOptionalPanel(actionFn, label, panelState, triggerDelayMs, holdAfterMs);
       return { acted: true, msg: label };

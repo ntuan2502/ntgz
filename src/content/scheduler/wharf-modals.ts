@@ -13,6 +13,8 @@ import {
 } from './militia-solver';
 
 let lastModalClickAt = 0;
+let catchCardSeenAt = 0;
+let catchReadMs = 0;
 let lastWheelActionAt = 0;
 let lastAtmActionAt = 0;
 let lastCricketCatchAt = 0;
@@ -82,12 +84,25 @@ export function handleBenCatchModal(
 
   const card = document.querySelector('.catch-card.ben-catch') as HTMLElement | null;
   if (!card) {
+    catchCardSeenAt = 0;
     if (bn?.fishing === 'landing' || bn?.landed) {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'z', code: 'KeyZ', bubbles: true }));
       void execGameAction('BEN_DISMISS_CATCH', { config });
     }
     return { handled: true };
   }
+
+  // Look at the catch card for a moment like a human before pressing a button
+  if (config.benHumanJitter !== false) {
+    if (!catchCardSeenAt) {
+      catchCardSeenAt = now;
+      catchReadMs = 550 + Math.floor(Math.random() * 650);
+    }
+    if (now - catchCardSeenAt < catchReadMs) {
+      return { handled: true };
+    }
+  }
+  catchCardSeenAt = 0;
 
   const landed = bn?.landed as {
     id?: string;
@@ -192,7 +207,7 @@ export function handleBenCatchModal(
 
   if (config.benHumanJitter !== false) {
     const microBreakMs = Math.random() < 0.04 ? Math.floor(Math.random() * 2000) + 2000 : 0;
-    const nextCastDelayMs = Math.floor(Math.random() * 200) + 200;
+    const nextCastDelayMs = Math.floor(Math.random() * 600) + 550;
     return { handled: true, microBreakMs, nextCastDelayMs };
   }
 

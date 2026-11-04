@@ -13,6 +13,7 @@ let lastGotAwaySeq = -1;
 let nextCastDelayMs = 0;
 let microBreakUntil = 0;
 let lastArrivedSpotAt = 0;
+let arriveSettleMs = 450;
 
 export async function stepBenDoFishing(
   snap: GameSnapshot,
@@ -422,13 +423,14 @@ export async function stepBenDoFishing(
     }
 
     const allowCast = Boolean(prep?.ok && prep.allowCast);
-    const targetCastDelay = Math.max(200, Math.min(nextCastDelayMs || delayMs, 500));
+    const targetCastDelay = Math.max(200, Math.min(nextCastDelayMs || delayMs, 1400));
 
     if (bu?.spot && !bu?.walking) {
       if (lastArrivedSpotAt === 0) {
         lastArrivedSpotAt = now;
+        arriveSettleMs = config.benHumanJitter !== false ? 550 + Math.floor(Math.random() * 600) : 450;
       }
-      if (now - lastArrivedSpotAt < 450) {
+      if (now - lastArrivedSpotAt < arriveSettleMs) {
         return { finishedArea: false };
       }
     } else {
@@ -446,7 +448,7 @@ export async function stepBenDoFishing(
       lastCastAt = now;
       lastArrivedSpotAt = 0;
       if (config.benHumanJitter !== false) {
-        nextCastDelayMs = Math.floor(Math.random() * 200) + 200;
+        nextCastDelayMs = Math.floor(Math.random() * 600) + 550;
       } else {
         nextCastDelayMs = 150;
       }
