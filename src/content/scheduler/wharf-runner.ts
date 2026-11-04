@@ -228,12 +228,14 @@ export async function stepBenDoFishing(
   }
 
   // 0b. Live status updates from page-hook fishing watchers (misses / pull results / catches)
+  let hadFreshFishingEvent = false;
   const fshEvents = snap.benNet?.fishingEvents;
   if (Array.isArray(fshEvents) && fshEvents.length > 0) {
     for (const ev of fshEvents) {
       if (ev && typeof ev.seq === 'number' && ev.seq > lastFishingEventSeq) {
         lastFishingEventSeq = ev.seq;
         setStatus(ev.text);
+        hadFreshFishingEvent = true;
       }
     }
   }
@@ -251,13 +253,15 @@ export async function stepBenDoFishing(
 
   // 1. Handle Fight Minigame
   if (bn.fishing === 'fight' || document.querySelector('.ben-fight')) {
-    // In Ben Do, page-hook fishing-watcher handles fight via WebSocket with zero latency.
-    const run = bn.fight?.run;
-    if (run && run.dir) {
-      const pullDir = run.dir === 'left' ? 'PHẢI ➡' : 'TRÁI ⬅';
-      setStatus(`💪 Bến Đò: Cá chạy ${run.dir === 'left' ? 'trái' : 'phải'} -> Ghìm ${pullDir}`);
-    } else {
-      setStatus('🎣 Bến Đò: Đang ghìm cá...');
+    // In Ben Do, page-hook fishing-watcher handles fight via keyboard arrow simulation and WebSocket.
+    if (!hadFreshFishingEvent) {
+      const run = bn.fight?.run;
+      if (run && run.dir) {
+        const pullDir = run.dir === 'left' ? 'PHẢI ➡' : 'TRÁI ⬅';
+        setStatus(`💪 Bến Đò: Cá chạy ${run.dir === 'left' ? 'trái' : 'phải'} -> Ghìm ${pullDir}`);
+      } else {
+        setStatus('🎣 Bến Đò: Đang ghìm cá...');
+      }
     }
     return { finishedArea: false };
   }
