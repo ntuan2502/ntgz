@@ -5,6 +5,24 @@ Tất cả các thay đổi đáng chú ý của dự án **Nông Trại GenZ Au
 
 ---
 
+## [1.18.1] - 2026-11-05
+
+### 🎣 Bến Đò: Tương Thích Hoàn Toàn Bản Cập Nhật Game Mới Nhất
+- **Bắt chuẩn xác WebSocket từ Hidden Iframe (`bq()` / `mq()`)**:
+  - Bản cập nhật game mới chuyển sang tạo kết nối WebSocket Bến Đò từ iframe ẩn (`mq().contentWindow.WebSocket`).
+  - Nâng cấp `hookWebSocketPrototype` tự động can thiệp cả `window.WebSocket` lẫn `iframe.contentWindow.WebSocket.prototype`, bảo đảm biến `benWs` luôn được bắt chính xác 100% trong mọi tình huống.
+- **Xử lý triệt để rò rỉ bộ nhớ sự kiện (Memory Leak `keydown`)**:
+  - Sửa lỗi component giằng co cá (`h8`) của game re-render liên tục và đăng ký hàng chục listener `keydown` rác do `stealth-guard.ts` trước đây bọc listener mà chưa unwrap trong `removeEventListener`.
+  - Quản lý ánh xạ listener qua `WeakMap`, unwrap chuẩn xác khi React cleanup, chặn đứng hiện tượng tích tụ 20+ listener và lỗi spam 20 gói tin `pull` liên tiếp trong 11ms làm đứt cước câu.
+- **Tối ưu hóa thao tác ghìm cần (`executeFightPull`)**:
+  - Dọn sạch `fight.run` trong Zustand store ngay lập tức và chỉ gửi duy nhất 1 gói tin `{ t: 'pull', n, dir }` kèm timing `u` tự nhiên qua WebSocket, loại bỏ bão sự kiện bàn phím ảo.
+- **Khắc phục triệt để lỗi giật cần quá sớm (Cá mới rỉa chưa cắn đã giật cần)**:
+  - Nhận diện đúng cơ chế hiển thị nút của game: nút màu nâu mang chữ `GIẬT!` luôn xuất hiện trên màn hình trong suốt cả 3 pha `wait` (chờ cá), `nibble` (cá rỉa) và `bite` (cá cắn).
+  - Loại bỏ điều kiện quét nút sớm trên DOM (`isBiteButtonPresent`) ở `wharf-runner.ts`, trao toàn quyền xử lý nhịp giật cần thời gian thực cho `fishing-watcher.ts`.
+  - Canh chuẩn xác độ trễ phao chìm hẳn **360ms - 430ms** chỉ khi trạng thái chính thức chuyển sang pha `bite`, loại bỏ lệnh gửi giật kép và chấm dứt hiện tượng trượt cá.
+
+---
+
 ## [1.18.0] - 2026-11-04
 
 ### 🛡️ Phòng Thủ Stealth Tàng Hình & Vượt Toàn Diện Anti-Cheat Probe Game Mới
