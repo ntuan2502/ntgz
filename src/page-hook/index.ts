@@ -150,6 +150,19 @@ interface GameActionPayload {
           return { ok: false, reason: 'NOT_IDLE' };
         }
 
+        case 'BEN_HOOK': {
+          sendBenWs({ t: 'hook' });
+          try {
+            const hookBtn = document.querySelector('button.ben-cast.btn-brown') as HTMLButtonElement | null;
+            if (hookBtn && (hookBtn.textContent || '').includes('GIẬT')) {
+              hookBtn.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true }));
+            }
+          } catch {
+            // ignore
+          }
+          return { ok: true, hooked: true };
+        }
+
         case 'FARMSTAY_STEP': {
           if (!payload.config) return { ok: false, error: 'NO_CONFIG' };
           const res = execFarmstayStep(payload.config);

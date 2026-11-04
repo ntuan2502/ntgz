@@ -103,103 +103,128 @@ export function addBenWsMessageListener(fn: BenWsMessageListener): () => void {
 }
 
 // 1. Intercept WebSocket.prototype.send to capture Ben Do WebSocket
-try {
-  const origSend = WebSocket.prototype.send;
-  WebSocket.prototype.send = function (...args: [string | ArrayBufferLike | Blob | ArrayBufferView]): void {
-    try {
-      const socket = this as WebSocket;
+export function hookWebSocketPrototype(proto: WebSocket): void {
+  try {
+    const protoRec = proto as unknown as {
+      send: (this: WebSocket, ...args: [string | ArrayBufferLike | Blob | ArrayBufferView]) => void;
+      __ntg_proto_hooked?: boolean;
+    };
+    if (!protoRec || typeof protoRec.send !== 'function' || protoRec.__ntg_proto_hooked) return;
+    protoRec.__ntg_proto_hooked = true;
+    const origSend = protoRec.send;
 
-      // Anti-cheat probe interception: ensure f is always [] (clean)
-      if (typeof args[0] === 'string' && args[0].includes('"probe"')) {
-        try {
-          const probeMsg = JSON.parse(args[0]);
-          if (probeMsg.t === 'probe') {
-            probeMsg.f = [];
-            args[0] = JSON.stringify(probeMsg);
-          }
-        } catch {
-          // ignore
-        }
-      }
+    protoRec.send = function (...args: [string | ArrayBufferLike | Blob | ArrayBufferView]): void {
+      try {
+        const socket = this as WebSocket;
 
-      // Anti-cheat timing (u) normalization: ensure actions always carry valid human delay
-      if (
-        typeof args[0] === 'string' &&
-        (args[0].includes('"cast"') ||
-          args[0].includes('"hook"') ||
-          args[0].includes('"pull"') ||
-          args[0].includes('"buy"') ||
-          args[0].includes('"sell"'))
-      ) {
-        try {
-          const actionMsg = JSON.parse(args[0]);
-          if (
-            actionMsg.t &&
-            ['cast', 'hook', 'pull', 'buy', 'sell'].includes(actionMsg.t)
-          ) {
-            if (
-              typeof actionMsg.u !== 'number' ||
-              actionMsg.u >= 5000 ||
-              actionMsg.u <= 0
-            ) {
-              actionMsg.u = Math.floor(Math.random() * 120) + 65;
-              args[0] = JSON.stringify(actionMsg);
+        // Anti-cheat probe interception: ensure f is always [] (clean)
+        if (typeof args[0] === 'string' && args[0].includes('"probe"')) {
+          try {
+            const probeMsg = JSON.parse(args[0]);
+            if (probeMsg.t === 'probe') {
+              probeMsg.f = [];
+              args[0] = JSON.stringify(probeMsg);
             }
+          } catch {
+            // ignore
           }
-        } catch {
-          // ignore
         }
-      }
 
-      if (socket && typeof socket.url === 'string' && socket.url.includes('/ws/ben-do')) {
-        benWs = socket;
-        (window as unknown as Record<string, unknown>).__ntg_benWs = socket;
-        const sockRecord = socket as unknown as Record<string, unknown>;
-        if (!sockRecord.__ntg_hooked) {
-          sockRecord.__ntg_hooked = true;
-          socket.addEventListener('message', (ev: MessageEvent) => {
-            try {
-              if (typeof ev.data === 'string') {
-                const msg = JSON.parse(ev.data);
-                if (msg && typeof msg === 'object') {
-                  if (msg.t === 'check' && stores.benNet) {
-                    const curCheck = stores.benNet.getState().check;
-                    stores.benNet.setState({
-                      check: {
-                        ...curCheck,
-                        img: (msg.img as string) ?? '',
-                        ask: (msg.ask as string) ?? 'fish',
-                        options: (msg.options as number[]) ?? [],
-                        ms: (msg.ms as number) ?? 15000,
-                        until: Date.now() + (Number(msg.ms) || 15000),
-                        ...(typeof msg.count === 'number' ? { count: msg.count } : {}),
-                        ...(typeof msg.ans === 'number' ? { ans: msg.ans } : {}),
-                        ...(typeof msg.solution === 'number' ? { solution: msg.solution } : {}),
-                        ...(typeof msg.correct === 'number' ? { correct: msg.correct } : {}),
-                        ...(typeof msg.pick === 'number' ? { pick: msg.pick } : {}),
-                      },
-                    });
-                  }
-                  for (const listener of wsListeners) {
-                    try {
-                      listener(msg);
-                    } catch {
-                      // ignore
+        // Anti-cheat timing (u) normalization: ensure actions always carry valid human delay
+        if (
+          typeof args[0] === 'string' &&
+          (args[0].includes('"cast"') ||
+            args[0].includes('"hook"') ||
+            args[0].includes('"pull"') ||
+            args[0].includes('"buy"') ||
+            args[0].includes('"sell"'))
+        ) {
+          try {
+            const actionMsg = JSON.parse(args[0]);
+            if (
+              actionMsg.t &&
+              ['cast', 'hook', 'pull', 'buy', 'sell'].includes(actionMsg.t)
+            ) {
+              if (
+                typeof actionMsg.u !== 'number' ||
+                actionMsg.u >= 5000 ||
+                actionMsg.u <= 0
+              ) {
+                actionMsg.u = Math.floor(Math.random() * 120) + 65;
+                args[0] = JSON.stringify(actionMsg);
+              }
+            }
+          } catch {
+            // ignore
+          }
+        }
+
+        if (socket && typeof socket.url === 'string' && socket.url.includes('/ws/ben-do')) {
+          benWs = socket;
+          (window as unknown as Record<string, unknown>).__ntg_benWs = socket;
+          const sockRecord = socket as unknown as Record<string, unknown>;
+          if (!sockRecord.__ntg_hooked) {
+            sockRecord.__ntg_hooked = true;
+            socket.addEventListener('message', (ev: MessageEvent) => {
+              try {
+                if (typeof ev.data === 'string') {
+                  const msg = JSON.parse(ev.data);
+                  if (msg && typeof msg === 'object') {
+                    if (msg.t === 'check' && stores.benNet) {
+                      const curCheck = stores.benNet.getState().check;
+                      stores.benNet.setState({
+                        check: {
+                          ...curCheck,
+                          img: (msg.img as string) ?? '',
+                          ask: (msg.ask as string) ?? 'fish',
+                          options: (msg.options as number[]) ?? [],
+                          ms: (msg.ms as number) ?? 15000,
+                          until: Date.now() + (Number(msg.ms) || 15000),
+                          ...(typeof msg.count === 'number' ? { count: msg.count } : {}),
+                          ...(typeof msg.ans === 'number' ? { ans: msg.ans } : {}),
+                          ...(typeof msg.solution === 'number' ? { solution: msg.solution } : {}),
+                          ...(typeof msg.correct === 'number' ? { correct: msg.correct } : {}),
+                          ...(typeof msg.pick === 'number' ? { pick: msg.pick } : {}),
+                        },
+                      });
+                    }
+                    for (const listener of wsListeners) {
+                      try {
+                        listener(msg);
+                      } catch {
+                        // ignore
+                      }
                     }
                   }
                 }
+              } catch {
+                // ignore
               }
-            } catch {
-              // ignore
-            }
-          });
+            });
+          }
         }
+      } catch {
+        // ignore
       }
-    } catch {
-      // ignore
+      return origSend.apply(this, args);
+    };
+  } catch {
+    // ignore
+  }
+}
+
+try {
+  const win = window as unknown as Record<string, unknown>;
+  win.__ntg_hookWebSocketPrototype = hookWebSocketPrototype;
+  hookWebSocketPrototype(WebSocket.prototype);
+
+  // Hook any pending iframe WebSocket prototypes that were registered before engine-access loaded
+  const pendingProtos = win.__ntg_pendingWsProtos as WebSocket[] | undefined;
+  if (Array.isArray(pendingProtos)) {
+    for (const proto of pendingProtos) {
+      hookWebSocketPrototype(proto);
     }
-    return origSend.apply(this, args);
-  };
+  }
 } catch {
   // ignore
 }

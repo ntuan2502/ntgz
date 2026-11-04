@@ -6,6 +6,7 @@ import { isVisible, triggerPointerDownAndClick, triggerPointerDownOnly, sleep } 
 import { handleBenCatchModal, handleBenMilitiaModal, handleBenOverlayModals } from './wharf-modals';
 
 let lastHookAt = 0;
+let biteDetectedAt = 0;
 let lastCastAt = 0;
 let lastCricketEventSeq = -1;
 let lastFishingEventSeq = -1;
@@ -303,12 +304,32 @@ export async function stepBenDoFishing(
   }
 
   // 4. Handle Bite ("GIẬT!")
-  if (bn.fishing === 'bite') {
-    if (now - lastHookAt > 260) {
+  const hookBtn = document.querySelector('button.ben-cast.btn-brown') as HTMLButtonElement | null;
+  const isBiteButtonPresent = Boolean(hookBtn && isVisible(hookBtn) && (hookBtn.textContent || '').includes('GIẬT'));
+
+  if (bn.fishing === 'bite' || isBiteButtonPresent) {
+    if (biteDetectedAt === 0) {
+      biteDetectedAt = now;
+    }
+    // Bobber plunge settle delay (~340ms) - only hook after bobber has fully sunk
+    if (now - biteDetectedAt >= 340 && now - lastHookAt > 280) {
       lastHookAt = now;
+      biteDetectedAt = 0;
+      if (hookBtn && isVisible(hookBtn)) {
+        triggerPointerDownOnly(hookBtn);
+      } else {
+        void execGameAction('BEN_HOOK');
+      }
+      setStatus('🎣 Bến Đò: Phao chìm hẳn -> ĐÃ GIẬT CẦN! 🐟');
+      await sleep(150);
+      return { finishedArea: false };
+    }
+    if (now - lastHookAt > 260) {
       setStatus('🎣 Bến Đò: Cá cắn câu -> Đợi phao chìm hẳn để giật...');
     }
     return { finishedArea: false };
+  } else {
+    biteDetectedAt = 0;
   }
 
   // 5. Waiting for fish

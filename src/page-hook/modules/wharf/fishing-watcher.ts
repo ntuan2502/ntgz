@@ -88,6 +88,16 @@ function scheduleHook(): void {
 
     // Send WebSocket hook packet directly
     sendBenWs({ t: 'hook' });
+
+    // Also trigger pointerdown on the GIẬT button if present in DOM
+    try {
+      const hookBtn = document.querySelector('button.ben-cast.btn-brown') as HTMLButtonElement | null;
+      if (hookBtn && (hookBtn.textContent || '').includes('GIẬT')) {
+        hookBtn.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true }));
+      }
+    } catch {
+      // ignore
+    }
   }, delayMs);
 }
 
@@ -159,69 +169,17 @@ function detectFightDirection(dirHint?: 'left' | 'right'): { fishDir: 'left' | '
 }
 
 /**
- * Simulate pressing the arrow key (ArrowLeft or ArrowRight) on window,
- * which triggers the game's native keydown listener in h8 (bundle.js:3462200),
- * with synchronous verification so we never send duplicate or missed pulls.
+ * Execute a fish pull action: clears fight.run in Zustand store and sends
+ * exactly one WebSocket pull packet directly, preventing duplicate or cascading pulls.
  */
 function executeFightPull(n: number, pullDir: 'left' | 'right'): void {
-  const key = pullDir === 'left' ? 'ArrowLeft' : 'ArrowRight';
-  const code = pullDir === 'left' ? 'ArrowLeft' : 'ArrowRight';
-  const keyCode = pullDir === 'left' ? 37 : 39;
+  // 1. Immediately clear fight.run in Zustand store so subsequent ticks never duplicate this run
+  stores.benNet?.setState((st) => ({
+    fight: st.fight && st.fight.run?.n === n ? { ...st.fight, run: null } : st.fight,
+  }));
 
-  // 1. Dispatch native keydown on window (h8 listens on window.addEventListener('keydown'))
-  const downEv = new KeyboardEvent('keydown', {
-    key,
-    code,
-    keyCode,
-    which: keyCode,
-    bubbles: true,
-    cancelable: true,
-  });
-  window.dispatchEvent(downEv);
-
-  // Release key naturally after 50ms
-  setTimeout(() => {
-    const upEv = new KeyboardEvent('keyup', {
-      key,
-      code,
-      keyCode,
-      which: keyCode,
-      bubbles: true,
-      cancelable: true,
-    });
-    window.dispatchEvent(upEv);
-  }, 50);
-
-  // 2. Check synchronously if h8's keydown handler already cleared fight.run in Zustand store
-  const afterKeyRun = stores.benNet?.getState().fight?.run;
-  if (!afterKeyRun || afterKeyRun.n !== n) {
-    return;
-  }
-
-  // 3. Fallback: trigger pointerdown on corresponding button in .ben-fight
-  try {
-    const fightBox = document.querySelector('.ben-fight');
-    if (fightBox) {
-      const btns = Array.from(fightBox.querySelectorAll('.ben-fight-btns button')) as HTMLButtonElement[];
-      const targetBtn = btns.find((b) =>
-        (b.textContent || '').includes(pullDir === 'left' ? 'Ghìm trái' : 'Ghìm phải')
-      );
-      if (targetBtn && !targetBtn.disabled) {
-        targetBtn.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true }));
-      }
-    }
-  } catch {
-    // ignore
-  }
-
-  // 4. Final guarantee: if still not cleared, update store and send WebSocket packet directly
-  const afterBtnRun = stores.benNet?.getState().fight?.run;
-  if (afterBtnRun && afterBtnRun.n === n) {
-    stores.benNet?.setState((st) => ({
-      fight: st.fight && st.fight.run?.n === n ? { ...st.fight, run: null } : st.fight,
-    }));
-    sendBenWs({ t: 'pull', n, dir: pullDir });
-  }
+  // 2. Send WebSocket pull packet directly (normalized human delay u is attached automatically)
+  sendBenWs({ t: 'pull', n, dir: pullDir });
 }
 
 function handleIncomingRun(n: number, dirHint?: 'left' | 'right', msHint?: number): void {
