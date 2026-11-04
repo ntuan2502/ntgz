@@ -63,7 +63,8 @@ export interface BenExecutionContext {
     actionFn: () => void,
     label: string,
     panelState?: Record<string, unknown>,
-    holdMs?: number
+    triggerDelayMs?: number,
+    holdAfterMs?: number
   ) => void;
   walkAndRun: (
     tile: { x: number; y: number },
@@ -71,7 +72,8 @@ export interface BenExecutionContext {
     label: string,
     actionKey?: string | null,
     panelState?: Record<string, unknown>,
-    holdMs?: number
+    triggerDelayMs?: number,
+    holdAfterMs?: number
   ) => BenStepResult;
 }
 

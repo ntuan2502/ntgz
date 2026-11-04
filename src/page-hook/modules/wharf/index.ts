@@ -32,6 +32,19 @@ let keepBenPanelUntil = 0;
 let keepBenPanelMsg = '';
 let hadMyBout = false;
 
+interface PendingPanelAction {
+  label: string;
+  panelState: Record<string, unknown>;
+  actionFn: () => void;
+  openedAt: number;
+  triggerDelayMs: number;
+  holdAfterMs: number;
+  executed: boolean;
+  closeAt: number;
+}
+
+let pendingPanel: PendingPanelAction | null = null;
+
 /**
  * Tự động đóng modal nhận cá câu được (.catch-card.ben-catch),
  * cất cá quý vào ngăn giữ lại (nếu bật cấu hình) và chuyển trạng thái cần câu về idle.
@@ -249,6 +262,55 @@ export function execBenStep(
   }
 
   const benShowFullActions = true;
+
+  if (pendingPanel) {
+    if (!bu.panel) {
+      pendingPanel = null;
+    } else {
+      const elapsed = Date.now() - pendingPanel.openedAt;
+      const isShopReady = Boolean(bn.shop?.ready && bn.shop.ready <= performance.now());
+      if (!pendingPanel.executed) {
+        if (elapsed < pendingPanel.triggerDelayMs && !isShopReady) {
+          return {
+            acted: true,
+            msg: `⏳ Đang mở ${pendingPanel.label} (chờ hiển thị nút thao tác...)`,
+          };
+        }
+        // Button is enabled in the live UI! Attempt clicking the active DOM button
+        const buyBtn = document.querySelector<HTMLButtonElement>(
+          'button.ben-item-buy:not(:disabled), button.ben-sell-btn:not(:disabled), .ben-panel button.btn-green:not(:disabled), .panel button.btn-green:not(:disabled)'
+        );
+        if (buyBtn && !buyBtn.disabled && buyBtn.offsetParent !== null) {
+          buyBtn.click();
+        }
+        try {
+          pendingPanel.actionFn();
+        } catch (err) {
+          console.error('[Wharf] Action execution error:', err);
+        }
+        pendingPanel.executed = true;
+        pendingPanel.closeAt = Date.now() + pendingPanel.holdAfterMs;
+        return {
+          acted: true,
+          msg: `✅ Đã chọn mua/thao tác tại ${pendingPanel.label}`,
+        };
+      } else {
+        if (Date.now() < pendingPanel.closeAt) {
+          return {
+            acted: true,
+            msg: `👁️ ${pendingPanel.label} (đang xử lý...)`,
+          };
+        }
+        buStore.setState({ panel: null });
+        pendingPanel = null;
+        return {
+          acted: true,
+          msg: '🚪 Đã đóng bảng thao tác',
+        };
+      }
+    }
+  }
+
   if (bu.panel && Date.now() < keepBenPanelUntil) {
     return { acted: true, msg: keepBenPanelMsg || '👁️ Đang thao tác trên giao diện...' };
   }
@@ -297,13 +359,27 @@ export function execBenStep(
     actionFn: () => void,
     label: string,
     panelState?: Record<string, unknown>,
-    holdMs = 350
+    triggerDelayMs = 550,
+    holdAfterMs = 400
   ) => {
     if (panelState) {
       buStore.setState(panelState);
-      keepBenPanelUntil = Date.now() + Math.min(holdMs, 400);
+      const panelKey = panelState.panel as string | undefined;
+      if (panelKey && ['bait', 'tea', 'food', 'hair', 'sell'].includes(panelKey)) {
+        sendBenWs({ t: 'shop', at: panelKey === 'sell' ? 'stall' : panelKey });
+      }
+      pendingPanel = {
+        label,
+        panelState,
+        actionFn,
+        openedAt: Date.now(),
+        triggerDelayMs: Math.max(500, triggerDelayMs),
+        holdAfterMs: Math.max(300, holdAfterMs),
+        executed: false,
+        closeAt: 0,
+      };
+      keepBenPanelUntil = Date.now() + Math.max(500, triggerDelayMs) + Math.max(300, holdAfterMs);
       keepBenPanelMsg = label;
-      actionFn();
     } else {
       actionFn();
     }
@@ -315,7 +391,8 @@ export function execBenStep(
     label: string,
     actionKey: string | null = null,
     panelState?: Record<string, unknown>,
-    holdMs = 350
+    triggerDelayMs = 550,
+    holdAfterMs = 400
   ): BenStepResult => {
     if (actionKey && !canAct(actionKey)) {
       return { acted: false };
@@ -333,7 +410,7 @@ export function execBenStep(
     }
     if (!benScene.farmer?.running && Math.abs(cur.x - tile.x) + Math.abs(cur.y - tile.y) <= 1) {
       if (actionKey) markActed(actionKey);
-      runWithOptionalPanel(actionFn, label, panelState, holdMs);
+      runWithOptionalPanel(actionFn, label, panelState, triggerDelayMs, holdAfterMs);
       return { acted: true, msg: label };
     }
     if (benScene.farmer?.running) {
@@ -348,7 +425,7 @@ export function execBenStep(
         Math.abs(latestTile.x - tile.x) + Math.abs(latestTile.y - tile.y) <= 2;
       if (arrived && (!actionKey || canAct(actionKey))) {
         if (actionKey) markActed(actionKey);
-        runWithOptionalPanel(actionFn, label, panelState, holdMs);
+        runWithOptionalPanel(actionFn, label, panelState, triggerDelayMs, holdAfterMs);
       }
     });
     return { acted: true, msg: `🚶 ${label}` };

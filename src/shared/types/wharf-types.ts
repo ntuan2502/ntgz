@@ -248,6 +248,12 @@ export interface BenNetState {
     until?: number;
     [key: string]: unknown;
   };
+  shop?: {
+    at?: string;
+    k?: string;
+    ready?: number;
+    [key: string]: unknown;
+  } | null;
   check?: {
     img?: string;
     ask?: 'fish' | 'crab' | 'shrimp' | 'snail' | string;

@@ -12,6 +12,7 @@ let lastCricketEventSeq = -1;
 let lastGotAwaySeq = -1;
 let nextCastDelayMs = 0;
 let microBreakUntil = 0;
+let lastArrivedSpotAt = 0;
 
 export async function stepBenDoFishing(
   snap: GameSnapshot,
@@ -342,6 +343,7 @@ export async function stepBenDoFishing(
     }
 
     if (bu?.walking && !isBossActive && !isBossImpending) {
+      lastArrivedSpotAt = 0;
       setStatus('🚶 Đang đi bộ ở Bến Đò...');
       return { finishedArea: false };
     }
@@ -411,6 +413,18 @@ export async function stepBenDoFishing(
 
     const allowCast = Boolean(prep?.ok && prep.allowCast);
     const targetCastDelay = Math.max(200, Math.min(nextCastDelayMs || delayMs, 500));
+
+    if (bu?.spot && !bu?.walking) {
+      if (lastArrivedSpotAt === 0) {
+        lastArrivedSpotAt = now;
+      }
+      if (now - lastArrivedSpotAt < 450) {
+        return { finishedArea: false };
+      }
+    } else {
+      lastArrivedSpotAt = 0;
+    }
+
     if (
       allowCast &&
       greenCastBtn &&
@@ -420,6 +434,7 @@ export async function stepBenDoFishing(
     ) {
       triggerPointerDownAndClick(greenCastBtn);
       lastCastAt = now;
+      lastArrivedSpotAt = 0;
       if (config.benHumanJitter !== false) {
         nextCastDelayMs = Math.floor(Math.random() * 200) + 200;
       } else {

@@ -169,6 +169,12 @@ export function sendBenWs(obj: Record<string, unknown>): boolean {
       // ignore
     }
   }
+  if ((obj.t === 'buy' || obj.t === 'sell') && !obj.k && stores.benNet) {
+    const shopK = (stores.benNet.getState().shop as { k?: string } | undefined)?.k;
+    if (shopK) {
+      obj.k = shopK;
+    }
+  }
   if (benWs && benWs.readyState === WebSocket.OPEN) {
     benWs.send(JSON.stringify(obj));
     return true;
