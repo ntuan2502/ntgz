@@ -21,6 +21,7 @@ export type { AlluvialStepResult };
 
 const BEN_FERRY_TILE = { x: 7, y: 10 };
 const BAI_GATE_TILE = { x: 26, y: 23 };
+const FARM_EXIT_GATE_TILE = { x: 3, y: 26 };
 
 let transitState:
   | 'idle'
@@ -29,6 +30,7 @@ let transitState:
   | 'enter_farm'
   | 'work_farm'
   | 'exit_farm'
+  | 'exit_farm_to_ben'
   | 'at_bai_market'
   | 'walk_to_bai_ferry'
   | 'wait_back_to_ben' = 'idle';
@@ -73,14 +75,12 @@ export function stepAlluvial(
       return null;
     }
     if (baiState.kind === 'farm') {
-      sendBenWs({ t: 'farmExit' });
-      sendBenWs({ t: 'ferry' });
-      transitState = 'wait_back_to_ben';
+      transitState = 'exit_farm_to_ben';
       transitStartedAt = now;
       resetBaiWalkTracker();
       return {
         acted: true,
-        msg: '🌾 Nông Trại Online: Đang chuyển nhanh về Bến Đò...',
+        msg: '🌾 Nông Trại Online: Đang đi ra cổng để về Bến Đò...',
         allowCast: false,
       };
     }
@@ -105,26 +105,17 @@ export function stepAlluvial(
       transitState = 'idle';
       return null;
     }
-    if (baiState.kind === 'farm') {
-      sendBenWs({ t: 'farmExit' });
-      sendBenWs({ t: 'ferry' });
+    if (baiState.kind === 'farm' || baiState.kind === 'bai') {
+      stores.main?.getState()?.showWorldMap?.();
+      setTimeout(() => {
+        stores.main?.setState({ screen: 'benDo', panel: null });
+      }, 150);
       transitState = 'wait_back_to_ben';
       transitStartedAt = now;
       resetBaiWalkTracker();
       return {
         acted: true,
         msg: '👑 Boss Bí Ngô xuất hiện! Đang chuyển nhanh về Bến Đò săn Boss 🎃',
-        allowCast: false,
-      };
-    }
-    if (baiState.kind === 'bai') {
-      sendBenWs({ t: 'ferry' });
-      transitState = 'wait_back_to_ben';
-      transitStartedAt = now;
-      resetBaiWalkTracker();
-      return {
-        acted: true,
-        msg: '👑 Boss Bí Ngô xuất hiện! Đang lên đò về Bến Đò săn Boss 🎃',
         allowCast: false,
       };
     }
@@ -137,14 +128,12 @@ export function stepAlluvial(
       return null;
     }
     if (baiState.kind === 'farm') {
-      sendBenWs({ t: 'farmExit' });
-      sendBenWs({ t: 'ferry' });
-      transitState = 'wait_back_to_ben';
+      transitState = 'exit_farm_to_ben';
       transitStartedAt = now;
       resetBaiWalkTracker();
       return {
         acted: true,
-        msg: '🌾 Nông Trại Online đã tắt: Đang quay về Bến Đò...',
+        msg: '🌾 Nông Trại Online đã tắt: Đang đi ra cổng để quay về Bến Đò...',
         allowCast: false,
       };
     }
@@ -211,26 +200,21 @@ export function stepAlluvial(
 
         if (shouldReturnToBen) {
           if (!hasMarketWork(cfg)) {
-            closeBaiPanel();
-            sendBenWs({ t: 'farmExit' });
-            sendBenWs({ t: 'ferry' });
-            transitState = 'wait_back_to_ben';
+            transitState = 'exit_farm_to_ben';
             transitStartedAt = now;
             resetBaiWalkTracker();
             return {
               acted: true,
-              msg: '🌾 Nông Trại Online: Đã xong việc ruộng, quay về Bến Đò câu cá (bỏ qua Chợ Bãi vì không có đồ bán/mua)...',
+              msg: '🌾 Nông Trại Online: Đã xong việc ruộng, đang ra cổng để về Bến Đò câu cá (bỏ qua Chợ Bãi vì không có đồ bán/mua)...',
               allowCast: false,
             };
           } else {
-            closeBaiPanel();
-            sendBenWs({ t: 'farmExit' });
-            transitState = 'at_bai_market';
+            transitState = 'exit_farm';
             transitStartedAt = now;
             resetBaiWalkTracker();
             return {
               acted: true,
-              msg: '🚪 Đất Bãi: Đang ra Chợ Bãi giao thương nông sản / mua vật tư...',
+              msg: '🚪 Đất Bãi: Đang ra cổng để sang Chợ Bãi giao thương nông sản / mua vật tư...',
               allowCast: false,
             };
           }
@@ -597,57 +581,140 @@ export function stepAlluvial(
 
       // Check if there are any market transactions needed at Chợ Bãi:
       if (!hasMarketWork(cfg)) {
-        // BYPASS CHỢ BÃI COMPLETELY!
-        closeBaiPanel();
-        sendBenWs({ t: 'farmExit' });
-        sendBenWs({ t: 'ferry' });
-        transitState = 'wait_back_to_ben';
+        // BYPASS CHỢ BÃI: Walk to gate, exit to bai, and take ferry back to Ben Do
+        transitState = 'exit_farm_to_ben';
         transitStartedAt = now;
         resetBaiWalkTracker();
         return {
           acted: true,
-          msg: '🌾 Nông Trại Online: Đã xong việc ruộng, quay về Bến Đò câu cá (bỏ qua Chợ Bãi vì không có đồ bán/mua)...',
+          msg: '🌾 Nông Trại Online: Đã xong việc ruộng, đang ra cổng để về Bến Đò câu cá (bỏ qua Chợ Bãi vì không có đồ bán/mua)...',
           allowCast: false,
         };
       }
 
       // Has market work -> exit to Chợ Bãi
-      closeBaiPanel();
-      sendBenWs({ t: 'farmExit' });
-      transitState = 'at_bai_market';
+      transitState = 'exit_farm';
       transitStartedAt = now;
       resetBaiWalkTracker();
       return {
         acted: true,
-        msg: '🚪 Đất Bãi: Đang ra Chợ Bãi giao thương nông sản / mua vật tư...',
+        msg: '🚪 Đất Bãi: Đang ra cổng để sang Chợ Bãi giao thương nông sản / mua vật tư...',
         allowCast: false,
       };
     }
     return result;
   }
 
-  // State 3.5: EXIT FARM TO CHỢ BÃI (only when hasMarketWork is true)
+  // State 3.5: EXIT FARM TO CHỢ BÃI (walk to farm gate (3, 26) before sending farmExit)
   if (transitState === 'exit_farm') {
     if (baiState.kind === 'bai') {
       transitState = 'at_bai_market';
       transitStartedAt = now;
       resetBaiWalkTracker();
-    } else {
+      return {
+        acted: true,
+        msg: '🏪 Đất Bãi: Đã bước ra Chợ Bãi, bắt đầu giao thương / mua vật tư...',
+        allowCast: false,
+      };
+    }
+
+    if (baiState.kind === 'farm') {
+      const walk = ensureAtSceneTile(
+        'BaiScene',
+        'farm',
+        FARM_EXIT_GATE_TILE,
+        '🚪 Đất Bãi: Đang đi bộ ra cổng (3, 26) để bước sang Chợ Bãi...',
+        undefined,
+        200
+      );
+      if (!walk.ready) {
+        return { acted: true, msg: walk.msg, allowCast: false };
+      }
+
       closeBaiPanel();
       sendBenWs({ t: 'farmExit' });
-      transitState = 'at_bai_market';
+      return {
+        acted: true,
+        msg: '🚪 Đất Bãi: Đã tới cổng, đang bước ra khu vực Chợ Bãi...',
+        allowCast: false,
+      };
+    }
+
+    if (baiState.kind === 'ben') {
+      transitState = 'idle';
+      resetBaiWalkTracker();
+      return null;
+    }
+
+    return { acted: true, msg: '🚪 Đất Bãi: Đang bước ra Chợ Bãi...', allowCast: false };
+  }
+
+  // State 3.6: EXIT FARM TO BẾN ĐÒ (walk to farm gate (3, 26), exit to bai, then take ferry to ben)
+  if (transitState === 'exit_farm_to_ben') {
+    if (baiState.kind === 'ben') {
+      transitState = 'wait_back_to_ben';
+      transitStartedAt = now;
+      resetBaiWalkTracker();
+      return { acted: true, msg: '⛵ Đã về tới Bến Đò...', allowCast: false };
+    }
+
+    if (baiState.kind === 'bai') {
+      sendBenWs({ t: 'ferry' });
+      transitState = 'wait_back_to_ben';
       transitStartedAt = now;
       resetBaiWalkTracker();
       return {
         acted: true,
-        msg: '🚪 Đất Bãi: Đang bước ra Chợ Bãi để giao thương...',
+        msg: '⛵ Chợ Bãi: Đã ra bến, lên đò Ông Tám quay về Bến Đò câu cá...',
         allowCast: false,
       };
     }
+
+    if (baiState.kind === 'farm') {
+      const walk = ensureAtSceneTile(
+        'BaiScene',
+        'farm',
+        FARM_EXIT_GATE_TILE,
+        '🚪 Đất Bãi: Đang đi ra cổng để đón đò về Bến Đò...',
+        undefined,
+        200
+      );
+      if (!walk.ready) {
+        return { acted: true, msg: walk.msg, allowCast: false };
+      }
+
+      closeBaiPanel();
+      sendBenWs({ t: 'farmExit' });
+      return {
+        acted: true,
+        msg: '🚪 Đất Bãi: Đang bước qua cổng để đón đò về Bến Đò...',
+        allowCast: false,
+      };
+    }
+
+    return { acted: true, msg: '⛵ Đang chuẩn bị về Bến Đò...', allowCast: false };
   }
 
   // State 4: AT CHỢ BÃI (strictly inside kind === 'bai': walk to stalls & sell products / buy supplies / claim HTX)
   if (transitState === 'at_bai_market') {
+    if (baiState.kind === 'farm') {
+      // Defensive self-heal: Still in farm, route to exit_farm
+      transitState = 'exit_farm';
+      transitStartedAt = now;
+      resetBaiWalkTracker();
+      return {
+        acted: true,
+        msg: '🚪 Đất Bãi: Đang ở trong ruộng, cần đi ra cổng để sang Chợ Bãi...',
+        allowCast: false,
+      };
+    }
+
+    if (baiState.kind === 'ben') {
+      transitState = 'idle';
+      resetBaiWalkTracker();
+      return null;
+    }
+
     if (baiState.kind === 'bai') {
       transitStartedAt = now;
       const { finishedMarket, result } = runBaiMarketWorkStep(cfg);

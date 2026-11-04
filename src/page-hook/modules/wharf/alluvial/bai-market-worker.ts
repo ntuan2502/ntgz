@@ -31,7 +31,7 @@ function tryWalkToStall(
   if (activeStallKey !== stallKey) {
     activeStallKey = stallKey;
     activeStallStartedAt = now;
-  } else if (now - activeStallStartedAt > 4000) {
+  } else if (now - activeStallStartedAt > 15000) {
     skippedStalls.add(stallKey);
     closeBaiPanel();
     return {

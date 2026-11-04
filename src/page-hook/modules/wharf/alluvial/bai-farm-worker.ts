@@ -256,6 +256,8 @@ export function runBaiFarmWorkStep(
 
         if (missingSeeds > 0) {
           baiState.pendingSupplies.seeds = { crop: preferCrop, qty: missingSeeds };
+        } else {
+          baiState.pendingSupplies.seeds = null;
         }
 
         if (currentSeeds > 0) {
@@ -428,6 +430,7 @@ export function runBaiFarmWorkStep(
               baiState.pendingSupplies.sugar = recipe.sugar - sugarCount;
             }
           } else {
+            baiState.pendingSupplies.sugar = 0;
             const walk = ensureAtSceneTile(
               'BaiScene',
               'farm',
@@ -682,6 +685,8 @@ export function runBaiFarmWorkStep(
         const medCount = baiState.items['med'] || 0;
         if (medCount < sickBirds.length) {
           baiState.pendingSupplies.med = sickBirds.length - medCount;
+        } else {
+          baiState.pendingSupplies.med = 0;
         }
 
         if (medCount > 0) {
@@ -803,6 +808,7 @@ export function runBaiFarmWorkStep(
         if (currentFeed < neededFeed) {
           baiState.pendingSupplies.netFeed = neededFeed - currentFeed;
         } else {
+          baiState.pendingSupplies.netFeed = 0;
           const walk = ensureAtSceneTile(
             'BaiScene',
             'farm',
