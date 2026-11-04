@@ -8,6 +8,9 @@ import {
   FriendsStoreState,
   BaiStoreState,
 } from '../../shared/types/game-store';
+import { initStealthGuard } from './stealth-guard';
+
+initStealthGuard();
 
 export interface ZustandStore<T> {
   getState: () => T;
@@ -105,6 +108,49 @@ try {
   WebSocket.prototype.send = function (...args: [string | ArrayBufferLike | Blob | ArrayBufferView]): void {
     try {
       const socket = this as WebSocket;
+
+      // Anti-cheat probe interception: ensure f is always [] (clean)
+      if (typeof args[0] === 'string' && args[0].includes('"probe"')) {
+        try {
+          const probeMsg = JSON.parse(args[0]);
+          if (probeMsg.t === 'probe') {
+            probeMsg.f = [];
+            args[0] = JSON.stringify(probeMsg);
+          }
+        } catch {
+          // ignore
+        }
+      }
+
+      // Anti-cheat timing (u) normalization: ensure actions always carry valid human delay
+      if (
+        typeof args[0] === 'string' &&
+        (args[0].includes('"cast"') ||
+          args[0].includes('"hook"') ||
+          args[0].includes('"pull"') ||
+          args[0].includes('"buy"') ||
+          args[0].includes('"sell"'))
+      ) {
+        try {
+          const actionMsg = JSON.parse(args[0]);
+          if (
+            actionMsg.t &&
+            ['cast', 'hook', 'pull', 'buy', 'sell'].includes(actionMsg.t)
+          ) {
+            if (
+              typeof actionMsg.u !== 'number' ||
+              actionMsg.u >= 5000 ||
+              actionMsg.u <= 0
+            ) {
+              actionMsg.u = Math.floor(Math.random() * 120) + 65;
+              args[0] = JSON.stringify(actionMsg);
+            }
+          }
+        } catch {
+          // ignore
+        }
+      }
+
       if (socket && typeof socket.url === 'string' && socket.url.includes('/ws/ben-do')) {
         benWs = socket;
         (window as unknown as Record<string, unknown>).__ntg_benWs = socket;
@@ -174,6 +220,14 @@ export function sendBenWs(obj: Record<string, unknown>): boolean {
     if (shopK) {
       obj.k = shopK;
     }
+  }
+  const actionType = obj.t as string | undefined;
+  if (
+    actionType &&
+    ['cast', 'hook', 'pull', 'buy', 'sell'].includes(actionType) &&
+    typeof obj.u !== 'number'
+  ) {
+    obj.u = Math.floor(Math.random() * 120) + 65;
   }
   if (benWs && benWs.readyState === WebSocket.OPEN) {
     benWs.send(JSON.stringify(obj));

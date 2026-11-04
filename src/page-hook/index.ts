@@ -1,3 +1,6 @@
+import { initStealthGuard } from './core/stealth-guard';
+initStealthGuard();
+
 import { stores, discoverStores, sendBenWs } from './core/engine-access';
 import { getSnapshot } from './core/store-watcher';
 import { dismissInterruptsIfNeeded } from './core/interrupts';

@@ -1,0 +1,120 @@
+/**
+ * Stealth Guard - Defends against client-side anti-cheat probes and synthetic input flags
+ * Ensures that iframe-based native function checks (iq/aq) pass, synthetic interactions
+ * keep ZK interaction timers fresh without triggering QK (fakeInput) counters, and
+ * WebSocket outgoing messages never leak extension detection flags or stale interaction times.
+ */
+
+function patchIframeContentWindow(cw: Window | null): void {
+  try {
+    const cwRec = cw as unknown as { Function?: { prototype?: { toString?: (this: unknown) => string } } } | null;
+    if (!cwRec || !cwRec.Function || !cwRec.Function.prototype || !cwRec.Function.prototype.toString) return;
+    const realToString = cwRec.Function.prototype.toString;
+    cwRec.Function.prototype.toString = function (this: unknown) {
+      if (
+        this === WebSocket.prototype.send ||
+        this === WebSocket.prototype.addEventListener ||
+        this === window.WebSocket ||
+        this === JSON.parse ||
+        this === JSON.stringify
+      ) {
+        const name = (this as { name?: string })?.name || 'send';
+        return `function ${name}() { [native code] }`;
+      }
+      return realToString.call(this);
+    };
+  } catch {
+    // ignore
+  }
+}
+
+export function initStealthGuard(): void {
+  // 1. Defend iframe-based Function.prototype.toString inspection (iq / aq in game bundle)
+  try {
+    const origAppendChild = Node.prototype.appendChild;
+    Node.prototype.appendChild = function <T extends Node>(node: T): T {
+      const res = origAppendChild.call(this, node) as T;
+      try {
+        if ((node as unknown as { tagName?: string })?.tagName === 'IFRAME') {
+          patchIframeContentWindow((node as unknown as HTMLIFrameElement).contentWindow);
+        }
+      } catch {
+        // ignore
+      }
+      return res;
+    };
+  } catch {
+    // ignore
+  }
+
+  try {
+    const cwDesc = Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype, 'contentWindow');
+    if (cwDesc && cwDesc.get) {
+      const origGet = cwDesc.get;
+      Object.defineProperty(HTMLIFrameElement.prototype, 'contentWindow', {
+        configurable: true,
+        enumerable: true,
+        get: function (this: HTMLIFrameElement) {
+          const cw = origGet.call(this);
+          if (cw) patchIframeContentWindow(cw);
+          return cw;
+        },
+      });
+    }
+  } catch {
+    // ignore
+  }
+
+  // 2. Defend synthetic input detection (QK fakeInput counter in game's window capture listeners)
+  try {
+    const origAddEventListener = EventTarget.prototype.addEventListener;
+    const monitoredTypes = new Set([
+      'pointerdown',
+      'mousedown',
+      'touchstart',
+      'keydown',
+      'pointerup',
+      'mouseup',
+      'touchend',
+      'keyup',
+    ]);
+
+    EventTarget.prototype.addEventListener = function (
+      type: string,
+      listener: EventListenerOrEventListenerObject | null,
+      options?: boolean | AddEventListenerOptions
+    ): void {
+      if (
+        (this === window || this === document || this === document.documentElement || this === document.body) &&
+        typeof listener === 'function' &&
+        monitoredTypes.has(type)
+      ) {
+        const origListener = listener as (ev: Event) => void;
+        const wrapped = function (this: unknown, ev: Event) {
+          try {
+            if (!ev.isTrusted) {
+              const proxyEv = new Proxy(ev, {
+                get(target, prop, receiver) {
+                  if (prop === 'isTrusted') return true;
+                  const val = Reflect.get(target, prop, receiver);
+                  return typeof val === 'function'
+                    ? (val as (...args: unknown[]) => unknown).bind(target)
+                    : val;
+                },
+              });
+              return origListener.call(this, proxyEv);
+            }
+          } catch {
+            // ignore
+          }
+          return origListener.call(this, ev);
+        };
+        (origListener as unknown as Record<string, unknown>).__ntg_wrapped = wrapped;
+        return origAddEventListener.call(this, type, wrapped as EventListener, options);
+      }
+      return origAddEventListener.call(this, type, listener, options);
+    };
+  } catch {
+    // ignore
+  }
+}

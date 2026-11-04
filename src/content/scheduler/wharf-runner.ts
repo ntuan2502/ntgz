@@ -399,6 +399,14 @@ export async function stepBenDoFishing(
       return { finishedArea: true, exhausted: true };
     }
 
+    if ((bn.notice as { error?: string } | undefined)?.error === 'wait') {
+      setStatus('⏳ Bến Đò: Máy chủ yêu cầu chờ nhịp (wait) -> Tạm nghỉ vài giây để hồi nhịp...');
+      if (config.benSmartSleepMode !== false) {
+        await sleep(1800);
+      }
+      return { finishedArea: false };
+    }
+
     if (isCastTired) {
       setStatus('😮‍💨 Bến Đò: Không đủ Sức câu -> Đang chờ đi ăn hồi Sức...');
       if (config.benSmartSleepMode !== false) {
@@ -450,21 +458,17 @@ export async function stepBenDoFishing(
     const canCastNow = (allowCast || isGreenReady) && isGreenReady;
 
     if (canCastNow && now - lastCastAt > targetCastDelay) {
-      triggerPointerDownAndClick(greenCastBtn);
-      try {
-        window.dispatchEvent(
-          new KeyboardEvent('keydown', { key: ' ', code: 'Space', keyCode: 32, which: 32, bubbles: true })
-        );
-      } catch {
-        // ignore
+      if (greenCastBtn && isVisible(greenCastBtn) && !greenCastBtn.disabled) {
+        triggerPointerDownAndClick(greenCastBtn);
+      } else {
+        void execGameAction('BEN_CAST');
       }
-      void execGameAction('BEN_CAST');
       lastCastAt = now;
       lastArrivedSpotAt = 0;
       if (config.benHumanJitter !== false) {
         nextCastDelayMs = Math.floor(Math.random() * 600) + 550;
       } else {
-        nextCastDelayMs = 150;
+        nextCastDelayMs = 250;
       }
       setStatus(`🎣 Bến Đò: Quăng câu (🪱 ${bn.wallet?.bait ?? 0} · ⚡ ${bn.wallet?.liveStamina ?? 0})`);
     } else if (allowCast && !bu?.spot && !isGreenReady) {
