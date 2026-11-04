@@ -79,6 +79,11 @@ export function runEntertainmentStep(ctx: BenExecutionContext): BenStepResult {
   // B. Đại lý vé số Bến Đò ({ x: 36, y: 31 })
   if (cfg.benAutoLotto !== false) {
     const lottoState = bn.lotto;
+    if ((!lottoState || canAct('ben_lotto_sync', 300000)) && canAct('ben_lotto_query', 60000)) {
+      markActed('ben_lotto_query');
+      markActed('ben_lotto_sync');
+      sendBenWs({ t: 'lotto' });
+    }
     const hasWins = (lottoState?.wins?.length || 0) > 0 || (lottoState?.pending || 0) > 0;
     if (hasWins && canAct('ben_lotto_claim', 4000)) {
       return walkAndRun(
@@ -93,9 +98,15 @@ export function runEntertainmentStep(ctx: BenExecutionContext): BenStepResult {
       );
     }
 
-    if (cfg.benAutoBuyLotto && shells >= 10 && canAct('ben_lotto_buy', 60000)) {
-      const sellingDay = lottoState?.selling;
-      const alreadyBought = (lottoState?.mine || []).some(
+    if (
+      cfg.benAutoBuyLotto &&
+      lottoState &&
+      typeof lottoState.selling === 'number' &&
+      shells >= 10 &&
+      canAct('ben_lotto_buy', 60000)
+    ) {
+      const sellingDay = lottoState.selling;
+      const alreadyBought = (lottoState.mine || []).some(
         (t: { day?: number }) => t.day === sellingDay
       );
       if (!alreadyBought) {
@@ -185,6 +196,10 @@ export function runEntertainmentStep(ctx: BenExecutionContext): BenStepResult {
   // D. Sạp Bà Tư Bí ({ x: 29, y: 18 }): Đi bộ tới sạp, mở bảng hlw và đổi/mở quà
   if (cfg.benAutoHlwExchange !== false) {
     const hlw = bn.hlw;
+    if (!hlw && canAct('ben_hlw_query', 60000)) {
+      markActed('ben_hlw_query');
+      sendBenWs({ t: 'hlw' });
+    }
     const bag = Array.isArray(hlw?.bag) ? hlw.bag : [];
     const boneItem = bag.find((i: { item: string }) => i.item === 'hlwBone');
     const pumpkinItem = bag.find((i: { item: string }) => i.item === 'hlwPumpkin');

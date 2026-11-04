@@ -34,6 +34,8 @@ let transitState:
   | 'wait_back_to_ben' = 'idle';
 let transitStartedAt = 0;
 let ferryInfoWaitStartedAt = 0;
+let initialInfoQueryAt = 0;
+let lastHtxQueryAt = 0;
 let transitReasonText = '';
 let workStep = 0;
 
@@ -296,6 +298,27 @@ export function stepAlluvial(
 
   // State 0: IDLE AT BẾN ĐÒ (kind === 'ben')
   if (transitState === 'idle') {
+    if (cfg.benAutoHtxClaim !== false && bn && !bn.htx && now - lastHtxQueryAt > 60000) {
+      lastHtxQueryAt = now;
+      sendBenWs({ t: 'htx' });
+    }
+
+    // Proactively sync `farmInfo` before deciding to transit so `hasLand`, `items`, and `specialty` are populated
+    if (baiState.lastInfoAt === 0) {
+      if (initialInfoQueryAt === 0 || now - initialInfoQueryAt > 5000) {
+        initialInfoQueryAt = now;
+        sendBenWs({ t: 'farmInfo' });
+      }
+      if (now - initialInfoQueryAt < 2000) {
+        return {
+          acted: true,
+          msg: '📜 Nông Trại Online: Đang kiểm tra thông tin đất bãi & kho nông sản...',
+          allowCast: false,
+        };
+      }
+      baiState.lastInfoAt = now;
+    }
+
     const currentShells = stores.benNet?.getState()?.wallet?.shells ?? baiState.shells;
 
     // A. If we already checked Ông Tám and confirmed the player does NOT own land yet:
@@ -321,7 +344,7 @@ export function stepAlluvial(
         shouldTransit = true;
         transitReason = 'Chuyển sang Nông Trại Online chăm sóc ruộng vườn';
       } else {
-        if (baiState.lastInfoAt === 0 || baiState.lastFarmSurveyAt === 0) {
+        if (baiState.lastFarmSurveyAt === 0) {
           shouldTransit = true;
           transitReason = 'Vào Đất Bãi kiểm tra đợt đầu';
         } else if (baiState.nextReadyAt > 0 && serverNowMs >= baiState.nextReadyAt) {
@@ -335,6 +358,9 @@ export function stepAlluvial(
 
       if (shouldTransit) {
         transitReasonText = transitReason;
+        if (now - baiState.lastInfoAt > 30000) {
+          sendBenWs({ t: 'farmInfo' });
+        }
         sendBenWs({ t: 'farmQuick' });
         transitState = 'enter_farm';
         transitStartedAt = now;

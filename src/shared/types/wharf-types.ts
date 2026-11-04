@@ -299,6 +299,7 @@ export interface BaiPlotData {
   readyAt?: number;
   pestAt?: number | null;
   fert?: boolean;
+  bio?: boolean;
 }
 
 export interface BaiCoconutData {

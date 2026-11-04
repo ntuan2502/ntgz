@@ -1,8 +1,11 @@
 import { AppConfig } from '../../../../shared/types/config';
 import { stores, sendBenWs, getActiveScene } from '../../../core/engine-access';
 import {
+  FISH_CATALOG_MAP,
   getFishDisplayName,
   getFishRarity,
+  resolveFishId,
+  shouldKeepFishByConfig,
   computeTideStatus,
 } from '../../../../shared/constants/wharf-catalog';
 import {
@@ -69,7 +72,8 @@ export function runBaiFarmWorkStep(
   if (!farm) {
     if (farmSyncWaitStartedAt === 0) {
       farmSyncWaitStartedAt = Date.now();
-      sendBenWs({ t: 'yardDone' });
+      sendBenWs({ t: 'farmInfo' });
+      sendBenWs({ t: 'farmGo', to: 'me' });
     }
     if (Date.now() - farmSyncWaitStartedAt < 4000) {
       return {
@@ -88,6 +92,10 @@ export function runBaiFarmWorkStep(
     };
   }
   farmSyncWaitStartedAt = 0;
+
+  if (baiState.lastInfoAt === 0 || !baiState.info) {
+    sendBenWs({ t: 'farmInfo' });
+  }
 
   const nowMs = getBaiServerNowMs();
   const plots = farm.plots || [];
@@ -314,22 +322,24 @@ export function runBaiFarmWorkStep(
   // Step 6: Fertilize plots (remote execution inside farm, faces parcel)
   if (step === 6) {
     if (cfg.benAutoBaiCrops !== false && cfg.benAutoBaiFertilize !== false) {
-      const fertCount = (baiState.items['fert'] || 0) + (baiState.items['fertBio'] || 0);
+      const fertCount = baiState.items['fert'] || 0;
       if (fertCount > 0) {
         const unfertilized = plots.filter(
           (p) => !p.fert && Boolean(p.crop) && (p.state === 'dry' || p.state === 'growing')
         );
         if (unfertilized.length > 0) {
-          const parcelIdx = Math.floor(unfertilized[0].plot / 6);
-          const parcelPlots = unfertilized.filter((p) => Math.floor(p.plot / 6) === parcelIdx);
+          const plotsToFert = unfertilized.slice(0, fertCount);
+          const parcelIdx = Math.floor(plotsToFert[0].plot / 6);
+          const parcelPlots = plotsToFert.filter((p) => Math.floor(p.plot / 6) === parcelIdx);
           lookAtParcel(parcelIdx);
           stores.bai?.setState({ tool: 'fert' });
 
           sendBenWs({ t: 'plotBatch', act: 'fert', plots: parcelPlots.map((p) => p.plot) });
+          baiState.items['fert'] = Math.max(0, fertCount - parcelPlots.length);
           for (const p of parcelPlots) {
             p.fert = true;
           }
-          const hasMoreParcels = unfertilized.length > parcelPlots.length;
+          const hasMoreParcels = plotsToFert.length > parcelPlots.length;
           return {
             nextWorkStep: hasMoreParcels ? 6 : 7,
             result: {
@@ -340,82 +350,114 @@ export function runBaiFarmWorkStep(
           };
         }
       }
+
+      const fertBioCount = baiState.items['fertBio'] || 0;
+      if (fertBioCount > 0) {
+        const unbioPlots = plots.filter(
+          (p) => !p.bio && Boolean(p.crop) && p.state === 'growing'
+        );
+        if (unbioPlots.length > 0) {
+          const targetPlot = unbioPlots[0];
+          const parcelIdx = Math.floor(targetPlot.plot / 6);
+          lookAtParcel(parcelIdx);
+          sendBenWs({ t: 'fertBio', plot: targetPlot.plot });
+          targetPlot.bio = true;
+          baiState.items['fertBio'] = Math.max(0, fertBioCount - 1);
+          const hasMoreBio = fertBioCount - 1 > 0 && unbioPlots.length > 1;
+          return {
+            nextWorkStep: hasMoreBio ? 6 : 7,
+            result: {
+              acted: true,
+              msg: `🧪 Đất Bãi: Đã bón phân vi sinh cho ô đất #${targetPlot.plot + 1} (giảm 50% thời gian chín)!`,
+              allowCast: false,
+            },
+          };
+        }
+      }
     }
     step = 7;
   }
 
-  // Step 7 (Phase 2): Candy Kiln (Tuân theo switch cha benAutoCocoProcess & trạng thái 'candy' | 'sell')
+  // Step 7 (Phase 2): Candy Kiln (Chỉ thực hiện khi đã xây Lò Kẹo Dừa `farm.candy`)
   if (step === 7) {
-    const cocoProcessEnabled = cfg.benAutoCocoProcess !== false;
-    const cocoMode = cfg.benCocoMode || (cfg.benAutoCocoSell ? 'sell' : 'candy');
-    const shouldCookCandy = cocoProcessEnabled && cocoMode === 'candy' && cfg.benAutoCandy !== false;
+    if (farm.candy) {
+      const cocoProcessEnabled = cfg.benAutoCocoProcess !== false;
+      const cocoMode = cfg.benCocoMode || (cfg.benAutoCocoSell ? 'sell' : 'candy');
+      const shouldCookCandy =
+        cocoProcessEnabled && cocoMode === 'candy' && cfg.benAutoCandy !== false;
 
-    // A. Luôn thu hoạch mẻ kẹo đã nấu chín trong lò nếu có
-    if (
-      (cocoProcessEnabled || cfg.benAutoCandy !== false) &&
-      typeof farm.candyReadyAt === 'number' &&
-      toTimestampMs(farm.candyReadyAt) <= nowMs
-    ) {
-      const walk = ensureAtSceneTile(
-        'BaiScene',
-        'farm',
-        CANDY_LOT_TILE,
-        '🚶 Đất Bãi: Đang đi lại Lò Kẹo Dừa (41, 15) để lấy kẹo chín...',
-        { panel: 'lot', lotSel: 'candy' },
-        500
-      );
-      if (!walk.ready) {
-        return { nextWorkStep: 7, result: { acted: true, msg: walk.msg, allowCast: false } };
+      // A. Luôn thu hoạch mẻ kẹo đã nấu chín trong lò nếu có
+      if (
+        (cocoProcessEnabled || cfg.benAutoCandy !== false) &&
+        typeof farm.candyReadyAt === 'number' &&
+        toTimestampMs(farm.candyReadyAt) <= nowMs
+      ) {
+        const walk = ensureAtSceneTile(
+          'BaiScene',
+          'farm',
+          CANDY_LOT_TILE,
+          '🚶 Đất Bãi: Đang đi lại Lò Kẹo Dừa (41, 15) để lấy kẹo chín...',
+          { panel: 'lot', lotSel: 'candy' },
+          500
+        );
+        if (!walk.ready) {
+          return { nextWorkStep: 7, result: { acted: true, msg: walk.msg, allowCast: false } };
+        }
+
+        sendBenWs({ t: 'candyCollect' });
+        farm.candyReadyAt = null;
+        return {
+          nextWorkStep: 7,
+          result: {
+            acted: true,
+            msg: '🍬 Lò Kẹo Dừa: Kẹo dừa đã nấu chín, đang lấy ra lò...',
+            allowCast: false,
+          },
+        };
       }
 
-      sendBenWs({ t: 'candyCollect' });
-      farm.candyReadyAt = null;
-      return {
-        nextWorkStep: 7,
-        result: {
-          acted: true,
-          msg: '🍬 Lò Kẹo Dừa: Kẹo dừa đã nấu chín, đang lấy ra lò...',
-          allowCast: false,
-        },
-      };
-    }
+      // B. Nấu mẻ kẹo mới khi đang ở chế độ "Làm kẹo" ('candy')
+      if (shouldCookCandy && !farm.candyReadyAt) {
+        const recipe = baiState.info?.candyRecipe || { coco: 4, sugar: 1, out: 5, price: 350 };
+        const cocoCount = baiState.items['coconut'] || baiState.items['coconuts'] || 0;
+        const sugarCount = baiState.items['sugar'] || 0;
 
-    // B. Nấu mẻ kẹo mới khi đang ở chế độ "Làm kẹo" ('candy')
-    if (shouldCookCandy && !farm.candyReadyAt) {
-      const recipe = baiState.info?.candyRecipe || { coco: 2, sugar: 1, out: 5, price: 350 };
-      const cocoCount =
-        baiState.items['coconut'] || baiState.items['coconuts'] || baiState.items['coco'] || 0;
-      const sugarCount = baiState.items['sugar'] || 0;
+        if (cocoCount >= recipe.coco) {
+          if (sugarCount < recipe.sugar) {
+            if (cfg.benAutoBuySugar !== false) {
+              baiState.pendingSupplies.sugar = recipe.sugar - sugarCount;
+            }
+          } else {
+            const walk = ensureAtSceneTile(
+              'BaiScene',
+              'farm',
+              CANDY_LOT_TILE,
+              '🚶 Đất Bãi: Đang đi lại Lò Kẹo Dừa (41, 15) để nấu kẹo...',
+              { panel: 'lot', lotSel: 'candy' },
+              500
+            );
+            if (!walk.ready) {
+              return { nextWorkStep: 7, result: { acted: true, msg: walk.msg, allowCast: false } };
+            }
 
-      if (cocoCount >= recipe.coco) {
-        if (sugarCount < recipe.sugar) {
-          if (cfg.benAutoBuySugar !== false) {
-            baiState.pendingSupplies.sugar = recipe.sugar - sugarCount;
+            sendBenWs({ t: 'candyStart' });
+            farm.candyReadyAt = nowMs + 2 * 3600 * 1000;
+            if (baiState.items['coconut']) {
+              baiState.items['coconut'] = Math.max(0, baiState.items['coconut'] - recipe.coco);
+            }
+            if (baiState.items['sugar']) {
+              baiState.items['sugar'] = Math.max(0, baiState.items['sugar'] - recipe.sugar);
+            }
+            closeBaiPanel();
+            return {
+              nextWorkStep: 8,
+              result: {
+                acted: true,
+                msg: `🔥 Lò Kẹo Dừa: Đã nhóm lửa nấu mẻ kẹo dừa mới (${recipe.coco} 🥥 + ${recipe.sugar}kg đường)!`,
+                allowCast: false,
+              },
+            };
           }
-        } else {
-          const walk = ensureAtSceneTile(
-            'BaiScene',
-            'farm',
-            CANDY_LOT_TILE,
-            '🚶 Đất Bãi: Đang đi lại Lò Kẹo Dừa (41, 15) để nấu kẹo...',
-            { panel: 'lot', lotSel: 'candy' },
-            500
-          );
-          if (!walk.ready) {
-            return { nextWorkStep: 7, result: { acted: true, msg: walk.msg, allowCast: false } };
-          }
-
-          sendBenWs({ t: 'candyStart' });
-          farm.candyReadyAt = nowMs + 2 * 3600 * 1000;
-          closeBaiPanel();
-          return {
-            nextWorkStep: 8,
-            result: {
-              acted: true,
-              msg: `🔥 Lò Kẹo Dừa: Đã nhóm lửa nấu mẻ kẹo dừa mới (${recipe.coco} 🥥 + ${recipe.sugar}kg đường)!`,
-              allowCast: false,
-            },
-          };
         }
       }
     }
@@ -423,165 +465,186 @@ export function runBaiFarmWorkStep(
     step = 8;
   }
 
-  // Step 8 (Phase 2): Fish Drying Racks & DryDex
+  // Step 8 (Phase 2): Fish Drying Racks & DryDex (Chỉ thực hiện khi đã xây Sân Phơi `farm.dryFish`)
   if (step === 8) {
-    const racks = farm.racks || [];
+    if (farm.dryFish) {
+      const racks = farm.racks || [];
 
-    // A. Thu hoạch cá đã phơi khô khi đến giờ
-    if (cfg.benAutoDryCollect !== false) {
-      const readyRacks = racks.filter((r) => toTimestampMs(r.readyAt) <= nowMs);
-      if (readyRacks.length > 0) {
-        const walk = ensureAtSceneTile(
-          'BaiScene',
-          'farm',
-          DRYFISH_LOT_TILE,
-          '🚶 Đất Bãi: Đang đi lại Sân Phơi Khô Cá (41, 20) để thu khô cá...',
-          { panel: 'lot', lotSel: 'dryFish' },
-          500
-        );
-        if (!walk.ready) {
-          return { nextWorkStep: 8, result: { acted: true, msg: walk.msg, allowCast: false } };
-        }
-
-        sendBenWs({ t: 'dryCollect' });
-        farm.racks = racks.filter((r) => toTimestampMs(r.readyAt) > nowMs);
-        return {
-          nextWorkStep: 8,
-          result: {
-            acted: true,
-            msg: `🐟 Sân Phơi Khô Cá: Thu hoạch ${readyRacks.length} con cá đã phơi khô vào kho!`,
-            allowCast: false,
-          },
-        };
-      }
-    }
-
-    // B. Cất khô cá vào Sổ bộ sưu tập DryDex (+⭐ Nổi tiếng)
-    if (cfg.benAutoDryDexPut !== false && baiState.info?.specialty?.driedList) {
-      const driedList = baiState.info.specialty.driedList;
-      const dexMap = new Map((baiState.dryDex?.items || []).map((x) => [x.fish, x.size]));
-      const candidateDex = driedList.find(
-        (d) => !dexMap.has(d.fish) || d.size > (dexMap.get(d.fish) || 0)
-      );
-
-      if (candidateDex) {
-        const walk = ensureAtSceneTile(
-          'BaiScene',
-          'farm',
-          DRYFISH_LOT_TILE,
-          '🚶 Đất Bãi: Đang đi lại Sân Phơi Khô Cá (41, 20) để cất khô cá vào bộ sưu tập...',
-          { panel: 'lot', lotSel: 'dryFish' },
-          500
-        );
-        if (!walk.ready) {
-          return { nextWorkStep: 8, result: { acted: true, msg: walk.msg, allowCast: false } };
-        }
-
-        const fishName = getFishDisplayName(candidateDex.fish);
-        sendBenWs({ t: 'dryDexPut', id: candidateDex.id });
-        baiState.info.specialty.driedList = driedList.filter((d) => d.id !== candidateDex.id);
-        return {
-          nextWorkStep: 8,
-          result: {
-            acted: true,
-            msg: `🐟 Sân Phơi Khô Cá: Đã cất khô cá ${fishName} (${candidateDex.size}cm) vào bộ sưu tập (+⭐ Nổi tiếng)!`,
-            allowCast: false,
-          },
-        };
-      }
-    }
-
-    // C. Đưa cá tươi từ giỏ lên nong phơi (ưu tiên cá có giá trị cao nhất trước)
-    if (cfg.benAutoDryFish !== false) {
-      const dryLv = Number(farm.dryLv) || 1;
-      const maxRacks = [6, 9, 12][Math.min(3, Math.max(1, dryLv)) - 1] || 6;
-      const emptyRackCount = Math.max(0, maxRacks - (farm.racks?.length || 0));
-      const basket = stores.benNet?.getState().basket || [];
-
-      const allowDryKept = cfg.benDryIncludeKept !== false;
-      const dryableCandidates = basket
-        .filter(
-          (f: { id?: string; kept?: boolean; odd?: boolean; rainbow?: boolean; price?: number; size?: number; fish?: string; released?: boolean }) => {
-            if (!f.id || f.released) return false;
-            if (f.odd || f.rainbow) return false;
-            const rarity = getFishRarity(f.fish);
-            if (rarity === 'junk' || rarity === 'mythic' || f.fish === 'rac' || f.fish?.startsWith('junk')) return false;
-            if (f.kept && !allowDryKept) return false;
-            return true;
+      // A. Thu hoạch cá đã phơi khô khi đến giờ
+      if (cfg.benAutoDryCollect !== false) {
+        const readyRacks = racks.filter((r) => toTimestampMs(r.readyAt) <= nowMs);
+        if (readyRacks.length > 0) {
+          const walk = ensureAtSceneTile(
+            'BaiScene',
+            'farm',
+            DRYFISH_LOT_TILE,
+            '🚶 Đất Bãi: Đang đi lại Sân Phơi Khô Cá (41, 20) để thu khô cá...',
+            { panel: 'lot', lotSel: 'dryFish' },
+            500
+          );
+          if (!walk.ready) {
+            return { nextWorkStep: 8, result: { acted: true, msg: walk.msg, allowCast: false } };
           }
-        )
-        .sort((a, b) => {
-          const priceDiff = (Number(b.price) || 0) - (Number(a.price) || 0);
-          if (priceDiff !== 0) return priceDiff;
-          return (Number(b.size) || 0) - (Number(a.size) || 0);
-        });
 
-      if (emptyRackCount > 0 && dryableCandidates.length > 0) {
-        const walk = ensureAtSceneTile(
-          'BaiScene',
-          'farm',
-          DRYFISH_LOT_TILE,
-          '🚶 Đất Bãi: Đang đi lại Sân Phơi Khô Cá (41, 20) để xếp cá lên nong...',
-          { panel: 'lot', lotSel: 'dryFish' },
-          500
-        );
-        if (!walk.ready) {
-          return { nextWorkStep: 8, result: { acted: true, msg: walk.msg, allowCast: false } };
+          sendBenWs({ t: 'dryCollect' });
+          farm.racks = racks.filter((r) => toTimestampMs(r.readyAt) > nowMs);
+          return {
+            nextWorkStep: 8,
+            result: {
+              acted: true,
+              msg: `🐟 Sân Phơi Khô Cá: Thu hoạch ${readyRacks.length} con cá đã phơi khô vào kho!`,
+              allowCast: false,
+            },
+          };
         }
+      }
 
-        const fishToDry = dryableCandidates[0];
-        const fishName = getFishDisplayName(fishToDry.fish || fishToDry.id);
-        const fishPrice = Number(fishToDry.price) || 0;
+      // B. Cất khô cá vào Sổ bộ sưu tập DryDex (+⭐ Nổi tiếng)
+      if (cfg.benAutoDryDexPut !== false && baiState.info?.specialty?.driedList?.length) {
+        if (!baiState.dryDex) {
+          sendBenWs({ t: 'dryDex' });
+        } else {
+          const driedList = baiState.info.specialty.driedList;
+          const dexMap = new Map((baiState.dryDex.items || []).map((x) => [x.fish, x.size]));
+          const candidateDex = driedList.find(
+            (d) => !dexMap.has(d.fish) || d.size > (dexMap.get(d.fish) || 0)
+          );
 
-        if (fishToDry.kept) {
-          sendBenWs({ t: 'keep', id: fishToDry.id, on: false });
+          if (candidateDex) {
+            const walk = ensureAtSceneTile(
+              'BaiScene',
+              'farm',
+              DRYFISH_LOT_TILE,
+              '🚶 Đất Bãi: Đang đi lại Sân Phơi Khô Cá (41, 20) để cất khô cá vào bộ sưu tập...',
+              { panel: 'lot', lotSel: 'dryFish' },
+              500
+            );
+            if (!walk.ready) {
+              return { nextWorkStep: 8, result: { acted: true, msg: walk.msg, allowCast: false } };
+            }
+
+            const fishName = getFishDisplayName(candidateDex.fish);
+            sendBenWs({ t: 'dryDexPut', id: candidateDex.id });
+            baiState.info.specialty.driedList = driedList.filter((d) => d.id !== candidateDex.id);
+            return {
+              nextWorkStep: 8,
+              result: {
+                acted: true,
+                msg: `🐟 Sân Phơi Khô Cá: Đã cất khô cá ${fishName} (${candidateDex.size}cm) vào bộ sưu tập (+⭐ Nổi tiếng)!`,
+                allowCast: false,
+              },
+            };
+          }
         }
-        sendBenWs({ t: 'dryPut', fish: fishToDry.id });
+      }
 
-        // Ghi nhận nong đang sử dụng và trừ cá khỏi giỏ
-        farm.racks = [
-          ...(farm.racks || []),
-          {
-            slot: farm.racks?.length || 0,
-            fish: fishToDry.fish || '',
-            size: fishToDry.size,
-            price: fishPrice,
-            readyAt: Math.floor(nowMs / 1000) + 6 * 3600,
-          },
-        ];
-        if (stores.benNet) {
-          const curBasket = stores.benNet.getState().basket || [];
-          stores.benNet.setState({
-            basket: curBasket.filter((f: { id?: string }) => f.id !== fishToDry.id),
+      // C. Đưa cá tươi từ giỏ lên nong phơi (ưu tiên cá có giá trị cao nhất trước)
+      if (cfg.benAutoDryFish !== false) {
+        const dryLv = Number(farm.dryLv) || 1;
+        const maxRacks = [6, 9, 12][Math.min(3, Math.max(1, dryLv)) - 1] || 6;
+        const emptyRackCount = Math.max(0, maxRacks - (farm.racks?.length || 0));
+        const basket = stores.benNet?.getState().basket || [];
+
+        const allowDryKept = cfg.benDryIncludeKept === true;
+        const dryableCandidates = basket
+          .filter(
+            (f: {
+              id?: string;
+              kept?: boolean;
+              odd?: boolean;
+              rainbow?: boolean;
+              price?: number;
+              size?: number;
+              fish?: string;
+              name?: string;
+              rarity?: string;
+              released?: boolean;
+            }) => {
+              if (!f.id || f.released) return false;
+              if (f.odd || f.rainbow) return false;
+              if ((Number(f.price) || 0) <= 0) return false;
+              const canonicalId = resolveFishId(f.fish, f.name);
+              const meta = canonicalId ? FISH_CATALOG_MAP.get(canonicalId) : undefined;
+              if (meta?.ghost || meta?.release) return false;
+              const rarity = getFishRarity(f.fish || f.name, f.rarity);
+              if (rarity === 'junk' || f.fish === 'rac' || f.fish?.startsWith('junk')) return false;
+              if (!allowDryKept && (f.kept || shouldKeepFishByConfig(f, cfg))) return false;
+              return true;
+            }
+          )
+          .sort((a, b) => {
+            const priceDiff = (Number(b.price) || 0) - (Number(a.price) || 0);
+            if (priceDiff !== 0) return priceDiff;
+            return (Number(b.size) || 0) - (Number(a.size) || 0);
           });
+
+        if (emptyRackCount > 0 && dryableCandidates.length > 0) {
+          const walk = ensureAtSceneTile(
+            'BaiScene',
+            'farm',
+            DRYFISH_LOT_TILE,
+            '🚶 Đất Bãi: Đang đi lại Sân Phơi Khô Cá (41, 20) để xếp cá lên nong...',
+            { panel: 'lot', lotSel: 'dryFish' },
+            500
+          );
+          if (!walk.ready) {
+            return { nextWorkStep: 8, result: { acted: true, msg: walk.msg, allowCast: false } };
+          }
+
+          const fishToDry = dryableCandidates[0];
+          const fishName = getFishDisplayName(fishToDry.fish || fishToDry.id);
+          const fishPrice = Number(fishToDry.price) || 0;
+
+          if (fishToDry.kept) {
+            sendBenWs({ t: 'keep', id: fishToDry.id, on: false });
+          }
+          sendBenWs({ t: 'dryPut', fish: fishToDry.id });
+
+          // Ghi nhận nong đang sử dụng và trừ cá khỏi giỏ
+          farm.racks = [
+            ...(farm.racks || []),
+            {
+              slot: farm.racks?.length || 0,
+              fish: fishToDry.fish || '',
+              size: fishToDry.size,
+              price: fishPrice,
+              readyAt: Math.floor(nowMs / 1000) + 6 * 3600,
+            },
+          ];
+          if (stores.benNet) {
+            const curBasket = stores.benNet.getState().basket || [];
+            stores.benNet.setState({
+              basket: curBasket.filter((f: { id?: string }) => f.id !== fishToDry.id),
+            });
+          }
+
+          const remainingEmptyRacks = Math.max(0, maxRacks - farm.racks.length);
+          const remainingCandidates = dryableCandidates.slice(1);
+          const hasMoreToDry = remainingEmptyRacks > 0 && remainingCandidates.length > 0;
+
+          if (!hasMoreToDry) {
+            closeBaiPanel();
+          }
+
+          const unkeepNote = fishToDry.kept ? ' (đã mở giữ)' : '';
+          return {
+            nextWorkStep: hasMoreToDry ? 8 : 9,
+            result: {
+              acted: true,
+              msg: `🐟 Sân Phơi Khô Cá: Đã đưa cá giá trị cao ${fishName}${unkeepNote} (${fishPrice.toLocaleString('vi-VN')}🐚, ${fishToDry.size || 0}cm) lên nong phơi (${farm.racks.length}/${maxRacks})!`,
+              allowCast: false,
+            },
+          };
         }
-
-        const remainingEmptyRacks = Math.max(0, maxRacks - farm.racks.length);
-        const remainingCandidates = dryableCandidates.slice(1);
-        const hasMoreToDry = remainingEmptyRacks > 0 && remainingCandidates.length > 0;
-
-        if (!hasMoreToDry) {
-          closeBaiPanel();
-        }
-
-        const unkeepNote = fishToDry.kept ? ' (đã mở giữ)' : '';
-        return {
-          nextWorkStep: hasMoreToDry ? 8 : 9,
-          result: {
-            acted: true,
-            msg: `🐟 Sân Phơi Khô Cá: Đã đưa cá giá trị cao ${fishName}${unkeepNote} (${fishPrice.toLocaleString('vi-VN')}🐚, ${fishToDry.size || 0}cm) lên nong phơi (${farm.racks.length}/${maxRacks})!`,
-            allowCast: false,
-          },
-        };
       }
     }
     closeBaiPanel();
     step = 9;
   }
 
-  // Step 9 (Phase 3): Poultry Coop
+  // Step 9 (Phase 3): Poultry Coop (Chỉ thực hiện khi đã dựng Chuồng Gà Vịt `farm.coop >= 1`)
   if (step === 9) {
-    if (cfg.benAutoCoop !== false) {
+    if (cfg.benAutoCoop !== false && (farm.coop ?? 0) >= 1) {
       const birds = farm.birds || [];
 
       // A. Pick eggs in nest
@@ -698,9 +761,9 @@ export function runBaiFarmWorkStep(
     step = 10;
   }
 
-  // Step 10 (Phase 3): River Net Fish
+  // Step 10 (Phase 3): River Net Fish (Chỉ thực hiện khi đã giăng Lưới Quây `Boolean(farm.net)`)
   if (step === 10) {
-    if (cfg.benAutoNet !== false) {
+    if (cfg.benAutoNet !== false && Boolean(farm.net)) {
       const netFish = farm.netFish || [];
 
       // A. Pull net for adult fish

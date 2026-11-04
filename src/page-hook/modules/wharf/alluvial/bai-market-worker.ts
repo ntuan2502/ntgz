@@ -79,13 +79,15 @@ export function hasMarketWork(cfg: AppConfig): boolean {
   const duckEggs = cfg.benAutoEggSell !== false ? baiState.items['eggDuck'] || 0 : 0;
   if (henEggs > 0 || duckEggs > 0) return true;
 
-  // 4. Cá nuôi lưới cần bán
+  // 4. Cá nuôi lưới & Ốc bươu, Cua đồng (Bãi Bùn) cần bán tại Ghe Anh Mười
   if (cfg.benAutoNetSell !== false) {
     const netFishCatalog = Object.keys(baiState.info?.net?.fish || {});
     const fishKeys = Object.keys(baiState.items).filter(
       (k) =>
         baiState.items[k] > 0 &&
-        (k.startsWith('fish:') ||
+        (k === 'oc' ||
+          k === 'cua' ||
+          k.startsWith('fish:') ||
           k.toLowerCase().startsWith('netfish:') ||
           netFishCatalog.includes(k))
     );
@@ -288,13 +290,15 @@ export function runBaiMarketWorkStep(cfg: AppConfig): {
     }
   }
 
-  // 4. Bán cá nuôi lưới cho Ghe Anh Mười (hỗ trợ cả khóa netfish: chữ thường từ server)
+  // 4. Bán cá nuôi lưới & ốc bươu, cua đồng cho Ghe Anh Mười
   if (cfg.benAutoNetSell !== false) {
     const netFishCatalog = Object.keys(baiState.info?.net?.fish || {});
     const fishKeys = Object.keys(baiState.items).filter(
       (k) =>
         baiState.items[k] > 0 &&
-        (k.startsWith('fish:') ||
+        (k === 'oc' ||
+          k === 'cua' ||
+          k.startsWith('fish:') ||
           k.toLowerCase().startsWith('netfish:') ||
           netFishCatalog.includes(k))
     );
@@ -303,7 +307,7 @@ export function runBaiMarketWorkStep(cfg: AppConfig): {
       const walk = tryWalkToStall(
         'fishBoat_sell',
         FISHBOAT_STALL_TILE,
-        '🚶 Chợ Bãi: Đang đi bộ tới Ghe Anh Mười (15, 5) để bán cá nuôi lưới...',
+        '🚶 Chợ Bãi: Đang đi bộ tới Ghe Anh Mười (15, 5) để bán thủy sản...',
         { panel: 'fishBoat' },
         550
       );
@@ -316,15 +320,16 @@ export function runBaiMarketWorkStep(cfg: AppConfig): {
         };
       } else {
         const pick: Record<string, number> = {};
-        let totalFishSold = 0;
+        let totalSold = 0;
         for (const k of fishKeys) {
           const qty = baiState.items[k];
-          pick[k] = qty;
-          const shortKey = k.replace(/^(fish:|netfish:|netFish:)/i, '');
-          if (shortKey !== k) {
-            pick[shortKey] = qty;
+          if (k === 'oc' || k === 'cua' || k.startsWith('netfish:')) {
+            pick[k] = qty;
+          } else {
+            const shortKey = k.replace(/^(fish:|netfish:|netFish:)/i, '');
+            pick[`netfish:${shortKey}`] = qty;
           }
-          totalFishSold += qty;
+          totalSold += qty;
           baiState.items[k] = 0;
         }
 
@@ -334,7 +339,7 @@ export function runBaiMarketWorkStep(cfg: AppConfig): {
           finishedMarket: false,
           result: {
             acted: true,
-            msg: `🐟 Ghe Anh Mười: Đã bán ${totalFishSold} con cá nuôi lưới lấy vỏ sò!`,
+            msg: `🐟 Ghe Anh Mười: Đã bán ${totalSold} con thủy sản (cá lưới / ốc / cua) lấy vỏ sò!`,
             allowCast: false,
           },
         };
@@ -366,10 +371,6 @@ export function runBaiMarketWorkStep(cfg: AppConfig): {
         const pick: Record<string, number> = {};
         for (const k of cropKeys) {
           pick[k] = baiState.items[k];
-          const shortKey = k.replace(/^crop:/, '');
-          if (shortKey !== k) {
-            pick[shortKey] = baiState.items[k];
-          }
           baiState.items[k] = 0;
         }
         sendBenWs({ t: 'cropSell', pick });
@@ -534,7 +535,12 @@ export function runBaiMarketWorkStep(cfg: AppConfig): {
         'htx',
         HTX_STALL_TILE,
         '🚶 Chợ Bãi: Đang đi bộ tới Kho HTX Cô Tư (29, 10) kiểm tra sổ HTX...',
-        { panel: 'htx' },
+        {
+          panel: 'htx',
+          onOpen: () => {
+            sendBenWs({ t: 'htx' });
+          },
+        },
         800
       );
       if (walk.timedOut) {
@@ -578,7 +584,7 @@ export function runBaiMarketWorkStep(cfg: AppConfig): {
         'luck',
         LUCK_STALL_TILE,
         `🚶 Chợ Bãi: Đang đi bộ tới Sạp Thím Hên (42, 24) để bốc thăm (${sticks} que thăm)...`,
-        { panel: 'luck' },
+        { panel: 'gearLuck' },
         800
       );
       if (walk.timedOut) {
