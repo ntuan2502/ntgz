@@ -27,6 +27,8 @@ export interface BenNetWallet {
   liveStamina?: number;
   luckCasts?: number;
   tickets?: number;
+  keepSlots?: number;
+  keepLevel?: number;
   [key: string]: unknown;
 }
 

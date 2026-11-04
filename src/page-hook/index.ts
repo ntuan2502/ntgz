@@ -213,6 +213,13 @@ interface GameActionPayload {
           const on = Boolean(payload.on);
           if (id) {
             sendBenWs({ t: 'keep', id, on });
+            if (!stores.benNet) discoverStores();
+            const curBasket = stores.benNet?.getState()?.basket;
+            if (stores.benNet && Array.isArray(curBasket)) {
+              stores.benNet.setState({
+                basket: curBasket.map((f) => (f.id === id ? { ...f, kept: on } : f)),
+              });
+            }
             return { ok: true };
           }
           return { ok: false, error: 'NO_FISH_ID' };

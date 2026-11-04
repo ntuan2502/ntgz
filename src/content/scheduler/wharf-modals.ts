@@ -1,5 +1,11 @@
 import { AppConfig } from '../../shared/types/config';
 import { GameSnapshot } from '../../shared/types/game-state';
+import {
+  computeBasketKeepPlan,
+  getFishRarity,
+  resolveFishId,
+  shouldKeepFishByConfig,
+} from '../../shared/constants/wharf-catalog';
 import { execGameAction } from '../bridge/content-bridge';
 import { isVisible, triggerPointerDownAndClick } from './dom-helpers';
 import {
@@ -112,92 +118,120 @@ export function handleBenCatchModal(
     size?: number;
     odd?: boolean;
     rainbow?: boolean;
+    released?: boolean;
     [key: string]: unknown;
   } | null | undefined;
 
-  let rawRarity = (landed?.rarity || '').toLowerCase();
-  if (!rawRarity) {
-    if (card.classList.contains('mythic')) {
-      rawRarity = 'mythic';
-    } else {
-      const h3Next = card.querySelector('h3')?.nextElementSibling?.textContent?.trim()?.toLowerCase() || '';
-      if (h3Next.includes('thần thoại')) rawRarity = 'mythic';
-      else if (h3Next.includes('huyền thoại')) rawRarity = 'legendary';
-      else if (h3Next.includes('rất hiếm') || h3Next.includes('quý')) rawRarity = 'epic';
-      else if (h3Next.includes('hiếm')) rawRarity = 'rare';
-      else if (h3Next.includes('hơi hiếm')) rawRarity = 'uncommon';
-      else if (h3Next.includes('thường')) rawRarity = 'common';
-    }
-  }
-  if (rawRarity === 'myth') rawRarity = 'mythic';
-  if (rawRarity === 'legend') rawRarity = 'legendary';
+  const h3Name = card.querySelector('h3')?.textContent?.trim() || '';
+  const h3Next = card.querySelector('h3')?.nextElementSibling?.textContent?.trim()?.toLowerCase() || '';
+  const fishId = resolveFishId(landed?.fish, h3Name);
+  const fallbackRarity = landed?.rarity || (card.classList.contains('mythic') ? 'mythic' : h3Next);
+  const rawRarity = getFishRarity(fishId || h3Name, fallbackRarity);
 
   const isRainbow = Boolean(landed?.rainbow || card.querySelector('.catch-tag.rainbow'));
   const isOdd = Boolean(landed?.odd || card.querySelector('.catch-tag.odd'));
 
-  const allowedRarities = Array.isArray(config.benKeepRarities)
-    ? config.benKeepRarities
-    : ['mythic', 'legendary', 'rainbow', 'odd'];
+  const fishPrice =
+    Number(landed?.price) ||
+    (() => {
+      const priceText = card.querySelector('.ben-catch-price')?.textContent || '';
+      const m = priceText.match(/([\d.,]+)\s*vỏ sò/i);
+      return m ? Number(m[1].replace(/[.,]/g, '')) : 0;
+    })();
 
-  const shouldKeep =
-    Boolean(config.benAutoKeepRare) &&
-    ((isRainbow && allowedRarities.includes('rainbow')) ||
-      (isOdd && allowedRarities.includes('odd')) ||
-      allowedRarities.includes(rawRarity));
+  const shouldKeep = shouldKeepFishByConfig(
+    {
+      id: landed?.id || 'landed',
+      fish: fishId || h3Name,
+      name: h3Name,
+      rarity: rawRarity,
+      price: fishPrice,
+      size: Number(landed?.size) || 0,
+      odd: isOdd,
+      rainbow: isRainbow,
+      released: Boolean(landed?.released),
+    },
+    config
+  );
 
   const keepBtn = card.querySelector('.ben-catch-btns button.btn-yellow') as HTMLButtonElement | null;
   const bagBtn = card.querySelector('.ben-catch-btns button.btn-green') as HTMLButtonElement | null;
 
   let shouldKeepFinal = shouldKeep;
-  let oldKeptIdToUnkeep: string | null = null;
+  const oldKeptIdsToUnkeep: string[] = [];
   let duplicateNote = '';
 
-  if (shouldKeep && config.benAutoSellDuplicateKept !== false && Array.isArray(bn?.basket)) {
-    const fishSpecies = landed?.fish || card.querySelector('h3')?.textContent?.trim() || '';
-    const fishPrice =
-      Number(landed?.price) ||
-      (() => {
-        const priceText = card.querySelector('.ben-catch-price')?.textContent || '';
-        const m = priceText.match(/([\d.,]+)\s*vỏ sò/i);
-        return m ? Number(m[1].replace(/[.,]/g, '')) : 0;
-      })();
-
-    const existingKept = bn.basket.filter(
-      (f: { kept?: boolean; fish?: string; name?: string; price?: number; id?: string }) =>
-        Boolean(f.kept) && (f.fish === fishSpecies || f.name === fishSpecies)
-    );
-
-    if (existingKept.length > 0) {
-      existingKept.sort(
-        (a: { price?: number }, b: { price?: number }) => (Number(b.price) || 0) - (Number(a.price) || 0)
+  if (shouldKeep && Array.isArray(bn?.basket)) {
+    if (config.benAutoSellDuplicateKept !== false) {
+      const existingKept = bn.basket.filter(
+        (f: { kept?: boolean; fish?: string; name?: string; price?: number; id?: string }) =>
+          Boolean(f.kept) &&
+          f.id !== landed?.id &&
+          (resolveFishId(f.fish, f.name) === fishId ||
+            (fishId && f.fish === fishId) ||
+            (h3Name && f.name === h3Name))
       );
-      const bestOld = existingKept[0];
-      const bestOldPrice = Number(bestOld.price) || 0;
 
-      if (fishPrice > bestOldPrice) {
-        shouldKeepFinal = true;
-        oldKeptIdToUnkeep = bestOld.id || null;
-        duplicateNote = ` (Đắt hơn con ${bestOldPrice.toLocaleString('vi-VN')}🐚 cũ, bỏ giữ con cũ để bán)`;
-      } else {
+      if (existingKept.length > 0) {
+        existingKept.sort(
+          (a: { price?: number }, b: { price?: number }) => (Number(b.price) || 0) - (Number(a.price) || 0)
+        );
+        const bestOld = existingKept[0];
+        const bestOldPrice = Number(bestOld.price) || 0;
+
+        if (fishPrice > bestOldPrice) {
+          shouldKeepFinal = true;
+          for (const oldFish of existingKept) {
+            if (oldFish.id) oldKeptIdsToUnkeep.push(oldFish.id);
+          }
+          duplicateNote = ` (Đắt hơn con ${bestOldPrice.toLocaleString('vi-VN')}🐚 cũ, bỏ giữ con cũ để bán)`;
+        } else {
+          shouldKeepFinal = false;
+          duplicateNote = ` (Trùng loại, rẻ hơn con đã giữ ${bestOldPrice.toLocaleString('vi-VN')}🐚 -> Bỏ vô giỏ để bán)`;
+        }
+      }
+    }
+
+    // Nếu cần giữ nhưng nút Giữ đang bị khoá do đầy ngăn (10/10), kiểm tra kế hoạch giữ cá toàn giỏ
+    // để nhường chỗ (bỏ giữ cá ngoài danh sách lọc hoặc cá rẻ hơn trong ngăn)
+    if (shouldKeepFinal && keepBtn?.disabled && oldKeptIdsToUnkeep.length === 0) {
+      const plan = computeBasketKeepPlan(bn.basket, bn.wallet, config);
+      if (landed?.id && !plan.desiredKeptIds.has(landed.id)) {
         shouldKeepFinal = false;
-        duplicateNote = ` (Trùng loại, rẻ hơn con đã giữ ${bestOldPrice.toLocaleString('vi-VN')}🐚 -> Bỏ vô giỏ để bán)`;
+        duplicateNote = ' (Ngăn giữ đã đầy cá đắt hơn -> Bỏ vô giỏ để bán)';
+      } else {
+        for (const u of plan.toUnkeep) {
+          if (u.fish.id && !oldKeptIdsToUnkeep.includes(u.fish.id)) {
+            oldKeptIdsToUnkeep.push(u.fish.id);
+          }
+        }
       }
     }
   }
 
-  if (shouldKeepFinal && keepBtn && !keepBtn.disabled) {
+  for (const oldId of oldKeptIdsToUnkeep) {
+    void execGameAction('BEN_KEEP_FISH', { id: oldId, on: false });
+  }
+
+  if (shouldKeepFinal) {
     const msg = `${formatBenCatchSummary(card, true)}${duplicateNote}`;
-    triggerPointerDownAndClick(keepBtn);
     setStatus(msg);
-    if (oldKeptIdToUnkeep) {
-      void execGameAction('BEN_KEEP_FISH', { id: oldKeptIdToUnkeep, on: false });
+    if (keepBtn && !keepBtn.disabled) {
+      triggerPointerDownAndClick(keepBtn);
+    } else {
+      if (landed?.id) {
+        void execGameAction('BEN_KEEP_FISH', { id: landed.id, on: true });
+      }
+      if (bagBtn) {
+        triggerPointerDownAndClick(bagBtn);
+      } else {
+        void execGameAction('BEN_DISMISS_CATCH', { config });
+      }
     }
-    void execGameAction('BEN_DISMISS_CATCH', { config });
   } else if (bagBtn) {
     const msg = `${formatBenCatchSummary(card, false)}${duplicateNote}`;
     triggerPointerDownAndClick(bagBtn);
     setStatus(msg);
-    void execGameAction('BEN_DISMISS_CATCH', { config });
   } else {
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'z', code: 'KeyZ', bubbles: true }));
     void execGameAction('BEN_DISMISS_CATCH', { config });

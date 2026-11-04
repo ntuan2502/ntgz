@@ -2,6 +2,7 @@ import { AppConfig } from '../../../../shared/types/config';
 import { stores, sendBenWs, getActiveScene } from '../../../core/engine-access';
 import {
   getFishDisplayName,
+  getFishRarity,
   computeTideStatus,
 } from '../../../../shared/constants/wharf-catalog';
 import {
@@ -500,10 +501,11 @@ export function runBaiFarmWorkStep(
       const allowDryKept = cfg.benDryIncludeKept !== false;
       const dryableCandidates = basket
         .filter(
-          (f: { id?: string; kept?: boolean; odd?: boolean; rainbow?: boolean; price?: number; size?: number; fish?: string }) => {
-            if (!f.id) return false;
+          (f: { id?: string; kept?: boolean; odd?: boolean; rainbow?: boolean; price?: number; size?: number; fish?: string; released?: boolean }) => {
+            if (!f.id || f.released) return false;
             if (f.odd || f.rainbow) return false;
-            if (f.fish === 'rac' || f.fish?.startsWith('junk')) return false;
+            const rarity = getFishRarity(f.fish);
+            if (rarity === 'junk' || rarity === 'mythic' || f.fish === 'rac' || f.fish?.startsWith('junk')) return false;
             if (f.kept && !allowDryKept) return false;
             return true;
           }

@@ -3,7 +3,11 @@ import { canAct, markActed } from '../../core/cooldown';
 import { computeBenStamina } from '../../core/store-watcher';
 import { dismissInterruptsIfNeeded } from '../../core/interrupts';
 import { AppConfig, WharfSubAreaId } from '../../../shared/types/config';
-import { computeWharfBossStatus } from '../../../shared/constants/wharf-catalog';
+import {
+  computeBasketKeepPlan,
+  computeWharfBossStatus,
+  shouldKeepFishByConfig,
+} from '../../../shared/constants/wharf-catalog';
 import { refreshCricketWatchers, getMyBout } from './cricket-watchers';
 import { stepAlluvial, isAlluvialInTransit, getBaiSnapshot } from './alluvial';
 import {
@@ -101,7 +105,7 @@ function finishPendingPanel(
   buStore: { setState: (s: Record<string, unknown>) => void },
   msg: string
 ): BenStepResult {
-  buStore.setState({ panel: null });
+  buStore.setState({ panel: null, bagTab: null });
   pendingPanel = null;
   keepBenPanelUntil = 0;
   return { acted: true, msg };
@@ -252,20 +256,38 @@ export function dismissBenCatchModal(cfg?: AppConfig): void {
       fish?: string;
       rarity?: string;
       price?: number;
+      size?: number;
       rainbow?: boolean;
       odd?: boolean;
+      released?: boolean;
     };
-    const rawRarity = (landed.rarity || '').toLowerCase();
-    const allowedRarities = Array.isArray(cfg?.benKeepRarities)
-      ? cfg.benKeepRarities
-      : ['mythic', 'legendary', 'rainbow', 'odd'];
-    const shouldKeep =
-      Boolean(cfg?.benAutoKeepRare) &&
-      ((landed.rainbow && allowedRarities.includes('rainbow')) ||
-        (landed.odd && allowedRarities.includes('odd')) ||
-        allowedRarities.includes(rawRarity));
-    if (shouldKeep && landed.id) {
-      sendBenWs({ t: 'keep', id: landed.id, on: true });
+    if (shouldKeepFishByConfig(landed, cfg) && landed.id) {
+      const curBasket = Array.isArray(bn.basket) ? bn.basket : [];
+      const plan = computeBasketKeepPlan(curBasket, bn.wallet, cfg);
+      const shouldKeep =
+        plan.desiredKeptIds.size > 0 ? plan.desiredKeptIds.has(landed.id) : true;
+      if (shouldKeep) {
+        const unkeptIds = new Set<string>();
+        for (const u of plan.toUnkeep) {
+          if (u.fish.id) {
+            sendBenWs({ t: 'keep', id: u.fish.id, on: false });
+            unkeptIds.add(u.fish.id);
+          }
+        }
+        sendBenWs({ t: 'keep', id: landed.id, on: true });
+        bnStore.setState({
+          fishing: 'idle',
+          landed: null,
+          basket: curBasket.map((f) =>
+            f.id === landed.id
+              ? { ...f, kept: true }
+              : f.id && unkeptIds.has(f.id)
+                ? { ...f, kept: false }
+                : f
+          ),
+        });
+        return;
+      }
     }
   }
   bnStore.setState({ fishing: 'idle', landed: null });

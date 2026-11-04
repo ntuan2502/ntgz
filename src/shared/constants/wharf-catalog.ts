@@ -25,11 +25,239 @@ export interface FishCatalogEntry {
 export const ALL_FISH_CATALOG: FishCatalogEntry[] = fishDexRaw as FishCatalogEntry[];
 
 /**
+ * Bản đồ tra cứu chi tiết cá/rác theo id (khớp với `r_` trong mã nguồn game).
+ */
+export const FISH_CATALOG_MAP: Map<string, FishCatalogEntry> = new Map(
+  ALL_FISH_CATALOG.map((f) => [f.id, f])
+);
+
+/**
  * Bản đồ tra cứu tên tiếng Việt của toàn bộ cá và rác trong Bến Đò.
  */
 export const FISH_NAME_MAP: Map<string, string> = new Map(
   ALL_FISH_CATALOG.map((f) => [f.id, f.name])
 );
+
+/**
+ * Bản đồ tra cứu ngược từ tên tiếng Việt (chữ thường) sang id cá.
+ */
+export const FISH_NAME_TO_ID_MAP: Map<string, string> = new Map(
+  ALL_FISH_CATALOG.map((f) => [f.name.trim().toLowerCase(), f.id])
+);
+
+/**
+ * Chuẩn hóa id cá từ id hoặc tên hiển thị tiếng Việt.
+ */
+export function resolveFishId(fishIdOrName?: string | null, fallbackName?: string | null): string {
+  if (fishIdOrName) {
+    const trimmed = fishIdOrName.trim();
+    if (FISH_CATALOG_MAP.has(trimmed)) return trimmed;
+    const byName = FISH_NAME_TO_ID_MAP.get(trimmed.toLowerCase());
+    if (byName) return byName;
+  }
+  if (fallbackName) {
+    const byFallback = FISH_NAME_TO_ID_MAP.get(fallbackName.trim().toLowerCase());
+    if (byFallback) return byFallback;
+  }
+  return fishIdOrName?.trim() || '';
+}
+
+/**
+ * Lấy độ hiếm chuẩn của cá theo id từ từ điển `fish-dex-data.json` (khớp với `r_[fish]?.rarity` trong game),
+ * vì payload `landed` và `basket` của máy chủ chỉ gửi `fish: "<id>"` chứ không gửi trường `rarity`.
+ */
+export function getFishRarity(
+  fishIdOrName?: string | null,
+  fallbackRarity?: string | null
+): FishCatalogEntry['rarity'] {
+  const resolvedId = resolveFishId(fishIdOrName);
+  if (resolvedId && FISH_CATALOG_MAP.has(resolvedId)) {
+    return FISH_CATALOG_MAP.get(resolvedId)!.rarity;
+  }
+
+  const raw = (fallbackRarity || '').trim().toLowerCase();
+  if (!raw) return 'common';
+  if (raw === 'mythic' || raw === 'myth' || raw.includes('thần thoại')) return 'mythic';
+  if (raw === 'legendary' || raw === 'legend' || raw.includes('huyền thoại')) return 'legendary';
+  if (raw === 'epic' || raw.includes('rất hiếm') || raw.includes('quý')) return 'epic';
+  // Lưu ý: phải kiểm tra "hơi hiếm" trước "hiếm" vì chuỗi "hơi hiếm" có chứa "hiếm"!
+  if (raw === 'uncommon' || raw.includes('hơi hiếm')) return 'uncommon';
+  if (raw === 'rare' || raw.includes('hiếm')) return 'rare';
+  if (raw === 'junk' || raw === 'rac' || raw.includes('rác')) return 'junk';
+  return 'common';
+}
+
+/**
+ * Tính sức chứa Ngăn cá giữ lại (khớp 100% với hàm `I$(wallet)` trong game: cơ bản 10 + 5 mỗi cấp `keepLevel`).
+ */
+export function getBenKeepSlots(
+  wallet?: { keepSlots?: number; keepLevel?: number } | null
+): number {
+  if (typeof wallet?.keepSlots === 'number' && wallet.keepSlots > 0) {
+    return wallet.keepSlots;
+  }
+  const lvl = Math.max(0, Math.min(Number(wallet?.keepLevel) || 0, 6));
+  return 10 + 5 * lvl;
+}
+
+export interface BenBasketFishItem {
+  id?: string;
+  fish?: string;
+  name?: string;
+  rarity?: string;
+  price?: number;
+  size?: number;
+  kept?: boolean;
+  odd?: boolean;
+  rainbow?: boolean;
+  released?: boolean;
+}
+
+/**
+ * Kiểm tra một con cá có thuộc diện cần giữ lại theo cấu hình `benAutoKeepRare` & `benKeepRarities` hay không.
+ * Loại trừ hoàn toàn rác (`junk`) và các loài cá phóng sinh (`release: true` như Cá heo nước ngọt, Rùa vàng).
+ */
+export function shouldKeepFishByConfig(
+  fish: BenBasketFishItem | null | undefined,
+  cfg?: { benAutoKeepRare?: boolean; benKeepRarities?: string[] } | null
+): boolean {
+  if (!fish || fish.released) return false;
+  if (!cfg?.benAutoKeepRare) return false;
+
+  const resolvedId = resolveFishId(fish.fish, fish.name);
+  const catalogEntry = resolvedId ? FISH_CATALOG_MAP.get(resolvedId) : undefined;
+  if (catalogEntry?.release) return false;
+
+  const rarity = catalogEntry?.rarity || getFishRarity(fish.fish || fish.name, fish.rarity);
+  if (rarity === 'junk') return false;
+
+  const allowedRarities = Array.isArray(cfg.benKeepRarities)
+    ? cfg.benKeepRarities
+    : ['mythic', 'legendary', 'rainbow', 'odd'];
+
+  return Boolean(
+    (fish.rainbow && allowedRarities.includes('rainbow')) ||
+      (fish.odd && allowedRarities.includes('odd')) ||
+      allowedRarities.includes(rarity)
+  );
+}
+
+const RARITY_PRIORITY_SCORE: Record<FishCatalogEntry['rarity'], number> = {
+  junk: 0,
+  common: 1,
+  uncommon: 2,
+  rare: 3,
+  epic: 4,
+  legendary: 5,
+  mythic: 6,
+};
+
+function compareFishKeepPriority(a: BenBasketFishItem, b: BenBasketFishItem): number {
+  const priceDiff = (Number(b.price) || 0) - (Number(a.price) || 0);
+  if (priceDiff !== 0) return priceDiff;
+  const rarA = RARITY_PRIORITY_SCORE[getFishRarity(a.fish || a.name, a.rarity)] || 0;
+  const rarB = RARITY_PRIORITY_SCORE[getFishRarity(b.fish || b.name, b.rarity)] || 0;
+  if (rarB !== rarA) return rarB - rarA;
+  const sizeDiff = (Number(b.size) || 0) - (Number(a.size) || 0);
+  if (sizeDiff !== 0) return sizeDiff;
+  if (Boolean(a.kept) !== Boolean(b.kept)) return a.kept ? -1 : 1;
+  return 0;
+}
+
+export interface BasketUnkeepEntry {
+  fish: BenBasketFishItem;
+  reason: 'not_in_filter' | 'duplicate' | 'slot_full';
+  betterFish?: BenBasketFishItem;
+}
+
+export interface BasketKeepPlan {
+  keepSlots: number;
+  desiredKeptIds: Set<string>;
+  toUnkeep: BasketUnkeepEntry[];
+  toKeep: BenBasketFishItem[];
+}
+
+/**
+ * Tính toán danh sách cá cần giữ (`toKeep`) và cần bỏ giữ (`toUnkeep`) trong `bn.basket`:
+ * 1. Chỉ giữ những cá khớp `shouldKeepFishByConfig` (loại bỏ cá thường/hơi hiếm bị giữ nhầm hoặc ngoài bộ lọc).
+ * 2. Nếu bật `benAutoSellDuplicateKept`, mỗi loài (`fish`) chỉ giữ 1 con có giá bán (`price`) cao nhất.
+ * 3. Giới hạn tổng số cá giữ không vượt quá `keepSlots` (ưu tiên giữ con đắt hơn).
+ */
+export function computeBasketKeepPlan(
+  basket: BenBasketFishItem[] | null | undefined,
+  wallet: { keepSlots?: number; keepLevel?: number } | null | undefined,
+  cfg?: {
+    benAutoKeepRare?: boolean;
+    benKeepRarities?: string[];
+    benAutoSellDuplicateKept?: boolean;
+  } | null
+): BasketKeepPlan {
+  const keepSlots = getBenKeepSlots(wallet);
+  const desiredKeptIds = new Set<string>();
+  const toUnkeep: BasketUnkeepEntry[] = [];
+  const toKeep: BenBasketFishItem[] = [];
+
+  if (!Array.isArray(basket) || basket.length === 0 || !cfg?.benAutoKeepRare) {
+    return { keepSlots, desiredKeptIds, toUnkeep, toKeep };
+  }
+
+  const validItems = basket.filter((f): f is BenBasketFishItem => Boolean(f && f.id && !f.released));
+  const matching: BenBasketFishItem[] = [];
+  const nonMatchingIds = new Set<string>();
+
+  for (const f of validItems) {
+    if (shouldKeepFishByConfig(f, cfg)) {
+      matching.push(f);
+    } else {
+      nonMatchingIds.add(f.id!);
+    }
+  }
+
+  const duplicateBetterMap = new Map<string, BenBasketFishItem>();
+  let candidates: BenBasketFishItem[] = [];
+
+  if (cfg.benAutoSellDuplicateKept !== false) {
+    const bySpecies = new Map<string, BenBasketFishItem[]>();
+    for (const f of matching) {
+      const speciesKey = resolveFishId(f.fish, f.name) || f.fish || f.id!;
+      if (!bySpecies.has(speciesKey)) bySpecies.set(speciesKey, []);
+      bySpecies.get(speciesKey)!.push(f);
+    }
+
+    for (const [, list] of bySpecies.entries()) {
+      list.sort(compareFishKeepPriority);
+      candidates.push(list[0]);
+      for (const dup of list.slice(1)) {
+        if (dup.id) duplicateBetterMap.set(dup.id, list[0]);
+      }
+    }
+  } else {
+    candidates = [...matching];
+  }
+
+  candidates.sort(compareFishKeepPriority);
+  const winners = candidates.slice(0, keepSlots);
+  for (const w of winners) {
+    if (w.id) desiredKeptIds.add(w.id);
+  }
+
+  for (const f of validItems) {
+    const id = f.id!;
+    if (f.kept && !desiredKeptIds.has(id)) {
+      if (nonMatchingIds.has(id)) {
+        toUnkeep.push({ fish: f, reason: 'not_in_filter' });
+      } else if (duplicateBetterMap.has(id)) {
+        toUnkeep.push({ fish: f, reason: 'duplicate', betterFish: duplicateBetterMap.get(id) });
+      } else {
+        toUnkeep.push({ fish: f, reason: 'slot_full', betterFish: winners[winners.length - 1] });
+      }
+    } else if (!f.kept && desiredKeptIds.has(id)) {
+      toKeep.push(f);
+    }
+  }
+
+  return { keepSlots, desiredKeptIds, toUnkeep, toKeep };
+}
 
 /**
  * Lấy tên hiển thị của cá theo id, ưu tiên tên từ từ điển game, fallback qua id.

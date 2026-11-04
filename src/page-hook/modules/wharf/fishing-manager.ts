@@ -3,6 +3,7 @@ import { canAct, markActed } from '../../core/cooldown';
 import {
   BEN_BAIT_NAMES,
   BEN_DRINK_NAMES,
+  computeBasketKeepPlan,
   getFishDisplayName,
 } from '../../../shared/constants/wharf-catalog';
 import { BenExecutionContext, BenStepResult, FISHING_SPOTS, SPOT_KEYS } from './types';
@@ -62,45 +63,82 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
     walkAndRun,
   } = ctx;
 
-  // 0. Tự động bỏ giữ cá trùng loại nếu bật benAutoSellDuplicateKept (chỉ giữ 1 con đắt nhất mỗi loài)
-  if (cfg.benAutoSellDuplicateKept !== false && Array.isArray(bn.basket)) {
-    const keptList = bn.basket.filter(
-      (x: { kept?: boolean; id?: string; fish?: string; price?: number; size?: number }) =>
-        Boolean(x.kept) && Boolean(x.id)
+  // 0. Đồng bộ Ngăn cá giữ lại trong giỏ theo đúng cấu hình benAutoKeepRare, benKeepRarities & benAutoSellDuplicateKept:
+  // - Bỏ giữ các con cá bị giữ nhầm (ngoài bộ lọc, trùng loại rẻ hơn, hoặc vượt sức chứa ngăn giữ).
+  // - Tự động giữ các con cá quý/cầu vồng/cá lạ đang nằm ở giỏ thường (ví dụ cá dính câu kép 'bonus' hoặc Cò Lon).
+  if (cfg.benAutoKeepRare !== false && Array.isArray(bn.basket) && bn.basket.length > 0) {
+    const plan = computeBasketKeepPlan(bn.basket, wallet, cfg);
+    const pendingUnkeeps = plan.toUnkeep.filter(
+      (u) => u.fish.id && canAct(`ben_unkeep_${u.fish.id}`, 1500)
     );
-    const bySpecies = new Map<string, typeof keptList>();
-    for (const f of keptList) {
-      const key = f.fish || 'unknown';
-      if (!bySpecies.has(key)) bySpecies.set(key, []);
-      bySpecies.get(key)!.push(f);
-    }
-    for (const [, list] of bySpecies.entries()) {
-      if (list.length > 1) {
-        list.sort(
-          (a, b) =>
-            (Number(b.price) || 0) - (Number(a.price) || 0) ||
-            (Number(b.size) || 0) - (Number(a.size) || 0)
-        );
-        for (const dup of list.slice(1)) {
-          if (dup.id && canAct(`ben_unkeep_${dup.id}`, 1000)) {
-            markActed(`ben_unkeep_${dup.id}`);
-            const fishName = getFishDisplayName(dup.fish, (dup as { name?: string }).name);
-            const unkeepMsg = `🔄 Bỏ giữ cá trùng: ${fishName} (${Number(dup.price || 0).toLocaleString('vi-VN')}🐚) để bán (ưu tiên giữ con ${Number(list[0].price || 0).toLocaleString('vi-VN')}🐚)`;
-            runWithOptionalPanel(
-              () => {
-                sendBenWs({ t: 'keep', id: dup.id, on: false });
-              },
-              unkeepMsg,
-              { panel: 'pack', bagTab: 'fish' },
-              1200
-            );
-            return {
-              acted: true,
-              msg: unkeepMsg,
-            };
-          }
+    const pendingKeeps = plan.toKeep.filter(
+      (f) => f.id && canAct(`ben_keep_${f.id}`, 1500)
+    );
+
+    if (pendingUnkeeps.length > 0 || pendingKeeps.length > 0) {
+      let summaryMsg = '';
+      if (pendingUnkeeps.length > 0) {
+        const first = pendingUnkeeps[0];
+        const fishName = getFishDisplayName(first.fish.fish, first.fish.name);
+        const priceStr = Number(first.fish.price || 0).toLocaleString('vi-VN');
+        if (first.reason === 'duplicate' && first.betterFish) {
+          summaryMsg = `🔄 Bỏ giữ cá trùng: ${fishName} (${priceStr}🐚) để bán (ưu tiên giữ con ${Number(first.betterFish.price || 0).toLocaleString('vi-VN')}🐚)`;
+        } else if (first.reason === 'not_in_filter') {
+          summaryMsg = `🔄 Bỏ giữ cá ngoài bộ lọc: ${fishName} (${priceStr}🐚)${pendingUnkeeps.length > 1 ? ` và ${pendingUnkeeps.length - 1} con khác` : ''} để bán`;
+        } else {
+          summaryMsg = `🔄 Nhường ngăn giữ cá: Bỏ giữ ${fishName} (${priceStr}🐚) cho cá giá trị cao hơn`;
         }
+      } else if (pendingKeeps.length > 0) {
+        const first = pendingKeeps[0];
+        const fishName = getFishDisplayName(first.fish, first.name);
+        const priceStr = Number(first.price || 0).toLocaleString('vi-VN');
+        summaryMsg = `⭐ Cất vào ngăn giữ lại: ${fishName} (${priceStr}🐚)${pendingKeeps.length > 1 ? ` (+${pendingKeeps.length - 1} con khác)` : ''}`;
       }
+
+      for (const u of pendingUnkeeps) {
+        if (u.fish.id) markActed(`ben_unkeep_${u.fish.id}`);
+      }
+      for (const k of pendingKeeps) {
+        if (k.id) markActed(`ben_keep_${k.id}`);
+      }
+
+      runWithOptionalPanel(
+        () => {
+          const unkeepSet = new Set<string>();
+          const keepSet = new Set<string>();
+          for (const u of pendingUnkeeps) {
+            if (u.fish.id) {
+              sendBenWs({ t: 'keep', id: u.fish.id, on: false });
+              unkeepSet.add(u.fish.id);
+            }
+          }
+          for (const k of pendingKeeps) {
+            if (k.id) {
+              sendBenWs({ t: 'keep', id: k.id, on: true });
+              keepSet.add(k.id);
+            }
+          }
+          const latestBasket = ctx.bnStore.getState()?.basket;
+          if (Array.isArray(latestBasket)) {
+            ctx.bnStore.setState({
+              basket: latestBasket.map((f) =>
+                f.id && unkeepSet.has(f.id)
+                  ? { ...f, kept: false }
+                  : f.id && keepSet.has(f.id)
+                    ? { ...f, kept: true }
+                    : f
+              ),
+            });
+          }
+        },
+        summaryMsg,
+        { panel: 'pack', bagTab: 'fish' },
+        900
+      );
+      return {
+        acted: true,
+        msg: summaryMsg,
+      };
     }
   }
 
@@ -119,23 +157,6 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
     nonKeptCount > 0 &&
     (isBasketFull || needShellsForBait || needShellsForFood)
   ) {
-    // Nếu bật tự phơi cá, giữ lại tối đa 6 con cá giá trị cao nhất trong giỏ để đem qua bãi phơi thay vì bán tươi
-    if (cfg.benAutoDryFish !== false && Array.isArray(bn.basket)) {
-      const dryCandidates = bn.basket
-        .filter(
-          (f: { id?: string; kept?: boolean; odd?: boolean; rainbow?: boolean; price?: number; fish?: string }) =>
-            Boolean(f.id && !f.kept && !f.odd && !f.rainbow && f.fish !== 'rac' && !f.fish?.startsWith('junk'))
-        )
-        .sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0));
-
-      for (const f of dryCandidates.slice(0, 6)) {
-        if (f.id) {
-          sendBenWs({ t: 'keep', id: f.id, on: true });
-          f.kept = true;
-        }
-      }
-    }
-
     const reasonText =
       nonKeptCount >= 60 || bn.notice?.error === 'basketFull'
         ? ' (Giỏ đã đầy 60/60)'
