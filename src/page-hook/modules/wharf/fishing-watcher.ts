@@ -30,6 +30,7 @@ let currentCastSeq = -1;
 let lastHookedAt = 0;
 let lastPulledN = -1;
 let scheduledRunN = -1;
+let invertPullDir = false;
 let biteTimeoutId: ReturnType<typeof setTimeout> | null = null;
 let runTimeoutId: ReturnType<typeof setTimeout> | null = null;
 let isListenerRegistered = false;
@@ -236,9 +237,10 @@ function handleIncomingRun(n: number, dirHint?: 'left' | 'right', msHint?: numbe
   }
   scheduledRunN = n;
 
-  // Natural reaction delay: 140ms - 190ms (gives React time to render DOM text & lands in max tension reduction window)
+  // Server rejects pulls faster than ~200ms as bot pre-fire (Ref: Jee(e,t) floor 150ms + network).
+  // Sweet spot 260ms - 335ms is safely above the minimum reaction floor and still inside the -12% tension gold window.
   const ms = msHint || 800;
-  const reactionMs = Math.min(ms * 0.25, 140 + Math.floor(Math.random() * 50));
+  const reactionMs = Math.min(Math.floor(ms * 0.44), 260 + Math.floor(Math.random() * 75));
 
   runTimeoutId = setTimeout(() => {
     runTimeoutId = null;
@@ -256,7 +258,12 @@ function handleIncomingRun(n: number, dirHint?: 'left' | 'right', msHint?: numbe
     const detected = detectFightDirection(dirHint);
     if (!detected) return;
 
-    const { fishDir, pullDir } = detected;
+    const { fishDir } = detected;
+    const pullDir: 'left' | 'right' = invertPullDir
+      ? detected.pullDir === 'left'
+        ? 'right'
+        : 'left'
+      : detected.pullDir;
     lastPulledN = n;
 
     executeFightPull(n, pullDir);
@@ -264,7 +271,7 @@ function handleIncomingRun(n: number, dirHint?: 'left' | 'right', msHint?: numbe
     pushFishingEvent(
       `💪 Bến Đò: Lượt ${n} - Cá chạy ${fishDir === 'left' ? 'TRÁI ⬅' : 'PHẢI ➡'} -> Bấm phím ${
         pullDir === 'left' ? '⬅ [ArrowLeft]' : '➡ [ArrowRight]'
-      }`
+      } (${reactionMs}ms)`
     );
   }, reactionMs);
 }
@@ -329,10 +336,20 @@ function ensureWsListener(): void {
       const dir = msg.dir === 'left' || msg.dir === 'right' ? msg.dir : undefined;
       handleIncomingRun(msg.n, dir, Number(msg.ms) || 800);
     } else if (msg.t === 'pulled' && typeof msg.n === 'number') {
+      const wasPulledByUs = lastPulledN === msg.n;
       lastPulledN = msg.n;
       const tension = typeof msg.tension === 'number' ? msg.tension : 0;
       if (msg.ok === false) {
-        pushFishingEvent(`⚠️ Bến Đò: Ghìm hụt lượt ${msg.n}! Dây căng ${tension}%`);
+        if (wasPulledByUs) {
+          invertPullDir = !invertPullDir;
+          pushFishingEvent(
+            `⚠️ Bến Đò: Ghìm hụt lượt ${msg.n} (căng ${tension}%) -> Đổi chiều ghìm sang ${
+              invertPullDir ? 'CÙNG BÊN' : 'NGƯỢC BÊN'
+            }!`
+          );
+        } else {
+          pushFishingEvent(`⚠️ Bến Đò: Ghìm hụt lượt ${msg.n} (quá giờ)! Dây căng ${tension}%`);
+        }
       } else if (msg.ok === true) {
         const left = typeof msg.left === 'number' ? msg.left : 0;
         pushFishingEvent(`💪 Bến Đò: Ghìm chuẩn lượt ${msg.n} (còn ${left} lượt, căng ${tension}%)`);
