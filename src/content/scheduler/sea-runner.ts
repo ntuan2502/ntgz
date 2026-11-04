@@ -125,9 +125,8 @@ export async function stepSeaFishing(
     if (now - lastHookAt > 250) {
       if (redBiteBtn) {
         triggerPointerDownOnly(redBiteBtn);
-      } else {
-        window.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true }));
       }
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true }));
       lastHookAt = now;
       setStatus('🔴 Biển: Cá cắn thật rồi -> GIẬT!');
     }

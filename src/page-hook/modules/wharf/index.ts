@@ -25,8 +25,9 @@ import { runBossHuntOrImpendingStep } from './boss-hunter';
 import { runFishingStep, updateSpotFishCounter } from './fishing-manager';
 import { runCricketBossStep, runCricketHuntStep, getHuntLightAt } from './cricket-arena';
 import { runEntertainmentStep } from './entertainment';
+import { refreshFishingWatcher } from './fishing-watcher';
 
-export { refreshCricketWatchers, stepAlluvial, getWharfNextAtmTime };
+export { refreshCricketWatchers, refreshFishingWatcher, stepAlluvial, getWharfNextAtmTime };
 
 let keepBenPanelUntil = 0;
 let keepBenPanelMsg = '';
@@ -101,6 +102,7 @@ export function execBenStep(
   }
   initWharfSeqsIfNeeded(bn);
   refreshCricketWatchers(cfg);
+  refreshFishingWatcher(cfg);
 
   // =========================================================================
   // 🪖 HIGHEST PRIORITY #0: MILITIA CHECK ("🪖 Dân quân kiểm tra!")

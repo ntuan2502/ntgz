@@ -2,12 +2,14 @@ import { isVisible, triggerPointerDownOnly } from './dom-helpers';
 import { GameSnapshot } from '../../shared/types/game-state';
 
 let lastPulledRunKey = '';
+let lastPulledRunN: string | number = -1;
 let lastPullAt = 0;
 
 export function handleFightMinigame(snap: GameSnapshot, setStatus: (text: string) => void): boolean {
   const fightBox = document.querySelector('.ben-fight');
   if (!fightBox || !isVisible(fightBox)) {
     lastPulledRunKey = '';
+    lastPulledRunN = -1;
     return false;
   }
 
@@ -31,18 +33,22 @@ export function handleFightMinigame(snap: GameSnapshot, setStatus: (text: string
 
   // Identify unique run number so we pull exactly once per run
   const runN =
-    fishRun?.n ||
-    (timerBar ? timerBar.textContent || timerBar.style.animationDuration : '') ||
-    'run';
+    fishRun?.n !== undefined
+      ? fishRun.n
+      : (timerBar ? timerBar.textContent || timerBar.style.animationDuration : '') || 'run';
   const runKey = `${runDir}:${runN}`;
 
   const now = performance.now();
-  if (runKey === lastPulledRunKey && now - lastPullAt < 550) {
+  // Do not pull the same run twice
+  if (runN !== 'run' && runN === lastPulledRunN) {
+    return true;
+  }
+  if (runKey === lastPulledRunKey && now - lastPullAt < 350) {
     return true;
   }
 
-  // Wait ~120ms reaction time
-  if (now - lastPullAt < 130) {
+  // Minimum reaction time (~70ms) to ensure DOM/React have rendered the run
+  if (now - lastPullAt < 80) {
     return true;
   }
 
@@ -55,15 +61,15 @@ export function handleFightMinigame(snap: GameSnapshot, setStatus: (text: string
   const targetBtn = pullDir === 'left' ? leftBtn : rightBtn;
   if (targetBtn && !targetBtn.disabled) {
     triggerPointerDownOnly(targetBtn);
-    lastPulledRunKey = runKey;
-    lastPullAt = now;
-    setStatus(`💪 Ghìm cần sang ${pullDir === 'left' ? 'TRÁI ⬅' : 'PHẢI ➡'}!`);
-  } else {
-    const key = pullDir === 'left' ? 'ArrowLeft' : 'ArrowRight';
-    const code = pullDir === 'left' ? 'KeyA' : 'KeyD';
-    window.dispatchEvent(new KeyboardEvent('keydown', { key, code, bubbles: true }));
-    lastPulledRunKey = runKey;
-    lastPullAt = now;
   }
+  // Dispatch native keyboard event on window so the game's keydown listener is triggered reliably
+  const key = pullDir === 'left' ? 'ArrowLeft' : 'ArrowRight';
+  const code = pullDir === 'left' ? 'KeyA' : 'KeyD';
+  window.dispatchEvent(new KeyboardEvent('keydown', { key, code, bubbles: true }));
+
+  lastPulledRunKey = runKey;
+  lastPulledRunN = runN;
+  lastPullAt = now;
+  setStatus(`💪 Ghìm cần sang ${pullDir === 'left' ? 'TRÁI ⬅' : 'PHẢI ➡'}!`);
   return true;
 }

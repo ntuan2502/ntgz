@@ -184,9 +184,9 @@ export interface BenNetState {
       dir?: 'left' | 'right';
       n?: number | string;
       [key: string]: unknown;
-    };
+    } | null;
     [key: string]: unknown;
-  };
+  } | null;
   wheel?: {
     bought?: number;
     picks?: string[];

@@ -4,7 +4,7 @@ import { dismissInterruptsIfNeeded } from './core/interrupts';
 import { getGameAssets, drawGameAsset } from './core/asset-renderer';
 import { execFarmSubAreaStep } from './modules/farm';
 import { execSeaStep } from './modules/sea';
-import { execBenStep, refreshCricketWatchers, dismissBenCatchModal } from './modules/wharf';
+import { execBenStep, refreshCricketWatchers, refreshFishingWatcher, dismissBenCatchModal } from './modules/wharf';
 import { execFarmstayStep } from './modules/farmstay';
 import { AppConfig, FarmSubAreaId } from '../shared/types/config';
 
@@ -143,6 +143,7 @@ interface GameActionPayload {
         case 'BEN_WATCH': {
           if (!payload.config) return { ok: false, error: 'NO_CONFIG' };
           refreshCricketWatchers(payload.config);
+          refreshFishingWatcher(payload.config);
           return { ok: true };
         }
 

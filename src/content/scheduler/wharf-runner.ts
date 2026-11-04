@@ -282,9 +282,8 @@ export async function stepBenDoFishing(
       const pullBtn = document.querySelector('button.ben-cast.btn-brown') as HTMLButtonElement | null;
       if (pullBtn && isVisible(pullBtn)) {
         triggerPointerDownOnly(pullBtn);
-      } else {
-        window.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true }));
       }
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true }));
       lastHookAt = now;
       setStatus('🎣 Bến Đò: Cá cắn câu -> GIẬT!');
     }
