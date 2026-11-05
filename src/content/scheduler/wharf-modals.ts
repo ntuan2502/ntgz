@@ -22,6 +22,8 @@ import {
   solveMilitiaOddImage,
   solveMilitiaQuizImage,
   solveMilitiaTapImage,
+  solveMilitiaDragImage,
+  type MilitiaDragAnswerResolution,
 } from './militia-solver';
 
 let lastModalClickAt = 0;
@@ -37,6 +39,7 @@ let militiaCheckType: MilitiaCheckType = 'count';
 let militiaSolvingPromise: Promise<unknown> | null = null;
 let militiaSolvedResult: MilitiaClassificationResult | null = null;
 let militiaSolvedTapResult: MilitiaTapAnswerResolution | null = null;
+let militiaSolvedDragResult: MilitiaDragAnswerResolution | null = null;
 let militiaTargetKind: MilitiaAskKind = 'fish';
 let militiaOptions: number[] = [];
 let militiaHasAlerted = false;
@@ -456,6 +459,7 @@ export function handleBenMilitiaModal(
     militiaSolvingPromise = null;
     militiaSolvedResult = null;
     militiaSolvedTapResult = null;
+    militiaSolvedDragResult = null;
     militiaOptions = [];
     militiaHasAlerted = false;
     return false;
@@ -582,7 +586,146 @@ export function handleBenMilitiaModal(
   }
 
   // -------------------------------------------------------------
-  // BRANCH B: Classic Count Captcha ('count')
+  // BRANCH B: Slider Drag Puzzle ('drag')
+  // -------------------------------------------------------------
+  if (militiaCheckType === 'drag') {
+    const hasMark = Boolean(militiaPanel?.querySelector('.militia-check-mark'));
+    const leftText = militiaPanel?.querySelector('.militia-check-left')?.textContent || '';
+    if (hasMark || leftText.includes('Đang chấm')) {
+      setStatus('🪖 Dân quân kiểm tra: Đã kéo mảnh ghép, đang chờ chấm kết quả...');
+      return true;
+    }
+
+    if (!militiaSolvedDragResult && !militiaSolvingPromise) {
+      const imgEl = militiaPanel?.querySelector('img.militia-check-img') as HTMLImageElement | null;
+      const imgSrc = imgEl?.src || (check?.img ? `data:image/png;base64,${check.img}` : '');
+      if (imgSrc) {
+        militiaSolvingPromise = solveMilitiaDragImage(
+          imgEl && imgEl.complete && imgEl.naturalWidth > 0 ? imgEl : imgSrc,
+          check?.pieceY
+        )
+          .then((res) => {
+            militiaSolvedDragResult = res;
+            console.log('[Militia] Solved drag slot:', res);
+            return res;
+          })
+          .catch((err) => {
+            console.warn('[Militia] Drag solving failed:', err);
+            return null;
+          });
+      }
+    }
+
+    if (config.benAutoMilitiaSolve === false) {
+      const normStr = militiaSolvedDragResult
+        ? ` (x=${militiaSolvedDragResult.x}, y=${militiaSolvedDragResult.y})`
+        : '';
+      setStatus(
+        `🪖 Dân quân kiểm tra (drag): Gợi ý: Kéo vào chỗ tối${normStr}. Chế độ thủ công: Bà con tự kéo nha! (còn ${remainingSec}s)`
+      );
+      return true;
+    }
+
+    const userDelaySec = Math.max(2, Math.min(60, Number(config.benMilitiaSolveDelaySec) || 10));
+    const exactHumanDelay = userDelaySec * 1000;
+    if (militiaSolvedDragResult && !isCriticalTimeout && now - militiaFirstSeenAt < exactHumanDelay) {
+      const waitSec = Math.max(1, Math.ceil((militiaFirstSeenAt + exactHumanDelay - now) / 1000));
+      setStatus(
+        `🪖 Dân quân kiểm tra (drag): Đã định vị chỗ trống tối (x=${militiaSolvedDragResult.x}, y=${militiaSolvedDragResult.y}). Tự kéo sau ${waitSec}s... (còn ${remainingSec}s)`
+      );
+      return true;
+    }
+
+    if (!militiaSolvedDragResult && !isCriticalTimeout) {
+      setStatus(`🪖 Dân quân kiểm tra (drag): Đang phân tích vị trí ô trống... (còn ${remainingSec}s)`);
+      return true;
+    }
+
+    if (militiaSolvedDragResult && now - lastMilitiaClickAt > 1500) {
+      lastMilitiaClickAt = now;
+      const res = militiaSolvedDragResult;
+
+      // 1. Try game store action if exposed
+      const execGameAction = (window as unknown as { __EXEC_GAME_ACTION__?: (action: string, data?: unknown) => boolean }).__EXEC_GAME_ACTION__;
+      if (typeof execGameAction === 'function') {
+        const ok = execGameAction('BEN_CHECK_ANSWER', {
+          x: res.x,
+          y: res.y,
+          path: res.path,
+        });
+        if (ok) {
+          setStatus(`🪖 Dân quân kiểm tra (drag): Đã gửi tọa độ ghép (x=${res.x}, y=${res.y})!`);
+          return true;
+        }
+      }
+
+      // 2. Perform DOM drag sequence: find draggable piece element
+      const pieceEl = (militiaPanel?.querySelector('.militia-check-piece') ||
+        militiaPanel?.querySelector('.militia-piece') ||
+        militiaPanel?.querySelector('.militia-check-left img') ||
+        militiaPanel?.querySelector('img.militia-check-img')) as HTMLElement | null;
+
+      const imgEl = militiaPanel?.querySelector('img.militia-check-img') as HTMLElement | null;
+      if (pieceEl && imgEl) {
+        const imgRect = imgEl.getBoundingClientRect();
+        const startClientX = imgRect.left + 25;
+        const startClientY = imgRect.top + res.normalizedY * imgRect.height;
+        const targetClientX = imgRect.left + res.normalizedX * imgRect.width;
+        const targetClientY = imgRect.top + res.normalizedY * imgRect.height;
+
+        pieceEl.dispatchEvent(
+          new PointerEvent('pointerdown', {
+            bubbles: true,
+            cancelable: true,
+            clientX: startClientX,
+            clientY: startClientY,
+            pointerId: 1,
+            isPrimary: true,
+          })
+        );
+
+        for (const pt of res.path) {
+          const stepT = pt[0];
+          setTimeout(() => {
+            const stepX = imgRect.left + (pt[1] / imgEl.offsetWidth) * imgRect.width;
+            const stepY = imgRect.top + (pt[2] / imgEl.offsetHeight) * imgRect.height;
+            window.dispatchEvent(
+              new PointerEvent('pointermove', {
+                bubbles: true,
+                cancelable: true,
+                clientX: stepX,
+                clientY: stepY,
+                pointerId: 1,
+                isPrimary: true,
+              })
+            );
+          }, stepT);
+        }
+
+        const lastStepMs = res.path[res.path.length - 1]?.[0] || 500;
+        setTimeout(() => {
+          window.dispatchEvent(
+            new PointerEvent('pointerup', {
+              bubbles: true,
+              cancelable: true,
+              clientX: targetClientX,
+              clientY: targetClientY,
+              pointerId: 1,
+              isPrimary: true,
+            })
+          );
+        }, lastStepMs + 30);
+
+        setStatus(`🪖 Dân quân kiểm tra: Đã kéo thả mảnh ghép vào ô trống tối (x=${res.x}, y=${res.y})!`);
+        return true;
+      }
+    }
+
+    return true;
+  }
+
+  // -------------------------------------------------------------
+  // BRANCH C: Classic Count Captcha ('count')
   // -------------------------------------------------------------
   militiaTargetKind = parseMilitiaTarget(check?.ask, militiaPanel?.textContent || '');
   const kindLabel = MILITIA_KIND_LABELS[militiaTargetKind] || 'con vật';

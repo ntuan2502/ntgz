@@ -40,6 +40,17 @@ export interface MilitiaTapAnswerResolution {
   confidence: number;
 }
 
+export interface MilitiaDragAnswerResolution {
+  x: number;
+  y: number;
+  slotCenterX: number;
+  slotCenterY: number;
+  normalizedX: number;
+  normalizedY: number;
+  path: [number, number, number][];
+  confidence: number;
+}
+
 export const MILITIA_KIND_LABELS: Record<MilitiaAskKind, string> = {
   fish: 'cá 🐟',
   crab: 'cua 🦀',
@@ -802,161 +813,259 @@ export async function solveMilitiaOddImage(
 
   const cellW = w / 3;
   const cellH = h / 3;
+  const pw = 48;
+  const ph = 24;
+  const halfW = Math.floor(pw / 2);
+  const halfH = Math.floor(ph / 2);
 
   const cells: Array<{
-    row: number;
-    col: number;
+    r: number;
+    c: number;
     x: number;
     y: number;
     normalizedX: number;
     normalizedY: number;
     fgCount: number;
-    darkCount: number;
-    bw: number;
-    bh: number;
-    area: number;
-    darkCentroidX: number;
-    darkCentroidY: number;
-    avgColor: [number, number, number];
+    eyeX: number;
+    eyeCount: number;
+    mask: number[];
   }> = [];
 
   for (let r = 0; r < 3; r++) {
     for (let c = 0; c < 3; c++) {
-      const cx0 = Math.floor(x0 + c * cellW);
-      const cy0 = Math.floor(y0 + r * cellH);
-      const cx1 = Math.floor(cx0 + cellW);
-      const cy1 = Math.floor(cy0 + cellH);
+      const cx = Math.floor(x0 + (c + 0.5) * cellW);
+      const cy = Math.floor(y0 + (r + 0.42) * cellH);
 
       let fgCount = 0;
-      let sumR = 0;
-      let sumG = 0;
-      let sumB = 0;
-      let minPx = cx1;
-      let maxPx = cx0;
-      let minPy = cy1;
-      let maxPy = cy0;
-      let darkCount = 0;
-      const darkPixels: Array<{ x: number; y: number }> = [];
+      let sumEyeX = 0;
+      let eyeCount = 0;
+      const mask: number[] = [];
 
-      for (let y = cy0; y < cy1; y++) {
-        for (let x = cx0; x < cx1; x++) {
-          const idx = (y * width + x) * 4;
+      for (let dy = -halfH; dy < halfH; dy++) {
+        for (let dx = -halfW; dx < halfW; dx++) {
+          const px = cx + dx;
+          const py = cy + dy;
+          const idx = (py * width + px) * 4;
           const pr = pixels[idx];
           const pg = pixels[idx + 1];
           const pb = pixels[idx + 2];
 
-          // River water background filter
-          const isWater =
-            (pb >= 95 && pg >= 70 && pr <= 95) ||
-            (pr > 220 && pg > 210 && pb > 180);
+          const isDark = pr < 60 && pg < 60 && pb < 70;
+          const isNonWaterColor =
+            (pr > 160 && (pr > pb + 30 || pr > pg + 30)) || // pink shrimp or yellow fish
+            (pr > 95 && pr > pb + 20) || // turtle shell / brown fin
+            (pg > 115 && pg > pb + 35); // turtle legs green
 
-          if (!isWater) {
-            fgCount++;
-            sumR += pr;
-            sumG += pg;
-            sumB += pb;
-            if (x < minPx) minPx = x;
-            if (x > maxPx) maxPx = x;
-            if (y < minPy) minPy = y;
-            if (y > maxPy) maxPy = y;
-          }
+          const isCreature = isDark || isNonWaterColor;
+          mask.push(isCreature ? 1 : 0);
+          if (isCreature) fgCount++;
 
-          if (pr < 60 && pg < 60 && pb < 70) {
-            darkCount++;
-            darkPixels.push({ x: x - cx0, y: y - cy0 });
+          if (isDark) {
+            // Check if within inner body region away from cell borders
+            if (Math.abs(dx) < 22 && Math.abs(dy) < 10) {
+              const leftIdx = (py * width + Math.max(0, px - 4)) * 4;
+              const rightIdx = (py * width + Math.min(width - 1, px + 4)) * 4;
+              const hasBodyNeighbor =
+                (pixels[leftIdx] > 160 && pixels[leftIdx + 1] > 140) ||
+                (pixels[rightIdx] > 160 && pixels[rightIdx + 1] > 140) ||
+                (pb > 150 && pg > 100); // blue fish
+              if (hasBodyNeighbor) {
+                sumEyeX += (px - (cx - halfW)) / pw;
+                eyeCount++;
+              }
+            }
           }
         }
       }
 
-      const bw = Math.max(0, maxPx - minPx + 1);
-      const bh = Math.max(0, maxPy - minPy + 1);
-      const avgR = fgCount ? Math.round(sumR / fgCount) : 0;
-      const avgG = fgCount ? Math.round(sumG / fgCount) : 0;
-      const avgB = fgCount ? Math.round(sumB / fgCount) : 0;
-
-      let sumDarkX = 0;
-      let sumDarkY = 0;
-      for (const p of darkPixels) {
-        sumDarkX += p.x;
-        sumDarkY += p.y;
-      }
-      const darkCentroidX = darkPixels.length ? (sumDarkX / darkPixels.length) / cellW : 0.5;
-      const darkCentroidY = darkPixels.length ? (sumDarkY / darkPixels.length) / cellH : 0.5;
-
-      const centerX = Math.round(cx0 + cellW / 2);
-      const centerY = Math.round(cy0 + cellH / 2);
+      const eyeX = eyeCount ? sumEyeX / eyeCount : 0.5;
+      const normalizedX = Number(((c + 0.5) / 3).toFixed(3));
+      const normalizedY = Number(((r + 0.5) / 3).toFixed(3));
 
       cells.push({
-        row: r,
-        col: c,
-        x: centerX,
-        y: centerY,
-        normalizedX: Number(((c + 0.5) / 3).toFixed(3)),
-        normalizedY: Number(((r + 0.5) / 3).toFixed(3)),
+        r,
+        c,
+        x: cx,
+        y: cy,
+        normalizedX,
+        normalizedY,
         fgCount,
-        darkCount,
-        bw,
-        bh,
-        area: bw * bh,
-        darkCentroidX,
-        darkCentroidY,
-        avgColor: [avgR, avgG, avgB],
+        eyeX,
+        eyeCount,
+        mask,
       });
     }
   }
 
-  function getOutlierScores<T>(list: T[], getter: (item: T) => number): number[] {
-    const vals = list.map(getter);
-    const sorted = [...vals].sort((a, b) => a - b);
-    const median = sorted[Math.floor(sorted.length / 2)];
-    const mads = sorted.map((v) => Math.abs(v - median)).sort((a, b) => a - b);
-    const mad = mads[Math.floor(mads.length / 2)] || 1;
-    return vals.map((v) => Math.abs(v - median) / mad);
+  // 1. Check SIZE anomaly (khác cỡ)
+  const fgCounts = cells.map((c) => c.fgCount);
+  const medFg = [...fgCounts].sort((a, b) => a - b)[4];
+  const sizeCandidates = cells
+    .map((c, i) => ({
+      idx: i,
+      ratio: medFg > 0 ? c.fgCount / medFg : 1,
+      diff: Math.abs(c.fgCount - medFg),
+    }))
+    .sort((a, b) => b.diff - a.diff);
+
+  if (sizeCandidates[0].diff > 80 && (sizeCandidates[0].ratio > 1.4 || sizeCandidates[0].ratio < 0.6)) {
+    const chosen = cells[sizeCandidates[0].idx];
+    return {
+      x: chosen.x,
+      y: chosen.y,
+      normalizedX: chosen.normalizedX,
+      normalizedY: chosen.normalizedY,
+      row: chosen.r,
+      col: chosen.c,
+      reason: 'khác cỡ (kích thước bất thường)',
+      confidence: Number((sizeCandidates[0].diff / 50).toFixed(2)),
+    };
   }
 
-  const areaScores = getOutlierScores(cells, (c) => c.area);
-  const pxScores = getOutlierScores(cells, (c) => c.fgCount);
-  const dirScores = getOutlierScores(cells, (c) => c.darkCentroidX);
-  const flipScores = getOutlierScores(cells, (c) => c.darkCentroidY);
-  const darkScores = getOutlierScores(cells, (c) => c.darkCount);
+  // 2. Check DIRECTION anomaly (quay đầu - eye horizontal position)
+  const eyeXs = cells.map((c) => c.eyeX);
+  const medEyeX = [...eyeXs].sort((a, b) => a - b)[4];
+  const dirCandidates = cells
+    .map((c, i) => ({
+      idx: i,
+      diff: Math.abs(c.eyeX - medEyeX),
+    }))
+    .sort((a, b) => b.diff - a.diff);
 
-  const medianR = [...cells.map((c) => c.avgColor[0])].sort((a, b) => a - b)[4];
-  const medianG = [...cells.map((c) => c.avgColor[1])].sort((a, b) => a - b)[4];
-  const medianB = [...cells.map((c) => c.avgColor[2])].sort((a, b) => a - b)[4];
-  const colorDiffs = cells.map((c) => colorDistance(c.avgColor[0], c.avgColor[1], c.avgColor[2], medianR, medianG, medianB));
-  const colorScores = getOutlierScores(colorDiffs, (v) => v);
+  if (dirCandidates[0].diff > 0.12 && (dirCandidates[0].diff > 0.18 || dirCandidates[0].diff > dirCandidates[1].diff * 1.35)) {
+    const chosen = cells[dirCandidates[0].idx];
+    return {
+      x: chosen.x,
+      y: chosen.y,
+      normalizedX: chosen.normalizedX,
+      normalizedY: chosen.normalizedY,
+      row: chosen.r,
+      col: chosen.c,
+      reason: 'quay đầu (bơi ngược hướng)',
+      confidence: Number((dirCandidates[0].diff * 10).toFixed(2)),
+    };
+  }
 
-  let maxScore = -1;
-  let bestIdx = 0;
-  let detectedReason = 'khác cỡ';
-
-  for (let i = 0; i < cells.length; i++) {
-    const candidates = [
-      { score: areaScores[i], type: 'khác cỡ (diện tích)' },
-      { score: pxScores[i], type: 'khác cỡ (số pixel)' },
-      { score: dirScores[i], type: 'quay đầu (lật ngang)' },
-      { score: flipScores[i], type: 'lật ngược (lật dọc)' },
-      { score: darkScores[i], type: 'mất mắt/đổi mắt' },
-      { score: colorScores[i], type: 'khác màu' },
-    ];
-    candidates.sort((a, b) => b.score - a.score);
-    if (candidates[0].score > maxScore) {
-      maxScore = candidates[0].score;
-      bestIdx = i;
-      detectedReason = candidates[0].type;
+  // 3. Check MASK anomaly (lật ngược - vertical inversion or shape anomaly)
+  const maskScores: Array<{ idx: number; score: number }> = [];
+  for (let i = 0; i < 9; i++) {
+    const m1 = cells[i].mask;
+    const diffs: number[] = [];
+    for (let j = 0; j < 9; j++) {
+      if (i === j) continue;
+      const m2 = cells[j].mask;
+      let d = 0;
+      for (let k = 0; k < m1.length; k++) {
+        if (m1[k] !== m2[k]) d++;
+      }
+      diffs.push(d);
     }
+    diffs.sort((a, b) => a - b);
+    maskScores.push({ idx: i, score: diffs[2] });
   }
-
-  const chosen = cells[bestIdx];
+  maskScores.sort((a, b) => b.score - a.score);
+  const chosen = cells[maskScores[0].idx];
   return {
     x: chosen.x,
     y: chosen.y,
     normalizedX: chosen.normalizedX,
     normalizedY: chosen.normalizedY,
-    row: chosen.row,
-    col: chosen.col,
-    reason: detectedReason,
-    confidence: Number(maxScore.toFixed(2)),
+    row: chosen.r,
+    col: chosen.c,
+    reason: 'lật ngược (chổng ngược đầu đuôi)',
+    confidence: Number((maskScores[0].score / 100).toFixed(2)),
+  };
+}
+
+/**
+ * Solves "drag" puzzle: Slider piece on left edge must be dragged into
+ * the recessed dark square slot in the river background image.
+ */
+export async function solveMilitiaDragImage(
+  imgSource: HTMLImageElement | string,
+  pieceY?: number
+): Promise<MilitiaDragAnswerResolution> {
+  const extracted = await extractMilitiaImageData(imgSource);
+  if (!extracted) {
+    return {
+      x: 180,
+      y: 60,
+      slotCenterX: 180,
+      slotCenterY: 60,
+      normalizedX: 0.5,
+      normalizedY: 0.4,
+      path: [[0, 20, 60], [300, 100, 60], [600, 180, 60]],
+      confidence: 0,
+    };
+  }
+
+  const { imgData, width, height } = extracted;
+  const pixels = imgData.data;
+  const { x0, y0, w, h } = detectContentBounds(pixels, width, height);
+
+  const slotSize = 38;
+  let minSum = Infinity;
+  let bestSlotX = x0 + Math.floor(w * 0.5);
+  let bestSlotY = y0 + Math.floor(h * 0.4);
+
+  // Scan in the right 75% region (avoiding the left draggable piece)
+  const startX = x0 + Math.floor(w * 0.25);
+  const endX = x0 + w - slotSize - 8;
+  const startY = y0 + 10;
+  const endY = y0 + h - slotSize - 10;
+
+  for (let y = startY; y < endY; y += 2) {
+    for (let x = startX; x < endX; x += 2) {
+      let sumBrightness = 0;
+      for (let dy = 2; dy < slotSize - 2; dy += 2) {
+        for (let dx = 2; dx < slotSize - 2; dx += 2) {
+          const idx = ((y + dy) * width + (x + dx)) * 4;
+          sumBrightness += pixels[idx] + pixels[idx + 1] + pixels[idx + 2];
+        }
+      }
+      if (sumBrightness < minSum) {
+        minSum = sumBrightness;
+        bestSlotX = x;
+        bestSlotY = y;
+      }
+    }
+  }
+
+  const slotCenterX = Math.round(bestSlotX + slotSize / 2);
+  const slotCenterY = Math.round(bestSlotY + slotSize / 2);
+  const normX = Number(((bestSlotX - x0) / w).toFixed(3));
+  const normY = Number(((bestSlotY - y0) / h).toFixed(3));
+
+  // Generate smooth human-like path
+  const originX = 18;
+  const originY = typeof pieceY === 'number' && pieceY > 0 ? pieceY : (slotCenterY - y0);
+  const targetX = bestSlotX - x0;
+  const targetY = bestSlotY - y0;
+
+  const totalDuration = 450 + Math.floor(Math.random() * 150); // 450 - 600ms
+  const steps = 12;
+  const path: [number, number, number][] = [];
+
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const ease = 1 - Math.pow(1 - t, 3);
+    const ms = Math.round(t * totalDuration);
+    const jitterX = i > 0 && i < steps ? (Math.random() - 0.5) * 2 : 0;
+    const jitterY = i > 0 && i < steps ? (Math.random() - 0.5) * 2 : 0;
+    const curX = Math.round(originX + (targetX - originX) * ease + jitterX);
+    const curY = Math.round(originY + (targetY - originY) * ease + jitterY);
+    path.push([ms, curX, curY]);
+  }
+
+  return {
+    x: targetX,
+    y: targetY,
+    slotCenterX,
+    slotCenterY,
+    normalizedX: normX,
+    normalizedY: normY,
+    path,
+    confidence: Number((100000 / Math.max(1, minSum)).toFixed(2)),
   };
 }
 
@@ -1165,13 +1274,227 @@ export async function solveMilitiaTapImage(
   }
 
   const { imgData, width, height } = extracted;
-  const classified = analyzeImageData(imgData, width, height);
+  const pixels = imgData.data;
+  const bounds = detectContentBounds(pixels, width, height);
+  const { x0, y0, w, h } = bounds;
+
+  const isRiverWater = (r: number, g: number, b: number): boolean => {
+    if (b >= 120 && g >= 100 && b > r + 20 && g > r + 10) return true;
+    if (b >= 140 && g >= 130 && (b - r >= 20 || g - r >= 15)) return true;
+    return false;
+  };
+
+  const isForeground = (r: number, g: number, b: number, a: number): boolean => {
+    if (a < 128) return false;
+    if (r < 60 && g < 60 && b < 70) return true;
+    if (g > 85 && g > r + 25 && g > b + 20 && r < 80 && b < 100) return false;
+    if (r > 220 && g > 205 && b > 170 && Math.abs(r - g) < 25) return false;
+    if (isRiverWater(r, g, b)) return false;
+    return true;
+  };
+
+  const visited = getVisitedBuffer(width * height);
+  const q = getQueueBuffer(width * height);
+
+  interface TapBlob {
+    minX: number;
+    maxX: number;
+    minY: number;
+    maxY: number;
+    bw: number;
+    bh: number;
+    pixelCount: number;
+    centerX: number;
+    centerY: number;
+    kind: string;
+    scores: Record<string, number>;
+  }
+
+  const blobs: TapBlob[] = [];
+
+  for (let y = y0; y < y0 + h; y++) {
+    for (let x = x0; x < x0 + w; x++) {
+      const idx = y * width + x;
+      if (visited[idx]) continue;
+
+      const pIdx = idx * 4;
+      const r = pixels[pIdx];
+      const g = pixels[pIdx + 1];
+      const b = pixels[pIdx + 2];
+      const a = pixels[pIdx + 3];
+      if (!isForeground(r, g, b, a)) continue;
+
+      visited[idx] = 1;
+      let head = 0;
+      let tail = 0;
+      q[tail++] = x;
+      q[tail++] = y;
+
+      let minX = x;
+      let maxX = x;
+      let minY = y;
+      let maxY = y;
+      let pixelCount = 0;
+      const blobPixels: number[] = [];
+
+      while (head < tail) {
+        const cx = q[head++];
+        const cy = q[head++];
+        pixelCount++;
+        blobPixels.push(cy * width + cx);
+
+        if (cx < minX) minX = cx;
+        if (cx > maxX) maxX = cx;
+        if (cy < minY) minY = cy;
+        if (cy > maxY) maxY = cy;
+
+        for (const [dx, dy] of [
+          [1, 0],
+          [-1, 0],
+          [0, 1],
+          [0, -1],
+          [1, 1],
+          [-1, -1],
+          [1, -1],
+          [-1, 1],
+        ]) {
+          const nx = cx + dx;
+          const ny = cy + dy;
+          if (nx >= x0 && nx < x0 + w && ny >= y0 && ny < y0 + h) {
+            const nIdx = ny * width + nx;
+            if (!visited[nIdx]) {
+              const npIdx = nIdx * 4;
+              const nr = pixels[npIdx];
+              const ng = pixels[npIdx + 1];
+              const nb = pixels[npIdx + 2];
+              const na = pixels[npIdx + 3];
+              if (isForeground(nr, ng, nb, na)) {
+                visited[nIdx] = 1;
+                q[tail++] = nx;
+                q[tail++] = ny;
+              }
+            }
+          }
+        }
+      }
+
+      const bw = maxX - minX + 1;
+      const bh = maxY - minY + 1;
+
+      if (bw >= 10 && bw <= 65 && bh >= 10 && bh <= 55 && pixelCount >= 25) {
+        let redCrabPx = 0;
+        let brownSnailPx = 0;
+        let greenFrogPx = 0;
+        let silverShrimpPx = 0;
+        let orangeShrimpPx = 0;
+        let blueFishPx = 0;
+
+        for (let i = 0; i < blobPixels.length; i++) {
+          const bpIdx = blobPixels[i] * 4;
+          const pr = pixels[bpIdx];
+          const pg = pixels[bpIdx + 1];
+          const pb = pixels[bpIdx + 2];
+
+          if (pr > 160 && pr - pg >= 65 && pr - pb >= 70) redCrabPx++;
+          if (pr >= 130 && pr <= 185 && pg >= 75 && pg <= 130 && pb <= 85 && pr - pg >= 25 && pr - pg <= 65) brownSnailPx++;
+          if (pg > 105 && pg > pr + 20 && pg > pb + 20) greenFrogPx++;
+          if (Math.abs(pr - pg) <= 15 && Math.abs(pg - pb) <= 15 && pr >= 100 && pr <= 215) silverShrimpPx++;
+          if (pr > 200 && pg > 110 && pg < 190 && pb < 90) orangeShrimpPx++;
+          if (pb > 140 && pb > pr + 35 && pb > pg + 15) blueFishPx++;
+        }
+
+        const scores: Record<string, number> = {
+          shrimp: silverShrimpPx + orangeShrimpPx,
+          crab: redCrabPx,
+          snail: brownSnailPx,
+          frog: greenFrogPx,
+          fish: blueFishPx,
+        };
+
+        let kind = 'other';
+        const ranked = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+        if (ranked[0][1] > 20) {
+          kind = ranked[0][0];
+        }
+
+        blobs.push({
+          minX,
+          maxX,
+          minY,
+          maxY,
+          bw,
+          bh,
+          pixelCount,
+          centerX: Math.round((minX + maxX) / 2),
+          centerY: Math.round((minY + maxY) / 2),
+          kind,
+          scores,
+        });
+      }
+    }
+  }
+
+  // Count kind frequencies
+  const freq: Record<string, number> = {};
+  for (const b of blobs) {
+    freq[b.kind] = (freq[b.kind] || 0) + 1;
+  }
+
+  const normalizedAsk = String(targetKind || '').toLowerCase();
+  let normalizedKind = 'shrimp';
+  if (normalizedAsk.includes('tom') || normalizedAsk.includes('shrimp') || normalizedAsk.includes('tôm') || normalizedAsk.includes('🦐')) {
+    normalizedKind = 'shrimp';
+  } else if (normalizedAsk.includes('cua') || normalizedAsk.includes('crab') || normalizedAsk.includes('🦀')) {
+    normalizedKind = 'crab';
+  } else if (normalizedAsk.includes('oc') || normalizedAsk.includes('snail') || normalizedAsk.includes('ốc') || normalizedAsk.includes('🐌')) {
+    normalizedKind = 'snail';
+  } else if (normalizedAsk.includes('ech') || normalizedAsk.includes('frog') || normalizedAsk.includes('ếch') || normalizedAsk.includes('🐸')) {
+    normalizedKind = 'frog';
+  } else if (normalizedAsk.includes('ca') || normalizedAsk.includes('fish') || normalizedAsk.includes('cá') || normalizedAsk.includes('🐟')) {
+    normalizedKind = 'fish';
+  }
+
+  let chosen: TapBlob | null;
+  const matches = blobs.filter((b) => b.kind === normalizedKind);
+  if (matches.length === 1) {
+    chosen = matches[0];
+  } else if (matches.length > 1) {
+    matches.sort((a, b) => (b.scores[normalizedKind] || 0) - (a.scores[normalizedKind] || 0));
+    chosen = matches[0];
+  } else {
+    // Check if there is an exact singleton creature
+    const singletons = blobs.filter((b) => freq[b.kind] === 1);
+    if (singletons.length === 1) {
+      chosen = singletons[0];
+    } else {
+      // Pick highest score for targetKind among all blobs
+      const sortedByScore = [...blobs].sort(
+        (a, b) => (b.scores[normalizedKind] || 0) - (a.scores[normalizedKind] || 0)
+      );
+      chosen = sortedByScore[0] || null;
+    }
+  }
+
+  if (!chosen) {
+    return {
+      x: Math.round(width / 2),
+      y: Math.round(height / 2),
+      normalizedX: 0.5,
+      normalizedY: 0.5,
+      reason: `Fallback trung tâm hình`,
+      confidence: 0,
+    };
+  }
+
+  const normX = Number(((chosen.centerX - x0) / w).toFixed(3));
+  const normY = Number(((chosen.centerY - y0) / h).toFixed(3));
+
   return {
-    x: Math.round(width / 2),
-    y: Math.round(height / 2),
-    normalizedX: 0.5,
-    normalizedY: 0.5,
-    reason: `Chạm vào ${targetKind} (${classified.blobsCount} sinh vật)`,
+    x: chosen.centerX,
+    y: chosen.centerY,
+    normalizedX: normX,
+    normalizedY: normY,
+    reason: `Chạm vào ${normalizedKind} duy nhất tại (${chosen.centerX}, ${chosen.centerY})`,
     confidence: 1,
   };
 }

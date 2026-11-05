@@ -28,6 +28,34 @@
     }
   },
   {
+    "file": "sample_odd_03_shrimp_upsidedown.png",
+    "type": "odd",
+    "prompt": "Có một con khác mấy con còn lại (lật ngược, quay đầu, khác màu, khác cỡ hay mất mắt). Chạm vào con đó nha.",
+    "category": "lật ngược (inverted vertically / upside down)",
+    "target": {
+      "grid": "3x3",
+      "row": 0,
+      "col": 1,
+      "normalizedX": 0.5,
+      "normalizedY": 0.167,
+      "description": "Con tôm ở hàng 1 cột giữa bị lật ngược (chổng ngược đầu đuôi theo chiều dọc)"
+    }
+  },
+  {
+    "file": "sample_odd_04_fish_direction.png",
+    "type": "odd",
+    "prompt": "Có một con khác mấy con còn lại (lật ngược, quay đầu, khác màu, khác cỡ hay mất mắt). Chạm vào con đó nha.",
+    "category": "quay đầu (opposite direction / flipped horizontally)",
+    "target": {
+      "grid": "3x3",
+      "row": 0,
+      "col": 1,
+      "normalizedX": 0.5,
+      "normalizedY": 0.167,
+      "description": "Con cá vàng ở hàng 1 cột giữa quay đầu bơi sang trái (các con khác bơi sang phải)"
+    }
+  },
+  {
     "file": "sample_quiz_01_plough_buffalo.png",
     "type": "quiz",
     "ask": "plough",
@@ -53,6 +81,47 @@
       "normalizedX": 0.5,
       "normalizedY": 0.75,
       "description": "Chiếc thuyền có cánh buồm trắng ở hàng dưới ô giữa"
+    }
+  },
+  {
+    "file": "sample_drag_01_slot.png",
+    "type": "drag",
+    "prompt": "Kéo mảnh hình viền vàng ở mép trái, thả vào đúng chỗ trống tối trong hình nha.",
+    "target": {
+      "slotX": 187,
+      "slotY": 181,
+      "slotCenterX": 206,
+      "slotCenterY": 200,
+      "normalizedX": 0.508,
+      "normalizedY": 0.369,
+      "description": "Ô vuông trống màu tối nằm ở vùng trung tâm hơi lệch sang phải"
+    }
+  },
+  {
+    "file": "sample_drag_02_slot.png",
+    "type": "drag",
+    "prompt": "Kéo mảnh hình viền vàng ở mép trái, thả vào đúng chỗ trống tối trong hình nha.",
+    "target": {
+      "slotX": 204,
+      "slotY": 167,
+      "slotCenterX": 223,
+      "slotCenterY": 186,
+      "normalizedX": 0.571,
+      "normalizedY": 0.420,
+      "description": "Ô vuông trống màu tối nằm ở vùng giữa lệch phải bên trên đàn cá cam"
+    }
+  },
+  {
+    "file": "sample_tap_01_shrimp.png",
+    "type": "tap",
+    "ask": "shrimp",
+    "prompt": "Chạm vào con tôm 🦐 trong hình nha (chỉ có một con).",
+    "target": {
+      "centerX": 328,
+      "centerY": 124,
+      "normalizedX": 0.940,
+      "normalizedY": 0.131,
+      "description": "Con tôm bạc ở góc trên bên phải (duy nhất 1 con trong hình)"
     }
   }
 ]

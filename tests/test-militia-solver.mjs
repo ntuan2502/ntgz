@@ -470,106 +470,144 @@ function solveOdd(filePath) {
   const { x0, y0, w, h } = detectContentBounds(pixels, width, height);
   const cellW = w / 3;
   const cellH = h / 3;
-  const cells = [];
+  const pw = 48, ph = 24;
+  const halfW = Math.floor(pw / 2), halfH = Math.floor(ph / 2);
 
+  const cells = [];
   for (let r = 0; r < 3; r++) {
     for (let c = 0; c < 3; c++) {
-      const cx0 = Math.floor(x0 + c * cellW);
-      const cy0 = Math.floor(y0 + r * cellH);
-      const cx1 = Math.floor(cx0 + cellW);
-      const cy1 = Math.floor(cy0 + cellH);
+      const cx = Math.floor(x0 + (c + 0.5) * cellW);
+      const cy = Math.floor(y0 + (r + 0.42) * cellH);
 
       let fgCount = 0;
-      let sumR = 0, sumG = 0, sumB = 0;
-      let minPx = cx1, maxPx = cx0, minPy = cy1, maxPy = cy0;
-      let darkCount = 0;
-      const darkPixels = [];
+      let sumEyeX = 0, eyeCount = 0;
+      const mask = [];
 
-      for (let y = cy0; y < cy1; y++) {
-        for (let x = cx0; x < cx1; x++) {
-          const idx = (y * width + x) * 4;
+      for (let dy = -halfH; dy < halfH; dy++) {
+        for (let dx = -halfW; dx < halfW; dx++) {
+          const px = cx + dx, py = cy + dy;
+          const idx = (py * width + px) * 4;
           const pr = pixels[idx], pg = pixels[idx + 1], pb = pixels[idx + 2];
-          const isWater = (pb >= 95 && pg >= 70 && pr <= 95) || (pr > 220 && pg > 210 && pb > 180);
-          if (!isWater) {
-            fgCount++;
-            sumR += pr; sumG += pg; sumB += pb;
-            if (x < minPx) minPx = x;
-            if (x > maxPx) maxPx = x;
-            if (y < minPy) minPy = y;
-            if (y > maxPy) maxPy = y;
-          }
-          if (pr < 60 && pg < 60 && pb < 70) {
-            darkCount++;
-            darkPixels.push({ x: x - cx0, y: y - cy0 });
+
+          const isDark = pr < 60 && pg < 60 && pb < 70;
+          const isNonWaterColor =
+            (pr > 160 && (pr > pb + 30 || pr > pg + 30)) ||
+            (pr > 95 && pr > pb + 20) ||
+            (pg > 115 && pg > pb + 35);
+
+          const isCreature = isDark || isNonWaterColor;
+          mask.push(isCreature ? 1 : 0);
+          if (isCreature) fgCount++;
+
+          if (isDark) {
+            if (Math.abs(dx) < 22 && Math.abs(dy) < 10) {
+              const leftIdx = (py * width + Math.max(0, px - 4)) * 4;
+              const rightIdx = (py * width + Math.min(width - 1, px + 4)) * 4;
+              const hasBodyNeighbor =
+                (pixels[leftIdx] > 160 && pixels[leftIdx + 1] > 140) ||
+                (pixels[rightIdx] > 160 && pixels[rightIdx + 1] > 140) ||
+                (pb > 150 && pg > 100);
+              if (hasBodyNeighbor) {
+                sumEyeX += (px - (cx - halfW)) / pw;
+                eyeCount++;
+              }
+            }
           }
         }
       }
 
-      const bw = Math.max(0, maxPx - minPx + 1);
-      const bh = Math.max(0, maxPy - minPy + 1);
-      const avgR = fgCount ? Math.round(sumR / fgCount) : 0;
-      const avgG = fgCount ? Math.round(sumG / fgCount) : 0;
-      const avgB = fgCount ? Math.round(sumB / fgCount) : 0;
+      const eyeX = eyeCount ? (sumEyeX / eyeCount) : 0.5;
+      cells.push({ row: r, col: c, fgCount, eyeX, eyeCount, mask });
+    }
+  }
 
-      let sumDarkX = 0, sumDarkY = 0;
-      for (const p of darkPixels) {
-        sumDarkX += p.x;
-        sumDarkY += p.y;
+  // 1. Size
+  const fgCounts = cells.map((c) => c.fgCount);
+  const medFg = [...fgCounts].sort((a, b) => a - b)[4];
+  const sizeCandidates = cells
+    .map((c, i) => ({
+      idx: i,
+      ratio: medFg > 0 ? c.fgCount / medFg : 1,
+      diff: Math.abs(c.fgCount - medFg),
+    }))
+    .sort((a, b) => b.diff - a.diff);
+
+  if (sizeCandidates[0].diff > 80 && (sizeCandidates[0].ratio > 1.40 || sizeCandidates[0].ratio < 0.60)) {
+    const chosen = cells[sizeCandidates[0].idx];
+    return { ...chosen, reason: 'khác cỡ (kích thước bất thường)', confidence: sizeCandidates[0].diff };
+  }
+
+  // 2. Direction
+  const eyeXs = cells.map((c) => c.eyeX);
+  const medEyeX = [...eyeXs].sort((a, b) => a - b)[4];
+  const dirCandidates = cells
+    .map((c, i) => ({
+      idx: i,
+      diff: Math.abs(c.eyeX - medEyeX),
+    }))
+    .sort((a, b) => b.diff - a.diff);
+
+  if (dirCandidates[0].diff > 0.12 && (dirCandidates[0].diff > 0.18 || dirCandidates[0].diff > dirCandidates[1].diff * 1.35)) {
+    const chosen = cells[dirCandidates[0].idx];
+    return { ...chosen, reason: 'quay đầu (bơi ngược hướng)', confidence: dirCandidates[0].diff };
+  }
+
+  // 3. Mask
+  const maskScores = [];
+  for (let i = 0; i < 9; i++) {
+    const m1 = cells[i].mask;
+    const diffs = [];
+    for (let j = 0; j < 9; j++) {
+      if (i === j) continue;
+      const m2 = cells[j].mask;
+      let d = 0;
+      for (let k = 0; k < m1.length; k++) {
+        if (m1[k] !== m2[k]) d++;
       }
-      const darkCentroidX = darkPixels.length ? (sumDarkX / darkPixels.length) / cellW : 0.5;
-      const darkCentroidY = darkPixels.length ? (sumDarkY / darkPixels.length) / cellH : 0.5;
+      diffs.push(d);
+    }
+    diffs.sort((a, b) => a - b);
+    maskScores.push({ idx: i, score: diffs[2] });
+  }
+  maskScores.sort((a, b) => b.score - a.score);
+  const chosen = cells[maskScores[0].idx];
+  return { ...chosen, reason: 'lật ngược (chổng ngược đầu đuôi)', confidence: maskScores[0].score };
+}
 
-      cells.push({
-        row: r,
-        col: c,
-        fgCount,
-        darkCount,
-        bw,
-        bh,
-        area: bw * bh,
-        darkCentroidX,
-        darkCentroidY,
-        avgColor: [avgR, avgG, avgB],
-      });
+function solveDrag(filePath) {
+  const { width, height, pixels } = decodePng(fs.readFileSync(filePath));
+  const { x0, y0, w, h } = detectContentBounds(pixels, width, height);
+
+  const slotSize = 38;
+  let minSum = Infinity;
+  let bestSlotX = x0 + Math.floor(w * 0.5);
+  let bestSlotY = y0 + Math.floor(h * 0.4);
+
+  const startX = x0 + Math.floor(w * 0.25);
+  const endX = x0 + w - slotSize - 8;
+  const startY = y0 + 10;
+  const endY = y0 + h - slotSize - 10;
+
+  for (let y = startY; y < endY; y += 2) {
+    for (let x = startX; x < endX; x += 2) {
+      let sumBrightness = 0;
+      for (let dy = 2; dy < slotSize - 2; dy += 2) {
+        for (let dx = 2; dx < slotSize - 2; dx += 2) {
+          const idx = ((y + dy) * width + (x + dx)) * 4;
+          sumBrightness += pixels[idx] + pixels[idx + 1] + pixels[idx + 2];
+        }
+      }
+      if (sumBrightness < minSum) {
+        minSum = sumBrightness;
+        bestSlotX = x;
+        bestSlotY = y;
+      }
     }
   }
 
-  function getOutlierScores(list, getter) {
-    const vals = list.map(getter);
-    const sorted = [...vals].sort((a, b) => a - b);
-    const median = sorted[Math.floor(sorted.length / 2)];
-    const mads = sorted.map((v) => Math.abs(v - median)).sort((a, b) => a - b);
-    const mad = mads[Math.floor(mads.length / 2)] || 1;
-    return vals.map((v) => Math.abs(v - median) / mad);
-  }
-
-  const areaScores = getOutlierScores(cells, (c) => c.area);
-  const pxScores = getOutlierScores(cells, (c) => c.fgCount);
-  const dirScores = getOutlierScores(cells, (c) => c.darkCentroidX);
-  const flipScores = getOutlierScores(cells, (c) => c.darkCentroidY);
-  const darkScores = getOutlierScores(cells, (c) => c.darkCount);
-
-  let maxScore = -1;
-  let bestIdx = 0;
-  let detectedReason = '';
-
-  for (let i = 0; i < cells.length; i++) {
-    const candidates = [
-      { score: areaScores[i], type: 'khác cỡ (diện tích)' },
-      { score: pxScores[i], type: 'khác cỡ (số pixel)' },
-      { score: dirScores[i], type: 'quay đầu (lật ngang)' },
-      { score: flipScores[i], type: 'lật ngược (lật dọc)' },
-      { score: darkScores[i], type: 'mất mắt/đổi mắt' },
-    ];
-    candidates.sort((a, b) => b.score - a.score);
-    if (candidates[0].score > maxScore) {
-      maxScore = candidates[0].score;
-      bestIdx = i;
-      detectedReason = candidates[0].type;
-    }
-  }
-
-  return { ...cells[bestIdx], reason: detectedReason, confidence: maxScore };
+  const normX = Number(((bestSlotX - x0) / w).toFixed(3));
+  const normY = Number(((bestSlotY - y0) / h).toFixed(3));
+  return { slotX: bestSlotX, slotY: bestSlotY, normX, normY, reason: 'Chỗ trống tối (slider slot)' };
 }
 
 function solveQuiz(filePath, askKey) {
@@ -632,18 +670,197 @@ function solveQuiz(filePath, askKey) {
   return { ...cells[bestIdx], reason, confidence: maxScore };
 }
 
-console.log('\n=== RUNNING MILITIA V2 (ODD & QUIZ) TEST SUITE ===');
+function solveTap(filePath, askKey) {
+  const { width, height, pixels } = decodePng(fs.readFileSync(filePath));
+  const bounds = detectContentBounds(pixels, width, height);
+  const { x0, y0, w, h } = bounds;
+
+  const isRiverWater = (r, g, b) => {
+    if (b >= 120 && g >= 100 && b > r + 20 && g > r + 10) return true;
+    if (b >= 140 && g >= 130 && (b - r >= 20 || g - r >= 15)) return true;
+    return false;
+  };
+
+  const isForeground = (r, g, b, a) => {
+    if (a < 128) return false;
+    if (r < 60 && g < 60 && b < 70) return true;
+    if (g > 85 && g > r + 25 && g > b + 20 && r < 80 && b < 100) return false;
+    if (r > 220 && g > 205 && b > 170 && Math.abs(r - g) < 25) return false;
+    if (isRiverWater(r, g, b)) return false;
+    return true;
+  };
+
+  const visited = new Uint8Array(width * height);
+  const blobs = [];
+
+  for (let y = y0; y < y0 + h; y++) {
+    for (let x = x0; x < x0 + w; x++) {
+      const idx = y * width + x;
+      if (visited[idx]) continue;
+
+      const pIdx = idx * 4;
+      const r = pixels[pIdx], g = pixels[pIdx + 1], b = pixels[pIdx + 2], a = pixels[pIdx + 3];
+      if (!isForeground(r, g, b, a)) continue;
+
+      const q = [x, y];
+      visited[idx] = 1;
+      let head = 0;
+
+      let minX = x, maxX = x, minY = y, maxY = y;
+      let pixelCount = 0;
+      const blobPixels = [];
+
+      while (head < q.length) {
+        const cx = q[head++];
+        const cy = q[head++];
+        pixelCount++;
+        blobPixels.push(cy * width + cx);
+
+        minX = Math.min(minX, cx);
+        maxX = Math.max(maxX, cx);
+        minY = Math.min(minY, cy);
+        maxY = Math.max(maxY, cy);
+
+        for (const [dx, dy] of [
+          [1, 0], [-1, 0], [0, 1], [0, -1],
+          [1, 1], [-1, -1], [1, -1], [-1, 1]
+        ]) {
+          const nx = cx + dx, ny = cy + dy;
+          if (nx >= x0 && nx < x0 + w && ny >= y0 && ny < y0 + h) {
+            const nIdx = ny * width + nx;
+            if (!visited[nIdx]) {
+              const npIdx = nIdx * 4;
+              const nr = pixels[npIdx], ng = pixels[npIdx + 1], nb = pixels[npIdx + 2], na = pixels[npIdx + 3];
+              if (isForeground(nr, ng, nb, na)) {
+                visited[nIdx] = 1;
+                q.push(nx, ny);
+              }
+            }
+          }
+        }
+      }
+
+      const bw = maxX - minX + 1;
+      const bh = maxY - minY + 1;
+
+      if (bw >= 10 && bw <= 65 && bh >= 10 && bh <= 55 && pixelCount >= 25) {
+        let redCrabPx = 0, brownSnailPx = 0, greenFrogPx = 0, silverShrimpPx = 0, orangeShrimpPx = 0, blueFishPx = 0;
+        for (let i = 0; i < blobPixels.length; i++) {
+          const bpIdx = blobPixels[i] * 4;
+          const pr = pixels[bpIdx], pg = pixels[bpIdx + 1], pb = pixels[bpIdx + 2];
+          if (pr > 160 && pr - pg >= 65 && pr - pb >= 70) redCrabPx++;
+          if (pr >= 130 && pr <= 185 && pg >= 75 && pg <= 130 && pb <= 85 && pr - pg >= 25 && pr - pg <= 65) brownSnailPx++;
+          if (pg > 105 && pg > pr + 20 && pg > pb + 20) greenFrogPx++;
+          if (Math.abs(pr - pg) <= 15 && Math.abs(pg - pb) <= 15 && pr >= 100 && pr <= 215) silverShrimpPx++;
+          if (pr > 200 && pg > 110 && pg < 190 && pb < 90) orangeShrimpPx++;
+          if (pb > 140 && pb > pr + 35 && pb > pg + 15) blueFishPx++;
+        }
+
+        const scores = {
+          shrimp: silverShrimpPx + orangeShrimpPx,
+          crab: redCrabPx,
+          snail: brownSnailPx,
+          frog: greenFrogPx,
+          fish: blueFishPx,
+        };
+
+        let kind = 'other';
+        const ranked = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+        if (ranked[0][1] > 20) {
+          kind = ranked[0][0];
+        }
+
+        blobs.push({
+          minX, maxX, minY, maxY, bw, bh, pixelCount,
+          centerX: Math.round((minX + maxX) / 2),
+          centerY: Math.round((minY + maxY) / 2),
+          kind, scores
+        });
+      }
+    }
+  }
+
+  const freq = {};
+  for (const b of blobs) {
+    freq[b.kind] = (freq[b.kind] || 0) + 1;
+  }
+
+  const normalizedAsk = (askKey || '').toLowerCase();
+  let targetKind = 'shrimp';
+  if (normalizedAsk.includes('tom') || normalizedAsk.includes('shrimp') || normalizedAsk.includes('tôm') || normalizedAsk.includes('🦐')) targetKind = 'shrimp';
+  else if (normalizedAsk.includes('cua') || normalizedAsk.includes('crab') || normalizedAsk.includes('🦀')) targetKind = 'crab';
+  else if (normalizedAsk.includes('oc') || normalizedAsk.includes('snail') || normalizedAsk.includes('ốc') || normalizedAsk.includes('🐌')) targetKind = 'snail';
+  else if (normalizedAsk.includes('ech') || normalizedAsk.includes('frog') || normalizedAsk.includes('ếch') || normalizedAsk.includes('🐸')) targetKind = 'frog';
+  else if (normalizedAsk.includes('ca') || normalizedAsk.includes('fish') || normalizedAsk.includes('cá') || normalizedAsk.includes('🐟')) targetKind = 'fish';
+
+  let chosen = null;
+  const matches = blobs.filter(b => b.kind === targetKind);
+  if (matches.length === 1) {
+    chosen = matches[0];
+  } else if (matches.length > 1) {
+    matches.sort((a, b) => (b.scores[targetKind] || 0) - (a.scores[targetKind] || 0));
+    chosen = matches[0];
+  } else {
+    const singletons = blobs.filter(b => freq[b.kind] === 1);
+    if (singletons.length === 1) {
+      chosen = singletons[0];
+    } else {
+      const sortedByScore = [...blobs].sort((a, b) => (b.scores[targetKind] || 0) - (a.scores[targetKind] || 0));
+      chosen = sortedByScore[0] || null;
+    }
+  }
+
+  if (!chosen) {
+    return { x: Math.round(width / 2), y: Math.round(height / 2), normX: 0.5, normY: 0.5, reason: 'fallback' };
+  }
+
+  const normX = Number(((chosen.centerX - x0) / w).toFixed(3));
+  const normY = Number(((chosen.centerY - y0) / h).toFixed(3));
+  return {
+    x: chosen.centerX,
+    y: chosen.centerY,
+    normX,
+    normY,
+    reason: `Chạm vào ${targetKind} duy nhất tại (${chosen.centerX}, ${chosen.centerY})`,
+    confidence: 1
+  };
+}
+
+console.log('\n=== RUNNING MILITIA V2 (ODD, QUIZ, DRAG, TAP) TEST SUITE ===');
 const v2Fixtures = [
   { file: 'tests/fixtures/militia-v2/sample_odd_01_turtle_size.png', type: 'odd', expRow: 1, expCol: 1 },
   { file: 'tests/fixtures/militia-v2/sample_odd_02_fish_direction.png', type: 'odd', expRow: 1, expCol: 0 },
+  { file: 'tests/fixtures/militia-v2/sample_odd_03_shrimp_upsidedown.png', type: 'odd', expRow: 0, expCol: 1 },
+  { file: 'tests/fixtures/militia-v2/sample_odd_04_fish_direction.png', type: 'odd', expRow: 0, expCol: 1 },
   { file: 'tests/fixtures/militia-v2/sample_quiz_01_plough_buffalo.png', type: 'quiz', ask: 'plough', expRow: 1, expCol: 1 },
   { file: 'tests/fixtures/militia-v2/sample_quiz_02_boat.png', type: 'quiz', ask: 'boat', expRow: 1, expCol: 1 },
+  { file: 'tests/fixtures/militia-v2/sample_drag_01_slot.png', type: 'drag', expNormX: 0.508, expNormY: 0.369 },
+  { file: 'tests/fixtures/militia-v2/sample_drag_02_slot.png', type: 'drag', expNormX: 0.571, expNormY: 0.420 },
+  { file: 'tests/fixtures/militia-v2/sample_tap_01_shrimp.png', type: 'tap', ask: 'shrimp', expNormX: 0.940, expNormY: 0.131 },
 ];
 
 for (const fx of v2Fixtures) {
-  const res = fx.type === 'odd' ? solveOdd(fx.file) : solveQuiz(fx.file, fx.ask);
-  const pass = res.row === fx.expRow && res.col === fx.expCol;
-  console.log(`\nTest V2 [${path.basename(fx.file)}]: Type="${fx.type}" ${fx.ask ? `Ask="${fx.ask}"` : ''}`);
-  console.log(`Result: Target=[Row ${res.row + 1}, Col ${res.col + 1}] (${res.reason}) -> Expected: [Row ${fx.expRow + 1}, Col ${fx.expCol + 1}] -> ${pass ? '✅ PASS' : '❌ FAIL'}`);
-  if (!pass) process.exitCode = 1;
+  if (fx.type === 'odd' || fx.type === 'quiz') {
+    const res = fx.type === 'odd' ? solveOdd(fx.file) : solveQuiz(fx.file, fx.ask);
+    const pass = res.row === fx.expRow && res.col === fx.expCol;
+    console.log(`\nTest V2 [${path.basename(fx.file)}]: Type="${fx.type}" ${fx.ask ? `Ask="${fx.ask}"` : ''}`);
+    console.log(`Result: Target=[Row ${res.row + 1}, Col ${res.col + 1}] (${res.reason}) -> Expected: [Row ${fx.expRow + 1}, Col ${fx.expCol + 1}] -> ${pass ? '✅ PASS' : '❌ FAIL'}`);
+    if (!pass) process.exitCode = 1;
+  } else if (fx.type === 'drag') {
+    const res = solveDrag(fx.file);
+    const passX = Math.abs(res.normX - fx.expNormX) < 0.03;
+    const passY = Math.abs(res.normY - fx.expNormY) < 0.03;
+    const pass = passX && passY;
+    console.log(`\nTest V2 [${path.basename(fx.file)}]: Type="drag"`);
+    console.log(`Result: Slot at norm=(${res.normX}, ${res.normY}) -> Expected: norm=(${fx.expNormX}, ${fx.expNormY}) -> ${pass ? '✅ PASS' : '❌ FAIL'}`);
+    if (!pass) process.exitCode = 1;
+  } else if (fx.type === 'tap') {
+    const res = solveTap(fx.file, fx.ask);
+    const passX = Math.abs(res.normX - fx.expNormX) < 0.03;
+    const passY = Math.abs(res.normY - fx.expNormY) < 0.03;
+    const pass = passX && passY;
+    console.log(`\nTest V2 [${path.basename(fx.file)}]: Type="tap" Ask="${fx.ask}"`);
+    console.log(`Result: Target at pos=(${res.x}, ${res.y}), norm=(${res.normX}, ${res.normY}) (${res.reason}) -> Expected: norm=(${fx.expNormX}, ${fx.expNormY}) -> ${pass ? '✅ PASS' : '❌ FAIL'}`);
+    if (!pass) process.exitCode = 1;
+  }
 }
