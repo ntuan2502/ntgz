@@ -29,7 +29,7 @@ import {
   wharfWatchState,
 } from './ws-watchers';
 import { runBossHuntOrImpendingStep } from './boss-hunter';
-import { runFishingStep, updateSpotFishCounter } from './fishing-manager';
+import { runFishingStep, updateSpotFishCounter, notifyLeftFishingSpot } from './fishing-manager';
 import { runCricketBossStep, runCricketHuntStep, getHuntLightAt } from './cricket-arena';
 import { runEntertainmentStep } from './entertainment';
 import { refreshFishingWatcher, getFishingEvents } from './fishing-watcher';
@@ -640,6 +640,7 @@ export function execBenStep(
     if (actionKey && !canAct(actionKey, 1000)) {
       return { acted: false };
     }
+    notifyLeftFishingSpot();
     if (
       (getBaiSnapshot()?.kind || 'ben') !== 'ben' ||
       !benScene ||
@@ -709,10 +710,14 @@ export function execBenStep(
 
   // 2. World Boss Hunter & 10s Impending Wait at Map Center
   const bossRes = runBossHuntOrImpendingStep(ctx);
-  if (bossRes) return bossRes;
+  if (bossRes) {
+    if (bossRes.acted) notifyLeftFishingSpot();
+    return bossRes;
+  }
 
   // 3. Active cricket hunt lock
   if (bn.hunt) {
+    notifyLeftFishingSpot();
     if (bn.hunt.phase === 'light' && Date.now() - getHuntLightAt() > HUNT_LIGHT_STALE_MS) {
       bnStore.setState({ hunt: null });
       return { acted: false };
@@ -732,6 +737,7 @@ export function execBenStep(
   const myBout = getMyBout(bn);
   if (myBout) {
     hadMyBout = true;
+    notifyLeftFishingSpot();
     const { bout, side } = myBout;
     return {
       acted: true,
@@ -754,13 +760,26 @@ export function execBenStep(
       }
       const res = stepAlluvial(cfg, onlineTarget);
       if (res && res.acted) {
+        notifyLeftFishingSpot();
         return { acted: true, msg: res.msg, allowCast: Boolean(res.allowCast) };
       }
       return { acted: false };
     },
-    cricketBoss: () => runCricketBossStep(ctx),
-    cricketHunt: () => runCricketHuntStep(ctx),
-    entertainment: () => runEntertainmentStep(ctx),
+    cricketBoss: () => {
+      const res = runCricketBossStep(ctx);
+      if (res.acted) notifyLeftFishingSpot();
+      return res;
+    },
+    cricketHunt: () => {
+      const res = runCricketHuntStep(ctx);
+      if (res.acted) notifyLeftFishingSpot();
+      return res;
+    },
+    entertainment: () => {
+      const res = runEntertainmentStep(ctx);
+      if (res.acted) notifyLeftFishingSpot();
+      return res;
+    },
     fishing: () => runFishingStep(ctx),
   };
   const continuousSubs = new Set<WharfSubAreaId>(['fishing', 'cricketHunt']);

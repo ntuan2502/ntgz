@@ -18,6 +18,12 @@ let lastBasketCountForSpot = -1;
 let lastJitterCatchCount = 0;
 let lastRunning = false;
 let lastSpotChoice: string | null = null;
+let lastFishedTile: { x: number; y: number } | null = null;
+let hasLeftFishingSpot = false;
+
+export function notifyLeftFishingSpot(): void {
+  hasLeftFishingSpot = true;
+}
 
 export function randomizeFishingSpot(avoidIdx = -1): void {
   const pool =
@@ -158,6 +164,7 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
     nonKeptCount > 0 &&
     (isBasketFull || needShellsForBait || needShellsForFood)
   ) {
+    notifyLeftFishingSpot();
     const reasonText =
       nonKeptCount >= 60 || bn.notice?.error === 'basketFull'
         ? ' (Giỏ đã đầy 60/60)'
@@ -178,7 +185,10 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
 
   // 2. Recover Stamina when low
   const stamRes = tryRecoverBenStamina(ctx);
-  if (stamRes) return stamRes;
+  if (stamRes) {
+    if (stamRes.acted) notifyLeftFishingSpot();
+    return stamRes;
+  }
 
   // 3. Buy Bait when out of bait or stocking up to benBaitMaxCount
   const maxBait = typeof cfg.benBaitMaxCount === 'number' ? cfg.benBaitMaxCount : 10000;
@@ -210,6 +220,7 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
 
     if (buyBaitChoice !== 'xinMoi' && canAfford) {
       if (canAct('ben_bait', 1000)) {
+        notifyLeftFishingSpot();
         const baitLabel = BEN_BAIT_NAMES[buyBaitChoice] || buyBaitChoice;
         return walkAndRun(
           { x: 53, y: 11 },
@@ -274,6 +285,7 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
 
     if (!xinMoiBlocked && canAct('ben_bait', 3000)) {
       setLastXinMoi(Date.now(), m.day || 0);
+      notifyLeftFishingSpot();
       return walkAndRun(
         { x: 53, y: 11 },
         () => {
@@ -306,6 +318,7 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
     const drinkCost = drinkPrices[drinkId] || 15;
     const drinkLabel = BEN_DRINK_NAMES[drinkId] || drinkId;
     if (shells >= drinkCost) {
+      notifyLeftFishingSpot();
       return walkAndRun(
         { x: 26, y: 12 },
         () => {
@@ -324,19 +337,89 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
     const spotChoice = cfg.benSpot || 'bank';
     const isDynamicSpot = spotChoice === 'rotate' || spotChoice === 'random';
 
-    // Khi người dùng bấm Bắt đầu (running từ false -> true) hoặc đổi sang chế độ random/rotate:
+    const curTile =
+      benScene?.farmer?.tile ??
+      (typeof benScene?.farmer?.x === 'number' && typeof benScene?.farmer?.y === 'number'
+        ? { x: Math.floor(benScene.farmer.x / 16), y: Math.floor((benScene.farmer.y - 1) / 16) }
+        : undefined);
+
+    // Tự động phát hiện khi nhân vật đã rời vị trí câu trước đó (>2 ô di chuyển)
+    if (
+      lastFishedTile &&
+      curTile &&
+      Math.abs(curTile.x - lastFishedTile.x) + Math.abs(curTile.y - lastFishedTile.y) > 2
+    ) {
+      hasLeftFishingSpot = true;
+    }
+
+    // Khi người dùng bấm Bắt đầu (running từ false -> true) hoặc đổi sang chế độ câu khác:
     const isSessionStart = (cfg.running && !lastRunning) || spotChoice !== lastSpotChoice;
     lastRunning = Boolean(cfg.running);
     lastSpotChoice = spotChoice;
 
-    if (spotChoice === 'random' && (isSessionStart || activeSpotIdx < 0)) {
-      randomizeFishingSpot();
-    } else if (spotChoice === 'rotate' && activeSpotIdx < 0) {
-      activeSpotIdx = 0;
-      activeTileIdx = 0;
-      spotFishCount = 0;
-      spotSessionStartedAt = Date.now();
-      lastJitterCatchCount = 0;
+    if (isSessionStart) {
+      hasLeftFishingSpot = false;
+      lastFishedTile = null;
+      if (spotChoice === 'random') {
+        randomizeFishingSpot();
+      } else if (spotChoice === 'rotate') {
+        activeSpotIdx = 0;
+        activeTileIdx = 0;
+        spotFishCount = 0;
+        spotSessionStartedAt = Date.now();
+        lastJitterCatchCount = 0;
+      } else {
+        const spotKey = spotChoice === 'bank' ? 'bank_center' : spotChoice;
+        const currentMeta = FISHING_SPOTS[spotKey] || FISHING_SPOTS.dock;
+        const subChoice = cfg.benSpotTile || 'all';
+        const subSpot =
+          subChoice !== 'all' && Array.isArray(currentMeta.subSpots)
+            ? currentMeta.subSpots.find((s) => s.key === subChoice)
+            : undefined;
+        const tilesPool =
+          subSpot && subSpot.tiles.length > 0 ? subSpot.tiles : currentMeta.tiles;
+        activeTileIdx = Math.floor(Math.random() * tilesPool.length);
+      }
+    } else if (hasLeftFishingSpot) {
+      // Mỗi khi nhân vật rời khỏi vị trí câu vì bất kỳ lý do gì (bán cá, mua mồi, hồi sức, đánh boss...):
+      if (isDynamicSpot) {
+        // "ngẫu nhiên thì qua hẳn chỗ khác luôn ấy":
+        if (spotChoice === 'random') {
+          randomizeFishingSpot(activeSpotIdx);
+        } else {
+          // rotate: sang hẳn khu vực tiếp theo
+          activeSpotIdx = (activeSpotIdx + 1) % SPOT_KEYS.length;
+          const newSpotMeta = FISHING_SPOTS[SPOT_KEYS[activeSpotIdx]];
+          activeTileIdx = Math.floor(Math.random() * (newSpotMeta?.tiles.length || 1));
+          spotFishCount = 0;
+          spotSessionStartedAt = Date.now();
+          lastJitterCatchCount = 0;
+        }
+      } else {
+        // "cụ thể chọn vị trí chính xác thì sẽ nhảy qua ô khác xung quanh":
+        const spotKey = spotChoice === 'bank' ? 'bank_center' : spotChoice;
+        const currentMeta = FISHING_SPOTS[spotKey] || FISHING_SPOTS.dock;
+        const subChoice = cfg.benSpotTile || 'all';
+        const subSpot =
+          subChoice !== 'all' && Array.isArray(currentMeta.subSpots)
+            ? currentMeta.subSpots.find((s) => s.key === subChoice)
+            : undefined;
+        const tilesPool =
+          subSpot && subSpot.tiles.length > 0 ? subSpot.tiles : currentMeta.tiles;
+
+        const otherIndices = tilesPool
+          .map((t, idx) => ({ t, idx }))
+          .filter(
+            ({ t }) => !(lastFishedTile && t.x === lastFishedTile.x && t.y === lastFishedTile.y)
+          );
+
+        if (otherIndices.length > 0) {
+          const picked = otherIndices[Math.floor(Math.random() * otherIndices.length)];
+          activeTileIdx = picked.idx;
+        }
+      }
+      hasLeftFishingSpot = false;
+      lastFishedTile = null;
     }
 
     if (isDynamicSpot && activeSpotIdx >= 0) {
@@ -381,20 +464,16 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
 
     const targetTile = candidateTiles[activeTileIdx % candidateTiles.length] || candidateTiles[0];
 
-    const curTile =
-      benScene?.farmer?.tile ??
-      (typeof benScene?.farmer?.x === 'number' && typeof benScene?.farmer?.y === 'number'
-        ? { x: Math.floor(benScene.farmer.x / 16), y: Math.floor((benScene.farmer.y - 1) / 16) }
-        : undefined);
-
-    const isAtAnyCandidate = Boolean(
-      curTile && candidateTiles.some((t) => t.x === curTile.x && t.y === curTile.y)
-    );
     const isAtTargetTile = curTile
       ? curTile.x === targetTile.x && curTile.y === targetTile.y
       : (bu.spot === spotMeta.kind || Boolean(bu.spot));
 
-    const isAtDesiredSpot = isAtAnyCandidate || isAtTargetTile;
+    const isAtDesiredSpot = isAtTargetTile;
+
+    if (isAtDesiredSpot && curTile) {
+      lastFishedTile = { x: curTile.x, y: curTile.y };
+      hasLeftFishingSpot = false;
+    }
 
     const needsWalkToSpot =
       (spotChoice as string) === 'any'
