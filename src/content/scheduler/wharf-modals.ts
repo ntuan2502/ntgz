@@ -7,15 +7,21 @@ import {
   shouldKeepFishByConfig,
 } from '../../shared/constants/wharf-catalog';
 import { execGameAction } from '../bridge/content-bridge';
-import { isVisible, triggerPointerDownAndClick } from './dom-helpers';
+import { isVisible, triggerPointerDownAndClick, triggerPointerDownAt } from './dom-helpers';
 import {
   classifyMilitiaImage,
+  detectMilitiaCheckType,
   MILITIA_KIND_LABELS,
   MilitiaAskKind,
+  MilitiaCheckType,
   MilitiaClassificationResult,
+  MilitiaTapAnswerResolution,
   parseMilitiaTarget,
   playMilitiaAlertBeep,
   resolveMilitiaAnswer,
+  solveMilitiaOddImage,
+  solveMilitiaQuizImage,
+  solveMilitiaTapImage,
 } from './militia-solver';
 
 let lastModalClickAt = 0;
@@ -27,8 +33,10 @@ let lastCricketCatchAt = 0;
 let lastBoutCloseAt = 0;
 let militiaFirstSeenAt = 0;
 let lastMilitiaClickAt = 0;
-let militiaSolvingPromise: Promise<MilitiaClassificationResult | null> | null = null;
+let militiaCheckType: MilitiaCheckType = 'count';
+let militiaSolvingPromise: Promise<unknown> | null = null;
 let militiaSolvedResult: MilitiaClassificationResult | null = null;
+let militiaSolvedTapResult: MilitiaTapAnswerResolution | null = null;
 let militiaTargetKind: MilitiaAskKind = 'fish';
 let militiaOptions: number[] = [];
 let militiaHasAlerted = false;
@@ -447,6 +455,7 @@ export function handleBenMilitiaModal(
     lastMilitiaClickAt = 0;
     militiaSolvingPromise = null;
     militiaSolvedResult = null;
+    militiaSolvedTapResult = null;
     militiaOptions = [];
     militiaHasAlerted = false;
     return false;
@@ -464,8 +473,117 @@ export function handleBenMilitiaModal(
     militiaFirstSeenAt = now;
   }
 
-  // Parse target creature and options
   const check = snap.benNet?.check;
+  militiaCheckType = detectMilitiaCheckType(check?.type, militiaPanel?.textContent || '');
+
+  // Calculate remaining time
+  const totalMs = Number(check?.ms) || 120000;
+  const expireAt = Number(check?.until) || Date.now() + totalMs;
+  const remainingSec = Math.max(0, Math.ceil((expireAt - Date.now()) / 1000));
+  const isCriticalTimeout = remainingSec <= 6;
+
+  // -------------------------------------------------------------
+  // BRANCH A: Tap-based captchas ('odd' | 'quiz' | 'tap')
+  // -------------------------------------------------------------
+  if (militiaCheckType === 'odd' || militiaCheckType === 'quiz' || militiaCheckType === 'tap') {
+    // Check if already tapped/evaluating
+    const hasMark = Boolean(militiaPanel?.querySelector('.militia-check-mark'));
+    const leftText = militiaPanel?.querySelector('.militia-check-left')?.textContent || '';
+    if (hasMark || leftText.includes('Đang chấm')) {
+      setStatus('🪖 Dân quân kiểm tra: Đã chạm ô trả lời, đang chờ chấm kết quả...');
+      return true;
+    }
+
+    // Trigger solver in background as soon as image element/base64 is present
+    if (!militiaSolvedTapResult && !militiaSolvingPromise) {
+      const imgEl = militiaPanel?.querySelector('img.militia-check-img') as HTMLImageElement | null;
+      const imgSrc = imgEl?.src || (check?.img ? `data:image/png;base64,${check.img}` : '');
+      if (imgSrc) {
+        const solverPromise: Promise<MilitiaTapAnswerResolution> =
+          militiaCheckType === 'odd'
+            ? solveMilitiaOddImage(imgEl && imgEl.complete && imgEl.naturalWidth > 0 ? imgEl : imgSrc)
+            : militiaCheckType === 'quiz'
+              ? solveMilitiaQuizImage(
+                  imgEl && imgEl.complete && imgEl.naturalWidth > 0 ? imgEl : imgSrc,
+                  check?.ask || militiaPanel?.textContent || ''
+                )
+              : solveMilitiaTapImage(
+                  imgEl && imgEl.complete && imgEl.naturalWidth > 0 ? imgEl : imgSrc,
+                  parseMilitiaTarget(check?.ask, militiaPanel?.textContent || '')
+                );
+
+        militiaSolvingPromise = solverPromise
+          .then((res) => {
+            militiaSolvedTapResult = res;
+            console.log(`[Militia] Solved ${militiaCheckType}:`, res);
+            return res;
+          })
+          .catch((err) => {
+            console.warn(`[Militia] ${militiaCheckType} solving failed:`, err);
+            return null;
+          });
+      }
+    }
+
+    // If manual solving is configured, provide hint without auto-clicking
+    if (config.benAutoMilitiaSolve === false) {
+      const posStr =
+        militiaSolvedTapResult?.row !== undefined
+          ? ` [Hàng ${(militiaSolvedTapResult.row ?? 0) + 1}, Cột ${(militiaSolvedTapResult.col ?? 0) + 1}]`
+          : '';
+      setStatus(
+        `🪖 Dân quân kiểm tra (${militiaCheckType}): Gợi ý:${posStr} (${militiaSolvedTapResult?.reason || '...'}). Chế độ thủ công: Bà con tự chạm nha! (còn ${remainingSec}s)`
+      );
+      return true;
+    }
+
+    // Natural deliberation delay
+    const userDelaySec = Math.max(2, Math.min(60, Number(config.benMilitiaSolveDelaySec) || 10));
+    const exactHumanDelay = userDelaySec * 1000;
+    if (militiaSolvedTapResult && !isCriticalTimeout && now - militiaFirstSeenAt < exactHumanDelay) {
+      const waitSec = Math.max(1, Math.ceil((militiaFirstSeenAt + exactHumanDelay - now) / 1000));
+      const posStr =
+        militiaSolvedTapResult.row !== undefined
+          ? ` [Hàng ${(militiaSolvedTapResult.row ?? 0) + 1}, Cột ${(militiaSolvedTapResult.col ?? 0) + 1}]`
+          : '';
+      setStatus(
+        `🪖 Dân quân kiểm tra (${militiaCheckType}): Phát hiện mục tiêu${posStr} (${militiaSolvedTapResult.reason}). Tự bấm sau ${waitSec}s... (còn ${remainingSec}s)`
+      );
+      return true;
+    }
+
+    // Still solving and not critical timeout yet
+    if (!militiaSolvedTapResult && !isCriticalTimeout) {
+      setStatus(`🪖 Dân quân kiểm tra (${militiaCheckType}): Đang phân tích ảnh... (còn ${remainingSec}s)`);
+      return true;
+    }
+
+    // Perform tap click on img.militia-check-img
+    const imgEl = militiaPanel?.querySelector('img.militia-check-img') as HTMLElement | null;
+    if (imgEl && now - lastMilitiaClickAt > 1000) {
+      const rect = imgEl.getBoundingClientRect();
+      const normX = militiaSolvedTapResult?.normalizedX ?? 0.5;
+      const normY = militiaSolvedTapResult?.normalizedY ?? 0.5;
+      const clientX = rect.left + normX * rect.width;
+      const clientY = rect.top + normY * rect.height;
+
+      triggerPointerDownAt(imgEl, clientX, clientY);
+      lastMilitiaClickAt = now;
+
+      const desc =
+        militiaSolvedTapResult?.row !== undefined
+          ? `ô [Hàng ${(militiaSolvedTapResult.row ?? 0) + 1}, Cột ${(militiaSolvedTapResult.col ?? 0) + 1}] (${militiaSolvedTapResult.reason})`
+          : 'vị trí mục tiêu';
+      setStatus(`🪖 Dân quân kiểm tra: Đã chạm ${desc}!`);
+      return true;
+    }
+
+    return true;
+  }
+
+  // -------------------------------------------------------------
+  // BRANCH B: Classic Count Captcha ('count')
+  // -------------------------------------------------------------
   militiaTargetKind = parseMilitiaTarget(check?.ask, militiaPanel?.textContent || '');
   const kindLabel = MILITIA_KIND_LABELS[militiaTargetKind] || 'con vật';
 
@@ -516,12 +634,6 @@ export function handleBenMilitiaModal(
     setStatus('🪖 Dân quân kiểm tra: Đã chọn đáp án, đang chờ chấm kết quả...');
     return true;
   }
-
-  // Calculate remaining time
-  const totalMs = Number(check?.ms) || 120000;
-  const expireAt = Number(check?.until) || Date.now() + totalMs;
-  const remainingSec = Math.max(0, Math.ceil((expireAt - Date.now()) / 1000));
-  const isCriticalTimeout = remainingSec <= 6;
 
   // Resolve best answer candidates
   let resolvedCount: number | null = null;

@@ -422,3 +422,228 @@ for (const fx of fixtures) {
   console.log(`Resolution: Count=${ans.count}, Picked="${ans.optionValue}" (Confidence: ${ans.confidence}) -> Expected: ${fx.expected} -> ${pass ? '✅ PASS' : '❌ FAIL'}`);
   if (!pass) process.exitCode = 1;
 }
+
+// -------------------------------------------------------------
+// V2 CAPTCHA TESTS ('odd' and 'quiz')
+// -------------------------------------------------------------
+function detectContentBounds(pixels, width, height) {
+  const isDialogBeige = (r, g, b) =>
+    (r > 235 && g > 225 && b > 200) || (r > 200 && g > 200 && b > 180 && Math.abs(r - g) < 15);
+
+  let top = -1, bottom = -1, left = width, right = 0;
+  for (let y = 30; y < height - 30; y++) {
+    let rowNonBgCount = 0;
+    for (let x = 10; x < width - 10; x++) {
+      const idx = (y * width + x) * 4;
+      const r = pixels[idx], g = pixels[idx + 1], b = pixels[idx + 2];
+      if (!isDialogBeige(r, g, b)) rowNonBgCount++;
+    }
+    if (rowNonBgCount > width * 0.7) {
+      if (top === -1) top = y;
+      bottom = y;
+    }
+  }
+
+  if (top !== -1 && bottom - top > 80 && top > 30) {
+    const midY = Math.floor((top + bottom) / 2);
+    for (let x = 5; x < width - 5; x++) {
+      const idx = (midY * width + x) * 4;
+      const r = pixels[idx], g = pixels[idx + 1], b = pixels[idx + 2];
+      if (!isDialogBeige(r, g, b)) {
+        if (x < left) left = x;
+        if (x > right) right = x;
+      }
+    }
+    return {
+      x0: left + 8,
+      y0: top + 8,
+      w: Math.max(1, right - left - 15),
+      h: Math.max(1, bottom - top - 15),
+    };
+  }
+
+  return { x0: 0, y0: 0, w: width, h: height };
+}
+
+function solveOdd(filePath) {
+  const { width, height, pixels } = decodePng(fs.readFileSync(filePath));
+  const { x0, y0, w, h } = detectContentBounds(pixels, width, height);
+  const cellW = w / 3;
+  const cellH = h / 3;
+  const cells = [];
+
+  for (let r = 0; r < 3; r++) {
+    for (let c = 0; c < 3; c++) {
+      const cx0 = Math.floor(x0 + c * cellW);
+      const cy0 = Math.floor(y0 + r * cellH);
+      const cx1 = Math.floor(cx0 + cellW);
+      const cy1 = Math.floor(cy0 + cellH);
+
+      let fgCount = 0;
+      let sumR = 0, sumG = 0, sumB = 0;
+      let minPx = cx1, maxPx = cx0, minPy = cy1, maxPy = cy0;
+      let darkCount = 0;
+      const darkPixels = [];
+
+      for (let y = cy0; y < cy1; y++) {
+        for (let x = cx0; x < cx1; x++) {
+          const idx = (y * width + x) * 4;
+          const pr = pixels[idx], pg = pixels[idx + 1], pb = pixels[idx + 2];
+          const isWater = (pb >= 95 && pg >= 70 && pr <= 95) || (pr > 220 && pg > 210 && pb > 180);
+          if (!isWater) {
+            fgCount++;
+            sumR += pr; sumG += pg; sumB += pb;
+            if (x < minPx) minPx = x;
+            if (x > maxPx) maxPx = x;
+            if (y < minPy) minPy = y;
+            if (y > maxPy) maxPy = y;
+          }
+          if (pr < 60 && pg < 60 && pb < 70) {
+            darkCount++;
+            darkPixels.push({ x: x - cx0, y: y - cy0 });
+          }
+        }
+      }
+
+      const bw = Math.max(0, maxPx - minPx + 1);
+      const bh = Math.max(0, maxPy - minPy + 1);
+      const avgR = fgCount ? Math.round(sumR / fgCount) : 0;
+      const avgG = fgCount ? Math.round(sumG / fgCount) : 0;
+      const avgB = fgCount ? Math.round(sumB / fgCount) : 0;
+
+      let sumDarkX = 0, sumDarkY = 0;
+      for (const p of darkPixels) {
+        sumDarkX += p.x;
+        sumDarkY += p.y;
+      }
+      const darkCentroidX = darkPixels.length ? (sumDarkX / darkPixels.length) / cellW : 0.5;
+      const darkCentroidY = darkPixels.length ? (sumDarkY / darkPixels.length) / cellH : 0.5;
+
+      cells.push({
+        row: r,
+        col: c,
+        fgCount,
+        darkCount,
+        bw,
+        bh,
+        area: bw * bh,
+        darkCentroidX,
+        darkCentroidY,
+        avgColor: [avgR, avgG, avgB],
+      });
+    }
+  }
+
+  function getOutlierScores(list, getter) {
+    const vals = list.map(getter);
+    const sorted = [...vals].sort((a, b) => a - b);
+    const median = sorted[Math.floor(sorted.length / 2)];
+    const mads = sorted.map((v) => Math.abs(v - median)).sort((a, b) => a - b);
+    const mad = mads[Math.floor(mads.length / 2)] || 1;
+    return vals.map((v) => Math.abs(v - median) / mad);
+  }
+
+  const areaScores = getOutlierScores(cells, (c) => c.area);
+  const pxScores = getOutlierScores(cells, (c) => c.fgCount);
+  const dirScores = getOutlierScores(cells, (c) => c.darkCentroidX);
+  const flipScores = getOutlierScores(cells, (c) => c.darkCentroidY);
+  const darkScores = getOutlierScores(cells, (c) => c.darkCount);
+
+  let maxScore = -1;
+  let bestIdx = 0;
+  let detectedReason = '';
+
+  for (let i = 0; i < cells.length; i++) {
+    const candidates = [
+      { score: areaScores[i], type: 'khác cỡ (diện tích)' },
+      { score: pxScores[i], type: 'khác cỡ (số pixel)' },
+      { score: dirScores[i], type: 'quay đầu (lật ngang)' },
+      { score: flipScores[i], type: 'lật ngược (lật dọc)' },
+      { score: darkScores[i], type: 'mất mắt/đổi mắt' },
+    ];
+    candidates.sort((a, b) => b.score - a.score);
+    if (candidates[0].score > maxScore) {
+      maxScore = candidates[0].score;
+      bestIdx = i;
+      detectedReason = candidates[0].type;
+    }
+  }
+
+  return { ...cells[bestIdx], reason: detectedReason, confidence: maxScore };
+}
+
+function solveQuiz(filePath, askKey) {
+  const { width, height, pixels } = decodePng(fs.readFileSync(filePath));
+  const { x0, y0, w, h } = detectContentBounds(pixels, width, height);
+  const cellW = w / 3;
+  const cellH = h / 2;
+  const cells = [];
+
+  for (let r = 0; r < 2; r++) {
+    for (let c = 0; c < 3; c++) {
+      const cx0 = Math.floor(x0 + c * cellW);
+      const cy0 = Math.floor(y0 + r * cellH);
+      const cx1 = Math.floor(cx0 + cellW);
+      const cy1 = Math.floor(cy0 + cellH);
+
+      const marginX = Math.floor(cellW * 0.12);
+      const marginY = Math.floor(cellH * 0.12);
+
+      let darkPx = 0, greenPx = 0, whitePx = 0, bluePx = 0, redOrangePx = 0, greyBuffaloPx = 0, brownHullPx = 0;
+
+      for (let y = cy0 + marginY; y < cy1 - marginY; y++) {
+        for (let x = cx0 + marginX; x < cx1 - marginX; x++) {
+          const idx = (y * width + x) * 4;
+          const pr = pixels[idx], pg = pixels[idx + 1], pb = pixels[idx + 2];
+          if (pr < 60 && pg < 60 && pb < 70) darkPx++;
+          if (pg > 110 && pg > pr + 25 && pg > pb + 15) greenPx++;
+          if (pr > 215 && pg > 215 && pb > 195) whitePx++;
+          if (pb > 140 && pb > pr + 40 && pb > pg + 15) bluePx++;
+          if (pr > 180 && pr > pb + 50 && pg < 130) redOrangePx++;
+          if (pr >= 65 && pr <= 110 && pg >= 70 && pg <= 115 && pb >= 80 && pb <= 130 && Math.abs(pr - pg) < 20) {
+            greyBuffaloPx++;
+          }
+          if (pr >= 110 && pr <= 165 && pg >= 70 && pg <= 115 && pb <= 80 && pr > pb + 40) {
+            brownHullPx++;
+          }
+        }
+      }
+
+      cells.push({ row: r, col: c, darkPx, greenPx, whitePx, bluePx, redOrangePx, greyBuffaloPx, brownHullPx });
+    }
+  }
+
+  let bestIdx = 0, maxScore = -1, reason = '';
+  const normalizedAsk = askKey.toLowerCase();
+  if (normalizedAsk.includes('plough') || normalizedAsk.includes('kéo cày')) {
+    reason = 'Con trâu kéo cày ngoài ruộng';
+    for (let i = 0; i < cells.length; i++) {
+      const score = cells[i].greyBuffaloPx * 2 + cells[i].darkPx;
+      if (score > maxScore) { maxScore = score; bestIdx = i; }
+    }
+  } else if (normalizedAsk.includes('boat') || normalizedAsk.includes('chở người') || normalizedAsk.includes('thuyền')) {
+    reason = 'Chiếc thuyền chở người qua sông';
+    for (let i = 0; i < cells.length; i++) {
+      const score = cells[i].whitePx + cells[i].brownHullPx * 2 - cells[i].redOrangePx * 5;
+      if (score > maxScore) { maxScore = score; bestIdx = i; }
+    }
+  }
+
+  return { ...cells[bestIdx], reason, confidence: maxScore };
+}
+
+console.log('\n=== RUNNING MILITIA V2 (ODD & QUIZ) TEST SUITE ===');
+const v2Fixtures = [
+  { file: 'tests/fixtures/militia-v2/sample_odd_01_turtle_size.png', type: 'odd', expRow: 1, expCol: 1 },
+  { file: 'tests/fixtures/militia-v2/sample_odd_02_fish_direction.png', type: 'odd', expRow: 1, expCol: 0 },
+  { file: 'tests/fixtures/militia-v2/sample_quiz_01_plough_buffalo.png', type: 'quiz', ask: 'plough', expRow: 1, expCol: 1 },
+  { file: 'tests/fixtures/militia-v2/sample_quiz_02_boat.png', type: 'quiz', ask: 'boat', expRow: 1, expCol: 1 },
+];
+
+for (const fx of v2Fixtures) {
+  const res = fx.type === 'odd' ? solveOdd(fx.file) : solveQuiz(fx.file, fx.ask);
+  const pass = res.row === fx.expRow && res.col === fx.expCol;
+  console.log(`\nTest V2 [${path.basename(fx.file)}]: Type="${fx.type}" ${fx.ask ? `Ask="${fx.ask}"` : ''}`);
+  console.log(`Result: Target=[Row ${res.row + 1}, Col ${res.col + 1}] (${res.reason}) -> Expected: [Row ${fx.expRow + 1}, Col ${fx.expCol + 1}] -> ${pass ? '✅ PASS' : '❌ FAIL'}`);
+  if (!pass) process.exitCode = 1;
+}

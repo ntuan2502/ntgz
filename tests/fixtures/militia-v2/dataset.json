@@ -1,0 +1,58 @@
+[
+  {
+    "file": "sample_odd_01_turtle_size.png",
+    "type": "odd",
+    "prompt": "Có một con khác mấy con còn lại (lật ngược, quay đầu, khác màu, khác cỡ hay mất mắt). Chạm vào con đó nha.",
+    "category": "khác cỡ (larger size)",
+    "target": {
+      "grid": "3x3",
+      "row": 1,
+      "col": 1,
+      "normalizedX": 0.5,
+      "normalizedY": 0.5,
+      "description": "Con rùa ở chính giữa kích thước to hơn các con rùa xung quanh"
+    }
+  },
+  {
+    "file": "sample_odd_02_fish_direction.png",
+    "type": "odd",
+    "prompt": "Có một con khác mấy con còn lại (lật ngược, quay đầu, khác màu, khác cỡ hay mất mắt). Chạm vào con đó nha.",
+    "category": "quay đầu (opposite direction / flipped horizontally)",
+    "target": {
+      "grid": "3x3",
+      "row": 1,
+      "col": 0,
+      "normalizedX": 0.167,
+      "normalizedY": 0.5,
+      "description": "Con cá ở hàng giữa, cột trái quay đầu bơi sang trái (các con khác bơi sang phải)"
+    }
+  },
+  {
+    "file": "sample_quiz_01_plough_buffalo.png",
+    "type": "quiz",
+    "ask": "plough",
+    "prompt": "Con nào kéo cày ngoài ruộng? Chạm vào ô đúng nha.",
+    "target": {
+      "grid": "2x3",
+      "row": 1,
+      "col": 1,
+      "normalizedX": 0.5,
+      "normalizedY": 0.75,
+      "description": "Con trâu xám có sừng kéo cày ở hàng dưới ô giữa"
+    }
+  },
+  {
+    "file": "sample_quiz_02_boat.png",
+    "type": "quiz",
+    "ask": "boat",
+    "prompt": "Cái gì chở người qua sông? Chạm vào ô đúng nha.",
+    "target": {
+      "grid": "2x3",
+      "row": 1,
+      "col": 1,
+      "normalizedX": 0.5,
+      "normalizedY": 0.75,
+      "description": "Chiếc thuyền có cánh buồm trắng ở hàng dưới ô giữa"
+    }
+  }
+]

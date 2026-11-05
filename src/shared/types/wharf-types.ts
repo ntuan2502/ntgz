@@ -258,9 +258,12 @@ export interface BenNetState {
     [key: string]: unknown;
   } | null;
   check?: {
+    type?: 'count' | 'odd' | 'quiz' | 'tap' | 'drag' | string;
     img?: string;
-    ask?: 'fish' | 'crab' | 'shrimp' | 'snail' | string;
+    ask?: string;
     options?: number[];
+    piece?: string;
+    pieceY?: number;
     ms?: number;
     until?: number;
     kinds?: string[];
@@ -269,6 +272,9 @@ export interface BenNetState {
     solution?: number;
     correct?: number;
     pick?: number;
+    x?: number;
+    y?: number;
+    path?: [number, number, number][];
     [key: string]: unknown;
   } | null;
   checkDone?: {

@@ -33,6 +33,26 @@ export function triggerPointerDownOnly(el: HTMLElement | null): boolean {
   return true;
 }
 
+export function triggerPointerDownAt(el: HTMLElement | null, clientX: number, clientY: number): boolean {
+  if (!el) return false;
+  const opts = {
+    bubbles: true,
+    cancelable: true,
+    clientX,
+    clientY,
+    button: 0,
+    buttons: 1,
+    pointerId: 1,
+    pointerType: 'mouse',
+    isPrimary: true,
+  };
+  el.dispatchEvent(new PointerEvent('pointerdown', opts));
+  el.dispatchEvent(new MouseEvent('mousedown', opts));
+  el.dispatchEvent(new PointerEvent('pointerup', opts));
+  el.dispatchEvent(new MouseEvent('mouseup', opts));
+  return true;
+}
+
 export function formatClock(minutes?: number): string {
   if (typeof minutes !== 'number') return '--:--';
   const h = Math.floor(minutes / 60) % 24;
