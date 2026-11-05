@@ -1383,11 +1383,15 @@ export async function solveMilitiaTapImage(
 
       if (bw >= 10 && bw <= 65 && bh >= 10 && bh <= 55 && pixelCount >= 25) {
         let redCrabPx = 0;
+        let purpleCrabPx = 0;
         let brownSnailPx = 0;
         let greenFrogPx = 0;
         let silverShrimpPx = 0;
         let orangeShrimpPx = 0;
+        let orangeFishPx = 0;
         let blueFishPx = 0;
+        let turtleShellPx = 0;
+        let turtleLegsPx = 0;
 
         for (let i = 0; i < blobPixels.length; i++) {
           const bpIdx = blobPixels[i] * 4;
@@ -1395,20 +1399,35 @@ export async function solveMilitiaTapImage(
           const pg = pixels[bpIdx + 1];
           const pb = pixels[bpIdx + 2];
 
+          // Crab red:
           if (pr > 160 && pr - pg >= 65 && pr - pb >= 70) redCrabPx++;
+          // Crab purple:
+          if (pb >= 100 && pr >= 80 && pb > pg + 25 && pr > pg + 20) purpleCrabPx++;
+          // Snail brown:
           if (pr >= 130 && pr <= 185 && pg >= 75 && pg <= 130 && pb <= 85 && pr - pg >= 25 && pr - pg <= 65) brownSnailPx++;
-          if (pg > 105 && pg > pr + 20 && pg > pb + 20) greenFrogPx++;
+          // Frog green:
+          if (pg > 105 && ((pg > pr + 20 && pg > pb + 20) || (pg > pr + 40 && pb > pr + 20))) greenFrogPx++;
+          // Silver shrimp:
           if (Math.abs(pr - pg) <= 15 && Math.abs(pg - pb) <= 15 && pr >= 100 && pr <= 215) silverShrimpPx++;
+          // Orange shrimp:
           if (pr > 200 && pg > 110 && pg < 190 && pb < 90) orangeShrimpPx++;
+          // Orange fish:
+          if (pr > 180 && pg > 90 && pg < 150 && pb < 80) orangeFishPx++;
+          // Blue fish:
           if (pb > 140 && pb > pr + 35 && pb > pg + 15) blueFishPx++;
+          // Turtle shell (olive green/brown):
+          if (pg >= 85 && pg <= 150 && pr >= 65 && pr <= 130 && pb <= 80 && (pg >= pr || Math.abs(pg - pr) < 25)) turtleShellPx++;
+          // Turtle legs (tan/yellow-brown):
+          if (pr >= 125 && pg >= 115 && pb <= 100 && pr > pb + 35 && pg > pb + 25) turtleLegsPx++;
         }
 
         const scores: Record<string, number> = {
+          turtle: turtleShellPx + turtleLegsPx * 2,
           shrimp: silverShrimpPx + orangeShrimpPx,
-          crab: redCrabPx,
+          crab: redCrabPx + purpleCrabPx,
           snail: brownSnailPx,
           frog: greenFrogPx,
-          fish: blueFishPx,
+          fish: blueFishPx + orangeFishPx,
         };
 
         let kind = 'other';
@@ -1450,6 +1469,8 @@ export async function solveMilitiaTapImage(
     normalizedKind = 'snail';
   } else if (normalizedAsk.includes('ech') || normalizedAsk.includes('frog') || normalizedAsk.includes('ếch') || normalizedAsk.includes('🐸')) {
     normalizedKind = 'frog';
+  } else if (normalizedAsk.includes('rua') || normalizedAsk.includes('turtle') || normalizedAsk.includes('rùa') || normalizedAsk.includes('🐢')) {
+    normalizedKind = 'turtle';
   } else if (normalizedAsk.includes('ca') || normalizedAsk.includes('fish') || normalizedAsk.includes('cá') || normalizedAsk.includes('🐟')) {
     normalizedKind = 'fish';
   }

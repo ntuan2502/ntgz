@@ -137,5 +137,18 @@
       "normalizedY": 0.131,
       "description": "Con tôm bạc ở góc trên bên phải (duy nhất 1 con trong hình)"
     }
+  },
+  {
+    "file": "sample_tap_02_turtle.png",
+    "type": "tap",
+    "ask": "turtle",
+    "prompt": "Chạm vào con rùa 🐢 trong hình nha (chỉ có một con).",
+    "target": {
+      "centerX": 174,
+      "centerY": 212,
+      "normalizedX": 0.460,
+      "normalizedY": 0.634,
+      "description": "Con rùa màu xanh rêu mai cứng ở giữa hàng dưới (duy nhất 1 con trong hình)"
+    }
   }
 ]
