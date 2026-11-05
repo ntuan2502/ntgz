@@ -899,6 +899,19 @@ export const FOOD_ITEMS = [
   { id: 'cheBuoi', name: 'Chén chè bưởi', stamina: 18, icon: '🍧', desc: 'Cùi bưởi giòn sần sật' },
 ];
 
+export const FOOD_PRICES: Record<string, number> = {
+  banhMi: 10,
+  chaoCa: 14,
+  huTieu: 20,
+  comTam: 28,
+  lauMam: 45,
+  xoiBap: 8,
+  khoaiMi: 6,
+  nuocMia: 5,
+  traDa: 2,
+  cheBuoi: 5,
+};
+
 export interface FishingSubSpotMeta {
   key: string;
   label: string;
@@ -1224,3 +1237,34 @@ export const SPOT_KEYS = [
   'creek_east',
   'south_swamp',
 ];
+
+export const SPOT_AREA_OPTIONS = [
+  { value: 'dock', label: '🌉 Cầu tàu lớn (Có cá Thần thoại 5000🐚)' },
+  { value: 'bamboo', label: '🎋 Cầu tre lắt lẻo (Mạn Tây - 2000🐚)' },
+  { value: 'bridge', label: '🪵 Cầu ván qua lạch (Mạn Đông - 2000🐚)' },
+  { value: 'bank_center', label: '🌾 Bờ sông bến giữa (Sát Xe Chị Thơm)' },
+  { value: 'bank_east', label: '🏪 Bờ sông bến Đông (Gần Vựa cá & Chú Đực)' },
+  { value: 'bank_west', label: '🛶 Bờ sông bến Tây (Gần Bến đò ngang)' },
+  { value: 'lake_east', label: '🪷 Hồ nước phía Đông (Ao sen bán nguyệt)' },
+  { value: 'creek_east', label: '🏞️ Kênh lạch phía Đông (Ven ruộng lúa)' },
+  { value: 'south_swamp', label: '🌾 Đầm nước phía Nam (Bãi lau sậy)' },
+  { value: 'rotate', label: '🔄 Tự luân phiên các vùng câu' },
+  { value: 'random', label: '🎲 Đổi ngẫu nhiên các vùng câu' },
+];
+
+export const PACK_FOOD_SELECT_OPTIONS = [
+  { value: 'banhTet', label: '🫔 Bánh tét lá cẩm (+50⚡ · 30🐚)' },
+  { value: 'comNam', label: '🍙 Cơm nắm muối mè (+30⚡ · 17🐚)' },
+  { value: 'banhBao', label: '🥟 Bánh bao nhân thịt (+22⚡ · 13🐚)' },
+  { value: 'banhMiGoi', label: '🥖 Bánh mì gói giấy (+20⚡ · 12🐚)' },
+  { value: 'xoiBap', label: '🍙 Xôi bắp lá chuối (+15⚡ · 9🐚)' },
+];
+
+export const DI_TAM_FOOD_SELECT_OPTIONS = [
+  { value: 'lauMam', label: '🍲 Lẩu cá linh (+100 Sức · 45 vỏ sò)' },
+  { value: 'comTam', label: '🍛 Cơm tấm sườn bì (+60 Sức · 28 vỏ sò)' },
+  { value: 'huTieu', label: '🍜 Hủ tiếu nam vang (+40 Sức · 20 vỏ sò)' },
+  { value: 'chaoCa', label: '🥣 Cháo cá lóc (+28 Sức · 14 vỏ sò)' },
+  { value: 'banhMi', label: '🥖 Bánh mì thịt (+20 Sức · 10 vỏ sò)' },
+];
+

@@ -3,7 +3,7 @@ import { AppConfig } from '@/shared/types/config';
 import { Switch } from '@/components/ui/switch';
 import { HudSelect } from '../HudSelect';
 import { MultiSelectCombobox } from '../MultiSelectCombobox';
-import { FISHING_SPOTS } from '@/shared/constants/wharf-catalog';
+import { FISHING_SPOTS, SPOT_AREA_OPTIONS } from '@/shared/constants/wharf-catalog';
 
 const KEEP_RARITY_OPTIONS = [
   { id: 'mythic', label: 'Thần thoại', icon: '🔥' },
@@ -14,20 +14,6 @@ const KEEP_RARITY_OPTIONS = [
   { id: 'rare', label: 'Hiếm', icon: '⭐' },
   { id: 'uncommon', label: 'Hơi hiếm', icon: '🐟' },
   { id: 'common', label: 'Thường', icon: '🐟' },
-];
-
-const SPOT_AREA_OPTIONS = [
-  { value: 'dock', label: '🌉 Cầu tàu lớn (Có cá Thần thoại 5000🐚)' },
-  { value: 'bamboo', label: '🎋 Cầu tre lắt lẻo (Mạn Tây - 2000🐚)' },
-  { value: 'bridge', label: '🪵 Cầu ván qua lạch (Mạn Đông - 2000🐚)' },
-  { value: 'bank_center', label: '🌾 Bờ sông bến giữa (Sát Xe Chị Thơm)' },
-  { value: 'bank_east', label: '🏪 Bờ sông bến Đông (Gần Vựa cá & Chú Đực)' },
-  { value: 'bank_west', label: '🛶 Bờ sông bến Tây (Gần Bến đò ngang)' },
-  { value: 'lake_east', label: '🪷 Hồ nước phía Đông (Ao sen bán nguyệt)' },
-  { value: 'creek_east', label: '🏞️ Kênh lạch phía Đông (Ven ruộng lúa)' },
-  { value: 'south_swamp', label: '🌾 Đầm nước phía Nam (Bãi lau sậy)' },
-  { value: 'rotate', label: '🔄 Tự luân phiên các vùng câu' },
-  { value: 'random', label: '🎲 Đổi ngẫu nhiên các vùng câu' },
 ];
 
 interface FishingCardProps {

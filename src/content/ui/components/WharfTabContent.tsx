@@ -5,6 +5,10 @@ import { Switch } from '@/components/ui/switch';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { HudSelect } from './HudSelect';
 import { MonitorTabId } from './monitor/MonitorHub';
+import {
+  PACK_FOOD_SELECT_OPTIONS,
+  DI_TAM_FOOD_SELECT_OPTIONS,
+} from '@/shared/constants/wharf-catalog';
 import { FishingCard } from './wharf-cards/FishingCard';
 import { CricketBossCard } from './wharf-cards/CricketBossCard';
 import { CricketHuntCard } from './wharf-cards/CricketHuntCard';
@@ -154,13 +158,7 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onO
                       <HudSelect
                         value={config.benPackFoodItem || 'banhTet'}
                         onValueChange={(val) => updateField('benPackFoodItem', val)}
-                        options={[
-                          { value: 'banhTet', label: '🫔 Bánh tét lá cẩm (+50⚡ · 30🐚)' },
-                          { value: 'comNam', label: '🍙 Cơm nắm muối mè (+30⚡ · 17🐚)' },
-                          { value: 'banhBao', label: '🥟 Bánh bao nhân thịt (+22⚡ · 13🐚)' },
-                          { value: 'banhMiGoi', label: '🥖 Bánh mì gói giấy (+20⚡ · 12🐚)' },
-                          { value: 'xoiBap', label: '🍙 Xôi bắp lá chuối (+15⚡ · 9🐚)' },
-                        ]}
+                        options={PACK_FOOD_SELECT_OPTIONS}
                       />
                     </div>
                     <div className="flex items-center justify-between gap-2 min-w-0">
@@ -187,13 +185,7 @@ export function WharfTabContent({ config, onUpdateConfig, onOpenMonitorTab: _onO
                     <HudSelect
                       value={config.benPreferFood || 'lauMam'}
                       onValueChange={(val) => updateField('benPreferFood', val)}
-                      options={[
-                        { value: 'lauMam', label: '🍲 Lẩu cá linh (+100 Sức · 45 vỏ sò)' },
-                        { value: 'comTam', label: '🍛 Cơm tấm sườn bì (+60 Sức · 28 vỏ sò)' },
-                        { value: 'huTieu', label: '🍜 Hủ tiếu nam vang (+40 Sức · 20 vỏ sò)' },
-                        { value: 'chaoCa', label: '🥣 Cháo cá lóc (+28 Sức · 14 vỏ sò)' },
-                        { value: 'banhMi', label: '🥖 Bánh mì thịt (+20 Sức · 10 vỏ sò)' },
-                      ]}
+                      options={DI_TAM_FOOD_SELECT_OPTIONS}
                     />
                   </div>
                 )}

@@ -6,6 +6,10 @@ updated: 2026-10-25
 
 # Project Conventions
 
+## Package Manager (CRITICAL)
+- **Always use `pnpm` exclusively** for all commands (`pnpm run build`, `pnpm run type-check`, `pnpm install`, etc.).
+- **NEVER use `npm` or `yarn`**.
+
 ## Git Workflow
 - Commit and push directly to the `main` branch. Dedicated feature or bugfix branches are not required.
 
@@ -18,10 +22,10 @@ Whenever the user asks to release, tag, or publish a new version, strictly follo
    - `CHANGELOG.md`: Record all new features, bug fixes, optimizations, breaking changes, and refactoring with explicit version header (`## [X.Y.Z] - YYYY-MM-DD`) following Keep a Changelog & SemVer.
    - `README.md`: Update title version `(vX.Y.Z)`, feature summary highlights, and current version footer `vX.Y.Z`.
 3. **Verify Code Quality & Build**:
-   - Run `npm run build`
-   - Run `npm run type-check`
-   - Run `npm run check-syntax`
-   - Run `npm run lint`
+   - Run `pnpm run build`
+   - Run `pnpm run type-check`
+   - Run `pnpm run check-syntax`
+   - Run `pnpm run lint`
 4. **Clean Temporary Files**:
    - Ensure NO temporary files (e.g. `AUDIT_REPORT_*.md`, `*DEBUG_REPORT.md`, scratch scripts) remain in git staging or the workspace.
 5. **Git Commit & Push**:
