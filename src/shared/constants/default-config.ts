@@ -354,6 +354,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   // Ben Do Fishing Settings
   benAutoSpot: true,
   benSpot: 'dock',
+  benSpotTile: 'all',
   benSpotSwitchMode: 'count',
   benSpotSwitchValue: 15,
   benHumanJitter: true,

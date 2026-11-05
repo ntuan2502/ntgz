@@ -362,15 +362,23 @@ export function runFishingStep(ctx: BenExecutionContext): BenStepResult {
 
     const spotKey = isDynamicSpot
       ? SPOT_KEYS[Math.max(0, activeSpotIdx) % SPOT_KEYS.length]
-      : spotChoice;
-    const spotMeta = FISHING_SPOTS[spotKey] || FISHING_SPOTS.bank;
+      : (spotChoice === 'bank' ? 'bank_center' : spotChoice);
+    const spotMeta = FISHING_SPOTS[spotKey] || FISHING_SPOTS.dock;
+
+    // Resolve candidate tiles: if user selected a specific sub-tile (benSpotTile), use its tiles!
+    const subChoice = cfg.benSpotTile || 'all';
+    const subSpot =
+      subChoice !== 'all' && Array.isArray(spotMeta.subSpots)
+        ? spotMeta.subSpots.find((s) => s.key === subChoice)
+        : undefined;
+    const candidateTiles =
+      subSpot && subSpot.tiles.length > 0 ? subSpot.tiles : spotMeta.tiles;
 
     if (cfg.benHumanJitter !== false && spotFishCount - lastJitterCatchCount >= 6) {
       lastJitterCatchCount = spotFishCount;
-      activeTileIdx = (activeTileIdx + 1) % spotMeta.tiles.length;
+      activeTileIdx = (activeTileIdx + 1) % candidateTiles.length;
     }
 
-    const candidateTiles = spotMeta.tiles;
     const targetTile = candidateTiles[activeTileIdx % candidateTiles.length] || candidateTiles[0];
 
     const curTile =

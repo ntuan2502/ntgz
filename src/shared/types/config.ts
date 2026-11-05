@@ -185,7 +185,20 @@ export interface AppConfig {
 
   // Ben Do Fishing Settings
   benAutoSpot: boolean;
-  benSpot: 'dock' | 'bamboo' | 'bank' | 'bridge' | 'rotate' | 'random';
+  benSpot:
+    | 'dock'
+    | 'bamboo'
+    | 'bank'
+    | 'bridge'
+    | 'bank_center'
+    | 'bank_east'
+    | 'bank_west'
+    | 'lake_east'
+    | 'creek_east'
+    | 'south_swamp'
+    | 'rotate'
+    | 'random';
+  benSpotTile?: string;
   benSpotSwitchMode?: 'count' | 'time';
   benSpotSwitchValue?: number;
   benHumanJitter?: boolean;

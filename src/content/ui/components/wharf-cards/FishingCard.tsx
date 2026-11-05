@@ -3,6 +3,7 @@ import { AppConfig } from '@/shared/types/config';
 import { Switch } from '@/components/ui/switch';
 import { HudSelect } from '../HudSelect';
 import { MultiSelectCombobox } from '../MultiSelectCombobox';
+import { FISHING_SPOTS } from '@/shared/constants/wharf-catalog';
 
 const KEEP_RARITY_OPTIONS = [
   { id: 'mythic', label: 'Thần thoại', icon: '🔥' },
@@ -13,6 +14,20 @@ const KEEP_RARITY_OPTIONS = [
   { id: 'rare', label: 'Hiếm', icon: '⭐' },
   { id: 'uncommon', label: 'Hơi hiếm', icon: '🐟' },
   { id: 'common', label: 'Thường', icon: '🐟' },
+];
+
+const SPOT_AREA_OPTIONS = [
+  { value: 'dock', label: '🌉 Cầu tàu lớn (Có cá Thần thoại 5000🐚)' },
+  { value: 'bamboo', label: '🎋 Cầu tre lắt lẻo (Mạn Tây - 2000🐚)' },
+  { value: 'bridge', label: '🪵 Cầu ván qua lạch (Mạn Đông - 2000🐚)' },
+  { value: 'bank_center', label: '🌾 Bờ sông bến giữa (Sát Xe Chị Thơm)' },
+  { value: 'bank_east', label: '🏪 Bờ sông bến Đông (Gần Vựa cá & Chú Đực)' },
+  { value: 'bank_west', label: '🛶 Bờ sông bến Tây (Gần Bến đò ngang)' },
+  { value: 'lake_east', label: '🪷 Hồ nước phía Đông (Ao sen bán nguyệt)' },
+  { value: 'creek_east', label: '🏞️ Kênh lạch phía Đông (Ven ruộng lúa)' },
+  { value: 'south_swamp', label: '🌾 Đầm nước phía Nam (Bãi lau sậy)' },
+  { value: 'rotate', label: '🔄 Tự luân phiên các vùng câu' },
+  { value: 'random', label: '🎲 Đổi ngẫu nhiên các vùng câu' },
 ];
 
 interface FishingCardProps {
@@ -34,23 +49,40 @@ export function FishingCard({ config, updateField }: FishingCardProps) {
           onCheckedChange={(c) => updateField('benAutoSpot', c)}
         />
       </label>
-      {config.benAutoSpot && (
-        <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-2 text-[11px] min-w-0 overflow-hidden">
-          <div className="flex items-center justify-between gap-2 min-w-0">
-            <span className="text-slate-600 shrink-0">Vị trí ngồi câu:</span>
-            <HudSelect
-              value={config.benSpot}
-              onValueChange={(val) => updateField('benSpot', val as AppConfig['benSpot'])}
-              options={[
-                { value: 'bank', label: '🌾 Bờ sông bến giữa' },
-                { value: 'dock', label: '🌉 Cầu tàu lớn (Đầu mũi)' },
-                { value: 'bamboo', label: '🎋 Cầu tre lắt lẻo' },
-                { value: 'bridge', label: '🪵 Cầu ván qua lạch' },
-                { value: 'rotate', label: '🔄 Tự luân phiên các điểm câu' },
-                { value: 'random', label: '🎲 Đổi ngẫu nhiên các điểm câu' },
-              ]}
-            />
-          </div>
+      {config.benAutoSpot && (() => {
+        const currentSpotKey = config.benSpot === 'bank' ? 'bank_center' : config.benSpot;
+        const currentSpotMeta = FISHING_SPOTS[currentSpotKey];
+        const subOptions = currentSpotMeta?.subSpots?.map((s) => ({
+          value: s.key,
+          label: s.label,
+        })) || [{ value: 'all', label: '🎲 Tất cả ô (Tự động đổi ô)' }];
+
+        return (
+          <div className="ml-2 pl-2.5 border-l-2 border-slate-200 space-y-2 text-[11px] min-w-0 overflow-hidden">
+            {/* Cấp 1: Chọn Khu Vực */}
+            <div className="flex items-center justify-between gap-2 min-w-0">
+              <span className="text-slate-600 shrink-0">Khu vực câu:</span>
+              <HudSelect
+                value={currentSpotKey}
+                onValueChange={(val) => {
+                  updateField('benSpot', val as AppConfig['benSpot']);
+                  updateField('benSpotTile', 'all');
+                }}
+                options={SPOT_AREA_OPTIONS}
+              />
+            </div>
+
+            {/* Cấp 2: Chọn Điểm câu chi tiết */}
+            {config.benSpot !== 'rotate' && config.benSpot !== 'random' && (
+              <div className="flex items-center justify-between gap-2 min-w-0">
+                <span className="text-slate-600 shrink-0">Điểm câu chi tiết:</span>
+                <HudSelect
+                  value={config.benSpotTile || 'all'}
+                  onValueChange={(val) => updateField('benSpotTile', val)}
+                  options={subOptions}
+                />
+              </div>
+            )}
 
           {(config.benSpot === 'rotate' || config.benSpot === 'random') && (
             <div className="rounded-lg bg-slate-50/80 p-2 border border-slate-100 space-y-1.5">
@@ -99,7 +131,8 @@ export function FishingCard({ config, updateField }: FishingCardProps) {
             />
           </label>
         </div>
-      )}
+        );
+      })()}
 
       <label className="flex items-center justify-between text-slate-700 cursor-pointer">
         <span>⭐ Tự động giữ lại cá trong giỏ</span>
