@@ -832,6 +832,7 @@ const v2Fixtures = [
   { file: 'tests/fixtures/militia-v2/sample_odd_02_fish_direction.png', type: 'odd', expRow: 1, expCol: 0 },
   { file: 'tests/fixtures/militia-v2/sample_odd_03_shrimp_upsidedown.png', type: 'odd', expRow: 0, expCol: 1 },
   { file: 'tests/fixtures/militia-v2/sample_odd_04_fish_direction.png', type: 'odd', expRow: 0, expCol: 1 },
+  { file: 'tests/fixtures/militia-v2/sample_odd_05_crab_upsidedown.png', type: 'odd', expRow: 2, expCol: 1 },
   { file: 'tests/fixtures/militia-v2/sample_quiz_01_plough_buffalo.png', type: 'quiz', ask: 'plough', expRow: 1, expCol: 1 },
   { file: 'tests/fixtures/militia-v2/sample_quiz_02_boat.png', type: 'quiz', ask: 'boat', expRow: 1, expCol: 1 },
   { file: 'tests/fixtures/militia-v2/sample_drag_01_slot.png', type: 'drag', expNormX: 0.508, expNormY: 0.369 },

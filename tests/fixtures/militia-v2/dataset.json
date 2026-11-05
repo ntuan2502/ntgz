@@ -56,6 +56,20 @@
     }
   },
   {
+    "file": "sample_odd_05_crab_upsidedown.png",
+    "type": "odd",
+    "prompt": "Có một con khác mấy con còn lại (lật ngược, quay đầu, khác màu, khác cỡ hay mất mắt). Chạm vào con đó nha.",
+    "category": "lật ngược (inverted vertically / upside down)",
+    "target": {
+      "grid": "3x3",
+      "row": 2,
+      "col": 1,
+      "normalizedX": 0.5,
+      "normalizedY": 0.833,
+      "description": "Con cua đỏ ở hàng 3 cột giữa bị lật ngược (hai càng chúc xuống đáy)"
+    }
+  },
+  {
     "file": "sample_quiz_01_plough_buffalo.png",
     "type": "quiz",
     "ask": "plough",
